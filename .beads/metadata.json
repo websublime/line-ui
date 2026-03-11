@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "vitamin",
+  "project_id": "bca8a2d6-30f9-4242-9697-ec5625ee3e19"
+}

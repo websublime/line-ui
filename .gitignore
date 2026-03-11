@@ -20,3 +20,7 @@ bun-debug.log*
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
