@@ -1,5 +1,11 @@
 # Agent Instructions
 
+## Beads Version Compatibility
+
+Check compatibility:
+- Changelog: https://github.com/steveyegge/beads/blob/main/CHANGELOG.md
+- Run `/beads-compat` to check installed version
+
 This project uses **bd** (beads) for issue tracking. Run `bd onboard` to get started.
 
 ## Quick Reference
@@ -109,21 +115,46 @@ bd automatically syncs with git:
 - Imports from JSONL when newer (e.g., after `git pull`)
 - No manual export/import needed!
 
+### Managing AI-Generated Planning Documents
+
+AI assistants often create planning and design documents during development:
+- PLAN.md, IMPLEMENTATION.md, ARCHITECTURE.md
+- DESIGN.md, CODEBASE_SUMMARY.md, INTEGRATION_PLAN.md
+- TESTING_GUIDE.md, TECHNICAL_DESIGN.md, PRODUCT-REQUIREMENTS-SPECIFICATION.md, SPEC.md and similar files
+
+**Best Practice: Use a dedicated directory for these ephemeral files**
+
+- Store ALL AI-generated planning/design docs in `docs/`
+- Keep the repository root clean and focused on permanent project files
+- Only access `docs/` when explicitly asked to review past planning
+
+### CLI Help
+
+Run `bd <command> --help` to see all available flags for any command.
+For example: `bd create --help` shows `--parent`, `--deps`, `--assignee`, etc.
+
+Get more info from reference: https://github.com/steveyegge/beads/raw/refs/heads/main/docs/CLI_REFERENCE.md
+
 ### Important Rules
 
 - ✅ Use bd for ALL task tracking
 - ✅ Always use `--json` flag for programmatic use
 - ✅ Link discovered work with `discovered-from` dependencies
 - ✅ Check `bd ready` before asking "what should I work on?"
+- ✅ Store AI planning docs in `docs/` directory
+- ✅ Run `bd <cmd> --help` to discover available flags
 - ❌ Do NOT create markdown TODO lists
 - ❌ Do NOT use external issue trackers
 - ❌ Do NOT duplicate tracking systems
+- ❌ Do NOT clutter repo root with planning documents
 
 For more details, see README.md and docs/QUICKSTART.md.
 
 ## Landing the Plane (Session Completion)
 
 **When ending a work session**, you MUST complete ALL steps below. Work is NOT complete until `git push` succeeds.
+
+**Branch Strategy:** Active v1.0.0 development targets the `next` branch. Only hotfixes target `main`.
 
 **MANDATORY WORKFLOW:**
 
@@ -133,7 +164,7 @@ For more details, see README.md and docs/QUICKSTART.md.
 4. **PUSH TO REMOTE** - This is MANDATORY:
    ```bash
    git pull --rebase
-   bd sync
+   bd dolt push
    git push
    git status  # MUST show "up to date with origin"
    ```
