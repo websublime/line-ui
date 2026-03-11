@@ -545,6 +545,7 @@ Storybook
 
 ### 5.4 Storybook Deployment
 
+- **GitHub Pages** for production deployment.
 - Automatic deployment per PR (preview link).
 - Production deployment on merge to main.
 
