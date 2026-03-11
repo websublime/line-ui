@@ -1,35 +1,35 @@
 {
-  "name": "@websublime/vitamin-core",
+  "name": "@websublime/vitamina-core",
   "version": "0.2.0",
-  "description": "Core lit functions",
+  "description": "Core Lit functions and base classes for Vitamina",
   "type": "module",
   "scripts": {
     "dev": "vite --debug --force",
-    "build": "vite build && pnpm dts && pnpm types && pnpm clean",
+    "build": "vite build && bun run dts && bun run types && bun run clean",
     "preview": "vite preview",
     "dts": "tsc --declaration --emitDeclarationOnly --project tsconfig.declaration.json",
-    "types": "mkdir dist/docs && api-extractor run --local",
+    "types": "mkdir -p dist/docs && api-extractor run --local",
     "clean": "rm -rf ./temp && rm -rf ./tsconfig.tsbuildinfo && rm -rf tsconfig.declaration.tsbuildinfo",
-    "lint": "eslint . --ext .js,.ts,.mjs",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
-    "@websublime/vitamin-theme": "workspace:*",
-    "lit": "^3.0.0"
+    "@websublime/vitamina-theme": "workspace:*",
+    "lit": "^3.3.2"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.38.3",
-    "@rollup/plugin-replace": "^5.0.5",
-    "@types/node": "^20.9.0",
-    "glob": "^10.3.10",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "@microsoft/api-extractor": "^7.57.7",
+    "@types/node": "^25.4.0",
+    "glob": "^13.0.6",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
   },
   "keywords": [
     "core",
     "websublime",
     "lit",
-    "ui"
+    "ui",
+    "web-components"
   ],
   "author": {
     "email": "hello@miguelramos.dev",
@@ -95,7 +95,7 @@
     }
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",

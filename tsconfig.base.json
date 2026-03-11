@@ -8,9 +8,9 @@
     "importHelpers": true,
     "inlineSources": true,
     "isolatedModules": true,
-    "lib": ["es2018", "dom", "dom.iterable"],
-    "module": "esNext",
-    "moduleResolution": "node",
+    "lib": ["es2022", "dom", "dom.iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedParameters": true,
@@ -19,12 +19,9 @@
     "skipLibCheck": true,
     "strict": true,
     "sourceMap": true,
-    "target": "es2018",
+    "target": "es2022",
+    "useDefineForClassFields": false
   },
   "references": [],
-  "exclude": [
-    "**/tests/**",
-    "**/dist/**",
-    "**/www/**"
-  ]
+  "exclude": ["**/tests/**", "**/dist/**", "**/www/**"]
 }

@@ -20,7 +20,11 @@
 
 ## ⚒ Develop
 
-Clone project and install with pnpm because we use monorepo style.
+Clone project and install with bun because we use monorepo style.
+
+```
+BUN_CONFIG_NO_GLOBAL_NPMRC=1 bun install
+```
 
 Run with start
 
