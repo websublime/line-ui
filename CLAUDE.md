@@ -18,7 +18,7 @@ Vitamina is a headless UI component library built as native Web Components. It p
 - **Component Framework**: Lit 3+
 - **Component Logic**: Zag.js (state machines)
 - **Utility Tokens**: Open Props (sizes, shadows, easings, typography)
-- **Color Tokens**: Custom 12-level semantic system (30 palettes, light/dark mode)
+- **Color Tokens**: Custom 12-level semantic system (28 palettes, light/dark mode)
 - **CSS Processing**: PostCSS (with plugins: import, nested, jit-props, mixins, simple-vars, preset-env, cssnano)
 - **Versioning**: Changesets
 - **Types**: TypeScript 5.9+ with API Extractor

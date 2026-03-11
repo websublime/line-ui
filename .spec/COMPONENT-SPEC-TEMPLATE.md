@@ -69,6 +69,10 @@ ARIA roles, states, and screen reader behaviour.
 
 Which machine is used and what context/API it exposes.
 
+## High level code spec design
+
+Interfaces, implementations andd code level design.
+
 ## Examples
 
 ### Basic

@@ -2,8 +2,8 @@
 
 **Date:** 2026-03-11
 **Author:** Miguel Ramos
-**Status:** Revised Draft
-**Version:** 0.2.0
+**Status:** Approved
+**Version:** 0.3.0
 
 ---
 
@@ -28,7 +28,7 @@ Vitamina is a headless UI component library built as native Web Components. It p
 | State Management | Zag.js state machines | Custom + Popper.js | Custom internal | Custom vanilla JS | FASTElement reactivity |
 | Customisation | `::part()` + CSS custom properties (dual-layer) | `::part()` + CSS custom properties | CSS variables; partial `::part()` | `::part()` + CSS custom properties | CSS variables; minimal `::part()` |
 | Accessibility | WCAG 2.1 AA via Zag.js | WCAG 2.1 AA (mature) | WCAG 2.1 AA (Adobe standard) | WCAG 2.1 AA+ (core differentiator) | WCAG 2.1 AA (Microsoft standard) |
-| Component Count | ~105+ (planned) | ~90+ (shipped) | ~40-50 | ~40+ | ~60+ |
+| Component Count | 118 (planned) | ~90+ (shipped) | ~40-50 | ~40+ | ~60+ |
 | Ecosystem | Pre-launch | 20k+ weekly downloads | Enterprise (Adobe products) | Enterprise (ING banking) | Enterprise (Microsoft Fluent) |
 | Theming | Headless default; optional 28-palette theme package | 30+ built-in themes | Adobe Spectrum theme | No built-in themes | Fluent Design theme |
 | SSR/SSG | Investigation planned post-Phase 1 | Partial (Astro, 11ty) | Limited | Limited | Limited |
@@ -112,9 +112,12 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 | Accessibility | WCAG 2.1 AA (Zag.js provides this natively for state-machine components) |
 | Bundle size | Soft target < 5KB gzipped per component |
 | SSR/SSG | Out of scope for Phase 0. Investigation planned post-Phase 1 for Astro, Nuxt, Next.js compatibility |
-| CDN usage | To be defined |
+| CDN usage | CDN distribution via unpkg and jsdelivr from Phase 1 onwards. ESM builds are CDN-compatible by default via the package.json `exports` field |
 | i18n — RTL | Supported natively via `dir` attribute |
 | i18n — Localization | Localization of component labels (e.g., "Close", "Dismiss") is the consumer's responsibility via slots and attributes |
+| Touch & pointer | All interactive components support both pointer and touch events. Zag.js handles this natively for pre-built machines; custom machines must follow the same pattern |
+| Error handling | Components fail gracefully: if a Zag.js machine fails to initialise, the component renders in a static fallback state. No JavaScript errors thrown to the consumer |
+| Progressive enhancement | Components that wrap native elements (Input, Textarea, Select) remain functional without JavaScript via light DOM fallback where feasible |
 
 ---
 
@@ -270,10 +273,18 @@ LitElement
         ├── Direction mixin (LTR/RTL)
         └── Zag.js machine connection (lifecycle-managed)
               │
-              ├── VitaButton extends VitaElement
-              ├── VitaDialog extends VitaElement
-              └── ...
+              ├── Pre-built machine components
+              │     ├── VitaDialog (uses @zag-js/dialog)
+              │     └── ...
+              ├── Custom machine components
+              │     ├── VitaInput (uses custom createMachine)
+              │     └── ...
+              └── Static components (no machine)
+                    ├── VitaBadge
+                    └── ...
 ```
+
+Components declare their tier by what they assign to the `machine` property: a pre-built Zag.js machine, a custom `createMachine()` result, or nothing (static). The base class handles all three cases — connect/disconnect is automatic for machines, zero overhead for static components.
 
 - Zag.js connection lives in the base class — each component only declares which machine it uses; connect/disconnect is automatic via lifecycle.
 - Simple components that don't use Zag.js (badge, separator, avatar) simply don't declare a machine — zero overhead.
@@ -296,7 +307,73 @@ export class VitaDialog extends VitaElement {
 }
 ```
 
-### 3.7 Component File Structure
+### 3.7 State Management — Unified via Zag.js
+
+**Three tiers of state management:**
+
+| Tier | What | When to use | Examples |
+|------|------|-------------|----------|
+| **Pre-built machine** | Uses existing `@zag-js/*` package | Complex components where Zag.js provides a production-ready machine | Dialog, Select, Combobox, Tabs, Accordion |
+| **Custom machine** | Uses `createMachine()` from `@zag-js/core` | Interactive components with states (focus, error, validation) where no pre-built machine exists | Input, Textarea, Field, Tag Input, Search Field |
+| **Static** | No machine | Purely presentational components with zero interaction state | Badge, Separator, Skeleton, VisuallyHidden, Center |
+
+**Why custom machines for "simple" components like Input:**
+
+Components like Input, Textarea, and Field have rich interaction states: focus/blur, error/invalid, disabled, readonly, empty/filled, loading, required. Without a state machine, each component invents its own ad-hoc state management, leading to inconsistency.
+
+With a custom Zag.js machine, every interactive component gets:
+- **Explicit state transitions** (e.g., `idle → focused → validating → error`)
+- **Computed states** (e.g., `isEmpty`, `isInvalid`, `isFilled`) — derived, memoized, consistent
+- **Controlled/uncontrolled for free** via Zag.js `bindable` pattern — `defaultValue`/`value` + `onChange`
+- **Guards** preventing invalid transitions (e.g., no input when `disabled`)
+- **Watch** for reactive side effects (e.g., notify parent `Field` of state changes)
+- **Inspector integration** — the inspector can read any machine's state, not just pre-built ones
+
+**Custom machine example — Input:**
+
+```typescript
+const machine = createMachine<InputSchema>({
+  props({ props }) {
+    return { disabled: false, required: false, readOnly: false, ...props }
+  },
+  context({ prop, bindable }) {
+    return {
+      value: bindable(() => ({
+        defaultValue: prop("defaultValue") ?? "",
+        value: prop("value"),
+        onChange(value) { prop("onChange")?.({ value }) }
+      })),
+      error: bindable(() => ({ defaultValue: "" })),
+    }
+  },
+  computed: {
+    isEmpty({ context }) { return context.get("value") === "" },
+    isInvalid({ context }) { return context.get("error") !== "" },
+  },
+  states: {
+    idle: {
+      on: { FOCUS: { target: "focused" } }
+    },
+    focused: {
+      on: {
+        BLUR: { target: "idle", actions: ["validate"] },
+        CHANGE: { actions: ["setValue"] },
+      }
+    }
+  }
+})
+```
+
+**Collections for item-based components:**
+
+Zag.js provides `ListCollection` and `TreeCollection` from `@zag-js/collection` for components that manage lists of items. These provide navigation (next/previous/first/last), search, filtering, reordering, and disabled item support. Collections are immutable — all modifications return new instances.
+
+- **Pre-built machines using collections:** Select, Combobox, Menu, Tree View (collections built into the machine)
+- **Custom machines + collections:** Tag Input, List View, Kanban Board, Search Field (custom machine with `ListCollection` for item management)
+
+**The result:** Every interactive component in Vitamina shares the same state management primitives. Whether a component uses a pre-built Zag.js machine or a custom one, the developer experience is identical: explicit states, computed values, controlled/uncontrolled support, and inspector integration.
+
+### 3.8 Component File Structure
 
 ```
 packages/components/src/dialog/
@@ -309,7 +386,7 @@ packages/components/src/dialog/
 └── index.ts               ← Public exports
 ```
 
-### 3.8 Icon System
+### 3.9 Icon System
 
 Abstract wrapper with an agnostic registry:
 
@@ -333,172 +410,173 @@ Abstract wrapper with an agnostic registry:
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Button | No | Slots for icon + label |
-| Badge | No | Status, count, dot variants |
-| Avatar | No | Fallback to initials, group |
-| Separator | No | Horizontal/vertical, optional label slot |
-| Visually Hidden | No | A11y utility |
-| Portal | No | Render outside DOM parent |
-| Icon | No | Agnostic registry wrapper |
-| Kbd / Shortcut | No | OS-aware (Cmd vs Ctrl) |
-| Skeleton | No | Pulse/wave animation |
-| Presence | Yes | Mount/unmount animations |
-| Stack | No | Flex vertical/horizontal with gap |
-| Grid | No | CSS Grid wrapper |
-| Center | No | Centering utility |
-| Aspect Ratio | No | Fixed ratio container |
+| Button | Custom | Slots for icon + label. States: idle, pressed, loading |
+| Badge | Static | Status, count, dot variants |
+| Avatar | Static | Fallback to initials, group |
+| Separator | Static | Horizontal/vertical, optional label slot |
+| Visually Hidden | Static | A11y utility |
+| Portal | Static | Render outside DOM parent |
+| Icon | Static | Agnostic registry wrapper |
+| Kbd / Shortcut | Static | OS-aware (Cmd vs Ctrl) |
+| Skeleton | Static | Pulse/wave animation |
+| Presence | Pre-built | Mount/unmount animations |
+| Stack | Static | Flex vertical/horizontal with gap |
+| Grid | Static | CSS Grid wrapper |
+| Center | Static | Centering utility |
+| Aspect Ratio | Static | Fixed ratio container |
 
 ### 4.2 Forms — Essential
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Input | No | Text, email, password, etc. |
-| Textarea | No | Auto-resize |
-| Field | No | Wrapper: label + input + error + hint |
-| Checkbox | Yes | `@zag-js/checkbox` |
-| Radio Group | Yes | `@zag-js/radio-group` |
-| Switch | Yes | `@zag-js/switch` |
-| Select | Yes | `@zag-js/select` |
-| Toggle Group | Yes | `@zag-js/toggle-group` |
-| Slider | Yes | `@zag-js/slider` |
-| Number Input | Yes | `@zag-js/number-input` |
+| Input | Custom | Text, email, password, etc. States: idle, focused, error, disabled |
+| Textarea | Custom | Auto-resize. States: idle, focused, error, disabled |
+| Field | Custom | Wrapper: label + input + error + hint. Orchestrates child state |
+| Checkbox | Pre-built | `@zag-js/checkbox` |
+| Radio Group | Pre-built | `@zag-js/radio-group` |
+| Switch | Pre-built | `@zag-js/switch` |
+| Select | Pre-built | `@zag-js/select` + `ListCollection` |
+| Toggle Group | Pre-built | `@zag-js/toggle-group` |
+| Slider | Pre-built | `@zag-js/slider` |
+| Number Input | Pre-built | `@zag-js/number-input` |
 
 ### 4.3 Overlays & Feedback
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Dialog | Yes | `@zag-js/dialog` — modal + non-modal |
-| Alert Dialog | Yes | Dialog variant with confirm/cancel |
-| Sheet | Yes | Side panel — overlay or push mode, any edge, header + footer slots |
-| Drawer | Yes | Temporary sliding panel |
-| Popover | Yes | `@zag-js/popover` |
-| Tooltip | Yes | `@zag-js/tooltip` |
-| Hover Card | Yes | `@zag-js/hover-card` |
-| Toast | Yes | `@zag-js/toast` — stack, positions |
+| Dialog | Pre-built | `@zag-js/dialog` — modal + non-modal |
+| Alert Dialog | Pre-built | Dialog variant with confirm/cancel |
+| Sheet | Pre-built | Side panel — overlay or push mode, any edge, header + footer slots |
+| Drawer | Pre-built | Temporary sliding panel |
+| Popover | Pre-built | `@zag-js/popover` |
+| Tooltip | Pre-built | `@zag-js/tooltip` |
+| Hover Card | Pre-built | `@zag-js/hover-card` |
+| Toast | Pre-built | `@zag-js/toast` — stack, positions |
 
 ### 4.4 Navigation & Disclosure
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Tabs | Yes | `@zag-js/tabs` |
-| Accordion | Yes | `@zag-js/accordion` |
-| Collapsible | Yes | `@zag-js/collapsible` |
-| Menu / Context Menu | Yes | `@zag-js/menu` — nested, context |
-| Navigation Menu | Yes | `@zag-js/navigation-menu` |
-| Breadcrumb | No | Slots for items |
-| Breadcrumb Trail | No | Clickable with dropdown showing siblings at each level |
-| Pagination | Yes | `@zag-js/pagination` |
-| Steps / Stepper | Yes | `@zag-js/steps` — visual indicator |
+| Tabs | Pre-built | `@zag-js/tabs` |
+| Accordion | Pre-built | `@zag-js/accordion` |
+| Collapsible | Pre-built | `@zag-js/collapsible` |
+| Menu / Context Menu | Pre-built | `@zag-js/menu` — nested, context |
+| Navigation Menu | Pre-built | `@zag-js/navigation-menu` |
+| Breadcrumb | Static | Slots for items |
+| Breadcrumb Trail | Custom | Clickable with dropdown showing siblings at each level. Uses `ListCollection` |
+| Pagination | Pre-built | `@zag-js/pagination` |
+| Steps / Stepper | Pre-built | `@zag-js/steps` — visual indicator |
 
 ### 4.5 Forms — Advanced
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Combobox | Yes | `@zag-js/combobox` — autocomplete |
-| Date Picker | Yes | `@zag-js/date-picker` |
-| Date Range Picker | Yes | `@zag-js/date-picker` range mode, two-calendar view |
-| Time Picker | Yes | `@zag-js/time-picker` |
-| Color Picker | Yes | `@zag-js/color-picker` |
-| Pin Input | Yes | `@zag-js/pin-input` — OTP codes |
-| Rating | Yes | `@zag-js/rating-group` |
-| Range Slider | Yes | `@zag-js/range-slider` |
-| File Upload | Yes | `@zag-js/file-upload` — drag & drop |
-| Signature Pad | Yes | `@zag-js/signature-pad` |
-| Tag Input | No | Text to tags, autocomplete, drag reorder, multi-paste |
-| Mention Input | No | Textarea with @mention and #channel inline |
-| Search Field | No | Suggestions dropdown, recent searches, scoped search |
-| Wizard / Multi-step Form | No | Step validation, progress tracking, branching logic |
-| OTP / Verification | No | Beyond pin input — timer, resend, paste from SMS |
+| Combobox | Pre-built | `@zag-js/combobox` — autocomplete + `ListCollection` |
+| Date Picker | Pre-built | `@zag-js/date-picker` |
+| Date Range Picker | Pre-built | `@zag-js/date-picker` range mode, two-calendar view |
+| Time Picker | Pre-built | `@zag-js/time-picker` |
+| Color Picker | Pre-built | `@zag-js/color-picker` |
+| Pin Input | Pre-built | `@zag-js/pin-input` — OTP codes |
+| Rating | Pre-built | `@zag-js/rating-group` |
+| Range Slider | Pre-built | `@zag-js/range-slider` |
+| File Upload | Pre-built | `@zag-js/file-upload` — drag & drop |
+| Signature Pad | Pre-built | `@zag-js/signature-pad` |
+| Tag Input | Custom | Text to tags, autocomplete, drag reorder, multi-paste. Custom machine + `ListCollection` |
+| Mention Input | Custom | Textarea with @mention and #channel inline. Custom machine + `ListCollection` |
+| Search Field | Custom | Suggestions dropdown, recent searches, scoped search. Custom machine + `ListCollection` |
+| Wizard / Multi-step Form | Custom | Step validation, progress tracking, branching logic |
 
 ### 4.6 Data Display
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Table | No | Headless, sort/filter via API |
-| Card | No | Composable: header, body, footer |
-| Progress | Yes | `@zag-js/progress` — linear + circular |
-| Progress Ring | No | Multiple overlapping rings, each a metric |
-| Progress List / Task Steps | No | List of operations completing in real-time (pending → loading → done → error) |
-| Scroll Area | Yes | `@zag-js/scroll-area` — custom scrollbars |
-| Carousel | Yes | `@zag-js/carousel` |
-| Clipboard | Yes | `@zag-js/clipboard` |
-| QR Code | Yes | `@zag-js/qr-code` |
-| Timer | Yes | `@zag-js/timer` — countdown/stopwatch |
-| Tree View | Yes | `@zag-js/tree-view` |
-| Gauge / Meter | No | Semicircular arc with pointer, coloured zones |
-| Empty State | No | Composable: icon + title + description + action |
+| Table | Custom | Headless, sort/filter via API. Custom machine + `ListCollection` |
+| Card | Static | Composable: header, body, footer |
+| Progress | Pre-built | `@zag-js/progress` — linear + circular |
+| Progress Ring | Static | Multiple overlapping rings, each a metric |
+| Progress List / Task Steps | Custom | List of operations completing in real-time (pending → loading → done → error) |
+| Scroll Area | Pre-built | `@zag-js/scroll-area` — custom scrollbars |
+| Carousel | Pre-built | `@zag-js/carousel` |
+| Clipboard | Pre-built | `@zag-js/clipboard` |
+| QR Code | Pre-built | `@zag-js/qr-code` |
+| Timer | Pre-built | `@zag-js/timer` — countdown/stopwatch |
+| Tree View | Pre-built | `@zag-js/tree-view` + `TreeCollection` |
+| Gauge / Meter | Static | Semicircular arc with pointer, coloured zones |
+| Empty State | Static | Composable: icon + title + description + action |
 
 ### 4.7 Layout & Containers
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| App Shell | No | Sidebar + header + main + footer via slots |
-| Sidebar | No | Collapsible, rail mode (icons only), resizable |
-| Header / Toolbar | No | Sticky, slots for logo, nav, actions |
-| Content Area | No | Internal scroll, max-width, responsive padding |
-| Panel | No | Header/body/footer, collapsible |
-| Splitter / Resizable Panels | Yes | `@zag-js/splitter` |
-| Floating Panel / Window | Yes | `@zag-js/floating-panel` — minimize, maximize, snap, z-order |
+| App Shell | Static | Sidebar + header + main + footer via slots |
+| Sidebar | Custom | Collapsible, rail mode (icons only), resizable |
+| Header / Toolbar | Static | Sticky, slots for logo, nav, actions |
+| Content Area | Static | Internal scroll, max-width, responsive padding |
+| Panel | Custom | Header/body/footer, collapsible |
+| Splitter / Resizable Panels | Pre-built | `@zag-js/splitter` |
+| Floating Panel / Window | Pre-built | `@zag-js/floating-panel` — minimize, maximize, snap, z-order |
 
 ### 4.8 Desktop-Inspired
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Command Palette / Command Bar | No | Cmd+K — sections, recent, fuzzy search, shortcuts display |
-| Spotlight | No | Global search with preview pane |
-| Status Bar | No | Bottom bar with contextual info, widget slots |
-| Activity Bar | No | Vertical icon bar switching between panels |
-| Notification Center | No | Side panel with notification history, grouped, dismissable |
-| Properties Panel | No | Contextual panel showing/editing properties of selected item |
-| Minimap | No | Miniature preview of long content with viewport indicator |
-| Master-Detail | No | Split view: list left, detail right |
-| List View | No | Multi-select (shift+click, cmd+click), keyboard nav, drag reorder, with/without icons |
-| Segmented Control | No | Toggle between 2-5 options with sliding indicator |
-| Dock | No | macOS-style icon magnification on hover |
+| Command Palette | Custom | Cmd+K — sections, recent, fuzzy search, shortcuts display. Custom machine + `ListCollection` |
+| Spotlight | Custom | Global search with preview pane. Custom machine + `ListCollection` |
+| Status Bar | Static | Bottom bar with contextual info, widget slots |
+| Activity Bar | Custom | Vertical icon bar switching between panels |
+| Notification Center | Custom | Side panel with notification history, grouped, dismissable. Custom machine + `ListCollection` |
+| Properties Panel | Custom | Contextual panel showing/editing properties of selected item |
+| Minimap | Static | Miniature preview of long content with viewport indicator |
+| Master-Detail | Custom | Split view: list left, detail right. Custom machine + `ListCollection` |
+| List View | Custom | Multi-select (shift+click, cmd+click), keyboard nav, drag reorder, with/without icons. Custom machine + `ListCollection` |
+| Segmented Control | Custom | Toggle between 2-5 options with sliding indicator |
+| Dock | Custom | macOS-style icon magnification on hover |
 
 ### 4.9 Innovative
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Kanban Board | No | Drag & drop columns + cards, headless |
-| Timeline | No | Vertical/horizontal, branching |
-| Data Grid | No | Virtual scrolling, inline edit, column resize, sort/filter |
-| Infinite Scroll | No | Intersection Observer, skeleton/placeholder slots |
-| Marquee | No | Continuous scrolling content |
-| Spotlight Card | No | Cursor-following gradient/glow effect |
-| Image Comparison | No | Before/after slider |
-| Sparkline | No | Mini inline charts — line, bar, area |
-| Flip Card | No | 3D flip animation, two slots (front/back) |
-| Morph / Shared Layout | No | View Transitions API |
-| Diff Viewer | No | Side-by-side or unified text diff |
-| Wheel Picker | No | iOS-style rotary scroll selection |
-| Angle Slider | Yes | `@zag-js/angle-slider` — rotary input |
-| Highlight | Yes | `@zag-js/highlight` — text matching |
-| Tour | Yes | `@zag-js/tour` — product tours |
+| Kanban Board | Custom | Drag & drop columns + cards, headless. Custom machine + `ListCollection` |
+| Timeline | Static | Vertical/horizontal, branching |
+| Data Grid | Custom | Virtual scrolling, inline edit, column resize, sort/filter. Custom machine + `ListCollection` |
+| Infinite Scroll | Custom | Intersection Observer, skeleton/placeholder slots |
+| Marquee | Static | Continuous scrolling content |
+| Spotlight Card | Static | Cursor-following gradient/glow effect |
+| Image Comparison | Custom | Before/after slider |
+| Sparkline | Static | Mini inline charts — line, bar, area |
+| Flip Card | Static | 3D flip animation, two slots (front/back) |
+| Morph / Shared Layout | Static | View Transitions API |
+| Diff Viewer | Static | Side-by-side or unified text diff |
+| Wheel Picker | Custom | iOS-style rotary scroll selection |
+| Angle Slider | Pre-built | `@zag-js/angle-slider` — rotary input |
+| Highlight | Pre-built | `@zag-js/highlight` — text matching |
+| Tour | Pre-built | `@zag-js/tour` — product tours |
 
 ### 4.10 Real-World / Domain Components
 
-| Component | Notes |
-|-----------|-------|
-| Ballot / Poll | Voting with live animated results |
-| Reaction Bar | Emoji reactions with counter, animation, toggle |
-| Proof / Annotation | Positional pins/comments on images, layouts, documents |
-| Price / Pricing Card | Currency, period, discount, strikethrough |
-| Stat Card | Value + label + trend (up/down) + optional sparkline |
-| Ticket / Pass | Visual notch, barcode/QR slot, tear line |
-| Chat Bubble | Tail, status (sent/delivered/read), timestamp, reply, reactions slot |
-| Audio Player | Headless controls: play/pause, waveform/progress, volume, speed |
-| Video Player | Headless controls: play, seek, volume, fullscreen, PiP, captions |
-| Cookie Consent | GDPR banner with category toggles, accept/reject/customise |
-| Calendar / Event View | Day/week/month view with event slots (not date picker) |
-| Terminal / Console | Monospace output, auto-scroll, ANSI colours, input line |
-| Receipt / Invoice | Line items, subtotal, tax, total with parts per section |
-| Changelog | Chronological list with version tags, categories, collapsible |
-| Weather Card | Icon + temperature + condition + high/low, composable |
-| Map Marker / Pin | Customisable marker with popover, for any map library |
-| OTP / Verification | Beyond pin input — timer, resend, paste from SMS |
+| Component | Zag.js | Notes |
+|-----------|--------|-------|
+| Ballot / Poll | Custom | Voting with live animated results |
+| Reaction Bar | Custom | Emoji reactions with counter, animation, toggle |
+| Proof / Annotation | Custom | Positional pins/comments on images, layouts, documents |
+| Price / Pricing Card | Static | Currency, period, discount, strikethrough |
+| Stat Card | Static | Value + label + trend (up/down) + optional sparkline |
+| Ticket / Pass | Static | Visual notch, barcode/QR slot, tear line |
+| Chat Bubble | Static | Tail, status (sent/delivered/read), timestamp, reply, reactions slot |
+| Audio Player | Custom | Headless controls: play/pause, waveform/progress, volume, speed |
+| Video Player | Custom | Headless controls: play, seek, volume, fullscreen, PiP, captions |
+| Cookie Consent | Custom | GDPR banner with category toggles, accept/reject/customise |
+| Calendar / Event View | Custom | Day/week/month view with event slots (not date picker). Custom machine + `ListCollection` |
+| Terminal / Console | Custom | Monospace output, auto-scroll, ANSI colours, input line |
+| Receipt / Invoice | Static | Line items, subtotal, tax, total with parts per section |
+| Changelog | Static | Chronological list with version tags, categories, collapsible |
+| Weather Card | Static | Icon + temperature + condition + high/low, composable |
+| Map Marker / Pin | Custom | Customisable marker with popover, for any map library |
+| OTP / Verification | Custom | Beyond pin input — timer, resend, paste from SMS |
 
 ### 4.11 Catalogue Summary
+
+**By Category:**
 
 | Category | Count |
 |----------|-------|
@@ -506,13 +584,22 @@ Abstract wrapper with an agnostic registry:
 | Forms — Essential | 10 |
 | Overlays & Feedback | 8 |
 | Navigation & Disclosure | 9 |
-| Forms — Advanced | 15 |
+| Forms — Advanced | 14 |
 | Data Display | 13 |
 | Layout & Containers | 7 |
 | Desktop-Inspired | 11 |
 | Innovative | 15 |
 | Real-World / Domain | 17 |
-| **Total** | **~105+** |
+| **Total** | **118** |
+
+**By Tier:**
+
+| Tier | Count | Description |
+|------|-------|-------------|
+| Pre-built | 45 | Uses existing `@zag-js/*` machine |
+| Custom | 37 | Custom machine via `createMachine()` |
+| Static | 36 | Purely presentational |
+| **Total** | **118** |
 
 ---
 
@@ -804,9 +891,9 @@ Workflows:
 | Task | Detail | Status | Priority |
 |------|--------|--------|----------|
 | Review & refactor Inspector | Existing component in core. Feature flag via localStorage, outline on hover, version display. Review current implementation, enhance with: docs/storybook link, exposed CSS parts, slot usage, optional metadata panel. Inspired by Bit.dev's original component inspection concept — unique differentiator in the Web Components space | | **P0** |
-| Migrate to Bun | Runtime + workspaces, remove pnpm | Done (requires review) | |
-| Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome | Done (requires review) | |
-| Update all dependencies | Lit 3+, Vite 7+ with Rolldown, PostCSS latest | Done (requires review) | |
+| Migrate to Bun | Runtime + workspaces, remove pnpm | Review pending | |
+| Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome | Review pending | |
+| Update all dependencies | Lit 3+, Vite 7+ with Rolldown, PostCSS latest | Review pending | |
 | Refactor VitaElement | Base class with Zag.js lifecycle, mixins (inspector, metadata, direction). Zag.js integration is a future investigation — the `@zag-js/element` adapter maturity is a technical risk to be validated | |
 | Restructure monorepo | 6 packages: core, components, theme, icons, site, storybook | |
 | Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer | |
@@ -816,7 +903,16 @@ Workflows:
 | npm scope | Configure `@websublime/vitamina-*` on npm | |
 | Theme package v2 | Integrate Open Props (utility tokens) + maintain 12-level colour system | |
 | Icon registry | Agnostic resolver system | |
-| Base documentation | Getting started, theming guide, customisation guide in Storybook | |
+| Base documentation | Getting started, theming guide, customisation guide in Storybook | | |
+| Validate HTMX integration | Spike: validate `VitaHtmxElement` adapter with `hx-*` forwarding, server-driven state, swap-aware lifecycle. Determine if exploratory or committed for Phase 1 | | P2 |
+
+**Phase 0 Status:** Tasks marked "Review pending" are functionally complete but require verification of quality and integration before sign-off.
+
+**Exit criteria:**
+- All tasks marked "Done" with review completed
+- Monorepo structure matches target
+- A developer can create, build, test, and document a new component using VitaElement
+- CI/CD pipeline operational (checks + RC releases on `next`)
 
 **Deliverable:** Functional monorepo. Zero UI components, but any developer can create a Vitamina component with the base class and have everything working — build, test, docs, release.
 
@@ -826,22 +922,29 @@ Workflows:
 
 | Component | Zag.js |
 |-----------|--------|
-| Button | No |
-| Badge | No |
-| Avatar | No |
-| Separator | No |
-| Visually Hidden | No |
-| Portal | No |
-| Icon | No |
-| Kbd / Shortcut | No |
-| Skeleton | No |
-| Presence | Yes |
-| Stack | No |
-| Grid | No |
-| Center | No |
-| Aspect Ratio | No |
+| Button | Custom |
+| Badge | Static |
+| Avatar | Static |
+| Separator | Static |
+| Visually Hidden | Static |
+| Portal | Static |
+| Icon | Static |
+| Kbd / Shortcut | Static |
+| Skeleton | Static |
+| Presence | Pre-built |
+| Stack | Static |
+| Grid | Static |
+| Center | Static |
+| Aspect Ratio | Static |
 
-**~14 components.** Mostly simple, no Zag.js. Validates architecture, parts convention, per-component build pipeline, and automatic documentation.
+**~14 components.** Mostly static, one pre-built, one custom. Validates architecture, parts convention, per-component build pipeline, and automatic documentation.
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 **Parallel:** Landing page for site.
 
@@ -849,18 +952,25 @@ Workflows:
 
 | Component | Zag.js |
 |-----------|--------|
-| Input | No |
-| Textarea | No |
-| Field | No |
-| Checkbox | Yes |
-| Radio Group | Yes |
-| Switch | Yes |
-| Select | Yes |
-| Toggle Group | Yes |
-| Slider | Yes |
-| Number Input | Yes |
+| Input | Custom |
+| Textarea | Custom |
+| Field | Custom |
+| Checkbox | Pre-built |
+| Radio Group | Pre-built |
+| Switch | Pre-built |
+| Select | Pre-built |
+| Toggle Group | Pre-built |
+| Slider | Pre-built |
+| Number Input | Pre-built |
 
-**~10 components.** First real Zag.js integration. Validates machine + Lit + parts pattern in forms.
+**~10 components.** First real Zag.js integration — both pre-built and custom machines. Validates machine + Lit + parts pattern in forms.
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 **Parallel:** Theming showcase on site.
 
@@ -868,136 +978,179 @@ Workflows:
 
 | Component | Zag.js |
 |-----------|--------|
-| Dialog | Yes |
-| Alert Dialog | Yes |
-| Sheet | Yes |
-| Drawer | Yes |
-| Popover | Yes |
-| Tooltip | Yes |
-| Hover Card | Yes |
-| Toast | Yes |
-| Tabs | Yes |
-| Accordion | Yes |
-| Collapsible | Yes |
-| Menu / Context Menu | Yes |
-| Breadcrumb | No |
-| Breadcrumb Trail | No |
+| Dialog | Pre-built |
+| Alert Dialog | Pre-built |
+| Sheet | Pre-built |
+| Drawer | Pre-built |
+| Popover | Pre-built |
+| Tooltip | Pre-built |
+| Hover Card | Pre-built |
+| Toast | Pre-built |
+| Tabs | Pre-built |
+| Accordion | Pre-built |
+| Collapsible | Pre-built |
+| Menu / Context Menu | Pre-built |
+| Breadcrumb | Static |
+| Breadcrumb Trail | Custom |
 
 **~14 components.** Complex components with focus management, portals, animations. Validates overlays and sub-component composition.
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 ### 7.6 Phase 4 — Advanced Forms (v0.5.0)
 
 | Component | Zag.js |
 |-----------|--------|
-| Combobox | Yes |
-| Date Picker | Yes |
-| Date Range Picker | Yes |
-| Time Picker | Yes |
-| Color Picker | Yes |
-| Pin Input | Yes |
-| Rating | Yes |
-| Range Slider | Yes |
-| File Upload | Yes |
-| Signature Pad | Yes |
-| Tag Input | No |
-| Mention Input | No |
-| Search Field | No |
+| Combobox | Pre-built |
+| Date Picker | Pre-built |
+| Date Range Picker | Pre-built |
+| Time Picker | Pre-built |
+| Color Picker | Pre-built |
+| Pin Input | Pre-built |
+| Rating | Pre-built |
+| Range Slider | Pre-built |
+| File Upload | Pre-built |
+| Signature Pad | Pre-built |
+| Tag Input | Custom |
+| Mention Input | Custom |
+| Search Field | Custom |
 
 **~13 components.** The most complex in the catalogue.
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 ### 7.7 Phase 5 — Data Display & Advanced Navigation (v0.6.0)
 
 | Component | Zag.js |
 |-----------|--------|
-| Table | No |
-| Card | No |
-| Progress | Yes |
-| Progress Ring | No |
-| Progress List / Task Steps | No |
-| Scroll Area | Yes |
-| Carousel | Yes |
-| Pagination | Yes |
-| Steps / Stepper | Yes |
-| Wizard | No |
-| Tree View | Yes |
-| Navigation Menu | Yes |
-| Clipboard | Yes |
-| QR Code | Yes |
-| Timer | Yes |
+| Table | Custom |
+| Card | Static |
+| Progress | Pre-built |
+| Progress Ring | Static |
+| Progress List / Task Steps | Custom |
+| Scroll Area | Pre-built |
+| Carousel | Pre-built |
+| Pagination | Pre-built |
+| Steps / Stepper | Pre-built |
+| Wizard / Multi-step Form | Custom |
+| Tree View | Pre-built |
+| Navigation Menu | Pre-built |
+| Clipboard | Pre-built |
+| QR Code | Pre-built |
+| Timer | Pre-built |
 
 **~15 components.**
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 ### 7.8 Phase 6 — Layout & Desktop-Inspired (v0.7.0)
 
 | Component | Zag.js |
 |-----------|--------|
-| App Shell | No |
-| Sidebar | No |
-| Header / Toolbar | No |
-| Content Area | No |
-| Panel | No |
-| Splitter | Yes |
-| Floating Panel / Window | Yes |
-| Status Bar | No |
-| Activity Bar | No |
-| Command Palette | No |
-| Notification Center | No |
-| Master-Detail | No |
-| List View | No |
-| Segmented Control | No |
-| Minimap | No |
+| App Shell | Static |
+| Sidebar | Custom |
+| Header / Toolbar | Static |
+| Content Area | Static |
+| Panel | Custom |
+| Splitter / Resizable Panels | Pre-built |
+| Floating Panel / Window | Pre-built |
+| Status Bar | Static |
+| Activity Bar | Custom |
+| Command Palette | Custom |
+| Notification Center | Custom |
+| Master-Detail | Custom |
+| List View | Custom |
+| Segmented Control | Custom |
+| Minimap | Static |
+| Properties Panel | Custom |
 
-**~15 components.** Layout pieces and desktop patterns. Vitamina starts seriously differentiating here.
+**~16 components.** Layout pieces and desktop patterns. Vitamina starts seriously differentiating here.
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 ### 7.9 Phase 7 — Innovative (v0.8.0)
 
 | Component | Zag.js |
 |-----------|--------|
-| Spotlight / Command Bar | No |
-| Kanban Board | No |
-| Timeline | No |
-| Data Grid | No |
-| Infinite Scroll | No |
-| Dock | No |
-| Marquee | No |
-| Spotlight Card | No |
-| Image Comparison | No |
-| Sparkline | No |
-| Flip Card | No |
-| Morph / Shared Layout | No |
-| Diff Viewer | No |
-| Wheel Picker | No |
-| Angle Slider | Yes |
-| Highlight | Yes |
-| Tour | Yes |
-| Empty State | No |
+| Spotlight | Custom |
+| Kanban Board | Custom |
+| Timeline | Static |
+| Data Grid | Custom |
+| Infinite Scroll | Custom |
+| Dock | Custom |
+| Marquee | Static |
+| Spotlight Card | Static |
+| Image Comparison | Custom |
+| Sparkline | Static |
+| Flip Card | Static |
+| Morph / Shared Layout | Static |
+| Diff Viewer | Static |
+| Wheel Picker | Custom |
+| Angle Slider | Pre-built |
+| Highlight | Pre-built |
+| Tour | Pre-built |
+| Empty State | Static |
 
 **~18 components.**
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 ### 7.10 Phase 8 — Real-World / Domain (v0.9.0)
 
-| Component | Notes |
-|-----------|-------|
-| Ballot / Poll | Voting with live animated results |
-| Reaction Bar | Emoji reactions |
-| Proof / Annotation | Positional pins/comments |
-| Price / Pricing Card | Currency, discount |
-| Stat Card | Dashboard building block |
-| Ticket / Pass | Visual notch, QR slot |
-| Chat Bubble | Status, reply, reactions |
-| Audio Player | Headless controls |
-| Video Player | Headless controls |
-| Cookie Consent | GDPR banner |
-| Calendar / Event View | Day/week/month |
-| Terminal / Console | Monospace output |
-| Receipt / Invoice | Line items layout |
-| Changelog | Release notes component |
-| Gauge / Meter | Semicircular |
-| Weather Card | Composable |
-| Map Marker / Pin | Customisable marker with popover |
-| OTP / Verification | Beyond pin input |
+| Component | Zag.js | Notes |
+|-----------|--------|-------|
+| Ballot / Poll | Custom | Voting with live animated results |
+| Reaction Bar | Custom | Emoji reactions |
+| Proof / Annotation | Custom | Positional pins/comments |
+| Price / Pricing Card | Static | Currency, discount |
+| Stat Card | Static | Dashboard building block |
+| Ticket / Pass | Static | Visual notch, QR slot |
+| Chat Bubble | Static | Status, reply, reactions |
+| Audio Player | Custom | Headless controls |
+| Video Player | Custom | Headless controls |
+| Cookie Consent | Custom | GDPR banner |
+| Calendar / Event View | Custom | Day/week/month |
+| Terminal / Console | Custom | Monospace output |
+| Receipt / Invoice | Static | Line items layout |
+| Changelog | Static | Release notes component |
+| Gauge / Meter | Static | Semicircular |
+| Weather Card | Static | Composable |
+| Map Marker / Pin | Custom | Customisable marker with popover |
+| OTP / Verification | Custom | Beyond pin input |
 
 **~18 components.**
+
+**Exit criteria:**
+- All listed components pass the 8-point test checklist (§5.2)
+- Storybook documentation complete for every component
+- Zero axe-core violations
+- CEM manifest generated and verified
+- Changeset entry for every component
 
 **Version after Phase 8: 1.0.0** — Full catalogue complete.
 
@@ -1010,11 +1163,11 @@ Phase 2 ─── 10 essential forms ────────────── 
 Phase 3 ─── 14 overlays & navigation ──────── v0.4.0
 Phase 4 ─── 13 advanced forms ─────────────── v0.5.0
 Phase 5 ─── 15 data display & nav ─────────── v0.6.0
-Phase 6 ─── 15 layout & desktop ───────────── v0.7.0
+Phase 6 ─── 16 layout & desktop ───────────── v0.7.0
 Phase 7 ─── 18 innovative ─────────────────── v0.8.0
 Phase 8 ─── 18 real-world / domain ────────── v0.9.0
                                         ──── v1.0.0
-                                    ~105+ components
+                                    118 components
 ```
 
 ---
@@ -1105,7 +1258,6 @@ Basic and advanced usage snippets.
 │   └── 0001-alert-component-spec.md
 ├── COMPONENT-SPEC-TEMPLATE.md
 ├── 0002-button-component-spec.md
-├── 0003-tabs.md
 └── ...
 ```
 
