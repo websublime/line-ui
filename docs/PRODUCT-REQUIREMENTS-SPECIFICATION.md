@@ -2,8 +2,8 @@
 
 **Date:** 2026-03-11
 **Author:** Miguel Ramos
-**Status:** Draft
-**Version:** 0.1.0
+**Status:** Revised Draft
+**Version:** 0.2.0
 
 ---
 
@@ -17,7 +17,35 @@ Vitamina is a headless UI component library built as native Web Components. It p
 
 > Headless UI primitives as native Web Components. Logic via state machines, total customisation via CSS `::part()`. Framework-agnostic. Optional ready-to-go themes. Integrated developer tooling via inspector.
 
-### 1.3 Key Differentiators
+### 1.3 Competitive Analysis
+
+#### Web Component Libraries Comparison
+
+| Dimension | Vitamina | Shoelace | Spectrum | Lion | FAST |
+|-----------|----------|----------|----------|------|------|
+| Framework | Web Components (Lit 3+) | Web Components (Lit 3) | Web Components (LitElement) | Web Components (vanilla) | Web Components (FASTElement) |
+| Approach | Headless-first + optional themes | Opinionated/styled | Opinionated (Adobe design) | Headless-first | Design system framework |
+| State Management | Zag.js state machines | Custom + Popper.js | Custom internal | Custom vanilla JS | FASTElement reactivity |
+| Customisation | `::part()` + CSS custom properties (dual-layer) | `::part()` + CSS custom properties | CSS variables; partial `::part()` | `::part()` + CSS custom properties | CSS variables; minimal `::part()` |
+| Accessibility | WCAG 2.1 AA via Zag.js | WCAG 2.1 AA (mature) | WCAG 2.1 AA (Adobe standard) | WCAG 2.1 AA+ (core differentiator) | WCAG 2.1 AA (Microsoft standard) |
+| Component Count | ~105+ (planned) | ~90+ (shipped) | ~40-50 | ~40+ | ~60+ |
+| Ecosystem | Pre-launch | 20k+ weekly downloads | Enterprise (Adobe products) | Enterprise (ING banking) | Enterprise (Microsoft Fluent) |
+| Theming | Headless default; optional 28-palette theme package | 30+ built-in themes | Adobe Spectrum theme | No built-in themes | Fluent Design theme |
+| SSR/SSG | Investigation planned post-Phase 1 | Partial (Astro, 11ty) | Limited | Limited | Limited |
+
+#### Framework-Specific Headless Libraries
+
+The headless-first approach is validated across multiple framework ecosystems, but each is locked to its framework:
+
+| Library | Framework | Components | Approach |
+|---------|-----------|------------|----------|
+| Radix UI | React-only | ~30+ | Headless primitives, className/CSS-in-JS |
+| Bits UI | Svelte-only | ~40+ | Headless primitives, class props + data-* attributes. Inspired by Radix (API), Melt UI (architecture), React Spectrum (a11y) |
+| Ark UI | React/Vue/Solid | ~40+ | Headless primitives powered by Zag.js state machines |
+
+**Vitamina resolves this fragmentation** — the same headless primitives work in React, Vue, Svelte, Angular, or plain HTML via native Web Components. No adapters, no rewrites.
+
+**Note:** Radix UI remains the most relevant comparison for the React audience:
 
 | Aspect | Radix UI | Vitamina |
 |--------|----------|----------|
@@ -28,12 +56,65 @@ Vitamina is a headless UI component library built as native Web Components. It p
 | Cross-framework | Needs adapters | Works everywhere natively |
 | Themes | Community-driven | Optional batteries-included themes |
 
+#### Vitamina's Genuine Differentiators
+
+- **State machines (Zag.js)** — Production-ready, framework-agnostic logic layer with built-in accessibility. No competitor in the Web Components space uses this approach.
+- **Headless-first + optional themes** — Unlike Shoelace or Spectrum which ship opinionated styles, Vitamina defaults to zero visual opinion. Themes are an accelerator, never a requirement.
+- **Dual-layer CSS customisation** — Both `::part()` for total control and CSS custom properties for quick adjustments. Most competitors offer one or the other, not both as a deliberate strategy.
+- **Inspector tooling** — Built-in developer tooling for QA and onboarding, unique in the Web Components ecosystem.
+- **HTMX integration (exploratory)** — First-class support for server-rendered HTML workflows, targeting a growing segment underserved by existing component libraries.
+
+#### Where Competitors Are Stronger
+
+- **Shoelace** — Maturity and ecosystem. 20k+ weekly downloads, battle-tested in production, comprehensive documentation.
+- **Spectrum / FAST** — Enterprise adoption. Backed by Adobe and Microsoft respectively, with dedicated teams and proven at scale.
+- **Lion** — Accessibility DNA. Built by ING's accessibility-first engineering team, with the deepest WCAG compliance in the space.
+
+#### Competitive Risks
+
+- **Shoelace's maturity is an adoption barrier.** Mitigation: focus early phases on core components with superior developer experience (state machines, dual-layer customisation, inspector tooling).
+- **Enterprise vendors have brand lock-in.** Mitigation: target teams who explicitly want framework-agnostic and customisation-first, rather than competing for enterprise design system budgets.
+
 ### 1.4 Core Principles
 
 1. **Headless-first** — Components carry zero visual opinion. All styling is the consumer's responsibility via `::part()` and `--vita-*` custom properties.
 2. **Theme as accelerator** — The theme package provides ready-to-go themes. Import one and everything works. Never mandatory.
 3. **HTMX as exploration** — Web Components are browser-native. A `<vita-dialog>` works in plain HTML served by any backend. HTMX adds server-driven interactivity. First-class support to be explored and validated.
 4. **Inspector as dev tooling** — Feature flag via localStorage. When active, every component exposes metadata: version, docs link, scope, QA tags. Useful for QA teams and integrating developers.
+
+### 1.5 Target Users
+
+**Persona 1: Frontend Developer**
+
+Builds SPAs or component-driven UIs. Wants headless components without framework lock-in. Values customisation via `::part()` and CSS custom properties. Frustrated with React-only libraries like Radix that require adapters or rewrites when switching frameworks.
+
+**Persona 2: Backend Developer (HTMX / server-rendered)**
+
+Serves HTML from any backend. Uses HTMX for interactivity. Wants Web Components that work in plain HTML without a build step or JavaScript framework. Values simplicity and progressive enhancement.
+
+### 1.6 Objectives & Success Metrics
+
+Soft targets (aspirational, not blocking):
+
+| Metric | Target | Notes |
+|--------|--------|-------|
+| Bundle size | < 5KB gzipped per component | Monitored, not blocking |
+| Accessibility | axe-core zero violations per component | Hard requirement per component spec |
+| Time-to-first-component | 15 minutes | A new developer can create and render a custom Vitamina component within 15 minutes using the docs |
+
+No npm download or GitHub stars targets at this stage — premature for a pre-launch project.
+
+### 1.7 Non-Functional Requirements
+
+| Requirement | Specification |
+|-------------|---------------|
+| Browser support | Chrome, Firefox, Safari — latest 2 stable versions |
+| Accessibility | WCAG 2.1 AA (Zag.js provides this natively for state-machine components) |
+| Bundle size | Soft target < 5KB gzipped per component |
+| SSR/SSG | Out of scope for Phase 0. Investigation planned post-Phase 1 for Astro, Nuxt, Next.js compatibility |
+| CDN usage | To be defined |
+| i18n — RTL | Supported natively via `dir` attribute |
+| i18n — Localization | Localization of component labels (e.g., "Close", "Dismiss") is the consumer's responsibility via slots and attributes |
 
 ---
 
@@ -42,7 +123,7 @@ Vitamina is a headless UI component library built as native Web Components. It p
 | Layer | Choice |
 |-------|--------|
 | Runtime & Package Manager | **Bun** (latest stable) |
-| Bundler | **Vite 6+ with Rolldown** |
+| Bundler | **Vite 7+ with Rolldown** |
 | Lint & Format | **Biome** (replaces ESLint + Prettier) |
 | Component Framework | **Lit 3+** (latest stable) |
 | Component Logic | **Zag.js** (latest stable) |
@@ -55,7 +136,7 @@ Vitamina is a headless UI component library built as native Web Components. It p
 
 **Bun** — Faster runtime, faster installs, native workspace support. Replaces Node.js + pnpm. Vite is kept for builds as its library mode with Rolldown is more mature than Bun's bundler for library output.
 
-**Vite 6+ with Rolldown** — Rolldown (Rust-based) replaces Rollup internally in Vite 6. Same configuration API, significantly faster builds.
+**Vite 7+ with Rolldown** — Rolldown (Rust-based) replaces Rollup internally in Vite 7. Same configuration API, significantly faster builds. Vite 7 stabilises the Rolldown integration that was experimental in earlier versions.
 
 **Biome** — Single tool for lint + format. Rust-based, orders of magnitude faster. Replaces ~10 packages: eslint, prettier, eslint-plugin-import, eslint-plugin-unicorn, eslint-config-prettier, etc.
 
@@ -63,7 +144,7 @@ Vitamina is a headless UI component library built as native Web Components. It p
 
 **Open Props** — High-quality utility tokens maintained by Adam Argyle (Google Chrome team). Modular — import only what you need. Complements the custom color system.
 
-**Custom Color System** — 12 semantic levels per palette (background → high-contrast), inspired by Radix Colors. Superior to Open Props for colour semantics and the heart of the theming system.
+**Custom Color System** — 12 semantic levels per palette (background to high-contrast), inspired by Radix Colors. Superior to Open Props for colour semantics and the heart of the theming system.
 
 ---
 
@@ -179,6 +260,8 @@ Short, semantic names reused across components. A developer who learns the parts
 
 ### 3.6 Base Class — VitaElement
 
+**Note:** This describes the target architecture. The current codebase uses `ComponentElement` with `ComponentMixin`. The refactoring to `VitaElement` is a Phase 0 task.
+
 ```
 LitElement
   └── VitaElement (refactored base class)
@@ -253,18 +336,17 @@ Abstract wrapper with an agnostic registry:
 | Button | No | Slots for icon + label |
 | Badge | No | Status, count, dot variants |
 | Avatar | No | Fallback to initials, group |
-| Separator | No | Horizontal/vertical |
+| Separator | No | Horizontal/vertical, optional label slot |
 | Visually Hidden | No | A11y utility |
 | Portal | No | Render outside DOM parent |
 | Icon | No | Agnostic registry wrapper |
-| Kbd / Shortcut | No | OS-aware (⌘ vs Ctrl) |
+| Kbd / Shortcut | No | OS-aware (Cmd vs Ctrl) |
 | Skeleton | No | Pulse/wave animation |
 | Presence | Yes | Mount/unmount animations |
 | Stack | No | Flex vertical/horizontal with gap |
 | Grid | No | CSS Grid wrapper |
 | Center | No | Centering utility |
 | Aspect Ratio | No | Fixed ratio container |
-| Divider | No | With optional label |
 
 ### 4.2 Forms — Essential
 
@@ -362,7 +444,7 @@ Abstract wrapper with an agnostic registry:
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Command Palette / Command Bar | No | ⌘K — sections, recent, fuzzy search, shortcuts display |
+| Command Palette / Command Bar | No | Cmd+K — sections, recent, fuzzy search, shortcuts display |
 | Spotlight | No | Global search with preview pane |
 | Status Bar | No | Bottom bar with contextual info, widget slots |
 | Activity Bar | No | Vertical icon bar switching between panels |
@@ -402,7 +484,7 @@ Abstract wrapper with an agnostic registry:
 | Reaction Bar | Emoji reactions with counter, animation, toggle |
 | Proof / Annotation | Positional pins/comments on images, layouts, documents |
 | Price / Pricing Card | Currency, period, discount, strikethrough |
-| Stat Card | Value + label + trend (↑↓) + optional sparkline |
+| Stat Card | Value + label + trend (up/down) + optional sparkline |
 | Ticket / Pass | Visual notch, barcode/QR slot, tear line |
 | Chat Bubble | Tail, status (sent/delivered/read), timestamp, reply, reactions slot |
 | Audio Player | Headless controls: play/pause, waveform/progress, volume, speed |
@@ -414,12 +496,13 @@ Abstract wrapper with an agnostic registry:
 | Changelog | Chronological list with version tags, categories, collapsible |
 | Weather Card | Icon + temperature + condition + high/low, composable |
 | Map Marker / Pin | Customisable marker with popover, for any map library |
+| OTP / Verification | Beyond pin input — timer, resend, paste from SMS |
 
 ### 4.11 Catalogue Summary
 
 | Category | Count |
 |----------|-------|
-| Primitives Base | 15 |
+| Primitives Base | 14 |
 | Forms — Essential | 10 |
 | Overlays & Feedback | 8 |
 | Navigation & Disclosure | 9 |
@@ -428,7 +511,7 @@ Abstract wrapper with an agnostic registry:
 | Layout & Containers | 7 |
 | Desktop-Inspired | 11 |
 | Innovative | 15 |
-| Real-World / Domain | 16 |
+| Real-World / Domain | 17 |
 | **Total** | **~105+** |
 
 ---
@@ -555,6 +638,23 @@ Storybook
 
 ### 6.1 Monorepo Structure
 
+#### Current Structure
+
+```
+packages/
+├── core/           ← Base class, mixins, utilities, helpers
+└── theme/          ← Ready-to-go themes + colour tokens
+```
+
+**Published packages (current):**
+
+| Package | npm name | Version |
+|---------|----------|---------|
+| core | `@websublime/vitamina-core` | 0.2.0 |
+| theme | `@websublime/vitamina-theme` | 0.6.0 |
+
+#### Target Structure — Phase 0
+
 ```
 packages/
 ├── core/           ← Base class, mixins, utilities, helpers
@@ -565,7 +665,7 @@ packages/
 └── storybook/      ← Storybook config + stories (not published to npm)
 ```
 
-**Published packages:**
+**Published packages (target):**
 
 | Package | npm name |
 |---------|----------|
@@ -576,7 +676,7 @@ packages/
 
 **Private packages:** `site`, `storybook` (not published).
 
-### 6.2 Build — Vite 6+ with Rolldown
+### 6.2 Build — Vite 7+ with Rolldown
 
 **Core package:**
 
@@ -659,10 +759,10 @@ PR merged → main
 
 ```
 Workflows:
-├── checks.yml         ← PRs: build + test + Playwright + a11y
-├── preview.yml        ← PRs: deploy Storybook preview
-├── release.yml        ← main: Changesets publish + deploy
-└── site.yml           ← main: deploy site to Cloudflare Pages
+├── checks.yml              ← PRs: build + test + lint
+├── release.yml             ← main: Changesets publish + deploy
+├── snapshot-deploy.yml     ← Snapshot deployment
+└── snapshot-version.yml    ← Snapshot versioning
 ```
 
 **PR checks:**
@@ -675,31 +775,48 @@ Workflows:
 6. Storybook build + preview deploy
 7. CEM generation check
 
+#### Release Candidate Strategy
+
+- Feature branches merge into `next`
+- Merge to `next` triggers automatic release candidate (RC) builds
+- No stable releases during Phase 0, only RCs
+- Stable releases begin from Phase 1 onwards via merge to `main`
+
 ---
 
 ## 7. Roadmap & Phases
+
+**Note:** Phase assignments may differ from catalogue categories due to complexity dependencies and incremental delivery strategy.
 
 ### 7.1 Versioning Strategy
 
 - **Minor bump per phase:** 0.1.0 → 0.2.0 → 0.3.0 → ...
 - **Major 1.0.0:** When all phases are complete.
 
+#### Breaking Changes Policy
+
+- **Pre-1.0:** Breaking changes are expected in minor bumps (0.x to 0.y), documented in changelogs via Changesets.
+- **Post-1.0:** Strict semver — breaking changes only in major bumps with migration guides.
+- **Deprecation:** Deprecated APIs are marked with JSDoc `@deprecated`, kept for at least 1 minor version, then removed in the next minor (pre-1.0) or major (post-1.0).
+
 ### 7.2 Phase 0 — Foundation (no UI components)
 
-| Task | Detail |
-|------|--------|
-| Migrate to Bun | Runtime + workspaces, remove pnpm |
-| Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome |
-| Update all dependencies | Lit 3+, Vite 6+ with Rolldown, PostCSS latest |
-| Refactor VitaElement | Base class with Zag.js lifecycle, mixins (inspector, metadata, direction) |
-| Restructure monorepo | 6 packages: core, components, theme, icons, site, storybook |
-| Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer |
-| Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright |
-| Setup CI/CD | GitHub Actions: checks, preview, release |
-| npm scope | Configure `@websublime/vitamina-*` on npm |
-| Theme package v2 | Integrate Open Props (utility tokens) + maintain 12-level colour system |
-| Icon registry | Agnostic resolver system |
-| Base documentation | Getting started, theming guide, customisation guide in Storybook |
+| Task | Detail | Status | Priority |
+|------|--------|--------|----------|
+| Review & refactor Inspector | Existing component in core. Feature flag via localStorage, outline on hover, version display. Review current implementation, enhance with: docs/storybook link, exposed CSS parts, slot usage, optional metadata panel. Inspired by Bit.dev's original component inspection concept — unique differentiator in the Web Components space | | **P0** |
+| Migrate to Bun | Runtime + workspaces, remove pnpm | Done (requires review) | |
+| Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome | Done (requires review) | |
+| Update all dependencies | Lit 3+, Vite 7+ with Rolldown, PostCSS latest | Done (requires review) | |
+| Refactor VitaElement | Base class with Zag.js lifecycle, mixins (inspector, metadata, direction). Zag.js integration is a future investigation — the `@zag-js/element` adapter maturity is a technical risk to be validated | |
+| Restructure monorepo | 6 packages: core, components, theme, icons, site, storybook | |
+| Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer | |
+| Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright | |
+| Setup CI/CD | GitHub Actions: checks, release, snapshot-deploy, snapshot-version | |
+| Define RC pipeline | Release candidate pipeline for `next` branch | |
+| npm scope | Configure `@websublime/vitamina-*` on npm | |
+| Theme package v2 | Integrate Open Props (utility tokens) + maintain 12-level colour system | |
+| Icon registry | Agnostic resolver system | |
+| Base documentation | Getting started, theming guide, customisation guide in Storybook | |
 
 **Deliverable:** Functional monorepo. Zero UI components, but any developer can create a Vitamina component with the base class and have everything working — build, test, docs, release.
 
@@ -723,9 +840,8 @@ Workflows:
 | Grid | No |
 | Center | No |
 | Aspect Ratio | No |
-| Divider | No |
 
-**~15 components.** Mostly simple, no Zag.js. Validates architecture, parts convention, per-component build pipeline, and automatic documentation.
+**~14 components.** Mostly simple, no Zag.js. Validates architecture, parts convention, per-component build pipeline, and automatic documentation.
 
 **Parallel:** Landing page for site.
 
@@ -765,8 +881,9 @@ Workflows:
 | Collapsible | Yes |
 | Menu / Context Menu | Yes |
 | Breadcrumb | No |
+| Breadcrumb Trail | No |
 
-**~13 components.** Complex components with focus management, portals, animations. Validates overlays and sub-component composition.
+**~14 components.** Complex components with focus management, portals, animations. Validates overlays and sub-component composition.
 
 ### 7.6 Phase 4 — Advanced Forms (v0.5.0)
 
@@ -877,9 +994,10 @@ Workflows:
 | Changelog | Release notes component |
 | Gauge / Meter | Semicircular |
 | Weather Card | Composable |
+| Map Marker / Pin | Customisable marker with popover |
 | OTP / Verification | Beyond pin input |
 
-**~17 components.**
+**~18 components.**
 
 **Version after Phase 8: 1.0.0** — Full catalogue complete.
 
@@ -887,14 +1005,14 @@ Workflows:
 
 ```
 Phase 0 ─── Foundation & Tooling ──────────── v0.1.0
-Phase 1 ─── 15 core primitives ────────────── v0.2.0
+Phase 1 ─── 14 core primitives ────────────── v0.2.0
 Phase 2 ─── 10 essential forms ────────────── v0.3.0
-Phase 3 ─── 13 overlays & navigation ──────── v0.4.0
-Phase 4 ���── 13 advanced forms ─────────────── v0.5.0
+Phase 3 ─── 14 overlays & navigation ──────── v0.4.0
+Phase 4 ─── 13 advanced forms ─────────────── v0.5.0
 Phase 5 ─── 15 data display & nav ─────────── v0.6.0
 Phase 6 ─── 15 layout & desktop ───────────── v0.7.0
 Phase 7 ─── 18 innovative ─────────────────── v0.8.0
-Phase 8 ─── 17 real-world / domain ────────── v0.9.0
+Phase 8 ─── 18 real-world / domain ────────── v0.9.0
                                         ──── v1.0.0
                                     ~105+ components
 ```
@@ -903,7 +1021,7 @@ Phase 8 ─── 17 real-world / domain ────────── v0.9.0
 
 ## 8. Component Specification Template
 
-Individual component specs live in `.spec/components/`. Architecture decisions live in `.spec/decisions/`.
+Individual component specs live in `.spec/`. Architecture decisions are tracked alongside component specs.
 
 ### 8.1 Spec Template
 
@@ -983,15 +1101,12 @@ Basic and advanced usage snippets.
 
 ```
 .spec/
-├── components/
-│   ├── 0001-button.md
-│   ├── 0002-dialog.md
-│   ├── 0003-tabs.md
-│   └── ...
-└── decisions/
-    ├── 0001-zag-js-integration.md
-    ├── 0002-css-parts-strategy.md
-    └── ...
+├── archive/
+│   └── 0001-alert-component-spec.md
+├── COMPONENT-SPEC-TEMPLATE.md
+├── 0002-button-component-spec.md
+├── 0003-tabs.md
+└── ...
 ```
 
 ---
@@ -1017,7 +1132,7 @@ Each palette provides 12 shades with semantic meaning:
 | 11 | `--{color}-11` | Low contrast text |
 | 12 | `--{color}-12` | High contrast text |
 
-**30 colour palettes** with light/dark mode support.
+**28 colour palettes** with light/dark mode support. Palette coverage will be reviewed and potentially expanded in Phase 0.
 
 ### 9.2 Utility Tokens (Open Props)
 
@@ -1045,6 +1160,16 @@ Each ready-to-go theme is a CSS file that:
 /* Consumer usage */
 @import '@websublime/vitamina-theme/themes/blue';
 ```
+
+---
+
+## 10. Community & Governance
+
+- **Bug reports and feature requests** via GitHub Issues.
+- **Pull requests welcome** — must include or reference a component spec.
+- **No Discord or community chat** at this stage.
+- **RFC process:** New components require a spec in `.spec/` before implementation begins.
+- **Code of conduct:** To be added.
 
 ---
 
