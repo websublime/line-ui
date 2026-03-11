@@ -1,8 +1,8 @@
 .DS_Store
 node_modules
-/dist
-temp/
-www/js/
+dist
+temp
+coverage
 
 # local env files
 .env.local
@@ -12,16 +12,11 @@ www/js/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-pnpm-debug.log*
+bun-debug.log*
 
 # Editor directories and files
 .idea
 .vscode
-.idea
-node_modules
-.DS_Store
-dist
-temp
-coverage
-.pnpm-store
-.eslintcache
+
+# Claude Code local settings
+.claude/settings.local.json

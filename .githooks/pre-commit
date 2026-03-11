@@ -1,0 +1,2 @@
+#!/bin/sh
+bunx @biomejs/biome check --staged --no-errors-on-unmatched
