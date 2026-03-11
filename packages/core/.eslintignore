@@ -1,8 +1,0 @@
-dist/
-www/
-types/
-public/
-coverage/
-**/*.d.ts
-temp/*
-node_modules/
