@@ -1,4 +1,4 @@
-:where(.schema-mint) {
+:where(.line-schema-mint) {
   --line-background: var(--line-mint-1); /* App background (-1) */
   --line-subtle-background: var(--line-mint-2); /* Subtle background (-2) */
   --line-ui-background: var(--line-mint-3); /* UI element background (-3) */
@@ -17,7 +17,7 @@
   --line-dark: var(--line-mint-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-mint) {
+:is(.dark) :where(.line-schema-mint) {
   --line-background: var(--line-mint-12); /* App background (-1) */
   --line-subtle-background: var(--line-mint-11); /* Subtle background (-2) */
   --line-ui-background: var(--line-mint-10); /* UI element background (-3) */
@@ -32,7 +32,7 @@
   --line-high-contrast: var(--line-mint-1); /* High-contrast text (-12) */
 }
 
-:where(.is-mint) {
+:where(.line-is-mint) {
   color: var(--line-mint-12);
   background-color: var(--line-mint-9);
   transition: all ease-in-out 150ms;
@@ -42,7 +42,7 @@
   }
 }
 
-:is(.dark) :where(.is-mint) {
+:is(.dark) :where(.line-is-mint) {
   color: var(--line-mint-12);
   background-color: var(--line-mint-4);
   transition: all ease-in-out 150ms;
@@ -52,47 +52,47 @@
   }
 }
 
-:where(.is-mint-color) {
+:where(.line-is-mint-color) {
   color: var(--line-mint-12);
 }
 
-:is(.dark) :where(.is-mint-color) {
+:is(.dark) :where(.line-is-mint-color) {
   color: var(--line-mint-1);
 }
 
-:where(.is-mint-low-contrast) {
+:where(.line-is-mint-low-contrast) {
   color: var(--line-mint-11);
 }
 
-:is(.dark) :where(.is-mint-low-contrast) {
+:is(.dark) :where(.line-is-mint-low-contrast) {
   color: var(--line-mint-2);
 }
 
-:where(.is-mint-high-contrast) {
+:where(.line-is-mint-high-contrast) {
   color: var(--line-mint-12);
 }
 
-:is(.dark) :where(.is-mint-high-contrast) {
+:is(.dark) :where(.line-is-mint-high-contrast) {
   color: var(--line-mint-1);
 }
 
-:where(.is-mint-background) {
+:where(.line-is-mint-background) {
   background-color: var(--line-mint-1);
 }
 
-:is(.dark) :where(.is-mint-background) {
+:is(.dark) :where(.line-is-mint-background) {
   background-color: var(--line-mint-12);
 }
 
-:where(.is-mint-subtle-background) {
+:where(.line-is-mint-subtle-background) {
   background-color: var(--line-mint-2);
 }
 
-:is(.dark) :where(.is-mint-subtle-background) {
+:is(.dark) :where(.line-is-mint-subtle-background) {
   background-color: var(--line-mint-11);
 }
 
-:where(.is-mint-ui-background) {
+:where(.line-is-mint-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-mint-3);
 
@@ -101,7 +101,7 @@
   }
 }
 
-:is(.dark) :where(.is-mint-ui-background) {
+:is(.dark) :where(.line-is-mint-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-mint-10);
 
@@ -110,79 +110,79 @@
   }
 }
 
-:where(.is-mint-ui-hover-background) {
+:where(.line-is-mint-ui-hover-background) {
   background-color: var(--line-mint-4);
 }
 
-:is(.dark) :where(.is-mint-ui-hover-background) {
+:is(.dark) :where(.line-is-mint-ui-hover-background) {
   background-color: var(--line-mint-9);
 }
 
-:where(.is-mint-ui-active-background) {
+:where(.line-is-mint-ui-active-background) {
   background-color: var(--line-mint-5);
 }
 
-:is(.dark) :where(.is-mint-ui-active-background) {
+:is(.dark) :where(.line-is-mint-ui-active-background) {
   background-color: var(--line-mint-8);
 }
 
-:where(.is-mint-subtle-element-background) {
+:where(.line-is-mint-subtle-element-background) {
   background-color: var(--line-mint-6);
 }
 
-:is(.dark) :where(.is-mint-subtle-element-background) {
+:is(.dark) :where(.line-is-mint-subtle-element-background) {
   background-color: var(--line-mint-7);
 }
 
-:where(.is-mint-ui-element-background) {
+:where(.line-is-mint-ui-element-background) {
   background-color: var(--line-mint-7);
 }
 
-:is(.dark) :where(.is-mint-ui-element-background) {
+:is(.dark) :where(.line-is-mint-ui-element-background) {
   background-color: var(--line-mint-6);
 }
 
-:where(.is-mint-ui-hover-background) {
+:where(.line-is-mint-ui-hover-background) {
   background-color: var(--line-mint-8);
 }
 
-:is(.dark) :where(.is-mint-ui-hover-background) {
+:is(.dark) :where(.line-is-mint-ui-hover-background) {
   background-color: var(--line-mint-5);
 }
 
-:where(.is-mint-solid-background) {
+:where(.line-is-mint-solid-background) {
   background-color: var(--line-mint-9);
 }
 
-:is(.dark) :where(.is-mint-solid-background) {
+:is(.dark) :where(.line-is-mint-solid-background) {
   background-color: var(--line-mint-4);
 }
 
-:where(.is-mint-hover-solid-background) {
+:where(.line-is-mint-hover-solid-background) {
   background-color: var(--line-mint-10);
 }
 
-:is(.dark) :where(.is-mint-hover-solid-background) {
+:is(.dark) :where(.line-is-mint-hover-solid-background) {
   background-color: var(--line-mint-3);
 }
 
-:where(.is-mint-low-contrast-background) {
+:where(.line-is-mint-low-contrast-background) {
   background-color: var(--line-mint-11);
 }
 
-:is(.dark) :where(.is-mint-low-contrast-background) {
+:is(.dark) :where(.line-is-mint-low-contrast-background) {
   background-color: var(--line-mint-2);
 }
 
-:where(.is-mint-high-contrast-background) {
+:where(.line-is-mint-high-contrast-background) {
   background-color: var(--line-mint-12);
 }
 
-:is(.dark) :where(.is-mint-high-contrast-background) {
+:is(.dark) :where(.line-is-mint-high-contrast-background) {
   background-color: var(--line-mint-1);
 }
 
-:where(.is-mint-border) {
+:where(.line-is-mint-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-mint-7);
   border-color: var(--line-mint-7);
@@ -193,7 +193,7 @@
   }
 }
 
-:is(.dark) :where(.is-mint-border) {
+:is(.dark) :where(.line-is-mint-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-mint-6);
   border-color: var(--line-mint-6);

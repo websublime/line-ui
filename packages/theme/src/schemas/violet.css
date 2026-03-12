@@ -1,4 +1,4 @@
-:where(.schema-violet) {
+:where(.line-schema-violet) {
   --line-background: var(--line-violet-1); /* App background (-1) */
   --line-subtle-background: var(--line-violet-2); /* Subtle background (-2) */
   --line-ui-background: var(--line-violet-3); /* UI element background (-3) */
@@ -17,7 +17,7 @@
   --line-dark: var(--line-violet-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-violet) {
+:is(.dark) :where(.line-schema-violet) {
   --line-background: var(--line-violet-12); /* App background (-1) */
   --line-subtle-background: var(--line-violet-11); /* Subtle background (-2) */
   --line-ui-background: var(--line-violet-10); /* UI element background (-3) */
@@ -32,7 +32,7 @@
   --line-high-contrast: var(--line-violet-1); /* High-contrast text (-12) */
 }
 
-:where(.is-violet) {
+:where(.line-is-violet) {
   color: var(--line-violet-1);
   background-color: var(--line-violet-9);
   transition: all ease-in-out 150ms;
@@ -42,7 +42,7 @@
   }
 }
 
-:is(.dark) :where(.is-violet) {
+:is(.dark) :where(.line-is-violet) {
   color: var(--line-violet-1);
   background-color: var(--line-violet-4);
   transition: all ease-in-out 150ms;
@@ -52,47 +52,47 @@
   }
 }
 
-:where(.is-violet-color) {
+:where(.line-is-violet-color) {
   color: var(--line-violet-12);
 }
 
-:is(.dark) :where(.is-violet-color) {
+:is(.dark) :where(.line-is-violet-color) {
   color: var(--line-violet-1);
 }
 
-:where(.is-violet-low-contrast) {
+:where(.line-is-violet-low-contrast) {
   color: var(--line-violet-11);
 }
 
-:is(.dark) :where(.is-violet-low-contrast) {
+:is(.dark) :where(.line-is-violet-low-contrast) {
   color: var(--line-violet-2);
 }
 
-:where(.is-violet-high-contrast) {
+:where(.line-is-violet-high-contrast) {
   color: var(--line-violet-12);
 }
 
-:is(.dark) :where(.is-violet-high-contrast) {
+:is(.dark) :where(.line-is-violet-high-contrast) {
   color: var(--line-violet-1);
 }
 
-:where(.is-violet-background) {
+:where(.line-is-violet-background) {
   background-color: var(--line-violet-1);
 }
 
-:is(.dark) :where(.is-violet-background) {
+:is(.dark) :where(.line-is-violet-background) {
   background-color: var(--line-violet-12);
 }
 
-:where(.is-violet-subtle-background) {
+:where(.line-is-violet-subtle-background) {
   background-color: var(--line-violet-2);
 }
 
-:is(.dark) :where(.is-violet-subtle-background) {
+:is(.dark) :where(.line-is-violet-subtle-background) {
   background-color: var(--line-violet-11);
 }
 
-:where(.is-violet-ui-background) {
+:where(.line-is-violet-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-violet-3);
 
@@ -101,7 +101,7 @@
   }
 }
 
-:is(.dark) :where(.is-violet-ui-background) {
+:is(.dark) :where(.line-is-violet-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-violet-10);
 
@@ -110,79 +110,79 @@
   }
 }
 
-:where(.is-violet-ui-hover-background) {
+:where(.line-is-violet-ui-hover-background) {
   background-color: var(--line-violet-4);
 }
 
-:is(.dark) :where(.is-violet-ui-hover-background) {
+:is(.dark) :where(.line-is-violet-ui-hover-background) {
   background-color: var(--line-violet-9);
 }
 
-:where(.is-violet-ui-active-background) {
+:where(.line-is-violet-ui-active-background) {
   background-color: var(--line-violet-5);
 }
 
-:is(.dark) :where(.is-violet-ui-active-background) {
+:is(.dark) :where(.line-is-violet-ui-active-background) {
   background-color: var(--line-violet-8);
 }
 
-:where(.is-violet-subtle-element-background) {
+:where(.line-is-violet-subtle-element-background) {
   background-color: var(--line-violet-6);
 }
 
-:is(.dark) :where(.is-violet-subtle-element-background) {
+:is(.dark) :where(.line-is-violet-subtle-element-background) {
   background-color: var(--line-violet-7);
 }
 
-:where(.is-violet-ui-element-background) {
+:where(.line-is-violet-ui-element-background) {
   background-color: var(--line-violet-7);
 }
 
-:is(.dark) :where(.is-violet-ui-element-background) {
+:is(.dark) :where(.line-is-violet-ui-element-background) {
   background-color: var(--line-violet-6);
 }
 
-:where(.is-violet-ui-hover-background) {
+:where(.line-is-violet-ui-hover-background) {
   background-color: var(--line-violet-8);
 }
 
-:is(.dark) :where(.is-violet-ui-hover-background) {
+:is(.dark) :where(.line-is-violet-ui-hover-background) {
   background-color: var(--line-violet-5);
 }
 
-:where(.is-violet-solid-background) {
+:where(.line-is-violet-solid-background) {
   background-color: var(--line-violet-9);
 }
 
-:is(.dark) :where(.is-violet-solid-background) {
+:is(.dark) :where(.line-is-violet-solid-background) {
   background-color: var(--line-violet-4);
 }
 
-:where(.is-violet-hover-solid-background) {
+:where(.line-is-violet-hover-solid-background) {
   background-color: var(--line-violet-10);
 }
 
-:is(.dark) :where(.is-violet-hover-solid-background) {
+:is(.dark) :where(.line-is-violet-hover-solid-background) {
   background-color: var(--line-violet-3);
 }
 
-:where(.is-violet-low-contrast-background) {
+:where(.line-is-violet-low-contrast-background) {
   background-color: var(--line-violet-11);
 }
 
-:is(.dark) :where(.is-violet-low-contrast-background) {
+:is(.dark) :where(.line-is-violet-low-contrast-background) {
   background-color: var(--line-violet-2);
 }
 
-:where(.is-violet-high-contrast-background) {
+:where(.line-is-violet-high-contrast-background) {
   background-color: var(--line-violet-12);
 }
 
-:is(.dark) :where(.is-violet-high-contrast-background) {
+:is(.dark) :where(.line-is-violet-high-contrast-background) {
   background-color: var(--line-violet-1);
 }
 
-:where(.is-violet-border) {
+:where(.line-is-violet-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-violet-7);
   border-color: var(--line-violet-7);
@@ -193,7 +193,7 @@
   }
 }
 
-:is(.dark) :where(.is-violet-border) {
+:is(.dark) :where(.line-is-violet-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-violet-6);
   border-color: var(--line-violet-6);

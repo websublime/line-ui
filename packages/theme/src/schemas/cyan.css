@@ -1,4 +1,4 @@
-:where(.schema-cyan) {
+:where(.line-schema-cyan) {
   --line-background: var(--line-cyan-1); /* App background (-1) */
   --line-subtle-background: var(--line-cyan-2); /* Subtle background (-2) */
   --line-ui-background: var(--line-cyan-3); /* UI element background (-3) */
@@ -15,7 +15,7 @@
   --line-dark: var(--line-cyan-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-cyan) {
+:is(.dark) :where(.line-schema-cyan) {
   --line-background: var(--line-cyan-12); /* App background (-1) */
   --line-subtle-background: var(--line-cyan-11); /* Subtle background (-2) */
   --line-ui-background: var(--line-cyan-10); /* UI element background (-3) */
@@ -30,7 +30,7 @@
   --line-high-contrast: var(--line-cyan-1); /* High-contrast text (-12) */
 }
 
-:where(.is-cyan) {
+:where(.line-is-cyan) {
   color: var(--line-cyan-1);
   background-color: var(--line-cyan-9);
   transition: all ease-in-out 150ms;
@@ -40,7 +40,7 @@
   }
 }
 
-:is(.dark) :where(.is-cyan) {
+:is(.dark) :where(.line-is-cyan) {
   color: var(--line-cyan-1);
   background-color: var(--line-cyan-4);
   transition: all ease-in-out 150ms;
@@ -50,47 +50,47 @@
   }
 }
 
-:where(.is-cyan-color) {
+:where(.line-is-cyan-color) {
   color: var(--line-cyan-12);
 }
 
-:is(.dark) :where(.is-cyan-color) {
+:is(.dark) :where(.line-is-cyan-color) {
   color: var(--line-cyan-1);
 }
 
-:where(.is-cyan-low-contrast) {
+:where(.line-is-cyan-low-contrast) {
   color: var(--line-cyan-11);
 }
 
-:is(.dark) :where(.is-cyan-low-contrast) {
+:is(.dark) :where(.line-is-cyan-low-contrast) {
   color: var(--line-cyan-2);
 }
 
-:where(.is-cyan-high-contrast) {
+:where(.line-is-cyan-high-contrast) {
   color: var(--line-cyan-12);
 }
 
-:is(.dark) :where(.is-cyan-high-contrast) {
+:is(.dark) :where(.line-is-cyan-high-contrast) {
   color: var(--line-cyan-1);
 }
 
-:where(.is-cyan-background) {
+:where(.line-is-cyan-background) {
   background-color: var(--line-cyan-1);
 }
 
-:is(.dark) :where(.is-cyan-background) {
+:is(.dark) :where(.line-is-cyan-background) {
   background-color: var(--line-cyan-12);
 }
 
-:where(.is-cyan-subtle-background) {
+:where(.line-is-cyan-subtle-background) {
   background-color: var(--line-cyan-2);
 }
 
-:is(.dark) :where(.is-cyan-subtle-background) {
+:is(.dark) :where(.line-is-cyan-subtle-background) {
   background-color: var(--line-cyan-11);
 }
 
-:where(.is-cyan-ui-background) {
+:where(.line-is-cyan-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-cyan-3);
 
@@ -99,7 +99,7 @@
   }
 }
 
-:is(.dark) :where(.is-cyan-ui-background) {
+:is(.dark) :where(.line-is-cyan-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-cyan-10);
 
@@ -108,79 +108,79 @@
   }
 }
 
-:where(.is-cyan-ui-hover-background) {
+:where(.line-is-cyan-ui-hover-background) {
   background-color: var(--line-cyan-4);
 }
 
-:is(.dark) :where(.is-cyan-ui-hover-background) {
+:is(.dark) :where(.line-is-cyan-ui-hover-background) {
   background-color: var(--line-cyan-9);
 }
 
-:where(.is-cyan-ui-active-background) {
+:where(.line-is-cyan-ui-active-background) {
   background-color: var(--line-cyan-5);
 }
 
-:is(.dark) :where(.is-cyan-ui-active-background) {
+:is(.dark) :where(.line-is-cyan-ui-active-background) {
   background-color: var(--line-cyan-8);
 }
 
-:where(.is-cyan-subtle-element-background) {
+:where(.line-is-cyan-subtle-element-background) {
   background-color: var(--line-cyan-6);
 }
 
-:is(.dark) :where(.is-cyan-subtle-element-background) {
+:is(.dark) :where(.line-is-cyan-subtle-element-background) {
   background-color: var(--line-cyan-7);
 }
 
-:where(.is-cyan-ui-element-background) {
+:where(.line-is-cyan-ui-element-background) {
   background-color: var(--line-cyan-7);
 }
 
-:is(.dark) :where(.is-cyan-ui-element-background) {
+:is(.dark) :where(.line-is-cyan-ui-element-background) {
   background-color: var(--line-cyan-6);
 }
 
-:where(.is-cyan-ui-hover-background) {
+:where(.line-is-cyan-ui-hover-background) {
   background-color: var(--line-cyan-8);
 }
 
-:is(.dark) :where(.is-cyan-ui-hover-background) {
+:is(.dark) :where(.line-is-cyan-ui-hover-background) {
   background-color: var(--line-cyan-5);
 }
 
-:where(.is-cyan-solid-background) {
+:where(.line-is-cyan-solid-background) {
   background-color: var(--line-cyan-9);
 }
 
-:is(.dark) :where(.is-cyan-solid-background) {
+:is(.dark) :where(.line-is-cyan-solid-background) {
   background-color: var(--line-cyan-4);
 }
 
-:where(.is-cyan-hover-solid-background) {
+:where(.line-is-cyan-hover-solid-background) {
   background-color: var(--line-cyan-10);
 }
 
-:is(.dark) :where(.is-cyan-hover-solid-background) {
+:is(.dark) :where(.line-is-cyan-hover-solid-background) {
   background-color: var(--line-cyan-3);
 }
 
-:where(.is-cyan-low-contrast-background) {
+:where(.line-is-cyan-low-contrast-background) {
   background-color: var(--line-cyan-11);
 }
 
-:is(.dark) :where(.is-cyan-low-contrast-background) {
+:is(.dark) :where(.line-is-cyan-low-contrast-background) {
   background-color: var(--line-cyan-2);
 }
 
-:where(.is-cyan-high-contrast-background) {
+:where(.line-is-cyan-high-contrast-background) {
   background-color: var(--line-cyan-12);
 }
 
-:is(.dark) :where(.is-cyan-high-contrast-background) {
+:is(.dark) :where(.line-is-cyan-high-contrast-background) {
   background-color: var(--line-cyan-1);
 }
 
-:where(.is-cyan-border) {
+:where(.line-is-cyan-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-cyan-7);
   border-color: var(--line-cyan-7);
@@ -191,7 +191,7 @@
   }
 }
 
-:is(.dark) :where(.is-cyan-border) {
+:is(.dark) :where(.line-is-cyan-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-cyan-6);
   border-color: var(--line-cyan-6);

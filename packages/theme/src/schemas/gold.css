@@ -1,4 +1,4 @@
-:where(.schema-gold) {
+:where(.line-schema-gold) {
   --line-background: var(--line-gold-1); /* App background (-1) */
   --line-subtle-background: var(--line-gold-2); /* Subtle background (-2) */
   --line-ui-background: var(--line-gold-3); /* UI element background (-3) */
@@ -15,7 +15,7 @@
   --line-dark: var(--line-gold-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-gold) {
+:is(.dark) :where(.line-schema-gold) {
   --line-background: var(--line-gold-12); /* App background (-1) */
   --line-subtle-background: var(--line-gold-11); /* Subtle background (-2) */
   --line-ui-background: var(--line-gold-10); /* UI element background (-3) */
@@ -30,7 +30,7 @@
   --line-high-contrast: var(--line-gold-1); /* High-contrast text (-12) */
 }
 
-:where(.is-gold) {
+:where(.line-is-gold) {
   color: var(--line-gold-1);
   background-color: var(--line-gold-9);
   transition: all ease-in-out 150ms;
@@ -40,7 +40,7 @@
   }
 }
 
-:is(.dark) :where(.is-gold) {
+:is(.dark) :where(.line-is-gold) {
   color: var(--line-gold-1);
   background-color: var(--line-gold-4);
   transition: all ease-in-out 150ms;
@@ -50,47 +50,47 @@
   }
 }
 
-:where(.is-gold-color) {
+:where(.line-is-gold-color) {
   color: var(--line-gold-12);
 }
 
-:is(.dark) :where(.is-gold-color) {
+:is(.dark) :where(.line-is-gold-color) {
   color: var(--line-gold-1);
 }
 
-:where(.is-gold-low-contrast) {
+:where(.line-is-gold-low-contrast) {
   color: var(--line-gold-11);
 }
 
-:is(.dark) :where(.is-gold-low-contrast) {
+:is(.dark) :where(.line-is-gold-low-contrast) {
   color: var(--line-gold-2);
 }
 
-:where(.is-gold-high-contrast) {
+:where(.line-is-gold-high-contrast) {
   color: var(--line-gold-12);
 }
 
-:is(.dark) :where(.is-gold-high-contrast) {
+:is(.dark) :where(.line-is-gold-high-contrast) {
   color: var(--line-gold-1);
 }
 
-:where(.is-gold-background) {
+:where(.line-is-gold-background) {
   background-color: var(--line-gold-1);
 }
 
-:is(.dark) :where(.is-gold-background) {
+:is(.dark) :where(.line-is-gold-background) {
   background-color: var(--line-gold-12);
 }
 
-:where(.is-gold-subtle-background) {
+:where(.line-is-gold-subtle-background) {
   background-color: var(--line-gold-2);
 }
 
-:is(.dark) :where(.is-gold-subtle-background) {
+:is(.dark) :where(.line-is-gold-subtle-background) {
   background-color: var(--line-gold-11);
 }
 
-:where(.is-gold-ui-background) {
+:where(.line-is-gold-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-gold-3);
 
@@ -99,7 +99,7 @@
   }
 }
 
-:is(.dark) :where(.is-gold-ui-background) {
+:is(.dark) :where(.line-is-gold-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-gold-10);
 
@@ -108,79 +108,79 @@
   }
 }
 
-:where(.is-gold-ui-hover-background) {
+:where(.line-is-gold-ui-hover-background) {
   background-color: var(--line-gold-4);
 }
 
-:is(.dark) :where(.is-gold-ui-hover-background) {
+:is(.dark) :where(.line-is-gold-ui-hover-background) {
   background-color: var(--line-gold-9);
 }
 
-:where(.is-gold-ui-active-background) {
+:where(.line-is-gold-ui-active-background) {
   background-color: var(--line-gold-5);
 }
 
-:is(.dark) :where(.is-gold-ui-active-background) {
+:is(.dark) :where(.line-is-gold-ui-active-background) {
   background-color: var(--line-gold-8);
 }
 
-:where(.is-gold-subtle-element-background) {
+:where(.line-is-gold-subtle-element-background) {
   background-color: var(--line-gold-6);
 }
 
-:is(.dark) :where(.is-gold-subtle-element-background) {
+:is(.dark) :where(.line-is-gold-subtle-element-background) {
   background-color: var(--line-gold-7);
 }
 
-:where(.is-gold-ui-element-background) {
+:where(.line-is-gold-ui-element-background) {
   background-color: var(--line-gold-7);
 }
 
-:is(.dark) :where(.is-gold-ui-element-background) {
+:is(.dark) :where(.line-is-gold-ui-element-background) {
   background-color: var(--line-gold-6);
 }
 
-:where(.is-gold-ui-hover-background) {
+:where(.line-is-gold-ui-hover-background) {
   background-color: var(--line-gold-8);
 }
 
-:is(.dark) :where(.is-gold-ui-hover-background) {
+:is(.dark) :where(.line-is-gold-ui-hover-background) {
   background-color: var(--line-gold-5);
 }
 
-:where(.is-gold-solid-background) {
+:where(.line-is-gold-solid-background) {
   background-color: var(--line-gold-9);
 }
 
-:is(.dark) :where(.is-gold-solid-background) {
+:is(.dark) :where(.line-is-gold-solid-background) {
   background-color: var(--line-gold-4);
 }
 
-:where(.is-gold-hover-solid-background) {
+:where(.line-is-gold-hover-solid-background) {
   background-color: var(--line-gold-10);
 }
 
-:is(.dark) :where(.is-gold-hover-solid-background) {
+:is(.dark) :where(.line-is-gold-hover-solid-background) {
   background-color: var(--line-gold-3);
 }
 
-:where(.is-gold-low-contrast-background) {
+:where(.line-is-gold-low-contrast-background) {
   background-color: var(--line-gold-11);
 }
 
-:is(.dark) :where(.is-gold-low-contrast-background) {
+:is(.dark) :where(.line-is-gold-low-contrast-background) {
   background-color: var(--line-gold-2);
 }
 
-:where(.is-gold-high-contrast-background) {
+:where(.line-is-gold-high-contrast-background) {
   background-color: var(--line-gold-12);
 }
 
-:is(.dark) :where(.is-gold-high-contrast-background) {
+:is(.dark) :where(.line-is-gold-high-contrast-background) {
   background-color: var(--line-gold-1);
 }
 
-:where(.is-gold-border) {
+:where(.line-is-gold-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-gold-7);
   border-color: var(--line-gold-7);
@@ -191,7 +191,7 @@
   }
 }
 
-:is(.dark) :where(.is-gold-border) {
+:is(.dark) :where(.line-is-gold-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-gold-6);
   border-color: var(--line-gold-6);

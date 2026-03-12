@@ -1,4 +1,4 @@
-:where(.schema-tomato) {
+:where(.line-schema-tomato) {
   --line-background: var(--line-tomato-1); /* App background (-1) */
   --line-subtle-background: var(--line-tomato-2); /* Subtle background (-2) */
   --line-ui-background: var(--line-tomato-3); /* UI element background (-3) */
@@ -17,7 +17,7 @@
   --line-dark: var(--line-tomato-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-tomato) {
+:is(.dark) :where(.line-schema-tomato) {
   --line-background: var(--line-tomato-12); /* App background (-1) */
   --line-subtle-background: var(--line-tomato-11); /* Subtle background (-2) */
   --line-ui-background: var(--line-tomato-10); /* UI element background (-3) */
@@ -32,7 +32,7 @@
   --line-high-contrast: var(--line-tomato-1); /* High-contrast text (-12) */
 }
 
-:where(.is-tomato) {
+:where(.line-is-tomato) {
   color: var(--line-tomato-1);
   background-color: var(--line-tomato-9);
   transition: all ease-in-out 150ms;
@@ -42,7 +42,7 @@
   }
 }
 
-:is(.dark) :where(.is-tomato) {
+:is(.dark) :where(.line-is-tomato) {
   color: var(--line-tomato-1);
   background-color: var(--line-tomato-4);
   transition: all ease-in-out 150ms;
@@ -52,47 +52,47 @@
   }
 }
 
-:where(.is-tomato-color) {
+:where(.line-is-tomato-color) {
   color: var(--line-tomato-12);
 }
 
-:is(.dark) :where(.is-tomato-color) {
+:is(.dark) :where(.line-is-tomato-color) {
   color: var(--line-tomato-1);
 }
 
-:where(.is-tomato-low-contrast) {
+:where(.line-is-tomato-low-contrast) {
   color: var(--line-tomato-11);
 }
 
-:is(.dark) :where(.is-tomato-low-contrast) {
+:is(.dark) :where(.line-is-tomato-low-contrast) {
   color: var(--line-tomato-2);
 }
 
-:where(.is-tomato-high-contrast) {
+:where(.line-is-tomato-high-contrast) {
   color: var(--line-tomato-12);
 }
 
-:is(.dark) :where(.is-tomato-high-contrast) {
+:is(.dark) :where(.line-is-tomato-high-contrast) {
   color: var(--line-tomato-1);
 }
 
-:where(.is-tomato-background) {
+:where(.line-is-tomato-background) {
   background-color: var(--line-tomato-1);
 }
 
-:is(.dark) :where(.is-tomato-background) {
+:is(.dark) :where(.line-is-tomato-background) {
   background-color: var(--line-tomato-12);
 }
 
-:where(.is-tomato-subtle-background) {
+:where(.line-is-tomato-subtle-background) {
   background-color: var(--line-tomato-2);
 }
 
-:is(.dark) :where(.is-tomato-subtle-background) {
+:is(.dark) :where(.line-is-tomato-subtle-background) {
   background-color: var(--line-tomato-11);
 }
 
-:where(.is-tomato-ui-background) {
+:where(.line-is-tomato-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-tomato-3);
 
@@ -101,7 +101,7 @@
   }
 }
 
-:is(.dark) :where(.is-tomato-ui-background) {
+:is(.dark) :where(.line-is-tomato-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-tomato-10);
 
@@ -110,79 +110,79 @@
   }
 }
 
-:where(.is-tomato-ui-hover-background) {
+:where(.line-is-tomato-ui-hover-background) {
   background-color: var(--line-tomato-4);
 }
 
-:is(.dark) :where(.is-tomato-ui-hover-background) {
+:is(.dark) :where(.line-is-tomato-ui-hover-background) {
   background-color: var(--line-tomato-9);
 }
 
-:where(.is-tomato-ui-active-background) {
+:where(.line-is-tomato-ui-active-background) {
   background-color: var(--line-tomato-5);
 }
 
-:is(.dark) :where(.is-tomato-ui-active-background) {
+:is(.dark) :where(.line-is-tomato-ui-active-background) {
   background-color: var(--line-tomato-8);
 }
 
-:where(.is-tomato-subtle-element-background) {
+:where(.line-is-tomato-subtle-element-background) {
   background-color: var(--line-tomato-6);
 }
 
-:is(.dark) :where(.is-tomato-subtle-element-background) {
+:is(.dark) :where(.line-is-tomato-subtle-element-background) {
   background-color: var(--line-tomato-7);
 }
 
-:where(.is-tomato-ui-element-background) {
+:where(.line-is-tomato-ui-element-background) {
   background-color: var(--line-tomato-7);
 }
 
-:is(.dark) :where(.is-tomato-ui-element-background) {
+:is(.dark) :where(.line-is-tomato-ui-element-background) {
   background-color: var(--line-tomato-6);
 }
 
-:where(.is-tomato-ui-hover-background) {
+:where(.line-is-tomato-ui-hover-background) {
   background-color: var(--line-tomato-8);
 }
 
-:is(.dark) :where(.is-tomato-ui-hover-background) {
+:is(.dark) :where(.line-is-tomato-ui-hover-background) {
   background-color: var(--line-tomato-5);
 }
 
-:where(.is-tomato-solid-background) {
+:where(.line-is-tomato-solid-background) {
   background-color: var(--line-tomato-9);
 }
 
-:is(.dark) :where(.is-tomato-solid-background) {
+:is(.dark) :where(.line-is-tomato-solid-background) {
   background-color: var(--line-tomato-4);
 }
 
-:where(.is-tomato-hover-solid-background) {
+:where(.line-is-tomato-hover-solid-background) {
   background-color: var(--line-tomato-10);
 }
 
-:is(.dark) :where(.is-tomato-hover-solid-background) {
+:is(.dark) :where(.line-is-tomato-hover-solid-background) {
   background-color: var(--line-tomato-3);
 }
 
-:where(.is-tomato-low-contrast-background) {
+:where(.line-is-tomato-low-contrast-background) {
   background-color: var(--line-tomato-11);
 }
 
-:is(.dark) :where(.is-tomato-low-contrast-background) {
+:is(.dark) :where(.line-is-tomato-low-contrast-background) {
   background-color: var(--line-tomato-2);
 }
 
-:where(.is-tomato-high-contrast-background) {
+:where(.line-is-tomato-high-contrast-background) {
   background-color: var(--line-tomato-12);
 }
 
-:is(.dark) :where(.is-tomato-high-contrast-background) {
+:is(.dark) :where(.line-is-tomato-high-contrast-background) {
   background-color: var(--line-tomato-1);
 }
 
-:where(.is-tomato-border) {
+:where(.line-is-tomato-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-tomato-7);
   border-color: var(--line-tomato-7);
@@ -193,7 +193,7 @@
   }
 }
 
-:is(.dark) :where(.is-tomato-border) {
+:is(.dark) :where(.line-is-tomato-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-tomato-6);
   border-color: var(--line-tomato-6);

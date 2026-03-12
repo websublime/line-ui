@@ -11,73 +11,73 @@
   background-color: var(--line-ui-active-background);
 }
 
-.is-background {
+.line-is-background {
   background-color: var(--line-background);
 }
 
-.is-subtle-background {
+.line-is-subtle-background {
   background-color: var(--line-subtle-background);
 }
 
-.is-ui-background {
+.line-is-ui-background {
   transition: colors ease-in-out delay-150;
   background-color: var(--line-ui-background);
 }
 
-.is-hover-background {
+.line-is-hover-background {
   background-color: var(--line-ui-hover-background);
 }
 
-.is-active-background {
+.line-is-active-background {
   background-color: var(--line-ui-active-background);
 }
 
-.is-subtle-border {
+.line-is-subtle-border {
   border-color: var(--line-subtle-border);
   outline-color: var(--line-subtle-border);
 }
 
-.is-ui-border {
+.line-is-ui-border {
   transition: colors ease-in-out delay-150;
   border-color: var(--line-ui-border);
   outline-color: var(--line-ui-border);
 }
 
-.is-ui-hover {
+.line-is-ui-hover {
   border-color: var(--line-ui-border-hover);
   outline-color: var(--line-ui-border-hover);
 }
 
-.is-solid-background {
+.line-is-solid-background {
   transition: colors ease-in-out delay-150;
   background-color: var(--line-solid-background);
 }
 
-.is-hover-solid {
+.line-is-hover-solid {
   background-color: var(--line-solid-hover);
 }
 
-.is-low-contrast {
+.line-is-low-contrast {
   color: var(--line-low-contrast);
 }
 
-.is-high-contrast {
+.line-is-high-contrast {
   color: var(--line-high-contrast);
 }
 
-.is-light {
+.line-is-light {
   color: var(--line-light);
 }
 
-.is-dark {
+.line-is-dark {
   color: var(--line-dark);
 }
 
-.is-white {
+.line-is-white {
   color: var(--line-white);
 }
 
-.is-black {
+.line-is-black {
   color: var(--line-black);
 }
 
@@ -94,7 +94,7 @@
   }
 }
 
-.is-tiny {
+.line-is-tiny {
   height: 1rem;
   font-size: 0.6rem;
   padding: 0.1rem;
