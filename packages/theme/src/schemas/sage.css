@@ -1,205 +1,205 @@
 :where(.schema-sage) {
-  --background: var(--sage-1);            /* App background (-1) */
-  --subtle-background: var(--sage-2);     /* Subtle background (-2) */
-  --ui-background: var(--sage-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--sage-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--sage-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--sage-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--sage-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--sage-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--sage-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--sage-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--sage-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--sage-12);        /* High-contrast text (-12) */
-  --light: var(--sage-1);                 /* Light text */
-  --white: var(--sage-1);                 /* White text */
-  --black: var(--sage-12);                /* Black text */
-  --dark: var(--sage-12);                 /* Dark text */
+  --background: var(--line-sage-1);            /* App background (-1) */
+  --subtle-background: var(--line-sage-2);     /* Subtle background (-2) */
+  --ui-background: var(--line-sage-3);         /* UI element background (-3) */
+  --ui-hover-background: var(--line-sage-4);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-sage-5);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-sage-6);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-sage-7);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-sage-8);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-sage-9);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-sage-10);          /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-sage-11);         /* Low-contrast text (-11) */
+  --high-contrast: var(--line-sage-12);        /* High-contrast text (-12) */
+  --light: var(--line-sage-1);                 /* Light text */
+  --white: var(--line-sage-1);                 /* White text */
+  --black: var(--line-sage-12);                /* Black text */
+  --dark: var(--line-sage-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-sage)  {
-  --background: var(--sage-12);           /* App background (-1) */
-  --subtle-background: var(--sage-11);    /* Subtle background (-2) */
-  --ui-background: var(--sage-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--sage-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--sage-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--sage-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--sage-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--sage-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--sage-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--sage-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--sage-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--sage-1);         /* High-contrast text (-12) */
+  --background: var(--line-sage-12);           /* App background (-1) */
+  --subtle-background: var(--line-sage-11);    /* Subtle background (-2) */
+  --ui-background: var(--line-sage-10);        /* UI element background (-3) */
+  --ui-hover-background: var(--line-sage-9);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-sage-8);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-sage-7);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-sage-6);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-sage-5);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-sage-4);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-sage-3);           /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-sage-2);          /* Low-contrast text (-11) */
+  --high-contrast: var(--line-sage-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-sage) {
-  color: var(--sage-1);
-  background-color: var(--sage-9);
+  color: var(--line-sage-1);
+  background-color: var(--line-sage-9);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--sage-10);
+    background-color: var(--line-sage-10);
   }
 }
 
 :is(.dark) :where(.is-sage) {
-  color: var(--sage-1);
-  background-color: var(--sage-4);
+  color: var(--line-sage-1);
+  background-color: var(--line-sage-4);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--sage-3);
+    background-color: var(--line-sage-3);
   }
 }
 
 :where(.is-sage-color) {
-  color: var(--sage-12);
+  color: var(--line-sage-12);
 }
 
 :is(:dark) :where(.is-sage-color) {
-  color: var(--sage-1);
+  color: var(--line-sage-1);
 }
 
 :where(.is-sage-low-contrast) {
-  color: var(--sage-11);
+  color: var(--line-sage-11);
 }
 
 :is(.dark) :where(.is-sage-low-contrast) {
-  color: var(--sage-2);
+  color: var(--line-sage-2);
 }
 
 :where(.is-sage-high-contrast) {
-  color: var(--sage-12);
+  color: var(--line-sage-12);
 }
 
 :is(.dark) :where(.is-sage-high-contrast) {
-  color: var(--sage-1);
+  color: var(--line-sage-1);
 }
 
 :where(.is-sage-background) {
-  background-color: var(--sage-1);
+  background-color: var(--line-sage-1);
 }
 
 :is(.dark) :where(.is-sage-background) {
-  background-color: var(--sage-12);
+  background-color: var(--line-sage-12);
 }
 
 :where(.is-sage-subtle-background) {
-  background-color: var(--sage-2);
+  background-color: var(--line-sage-2);
 }
 
 :is(.dark) :where(.is-sage-subtle-background) {
-  background-color: var(--sage-11);
+  background-color: var(--line-sage-11);
 }
 
 :where(.is-sage-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--sage-3);
+  background-color: var(--line-sage-3);
 
   &:hover {
-    background-color: var(--sage-4);
+    background-color: var(--line-sage-4);
   }
 }
 
 :is(.dark) :where(.is-sage-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--sage-10);
+  background-color: var(--line-sage-10);
 
   &:hover {
-    background-color: var(--sage-9);
+    background-color: var(--line-sage-9);
   }
 }
 
 :where(.is-sage-ui-hover-background) {
-  background-color: var(--sage-4);
+  background-color: var(--line-sage-4);
 }
 
 :is(.dark) :where(.is-sage-ui-hover-background) {
-  background-color: var(--sage-9);
+  background-color: var(--line-sage-9);
 }
 
 :where(.is-sage-ui-active-background) {
-  background-color: var(--sage-5);
+  background-color: var(--line-sage-5);
 }
 
 :is(.dark) :where(.is-sage-ui-active-background) {
-  background-color: var(--sage-8);
+  background-color: var(--line-sage-8);
 }
 
 :where(.is-sage-subtle-element-background) {
-  background-color: var(--sage-6);
+  background-color: var(--line-sage-6);
 }
 
 :is(.dark) :where(.is-sage-subtle-element-background) {
-  background-color: var(--sage-7);
+  background-color: var(--line-sage-7);
 }
 
 :where(.is-sage-ui-element-background) {
-  background-color: var(--sage-7);
+  background-color: var(--line-sage-7);
 }
 
 :is(.dark) :where(.is-sage-ui-element-background) {
-  background-color: var(--sage-6);
+  background-color: var(--line-sage-6);
 }
 
 :where(.is-sage-ui-hover-background) {
-  background-color: var(--sage-8);
+  background-color: var(--line-sage-8);
 }
 
 :is(.dark) :where(.is-sage-ui-hover-background) {
-  background-color: var(--sage-5);
+  background-color: var(--line-sage-5);
 }
 
 :where(.is-sage-solid-background) {
-  background-color: var(--sage-9);
+  background-color: var(--line-sage-9);
 }
 
 :is(.dark) :where(.is-sage-solid-background) {
-  background-color: var(--sage-4);
+  background-color: var(--line-sage-4);
 }
 
 :where(.is-sage-hover-solid-background) {
-  background-color: var(--sage-10);
+  background-color: var(--line-sage-10);
 }
 
 :is(.dark) :where(.is-sage-hover-solid-background) {
-  background-color: var(--sage-3);
+  background-color: var(--line-sage-3);
 }
 
 :where(.is-sage-low-contrast-background) {
-  background-color: var(--sage-11);
+  background-color: var(--line-sage-11);
 }
 
 :is(.dark) :where(.is-sage-low-contrast-background) {
-  background-color: var(--sage-2);
+  background-color: var(--line-sage-2);
 }
 
 :where(.is-sage-high-contrast-background) {
-  background-color: var(--sage-12);
+  background-color: var(--line-sage-12);
 }
 
 :is(.dark) :where(.is-sage-high-contrast-background) {
-  background-color: var(--sage-1);
+  background-color: var(--line-sage-1);
 }
 
 :where(.is-sage-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--sage-7);
-  border-color: var(--sage-7);
+  outline-color: var(--line-sage-7);
+  border-color: var(--line-sage-7);
 
   &:hover {
-    outline-color: var(--sage-8);
-    border-color: var(--sage-8);
+    outline-color: var(--line-sage-8);
+    border-color: var(--line-sage-8);
   }
 }
 
 :is(.dark) :where(.is-sage-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--sage-6);
-  border-color: var(--sage-6);
+  outline-color: var(--line-sage-6);
+  border-color: var(--line-sage-6);
 
   &:hover {
-    outline-color: var(--sage-5);
-    border-color: var(--sage-5);
+    outline-color: var(--line-sage-5);
+    border-color: var(--line-sage-5);
   }
 }

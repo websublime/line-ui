@@ -1,205 +1,205 @@
 :where(.schema-violet) {
-  --background: var(--violet-1);            /* App background (-1) */
-  --subtle-background: var(--violet-2);     /* Subtle background (-2) */
-  --ui-background: var(--violet-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--violet-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--violet-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--violet-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--violet-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--violet-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--violet-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--violet-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--violet-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--violet-12);        /* High-contrast text (-12) */
-  --light: var(--violet-1);                 /* Light text */
-  --white: var(--violet-1);                 /* White text */
-  --black: var(--violet-12);                /* Black text */
-  --dark: var(--violet-12);                 /* Dark text */
+  --background: var(--line-violet-1);            /* App background (-1) */
+  --subtle-background: var(--line-violet-2);     /* Subtle background (-2) */
+  --ui-background: var(--line-violet-3);         /* UI element background (-3) */
+  --ui-hover-background: var(--line-violet-4);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-violet-5);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-violet-6);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-violet-7);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-violet-8);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-violet-9);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-violet-10);          /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-violet-11);         /* Low-contrast text (-11) */
+  --high-contrast: var(--line-violet-12);        /* High-contrast text (-12) */
+  --light: var(--line-violet-1);                 /* Light text */
+  --white: var(--line-violet-1);                 /* White text */
+  --black: var(--line-violet-12);                /* Black text */
+  --dark: var(--line-violet-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-violet)  {
-  --background: var(--violet-12);           /* App background (-1) */
-  --subtle-background: var(--violet-11);    /* Subtle background (-2) */
-  --ui-background: var(--violet-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--violet-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--violet-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--violet-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--violet-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--violet-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--violet-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--violet-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--violet-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--violet-1);         /* High-contrast text (-12) */
+  --background: var(--line-violet-12);           /* App background (-1) */
+  --subtle-background: var(--line-violet-11);    /* Subtle background (-2) */
+  --ui-background: var(--line-violet-10);        /* UI element background (-3) */
+  --ui-hover-background: var(--line-violet-9);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-violet-8);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-violet-7);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-violet-6);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-violet-5);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-violet-4);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-violet-3);           /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-violet-2);          /* Low-contrast text (-11) */
+  --high-contrast: var(--line-violet-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-violet) {
-  color: var(--violet-1);
-  background-color: var(--violet-9);
+  color: var(--line-violet-1);
+  background-color: var(--line-violet-9);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--violet-10);
+    background-color: var(--line-violet-10);
   }
 }
 
 :is(.dark) :where(.is-violet) {
-  color: var(--violet-1);
-  background-color: var(--violet-4);
+  color: var(--line-violet-1);
+  background-color: var(--line-violet-4);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--violet-3);
+    background-color: var(--line-violet-3);
   }
 }
 
 :where(.is-violet-color) {
-  color: var(--violet-12);
+  color: var(--line-violet-12);
 }
 
 :is(:dark) :where(.is-violet-color) {
-  color: var(--violet-1);
+  color: var(--line-violet-1);
 }
 
 :where(.is-violet-low-contrast) {
-  color: var(--violet-11);
+  color: var(--line-violet-11);
 }
 
 :is(.dark) :where(.is-violet-low-contrast) {
-  color: var(--violet-2);
+  color: var(--line-violet-2);
 }
 
 :where(.is-violet-high-contrast) {
-  color: var(--violet-12);
+  color: var(--line-violet-12);
 }
 
 :is(.dark) :where(.is-violet-high-contrast) {
-  color: var(--violet-1);
+  color: var(--line-violet-1);
 }
 
 :where(.is-violet-background) {
-  background-color: var(--violet-1);
+  background-color: var(--line-violet-1);
 }
 
 :is(.dark) :where(.is-violet-background) {
-  background-color: var(--violet-12);
+  background-color: var(--line-violet-12);
 }
 
 :where(.is-violet-subtle-background) {
-  background-color: var(--violet-2);
+  background-color: var(--line-violet-2);
 }
 
 :is(.dark) :where(.is-violet-subtle-background) {
-  background-color: var(--violet-11);
+  background-color: var(--line-violet-11);
 }
 
 :where(.is-violet-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--violet-3);
+  background-color: var(--line-violet-3);
 
   &:hover {
-    background-color: var(--violet-4);
+    background-color: var(--line-violet-4);
   }
 }
 
 :is(.dark) :where(.is-violet-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--violet-10);
+  background-color: var(--line-violet-10);
 
   &:hover {
-    background-color: var(--violet-9);
+    background-color: var(--line-violet-9);
   }
 }
 
 :where(.is-violet-ui-hover-background) {
-  background-color: var(--violet-4);
+  background-color: var(--line-violet-4);
 }
 
 :is(.dark) :where(.is-violet-ui-hover-background) {
-  background-color: var(--violet-9);
+  background-color: var(--line-violet-9);
 }
 
 :where(.is-violet-ui-active-background) {
-  background-color: var(--violet-5);
+  background-color: var(--line-violet-5);
 }
 
 :is(.dark) :where(.is-violet-ui-active-background) {
-  background-color: var(--violet-8);
+  background-color: var(--line-violet-8);
 }
 
 :where(.is-violet-subtle-element-background) {
-  background-color: var(--violet-6);
+  background-color: var(--line-violet-6);
 }
 
 :is(.dark) :where(.is-violet-subtle-element-background) {
-  background-color: var(--violet-7);
+  background-color: var(--line-violet-7);
 }
 
 :where(.is-violet-ui-element-background) {
-  background-color: var(--violet-7);
+  background-color: var(--line-violet-7);
 }
 
 :is(.dark) :where(.is-violet-ui-element-background) {
-  background-color: var(--violet-6);
+  background-color: var(--line-violet-6);
 }
 
 :where(.is-violet-ui-hover-background) {
-  background-color: var(--violet-8);
+  background-color: var(--line-violet-8);
 }
 
 :is(.dark) :where(.is-violet-ui-hover-background) {
-  background-color: var(--violet-5);
+  background-color: var(--line-violet-5);
 }
 
 :where(.is-violet-solid-background) {
-  background-color: var(--violet-9);
+  background-color: var(--line-violet-9);
 }
 
 :is(.dark) :where(.is-violet-solid-background) {
-  background-color: var(--violet-4);
+  background-color: var(--line-violet-4);
 }
 
 :where(.is-violet-hover-solid-background) {
-  background-color: var(--violet-10);
+  background-color: var(--line-violet-10);
 }
 
 :is(.dark) :where(.is-violet-hover-solid-background) {
-  background-color: var(--violet-3);
+  background-color: var(--line-violet-3);
 }
 
 :where(.is-violet-low-contrast-background) {
-  background-color: var(--violet-11);
+  background-color: var(--line-violet-11);
 }
 
 :is(.dark) :where(.is-violet-low-contrast-background) {
-  background-color: var(--violet-2);
+  background-color: var(--line-violet-2);
 }
 
 :where(.is-violet-high-contrast-background) {
-  background-color: var(--violet-12);
+  background-color: var(--line-violet-12);
 }
 
 :is(.dark) :where(.is-violet-high-contrast-background) {
-  background-color: var(--violet-1);
+  background-color: var(--line-violet-1);
 }
 
 :where(.is-violet-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--violet-7);
-  border-color: var(--violet-7);
+  outline-color: var(--line-violet-7);
+  border-color: var(--line-violet-7);
 
   &:hover {
-    outline-color: var(--violet-8);
-    border-color: var(--violet-8);
+    outline-color: var(--line-violet-8);
+    border-color: var(--line-violet-8);
   }
 }
 
 :is(.dark) :where(.is-violet-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--violet-6);
-  border-color: var(--violet-6);
+  outline-color: var(--line-violet-6);
+  border-color: var(--line-violet-6);
 
   &:hover {
-    outline-color: var(--violet-5);
-    border-color: var(--violet-5);
+    outline-color: var(--line-violet-5);
+    border-color: var(--line-violet-5);
   }
 }

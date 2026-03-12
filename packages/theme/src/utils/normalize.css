@@ -115,7 +115,7 @@
 }
 
 ::placeholder {
-  color: var(--gray-7);
+  color: var(--line-gray-7);
   opacity: .75;
 }
 

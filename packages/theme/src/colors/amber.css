@@ -1,29 +1,29 @@
 :where(html) {
-  --amber-1: hsl(39, 70.0%, 99.0%);
-  --amber-2: hsl(40, 100%, 96.5%);
-  --amber-3: hsl(45, 100%, 90.8%);
-  --amber-4: hsl(44, 100%, 85.8%);
-  --amber-5: hsl(40, 100%, 81.5%);
-  --amber-6: hsl(39, 83.6%, 75.4%);
-  --amber-7: hsl(37, 66.9%, 68.2%);
-  --amber-8: hsl(35, 59.8%, 60.0%);
-  --amber-9: hsl(42, 100%, 62.0%);
-  --amber-10: hsl(42, 100%, 55.0%);
-  --amber-11: hsl(25, 50.0%, 38.0%);
-  --amber-12: hsl(25, 40.0%, 22.0%);
+  --line-amber-1: hsl(39, 70.0%, 99.0%);
+  --line-amber-2: hsl(40, 100%, 96.5%);
+  --line-amber-3: hsl(45, 100%, 90.8%);
+  --line-amber-4: hsl(44, 100%, 85.8%);
+  --line-amber-5: hsl(40, 100%, 81.5%);
+  --line-amber-6: hsl(39, 83.6%, 75.4%);
+  --line-amber-7: hsl(37, 66.9%, 68.2%);
+  --line-amber-8: hsl(35, 59.8%, 60.0%);
+  --line-amber-9: hsl(42, 100%, 62.0%);
+  --line-amber-10: hsl(42, 100%, 55.0%);
+  --line-amber-11: hsl(25, 50.0%, 38.0%);
+  --line-amber-12: hsl(25, 40.0%, 22.0%);
 }
 
 :where(html):is(.dark) {
-  --amber-12: hsl(36, 100%, 6.1%);
-  --amber-11: hsl(36, 80.5%, 8.0%);
-  --amber-10: hsl(35, 63.4%, 11.4%);
-  --amber-9: hsl(34, 58.8%, 14.1%);
-  --amber-8: hsl(34, 58.1%, 16.7%);
-  --amber-7: hsl(35, 58.3%, 20.5%);
-  --amber-6: hsl(35, 59.0%, 27.4%);
-  --amber-5: hsl(36, 60.2%, 41.4%);
-  --amber-4: hsl(42, 100%, 62.0%);
-  --amber-3: hsl(43, 100%, 64.0%);
-  --amber-2: hsl(43, 100%, 65.0%);
-  --amber-1: hsl(41, 100%, 85.0%);
+  --line-amber-12: hsl(36, 100%, 6.1%);
+  --line-amber-11: hsl(36, 80.5%, 8.0%);
+  --line-amber-10: hsl(35, 63.4%, 11.4%);
+  --line-amber-9: hsl(34, 58.8%, 14.1%);
+  --line-amber-8: hsl(34, 58.1%, 16.7%);
+  --line-amber-7: hsl(35, 58.3%, 20.5%);
+  --line-amber-6: hsl(35, 59.0%, 27.4%);
+  --line-amber-5: hsl(36, 60.2%, 41.4%);
+  --line-amber-4: hsl(42, 100%, 62.0%);
+  --line-amber-3: hsl(43, 100%, 64.0%);
+  --line-amber-2: hsl(43, 100%, 65.0%);
+  --line-amber-1: hsl(41, 100%, 85.0%);
 }

@@ -1,205 +1,205 @@
 :where(.schema-mint) {
-  --background: var(--mint-1);            /* App background (-1) */
-  --subtle-background: var(--mint-2);     /* Subtle background (-2) */
-  --ui-background: var(--mint-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--mint-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--mint-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--mint-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--mint-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--mint-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--mint-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--mint-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--mint-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--mint-12);        /* High-contrast text (-12) */
-  --light: var(--mint-1);                 /* Light text */
-  --white: var(--mint-1);                 /* White text */
-  --black: var(--mint-12);                /* Black text */
-  --dark: var(--mint-12);                 /* Dark text */
+  --background: var(--line-mint-1);            /* App background (-1) */
+  --subtle-background: var(--line-mint-2);     /* Subtle background (-2) */
+  --ui-background: var(--line-mint-3);         /* UI element background (-3) */
+  --ui-hover-background: var(--line-mint-4);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-mint-5);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-mint-6);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-mint-7);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-mint-8);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-mint-9);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-mint-10);          /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-mint-11);         /* Low-contrast text (-11) */
+  --high-contrast: var(--line-mint-12);        /* High-contrast text (-12) */
+  --light: var(--line-mint-1);                 /* Light text */
+  --white: var(--line-mint-1);                 /* White text */
+  --black: var(--line-mint-12);                /* Black text */
+  --dark: var(--line-mint-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-mint)  {
-  --background: var(--mint-12);           /* App background (-1) */
-  --subtle-background: var(--mint-11);    /* Subtle background (-2) */
-  --ui-background: var(--mint-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--mint-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--mint-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--mint-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--mint-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--mint-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--mint-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--mint-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--mint-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--mint-1);         /* High-contrast text (-12) */
+  --background: var(--line-mint-12);           /* App background (-1) */
+  --subtle-background: var(--line-mint-11);    /* Subtle background (-2) */
+  --ui-background: var(--line-mint-10);        /* UI element background (-3) */
+  --ui-hover-background: var(--line-mint-9);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-mint-8);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-mint-7);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-mint-6);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-mint-5);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-mint-4);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-mint-3);           /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-mint-2);          /* Low-contrast text (-11) */
+  --high-contrast: var(--line-mint-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-mint) {
-  color: var(--mint-12);
-  background-color: var(--mint-9);
+  color: var(--line-mint-12);
+  background-color: var(--line-mint-9);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--mint-10);
+    background-color: var(--line-mint-10);
   }
 }
 
 :is(.dark) :where(.is-mint) {
-  color: var(--mint-12);
-  background-color: var(--mint-4);
+  color: var(--line-mint-12);
+  background-color: var(--line-mint-4);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--mint-3);
+    background-color: var(--line-mint-3);
   }
 }
 
 :where(.is-mint-color) {
-  color: var(--mint-12);
+  color: var(--line-mint-12);
 }
 
 :is(:dark) :where(.is-mint-color) {
-  color: var(--mint-1);
+  color: var(--line-mint-1);
 }
 
 :where(.is-mint-low-contrast) {
-  color: var(--mint-11);
+  color: var(--line-mint-11);
 }
 
 :is(.dark) :where(.is-mint-low-contrast) {
-  color: var(--mint-2);
+  color: var(--line-mint-2);
 }
 
 :where(.is-mint-high-contrast) {
-  color: var(--mint-12);
+  color: var(--line-mint-12);
 }
 
 :is(.dark) :where(.is-mint-high-contrast) {
-  color: var(--mint-1);
+  color: var(--line-mint-1);
 }
 
 :where(.is-mint-background) {
-  background-color: var(--mint-1);
+  background-color: var(--line-mint-1);
 }
 
 :is(.dark) :where(.is-mint-background) {
-  background-color: var(--mint-12);
+  background-color: var(--line-mint-12);
 }
 
 :where(.is-mint-subtle-background) {
-  background-color: var(--mint-2);
+  background-color: var(--line-mint-2);
 }
 
 :is(.dark) :where(.is-mint-subtle-background) {
-  background-color: var(--mint-11);
+  background-color: var(--line-mint-11);
 }
 
 :where(.is-mint-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--mint-3);
+  background-color: var(--line-mint-3);
 
   &:hover {
-    background-color: var(--mint-4);
+    background-color: var(--line-mint-4);
   }
 }
 
 :is(.dark) :where(.is-mint-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--mint-10);
+  background-color: var(--line-mint-10);
 
   &:hover {
-    background-color: var(--mint-9);
+    background-color: var(--line-mint-9);
   }
 }
 
 :where(.is-mint-ui-hover-background) {
-  background-color: var(--mint-4);
+  background-color: var(--line-mint-4);
 }
 
 :is(.dark) :where(.is-mint-ui-hover-background) {
-  background-color: var(--mint-9);
+  background-color: var(--line-mint-9);
 }
 
 :where(.is-mint-ui-active-background) {
-  background-color: var(--mint-5);
+  background-color: var(--line-mint-5);
 }
 
 :is(.dark) :where(.is-mint-ui-active-background) {
-  background-color: var(--mint-8);
+  background-color: var(--line-mint-8);
 }
 
 :where(.is-mint-subtle-element-background) {
-  background-color: var(--mint-6);
+  background-color: var(--line-mint-6);
 }
 
 :is(.dark) :where(.is-mint-subtle-element-background) {
-  background-color: var(--mint-7);
+  background-color: var(--line-mint-7);
 }
 
 :where(.is-mint-ui-element-background) {
-  background-color: var(--mint-7);
+  background-color: var(--line-mint-7);
 }
 
 :is(.dark) :where(.is-mint-ui-element-background) {
-  background-color: var(--mint-6);
+  background-color: var(--line-mint-6);
 }
 
 :where(.is-mint-ui-hover-background) {
-  background-color: var(--mint-8);
+  background-color: var(--line-mint-8);
 }
 
 :is(.dark) :where(.is-mint-ui-hover-background) {
-  background-color: var(--mint-5);
+  background-color: var(--line-mint-5);
 }
 
 :where(.is-mint-solid-background) {
-  background-color: var(--mint-9);
+  background-color: var(--line-mint-9);
 }
 
 :is(.dark) :where(.is-mint-solid-background) {
-  background-color: var(--mint-4);
+  background-color: var(--line-mint-4);
 }
 
 :where(.is-mint-hover-solid-background) {
-  background-color: var(--mint-10);
+  background-color: var(--line-mint-10);
 }
 
 :is(.dark) :where(.is-mint-hover-solid-background) {
-  background-color: var(--mint-3);
+  background-color: var(--line-mint-3);
 }
 
 :where(.is-mint-low-contrast-background) {
-  background-color: var(--mint-11);
+  background-color: var(--line-mint-11);
 }
 
 :is(.dark) :where(.is-mint-low-contrast-background) {
-  background-color: var(--mint-2);
+  background-color: var(--line-mint-2);
 }
 
 :where(.is-mint-high-contrast-background) {
-  background-color: var(--mint-12);
+  background-color: var(--line-mint-12);
 }
 
 :is(.dark) :where(.is-mint-high-contrast-background) {
-  background-color: var(--mint-1);
+  background-color: var(--line-mint-1);
 }
 
 :where(.is-mint-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--mint-7);
-  border-color: var(--mint-7);
+  outline-color: var(--line-mint-7);
+  border-color: var(--line-mint-7);
 
   &:hover {
-    outline-color: var(--mint-8);
-    border-color: var(--mint-8);
+    outline-color: var(--line-mint-8);
+    border-color: var(--line-mint-8);
   }
 }
 
 :is(.dark) :where(.is-mint-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--mint-6);
-  border-color: var(--mint-6);
+  outline-color: var(--line-mint-6);
+  border-color: var(--line-mint-6);
 
   &:hover {
-    outline-color: var(--mint-5);
-    border-color: var(--mint-5);
+    outline-color: var(--line-mint-5);
+    border-color: var(--line-mint-5);
   }
 }

@@ -1,205 +1,205 @@
 :where(.schema-tomato) {
-  --background: var(--tomato-1);            /* App background (-1) */
-  --subtle-background: var(--tomato-2);     /* Subtle background (-2) */
-  --ui-background: var(--tomato-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--tomato-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--tomato-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--tomato-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--tomato-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--tomato-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--tomato-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--tomato-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--tomato-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--tomato-12);        /* High-contrast text (-12) */
-  --light: var(--tomato-1);                 /* Light text */
-  --white: var(--tomato-1);                 /* White text */
-  --black: var(--tomato-12);                /* Black text */
-  --dark: var(--tomato-12);                 /* Dark text */
+  --background: var(--line-tomato-1);            /* App background (-1) */
+  --subtle-background: var(--line-tomato-2);     /* Subtle background (-2) */
+  --ui-background: var(--line-tomato-3);         /* UI element background (-3) */
+  --ui-hover-background: var(--line-tomato-4);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-tomato-5);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-tomato-6);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-tomato-7);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-tomato-8);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-tomato-9);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-tomato-10);          /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-tomato-11);         /* Low-contrast text (-11) */
+  --high-contrast: var(--line-tomato-12);        /* High-contrast text (-12) */
+  --light: var(--line-tomato-1);                 /* Light text */
+  --white: var(--line-tomato-1);                 /* White text */
+  --black: var(--line-tomato-12);                /* Black text */
+  --dark: var(--line-tomato-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-tomato)  {
-  --background: var(--tomato-12);           /* App background (-1) */
-  --subtle-background: var(--tomato-11);    /* Subtle background (-2) */
-  --ui-background: var(--tomato-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--tomato-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--tomato-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--tomato-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--tomato-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--tomato-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--tomato-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--tomato-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--tomato-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--tomato-1);         /* High-contrast text (-12) */
+  --background: var(--line-tomato-12);           /* App background (-1) */
+  --subtle-background: var(--line-tomato-11);    /* Subtle background (-2) */
+  --ui-background: var(--line-tomato-10);        /* UI element background (-3) */
+  --ui-hover-background: var(--line-tomato-9);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-tomato-8);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-tomato-7);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-tomato-6);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-tomato-5);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-tomato-4);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-tomato-3);           /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-tomato-2);          /* Low-contrast text (-11) */
+  --high-contrast: var(--line-tomato-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-tomato) {
-  color: var(--tomato-1);
-  background-color: var(--tomato-9);
+  color: var(--line-tomato-1);
+  background-color: var(--line-tomato-9);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--tomato-10);
+    background-color: var(--line-tomato-10);
   }
 }
 
 :is(.dark) :where(.is-tomato) {
-  color: var(--tomato-1);
-  background-color: var(--tomato-4);
+  color: var(--line-tomato-1);
+  background-color: var(--line-tomato-4);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--tomato-3);
+    background-color: var(--line-tomato-3);
   }
 }
 
 :where(.is-tomato-color) {
-  color: var(--tomato-12);
+  color: var(--line-tomato-12);
 }
 
 :is(:dark) :where(.is-tomato-color) {
-  color: var(--tomato-1);
+  color: var(--line-tomato-1);
 }
 
 :where(.is-tomato-low-contrast) {
-  color: var(--tomato-11);
+  color: var(--line-tomato-11);
 }
 
 :is(.dark) :where(.is-tomato-low-contrast) {
-  color: var(--tomato-2);
+  color: var(--line-tomato-2);
 }
 
 :where(.is-tomato-high-contrast) {
-  color: var(--tomato-12);
+  color: var(--line-tomato-12);
 }
 
 :is(.dark) :where(.is-tomato-high-contrast) {
-  color: var(--tomato-1);
+  color: var(--line-tomato-1);
 }
 
 :where(.is-tomato-background) {
-  background-color: var(--tomato-1);
+  background-color: var(--line-tomato-1);
 }
 
 :is(.dark) :where(.is-tomato-background) {
-  background-color: var(--tomato-12);
+  background-color: var(--line-tomato-12);
 }
 
 :where(.is-tomato-subtle-background) {
-  background-color: var(--tomato-2);
+  background-color: var(--line-tomato-2);
 }
 
 :is(.dark) :where(.is-tomato-subtle-background) {
-  background-color: var(--tomato-11);
+  background-color: var(--line-tomato-11);
 }
 
 :where(.is-tomato-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--tomato-3);
+  background-color: var(--line-tomato-3);
 
   &:hover {
-    background-color: var(--tomato-4);
+    background-color: var(--line-tomato-4);
   }
 }
 
 :is(.dark) :where(.is-tomato-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--tomato-10);
+  background-color: var(--line-tomato-10);
 
   &:hover {
-    background-color: var(--tomato-9);
+    background-color: var(--line-tomato-9);
   }
 }
 
 :where(.is-tomato-ui-hover-background) {
-  background-color: var(--tomato-4);
+  background-color: var(--line-tomato-4);
 }
 
 :is(.dark) :where(.is-tomato-ui-hover-background) {
-  background-color: var(--tomato-9);
+  background-color: var(--line-tomato-9);
 }
 
 :where(.is-tomato-ui-active-background) {
-  background-color: var(--tomato-5);
+  background-color: var(--line-tomato-5);
 }
 
 :is(.dark) :where(.is-tomato-ui-active-background) {
-  background-color: var(--tomato-8);
+  background-color: var(--line-tomato-8);
 }
 
 :where(.is-tomato-subtle-element-background) {
-  background-color: var(--tomato-6);
+  background-color: var(--line-tomato-6);
 }
 
 :is(.dark) :where(.is-tomato-subtle-element-background) {
-  background-color: var(--tomato-7);
+  background-color: var(--line-tomato-7);
 }
 
 :where(.is-tomato-ui-element-background) {
-  background-color: var(--tomato-7);
+  background-color: var(--line-tomato-7);
 }
 
 :is(.dark) :where(.is-tomato-ui-element-background) {
-  background-color: var(--tomato-6);
+  background-color: var(--line-tomato-6);
 }
 
 :where(.is-tomato-ui-hover-background) {
-  background-color: var(--tomato-8);
+  background-color: var(--line-tomato-8);
 }
 
 :is(.dark) :where(.is-tomato-ui-hover-background) {
-  background-color: var(--tomato-5);
+  background-color: var(--line-tomato-5);
 }
 
 :where(.is-tomato-solid-background) {
-  background-color: var(--tomato-9);
+  background-color: var(--line-tomato-9);
 }
 
 :is(.dark) :where(.is-tomato-solid-background) {
-  background-color: var(--tomato-4);
+  background-color: var(--line-tomato-4);
 }
 
 :where(.is-tomato-hover-solid-background) {
-  background-color: var(--tomato-10);
+  background-color: var(--line-tomato-10);
 }
 
 :is(.dark) :where(.is-tomato-hover-solid-background) {
-  background-color: var(--tomato-3);
+  background-color: var(--line-tomato-3);
 }
 
 :where(.is-tomato-low-contrast-background) {
-  background-color: var(--tomato-11);
+  background-color: var(--line-tomato-11);
 }
 
 :is(.dark) :where(.is-tomato-low-contrast-background) {
-  background-color: var(--tomato-2);
+  background-color: var(--line-tomato-2);
 }
 
 :where(.is-tomato-high-contrast-background) {
-  background-color: var(--tomato-12);
+  background-color: var(--line-tomato-12);
 }
 
 :is(.dark) :where(.is-tomato-high-contrast-background) {
-  background-color: var(--tomato-1);
+  background-color: var(--line-tomato-1);
 }
 
 :where(.is-tomato-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--tomato-7);
-  border-color: var(--tomato-7);
+  outline-color: var(--line-tomato-7);
+  border-color: var(--line-tomato-7);
 
   &:hover {
-    outline-color: var(--tomato-8);
-    border-color: var(--tomato-8);
+    outline-color: var(--line-tomato-8);
+    border-color: var(--line-tomato-8);
   }
 }
 
 :is(.dark) :where(.is-tomato-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--tomato-6);
-  border-color: var(--tomato-6);
+  outline-color: var(--line-tomato-6);
+  border-color: var(--line-tomato-6);
 
   &:hover {
-    outline-color: var(--tomato-5);
-    border-color: var(--tomato-5);
+    outline-color: var(--line-tomato-5);
+    border-color: var(--line-tomato-5);
   }
 }
