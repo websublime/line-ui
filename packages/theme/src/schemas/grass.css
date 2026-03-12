@@ -1,33 +1,33 @@
 :where(.schema-grass) {
-  --background: var(--grass-1);            /* App background (-1) */
-  --subtle-background: var(--grass-2);     /* Subtle background (-2) */
-  --ui-background: var(--grass-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--grass-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--grass-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--grass-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--grass-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--grass-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--grass-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--grass-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--grass-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--grass-12);        /* High-contrast text (-12) */
-  --light: var(--grass-1);                 /* Light text */
-  --dark: var(--grass-12);                 /* Dark text */
+  --line-background: var(--grass-1);            /* App background (-1) */
+  --line-subtle-background: var(--grass-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--grass-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--grass-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--grass-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--grass-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--grass-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--grass-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--grass-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--grass-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--grass-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--grass-12);        /* High-contrast text (-12) */
+  --line-light: var(--grass-1);                 /* Light text */
+  --line-dark: var(--grass-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-grass)  {
-  --background: var(--grass-12);           /* App background (-1) */
-  --subtle-background: var(--grass-11);    /* Subtle background (-2) */
-  --ui-background: var(--grass-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--grass-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--grass-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--grass-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--grass-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--grass-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--grass-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--grass-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--grass-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--grass-1);         /* High-contrast text (-12) */
+  --line-background: var(--grass-12);           /* App background (-1) */
+  --line-subtle-background: var(--grass-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--grass-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--grass-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--grass-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--grass-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--grass-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--grass-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--grass-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--grass-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--grass-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--grass-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-grass) {

@@ -1,33 +1,33 @@
 :where(.schema-green) {
-  --background: var(--green-1);            /* App background (-1) */
-  --subtle-background: var(--green-2);     /* Subtle background (-2) */
-  --ui-background: var(--green-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--green-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--green-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--green-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--green-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--green-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--green-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--green-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--green-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--green-12);        /* High-contrast text (-12) */
-  --light: var(--green-1);                 /* Light text */
-  --dark: var(--green-12);                 /* Dark text */
+  --line-background: var(--green-1);            /* App background (-1) */
+  --line-subtle-background: var(--green-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--green-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--green-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--green-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--green-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--green-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--green-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--green-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--green-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--green-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--green-12);        /* High-contrast text (-12) */
+  --line-light: var(--green-1);                 /* Light text */
+  --line-dark: var(--green-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-green)  {
-  --background: var(--green-12);           /* App background (-1) */
-  --subtle-background: var(--green-11);    /* Subtle background (-2) */
-  --ui-background: var(--green-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--green-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--green-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--green-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--green-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--green-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--green-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--green-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--green-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--green-1);         /* High-contrast text (-12) */
+  --line-background: var(--green-12);           /* App background (-1) */
+  --line-subtle-background: var(--green-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--green-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--green-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--green-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--green-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--green-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--green-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--green-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--green-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--green-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--green-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-green) {

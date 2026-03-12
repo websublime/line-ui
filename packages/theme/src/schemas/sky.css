@@ -1,35 +1,35 @@
 :where(.schema-sky) {
-  --background: var(--sky-1);            /* App background (-1) */
-  --subtle-background: var(--sky-2);     /* Subtle background (-2) */
-  --ui-background: var(--sky-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--sky-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--sky-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--sky-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--sky-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--sky-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--sky-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--sky-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--sky-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--sky-12);        /* High-contrast text (-12) */
-  --light: var(--sky-1);                 /* Light text */
-  --white: var(--sky-1);                 /* White text */
-  --black: var(--sky-12);                /* Black text */
-  --dark: var(--sky-12);                 /* Dark text */
+  --line-background: var(--sky-1);            /* App background (-1) */
+  --line-subtle-background: var(--sky-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--sky-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--sky-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--sky-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--sky-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--sky-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--sky-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--sky-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--sky-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--sky-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--sky-12);        /* High-contrast text (-12) */
+  --line-light: var(--sky-1);                 /* Light text */
+  --line-white: var(--sky-1);                 /* White text */
+  --line-black: var(--sky-12);                /* Black text */
+  --line-dark: var(--sky-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-sky)  {
-  --background: var(--sky-12);           /* App background (-1) */
-  --subtle-background: var(--sky-11);    /* Subtle background (-2) */
-  --ui-background: var(--sky-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--sky-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--sky-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--sky-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--sky-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--sky-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--sky-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--sky-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--sky-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--sky-1);         /* High-contrast text (-12) */
+  --line-background: var(--sky-12);           /* App background (-1) */
+  --line-subtle-background: var(--sky-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--sky-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--sky-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--sky-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--sky-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--sky-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--sky-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--sky-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--sky-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--sky-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--sky-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-sky) {

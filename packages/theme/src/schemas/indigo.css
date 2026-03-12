@@ -1,33 +1,33 @@
 :where(.schema-indigo) {
-  --background: var(--indigo-1);            /* App background (-1) */
-  --subtle-background: var(--indigo-2);     /* Subtle background (-2) */
-  --ui-background: var(--indigo-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--indigo-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--indigo-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--indigo-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--indigo-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--indigo-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--indigo-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--indigo-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--indigo-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--indigo-12);        /* High-contrast text (-12) */
-  --light: var(--indigo-1);                 /* Light text */
-  --dark: var(--indigo-12);                 /* Dark text */
+  --line-background: var(--indigo-1);            /* App background (-1) */
+  --line-subtle-background: var(--indigo-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--indigo-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--indigo-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--indigo-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--indigo-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--indigo-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--indigo-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--indigo-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--indigo-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--indigo-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--indigo-12);        /* High-contrast text (-12) */
+  --line-light: var(--indigo-1);                 /* Light text */
+  --line-dark: var(--indigo-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-indigo)  {
-  --background: var(--indigo-12);           /* App background (-1) */
-  --subtle-background: var(--indigo-11);    /* Subtle background (-2) */
-  --ui-background: var(--indigo-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--indigo-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--indigo-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--indigo-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--indigo-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--indigo-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--indigo-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--indigo-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--indigo-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--indigo-1);         /* High-contrast text (-12) */
+  --line-background: var(--indigo-12);           /* App background (-1) */
+  --line-subtle-background: var(--indigo-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--indigo-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--indigo-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--indigo-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--indigo-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--indigo-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--indigo-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--indigo-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--indigo-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--indigo-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--indigo-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-indigo) {

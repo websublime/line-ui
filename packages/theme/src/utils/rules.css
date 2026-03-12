@@ -1,38 +1,38 @@
 @media (prefers-color-scheme: light) {
   :root {
-    --background: hsl(0, 0%, 99.0%);            /* App background (-1) */
-    --subtle-background: hsl(0, 0%, 97.5%);     /* Subtle background (-2) */
-    --ui-background: hsl(0, 0%, 94.6%);         /* UI element background (-3) */
-    --ui-hover-background: hsl(0, 0%, 92.0%);   /* Hovered UI element background  (-4)*/
-    --ui-active-background: hsl(0, 0%, 89.5%);  /* Active / Selected UI element background (-5) */
-    --subtle-border: hsl(0, 0%, 86.8%);         /* Subtle borders and separators (-6) */
-    --ui-border: hsl(0, 0%, 83.0%);             /* UI element border and focus rings (-7) */
-    --ui-border-hover: hsl(0, 0%, 73.2%);       /* Hovered UI element border (-8) */
-    --solid-background: hsl(0, 0%, 55.2%);      /* Solid backgrounds (-9) */
-    --solid-hover: hsl(0, 0%, 50.3%);           /* Hovered solid backgrounds (-10) */
-    --low-contrast: hsl(0, 0%, 39.3%);          /* Low-contrast text (-11) */
-    --high-contrast: hsl(0, 0%, 12.5%);         /* High-contrast text (-12) */
-    --white: #f1f1f1;                           /* White text */
-    --black: #030303;                           /* Black text */
+    --line-background: hsl(0, 0%, 99.0%);            /* App background (-1) */
+    --line-subtle-background: hsl(0, 0%, 97.5%);     /* Subtle background (-2) */
+    --line-ui-background: hsl(0, 0%, 94.6%);         /* UI element background (-3) */
+    --line-ui-hover-background: hsl(0, 0%, 92.0%);   /* Hovered UI element background  (-4)*/
+    --line-ui-active-background: hsl(0, 0%, 89.5%);  /* Active / Selected UI element background (-5) */
+    --line-subtle-border: hsl(0, 0%, 86.8%);         /* Subtle borders and separators (-6) */
+    --line-ui-border: hsl(0, 0%, 83.0%);             /* UI element border and focus rings (-7) */
+    --line-ui-border-hover: hsl(0, 0%, 73.2%);       /* Hovered UI element border (-8) */
+    --line-solid-background: hsl(0, 0%, 55.2%);      /* Solid backgrounds (-9) */
+    --line-solid-hover: hsl(0, 0%, 50.3%);           /* Hovered solid backgrounds (-10) */
+    --line-low-contrast: hsl(0, 0%, 39.3%);          /* Low-contrast text (-11) */
+    --line-high-contrast: hsl(0, 0%, 12.5%);         /* High-contrast text (-12) */
+    --line-white: #f1f1f1;                           /* White text */
+    --line-black: #030303;                           /* Black text */
   }
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: hsl(0, 0%, 9.5%);             /* App background (-1) */
-    --subtle-background: hsl(0, 0%, 10.5%);     /* Subtle background (-2) */
-    --ui-background: hsl(0, 0%, 15.8%);         /* UI element background (-3) */
-    --ui-hover-background: hsl(0, 0%, 18.9%);   /* Hovered UI element background  (-4)*/
-    --ui-active-background: hsl(0, 0%, 21.7%);  /* Active / Selected UI element background (-5) */
-    --subtle-border: hsl(0, 0%, 24.7%);         /* Subtle borders and separators (-6) */
-    --ui-border: hsl(0, 0%, 29.1%);             /* UI element border and focus rings (-7) */
-    --ui-border-hover: hsl(0, 0%, 37.5%);       /* Hovered UI element border (-8) */
-    --solid-background: hsl(0, 0%, 43.0%);      /* Solid backgrounds (-9) */
-    --solid-hover: hsl(0, 0%, 50.7%);           /* Hovered solid backgrounds (-10) */
-    --low-contrast: hsl(0, 0%, 69.5%);          /* Low-contrast text (-11) */
-    --high-contrast: hsl(0, 0%, 93.5%);         /* High-contrast text (-12) */
-    --white: #f1f1f1;                           /* White text */
-    --black: #030303;                           /* Black text */
+    --line-background: hsl(0, 0%, 9.5%);             /* App background (-1) */
+    --line-subtle-background: hsl(0, 0%, 10.5%);     /* Subtle background (-2) */
+    --line-ui-background: hsl(0, 0%, 15.8%);         /* UI element background (-3) */
+    --line-ui-hover-background: hsl(0, 0%, 18.9%);   /* Hovered UI element background  (-4)*/
+    --line-ui-active-background: hsl(0, 0%, 21.7%);  /* Active / Selected UI element background (-5) */
+    --line-subtle-border: hsl(0, 0%, 24.7%);         /* Subtle borders and separators (-6) */
+    --line-ui-border: hsl(0, 0%, 29.1%);             /* UI element border and focus rings (-7) */
+    --line-ui-border-hover: hsl(0, 0%, 37.5%);       /* Hovered UI element border (-8) */
+    --line-solid-background: hsl(0, 0%, 43.0%);      /* Solid backgrounds (-9) */
+    --line-solid-hover: hsl(0, 0%, 50.7%);           /* Hovered solid backgrounds (-10) */
+    --line-low-contrast: hsl(0, 0%, 69.5%);          /* Low-contrast text (-11) */
+    --line-high-contrast: hsl(0, 0%, 93.5%);         /* High-contrast text (-12) */
+    --line-white: #f1f1f1;                           /* White text */
+    --line-black: #030303;                           /* Black text */
   }
 }
 

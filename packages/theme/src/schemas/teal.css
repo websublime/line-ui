@@ -1,35 +1,35 @@
 :where(.schema-teal) {
-  --background: var(--teal-1);            /* App background (-1) */
-  --subtle-background: var(--teal-2);     /* Subtle background (-2) */
-  --ui-background: var(--teal-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--teal-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--teal-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--teal-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--teal-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--teal-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--teal-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--teal-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--teal-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--teal-12);        /* High-contrast text (-12) */
-  --light: var(--teal-1);                 /* Light text */
-  --white: var(--teal-1);                 /* White text */
-  --black: var(--teal-12);                /* Black text */
-  --dark: var(--teal-12);                 /* Dark text */
+  --line-background: var(--teal-1);            /* App background (-1) */
+  --line-subtle-background: var(--teal-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--teal-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--teal-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--teal-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--teal-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--teal-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--teal-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--teal-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--teal-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--teal-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--teal-12);        /* High-contrast text (-12) */
+  --line-light: var(--teal-1);                 /* Light text */
+  --line-white: var(--teal-1);                 /* White text */
+  --line-black: var(--teal-12);                /* Black text */
+  --line-dark: var(--teal-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-teal)  {
-  --background: var(--teal-12);           /* App background (-1) */
-  --subtle-background: var(--teal-11);    /* Subtle background (-2) */
-  --ui-background: var(--teal-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--teal-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--teal-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--teal-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--teal-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--teal-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--teal-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--teal-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--teal-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--teal-1);         /* High-contrast text (-12) */
+  --line-background: var(--teal-12);           /* App background (-1) */
+  --line-subtle-background: var(--teal-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--teal-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--teal-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--teal-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--teal-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--teal-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--teal-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--teal-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--teal-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--teal-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--teal-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-teal) {

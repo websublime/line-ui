@@ -61,8 +61,8 @@
 @import './custom/orange-custom.css';
 
 body {
-  color: var(--low-contrast);
-  background-color: var(--background);
+  color: var(--line-low-contrast);
+  background-color: var(--line-background);
 }
 
 .page-title {
@@ -99,7 +99,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  border-color: var(--ui-border);
+  border-color: var(--line-ui-border);
   border-bottom-width: 1px;
 
   &-title {
@@ -147,13 +147,13 @@ body {
 }
 
 .ui-theme-button {
-  color: var(--high-contrast);
-  border-color: var(--ui-border);
-  outline-color: var(--ui-border);
+  color: var(--line-high-contrast);
+  border-color: var(--line-ui-border);
+  outline-color: var(--line-ui-border);
 
   &:hover {
-    border-color: var(--ui-border-hover);
-    outline-color: var(--ui-border-hover);
+    border-color: var(--line-ui-border-hover);
+    outline-color: var(--line-ui-border-hover);
   }
 }
 
@@ -167,27 +167,27 @@ body {
 
   div {
     height: var(--size-7);
-    outline-color: var(--ui-border);
+    outline-color: var(--line-ui-border);
     outline-style: solid;
     outline-width: 1px;
-    color: var(--low-contrast);
+    color: var(--line-low-contrast);
   }
 }
 
 .ui-light {
-  background-color: var(--light);
+  background-color: var(--line-light);
 }
 
 .ui-dark {
-  background-color: var(--dark);
+  background-color: var(--line-dark);
 }
 
 .ui-white {
-  background-color: var(--white);
+  background-color: var(--line-white);
 }
 
 .ui-black {
-  background-color: var(--black);
+  background-color: var(--line-black);
 }
 
 

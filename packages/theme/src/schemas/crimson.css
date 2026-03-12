@@ -1,33 +1,33 @@
 :where(.schema-crimson) {
-  --background: var(--crimson-1);            /* App background (-1) */
-  --subtle-background: var(--crimson-2);     /* Subtle background (-2) */
-  --ui-background: var(--crimson-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--crimson-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--crimson-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--crimson-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--crimson-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--crimson-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--crimson-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--crimson-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--crimson-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--crimson-12);        /* High-contrast text (-12) */
-  --light: var(--crimson-1);                 /* Light text */
-  --dark: var(--crimson-12);                 /* Dark text */
+  --line-background: var(--crimson-1);            /* App background (-1) */
+  --line-subtle-background: var(--crimson-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--crimson-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--crimson-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--crimson-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--crimson-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--crimson-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--crimson-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--crimson-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--crimson-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--crimson-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--crimson-12);        /* High-contrast text (-12) */
+  --line-light: var(--crimson-1);                 /* Light text */
+  --line-dark: var(--crimson-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-crimson)  {
-  --background: var(--crimson-12);           /* App background (-1) */
-  --subtle-background: var(--crimson-11);    /* Subtle background (-2) */
-  --ui-background: var(--crimson-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--crimson-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--crimson-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--crimson-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--crimson-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--crimson-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--crimson-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--crimson-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--crimson-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--crimson-1);         /* High-contrast text (-12) */
+  --line-background: var(--crimson-12);           /* App background (-1) */
+  --line-subtle-background: var(--crimson-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--crimson-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--crimson-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--crimson-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--crimson-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--crimson-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--crimson-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--crimson-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--crimson-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--crimson-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--crimson-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-crimson) {

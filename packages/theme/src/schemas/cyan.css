@@ -1,33 +1,33 @@
 :where(.schema-cyan) {
-  --background: var(--cyan-1);            /* App background (-1) */
-  --subtle-background: var(--cyan-2);     /* Subtle background (-2) */
-  --ui-background: var(--cyan-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--cyan-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--cyan-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--cyan-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--cyan-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--cyan-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--cyan-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--cyan-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--cyan-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--cyan-12);        /* High-contrast text (-12) */
-  --light: var(--cyan-1);                 /* Light text */
-  --dark: var(--cyan-12);                 /* Dark text */
+  --line-background: var(--cyan-1);            /* App background (-1) */
+  --line-subtle-background: var(--cyan-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--cyan-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--cyan-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--cyan-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--cyan-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--cyan-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--cyan-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--cyan-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--cyan-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--cyan-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--cyan-12);        /* High-contrast text (-12) */
+  --line-light: var(--cyan-1);                 /* Light text */
+  --line-dark: var(--cyan-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-cyan)  {
-  --background: var(--cyan-12);           /* App background (-1) */
-  --subtle-background: var(--cyan-11);    /* Subtle background (-2) */
-  --ui-background: var(--cyan-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--cyan-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--cyan-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--cyan-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--cyan-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--cyan-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--cyan-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--cyan-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--cyan-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--cyan-1);         /* High-contrast text (-12) */
+  --line-background: var(--cyan-12);           /* App background (-1) */
+  --line-subtle-background: var(--cyan-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--cyan-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--cyan-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--cyan-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--cyan-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--cyan-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--cyan-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--cyan-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--cyan-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--cyan-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--cyan-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-cyan) {

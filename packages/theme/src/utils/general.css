@@ -1,83 +1,83 @@
 ::-moz-selection { /* Code for Firefox */
   transition: all ease-in-out delay-150;
-  color: var(--low-contrast);
-  background-color: var(--ui-active-background);
+  color: var(--line-low-contrast);
+  background-color: var(--line-ui-active-background);
 }
 
 ::selection {
   transition: all ease-in-out delay-150;
-  color: var(--low-contrast);
-  background-color: var(--ui-active-background);
+  color: var(--line-low-contrast);
+  background-color: var(--line-ui-active-background);
 }
 
 .is-background {
-  background-color: var(--background);
+  background-color: var(--line-background);
 }
 
 .is-subtle-background {
-  background-color: var(--subtle-background);
+  background-color: var(--line-subtle-background);
 }
 
 .is-ui-background {
   transition: colors ease-in-out delay-150;
-  background-color: var(--ui-background);
+  background-color: var(--line-ui-background);
 }
 
 .is-hover-background {
-  background-color: var(--ui-hover-background);
+  background-color: var(--line-ui-hover-background);
 }
 
 .is-active-background {
-  background-color: var(--ui-active-background);
+  background-color: var(--line-ui-active-background);
 }
 
 .is-subtle-border {
-  border-color: var(--subtle-border);
-  outline-color: var(--subtle-border);
+  border-color: var(--line-subtle-border);
+  outline-color: var(--line-subtle-border);
 }
 
 .is-ui-border {
   transition: colors ease-in-out delay-150;
-  border-color: var(--ui-border);
-  outline-color: var(--ui-border);
+  border-color: var(--line-ui-border);
+  outline-color: var(--line-ui-border);
 }
 
 .is-ui-hover {
-  border-color: var(--ui-border-hover);
-  outline-color: var(--ui-border-hover);
+  border-color: var(--line-ui-border-hover);
+  outline-color: var(--line-ui-border-hover);
 }
 
 .is-solid-background {
   transition:colors ease-in-out delay-150;
-  background-color: var(--solid-background);
+  background-color: var(--line-solid-background);
 }
 
 .is-hover-solid {
-  background-color: var(--solid-hover);
+  background-color: var(--line-solid-hover);
 }
 
 .is-low-contrast {
-  color: var(--low-contrast);
+  color: var(--line-low-contrast);
 }
 
 .is-high-contrast {
-  color: var(--high-contrast);
+  color: var(--line-high-contrast);
 }
 
 .is-light {
-  color: var(--light);
+  color: var(--line-light);
 }
 
 .is-dark {
-  color: var(--dark);
+  color: var(--line-dark);
 }
 
 .is-white {
-  color: var(--white);
+  color: var(--line-white);
 }
 
 .is-black {
-  color: var(--black);
+  color: var(--line-black);
 }
 
 .carousel {

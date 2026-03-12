@@ -1,35 +1,35 @@
 :where(.schema-orange) {
-  --background: var(--orange-1);            /* App background (-1) */
-  --subtle-background: var(--orange-2);     /* Subtle background (-2) */
-  --ui-background: var(--orange-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--orange-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--orange-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--orange-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--orange-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--orange-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--orange-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--orange-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--orange-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--orange-12);        /* High-contrast text (-12) */
-  --light: var(--orange-1);                 /* Light text */
-  --white: var(--orange-1);                 /* White text */
-  --black: var(--orange-12);                /* Black text */
-  --dark: var(--orange-12);                 /* Dark text */
+  --line-background: var(--orange-1);            /* App background (-1) */
+  --line-subtle-background: var(--orange-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--orange-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--orange-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--orange-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--orange-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--orange-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--orange-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--orange-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--orange-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--orange-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--orange-12);        /* High-contrast text (-12) */
+  --line-light: var(--orange-1);                 /* Light text */
+  --line-white: var(--orange-1);                 /* White text */
+  --line-black: var(--orange-12);                /* Black text */
+  --line-dark: var(--orange-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-orange)  {
-  --background: var(--orange-12);           /* App background (-1) */
-  --subtle-background: var(--orange-11);    /* Subtle background (-2) */
-  --ui-background: var(--orange-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--orange-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--orange-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--orange-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--orange-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--orange-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--orange-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--orange-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--orange-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--orange-1);         /* High-contrast text (-12) */
+  --line-background: var(--orange-12);           /* App background (-1) */
+  --line-subtle-background: var(--orange-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--orange-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--orange-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--orange-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--orange-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--orange-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--orange-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--orange-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--orange-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--orange-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--orange-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-orange) {

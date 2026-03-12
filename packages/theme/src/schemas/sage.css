@@ -1,35 +1,35 @@
 :where(.schema-sage) {
-  --background: var(--sage-1);            /* App background (-1) */
-  --subtle-background: var(--sage-2);     /* Subtle background (-2) */
-  --ui-background: var(--sage-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--sage-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--sage-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--sage-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--sage-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--sage-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--sage-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--sage-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--sage-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--sage-12);        /* High-contrast text (-12) */
-  --light: var(--sage-1);                 /* Light text */
-  --white: var(--sage-1);                 /* White text */
-  --black: var(--sage-12);                /* Black text */
-  --dark: var(--sage-12);                 /* Dark text */
+  --line-background: var(--sage-1);            /* App background (-1) */
+  --line-subtle-background: var(--sage-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--sage-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--sage-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--sage-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--sage-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--sage-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--sage-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--sage-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--sage-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--sage-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--sage-12);        /* High-contrast text (-12) */
+  --line-light: var(--sage-1);                 /* Light text */
+  --line-white: var(--sage-1);                 /* White text */
+  --line-black: var(--sage-12);                /* Black text */
+  --line-dark: var(--sage-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-sage)  {
-  --background: var(--sage-12);           /* App background (-1) */
-  --subtle-background: var(--sage-11);    /* Subtle background (-2) */
-  --ui-background: var(--sage-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--sage-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--sage-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--sage-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--sage-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--sage-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--sage-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--sage-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--sage-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--sage-1);         /* High-contrast text (-12) */
+  --line-background: var(--sage-12);           /* App background (-1) */
+  --line-subtle-background: var(--sage-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--sage-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--sage-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--sage-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--sage-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--sage-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--sage-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--sage-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--sage-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--sage-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--sage-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-sage) {

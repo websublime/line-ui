@@ -1,33 +1,33 @@
 :where(.schema-gold) {
-  --background: var(--gold-1);            /* App background (-1) */
-  --subtle-background: var(--gold-2);     /* Subtle background (-2) */
-  --ui-background: var(--gold-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--gold-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--gold-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--gold-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--gold-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--gold-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--gold-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--gold-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--gold-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--gold-12);        /* High-contrast text (-12) */
-  --light: var(--gold-1);                 /* Light text */
-  --dark: var(--gold-12);                 /* Dark text */
+  --line-background: var(--gold-1);            /* App background (-1) */
+  --line-subtle-background: var(--gold-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--gold-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--gold-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--gold-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--gold-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--gold-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--gold-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--gold-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--gold-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--gold-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--gold-12);        /* High-contrast text (-12) */
+  --line-light: var(--gold-1);                 /* Light text */
+  --line-dark: var(--gold-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-gold)  {
-  --background: var(--gold-12);           /* App background (-1) */
-  --subtle-background: var(--gold-11);    /* Subtle background (-2) */
-  --ui-background: var(--gold-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--gold-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--gold-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--gold-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--gold-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--gold-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--gold-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--gold-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--gold-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--gold-1);         /* High-contrast text (-12) */
+  --line-background: var(--gold-12);           /* App background (-1) */
+  --line-subtle-background: var(--gold-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--gold-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--gold-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--gold-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--gold-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--gold-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--gold-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--gold-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--gold-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--gold-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--gold-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-gold) {

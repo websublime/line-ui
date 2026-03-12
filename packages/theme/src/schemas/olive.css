@@ -1,35 +1,35 @@
 :where(.schema-olive) {
-  --background: var(--olive-1);            /* App background (-1) */
-  --subtle-background: var(--olive-2);     /* Subtle background (-2) */
-  --ui-background: var(--olive-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--olive-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--olive-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--olive-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--olive-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--olive-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--olive-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--olive-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--olive-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--olive-12);        /* High-contrast text (-12) */
-  --light: var(--olive-1);                 /* Light text */
-  --white: var(--olive-1);                 /* White text */
-  --black: var(--olive-12);                /* Black text */
-  --dark: var(--olive-12);                 /* Dark text */
+  --line-background: var(--olive-1);            /* App background (-1) */
+  --line-subtle-background: var(--olive-2);     /* Subtle background (-2) */
+  --line-ui-background: var(--olive-3);         /* UI element background (-3) */
+  --line-ui-hover-background: var(--olive-4);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--olive-5);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--olive-6);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--olive-7);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--olive-8);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--olive-9);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--olive-10);          /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--olive-11);         /* Low-contrast text (-11) */
+  --line-high-contrast: var(--olive-12);        /* High-contrast text (-12) */
+  --line-light: var(--olive-1);                 /* Light text */
+  --line-white: var(--olive-1);                 /* White text */
+  --line-black: var(--olive-12);                /* Black text */
+  --line-dark: var(--olive-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-olive)  {
-  --background: var(--olive-12);           /* App background (-1) */
-  --subtle-background: var(--olive-11);    /* Subtle background (-2) */
-  --ui-background: var(--olive-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--olive-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--olive-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--olive-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--olive-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--olive-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--olive-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--olive-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--olive-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--olive-1);         /* High-contrast text (-12) */
+  --line-background: var(--olive-12);           /* App background (-1) */
+  --line-subtle-background: var(--olive-11);    /* Subtle background (-2) */
+  --line-ui-background: var(--olive-10);        /* UI element background (-3) */
+  --line-ui-hover-background: var(--olive-9);   /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--olive-8);  /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--olive-7);         /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--olive-6);             /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--olive-5);       /* Hovered UI element border (-8) */
+  --line-solid-background: var(--olive-4);      /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--olive-3);           /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--olive-2);          /* Low-contrast text (-11) */
+  --line-high-contrast: var(--olive-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-olive) {
