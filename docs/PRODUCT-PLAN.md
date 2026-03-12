@@ -140,12 +140,11 @@ P0-E3 (Monorepo)                            depends on E1-T8
   T4 (site pkg) ───────┘
 
 P0-E4 (LineElement)                         depends on E1-T6
-  T1 (base class refactor) ──► T2 (Inspector)
-                           ──► T3 (Metadata)
-                           ──► T4 (Direction)
-                           ──► T5 (FormAssociated)
-                           ──► T6 (Zag.js spike)
-                           ──► T7 (HTMX spike)
+  T3 (Metadata) ◄── E1-T6 ──┐
+  T4 (Direction) ◄── E1-T6 ──┼──► T1 (base class refactor) ──► T2 (Inspector)
+                              │                             ──► T5 (FormAssociated)
+                              │                             ──► T6 (Zag.js spike)
+                              │                             ──► T7 (HTMX spike)
 
 P0-E5 (Storybook)                          depends on E3-T3
   T1 (setup) ──► T2 (CEM) ◄── E4-T1
