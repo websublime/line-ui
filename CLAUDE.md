@@ -35,26 +35,36 @@ Agents and contributors must understand the three-tier documentation structure:
 
 ```
 docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
-│   What & Why — product vision, component catalogue (131 components),
+│   What & Why — product vision, component catalogue (132 components),
 │   design token decisions, roadmap, phases, success metrics
 │
 ├── docs/ARCHITECTURE.md
 │     How — composition patterns, state management tiers (Pre-built/Custom/Static),
 │     CSS dual-layer strategy, base class design, bundle splitting, form association
 │
+├── docs/PRODUCT-PLAN.md
+│     When — phased execution plan, epic/task breakdown, dependency graphs,
+│     done criteria per phase, critical path
+│
 ├── docs/COMPETITIVE-COMPONENT-ANALYSIS.md
 │     Positioning — component-by-component gap analysis vs Shoelace, Spectrum, etc.
 │
-└── .spec/XXXX-{component}.md
-      Detail — per-component API: props, events, slots, parts, CSS custom properties,
-      keyboard navigation, accessibility, machine states, markup examples
-      Template: .spec/COMPONENT-SPEC-TEMPLATE.md
+└── .spec/
+      Detail — per-component and per-system API contracts
+      ├── COMPONENT-SPEC-TEMPLATE.md   Template for component specs
+      ├── BASE-SPEC.md (APPROVED)      LineElement base class, mixins, Zag.js adapter
+      ├── ICON-REGISTRY-SPEC.md (APPROVED)  Icon registry API, <line-icon> component
+      └── STORYBOOK-SPEC.md (APPROVED) Storybook 8 setup, CEM, story conventions
 ```
 
 | Task | Start here |
 |------|-----------|
 | Understanding project goals, phases, decisions | PRD |
 | Learning composition patterns, tier classification, CSS strategy | ARCHITECTURE |
+| Understanding execution order, dependencies, done criteria | PRODUCT-PLAN |
+| Implementing LineElement, mixins, or core infrastructure | `.spec/BASE-SPEC.md` |
+| Implementing icon registry or `<line-icon>` | `.spec/ICON-REGISTRY-SPEC.md` |
+| Setting up Storybook, CEM, or writing stories | `.spec/STORYBOOK-SPEC.md` |
 | Implementing or reviewing a specific component | `.spec/` for that component |
 | Comparing with competitors, identifying gaps | COMPETITIVE-COMPONENT-ANALYSIS |
 
@@ -84,9 +94,13 @@ vitamin/
 ├── docs/                             # Product requirements & planning docs
 │   ├── PRODUCT-REQUIREMENTS-SPECIFICATION.md
 │   ├── ARCHITECTURE.md
+│   ├── PRODUCT-PLAN.md
 │   └── COMPETITIVE-COMPONENT-ANALYSIS.md
-├── .spec/                            # Component specs (per-component API contracts)
-│   └── COMPONENT-SPEC-TEMPLATE.md
+├── .spec/                            # Architecture & component specs (API contracts)
+│   ├── COMPONENT-SPEC-TEMPLATE.md
+│   ├── BASE-SPEC.md                  # LineElement, mixins, Zag.js adapter (APPROVED)
+│   ├── ICON-REGISTRY-SPEC.md         # Icon registry, <line-icon> (APPROVED)
+│   └── STORYBOOK-SPEC.md             # Storybook 8 setup, CEM, stories (APPROVED)
 ├── .changeset/                       # Changesets configuration
 ├── .github/                          # GitHub workflows & config
 ├── .githooks/                        # Git hooks (core.hooksPath)
