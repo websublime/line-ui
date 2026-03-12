@@ -10,73 +10,73 @@
   background-color: var(--ui-active-background);
 }
 
-.is-background {
+.line-is-background {
   background-color: var(--background);
 }
 
-.is-subtle-background {
+.line-is-subtle-background {
   background-color: var(--subtle-background);
 }
 
-.is-ui-background {
+.line-is-ui-background {
   transition: colors ease-in-out delay-150;
   background-color: var(--ui-background);
 }
 
-.is-hover-background {
+.line-is-hover-background {
   background-color: var(--ui-hover-background);
 }
 
-.is-active-background {
+.line-is-active-background {
   background-color: var(--ui-active-background);
 }
 
-.is-subtle-border {
+.line-is-subtle-border {
   border-color: var(--subtle-border);
   outline-color: var(--subtle-border);
 }
 
-.is-ui-border {
+.line-is-ui-border {
   transition: colors ease-in-out delay-150;
   border-color: var(--ui-border);
   outline-color: var(--ui-border);
 }
 
-.is-ui-hover {
+.line-is-ui-hover {
   border-color: var(--ui-border-hover);
   outline-color: var(--ui-border-hover);
 }
 
-.is-solid-background {
+.line-is-solid-background {
   transition:colors ease-in-out delay-150;
   background-color: var(--solid-background);
 }
 
-.is-hover-solid {
+.line-is-hover-solid {
   background-color: var(--solid-hover);
 }
 
-.is-low-contrast {
+.line-is-low-contrast {
   color: var(--low-contrast);
 }
 
-.is-high-contrast {
+.line-is-high-contrast {
   color: var(--high-contrast);
 }
 
-.is-light {
+.line-is-light {
   color: var(--light);
 }
 
-.is-dark {
+.line-is-dark {
   color: var(--dark);
 }
 
-.is-white {
+.line-is-white {
   color: var(--white);
 }
 
-.is-black {
+.line-is-black {
   color: var(--black);
 }
 
@@ -93,7 +93,7 @@
   }
 }
 
-.is-tiny {
+.line-is-tiny {
   height: 1rem;
   font-size: .6rem;
   padding: 0.1rem;

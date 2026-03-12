@@ -1,4 +1,4 @@
-:where(.schema-brown) {
+:where(.line-schema-brown) {
   --background: var(--brown-1);            /* App background (-1) */
   --subtle-background: var(--brown-2);     /* Subtle background (-2) */
   --ui-background: var(--brown-3);         /* UI element background (-3) */
@@ -15,7 +15,7 @@
   --dark: var(--brown-12);                 /* Dark text */
 }
 
-:is(.dark) :where(.schema-brown)  {
+:is(.dark) :where(.line-schema-brown)  {
   --background: var(--brown-12);           /* App background (-1) */
   --subtle-background: var(--brown-11);    /* Subtle background (-2) */
   --ui-background: var(--brown-10);        /* UI element background (-3) */
@@ -30,7 +30,7 @@
   --high-contrast: var(--brown-1);         /* High-contrast text (-12) */
 }
 
-:where(.is-brown) {
+:where(.line-is-brown) {
   color: var(--brown-1);
   background-color: var(--brown-9);
   transition: all ease-in-out 150ms;
@@ -40,7 +40,7 @@
   }
 }
 
-:is(.dark) :where(.is-brown) {
+:is(.dark) :where(.line-is-brown) {
   color: var(--brown-1);
   background-color: var(--brown-4);
   transition: all ease-in-out 150ms;
@@ -50,47 +50,47 @@
   }
 }
 
-:where(.is-brown-color) {
+:where(.line-is-brown-color) {
   color: var(--brown-12);
 }
 
-:is(:dark) :where(.is-brown-color) {
+:is(:dark) :where(.line-is-brown-color) {
   color: var(--brown-1);
 }
 
-:where(.is-brown-low-contrast) {
+:where(.line-is-brown-low-contrast) {
   color: var(--brown-11);
 }
 
-:is(.dark) :where(.is-brown-low-contrast) {
+:is(.dark) :where(.line-is-brown-low-contrast) {
   color: var(--brown-2);
 }
 
-:where(.is-brown-high-contrast) {
+:where(.line-is-brown-high-contrast) {
   color: var(--brown-12);
 }
 
-:is(.dark) :where(.is-brown-high-contrast) {
+:is(.dark) :where(.line-is-brown-high-contrast) {
   color: var(--brown-1);
 }
 
-:where(.is-brown-background) {
+:where(.line-is-brown-background) {
   background-color: var(--brown-1);
 }
 
-:is(.dark) :where(.is-brown-background) {
+:is(.dark) :where(.line-is-brown-background) {
   background-color: var(--brown-12);
 }
 
-:where(.is-brown-subtle-background) {
+:where(.line-is-brown-subtle-background) {
   background-color: var(--brown-2);
 }
 
-:is(.dark) :where(.is-brown-subtle-background) {
+:is(.dark) :where(.line-is-brown-subtle-background) {
   background-color: var(--brown-11);
 }
 
-:where(.is-brown-ui-background) {
+:where(.line-is-brown-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--brown-3);
 
@@ -99,7 +99,7 @@
   }
 }
 
-:is(.dark) :where(.is-brown-ui-background) {
+:is(.dark) :where(.line-is-brown-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--brown-10);
 
@@ -108,79 +108,79 @@
   }
 }
 
-:where(.is-brown-ui-hover-background) {
+:where(.line-is-brown-ui-hover-background) {
   background-color: var(--brown-4);
 }
 
-:is(.dark) :where(.is-brown-ui-hover-background) {
+:is(.dark) :where(.line-is-brown-ui-hover-background) {
   background-color: var(--brown-9);
 }
 
-:where(.is-brown-ui-active-background) {
+:where(.line-is-brown-ui-active-background) {
   background-color: var(--brown-5);
 }
 
-:is(.dark) :where(.is-brown-ui-active-background) {
+:is(.dark) :where(.line-is-brown-ui-active-background) {
   background-color: var(--brown-8);
 }
 
-:where(.is-brown-subtle-element-background) {
+:where(.line-is-brown-subtle-element-background) {
   background-color: var(--brown-6);
 }
 
-:is(.dark) :where(.is-brown-subtle-element-background) {
+:is(.dark) :where(.line-is-brown-subtle-element-background) {
   background-color: var(--brown-7);
 }
 
-:where(.is-brown-ui-element-background) {
+:where(.line-is-brown-ui-element-background) {
   background-color: var(--brown-7);
 }
 
-:is(.dark) :where(.is-brown-ui-element-background) {
+:is(.dark) :where(.line-is-brown-ui-element-background) {
   background-color: var(--brown-6);
 }
 
-:where(.is-brown-ui-hover-background) {
+:where(.line-is-brown-ui-hover-background) {
   background-color: var(--brown-8);
 }
 
-:is(.dark) :where(.is-brown-ui-hover-background) {
+:is(.dark) :where(.line-is-brown-ui-hover-background) {
   background-color: var(--brown-5);
 }
 
-:where(.is-brown-solid-background) {
+:where(.line-is-brown-solid-background) {
   background-color: var(--brown-9);
 }
 
-:is(.dark) :where(.is-brown-solid-background) {
+:is(.dark) :where(.line-is-brown-solid-background) {
   background-color: var(--brown-4);
 }
 
-:where(.is-brown-hover-solid-background) {
+:where(.line-is-brown-hover-solid-background) {
   background-color: var(--brown-10);
 }
 
-:is(.dark) :where(.is-brown-hover-solid-background) {
+:is(.dark) :where(.line-is-brown-hover-solid-background) {
   background-color: var(--brown-3);
 }
 
-:where(.is-brown-low-contrast-background) {
+:where(.line-is-brown-low-contrast-background) {
   background-color: var(--brown-11);
 }
 
-:is(.dark) :where(.is-brown-low-contrast-background) {
+:is(.dark) :where(.line-is-brown-low-contrast-background) {
   background-color: var(--brown-2);
 }
 
-:where(.is-brown-high-contrast-background) {
+:where(.line-is-brown-high-contrast-background) {
   background-color: var(--brown-12);
 }
 
-:is(.dark) :where(.is-brown-high-contrast-background) {
+:is(.dark) :where(.line-is-brown-high-contrast-background) {
   background-color: var(--brown-1);
 }
 
-:where(.is-brown-border) {
+:where(.line-is-brown-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--brown-7);
   border-color: var(--brown-7);
@@ -191,7 +191,7 @@
   }
 }
 
-:is(.dark) :where(.is-brown-border) {
+:is(.dark) :where(.line-is-brown-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--brown-6);
   border-color: var(--brown-6);

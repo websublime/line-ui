@@ -1,4 +1,4 @@
-:where(.schema-red) {
+:where(.line-schema-red) {
   --background: var(--red-1);            /* App background (-1) */
   --subtle-background: var(--red-2);     /* Subtle background (-2) */
   --ui-background: var(--red-3);         /* UI element background (-3) */
@@ -17,7 +17,7 @@
   --dark: var(--red-12);                 /* Dark text */
 }
 
-:is(.dark) :where(.schema-red)  {
+:is(.dark) :where(.line-schema-red)  {
   --background: var(--red-12);           /* App background (-1) */
   --subtle-background: var(--red-11);    /* Subtle background (-2) */
   --ui-background: var(--red-10);        /* UI element background (-3) */
@@ -32,7 +32,7 @@
   --high-contrast: var(--red-1);         /* High-contrast text (-12) */
 }
 
-:where(.is-red) {
+:where(.line-is-red) {
   color: var(--red-1);
   background-color: var(--red-9);
   transition: all ease-in-out 150ms;
@@ -42,7 +42,7 @@
   }
 }
 
-:is(.dark) :where(.is-red) {
+:is(.dark) :where(.line-is-red) {
   color: var(--red-1);
   background-color: var(--red-4);
   transition: all ease-in-out 150ms;
@@ -52,47 +52,47 @@
   }
 }
 
-:where(.is-red-color) {
+:where(.line-is-red-color) {
   color: var(--red-12);
 }
 
-:is(:dark) :where(.is-red-color) {
+:is(:dark) :where(.line-is-red-color) {
   color: var(--red-1);
 }
 
-:where(.is-red-low-contrast) {
+:where(.line-is-red-low-contrast) {
   color: var(--red-11);
 }
 
-:is(.dark) :where(.is-red-low-contrast) {
+:is(.dark) :where(.line-is-red-low-contrast) {
   color: var(--red-2);
 }
 
-:where(.is-red-high-contrast) {
+:where(.line-is-red-high-contrast) {
   color: var(--red-12);
 }
 
-:is(.dark) :where(.is-red-high-contrast) {
+:is(.dark) :where(.line-is-red-high-contrast) {
   color: var(--red-1);
 }
 
-:where(.is-red-background) {
+:where(.line-is-red-background) {
   background-color: var(--red-1);
 }
 
-:is(.dark) :where(.is-red-background) {
+:is(.dark) :where(.line-is-red-background) {
   background-color: var(--red-12);
 }
 
-:where(.is-red-subtle-background) {
+:where(.line-is-red-subtle-background) {
   background-color: var(--red-2);
 }
 
-:is(.dark) :where(.is-red-subtle-background) {
+:is(.dark) :where(.line-is-red-subtle-background) {
   background-color: var(--red-11);
 }
 
-:where(.is-red-ui-background) {
+:where(.line-is-red-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--red-3);
 
@@ -101,7 +101,7 @@
   }
 }
 
-:is(.dark) :where(.is-red-ui-background) {
+:is(.dark) :where(.line-is-red-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--red-10);
 
@@ -110,79 +110,79 @@
   }
 }
 
-:where(.is-red-ui-hover-background) {
+:where(.line-is-red-ui-hover-background) {
   background-color: var(--red-4);
 }
 
-:is(.dark) :where(.is-red-ui-hover-background) {
+:is(.dark) :where(.line-is-red-ui-hover-background) {
   background-color: var(--red-9);
 }
 
-:where(.is-red-ui-active-background) {
+:where(.line-is-red-ui-active-background) {
   background-color: var(--red-5);
 }
 
-:is(.dark) :where(.is-red-ui-active-background) {
+:is(.dark) :where(.line-is-red-ui-active-background) {
   background-color: var(--red-8);
 }
 
-:where(.is-red-subtle-element-background) {
+:where(.line-is-red-subtle-element-background) {
   background-color: var(--red-6);
 }
 
-:is(.dark) :where(.is-red-subtle-element-background) {
+:is(.dark) :where(.line-is-red-subtle-element-background) {
   background-color: var(--red-7);
 }
 
-:where(.is-red-ui-element-background) {
+:where(.line-is-red-ui-element-background) {
   background-color: var(--red-7);
 }
 
-:is(.dark) :where(.is-red-ui-element-background) {
+:is(.dark) :where(.line-is-red-ui-element-background) {
   background-color: var(--red-6);
 }
 
-:where(.is-red-ui-hover-background) {
+:where(.line-is-red-ui-hover-background) {
   background-color: var(--red-8);
 }
 
-:is(.dark) :where(.is-red-ui-hover-background) {
+:is(.dark) :where(.line-is-red-ui-hover-background) {
   background-color: var(--red-5);
 }
 
-:where(.is-red-solid-background) {
+:where(.line-is-red-solid-background) {
   background-color: var(--red-9);
 }
 
-:is(.dark) :where(.is-red-solid-background) {
+:is(.dark) :where(.line-is-red-solid-background) {
   background-color: var(--red-4);
 }
 
-:where(.is-red-hover-solid-background) {
+:where(.line-is-red-hover-solid-background) {
   background-color: var(--red-10);
 }
 
-:is(.dark) :where(.is-red-hover-solid-background) {
+:is(.dark) :where(.line-is-red-hover-solid-background) {
   background-color: var(--red-3);
 }
 
-:where(.is-red-low-contrast-background) {
+:where(.line-is-red-low-contrast-background) {
   background-color: var(--red-11);
 }
 
-:is(.dark) :where(.is-red-low-contrast-background) {
+:is(.dark) :where(.line-is-red-low-contrast-background) {
   background-color: var(--red-2);
 }
 
-:where(.is-red-high-contrast-background) {
+:where(.line-is-red-high-contrast-background) {
   background-color: var(--red-12);
 }
 
-:is(.dark) :where(.is-red-high-contrast-background) {
+:is(.dark) :where(.line-is-red-high-contrast-background) {
   background-color: var(--red-1);
 }
 
-:where(.is-red-border) {
+:where(.line-is-red-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--red-7);
   border-color: var(--red-7);
@@ -193,7 +193,7 @@
   }
 }
 
-:is(.dark) :where(.is-red-border) {
+:is(.dark) :where(.line-is-red-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--red-6);
   border-color: var(--red-6);

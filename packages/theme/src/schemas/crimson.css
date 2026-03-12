@@ -1,4 +1,4 @@
-:where(.schema-crimson) {
+:where(.line-schema-crimson) {
   --background: var(--crimson-1);            /* App background (-1) */
   --subtle-background: var(--crimson-2);     /* Subtle background (-2) */
   --ui-background: var(--crimson-3);         /* UI element background (-3) */
@@ -15,7 +15,7 @@
   --dark: var(--crimson-12);                 /* Dark text */
 }
 
-:is(.dark) :where(.schema-crimson)  {
+:is(.dark) :where(.line-schema-crimson)  {
   --background: var(--crimson-12);           /* App background (-1) */
   --subtle-background: var(--crimson-11);    /* Subtle background (-2) */
   --ui-background: var(--crimson-10);        /* UI element background (-3) */
@@ -30,7 +30,7 @@
   --high-contrast: var(--crimson-1);         /* High-contrast text (-12) */
 }
 
-:where(.is-crimson) {
+:where(.line-is-crimson) {
   color: var(--crimson-1);
   background-color: var(--crimson-9);
   transition: all ease-in-out 150ms;
@@ -40,7 +40,7 @@
   }
 }
 
-:is(.dark) :where(.is-crimson) {
+:is(.dark) :where(.line-is-crimson) {
   color: var(--crimson-1);
   background-color: var(--crimson-4);
   transition: all ease-in-out 150ms;
@@ -50,47 +50,47 @@
   }
 }
 
-:where(.is-crimson-color) {
+:where(.line-is-crimson-color) {
   color: var(--crimson-12);
 }
 
-:is(:dark) :where(.is-crimson-color) {
+:is(:dark) :where(.line-is-crimson-color) {
   color: var(--crimson-1);
 }
 
-:where(.is-crimson-low-contrast) {
+:where(.line-is-crimson-low-contrast) {
   color: var(--crimson-11);
 }
 
-:is(.dark) :where(.is-crimson-low-contrast) {
+:is(.dark) :where(.line-is-crimson-low-contrast) {
   color: var(--crimson-2);
 }
 
-:where(.is-crimson-high-contrast) {
+:where(.line-is-crimson-high-contrast) {
   color: var(--crimson-12);
 }
 
-:is(.dark) :where(.is-crimson-high-contrast) {
+:is(.dark) :where(.line-is-crimson-high-contrast) {
   color: var(--crimson-1);
 }
 
-:where(.is-crimson-background) {
+:where(.line-is-crimson-background) {
   background-color: var(--crimson-1);
 }
 
-:is(.dark) :where(.is-crimson-background) {
+:is(.dark) :where(.line-is-crimson-background) {
   background-color: var(--crimson-12);
 }
 
-:where(.is-crimson-subtle-background) {
+:where(.line-is-crimson-subtle-background) {
   background-color: var(--crimson-2);
 }
 
-:is(.dark) :where(.is-crimson-subtle-background) {
+:is(.dark) :where(.line-is-crimson-subtle-background) {
   background-color: var(--crimson-11);
 }
 
-:where(.is-crimson-ui-background) {
+:where(.line-is-crimson-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--crimson-3);
 
@@ -99,7 +99,7 @@
   }
 }
 
-:is(.dark) :where(.is-crimson-ui-background) {
+:is(.dark) :where(.line-is-crimson-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--crimson-10);
 
@@ -108,79 +108,79 @@
   }
 }
 
-:where(.is-crimson-ui-hover-background) {
+:where(.line-is-crimson-ui-hover-background) {
   background-color: var(--crimson-4);
 }
 
-:is(.dark) :where(.is-crimson-ui-hover-background) {
+:is(.dark) :where(.line-is-crimson-ui-hover-background) {
   background-color: var(--crimson-9);
 }
 
-:where(.is-crimson-ui-active-background) {
+:where(.line-is-crimson-ui-active-background) {
   background-color: var(--crimson-5);
 }
 
-:is(.dark) :where(.is-crimson-ui-active-background) {
+:is(.dark) :where(.line-is-crimson-ui-active-background) {
   background-color: var(--crimson-8);
 }
 
-:where(.is-crimson-subtle-element-background) {
+:where(.line-is-crimson-subtle-element-background) {
   background-color: var(--crimson-6);
 }
 
-:is(.dark) :where(.is-crimson-subtle-element-background) {
+:is(.dark) :where(.line-is-crimson-subtle-element-background) {
   background-color: var(--crimson-7);
 }
 
-:where(.is-crimson-ui-element-background) {
+:where(.line-is-crimson-ui-element-background) {
   background-color: var(--crimson-7);
 }
 
-:is(.dark) :where(.is-crimson-ui-element-background) {
+:is(.dark) :where(.line-is-crimson-ui-element-background) {
   background-color: var(--crimson-6);
 }
 
-:where(.is-crimson-ui-hover-background) {
+:where(.line-is-crimson-ui-hover-background) {
   background-color: var(--crimson-8);
 }
 
-:is(.dark) :where(.is-crimson-ui-hover-background) {
+:is(.dark) :where(.line-is-crimson-ui-hover-background) {
   background-color: var(--crimson-5);
 }
 
-:where(.is-crimson-solid-background) {
+:where(.line-is-crimson-solid-background) {
   background-color: var(--crimson-9);
 }
 
-:is(.dark) :where(.is-crimson-solid-background) {
+:is(.dark) :where(.line-is-crimson-solid-background) {
   background-color: var(--crimson-4);
 }
 
-:where(.is-crimson-hover-solid-background) {
+:where(.line-is-crimson-hover-solid-background) {
   background-color: var(--crimson-10);
 }
 
-:is(.dark) :where(.is-crimson-hover-solid-background) {
+:is(.dark) :where(.line-is-crimson-hover-solid-background) {
   background-color: var(--crimson-3);
 }
 
-:where(.is-crimson-low-contrast-background) {
+:where(.line-is-crimson-low-contrast-background) {
   background-color: var(--crimson-11);
 }
 
-:is(.dark) :where(.is-crimson-low-contrast-background) {
+:is(.dark) :where(.line-is-crimson-low-contrast-background) {
   background-color: var(--crimson-2);
 }
 
-:where(.is-crimson-high-contrast-background) {
+:where(.line-is-crimson-high-contrast-background) {
   background-color: var(--crimson-12);
 }
 
-:is(.dark) :where(.is-crimson-high-contrast-background) {
+:is(.dark) :where(.line-is-crimson-high-contrast-background) {
   background-color: var(--crimson-1);
 }
 
-:where(.is-crimson-border) {
+:where(.line-is-crimson-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--crimson-7);
   border-color: var(--crimson-7);
@@ -191,7 +191,7 @@
   }
 }
 
-:is(.dark) :where(.is-crimson-border) {
+:is(.dark) :where(.line-is-crimson-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--crimson-6);
   border-color: var(--crimson-6);

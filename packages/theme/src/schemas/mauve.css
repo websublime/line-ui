@@ -1,4 +1,4 @@
-:where(.schema-mauve) {
+:where(.line-schema-mauve) {
   --background: var(--mauve-1);            /* App background (-1) */
   --subtle-background: var(--mauve-2);     /* Subtle background (-2) */
   --ui-background: var(--mauve-3);         /* UI element background (-3) */
@@ -15,7 +15,7 @@
   --dark: var(--mauve-12);                 /* Dark text */
 }
 
-:is(.dark) :where(.schema-mauve)  {
+:is(.dark) :where(.line-schema-mauve)  {
   --background: var(--mauve-12);           /* App background (-1) */
   --subtle-background: var(--mauve-11);    /* Subtle background (-2) */
   --ui-background: var(--mauve-10);        /* UI element background (-3) */
@@ -30,7 +30,7 @@
   --high-contrast: var(--mauve-1);         /* High-contrast text (-12) */
 }
 
-:where(.is-mauve) {
+:where(.line-is-mauve) {
   color: var(--mauve-1);
   background-color: var(--mauve-9);
   transition: all ease-in-out 150ms;
@@ -40,7 +40,7 @@
   }
 }
 
-:is(.dark) :where(.is-mauve) {
+:is(.dark) :where(.line-is-mauve) {
   color: var(--mauve-1);
   background-color: var(--mauve-4);
   transition: all ease-in-out 150ms;
@@ -50,47 +50,47 @@
   }
 }
 
-:where(.is-mauve-color) {
+:where(.line-is-mauve-color) {
   color: var(--mauve-12);
 }
 
-:is(:dark) :where(.is-mauve-color) {
+:is(:dark) :where(.line-is-mauve-color) {
   color: var(--mauve-1);
 }
 
-:where(.is-mauve-low-contrast) {
+:where(.line-is-mauve-low-contrast) {
   color: var(--mauve-11);
 }
 
-:is(.dark) :where(.is-mauve-low-contrast) {
+:is(.dark) :where(.line-is-mauve-low-contrast) {
   color: var(--mauve-2);
 }
 
-:where(.is-mauve-high-contrast) {
+:where(.line-is-mauve-high-contrast) {
   color: var(--mauve-12);
 }
 
-:is(.dark) :where(.is-mauve-high-contrast) {
+:is(.dark) :where(.line-is-mauve-high-contrast) {
   color: var(--mauve-1);
 }
 
-:where(.is-mauve-background) {
+:where(.line-is-mauve-background) {
   background-color: var(--mauve-1);
 }
 
-:is(.dark) :where(.is-mauve-background) {
+:is(.dark) :where(.line-is-mauve-background) {
   background-color: var(--mauve-12);
 }
 
-:where(.is-mauve-subtle-background) {
+:where(.line-is-mauve-subtle-background) {
   background-color: var(--mauve-2);
 }
 
-:is(.dark) :where(.is-mauve-subtle-background) {
+:is(.dark) :where(.line-is-mauve-subtle-background) {
   background-color: var(--mauve-11);
 }
 
-:where(.is-mauve-ui-background) {
+:where(.line-is-mauve-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--mauve-3);
 
@@ -99,7 +99,7 @@
   }
 }
 
-:is(.dark) :where(.is-mauve-ui-background) {
+:is(.dark) :where(.line-is-mauve-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--mauve-10);
 
@@ -108,79 +108,79 @@
   }
 }
 
-:where(.is-mauve-ui-hover-background) {
+:where(.line-is-mauve-ui-hover-background) {
   background-color: var(--mauve-4);
 }
 
-:is(.dark) :where(.is-mauve-ui-hover-background) {
+:is(.dark) :where(.line-is-mauve-ui-hover-background) {
   background-color: var(--mauve-9);
 }
 
-:where(.is-mauve-ui-active-background) {
+:where(.line-is-mauve-ui-active-background) {
   background-color: var(--mauve-5);
 }
 
-:is(.dark) :where(.is-mauve-ui-active-background) {
+:is(.dark) :where(.line-is-mauve-ui-active-background) {
   background-color: var(--mauve-8);
 }
 
-:where(.is-mauve-subtle-element-background) {
+:where(.line-is-mauve-subtle-element-background) {
   background-color: var(--mauve-6);
 }
 
-:is(.dark) :where(.is-mauve-subtle-element-background) {
+:is(.dark) :where(.line-is-mauve-subtle-element-background) {
   background-color: var(--mauve-7);
 }
 
-:where(.is-mauve-ui-element-background) {
+:where(.line-is-mauve-ui-element-background) {
   background-color: var(--mauve-7);
 }
 
-:is(.dark) :where(.is-mauve-ui-element-background) {
+:is(.dark) :where(.line-is-mauve-ui-element-background) {
   background-color: var(--mauve-6);
 }
 
-:where(.is-mauve-ui-hover-background) {
+:where(.line-is-mauve-ui-hover-background) {
   background-color: var(--mauve-8);
 }
 
-:is(.dark) :where(.is-mauve-ui-hover-background) {
+:is(.dark) :where(.line-is-mauve-ui-hover-background) {
   background-color: var(--mauve-5);
 }
 
-:where(.is-mauve-solid-background) {
+:where(.line-is-mauve-solid-background) {
   background-color: var(--mauve-9);
 }
 
-:is(.dark) :where(.is-mauve-solid-background) {
+:is(.dark) :where(.line-is-mauve-solid-background) {
   background-color: var(--mauve-4);
 }
 
-:where(.is-mauve-hover-solid-background) {
+:where(.line-is-mauve-hover-solid-background) {
   background-color: var(--mauve-10);
 }
 
-:is(.dark) :where(.is-mauve-hover-solid-background) {
+:is(.dark) :where(.line-is-mauve-hover-solid-background) {
   background-color: var(--mauve-3);
 }
 
-:where(.is-mauve-low-contrast-background) {
+:where(.line-is-mauve-low-contrast-background) {
   background-color: var(--mauve-11);
 }
 
-:is(.dark) :where(.is-mauve-low-contrast-background) {
+:is(.dark) :where(.line-is-mauve-low-contrast-background) {
   background-color: var(--mauve-2);
 }
 
-:where(.is-mauve-high-contrast-background) {
+:where(.line-is-mauve-high-contrast-background) {
   background-color: var(--mauve-12);
 }
 
-:is(.dark) :where(.is-mauve-high-contrast-background) {
+:is(.dark) :where(.line-is-mauve-high-contrast-background) {
   background-color: var(--mauve-1);
 }
 
-:where(.is-mauve-border) {
+:where(.line-is-mauve-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--mauve-7);
   border-color: var(--mauve-7);
@@ -191,7 +191,7 @@
   }
 }
 
-:is(.dark) :where(.is-mauve-border) {
+:is(.dark) :where(.line-is-mauve-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--mauve-6);
   border-color: var(--mauve-6);

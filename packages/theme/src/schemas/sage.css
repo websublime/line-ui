@@ -1,4 +1,4 @@
-:where(.schema-sage) {
+:where(.line-schema-sage) {
   --background: var(--sage-1);            /* App background (-1) */
   --subtle-background: var(--sage-2);     /* Subtle background (-2) */
   --ui-background: var(--sage-3);         /* UI element background (-3) */
@@ -17,7 +17,7 @@
   --dark: var(--sage-12);                 /* Dark text */
 }
 
-:is(.dark) :where(.schema-sage)  {
+:is(.dark) :where(.line-schema-sage)  {
   --background: var(--sage-12);           /* App background (-1) */
   --subtle-background: var(--sage-11);    /* Subtle background (-2) */
   --ui-background: var(--sage-10);        /* UI element background (-3) */
@@ -32,7 +32,7 @@
   --high-contrast: var(--sage-1);         /* High-contrast text (-12) */
 }
 
-:where(.is-sage) {
+:where(.line-is-sage) {
   color: var(--sage-1);
   background-color: var(--sage-9);
   transition: all ease-in-out 150ms;
@@ -42,7 +42,7 @@
   }
 }
 
-:is(.dark) :where(.is-sage) {
+:is(.dark) :where(.line-is-sage) {
   color: var(--sage-1);
   background-color: var(--sage-4);
   transition: all ease-in-out 150ms;
@@ -52,47 +52,47 @@
   }
 }
 
-:where(.is-sage-color) {
+:where(.line-is-sage-color) {
   color: var(--sage-12);
 }
 
-:is(:dark) :where(.is-sage-color) {
+:is(:dark) :where(.line-is-sage-color) {
   color: var(--sage-1);
 }
 
-:where(.is-sage-low-contrast) {
+:where(.line-is-sage-low-contrast) {
   color: var(--sage-11);
 }
 
-:is(.dark) :where(.is-sage-low-contrast) {
+:is(.dark) :where(.line-is-sage-low-contrast) {
   color: var(--sage-2);
 }
 
-:where(.is-sage-high-contrast) {
+:where(.line-is-sage-high-contrast) {
   color: var(--sage-12);
 }
 
-:is(.dark) :where(.is-sage-high-contrast) {
+:is(.dark) :where(.line-is-sage-high-contrast) {
   color: var(--sage-1);
 }
 
-:where(.is-sage-background) {
+:where(.line-is-sage-background) {
   background-color: var(--sage-1);
 }
 
-:is(.dark) :where(.is-sage-background) {
+:is(.dark) :where(.line-is-sage-background) {
   background-color: var(--sage-12);
 }
 
-:where(.is-sage-subtle-background) {
+:where(.line-is-sage-subtle-background) {
   background-color: var(--sage-2);
 }
 
-:is(.dark) :where(.is-sage-subtle-background) {
+:is(.dark) :where(.line-is-sage-subtle-background) {
   background-color: var(--sage-11);
 }
 
-:where(.is-sage-ui-background) {
+:where(.line-is-sage-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--sage-3);
 
@@ -101,7 +101,7 @@
   }
 }
 
-:is(.dark) :where(.is-sage-ui-background) {
+:is(.dark) :where(.line-is-sage-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--sage-10);
 
@@ -110,79 +110,79 @@
   }
 }
 
-:where(.is-sage-ui-hover-background) {
+:where(.line-is-sage-ui-hover-background) {
   background-color: var(--sage-4);
 }
 
-:is(.dark) :where(.is-sage-ui-hover-background) {
+:is(.dark) :where(.line-is-sage-ui-hover-background) {
   background-color: var(--sage-9);
 }
 
-:where(.is-sage-ui-active-background) {
+:where(.line-is-sage-ui-active-background) {
   background-color: var(--sage-5);
 }
 
-:is(.dark) :where(.is-sage-ui-active-background) {
+:is(.dark) :where(.line-is-sage-ui-active-background) {
   background-color: var(--sage-8);
 }
 
-:where(.is-sage-subtle-element-background) {
+:where(.line-is-sage-subtle-element-background) {
   background-color: var(--sage-6);
 }
 
-:is(.dark) :where(.is-sage-subtle-element-background) {
+:is(.dark) :where(.line-is-sage-subtle-element-background) {
   background-color: var(--sage-7);
 }
 
-:where(.is-sage-ui-element-background) {
+:where(.line-is-sage-ui-element-background) {
   background-color: var(--sage-7);
 }
 
-:is(.dark) :where(.is-sage-ui-element-background) {
+:is(.dark) :where(.line-is-sage-ui-element-background) {
   background-color: var(--sage-6);
 }
 
-:where(.is-sage-ui-hover-background) {
+:where(.line-is-sage-ui-hover-background) {
   background-color: var(--sage-8);
 }
 
-:is(.dark) :where(.is-sage-ui-hover-background) {
+:is(.dark) :where(.line-is-sage-ui-hover-background) {
   background-color: var(--sage-5);
 }
 
-:where(.is-sage-solid-background) {
+:where(.line-is-sage-solid-background) {
   background-color: var(--sage-9);
 }
 
-:is(.dark) :where(.is-sage-solid-background) {
+:is(.dark) :where(.line-is-sage-solid-background) {
   background-color: var(--sage-4);
 }
 
-:where(.is-sage-hover-solid-background) {
+:where(.line-is-sage-hover-solid-background) {
   background-color: var(--sage-10);
 }
 
-:is(.dark) :where(.is-sage-hover-solid-background) {
+:is(.dark) :where(.line-is-sage-hover-solid-background) {
   background-color: var(--sage-3);
 }
 
-:where(.is-sage-low-contrast-background) {
+:where(.line-is-sage-low-contrast-background) {
   background-color: var(--sage-11);
 }
 
-:is(.dark) :where(.is-sage-low-contrast-background) {
+:is(.dark) :where(.line-is-sage-low-contrast-background) {
   background-color: var(--sage-2);
 }
 
-:where(.is-sage-high-contrast-background) {
+:where(.line-is-sage-high-contrast-background) {
   background-color: var(--sage-12);
 }
 
-:is(.dark) :where(.is-sage-high-contrast-background) {
+:is(.dark) :where(.line-is-sage-high-contrast-background) {
   background-color: var(--sage-1);
 }
 
-:where(.is-sage-border) {
+:where(.line-is-sage-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--sage-7);
   border-color: var(--sage-7);
@@ -193,7 +193,7 @@
   }
 }
 
-:is(.dark) :where(.is-sage-border) {
+:is(.dark) :where(.line-is-sage-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--sage-6);
   border-color: var(--sage-6);

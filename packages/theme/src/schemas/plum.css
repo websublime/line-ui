@@ -1,4 +1,4 @@
-:where(.schema-plum) {
+:where(.line-schema-plum) {
   --background: var(--plum-1);            /* App background (-1) */
   --subtle-background: var(--plum-2);     /* Subtle background (-2) */
   --ui-background: var(--plum-3);         /* UI element background (-3) */
@@ -17,7 +17,7 @@
   --dark: var(--plum-12);                 /* Dark text */
 }
 
-:is(.dark) :where(.schema-plum)  {
+:is(.dark) :where(.line-schema-plum)  {
   --background: var(--plum-12);           /* App background (-1) */
   --subtle-background: var(--plum-11);    /* Subtle background (-2) */
   --ui-background: var(--plum-10);        /* UI element background (-3) */
@@ -32,7 +32,7 @@
   --high-contrast: var(--plum-1);         /* High-contrast text (-12) */
 }
 
-:where(.is-plum) {
+:where(.line-is-plum) {
   color: var(--plum-1);
   background-color: var(--plum-9);
   transition: all ease-in-out 150ms;
@@ -42,7 +42,7 @@
   }
 }
 
-:is(.dark) :where(.is-plum) {
+:is(.dark) :where(.line-is-plum) {
   color: var(--plum-1);
   background-color: var(--plum-4);
   transition: all ease-in-out 150ms;
@@ -52,47 +52,47 @@
   }
 }
 
-:where(.is-plum-color) {
+:where(.line-is-plum-color) {
   color: var(--plum-12);
 }
 
-:is(:dark) :where(.is-plum-color) {
+:is(:dark) :where(.line-is-plum-color) {
   color: var(--plum-1);
 }
 
-:where(.is-plum-low-contrast) {
+:where(.line-is-plum-low-contrast) {
   color: var(--plum-11);
 }
 
-:is(.dark) :where(.is-plum-low-contrast) {
+:is(.dark) :where(.line-is-plum-low-contrast) {
   color: var(--plum-2);
 }
 
-:where(.is-plum-high-contrast) {
+:where(.line-is-plum-high-contrast) {
   color: var(--plum-12);
 }
 
-:is(.dark) :where(.is-plum-high-contrast) {
+:is(.dark) :where(.line-is-plum-high-contrast) {
   color: var(--plum-1);
 }
 
-:where(.is-plum-background) {
+:where(.line-is-plum-background) {
   background-color: var(--plum-1);
 }
 
-:is(.dark) :where(.is-plum-background) {
+:is(.dark) :where(.line-is-plum-background) {
   background-color: var(--plum-12);
 }
 
-:where(.is-plum-subtle-background) {
+:where(.line-is-plum-subtle-background) {
   background-color: var(--plum-2);
 }
 
-:is(.dark) :where(.is-plum-subtle-background) {
+:is(.dark) :where(.line-is-plum-subtle-background) {
   background-color: var(--plum-11);
 }
 
-:where(.is-plum-ui-background) {
+:where(.line-is-plum-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--plum-3);
 
@@ -101,7 +101,7 @@
   }
 }
 
-:is(.dark) :where(.is-plum-ui-background) {
+:is(.dark) :where(.line-is-plum-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--plum-10);
 
@@ -110,79 +110,79 @@
   }
 }
 
-:where(.is-plum-ui-hover-background) {
+:where(.line-is-plum-ui-hover-background) {
   background-color: var(--plum-4);
 }
 
-:is(.dark) :where(.is-plum-ui-hover-background) {
+:is(.dark) :where(.line-is-plum-ui-hover-background) {
   background-color: var(--plum-9);
 }
 
-:where(.is-plum-ui-active-background) {
+:where(.line-is-plum-ui-active-background) {
   background-color: var(--plum-5);
 }
 
-:is(.dark) :where(.is-plum-ui-active-background) {
+:is(.dark) :where(.line-is-plum-ui-active-background) {
   background-color: var(--plum-8);
 }
 
-:where(.is-plum-subtle-element-background) {
+:where(.line-is-plum-subtle-element-background) {
   background-color: var(--plum-6);
 }
 
-:is(.dark) :where(.is-plum-subtle-element-background) {
+:is(.dark) :where(.line-is-plum-subtle-element-background) {
   background-color: var(--plum-7);
 }
 
-:where(.is-plum-ui-element-background) {
+:where(.line-is-plum-ui-element-background) {
   background-color: var(--plum-7);
 }
 
-:is(.dark) :where(.is-plum-ui-element-background) {
+:is(.dark) :where(.line-is-plum-ui-element-background) {
   background-color: var(--plum-6);
 }
 
-:where(.is-plum-ui-hover-background) {
+:where(.line-is-plum-ui-hover-background) {
   background-color: var(--plum-8);
 }
 
-:is(.dark) :where(.is-plum-ui-hover-background) {
+:is(.dark) :where(.line-is-plum-ui-hover-background) {
   background-color: var(--plum-5);
 }
 
-:where(.is-plum-solid-background) {
+:where(.line-is-plum-solid-background) {
   background-color: var(--plum-9);
 }
 
-:is(.dark) :where(.is-plum-solid-background) {
+:is(.dark) :where(.line-is-plum-solid-background) {
   background-color: var(--plum-4);
 }
 
-:where(.is-plum-hover-solid-background) {
+:where(.line-is-plum-hover-solid-background) {
   background-color: var(--plum-10);
 }
 
-:is(.dark) :where(.is-plum-hover-solid-background) {
+:is(.dark) :where(.line-is-plum-hover-solid-background) {
   background-color: var(--plum-3);
 }
 
-:where(.is-plum-low-contrast-background) {
+:where(.line-is-plum-low-contrast-background) {
   background-color: var(--plum-11);
 }
 
-:is(.dark) :where(.is-plum-low-contrast-background) {
+:is(.dark) :where(.line-is-plum-low-contrast-background) {
   background-color: var(--plum-2);
 }
 
-:where(.is-plum-high-contrast-background) {
+:where(.line-is-plum-high-contrast-background) {
   background-color: var(--plum-12);
 }
 
-:is(.dark) :where(.is-plum-high-contrast-background) {
+:is(.dark) :where(.line-is-plum-high-contrast-background) {
   background-color: var(--plum-1);
 }
 
-:where(.is-plum-border) {
+:where(.line-is-plum-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--plum-7);
   border-color: var(--plum-7);
@@ -193,7 +193,7 @@
   }
 }
 
-:is(.dark) :where(.is-plum-border) {
+:is(.dark) :where(.line-is-plum-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--plum-6);
   border-color: var(--plum-6);
