@@ -50,11 +50,12 @@ docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
 │     Positioning — component-by-component gap analysis vs Shoelace, Spectrum, etc.
 │
 └── .spec/
-      Detail — per-component and per-system API contracts
-      ├── COMPONENT-SPEC-TEMPLATE.md   Template for component specs
-      ├── BASE-SPEC.md (APPROVED)      LineElement base class, mixins, Zag.js adapter
-      ├── ICON-REGISTRY-SPEC.md (APPROVED)  Icon registry API, <line-icon> component
-      └── STORYBOOK-SPEC.md (APPROVED) Storybook 8 setup, CEM, story conventions
+      Detail — architecture and per-component API contracts.
+      Every spec follows COMPONENT-SPEC-TEMPLATE.md and has a status
+      (DRAFT → APPROVED → IMPLEMENTED). Specs are created just-in-time
+      before implementation begins.
+      Naming: {SYSTEM}-SPEC.md for infrastructure (BASE-SPEC, ICON-REGISTRY-SPEC,
+      STORYBOOK-SPEC), {NNNN}-{component}.md for components (0002-button.md).
 ```
 
 | Task | Start here |
@@ -62,10 +63,7 @@ docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
 | Understanding project goals, phases, decisions | PRD |
 | Learning composition patterns, tier classification, CSS strategy | ARCHITECTURE |
 | Understanding execution order, dependencies, done criteria | PRODUCT-PLAN |
-| Implementing LineElement, mixins, or core infrastructure | `.spec/BASE-SPEC.md` |
-| Implementing icon registry or `<line-icon>` | `.spec/ICON-REGISTRY-SPEC.md` |
-| Setting up Storybook, CEM, or writing stories | `.spec/STORYBOOK-SPEC.md` |
-| Implementing or reviewing a specific component | `.spec/` for that component |
+| Implementing any system or component | `.spec/` — find the matching spec by name |
 | Comparing with competitors, identifying gaps | COMPETITIVE-COMPONENT-ANALYSIS |
 
 ## Repository Structure
@@ -97,10 +95,9 @@ vitamin/
 │   ├── PRODUCT-PLAN.md
 │   └── COMPETITIVE-COMPONENT-ANALYSIS.md
 ├── .spec/                            # Architecture & component specs (API contracts)
-│   ├── COMPONENT-SPEC-TEMPLATE.md
-│   ├── BASE-SPEC.md                  # LineElement, mixins, Zag.js adapter (APPROVED)
-│   ├── ICON-REGISTRY-SPEC.md         # Icon registry, <line-icon> (APPROVED)
-│   └── STORYBOOK-SPEC.md             # Storybook 8 setup, CEM, stories (APPROVED)
+│   ├── COMPONENT-SPEC-TEMPLATE.md    # Template for all specs
+│   ├── {SYSTEM}-SPEC.md              # Infrastructure specs (e.g., BASE-SPEC, ICON-REGISTRY-SPEC)
+│   └── {NNNN}-{component}.md         # Per-component specs (e.g., 0002-button.md)
 ├── .changeset/                       # Changesets configuration
 ├── .github/                          # GitHub workflows & config
 ├── .githooks/                        # Git hooks (core.hooksPath)
