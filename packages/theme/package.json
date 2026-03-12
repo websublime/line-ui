@@ -1,13 +1,13 @@
 {
-  "name": "@websublime/vitamina-theme",
+  "name": "@websublime/line-theme",
   "version": "0.6.0",
-  "description": "Base theme for Vitamina",
+  "description": "Base theme for line://ui",
   "type": "module",
-  "style": "dist/vita.min.css",
+  "style": "dist/line.min.css",
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && bun run --filter '/^css:.*/' ",
-    "css:all": "postcss src/vita.css -o ./dist/vita.min.css",
+    "css:all": "postcss src/line.css -o ./dist/line.min.css",
     "css:colors:amber": "postcss src/colors/amber.css -o ./dist/colors-amber.min.css",
     "css:colors:blue": "postcss src/colors/blue.css -o ./dist/colors-blue.min.css",
     "css:colors:bronze": "postcss src/colors/bronze.css -o ./dist/colors-bronze.min.css",
