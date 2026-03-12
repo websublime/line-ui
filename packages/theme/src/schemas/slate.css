@@ -1,4 +1,4 @@
-:where(.schema-slate) {
+:where(.line-schema-slate) {
   --line-background: var(--line-slate-1); /* App background (-1) */
   --line-subtle-background: var(--line-slate-2); /* Subtle background (-2) */
   --line-ui-background: var(--line-slate-3); /* UI element background (-3) */
@@ -17,7 +17,7 @@
   --line-dark: var(--line-slate-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-slate) {
+:is(.dark) :where(.line-schema-slate) {
   --line-background: var(--line-slate-12); /* App background (-1) */
   --line-subtle-background: var(--line-slate-11); /* Subtle background (-2) */
   --line-ui-background: var(--line-slate-10); /* UI element background (-3) */
@@ -32,7 +32,7 @@
   --line-high-contrast: var(--line-slate-1); /* High-contrast text (-12) */
 }
 
-:where(.is-slate) {
+:where(.line-is-slate) {
   color: var(--line-slate-1);
   background-color: var(--line-slate-9);
   transition: all ease-in-out 150ms;
@@ -42,7 +42,7 @@
   }
 }
 
-:is(.dark) :where(.is-slate) {
+:is(.dark) :where(.line-is-slate) {
   color: var(--line-slate-1);
   background-color: var(--line-slate-4);
   transition: all ease-in-out 150ms;
@@ -52,47 +52,47 @@
   }
 }
 
-:where(.is-slate-color) {
+:where(.line-is-slate-color) {
   color: var(--line-slate-12);
 }
 
-:is(.dark) :where(.is-slate-color) {
+:is(.dark) :where(.line-is-slate-color) {
   color: var(--line-slate-1);
 }
 
-:where(.is-slate-low-contrast) {
+:where(.line-is-slate-low-contrast) {
   color: var(--line-slate-11);
 }
 
-:is(.dark) :where(.is-slate-low-contrast) {
+:is(.dark) :where(.line-is-slate-low-contrast) {
   color: var(--line-slate-2);
 }
 
-:where(.is-slate-high-contrast) {
+:where(.line-is-slate-high-contrast) {
   color: var(--line-slate-12);
 }
 
-:is(.dark) :where(.is-slate-high-contrast) {
+:is(.dark) :where(.line-is-slate-high-contrast) {
   color: var(--line-slate-1);
 }
 
-:where(.is-slate-background) {
+:where(.line-is-slate-background) {
   background-color: var(--line-slate-1);
 }
 
-:is(.dark) :where(.is-slate-background) {
+:is(.dark) :where(.line-is-slate-background) {
   background-color: var(--line-slate-12);
 }
 
-:where(.is-slate-subtle-background) {
+:where(.line-is-slate-subtle-background) {
   background-color: var(--line-slate-2);
 }
 
-:is(.dark) :where(.is-slate-subtle-background) {
+:is(.dark) :where(.line-is-slate-subtle-background) {
   background-color: var(--line-slate-11);
 }
 
-:where(.is-slate-ui-background) {
+:where(.line-is-slate-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-slate-3);
 
@@ -101,7 +101,7 @@
   }
 }
 
-:is(.dark) :where(.is-slate-ui-background) {
+:is(.dark) :where(.line-is-slate-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-slate-10);
 
@@ -110,79 +110,79 @@
   }
 }
 
-:where(.is-slate-ui-hover-background) {
+:where(.line-is-slate-ui-hover-background) {
   background-color: var(--line-slate-4);
 }
 
-:is(.dark) :where(.is-slate-ui-hover-background) {
+:is(.dark) :where(.line-is-slate-ui-hover-background) {
   background-color: var(--line-slate-9);
 }
 
-:where(.is-slate-ui-active-background) {
+:where(.line-is-slate-ui-active-background) {
   background-color: var(--line-slate-5);
 }
 
-:is(.dark) :where(.is-slate-ui-active-background) {
+:is(.dark) :where(.line-is-slate-ui-active-background) {
   background-color: var(--line-slate-8);
 }
 
-:where(.is-slate-subtle-element-background) {
+:where(.line-is-slate-subtle-element-background) {
   background-color: var(--line-slate-6);
 }
 
-:is(.dark) :where(.is-slate-subtle-element-background) {
+:is(.dark) :where(.line-is-slate-subtle-element-background) {
   background-color: var(--line-slate-7);
 }
 
-:where(.is-slate-ui-element-background) {
+:where(.line-is-slate-ui-element-background) {
   background-color: var(--line-slate-7);
 }
 
-:is(.dark) :where(.is-slate-ui-element-background) {
+:is(.dark) :where(.line-is-slate-ui-element-background) {
   background-color: var(--line-slate-6);
 }
 
-:where(.is-slate-ui-hover-background) {
+:where(.line-is-slate-ui-hover-background) {
   background-color: var(--line-slate-8);
 }
 
-:is(.dark) :where(.is-slate-ui-hover-background) {
+:is(.dark) :where(.line-is-slate-ui-hover-background) {
   background-color: var(--line-slate-5);
 }
 
-:where(.is-slate-solid-background) {
+:where(.line-is-slate-solid-background) {
   background-color: var(--line-slate-9);
 }
 
-:is(.dark) :where(.is-slate-solid-background) {
+:is(.dark) :where(.line-is-slate-solid-background) {
   background-color: var(--line-slate-4);
 }
 
-:where(.is-slate-hover-solid-background) {
+:where(.line-is-slate-hover-solid-background) {
   background-color: var(--line-slate-10);
 }
 
-:is(.dark) :where(.is-slate-hover-solid-background) {
+:is(.dark) :where(.line-is-slate-hover-solid-background) {
   background-color: var(--line-slate-3);
 }
 
-:where(.is-slate-low-contrast-background) {
+:where(.line-is-slate-low-contrast-background) {
   background-color: var(--line-slate-11);
 }
 
-:is(.dark) :where(.is-slate-low-contrast-background) {
+:is(.dark) :where(.line-is-slate-low-contrast-background) {
   background-color: var(--line-slate-2);
 }
 
-:where(.is-slate-high-contrast-background) {
+:where(.line-is-slate-high-contrast-background) {
   background-color: var(--line-slate-12);
 }
 
-:is(.dark) :where(.is-slate-high-contrast-background) {
+:is(.dark) :where(.line-is-slate-high-contrast-background) {
   background-color: var(--line-slate-1);
 }
 
-:where(.is-slate-border) {
+:where(.line-is-slate-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-slate-7);
   border-color: var(--line-slate-7);
@@ -193,7 +193,7 @@
   }
 }
 
-:is(.dark) :where(.is-slate-border) {
+:is(.dark) :where(.line-is-slate-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-slate-6);
   border-color: var(--line-slate-6);

@@ -1,4 +1,4 @@
-:where(.schema-green) {
+:where(.line-schema-green) {
   --line-background: var(--line-green-1); /* App background (-1) */
   --line-subtle-background: var(--line-green-2); /* Subtle background (-2) */
   --line-ui-background: var(--line-green-3); /* UI element background (-3) */
@@ -15,7 +15,7 @@
   --line-dark: var(--line-green-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-green) {
+:is(.dark) :where(.line-schema-green) {
   --line-background: var(--line-green-12); /* App background (-1) */
   --line-subtle-background: var(--line-green-11); /* Subtle background (-2) */
   --line-ui-background: var(--line-green-10); /* UI element background (-3) */
@@ -30,7 +30,7 @@
   --line-high-contrast: var(--line-green-1); /* High-contrast text (-12) */
 }
 
-:where(.is-green) {
+:where(.line-is-green) {
   color: var(--line-green-1);
   background-color: var(--line-green-9);
   transition: all ease-in-out 150ms;
@@ -40,7 +40,7 @@
   }
 }
 
-:is(.dark) :where(.is-green) {
+:is(.dark) :where(.line-is-green) {
   color: var(--line-green-1);
   background-color: var(--line-green-4);
   transition: all ease-in-out 150ms;
@@ -50,47 +50,47 @@
   }
 }
 
-:where(.is-green-color) {
+:where(.line-is-green-color) {
   color: var(--line-green-12);
 }
 
-:is(.dark) :where(.is-green-color) {
+:is(.dark) :where(.line-is-green-color) {
   color: var(--line-green-1);
 }
 
-:where(.is-green-low-contrast) {
+:where(.line-is-green-low-contrast) {
   color: var(--line-green-11);
 }
 
-:is(.dark) :where(.is-green-low-contrast) {
+:is(.dark) :where(.line-is-green-low-contrast) {
   color: var(--line-green-2);
 }
 
-:where(.is-green-high-contrast) {
+:where(.line-is-green-high-contrast) {
   color: var(--line-green-12);
 }
 
-:is(.dark) :where(.is-green-high-contrast) {
+:is(.dark) :where(.line-is-green-high-contrast) {
   color: var(--line-green-1);
 }
 
-:where(.is-green-background) {
+:where(.line-is-green-background) {
   background-color: var(--line-green-1);
 }
 
-:is(.dark) :where(.is-green-background) {
+:is(.dark) :where(.line-is-green-background) {
   background-color: var(--line-green-12);
 }
 
-:where(.is-green-subtle-background) {
+:where(.line-is-green-subtle-background) {
   background-color: var(--line-green-2);
 }
 
-:is(.dark) :where(.is-green-subtle-background) {
+:is(.dark) :where(.line-is-green-subtle-background) {
   background-color: var(--line-green-11);
 }
 
-:where(.is-green-ui-background) {
+:where(.line-is-green-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-green-3);
 
@@ -99,7 +99,7 @@
   }
 }
 
-:is(.dark) :where(.is-green-ui-background) {
+:is(.dark) :where(.line-is-green-ui-background) {
   transition: colors ease-in-out 150ms;
   background-color: var(--line-green-10);
 
@@ -108,79 +108,79 @@
   }
 }
 
-:where(.is-green-ui-hover-background) {
+:where(.line-is-green-ui-hover-background) {
   background-color: var(--line-green-4);
 }
 
-:is(.dark) :where(.is-green-ui-hover-background) {
+:is(.dark) :where(.line-is-green-ui-hover-background) {
   background-color: var(--line-green-9);
 }
 
-:where(.is-green-ui-active-background) {
+:where(.line-is-green-ui-active-background) {
   background-color: var(--line-green-5);
 }
 
-:is(.dark) :where(.is-green-ui-active-background) {
+:is(.dark) :where(.line-is-green-ui-active-background) {
   background-color: var(--line-green-8);
 }
 
-:where(.is-green-subtle-element-background) {
+:where(.line-is-green-subtle-element-background) {
   background-color: var(--line-green-6);
 }
 
-:is(.dark) :where(.is-green-subtle-element-background) {
+:is(.dark) :where(.line-is-green-subtle-element-background) {
   background-color: var(--line-green-7);
 }
 
-:where(.is-green-ui-element-background) {
+:where(.line-is-green-ui-element-background) {
   background-color: var(--line-green-7);
 }
 
-:is(.dark) :where(.is-green-ui-element-background) {
+:is(.dark) :where(.line-is-green-ui-element-background) {
   background-color: var(--line-green-6);
 }
 
-:where(.is-green-ui-hover-background) {
+:where(.line-is-green-ui-hover-background) {
   background-color: var(--line-green-8);
 }
 
-:is(.dark) :where(.is-green-ui-hover-background) {
+:is(.dark) :where(.line-is-green-ui-hover-background) {
   background-color: var(--line-green-5);
 }
 
-:where(.is-green-solid-background) {
+:where(.line-is-green-solid-background) {
   background-color: var(--line-green-9);
 }
 
-:is(.dark) :where(.is-green-solid-background) {
+:is(.dark) :where(.line-is-green-solid-background) {
   background-color: var(--line-green-4);
 }
 
-:where(.is-green-hover-solid-background) {
+:where(.line-is-green-hover-solid-background) {
   background-color: var(--line-green-10);
 }
 
-:is(.dark) :where(.is-green-hover-solid-background) {
+:is(.dark) :where(.line-is-green-hover-solid-background) {
   background-color: var(--line-green-3);
 }
 
-:where(.is-green-low-contrast-background) {
+:where(.line-is-green-low-contrast-background) {
   background-color: var(--line-green-11);
 }
 
-:is(.dark) :where(.is-green-low-contrast-background) {
+:is(.dark) :where(.line-is-green-low-contrast-background) {
   background-color: var(--line-green-2);
 }
 
-:where(.is-green-high-contrast-background) {
+:where(.line-is-green-high-contrast-background) {
   background-color: var(--line-green-12);
 }
 
-:is(.dark) :where(.is-green-high-contrast-background) {
+:is(.dark) :where(.line-is-green-high-contrast-background) {
   background-color: var(--line-green-1);
 }
 
-:where(.is-green-border) {
+:where(.line-is-green-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-green-7);
   border-color: var(--line-green-7);
@@ -191,7 +191,7 @@
   }
 }
 
-:is(.dark) :where(.is-green-border) {
+:is(.dark) :where(.line-is-green-border) {
   transition: colors ease-in-out 150ms;
   outline-color: var(--line-green-6);
   border-color: var(--line-green-6);
