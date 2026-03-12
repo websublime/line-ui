@@ -1,29 +1,29 @@
 :where(html) {
-  --tomato-1: hsl(10, 100%, 99.4%);
-  --tomato-2: hsl(8, 100%, 98.4%);
-  --tomato-3: hsl(8, 100%, 96.6%);
-  --tomato-4: hsl(8, 100%, 94.3%);
-  --tomato-5: hsl(8, 92.8%, 91.0%);
-  --tomato-6: hsl(9, 84.7%, 86.3%);
-  --tomato-7: hsl(10, 77.3%, 79.5%);
-  --tomato-8: hsl(10, 71.6%, 71.0%);
-  --tomato-9: hsl(10, 78.0%, 54.0%);
-  --tomato-10: hsl(10, 71.4%, 49.4%);
-  --tomato-11: hsl(10, 82.0%, 42.0%);
-  --tomato-12: hsl(8, 50.0%, 24.0%);
+  --line-tomato-1: hsl(10, 100%, 99.4%);
+  --line-tomato-2: hsl(8, 100%, 98.4%);
+  --line-tomato-3: hsl(8, 100%, 96.6%);
+  --line-tomato-4: hsl(8, 100%, 94.3%);
+  --line-tomato-5: hsl(8, 92.8%, 91.0%);
+  --line-tomato-6: hsl(9, 84.7%, 86.3%);
+  --line-tomato-7: hsl(10, 77.3%, 79.5%);
+  --line-tomato-8: hsl(10, 71.6%, 71.0%);
+  --line-tomato-9: hsl(10, 78.0%, 54.0%);
+  --line-tomato-10: hsl(10, 71.4%, 49.4%);
+  --line-tomato-11: hsl(10, 82.0%, 42.0%);
+  --line-tomato-12: hsl(8, 50.0%, 24.0%);
 }
 
 :where(html):is(.dark) {
-  --tomato-12: hsl(10, 23.0%, 9.4%);
-  --tomato-11: hsl(10, 39.0%, 11.6%);
-  --tomato-10: hsl(9, 48.3%, 15.5%);
-  --tomato-9: hsl(9, 53.0%, 18.1%);
-  --tomato-8: hsl(9, 57.0%, 20.7%);
-  --tomato-7: hsl(9, 61.8%, 24.5%);
-  --tomato-6: hsl(9, 68.4%, 31.1%);
-  --tomato-5: hsl(10, 80.4%, 43.9%);
-  --tomato-4: hsl(10, 78.0%, 54.0%);
-  --tomato-3: hsl(10, 88.4%, 64.1%);
-  --tomato-2: hsl(10, 100%, 72.0%);
-  --tomato-1: hsl(10, 85.0%, 89.0%);
+  --line-tomato-12: hsl(10, 23.0%, 9.4%);
+  --line-tomato-11: hsl(10, 39.0%, 11.6%);
+  --line-tomato-10: hsl(9, 48.3%, 15.5%);
+  --line-tomato-9: hsl(9, 53.0%, 18.1%);
+  --line-tomato-8: hsl(9, 57.0%, 20.7%);
+  --line-tomato-7: hsl(9, 61.8%, 24.5%);
+  --line-tomato-6: hsl(9, 68.4%, 31.1%);
+  --line-tomato-5: hsl(10, 80.4%, 43.9%);
+  --line-tomato-4: hsl(10, 78.0%, 54.0%);
+  --line-tomato-3: hsl(10, 88.4%, 64.1%);
+  --line-tomato-2: hsl(10, 100%, 72.0%);
+  --line-tomato-1: hsl(10, 85.0%, 89.0%);
 }

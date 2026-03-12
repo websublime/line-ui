@@ -1,205 +1,205 @@
 :where(.schema-amber) {
-  --background: var(--amber-1);            /* App background (-1) */
-  --subtle-background: var(--amber-2);     /* Subtle background (-2) */
-  --ui-background: var(--amber-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--amber-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--amber-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--amber-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--amber-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--amber-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--amber-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--amber-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--amber-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--amber-12);        /* High-contrast text (-12) */
-  --light: var(--amber-1);                 /* Light text */
-  --dark: var(--amber-12);                 /* Dark text */
+  --background: var(--line-amber-1);            /* App background (-1) */
+  --subtle-background: var(--line-amber-2);     /* Subtle background (-2) */
+  --ui-background: var(--line-amber-3);         /* UI element background (-3) */
+  --ui-hover-background: var(--line-amber-4);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-amber-5);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-amber-6);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-amber-7);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-amber-8);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-amber-9);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-amber-10);          /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-amber-11);         /* Low-contrast text (-11) */
+  --high-contrast: var(--line-amber-12);        /* High-contrast text (-12) */
+  --light: var(--line-amber-1);                 /* Light text */
+  --dark: var(--line-amber-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-amber)   {
-  --background: var(--amber-12);           /* App background (-1) */
-  --subtle-background: var(--amber-11);    /* Subtle background (-2) */
-  --ui-background: var(--amber-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--amber-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--amber-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--amber-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--amber-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--amber-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--amber-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--amber-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--amber-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--amber-1);         /* High-contrast text (-12) */
-  --light: var(--amber-12);                /* Light text */
-  --dark: var(--amber-1);                  /* Dark text */
+  --background: var(--line-amber-12);           /* App background (-1) */
+  --subtle-background: var(--line-amber-11);    /* Subtle background (-2) */
+  --ui-background: var(--line-amber-10);        /* UI element background (-3) */
+  --ui-hover-background: var(--line-amber-9);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-amber-8);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-amber-7);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-amber-6);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-amber-5);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-amber-4);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-amber-3);           /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-amber-2);          /* Low-contrast text (-11) */
+  --high-contrast: var(--line-amber-1);         /* High-contrast text (-12) */
+  --light: var(--line-amber-12);                /* Light text */
+  --dark: var(--line-amber-1);                  /* Dark text */
 }
 
 :where(.is-amber) {
-  color: var(--amber-12);
-  background-color: var(--amber-9);
+  color: var(--line-amber-12);
+  background-color: var(--line-amber-9);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--amber-10);
+    background-color: var(--line-amber-10);
   }
 }
 
 :is(.dark) :where(.is-amber) {
-  color: var(--amber-12);
-  background-color: var(--amber-4);
+  color: var(--line-amber-12);
+  background-color: var(--line-amber-4);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--amber-3);
+    background-color: var(--line-amber-3);
   }
 }
 
 :where(.is-amber-color) {
-  color: var(--amber-12);
+  color: var(--line-amber-12);
 }
 
 :is(:dark) :where(.is-amber-color) {
-  color: var(--amber-1);
+  color: var(--line-amber-1);
 }
 
 :where(.is-amber-low-contrast) {
-  color: var(--amber-11);
+  color: var(--line-amber-11);
 }
 
 :is(.dark) :where(.is-amber-low-contrast) {
-  color: var(--amber-2);
+  color: var(--line-amber-2);
 }
 
 :where(.is-amber-high-contrast) {
-  color: var(--amber-12);
+  color: var(--line-amber-12);
 }
 
 :is(.dark) :where(.is-amber-high-contrast) {
-  color: var(--amber-1);
+  color: var(--line-amber-1);
 }
 
 :where(.is-amber-background) {
-  background-color: var(--amber-1);
+  background-color: var(--line-amber-1);
 }
 
 :is(.dark) :where(.is-amber-background) {
-  background-color: var(--amber-12);
+  background-color: var(--line-amber-12);
 }
 
 :where(.is-amber-subtle-background) {
-  background-color: var(--amber-2);
+  background-color: var(--line-amber-2);
 }
 
 :is(.dark) :where(.is-amber-subtle-background) {
-  background-color: var(--amber-11);
+  background-color: var(--line-amber-11);
 }
 
 :where(.is-amber-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--amber-3);
+  background-color: var(--line-amber-3);
 
   &:hover {
-    background-color: var(--amber-4);
+    background-color: var(--line-amber-4);
   }
 }
 
 :is(.dark) :where(.is-amber-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--amber-10);
+  background-color: var(--line-amber-10);
 
   &:hover {
-    background-color: var(--amber-9);
+    background-color: var(--line-amber-9);
   }
 }
 
 :where(.is-amber-ui-hover-background) {
-  background-color: var(--amber-4);
+  background-color: var(--line-amber-4);
 }
 
 :is(.dark) :where(.is-amber-ui-hover-background) {
-  background-color: var(--amber-9);
+  background-color: var(--line-amber-9);
 }
 
 :where(.is-amber-ui-active-background) {
-  background-color: var(--amber-5);
+  background-color: var(--line-amber-5);
 }
 
 :is(.dark) :where(.is-amber-ui-active-background) {
-  background-color: var(--amber-8);
+  background-color: var(--line-amber-8);
 }
 
 :where(.is-amber-subtle-element-background) {
-  background-color: var(--amber-6);
+  background-color: var(--line-amber-6);
 }
 
 :is(.dark) :where(.is-amber-subtle-element-background) {
-  background-color: var(--amber-7);
+  background-color: var(--line-amber-7);
 }
 
 :where(.is-amber-ui-element-background) {
-  background-color: var(--amber-7);
+  background-color: var(--line-amber-7);
 }
 
 :is(.dark) :where(.is-amber-ui-element-background) {
-  background-color: var(--amber-6);
+  background-color: var(--line-amber-6);
 }
 
 :where(.is-amber-ui-hover-background) {
-  background-color: var(--amber-8);
+  background-color: var(--line-amber-8);
 }
 
 :is(.dark) :where(.is-amber-ui-hover-background) {
-  background-color: var(--amber-5);
+  background-color: var(--line-amber-5);
 }
 
 :where(.is-amber-solid-background) {
-  background-color: var(--amber-9);
+  background-color: var(--line-amber-9);
 }
 
 :is(.dark) :where(.is-amber-solid-background) {
-  background-color: var(--amber-4);
+  background-color: var(--line-amber-4);
 }
 
 :where(.is-amber-hover-solid-background) {
-  background-color: var(--amber-10);
+  background-color: var(--line-amber-10);
 }
 
 :is(.dark) :where(.is-amber-hover-solid-background) {
-  background-color: var(--amber-3);
+  background-color: var(--line-amber-3);
 }
 
 :where(.is-amber-low-contrast-background) {
-  background-color: var(--amber-11);
+  background-color: var(--line-amber-11);
 }
 
 :is(.dark) :where(.is-amber-low-contrast-background) {
-  background-color: var(--amber-2);
+  background-color: var(--line-amber-2);
 }
 
 :where(.is-amber-high-contrast-background) {
-  background-color: var(--amber-12);
+  background-color: var(--line-amber-12);
 }
 
 :is(.dark) :where(.is-amber-high-contrast-background) {
-  background-color: var(--amber-1);
+  background-color: var(--line-amber-1);
 }
 
 :where(.is-amber-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--amber-7);
-  border-color: var(--amber-7);
+  outline-color: var(--line-amber-7);
+  border-color: var(--line-amber-7);
 
   &:hover {
-    outline-color: var(--amber-8);
-    border-color: var(--amber-8);
+    outline-color: var(--line-amber-8);
+    border-color: var(--line-amber-8);
   }
 }
 
 :is(.dark) :where(.is-amber-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--amber-6);
-  border-color: var(--amber-6);
+  outline-color: var(--line-amber-6);
+  border-color: var(--line-amber-6);
 
   &:hover {
-    outline-color: var(--amber-5);
-    border-color: var(--amber-5);
+    outline-color: var(--line-amber-5);
+    border-color: var(--line-amber-5);
   }
 }

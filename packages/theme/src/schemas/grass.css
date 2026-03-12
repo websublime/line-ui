@@ -1,203 +1,203 @@
 :where(.schema-grass) {
-  --background: var(--grass-1);            /* App background (-1) */
-  --subtle-background: var(--grass-2);     /* Subtle background (-2) */
-  --ui-background: var(--grass-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--grass-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--grass-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--grass-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--grass-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--grass-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--grass-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--grass-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--grass-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--grass-12);        /* High-contrast text (-12) */
-  --light: var(--grass-1);                 /* Light text */
-  --dark: var(--grass-12);                 /* Dark text */
+  --background: var(--line-grass-1);            /* App background (-1) */
+  --subtle-background: var(--line-grass-2);     /* Subtle background (-2) */
+  --ui-background: var(--line-grass-3);         /* UI element background (-3) */
+  --ui-hover-background: var(--line-grass-4);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-grass-5);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-grass-6);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-grass-7);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-grass-8);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-grass-9);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-grass-10);          /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-grass-11);         /* Low-contrast text (-11) */
+  --high-contrast: var(--line-grass-12);        /* High-contrast text (-12) */
+  --light: var(--line-grass-1);                 /* Light text */
+  --dark: var(--line-grass-12);                 /* Dark text */
 }
 
 :is(.dark) :where(.schema-grass)  {
-  --background: var(--grass-12);           /* App background (-1) */
-  --subtle-background: var(--grass-11);    /* Subtle background (-2) */
-  --ui-background: var(--grass-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--grass-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--grass-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--grass-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--grass-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--grass-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--grass-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--grass-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--grass-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--grass-1);         /* High-contrast text (-12) */
+  --background: var(--line-grass-12);           /* App background (-1) */
+  --subtle-background: var(--line-grass-11);    /* Subtle background (-2) */
+  --ui-background: var(--line-grass-10);        /* UI element background (-3) */
+  --ui-hover-background: var(--line-grass-9);   /* Hovered UI element background  (-4)*/
+  --ui-active-background: var(--line-grass-8);  /* Active / Selected UI element background (-5) */
+  --subtle-border: var(--line-grass-7);         /* Subtle borders and separators (-6) */
+  --ui-border: var(--line-grass-6);             /* UI element border and focus rings (-7) */
+  --ui-border-hover: var(--line-grass-5);       /* Hovered UI element border (-8) */
+  --solid-background: var(--line-grass-4);      /* Solid backgrounds (-9) */
+  --solid-hover: var(--line-grass-3);           /* Hovered solid backgrounds (-10) */
+  --low-contrast: var(--line-grass-2);          /* Low-contrast text (-11) */
+  --high-contrast: var(--line-grass-1);         /* High-contrast text (-12) */
 }
 
 :where(.is-grass) {
-  color: var(--grass-1);
-  background-color: var(--grass-9);
+  color: var(--line-grass-1);
+  background-color: var(--line-grass-9);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--grass-10);
+    background-color: var(--line-grass-10);
   }
 }
 
 :is(.dark) :where(.is-grass) {
-  color: var(--grass-1);
-  background-color: var(--grass-4);
+  color: var(--line-grass-1);
+  background-color: var(--line-grass-4);
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--grass-3);
+    background-color: var(--line-grass-3);
   }
 }
 
 :where(.is-grass-color) {
-  color: var(--grass-12);
+  color: var(--line-grass-12);
 }
 
 :is(:dark) :where(.is-grass-color) {
-  color: var(--grass-1);
+  color: var(--line-grass-1);
 }
 
 :where(.is-grass-low-contrast) {
-  color: var(--grass-11);
+  color: var(--line-grass-11);
 }
 
 :is(.dark) :where(.is-grass-low-contrast) {
-  color: var(--grass-2);
+  color: var(--line-grass-2);
 }
 
 :where(.is-grass-high-contrast) {
-  color: var(--grass-12);
+  color: var(--line-grass-12);
 }
 
 :is(.dark) :where(.is-grass-high-contrast) {
-  color: var(--grass-1);
+  color: var(--line-grass-1);
 }
 
 :where(.is-grass-background) {
-  background-color: var(--grass-1);
+  background-color: var(--line-grass-1);
 }
 
 :is(.dark) :where(.is-grass-background) {
-  background-color: var(--grass-12);
+  background-color: var(--line-grass-12);
 }
 
 :where(.is-grass-subtle-background) {
-  background-color: var(--grass-2);
+  background-color: var(--line-grass-2);
 }
 
 :is(.dark) :where(.is-grass-subtle-background) {
-  background-color: var(--grass-11);
+  background-color: var(--line-grass-11);
 }
 
 :where(.is-grass-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--grass-3);
+  background-color: var(--line-grass-3);
 
   &:hover {
-    background-color: var(--grass-4);
+    background-color: var(--line-grass-4);
   }
 }
 
 :is(.dark) :where(.is-grass-ui-background) {
   transition: colors ease-in-out 150ms;
-  background-color: var(--grass-10);
+  background-color: var(--line-grass-10);
 
   &:hover {
-    background-color: var(--grass-9);
+    background-color: var(--line-grass-9);
   }
 }
 
 :where(.is-grass-ui-hover-background) {
-  background-color: var(--grass-4);
+  background-color: var(--line-grass-4);
 }
 
 :is(.dark) :where(.is-grass-ui-hover-background) {
-  background-color: var(--grass-9);
+  background-color: var(--line-grass-9);
 }
 
 :where(.is-grass-ui-active-background) {
-  background-color: var(--grass-5);
+  background-color: var(--line-grass-5);
 }
 
 :is(.dark) :where(.is-grass-ui-active-background) {
-  background-color: var(--grass-8);
+  background-color: var(--line-grass-8);
 }
 
 :where(.is-grass-subtle-element-background) {
-  background-color: var(--grass-6);
+  background-color: var(--line-grass-6);
 }
 
 :is(.dark) :where(.is-grass-subtle-element-background) {
-  background-color: var(--grass-7);
+  background-color: var(--line-grass-7);
 }
 
 :where(.is-grass-ui-element-background) {
-  background-color: var(--grass-7);
+  background-color: var(--line-grass-7);
 }
 
 :is(.dark) :where(.is-grass-ui-element-background) {
-  background-color: var(--grass-6);
+  background-color: var(--line-grass-6);
 }
 
 :where(.is-grass-ui-hover-background) {
-  background-color: var(--grass-8);
+  background-color: var(--line-grass-8);
 }
 
 :is(.dark) :where(.is-grass-ui-hover-background) {
-  background-color: var(--grass-5);
+  background-color: var(--line-grass-5);
 }
 
 :where(.is-grass-solid-background) {
-  background-color: var(--grass-9);
+  background-color: var(--line-grass-9);
 }
 
 :is(.dark) :where(.is-grass-solid-background) {
-  background-color: var(--grass-4);
+  background-color: var(--line-grass-4);
 }
 
 :where(.is-grass-hover-solid-background) {
-  background-color: var(--grass-10);
+  background-color: var(--line-grass-10);
 }
 
 :is(.dark) :where(.is-grass-hover-solid-background) {
-  background-color: var(--grass-3);
+  background-color: var(--line-grass-3);
 }
 
 :where(.is-grass-low-contrast-background) {
-  background-color: var(--grass-11);
+  background-color: var(--line-grass-11);
 }
 
 :is(.dark) :where(.is-grass-low-contrast-background) {
-  background-color: var(--grass-2);
+  background-color: var(--line-grass-2);
 }
 
 :where(.is-grass-high-contrast-background) {
-  background-color: var(--grass-12);
+  background-color: var(--line-grass-12);
 }
 
 :is(.dark) :where(.is-grass-high-contrast-background) {
-  background-color: var(--grass-1);
+  background-color: var(--line-grass-1);
 }
 
 :where(.is-grass-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--grass-7);
-  border-color: var(--grass-7);
+  outline-color: var(--line-grass-7);
+  border-color: var(--line-grass-7);
 
   &:hover {
-    outline-color: var(--grass-8);
-    border-color: var(--grass-8);
+    outline-color: var(--line-grass-8);
+    border-color: var(--line-grass-8);
   }
 }
 
 :is(.dark) :where(.is-grass-border) {
   transition: colors ease-in-out 150ms;
-  outline-color: var(--grass-6);
-  border-color: var(--grass-6);
+  outline-color: var(--line-grass-6);
+  border-color: var(--line-grass-6);
 
   &:hover {
-    outline-color: var(--grass-5);
-    border-color: var(--grass-5);
+    outline-color: var(--line-grass-5);
+    border-color: var(--line-grass-5);
   }
 }
