@@ -1,4 +1,4 @@
-# Vitamina Design System
+# line://ui Design System
 
 **Note**: This project uses [bd (beads)](https://github.com/steveyegge/beads)
 for issue tracking. Use `bd` commands instead of markdown TODOs.
@@ -6,7 +6,7 @@ See AGENTS.md for workflow details.
 
 ## Project Overview
 
-Vitamina is a headless UI component library built as native Web Components. It provides robust interaction logic via Zag.js state machines, full visual customisation via CSS `::part()` and CSS custom properties, and works in any framework or no framework at all.
+line://ui is a headless UI component library built as native Web Components. It provides robust interaction logic via Zag.js state machines, full visual customisation via CSS `::part()` and CSS custom properties, and works in any framework or no framework at all.
 
 **Key differentiators:** Framework-agnostic (Web Components), native `::part()` + CSS custom properties for styling, Zag.js state machines for logic, optional batteries-included themes, integrated developer tooling via inspector.
 
@@ -17,9 +17,9 @@ Vitamina is a headless UI component library built as native Web Components. It p
 - **Lint & Format**: Biome (replaces ESLint + Prettier)
 - **Component Framework**: Lit 3+
 - **Component Logic**: Zag.js (state machines)
-- **Utility Tokens**: Open Props (sizes, shadows, easings, typography)
+- **Utility Tokens**: Open Props (sizes, shadows, easings, typography) — all rewritten to `--line-*` at build time
 - **Color Tokens**: Custom 12-level semantic system (28 palettes, light/dark mode)
-- **CSS Processing**: PostCSS (with plugins: import, nested, jit-props, mixins, simple-vars, preset-env, cssnano)
+- **CSS Processing**: PostCSS (plugins: import, jit-props, mixins, simple-vars, nested, preset-env, custom-media, cssnano)
 - **Versioning**: Changesets
 - **Types**: TypeScript 5.9+ with API Extractor
 
@@ -29,12 +29,41 @@ Vitamina is a headless UI component library built as native Web Components. It p
 - theme-supervisor (Violet) — packages/theme: PostCSS pipeline, color palettes, design tokens, CSS themes
 - infra-supervisor (Olive) — GitHub Actions CI/CD, Changesets versioning, Bun monorepo tooling
 
+## Documentation Hierarchy
+
+Agents and contributors must understand the three-tier documentation structure:
+
+```
+docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
+│   What & Why — product vision, component catalogue (131 components),
+│   design token decisions, roadmap, phases, success metrics
+│
+├── docs/ARCHITECTURE.md
+│     How — composition patterns, state management tiers (Pre-built/Custom/Static),
+│     CSS dual-layer strategy, base class design, bundle splitting, form association
+│
+├── docs/COMPETITIVE-COMPONENT-ANALYSIS.md
+│     Positioning — component-by-component gap analysis vs Shoelace, Spectrum, etc.
+│
+└── .spec/XXXX-{component}.md
+      Detail — per-component API: props, events, slots, parts, CSS custom properties,
+      keyboard navigation, accessibility, machine states, markup examples
+      Template: .spec/COMPONENT-SPEC-TEMPLATE.md
+```
+
+| Task | Start here |
+|------|-----------|
+| Understanding project goals, phases, decisions | PRD |
+| Learning composition patterns, tier classification, CSS strategy | ARCHITECTURE |
+| Implementing or reviewing a specific component | `.spec/` for that component |
+| Comparing with competitors, identifying gaps | COMPETITIVE-COMPONENT-ANALYSIS |
+
 ## Repository Structure
 
 ```
 vitamin/
 ├── packages/
-│   ├── core/                         # Base class (VitaElement), mixins, controllers, utilities
+│   ├── core/                         # Base class (LineElement), mixins, controllers, utilities
 │   │   └── src/
 │   │       ├── lib/
 │   │       │   ├── component.ts      # Base component class
@@ -48,17 +77,16 @@ vitamin/
 │   └── theme/                        # CSS themes, colour tokens, utility tokens
 │       └── src/
 │           ├── colors/              # 28 colour palettes (12-level semantic)
-│           ├── custom/              # Custom colour overrides per palette
 │           ├── schemas/             # Colour schemas (semantic mapping)
 │           ├── themes/              # Ready-to-go themes per palette
 │           ├── utils/               # Normalize, media queries, rules, general
-│           └── vita.css             # Main CSS bundle
+│           └── line.css             # Main CSS bundle (target, currently vita.css)
 ├── docs/                             # Product requirements & planning docs
-│   └── PRODUCT-REQUIREMENTS-SPECIFICATION.md
-├── .spec/                            # Component specs & architecture decisions
-│   ├── COMPONENT-SPEC-TEMPLATE.md
-│   ├── 0001-alert-component-spec.md
-│   └── 0002-button-component-spec.md
+│   ├── PRODUCT-REQUIREMENTS-SPECIFICATION.md
+│   ├── ARCHITECTURE.md
+│   └── COMPETITIVE-COMPONENT-ANALYSIS.md
+├── .spec/                            # Component specs (per-component API contracts)
+│   └── COMPONENT-SPEC-TEMPLATE.md
 ├── .changeset/                       # Changesets configuration
 ├── .github/                          # GitHub workflows & config
 ├── .githooks/                        # Git hooks (core.hooksPath)
@@ -105,21 +133,20 @@ For visual changes (new UI, modified display):
 
 ## Published Packages
 
-| Package | npm name | Version |
-|---------|----------|---------|
-| core | `@websublime/vitamina-core` | 0.2.0 |
-| theme | `@websublime/vitamina-theme` | 0.6.0 |
+| Package | npm name (target) | npm name (current) | Version |
+|---------|-------------------|---------------------|---------|
+| core | `@websublime/line-core` | `@websublime/vitamina-core` | 0.2.0 |
+| theme | `@websublime/line-theme` | `@websublime/vitamina-theme` | 0.6.0 |
 
-## Component Naming Convention
+> **Branding refactor pending (Phase 0):** Package names, CSS variables, class names, and tag prefixes must be migrated from `vita-*` to `line-*`. See PRD §9.14 for the full migration table.
 
-- **Tag prefix**: `vita-` (e.g., `<vita-button>`, `<vita-dialog>`)
-- **CSS custom property prefix**: `--vita-` (e.g., `--vita-radius`, `--vita-font-size`)
+## Naming Convention
+
+- **Brand / wordmark**: `line://ui` (always lowercase, always with `://`)
+- **Tag prefix**: `line-` (e.g., `<line-button>`, `<line-dialog>`)
+- **CSS custom property prefix**: `--line-*` (e.g., `--line-radius-2`, `--line-blue-9`)
+- **CSS class prefix**: `.line-` (e.g., `.line-schema-blue`, `.line-is-background`)
 - **CSS parts**: Short, semantic names reused across components (root, trigger, content, overlay, title, etc.)
+- **Base class**: `LineElement`
+- **npm packages**: `@websublime/line-*`
 
-## Current Phase
-
-**Phase 0 — Foundation & Tooling** (targeting v0.1.0)
-- Bun migration: Done
-- Biome migration: Done
-- Dependency updates: Done
-- Remaining: VitaElement refactor, monorepo restructure (add components, icons, site, storybook packages), Storybook setup, testing setup, CI/CD, theme v2, icon registry
