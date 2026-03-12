@@ -226,7 +226,7 @@ Specs must be written and approved before implementation begins. All 21 componen
 | P1-E2-T1 | Write specs for static primitives | Write `.spec/` files for: Alert, Badge, Chip, Avatar, Separator, VisuallyHidden, Portal, Kbd, Skeleton, Stack, Grid, Center, AspectRatio, Spinner. 14 specs following `COMPONENT-SPEC-TEMPLATE.md`. | Phase 0 complete | Luna | L | PRD 4.1, 8.1 |
 | P1-E2-T2 | Write specs for interactive primitives | Write `.spec/` files for: Button, IconButton, ButtonGroup, AvatarGroup, Presence. 5 specs. | Phase 0 complete | Luna | M | PRD 4.1, 8.1 |
 | P1-E2-T3 | Write spec for Icon component | Write `.spec/` for Icon component -- depends on icon registry being complete (Phase 0). | Phase 0 complete | Luna | S | PRD 4.1, ARCH 11 |
-| P1-E2-T4 | Review and approve all Phase 1 specs | All 20 specs reviewed, status set to `approved`. | P1-E2-T1 through P1-E2-T3 | Luna | M | PRD 8.2, 8.3 |
+| P1-E2-T4 | Review and approve all Phase 1 specs | All 21 specs reviewed, status set to `approved`. | P1-E2-T1 through P1-E2-T3 | Luna | M | PRD 8.2, 8.3 |
 
 ### 3.3 Epic 3: Static Components (no machine)
 
