@@ -13,7 +13,7 @@
       },
     },
     "packages/core": {
-      "name": "@websublime/vitamina-core",
+      "name": "@websublime/line-core",
       "version": "0.2.0",
       "dependencies": {
         "@websublime/vitamina-theme": "workspace:*",
@@ -354,7 +354,7 @@
 
     "@types/trusted-types": ["@types/trusted-types@2.0.7", "", {}, "sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw=="],
 
-    "@websublime/vitamina-core": ["@websublime/vitamina-core@workspace:packages/core"],
+    "@websublime/line-core": ["@websublime/line-core@workspace:packages/core"],
 
     "@websublime/vitamina-theme": ["@websublime/vitamina-theme@workspace:packages/theme"],
 

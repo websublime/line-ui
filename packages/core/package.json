@@ -1,7 +1,7 @@
 {
-  "name": "@websublime/vitamina-core",
+  "name": "@websublime/line-core",
   "version": "0.2.0",
-  "description": "Core Lit functions and base classes for Vitamina",
+  "description": "Core Lit functions and base classes for line://ui",
   "type": "module",
   "scripts": {
     "dev": "vite --debug --force",
