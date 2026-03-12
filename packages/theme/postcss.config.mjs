@@ -6,6 +6,9 @@ import postcssNested from 'postcss-nested';
 import postcssPresetEnv from 'postcss-preset-env';
 import postcssSimpleVars from 'postcss-simple-vars';
 
+// TODO(line-ui-c5q.1): Add postcss-jit-props plugin here for Open Props utility token
+// injection with --line-* prefix rewrite. The dependency is already installed; it needs
+// to be activated in this pipeline. See PRD 9.3 and Decision T3.
 export default {
   plugins: [
     postcssImport(),

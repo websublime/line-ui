@@ -6,7 +6,7 @@
   "style": "dist/line.min.css",
   "scripts": {
     "dev": "vite",
-    "build": "rm -rf dist && node -e \"const{execSync:r}=require('child_process');const s=Object.keys(require('./package.json').scripts).filter(k=>k.startsWith('css:'));for(const n of s){process.stdout.write(n+'... ');r('bun run '+n,{stdio:'ignore'});console.log('done')}\"",
+    "build": "rm -rf dist && bun run src/build.ts",
     "css:all": "postcss src/line.css -o ./dist/line.min.css",
     "css:colors:amber": "postcss src/colors/amber.css -o ./dist/colors-amber.min.css",
     "css:colors:blue": "postcss src/colors/blue.css -o ./dist/colors-blue.min.css",
