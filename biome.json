@@ -25,7 +25,9 @@
       },
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "error"
+        "noUnusedVariables": "error",
+        "noUnknownMediaFeatureName": "off",
+        "noUnknownPseudoClass": "off"
       },
       "style": {
         "noParameterAssign": "error",

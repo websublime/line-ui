@@ -1,35 +1,35 @@
 :where(.schema-yellow) {
-  --background: var(--line-yellow-1);            /* App background (-1) */
-  --subtle-background: var(--line-yellow-2);     /* Subtle background (-2) */
-  --ui-background: var(--line-yellow-3);         /* UI element background (-3) */
-  --ui-hover-background: var(--line-yellow-4);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--line-yellow-5);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--line-yellow-6);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--line-yellow-7);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--line-yellow-8);       /* Hovered UI element border (-8) */
-  --solid-background: var(--line-yellow-9);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--line-yellow-10);          /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--line-yellow-11);         /* Low-contrast text (-11) */
-  --high-contrast: var(--line-yellow-12);        /* High-contrast text (-12) */
-  --light: var(--line-yellow-1);                 /* Light text */
-  --white: var(--line-yellow-1);                 /* White text */
-  --black: var(--line-yellow-12);                /* Black text */
-  --dark: var(--line-yellow-12);                 /* Dark text */
+  --line-background: var(--line-yellow-1); /* App background (-1) */
+  --line-subtle-background: var(--line-yellow-2); /* Subtle background (-2) */
+  --line-ui-background: var(--line-yellow-3); /* UI element background (-3) */
+  --line-ui-hover-background: var(--line-yellow-4); /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--line-yellow-5); /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--line-yellow-6); /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--line-yellow-7); /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--line-yellow-8); /* Hovered UI element border (-8) */
+  --line-solid-background: var(--line-yellow-9); /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--line-yellow-10); /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--line-yellow-11); /* Low-contrast text (-11) */
+  --line-high-contrast: var(--line-yellow-12); /* High-contrast text (-12) */
+  --line-light: var(--line-yellow-1); /* Light text */
+  --line-white: var(--line-yellow-1); /* White text */
+  --line-black: var(--line-yellow-12); /* Black text */
+  --line-dark: var(--line-yellow-12); /* Dark text */
 }
 
-:is(.dark) :where(.schema-yellow)  {
-  --background: var(--line-yellow-12);           /* App background (-1) */
-  --subtle-background: var(--line-yellow-11);    /* Subtle background (-2) */
-  --ui-background: var(--line-yellow-10);        /* UI element background (-3) */
-  --ui-hover-background: var(--line-yellow-9);   /* Hovered UI element background  (-4)*/
-  --ui-active-background: var(--line-yellow-8);  /* Active / Selected UI element background (-5) */
-  --subtle-border: var(--line-yellow-7);         /* Subtle borders and separators (-6) */
-  --ui-border: var(--line-yellow-6);             /* UI element border and focus rings (-7) */
-  --ui-border-hover: var(--line-yellow-5);       /* Hovered UI element border (-8) */
-  --solid-background: var(--line-yellow-4);      /* Solid backgrounds (-9) */
-  --solid-hover: var(--line-yellow-3);           /* Hovered solid backgrounds (-10) */
-  --low-contrast: var(--line-yellow-2);          /* Low-contrast text (-11) */
-  --high-contrast: var(--line-yellow-1);         /* High-contrast text (-12) */
+:is(.dark) :where(.schema-yellow) {
+  --line-background: var(--line-yellow-12); /* App background (-1) */
+  --line-subtle-background: var(--line-yellow-11); /* Subtle background (-2) */
+  --line-ui-background: var(--line-yellow-10); /* UI element background (-3) */
+  --line-ui-hover-background: var(--line-yellow-9); /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: var(--line-yellow-8); /* Active / Selected UI element background (-5) */
+  --line-subtle-border: var(--line-yellow-7); /* Subtle borders and separators (-6) */
+  --line-ui-border: var(--line-yellow-6); /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: var(--line-yellow-5); /* Hovered UI element border (-8) */
+  --line-solid-background: var(--line-yellow-4); /* Solid backgrounds (-9) */
+  --line-solid-hover: var(--line-yellow-3); /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: var(--line-yellow-2); /* Low-contrast text (-11) */
+  --line-high-contrast: var(--line-yellow-1); /* High-contrast text (-12) */
 }
 
 :where(.is-yellow) {
@@ -56,7 +56,7 @@
   color: var(--line-yellow-12);
 }
 
-:is(:dark) :where(.is-yellow-color) {
+:is(.dark) :where(.is-yellow-color) {
   color: var(--line-yellow-1);
 }
 

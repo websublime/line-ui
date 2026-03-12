@@ -1,68 +1,68 @@
-@import './utils/rules.css';
-@import './utils/normalize.css';
-@import './utils/general.css';
+@import "./utils/rules.css";
+@import "./utils/normalize.css";
+@import "./utils/general.css";
 
-@import './themes/gray-theme.css';
-@import './themes/mauve-theme.css';
-@import './themes/slate-theme.css';
-@import './themes/sage-theme.css';
-@import './themes/olive-theme.css';
-@import './themes/sand-theme.css';
-@import './themes/tomato-theme.css';
-@import './themes/red-theme.css';
-@import './themes/crimson-theme.css';
-@import './themes/pink-theme.css';
-@import './themes/plum-theme.css';
-@import './themes/purple-theme.css';
-@import './themes/violet-theme.css';
-@import './themes/indigo-theme.css';
-@import './themes/blue-theme.css';
-@import './themes/cyan-theme.css';
-@import './themes/teal-theme.css';
-@import './themes/green-theme.css';
-@import './themes/grass-theme.css';
-@import './themes/brown-theme.css';
-@import './themes/bronze-theme.css';
-@import './themes/gold-theme.css';
-@import './themes/sky-theme.css';
-@import './themes/mint-theme.css';
-@import './themes/lime-theme.css';
-@import './themes/yellow-theme.css';
-@import './themes/amber-theme.css';
-@import './themes/orange-theme.css';
+@import "./themes/gray-theme.css";
+@import "./themes/mauve-theme.css";
+@import "./themes/slate-theme.css";
+@import "./themes/sage-theme.css";
+@import "./themes/olive-theme.css";
+@import "./themes/sand-theme.css";
+@import "./themes/tomato-theme.css";
+@import "./themes/red-theme.css";
+@import "./themes/crimson-theme.css";
+@import "./themes/pink-theme.css";
+@import "./themes/plum-theme.css";
+@import "./themes/purple-theme.css";
+@import "./themes/violet-theme.css";
+@import "./themes/indigo-theme.css";
+@import "./themes/blue-theme.css";
+@import "./themes/cyan-theme.css";
+@import "./themes/teal-theme.css";
+@import "./themes/green-theme.css";
+@import "./themes/grass-theme.css";
+@import "./themes/brown-theme.css";
+@import "./themes/bronze-theme.css";
+@import "./themes/gold-theme.css";
+@import "./themes/sky-theme.css";
+@import "./themes/mint-theme.css";
+@import "./themes/lime-theme.css";
+@import "./themes/yellow-theme.css";
+@import "./themes/amber-theme.css";
+@import "./themes/orange-theme.css";
 
-@import './custom/gray-custom.css';
-@import './custom/mauve-custom.css';
-@import './custom/slate-custom.css';
-@import './custom/sage-custom.css';
-@import './custom/olive-custom.css';
-@import './custom/sand-custom.css';
-@import './custom/tomato-custom.css';
-@import './custom/red-custom.css';
-@import './custom/crimson-custom.css';
-@import './custom/pink-custom.css';
-@import './custom/plum-custom.css';
-@import './custom/purple-custom.css';
-@import './custom/violet-custom.css';
-@import './custom/indigo-custom.css';
-@import './custom/blue-custom.css';
-@import './custom/cyan-custom.css';
-@import './custom/teal-custom.css';
-@import './custom/green-custom.css';
-@import './custom/grass-custom.css';
-@import './custom/brown-custom.css';
-@import './custom/bronze-custom.css';
-@import './custom/gold-custom.css';
-@import './custom/sky-custom.css';
-@import './custom/mint-custom.css';
-@import './custom/lime-custom.css';
-@import './custom/yellow-custom.css';
-@import './custom/amber-custom.css';
-@import './custom/orange-custom.css';
+@import "./custom/gray-custom.css";
+@import "./custom/mauve-custom.css";
+@import "./custom/slate-custom.css";
+@import "./custom/sage-custom.css";
+@import "./custom/olive-custom.css";
+@import "./custom/sand-custom.css";
+@import "./custom/tomato-custom.css";
+@import "./custom/red-custom.css";
+@import "./custom/crimson-custom.css";
+@import "./custom/pink-custom.css";
+@import "./custom/plum-custom.css";
+@import "./custom/purple-custom.css";
+@import "./custom/violet-custom.css";
+@import "./custom/indigo-custom.css";
+@import "./custom/blue-custom.css";
+@import "./custom/cyan-custom.css";
+@import "./custom/teal-custom.css";
+@import "./custom/green-custom.css";
+@import "./custom/grass-custom.css";
+@import "./custom/brown-custom.css";
+@import "./custom/bronze-custom.css";
+@import "./custom/gold-custom.css";
+@import "./custom/sky-custom.css";
+@import "./custom/mint-custom.css";
+@import "./custom/lime-custom.css";
+@import "./custom/yellow-custom.css";
+@import "./custom/amber-custom.css";
+@import "./custom/orange-custom.css";
 
 body {
-  color: var(--low-contrast);
-  background-color: var(--background);
+  color: var(--line-low-contrast);
+  background-color: var(--line-background);
 }
 
 .page-title {
@@ -91,7 +91,6 @@ body {
   }
 }
 
-
 .ui-nav {
   width: 100%;
   padding: 0.75rem;
@@ -99,7 +98,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  border-color: var(--ui-border);
+  border-color: var(--line-ui-border);
   border-bottom-width: 1px;
 
   &-title {
@@ -123,12 +122,11 @@ body {
     align-items: center;
     justify-content: center;
 
-
-    @media(--md-n-above) {
+    @media (--md-n-above) {
       display: flex;
     }
 
-    @media(--md-n-below) {
+    @media (--md-n-below) {
       flex-direction: column;
       align-items: center;
     }
@@ -147,13 +145,13 @@ body {
 }
 
 .ui-theme-button {
-  color: var(--high-contrast);
-  border-color: var(--ui-border);
-  outline-color: var(--ui-border);
+  color: var(--line-high-contrast);
+  border-color: var(--line-ui-border);
+  outline-color: var(--line-ui-border);
 
   &:hover {
-    border-color: var(--ui-border-hover);
-    outline-color: var(--ui-border-hover);
+    border-color: var(--line-ui-border-hover);
+    outline-color: var(--line-ui-border-hover);
   }
 }
 
@@ -167,29 +165,28 @@ body {
 
   div {
     height: var(--size-7);
-    outline-color: var(--ui-border);
+    outline-color: var(--line-ui-border);
     outline-style: solid;
     outline-width: 1px;
-    color: var(--low-contrast);
+    color: var(--line-low-contrast);
   }
 }
 
 .ui-light {
-  background-color: var(--light);
+  background-color: var(--line-light);
 }
 
 .ui-dark {
-  background-color: var(--dark);
+  background-color: var(--line-dark);
 }
 
 .ui-white {
-  background-color: var(--white);
+  background-color: var(--line-white);
 }
 
 .ui-black {
-  background-color: var(--black);
+  background-color: var(--line-black);
 }
-
 
 .ui-tokens {
   grid-template-columns: repeat(8, minmax(0, 1fr));
