@@ -14,7 +14,7 @@
     "lint:fix": "biome check --write ."
   },
   "dependencies": {
-    "@websublime/vitamina-theme": "workspace:*",
+    "@websublime/line-theme": "workspace:*",
     "lit": "^3.3.2"
   },
   "devDependencies": {
