@@ -1,12 +1,12 @@
-const cssNano = require('cssnano');
-const customMedia = require('postcss-custom-media');
-const postcssImport = require('postcss-import');
-const postcssMixins = require('postcss-mixins');
-const postcssNested = require('postcss-nested');
-const postcssPresetEnv = require('postcss-preset-env');
-const postcssSimpleVars = require('postcss-simple-vars');
+import cssNano from 'cssnano';
+import customMedia from 'postcss-custom-media';
+import postcssImport from 'postcss-import';
+import postcssMixins from 'postcss-mixins';
+import postcssNested from 'postcss-nested';
+import postcssPresetEnv from 'postcss-preset-env';
+import postcssSimpleVars from 'postcss-simple-vars';
 
-module.exports = {
+export default {
   plugins: [
     postcssImport(),
     postcssMixins(),
