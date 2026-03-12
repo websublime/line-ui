@@ -1,17 +1,17 @@
-# Vitamina — Product Requirements Specification
+# line://ui — Product Requirements Specification
 
-**Date:** 2026-03-11
+**Date:** 2026-03-12
 **Author:** Miguel Ramos
 **Status:** Approved
-**Version:** 0.3.0
+**Version:** 0.6.0
 
 ---
 
 ## 1. Vision & Positioning
 
-### 1.1 What is Vitamina
+### 1.1 What is line://ui
 
-Vitamina is a headless UI component library built as native Web Components. It provides robust interaction logic via state machines, full visual customisation via CSS `::part()` and CSS custom properties, and works in any framework or no framework at all.
+line://ui is a headless UI component library built as native Web Components. It provides robust interaction logic via state machines, full visual customisation via CSS `::part()` and CSS custom properties, and works in any framework or no framework at all.
 
 ### 1.2 Positioning Statement
 
@@ -21,14 +21,14 @@ Vitamina is a headless UI component library built as native Web Components. It p
 
 #### Web Component Libraries Comparison
 
-| Dimension | Vitamina | Shoelace | Spectrum | Lion | FAST |
-|-----------|----------|----------|----------|------|------|
+| Dimension | line://ui | Shoelace | Spectrum | Lion | FAST |
+|-----------|-----------|----------|----------|------|------|
 | Framework | Web Components (Lit 3+) | Web Components (Lit 3) | Web Components (LitElement) | Web Components (vanilla) | Web Components (FASTElement) |
 | Approach | Headless-first + optional themes | Opinionated/styled | Opinionated (Adobe design) | Headless-first | Design system framework |
 | State Management | Zag.js state machines | Custom + Popper.js | Custom internal | Custom vanilla JS | FASTElement reactivity |
 | Customisation | `::part()` + CSS custom properties (dual-layer) | `::part()` + CSS custom properties | CSS variables; partial `::part()` | `::part()` + CSS custom properties | CSS variables; minimal `::part()` |
 | Accessibility | WCAG 2.1 AA via Zag.js | WCAG 2.1 AA (mature) | WCAG 2.1 AA (Adobe standard) | WCAG 2.1 AA+ (core differentiator) | WCAG 2.1 AA (Microsoft standard) |
-| Component Count | 118 (planned) | ~90+ (shipped) | ~40-50 | ~40+ | ~60+ |
+| Component Count | 130 (planned) | ~90+ (shipped) | ~40-50 | ~40+ | ~60+ |
 | Ecosystem | Pre-launch | 20k+ weekly downloads | Enterprise (Adobe products) | Enterprise (ING banking) | Enterprise (Microsoft Fluent) |
 | Theming | Headless default; optional 28-palette theme package | 30+ built-in themes | Adobe Spectrum theme | No built-in themes | Fluent Design theme |
 | SSR/SSG | Investigation planned post-Phase 1 | Partial (Astro, 11ty) | Limited | Limited | Limited |
@@ -43,12 +43,12 @@ The headless-first approach is validated across multiple framework ecosystems, b
 | Bits UI | Svelte-only | ~40+ | Headless primitives, class props + data-* attributes. Inspired by Radix (API), Melt UI (architecture), React Spectrum (a11y) |
 | Ark UI | React/Vue/Solid | ~40+ | Headless primitives powered by Zag.js state machines |
 
-**Vitamina resolves this fragmentation** — the same headless primitives work in React, Vue, Svelte, Angular, or plain HTML via native Web Components. No adapters, no rewrites.
+**line://ui resolves this fragmentation** — the same headless primitives work in React, Vue, Svelte, Angular, or plain HTML via native Web Components. No adapters, no rewrites.
 
 **Note:** Radix UI remains the most relevant comparison for the React audience:
 
-| Aspect | Radix UI | Vitamina |
-|--------|----------|----------|
+| Aspect | Radix UI | line://ui |
+|--------|----------|-----------|
 | Framework | React-only | Framework-agnostic (Web Components) |
 | Customisation | className / CSS-in-JS | Native `::part()` + CSS custom properties |
 | Composition | JSX children | Slots + light DOM |
@@ -56,10 +56,10 @@ The headless-first approach is validated across multiple framework ecosystems, b
 | Cross-framework | Needs adapters | Works everywhere natively |
 | Themes | Community-driven | Optional batteries-included themes |
 
-#### Vitamina's Genuine Differentiators
+#### line://ui's Genuine Differentiators
 
 - **State machines (Zag.js)** — Production-ready, framework-agnostic logic layer with built-in accessibility. No competitor in the Web Components space uses this approach.
-- **Headless-first + optional themes** — Unlike Shoelace or Spectrum which ship opinionated styles, Vitamina defaults to zero visual opinion. Themes are an accelerator, never a requirement.
+- **Headless-first + optional themes** — Unlike Shoelace or Spectrum which ship opinionated styles, line://ui defaults to zero visual opinion. Themes are an accelerator, never a requirement.
 - **Dual-layer CSS customisation** — Both `::part()` for total control and CSS custom properties for quick adjustments. Most competitors offer one or the other, not both as a deliberate strategy.
 - **Inspector tooling** — Built-in developer tooling for QA and onboarding, unique in the Web Components ecosystem.
 - **HTMX integration (exploratory)** — First-class support for server-rendered HTML workflows, targeting a growing segment underserved by existing component libraries.
@@ -77,10 +77,11 @@ The headless-first approach is validated across multiple framework ecosystems, b
 
 ### 1.4 Core Principles
 
-1. **Headless-first** — Components carry zero visual opinion. All styling is the consumer's responsibility via `::part()` and `--vita-*` custom properties.
+1. **Headless-first** — Components carry zero visual opinion. All styling is the consumer's responsibility via `::part()` and `--line-*` custom properties.
 2. **Theme as accelerator** — The theme package provides ready-to-go themes. Import one and everything works. Never mandatory.
-3. **HTMX as exploration** — Web Components are browser-native. A `<vita-dialog>` works in plain HTML served by any backend. HTMX adds server-driven interactivity. First-class support to be explored and validated.
-4. **Inspector as dev tooling** — Feature flag via localStorage. When active, every component exposes metadata: version, docs link, scope, QA tags. Useful for QA teams and integrating developers.
+3. **Composition over configuration** — Components connect via `<slot>`, not props. A Field does not import an Input — it accepts any form control via slot. A DatePicker accepts any trigger via slot. Independence is the default.
+4. **HTMX as exploration** — Web Components are browser-native. A `<line-dialog>` works in plain HTML served by any backend. HTMX adds server-driven interactivity. First-class support to be explored and validated.
+5. **Inspector as dev tooling** — Feature flag via localStorage. When active, every component exposes metadata: version, docs link, scope, QA tags. Useful for QA teams and integrating developers.
 
 ### 1.5 Target Users
 
@@ -100,7 +101,7 @@ Soft targets (aspirational, not blocking):
 |--------|--------|-------|
 | Bundle size | < 5KB gzipped per component | Monitored, not blocking |
 | Accessibility | axe-core zero violations per component | Hard requirement per component spec |
-| Time-to-first-component | 15 minutes | A new developer can create and render a custom Vitamina component within 15 minutes using the docs |
+| Time-to-first-component | 15 minutes | A new developer can create and render a custom line://ui component within 15 minutes using the docs |
 
 No npm download or GitHub stars targets at this stage — premature for a pre-launch project.
 
@@ -157,7 +158,7 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 
 ```
 ┌──────────────────────────────────────────────┐
-│  <vita-dialog>                               │
+│  <line-dialog>                               │
 │                                              │
 │  ┌─────────────┐   ┌──────────────────────┐  │
 │  │  Zag.js     │   │  Lit                 │  │
@@ -190,47 +191,78 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 **Simple component example:**
 
 ```html
-<vita-button>
-  <vita-icon slot="icon" name="check"></vita-icon>
+<line-button>
+  <line-icon slot="prefix" name="check"></line-icon>
   Save
-</vita-button>
+</line-button>
 ```
 
 **Complex component example (Radix-style):**
 
 ```html
-<vita-dialog>
-  <vita-dialog-trigger>
+<line-dialog>
+  <line-dialog-trigger>
     <button>Open</button>
-  </vita-dialog-trigger>
-  <vita-dialog-content>
-    <vita-dialog-title>Title</vita-dialog-title>
-    <vita-dialog-close></vita-dialog-close>
+  </line-dialog-trigger>
+  <line-dialog-content>
+    <line-dialog-title>Title</line-dialog-title>
+    <line-dialog-close></line-dialog-close>
     <p>Content</p>
-  </vita-dialog-content>
-</vita-dialog>
+  </line-dialog-content>
+</line-dialog>
 ```
 
-### 3.3 Tag Prefix
+**Composition via slot (Field + Input):**
 
-**`vita-`** — Short (4 chars + hyphen), brand-linked, no known conflicts with other design systems.
+```html
+<line-field>
+  <span slot="label">
+    Email <line-icon name="info" size="xs"></line-icon>
+  </span>
+  <line-input type="email" required>
+    <line-icon slot="prefix" name="mail"></line-icon>
+  </line-input>
+  <span slot="hint">We use your email for login</span>
+  <span slot="error">
+    <line-icon name="alert-circle"></line-icon>
+    Invalid email address
+  </span>
+</line-field>
+```
 
-### 3.4 CSS Customisation — Dual Layer
+The Field does not import the Input. The Input does not know the Field exists. Both work standalone. Connected via `<slot>` and events.
+
+### 3.3 Slot vs Internal Part — Decision Rule
+
+Components expose **slots** for content the consumer controls, and **internal parts** for elements the component must coordinate with its state machine.
+
+| Who controls the action? | Approach | Examples |
+|--------------------------|----------|----------|
+| Consumer decides content and behaviour | **Slot** | prefix, suffix icons; label, hint, error text |
+| Component needs to coordinate state/action | **Internal part** | password toggle, clear button, increment/decrement steppers |
+
+A prefix icon is a slot — the component doesn't know or care what it is. A password visibility toggle is an internal part — the component must toggle the input `type` between "password" and "text" when clicked. A clear button is an internal part — it must call `CLEAR` on the machine.
+
+### 3.4 Tag Prefix
+
+**`line-`** — Short (4 chars + hyphen), brand-linked (`line://ui`), no known conflicts with other design systems.
+
+### 3.5 CSS Customisation — Dual Layer
 
 **Layer 1: CSS Custom Properties (tokens) — Quick adjustments**
 
 ```css
-vita-button {
-  --vita-radius: 8px;
-  --vita-font-size: 1rem;
-  --vita-padding: 0.5rem 1rem;
+line-button {
+  --line-radius: 8px;
+  --line-font-size: 1rem;
+  --line-padding: 0.5rem 1rem;
 }
 ```
 
 **Layer 2: `::part()` — Total control over internal elements**
 
 ```css
-vita-button::part(root) {
+line-button::part(root) {
   background: linear-gradient(135deg, pink, purple);
   border: none;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
@@ -239,9 +271,9 @@ vita-button::part(root) {
 
 Custom properties for consumers who want to adjust tokens without knowing internal structure. Parts for consumers who want absolute control. Complementary, not redundant.
 
-**Custom property prefix:** `--vita-` (consistent with tag prefix).
+**Custom property prefix:** `--line-` (consistent with tag prefix).
 
-### 3.5 CSS Parts Naming Convention
+### 3.6 CSS Parts Naming Convention
 
 ```css
 ::part(root)        /* Main container */
@@ -257,57 +289,63 @@ Custom properties for consumers who want to adjust tokens without knowing intern
 ::part(item)        /* Item in lists */
 ::part(label)       /* Label */
 ::part(input)       /* Internal input */
+::part(toggle)      /* Toggle element (e.g., password visibility) */
+::part(clear)       /* Clear/dismiss button */
+::part(increment)   /* Increment stepper */
+::part(decrement)   /* Decrement stepper */
+::part(remove)      /* Remove button (e.g., chip dismiss) */
+::part(overflow)    /* Overflow indicator (e.g., avatar group +N) */
 ```
 
 Short, semantic names reused across components. A developer who learns the parts of one component already knows others.
 
-### 3.6 Base Class — VitaElement
+### 3.7 Base Class — LineElement
 
-**Note:** This describes the target architecture. The current codebase uses `ComponentElement` with `ComponentMixin`. The refactoring to `VitaElement` is a Phase 0 task.
+**Note:** This describes the target architecture. The current codebase uses `ComponentElement` with `ComponentMixin`. The refactoring to `LineElement` is a Phase 0 task.
 
 ```
 LitElement
-  └── VitaElement (refactored base class)
+  └── LineElement (refactored base class)
         ├── Inspector mixin (feature flag via localStorage)
         ├── Metadata mixin (version, docs, qa)
         ├── Direction mixin (LTR/RTL)
+        ├── FormAssociated mixin (opt-in, ElementInternals)
         └── Zag.js machine connection (lifecycle-managed)
               │
               ├── Pre-built machine components
-              │     ├── VitaDialog (uses @zag-js/dialog)
+              │     ├── LineDialog (uses @zag-js/dialog)
               │     └── ...
               ├── Custom machine components
-              │     ├── VitaInput (uses custom createMachine)
+              │     ├── LineInput (uses custom createMachine)
               │     └── ...
               └── Static components (no machine)
-                    ├── VitaBadge
+                    ├── LineBadge
                     └── ...
 ```
 
 Components declare their tier by what they assign to the `machine` property: a pre-built Zag.js machine, a custom `createMachine()` result, or nothing (static). The base class handles all three cases — connect/disconnect is automatic for machines, zero overhead for static components.
 
-- Zag.js connection lives in the base class — each component only declares which machine it uses; connect/disconnect is automatic via lifecycle.
-- Simple components that don't use Zag.js (badge, separator, avatar) simply don't declare a machine — zero overhead.
-- Inspector, metadata, and direction mixins are maintained conceptually but cleaned up.
+### 3.8 Form Association Strategy
 
-**Component authoring example:**
+All form control components implement `static formAssociated = true` and use `ElementInternals` to participate in native HTML `<form>` elements. This is handled as an opt-in mixin in the base class.
 
-```typescript
-export class VitaDialog extends VitaElement {
-  machine = dialog.machine({ id: this.id })
+**What `formAssociated` provides natively:**
 
-  render() {
-    return html`
-      <div part="overlay" ${spread(this.api.getBackdropProps())}></div>
-      <div part="content" ${spread(this.api.getContentProps())}>
-        <slot></slot>
-      </div>
-    `
-  }
-}
-```
+- `<line-button type="submit">` submits parent forms (including Enter key)
+- `<line-input name="email">` appears in `FormData` automatically
+- `<line-button type="reset">` resets all form controls
+- HTML5 validation (`required`, `pattern`, `minlength`) works natively
+- `:invalid`/`:valid` CSS pseudo-classes work
+- `form.checkValidity()` and `form.reportValidity()` work
 
-### 3.7 State Management — Unified via Zag.js
+**What line://ui does NOT provide:**
+
+- No `<line-form>` wrapper component. Each framework (Vue, React, Angular) has its own form management solutions. The `<form>` element is native and sufficient. A `<line-form>` convenience component is a nice-to-have post-1.0.
+- No cross-field validation orchestration. This is application-level logic.
+
+**Form-associated components:** Button, Input, PasswordInput, SearchInput, DateInput, Textarea, Select, Checkbox, RadioGroup, Switch, NumberInput, Editable, ToggleGroup, Slider, Combobox, DatePicker, TimePicker, ColorPicker, PinInput, Rating, RangeSlider, FileUpload, TagInput, MentionInput, SearchField.
+
+### 3.9 State Management — Unified via Zag.js
 
 **Three tiers of state management:**
 
@@ -371,36 +409,170 @@ Zag.js provides `ListCollection` and `TreeCollection` from `@zag-js/collection` 
 - **Pre-built machines using collections:** Select, Combobox, Menu, Tree View (collections built into the machine)
 - **Custom machines + collections:** Tag Input, List View, Kanban Board, Search Field (custom machine with `ListCollection` for item management)
 
-**The result:** Every interactive component in Vitamina shares the same state management primitives. Whether a component uses a pre-built Zag.js machine or a custom one, the developer experience is identical: explicit states, computed values, controlled/uncontrolled support, and inspector integration.
+**The result:** Every interactive component in line://ui shares the same state management primitives. Whether a component uses a pre-built Zag.js machine or a custom one, the developer experience is identical: explicit states, computed values, controlled/uncontrolled support, and inspector integration.
 
-### 3.8 Component File Structure
+### 3.10 Field Architecture
+
+The Field is the orchestrator that connects labels, hints, errors, and required indicators to any form control. It does not import any specific control — it uses `<slot>` and events.
+
+**Slots:**
+
+| Slot | Content |
+|------|---------|
+| `label` | Free content — text, icons, tooltips, badges |
+| `default` | The form control (Input, Select, Textarea, any) |
+| `hint` | Help text — free content |
+| `error` | Error message — free content, visible when in error state |
+
+**Host data attributes (reflected on the `<line-field>` element):**
+
+| Attribute | When active | Used for |
+|-----------|-------------|----------|
+| `data-focused` | Child control has focus | Label highlight, floating label pattern |
+| `data-filled` | Child control has non-empty value | Floating label pattern, conditional hint |
+| `data-error` | Validation failed | Error styling, show error slot |
+| `data-disabled` | Child control is disabled | Opacity, cursor |
+| `data-readonly` | Child control is readonly | Differentiated styling |
+| `data-required` | Child control is required | Required indicator |
+
+**How Field detects child state (priority order):**
+
+1. **Explicit props** — `<line-field error>` overrides everything. Consumer has full control.
+2. **Child events** — Form controls emit `line-focus`, `line-blur`, `line-change`, `line-invalid`, `line-valid`. Field listens on the default slot.
+3. **Native validity** — Via `formAssociated` + `ElementInternals`, the control reports validity to the browser. Field listens for the native `invalid` event.
+
+**Label connection:**
+
+The Field generates a unique ID, sets `aria-labelledby` on the child control, and forwards clicks on the label slot to `.focus()` on the child. This works cross-shadow-boundary.
+
+**Required indicator:**
+
+When the child has `required` or the consumer sets `<line-field required>`, the Field exposes `::part(required-indicator)` in the label area. The consumer or theme styles it — could be `*`, text, icon, nothing.
+
+**Floating label:**
+
+The Field does NOT implement floating labels internally. The `data-focused` and `data-filled` host attributes enable floating labels via pure CSS (see Patterns in Storybook). A `<line-floating-field>` convenience component is a nice-to-have post-1.0.
+
+**Field-compatible controls (any component that):**
+
+1. Emits `line-focus`, `line-blur`, `line-change`, `line-invalid` events
+2. Has `formAssociated: true`
+3. Accepts `.focus()` programmatically
+
+### 3.11 Component File Structure
 
 ```
 packages/components/src/dialog/
-├── dialog.ts              ← <vita-dialog> root
-├── dialog-trigger.ts      ← <vita-dialog-trigger>
-├── dialog-content.ts      ← <vita-dialog-content>
-├── dialog-title.ts        ← <vita-dialog-title>
-├── dialog-close.ts        ← <vita-dialog-close>
+├── dialog.ts              ← <line-dialog> root
+├── dialog-trigger.ts      ← <line-dialog-trigger>
+├── dialog-content.ts      ← <line-dialog-content>
+├── dialog-title.ts        ← <line-dialog-title>
+├── dialog-close.ts        ← <line-dialog-close>
 ├── dialog.types.ts        ← Types/interfaces
 └── index.ts               ← Public exports
 ```
 
-### 3.9 Icon System
+### 3.12 Icon System
 
 Abstract wrapper with an agnostic registry:
 
 ```html
-<vita-icon name="check" library="phosphor"></vita-icon>
-<vita-icon name="arrow-right" library="lucide"></vita-icon>
-<vita-icon src="/my-icons/custom.svg"></vita-icon>
+<line-icon name="check" library="phosphor"></line-icon>
+<line-icon name="arrow-right" library="lucide"></line-icon>
+<line-icon src="/my-icons/custom.svg"></line-icon>
 ```
 
-- `vita-icon` exposes a **registry** where the consumer registers icon libraries.
+- `line-icon` exposes a **registry** where the consumer registers icon libraries.
 - Each library is a resolver: given a name, returns the SVG (URL, sprite, inline).
 - The component renders the SVG inside shadow DOM with `part="svg"` for customisation.
 - Zero icons bundled in core — the consumer brings their own.
 - Ready-to-go themes declare a default library (e.g., Phosphor, Lucide, Heroicons) and register the resolver automatically.
+
+### 3.13 Bundle Splitting Rule
+
+> Sub-components of a family share a single entrypoint. Independently usable components have separate entrypoints. A component belongs to a family when it requires its parent to function. Components connected via `<slot>` are always separate entrypoints — slots imply independence.
+
+**Families (single entrypoint):**
+
+| Entrypoint | Registers |
+|------------|-----------|
+| `./dialog` | line-dialog, line-dialog-trigger, line-dialog-content, line-dialog-title, line-dialog-close |
+| `./tabs` | line-tabs, line-tab-list, line-tab-trigger, line-tab-content |
+| `./accordion` | line-accordion, line-accordion-item, line-accordion-trigger, line-accordion-content |
+| `./menu` | line-menu, line-menu-trigger, line-menu-content, line-menu-item, line-menu-separator |
+| `./select` | line-select, line-select-trigger, line-select-content, line-select-item, line-select-group |
+| `./combobox` | line-combobox, line-combobox-input, line-combobox-content, line-combobox-item |
+| `./popover` | line-popover, line-popover-trigger, line-popover-content |
+| `./tooltip` | line-tooltip, line-tooltip-trigger, line-tooltip-content |
+| `./toast` | line-toast, line-toast-group |
+| `./menubar` | line-menubar, line-menubar-menu, line-menubar-trigger, line-menubar-content, line-menubar-item |
+
+**Independent entrypoints (connected via slot, work standalone):**
+
+`./button`, `./icon-button`, `./button-group`, `./split-button`, `./input`, `./password-input`, `./search-input`, `./date-input`, `./textarea`, `./field`, `./fieldset`, `./icon`, `./alert`, `./chip`, `./avatar`, `./avatar-group`, `./presence`, `./spinner`, `./editable`, etc.
+
+**The barrel export (`"."`) imports everything** — for consumers who prefer convenience over bundle size.
+
+### 3.14 Spinner
+
+**Tier:** Static (no machine, no Zag.js dependency).
+
+A standalone loading indicator. CSS-only animation — the component provides the structural markup and exposes `::part(root)` for full visual control. No opinion on shape (circle, dots, bars) or animation style.
+
+| | |
+|---|---|
+| **Tag** | `<line-spinner>` |
+| **Parts** | `root` |
+| **Props** | `size` (sm, md, lg), `speed` (slow, normal, fast), `label` (a11y, default: "Loading") |
+| **Attributes** | `role="status"`, `aria-label` from `label` prop |
+| **Slots** | `default` — optional, replaces built-in animation with consumer-provided content |
+| **Entrypoint** | `./spinner` (independent) |
+
+**Why Static:** A spinner has no interactive states, no user input, no machine logic. It renders and animates. The consumer controls appearance via `::part(root)` and CSS custom properties `--line-spinner-size`, `--line-spinner-speed`, `--line-spinner-color`.
+
+**Relationship to Button loading:** `<line-button loading>` shows a loading state but does NOT import Spinner. Button's loading visual is handled via its own `::part(loading)`. Consumers who want a spinner inside a loading button compose: `<line-button loading><line-spinner slot="prefix"></line-spinner> Saving...</line-button>`.
+
+### 3.15 Editable
+
+**Tier:** Pre-built (`@zag-js/editable`).
+
+Click-to-edit inline text. The user sees a read-only preview; clicking (or pressing Enter) switches to an input. Blur or submit saves; Escape cancels. Common pattern for table cells, profile names, settings fields.
+
+| | |
+|---|---|
+| **Tag** | `<line-editable>` |
+| **Sub-components** | `<line-editable-area>`, `<line-editable-input>`, `<line-editable-preview>`, `<line-editable-edit-trigger>`, `<line-editable-submit-trigger>`, `<line-editable-cancel-trigger>` |
+| **Parts** | root, area, input, preview, edit-trigger, submit-trigger, cancel-trigger |
+| **Props** | `value`, `default-value`, `placeholder`, `disabled`, `readonly`, `auto-resize`, `submit-mode` (blur, enter, both, none), `activation-mode` (focus, dblclick, click) |
+| **Events** | `line-value-change`, `line-value-commit`, `line-value-revert`, `line-edit`, `line-cancel` |
+| **Host attributes** | `data-editing`, `data-disabled`, `data-readonly`, `data-empty` |
+| **Entrypoint** | `./editable` (independent — sub-components in same entrypoint) |
+| **Form** | `formAssociated: true` — participates in native form submission |
+
+**Machine states:** `idle` → (click/Enter) → `editing` → (blur/submit) → `idle`. On `Escape` → revert to previous value → `idle`.
+
+**Slot/Part rule:** All sub-components are **internal parts**, not slots. The component must coordinate the read↔edit transition, manage focus between preview and input, and handle keyboard events. Consumer controls visual layout via `::part(*)`.
+
+### 3.16 Menubar
+
+**Tier:** Custom (no `@zag-js/menubar` exists — built on top of `@zag-js/menu`).
+
+Horizontal application-style menu bar (File, Edit, View...). Different from `<line-navigation-menu>` (which is for website navigation). Menubar is for desktop-app chrome — the Desktop-Inspired category depends on it.
+
+| | |
+|---|---|
+| **Tag** | `<line-menubar>` |
+| **Sub-components** | `<line-menubar-menu>`, `<line-menubar-trigger>`, `<line-menubar-content>`, `<line-menubar-item>`, `<line-menubar-separator>`, `<line-menubar-group>`, `<line-menubar-checkbox-item>`, `<line-menubar-radio-item>`, `<line-menubar-radio-group>`, `<line-menubar-sub-trigger>`, `<line-menubar-sub-content>` |
+| **Parts** | root, menu, trigger, content, item, separator, group |
+| **Props (root)** | `loop` (keyboard loops at edges), `orientation` (horizontal default) |
+| **Keyboard** | Arrow Left/Right between top-level triggers, Arrow Down opens menu, Escape closes current, Home/End first/last trigger |
+| **ARIA** | `role="menubar"` on root, `role="menuitem"` / `role="menuitemcheckbox"` / `role="menuitemradio"` on items, `aria-haspopup`, `aria-expanded` on triggers |
+| **Host attributes** | `data-orientation` |
+| **Entrypoint** | `./menubar` (family — all sub-components in one entrypoint) |
+
+**Machine:** Custom `createMachine()` coordinating N `@zag-js/menu` instances. Tracks `activeMenuIndex`, manages hover-to-open when any menu is already open, and handles arrow-key navigation between triggers. Each menu instance delegates to its own Zag.js menu machine for item navigation, submenus, and dismiss behavior.
+
+**Why not reuse `<line-menu>`:** Menubar triggers are always visible in a row, open on hover when a sibling is already open, and share a single keyboard navigation context. This is fundamentally different from a standalone dropdown menu. The internal Menu logic is shared (via Zag.js), but the orchestration layer is new.
 
 ---
 
@@ -410,9 +582,15 @@ Abstract wrapper with an agnostic registry:
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Button | Custom | Slots for icon + label. States: idle, pressed, loading |
+| Button | Custom | Slots: prefix, suffix, default (label). States: idle, pressed, loading, disabled. `formAssociated: true` — supports `type="submit\|reset\|button"` |
+| IconButton | Custom | Icon-only button. `aria-label` required (enforced via TypeScript). Same machine as Button |
+| ButtonGroup | Static | `role="group"`, border collapse, keyboard nav. Accepts any buttons via `<slot>` |
+| SplitButton | Custom | Primary action + dropdown for alternatives. Composes Button + Menu logic internally |
+| Alert | Static | Inline feedback: info, warning, error, success. Slots: icon, title, description, action, close. Dismiss via `line-dismiss` event, consumer controls DOM |
 | Badge | Static | Status, count, dot variants |
-| Avatar | Static | Fallback to initials, group |
+| Chip | Static | Display tag with optional remove. Parts: root, remove. Props: removable, disabled |
+| Avatar | Static | Fallback to initials → icon. Slots: default, fallback, status. Parts: root, image, fallback |
+| AvatarGroup | Custom | Stacking with overlap, overflow counter. Machine: collapsed ↔ expanded ↔ overflow_open. Parts: root, overflow. Props: max, size, spacing |
 | Separator | Static | Horizontal/vertical, optional label slot |
 | Visually Hidden | Static | A11y utility |
 | Portal | Static | Render outside DOM parent |
@@ -424,21 +602,27 @@ Abstract wrapper with an agnostic registry:
 | Grid | Static | CSS Grid wrapper |
 | Center | Static | Centering utility |
 | Aspect Ratio | Static | Fixed ratio container |
+| Spinner | Static | Loading indicator. CSS-only animation (pulse/spin). Parts: root. Props: size, speed. Consumer styles the visual — no opinion on shape or animation |
 
 ### 4.2 Forms — Essential
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
-| Input | Custom | Text, email, password, etc. States: idle, focused, error, disabled |
-| Textarea | Custom | Auto-resize. States: idle, focused, error, disabled |
-| Field | Custom | Wrapper: label + input + error + hint. Orchestrates child state |
+| Input | Custom | Text, email, tel, url. Slots: prefix, suffix. States: idle, focused, filled, error, disabled, readonly. `formAssociated: true`. Detects browser autofill |
+| PasswordInput | Custom | Extends Input pattern. Internal toggle part for visibility (eye/eye-off). Parts: root, input, toggle. Machine: adds hidden ↔ visible states |
+| SearchInput | Custom | Input with internal clear part. Parts: root, input, clear. Machine: adds empty ↔ filled (show/hide clear). Clear calls machine CLEAR action |
+| DateInput | Custom | Masked date field with segment navigation (day/month/year). Format prop (DD/MM/YYYY etc). No popup. States: idle, focused (with segment sub-states), filled, error. Phase 2, separate from DatePicker |
+| Textarea | Custom | Auto-resize. States: idle, focused, filled, error, disabled, readonly. Props: rows, maxRows, autoResize. `formAssociated: true` |
+| Field | Custom | Orchestrator. Slots: label, default (control), hint, error. Host data attributes: data-focused, data-filled, data-error, data-disabled, data-readonly, data-required. Parts: root, label, hint, error, required-indicator. Detects child state via events → validity → explicit props |
+| Fieldset | Static | Semantic grouping. Renders `<fieldset>` with `<legend>` via slot. Props: disabled (propagates to all formAssociated children). Parts: root, legend |
 | Checkbox | Pre-built | `@zag-js/checkbox` |
 | Radio Group | Pre-built | `@zag-js/radio-group` |
 | Switch | Pre-built | `@zag-js/switch` |
 | Select | Pre-built | `@zag-js/select` + `ListCollection` |
 | Toggle Group | Pre-built | `@zag-js/toggle-group` |
 | Slider | Pre-built | `@zag-js/slider` |
-| Number Input | Pre-built | `@zag-js/number-input` |
+| Number Input | Pre-built | `@zag-js/number-input`. Internal increment/decrement parts |
+| Editable | Pre-built | `@zag-js/editable`. Click-to-edit inline text. Machine: reading → editing → saving. Used in tables, settings, profile fields |
 
 ### 4.3 Overlays & Feedback
 
@@ -466,13 +650,14 @@ Abstract wrapper with an agnostic registry:
 | Breadcrumb Trail | Custom | Clickable with dropdown showing siblings at each level. Uses `ListCollection` |
 | Pagination | Pre-built | `@zag-js/pagination` |
 | Steps / Stepper | Pre-built | `@zag-js/steps` — visual indicator |
+| Menubar | Custom | Horizontal app-style menu bar (File, Edit, View...). Different from NavigationMenu (site nav). Custom machine coordinating multiple Menu instances horizontally with keyboard nav (arrow left/right between menus) |
 
 ### 4.5 Forms — Advanced
 
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
 | Combobox | Pre-built | `@zag-js/combobox` — autocomplete + `ListCollection` |
-| Date Picker | Pre-built | `@zag-js/date-picker` |
+| Date Picker | Pre-built | `@zag-js/date-picker`. Accepts any trigger via slot — can compose with DateInput for type + pick |
 | Date Range Picker | Pre-built | `@zag-js/date-picker` range mode, two-calendar view |
 | Time Picker | Pre-built | `@zag-js/time-picker` |
 | Color Picker | Pre-built | `@zag-js/color-picker` |
@@ -483,7 +668,7 @@ Abstract wrapper with an agnostic registry:
 | Signature Pad | Pre-built | `@zag-js/signature-pad` |
 | Tag Input | Custom | Text to tags, autocomplete, drag reorder, multi-paste. Custom machine + `ListCollection` |
 | Mention Input | Custom | Textarea with @mention and #channel inline. Custom machine + `ListCollection` |
-| Search Field | Custom | Suggestions dropdown, recent searches, scoped search. Custom machine + `ListCollection` |
+| Search Field | Custom | Full search experience: suggestions dropdown, recent searches, scoped search. Different from SearchInput (Phase 2) which is just a field with clear. Custom machine + `ListCollection` |
 | Wizard / Multi-step Form | Custom | Step validation, progress tracking, branching logic |
 
 ### 4.6 Data Display
@@ -580,26 +765,26 @@ Abstract wrapper with an agnostic registry:
 
 | Category | Count |
 |----------|-------|
-| Primitives Base | 14 |
-| Forms — Essential | 10 |
+| Primitives Base | 20 |
+| Forms — Essential | 15 |
 | Overlays & Feedback | 8 |
-| Navigation & Disclosure | 9 |
+| Navigation & Disclosure | 10 |
 | Forms — Advanced | 14 |
 | Data Display | 13 |
 | Layout & Containers | 7 |
 | Desktop-Inspired | 11 |
 | Innovative | 15 |
 | Real-World / Domain | 17 |
-| **Total** | **118** |
+| **Total** | **130** |
 
 **By Tier:**
 
 | Tier | Count | Description |
 |------|-------|-------------|
-| Pre-built | 45 | Uses existing `@zag-js/*` machine |
-| Custom | 37 | Custom machine via `createMachine()` |
-| Static | 36 | Purely presentational |
-| **Total** | **118** |
+| Pre-built | 46 | Uses existing `@zag-js/*` machine |
+| Custom | 45 | Custom machine via `createMachine()` |
+| Static | 39 | Purely presentational |
+| **Total** | **130** |
 
 ---
 
@@ -616,7 +801,7 @@ Abstract wrapper with an agnostic registry:
 | Overview | Description, when to use, when not to use |
 | Playground | Interactive story with controls for all props |
 | Anatomy | Visual diagram of available parts and slots |
-| Parts & Properties | Table of all `::part()` and `--vita-*` custom properties |
+| Parts & Properties | Table of all `::part()` and `--line-*` custom properties |
 | Slots | Available slots and what each accepts |
 | Accessibility | Keyboard shortcuts, ARIA roles, screen reader behaviour |
 | Examples | Real variants — with theme applied and without |
@@ -646,22 +831,24 @@ Storybook
 │   ├── Shadows & Elevation
 │   └── Motion & Easings
 ├── Components
-│   ├── Layout
+│   ├── Primitives
 │   ├── Forms
 │   ├── Overlays
 │   ├── Navigation
 │   ├── Data Display
+│   ├── Layout
 │   ├── Desktop-Inspired
 │   ├── Innovative
 │   └── Real-World
 └── Patterns (component compositions)
+    ├── Floating Label Field
     ├── Login Form
     ├── Dashboard Layout
     ├── Settings Page
     └── ...
 ```
 
-**Patterns section:** Shows how to compose multiple Vitamina components together for real scenarios. Not components — recipes.
+**Patterns section:** Shows how to compose multiple line://ui components together for real scenarios. Not components — recipes. Includes the floating label pattern with full CSS.
 
 ### 5.2 Testing Strategy
 
@@ -686,9 +873,11 @@ Storybook
 
 ### 5.3 Public Site
 
-**Tool:** Astro + MDX + Vitamina components (dogfooding).
+**Tool:** Astro + MDX + line://ui components (dogfooding).
 
 **Deploy:** Cloudflare Pages.
+
+**URL:** `line-ui.websublime.com`
 
 **Site structure:**
 
@@ -700,18 +889,6 @@ Storybook
 | Theming showcase | Interactive theme browser |
 | Changelog | Release notes (auto-generated via Changesets) |
 | Storybook link | Link to deployed Storybook |
-
-**Storybook vs Site:**
-
-| Site (public) | Storybook (dev/playground) |
-|---------------|---------------------------|
-| Landing page, branding | — |
-| Curated docs with examples | Auto-generated API docs |
-| Getting started, guides | — |
-| Interactive theming showcase | Controls playground |
-| Copy-paste snippets | All variants/edge cases |
-| Changelog | — |
-| Link to Storybook | Link to site |
 
 ### 5.4 Storybook Deployment
 
@@ -745,7 +922,7 @@ packages/
 ```
 packages/
 ├── core/           ← Base class, mixins, utilities, helpers
-├── components/     ← All UI components (vita-button, vita-dialog, etc.)
+├── components/     ← All UI components (line-button, line-dialog, etc.)
 ├── theme/          ← Ready-to-go themes + colour tokens
 ├── icons/          ← Icon registry + resolvers for popular libraries
 ├── site/           ← Astro site (not published to npm)
@@ -756,10 +933,10 @@ packages/
 
 | Package | npm name |
 |---------|----------|
-| core | `@websublime/vitamina-core` |
-| components | `@websublime/vitamina-components` |
-| theme | `@websublime/vitamina-theme` |
-| icons | `@websublime/vitamina-icons` |
+| core | `@websublime/line-core` |
+| components | `@websublime/line-components` |
+| theme | `@websublime/line-theme` |
+| icons | `@websublime/line-icons` |
 
 **Private packages:** `site`, `storybook` (not published).
 
@@ -770,23 +947,35 @@ packages/
 ```
 src/ → Vite library mode → dist/
   ├── index.js          ← Main barrel
-  ├── vita-element.js   ← Base class
-  ├── mixins/           ← Individual mixins
+  ├── line-element.js   ← Base class
+  ├── mixins/           ← Individual mixins (inspector, metadata, direction, form-associated)
   ├── utilities/        ← Helpers, decorators
   └── types/            ← .d.ts
 ```
 
 **Components package — Tree-shakeable per-component:**
 
-Each component is a separate entrypoint in `package.json`:
+Each component family or independent component is a separate entrypoint in `package.json` (see §3.13 Bundle Splitting Rule):
 
 ```json
 {
   "exports": {
     ".": "./dist/index.js",
     "./button": "./dist/button/index.js",
+    "./icon-button": "./dist/icon-button/index.js",
+    "./button-group": "./dist/button-group/index.js",
+    "./input": "./dist/input/index.js",
+    "./password-input": "./dist/password-input/index.js",
+    "./search-input": "./dist/search-input/index.js",
+    "./date-input": "./dist/date-input/index.js",
+    "./field": "./dist/field/index.js",
+    "./fieldset": "./dist/fieldset/index.js",
     "./dialog": "./dist/dialog/index.js",
-    "./tabs": "./dist/tabs/index.js"
+    "./tabs": "./dist/tabs/index.js",
+    "./alert": "./dist/alert/index.js",
+    "./chip": "./dist/chip/index.js",
+    "./avatar": "./dist/avatar/index.js",
+    "./avatar-group": "./dist/avatar-group/index.js"
   }
 }
 ```
@@ -794,8 +983,9 @@ Each component is a separate entrypoint in `package.json`:
 Consumer imports surgically:
 
 ```js
-import '@websublime/vitamina-components/button'
-import '@websublime/vitamina-components/dialog'
+import '@websublime/line-components/button'
+import '@websublime/line-components/field'
+import '@websublime/line-components/input'
 ```
 
 **Theme package:**
@@ -805,7 +995,7 @@ Individual CSS files per theme + complete bundle:
 ```json
 {
   "exports": {
-    ".": "./dist/vita.css",
+    ".": "./dist/line.css",
     "./themes/blue": "./dist/themes/blue.css",
     "./themes/green": "./dist/themes/green.css"
   }
@@ -894,27 +1084,29 @@ Workflows:
 | Migrate to Bun | Runtime + workspaces, remove pnpm | Review pending | |
 | Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome | Review pending | |
 | Update all dependencies | Lit 3+, Vite 7+ with Rolldown, PostCSS latest | Review pending | |
-| Refactor VitaElement | Base class with Zag.js lifecycle, mixins (inspector, metadata, direction). Zag.js integration is a future investigation — the `@zag-js/element` adapter maturity is a technical risk to be validated | |
-| Restructure monorepo | 6 packages: core, components, theme, icons, site, storybook | |
-| Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer | |
-| Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright | |
-| Setup CI/CD | GitHub Actions: checks, release, snapshot-deploy, snapshot-version | |
-| Define RC pipeline | Release candidate pipeline for `next` branch | |
-| npm scope | Configure `@websublime/vitamina-*` on npm | |
-| Theme package v2 | Integrate Open Props (utility tokens) + maintain 12-level colour system | |
-| Icon registry | Agnostic resolver system | |
+| Refactor LineElement | Base class with Zag.js lifecycle, mixins (inspector, metadata, direction, form-associated). Zag.js integration is a future investigation — the `@zag-js/element` adapter maturity is a technical risk to be validated | | |
+| FormAssociated mixin | Implement opt-in `formAssociated` mixin in LineElement using `ElementInternals`. Provides: `setFormValue()`, `reportValidity()`, `checkValidity()`, `:invalid`/`:valid` states | | |
+| Restructure monorepo | 6 packages: core, components, theme, icons, site, storybook | | |
+| Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer | | |
+| Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright | | |
+| Setup CI/CD | GitHub Actions: checks, release, snapshot-deploy, snapshot-version | | |
+| Define RC pipeline | Release candidate pipeline for `next` branch | | |
+| npm scope | Configure `@websublime/line-*` on npm | | |
+| Theme package v2 | Integrate Open Props (utility tokens) + maintain 12-level colour system | | |
+| Icon registry | Agnostic resolver system | | |
 | Base documentation | Getting started, theming guide, customisation guide in Storybook | | |
-| Validate HTMX integration | Spike: validate `VitaHtmxElement` adapter with `hx-*` forwarding, server-driven state, swap-aware lifecycle. Determine if exploratory or committed for Phase 1 | | P2 |
+| Validate HTMX integration | Spike: validate `LineHtmxElement` adapter with `hx-*` forwarding, server-driven state, swap-aware lifecycle. Determine if exploratory or committed for Phase 1 | | P2 |
 
 **Phase 0 Status:** Tasks marked "Review pending" are functionally complete but require verification of quality and integration before sign-off.
 
 **Exit criteria:**
 - All tasks marked "Done" with review completed
 - Monorepo structure matches target
-- A developer can create, build, test, and document a new component using VitaElement
+- A developer can create, build, test, and document a new component using LineElement
+- FormAssociated mixin operational with native `<form>` elements
 - CI/CD pipeline operational (checks + RC releases on `next`)
 
-**Deliverable:** Functional monorepo. Zero UI components, but any developer can create a Vitamina component with the base class and have everything working — build, test, docs, release.
+**Deliverable:** Functional monorepo. Zero UI components, but any developer can create a line://ui component with the base class and have everything working — build, test, docs, release.
 
 **Version:** 0.1.0
 
@@ -923,8 +1115,13 @@ Workflows:
 | Component | Zag.js |
 |-----------|--------|
 | Button | Custom |
+| IconButton | Custom |
+| ButtonGroup | Static |
+| Alert | Static |
+| Chip | Static |
 | Badge | Static |
 | Avatar | Static |
+| AvatarGroup | Custom |
 | Separator | Static |
 | Visually Hidden | Static |
 | Portal | Static |
@@ -936,8 +1133,9 @@ Workflows:
 | Grid | Static |
 | Center | Static |
 | Aspect Ratio | Static |
+| Spinner | Static |
 
-**~14 components.** Mostly static, one pre-built, one custom. Validates architecture, parts convention, per-component build pipeline, and automatic documentation.
+**20 components.** Validates architecture, parts convention, slot/part decision rule, per-component build pipeline, bundle splitting, and automatic documentation.
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -945,6 +1143,7 @@ Workflows:
 - Zero axe-core violations
 - CEM manifest generated and verified
 - Changeset entry for every component
+- Bundle splitting verified — families and independents work as documented
 
 **Parallel:** Landing page for site.
 
@@ -953,8 +1152,12 @@ Workflows:
 | Component | Zag.js |
 |-----------|--------|
 | Input | Custom |
+| PasswordInput | Custom |
+| SearchInput | Custom |
+| DateInput | Custom |
 | Textarea | Custom |
 | Field | Custom |
+| Fieldset | Static |
 | Checkbox | Pre-built |
 | Radio Group | Pre-built |
 | Switch | Pre-built |
@@ -962,12 +1165,16 @@ Workflows:
 | Toggle Group | Pre-built |
 | Slider | Pre-built |
 | Number Input | Pre-built |
+| Editable | Pre-built |
 
-**~10 components.** First real Zag.js integration — both pre-built and custom machines. Validates machine + Lit + parts pattern in forms.
+**15 components.** First real Zag.js integration — both pre-built and custom machines. Validates machine + Lit + parts pattern in forms. Validates Field orchestration, formAssociated integration, and the slot/part decision rule for internal elements (toggle, clear, increment).
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
+- Field correctly detects child state via events, validity, and explicit props
+- formAssociated components participate in native `<form>` submit, reset, and validation
 - Storybook documentation complete for every component
+- Floating label pattern documented in Storybook Patterns section
 - Zero axe-core violations
 - CEM manifest generated and verified
 - Changeset entry for every component
@@ -990,10 +1197,12 @@ Workflows:
 | Accordion | Pre-built |
 | Collapsible | Pre-built |
 | Menu / Context Menu | Pre-built |
+| SplitButton | Custom |
 | Breadcrumb | Static |
 | Breadcrumb Trail | Custom |
+| Menubar | Custom |
 
-**~14 components.** Complex components with focus management, portals, animations. Validates overlays and sub-component composition.
+**16 components.** Complex components with focus management, portals, animations. Validates overlays and sub-component composition. SplitButton enters here because it depends on Button (Phase 1) + Menu logic. Menubar enters here because it coordinates multiple Menu instances.
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -1020,10 +1229,11 @@ Workflows:
 | Mention Input | Custom |
 | Search Field | Custom |
 
-**~13 components.** The most complex in the catalogue.
+**13 components.** The most complex in the catalogue. DatePicker composes with DateInput (Phase 2) as optional trigger.
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
+- DatePicker + DateInput composition verified
 - Storybook documentation complete for every component
 - Zero axe-core violations
 - CEM manifest generated and verified
@@ -1049,7 +1259,7 @@ Workflows:
 | QR Code | Pre-built |
 | Timer | Pre-built |
 
-**~15 components.**
+**15 components.**
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -1079,7 +1289,7 @@ Workflows:
 | Minimap | Static |
 | Properties Panel | Custom |
 
-**~16 components.** Layout pieces and desktop patterns. Vitamina starts seriously differentiating here.
+**16 components.** Layout pieces and desktop patterns. line://ui starts seriously differentiating here.
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -1111,7 +1321,7 @@ Workflows:
 | Tour | Pre-built |
 | Empty State | Static |
 
-**~18 components.**
+**18 components.**
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -1143,7 +1353,7 @@ Workflows:
 | Map Marker / Pin | Custom | Customisable marker with popover |
 | OTP / Verification | Custom | Beyond pin input |
 
-**~18 components.**
+**18 components.**
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -1154,20 +1364,27 @@ Workflows:
 
 **Version after Phase 8: 1.0.0** — Full catalogue complete.
 
-### 7.11 Roadmap Summary
+### 7.11 Nice-to-have (post-1.0)
+
+| Component/Feature | Description |
+|-------------------|-------------|
+| FloatingField | Convenience component wrapping Field + floating label CSS. Pattern documented in Storybook covers 95% of cases |
+| line-form | Convenience wrapper adding: submit handling with loading state, error distribution by `name`, focus-first-error. Each framework has its own form management — this is application-level |
+
+### 7.12 Roadmap Summary
 
 ```
 Phase 0 ─── Foundation & Tooling ──────────── v0.1.0
-Phase 1 ─── 14 core primitives ────────────── v0.2.0
-Phase 2 ─── 10 essential forms ────────────── v0.3.0
-Phase 3 ─── 14 overlays & navigation ──────── v0.4.0
+Phase 1 ─── 20 core primitives ────────────── v0.2.0
+Phase 2 ─── 15 essential forms ────────────── v0.3.0
+Phase 3 ─── 16 overlays & navigation ──────── v0.4.0
 Phase 4 ─── 13 advanced forms ─────────────── v0.5.0
 Phase 5 ─── 15 data display & nav ─────────── v0.6.0
 Phase 6 ─── 16 layout & desktop ───────────── v0.7.0
 Phase 7 ─── 18 innovative ─────────────────── v0.8.0
 Phase 8 ─── 18 real-world / domain ────────── v0.9.0
                                         ──── v1.0.0
-                                    118 components
+                                    130 components
 ```
 
 ---
@@ -1179,7 +1396,7 @@ Individual component specs live in `.spec/`. Architecture decisions are tracked 
 ### 8.1 Spec Template
 
 ```markdown
-# XXXX. vita-{component} spec
+# XXXX. line-{component} spec
 
 Date: YYYY-MM-DD
 Status: proposed | in-progress | done
@@ -1195,8 +1412,8 @@ Visual structure — which internal elements exist.
 
 ## Sub-components (if applicable)
 
-- `vita-{component}-trigger`
-- `vita-{component}-content`
+- `line-{component}-trigger`
+- `line-{component}-content`
 - ...
 
 ## Parts
@@ -1206,18 +1423,30 @@ Visual structure — which internal elements exist.
 | root | div | Main container |
 | ... | ... | ... |
 
+## Internal Parts (component-controlled)
+
+Elements rendered by the component that the consumer styles but does not provide.
+Applies only when the component must coordinate state with the element.
+
+| Part | Element | Why internal |
+|------|---------|-------------|
+| toggle | button | Coordinates with machine to toggle input type |
+| ... | ... | ... |
+
+## Slots
+
+| Slot | Description | Content |
+|------|-------------|---------|
+| default | Primary content | Free |
+| prefix | Leading content inside the control | Free |
+| suffix | Trailing content inside the control | Free |
+| ... | ... | ... |
+
 ## Custom Properties
 
 | Property | Default | Description |
 |----------|---------|-------------|
-| --vita-{component}-* | ... | ... |
-
-## Slots
-
-| Slot | Description |
-|------|-------------|
-| default | ... |
-| ... | ... |
+| --line-{component}-* | ... | ... |
 
 ## Properties (attributes)
 
@@ -1231,6 +1460,13 @@ Visual structure — which internal elements exist.
 |-------|--------|-------------|
 | ... | ... | ... |
 
+## Host Data Attributes
+
+| Attribute | When | Description |
+|-----------|------|-------------|
+| data-focused | Control has focus | Styling hook |
+| ... | ... | ... |
+
 ## Keyboard
 
 | Key | Description |
@@ -1240,10 +1476,12 @@ Visual structure — which internal elements exist.
 ## Accessibility
 
 ARIA roles, states, and screen reader behaviour.
+Form association details (if formAssociated).
 
 ## Zag.js Machine (if applicable)
 
 Which machine is used and what context/API it exposes.
+Machine states and transitions.
 
 ## Examples
 
@@ -1265,53 +1503,600 @@ Basic and advanced usage snippets.
 
 ## 9. Design Token System
 
-### 9.1 Colour System (Custom — 12 Semantic Levels)
+> **Branding refactor required:** The existing theme package is published as `@websublime/vitamina-theme` v0.6.0 and uses unprefixed variables (`--blue-9`, `--background`) and unprefixed classes (`.schema-blue`, `.is-blue`). This section documents the **target architecture** using the `line://ui` branding (`--line-*` prefix, `.line-*` classes). The codebase refactor to align with this specification is a Phase 0 task (see [section 9.14](#914-branding-refactor-phase-0)).
 
-Each palette provides 12 shades with semantic meaning:
+### 9.1 Colour Palette System (Custom — 12 Semantic Levels)
+
+The colour system is inspired by [Radix Colors](https://www.radix-ui.com/colors) and provides 28 colour-named palettes. Each palette defines 12 levels with hand-crafted HSL values for both light and dark modes.
+
+**The 28 palettes:**
+
+| Group | Palettes |
+|-------|----------|
+| Neutrals | gray, mauve, slate, sage, olive, sand |
+| Warm | tomato, red, crimson, pink, plum, purple, violet |
+| Cool | indigo, blue, cyan, teal |
+| Nature | green, grass, lime, mint, sky |
+| Earth | brown, bronze, gold |
+| Alert | yellow, amber, orange |
+
+All palettes are **colour-named** (not semantic). A semantic alias layer (`--line-primary-*`, `--line-danger-*`, etc.) is defined in [section 9.5](#95-semantic-alias-layer) and implemented in Phase 1.
+
+**12-level structure per palette:**
 
 | Level | Variable | Semantic Use |
 |-------|----------|-------------|
-| 1 | `--{color}-1` | Background |
-| 2 | `--{color}-2` | Subtle background |
-| 3 | `--{color}-3` | UI element background |
-| 4 | `--{color}-4` | UI element hover background |
-| 5 | `--{color}-5` | UI element active background |
-| 6 | `--{color}-6` | Subtle border |
-| 7 | `--{color}-7` | UI element border |
-| 8 | `--{color}-8` | UI element border hover |
-| 9 | `--{color}-9` | Solid background |
-| 10 | `--{color}-10` | Solid hover |
-| 11 | `--{color}-11` | Low contrast text |
-| 12 | `--{color}-12` | High contrast text |
+| 1 | `--line-{color}-1` | App background |
+| 2 | `--line-{color}-2` | Subtle background |
+| 3 | `--line-{color}-3` | UI element background |
+| 4 | `--line-{color}-4` | UI element hover background |
+| 5 | `--line-{color}-5` | UI element active / selected background |
+| 6 | `--line-{color}-6` | Subtle borders and separators |
+| 7 | `--line-{color}-7` | UI element border and focus rings |
+| 8 | `--line-{color}-8` | UI element border hover |
+| 9 | `--line-{color}-9` | Solid backgrounds (primary action colour) |
+| 10 | `--line-{color}-10` | Solid hover backgrounds |
+| 11 | `--line-{color}-11` | Low-contrast text |
+| 12 | `--line-{color}-12` | High-contrast text |
 
-**28 colour palettes** with light/dark mode support. Palette coverage will be reviewed and potentially expanded in Phase 0.
+**Naming pattern:** `--line-{palette}-{level}`, e.g., `--line-blue-1`, `--line-crimson-9`, `--line-gray-12`.
 
-### 9.2 Utility Tokens (Open Props)
-
-Sourced from Open Props for non-colour tokens:
-
-- Sizes & spacing
-- Typography (font families, sizes, weights, line heights, letter spacing)
-- Shadows & elevation
-- Border radii
-- Easings & animations
-- Aspect ratios
-- Z-index scale
-- Gradients
-
-### 9.3 Theme Structure
-
-Each ready-to-go theme is a CSS file that:
-
-1. Applies a colour palette as the active schema
-2. Sets utility token defaults
-3. Registers a default icon library
-4. Supports light/dark mode via `prefers-color-scheme` and `.dark` class toggle
+Each palette file (e.g., `src/colors/blue.css`) defines light mode values on `:where(html)` and dark mode values on `:where(html):is(.dark)`:
 
 ```css
-/* Consumer usage */
-@import '@websublime/vitamina-theme/themes/blue';
+/* src/colors/blue.css */
+:where(html) {
+  --line-blue-1: hsl(206, 100%, 99.2%);
+  --line-blue-2: hsl(210, 100%, 98.0%);
+  /* ... through --line-blue-12 */
+}
+
+:where(html):is(.dark) {
+  --line-blue-12: hsl(212, 35.0%, 9.2%);
+  --line-blue-11: hsl(216, 50.0%, 11.8%);
+  /* ... through --line-blue-1 — note: numbering is reversed in dark mode */
+}
 ```
+
+Dark mode values are **not** simply inverted — each level has independently crafted HSL values optimised for dark backgrounds. The level numbering reverses in dark mode (level 12 becomes the darkest, level 1 becomes the lightest) to maintain the semantic meaning: level 1 is always "background", level 12 is always "high contrast text", regardless of mode.
+
+### 9.2 Variable Namespace
+
+**Decision: All tokens use the `--line-*` prefix.** No exceptions. This provides zero collision risk, a single naming convention, and consistent branding across the design system.
+
+| Token Category | Namespace | Examples | Defined In |
+|----------------|-----------|----------|------------|
+| Palette colours | `--line-{color}-{level}` | `--line-blue-1`, `--line-gray-12`, `--line-crimson-9` | `src/colors/*.css` |
+| Semantic roles | `--line-{role}` | `--line-background`, `--line-solid-hover`, `--line-high-contrast` | `src/schemas/*.css`, `src/utils/rules.css` |
+| Utility tokens (Open Props) | `--line-{token}` | `--line-size-3`, `--line-font-size-2`, `--line-shadow-3` | `src/utils/rules.css` (via build-time rewrite) |
+| Semantic aliases | `--line-{alias}-{level}` | `--line-primary-9`, `--line-danger-1` | `src/aliases.css` (Phase 1) |
+| Component tokens | `--line-{component}-{prop}` | `--line-button-radius`, `--line-input-bg` | Component `:host` styles |
+| CSS classes | `.line-{name}` | `.line-schema-blue`, `.line-is-blue`, `.line-is-background` | `src/schemas/*.css`, `src/utils/general.css` |
+
+**Open Props build-time rewrite:** Open Props tokens are consumed at build time via `postcss-jit-props`. A PostCSS build step rewrites all Open Props variables from their original namespace (`--size-3`, `--radius-2`, `--shadow-3`) to the `--line-*` namespace (`--line-size-3`, `--line-radius-2`, `--line-shadow-3`). This is a source-level transformation — the output CSS contains only `--line-*` variables. The consumer never sees unprefixed Open Props tokens.
+
+### 9.3 Open Props Integration
+
+Open Props tokens are injected at build time by `postcss-jit-props`, which auto-detects which tokens the source CSS uses and inlines only those values. The consumer does NOT need to install Open Props — all used tokens are compiled into the output CSS with the `--line-*` prefix.
+
+**Tokens included in the theme package (after build-time rewrite):**
+
+| Category | Variables | Range |
+|----------|-----------|-------|
+| Font families | `--line-font-sans`, `--line-font-serif`, `--line-font-mono` | 3 stacks |
+| Font weights | `--line-font-weight-1` through `--line-font-weight-9` | 100 to 900 |
+| Font sizes | `--line-font-size-0` through `--line-font-size-9` | 0.5rem to 3.5rem |
+| Font sizes (fluid) | `--line-font-size-fluid-0` through `--line-font-size-fluid-3` | `clamp()` responsive |
+| Line heights | `--line-font-lineheight-0` through `--line-font-lineheight-9` | 0.95 to 3 |
+| Letter spacing | `--line-font-letterspacing-0` through `--line-font-letterspacing-9` | -0.05em to 2em |
+| Spacing (absolute) | `--line-size-000`, `--line-size-00`, `--line-size-1` through `--line-size-15` | -0.5rem to 30rem |
+| Spacing (fluid) | `--line-size-fluid-1` through `--line-size-fluid-10` | `clamp()` responsive |
+| Spacing (relative) | `--line-size-relative-000` through `--line-size-relative-15` | `ch`-based |
+| Content widths | `--line-size-content-1` through `--line-size-content-3` | 20ch to 60ch |
+| Header widths | `--line-size-header-1` through `--line-size-header-3` | 20ch to 35ch |
+| Breakpoints | `--line-size-xxs` through `--line-size-xxl` | 240px to 1920px |
+| Border radii | `--line-radius-2`, `--line-radius-3` | Open Props values |
+| Border sizes | `--line-border-size-1` through `--line-border-size-3` | Open Props values |
+| Easings | `--line-ease-2` | Open Props values |
+| Shadows | `--line-shadow-1` through `--line-shadow-6` + inner shadows | Multi-layer box-shadows |
+| Shadow config | `--line-shadow-color`, `--line-shadow-strength` | Dark mode overrides |
+
+**PostCSS pipeline fix (Phase 0):** The `postcss-jit-props` plugin is listed as a dependency (`^1.0.16`) but is **not configured** in `postcss.config.cjs`. Without it, tokens referenced in `normalize.css` (`--radius-2`, `--border-size-*`, `--ease-2`, `--surface-4`) resolve to empty values at runtime. Phase 0 must add `postcss-jit-props` to the pipeline and configure the `--line-*` prefix rewrite.
+
+**Import strategy:** Open Props is a `devDependency` — consumed at build time only. If a consumer also uses Open Props in their own project, there is no conflict — the `--line-*` prefixed tokens are distinct from Open Props' native `--size-*` tokens.
+
+### 9.4 Schema System — Semantic Layer
+
+Schemas map the 12 palette levels to **semantic role variables**. Each palette has a corresponding schema file (`src/schemas/{palette}.css`) scoped to a CSS class.
+
+**The 14 semantic role variables:**
+
+| Semantic Variable | Maps To (Light) | Maps To (Dark) | Purpose |
+|-------------------|-----------------|----------------|---------|
+| `--line-background` | `--line-{color}-1` | `--line-{color}-12` | App background |
+| `--line-subtle-background` | `--line-{color}-2` | `--line-{color}-11` | Subtle background |
+| `--line-ui-background` | `--line-{color}-3` | `--line-{color}-10` | UI element background |
+| `--line-ui-hover-background` | `--line-{color}-4` | `--line-{color}-9` | Hovered UI element |
+| `--line-ui-active-background` | `--line-{color}-5` | `--line-{color}-8` | Active / selected element |
+| `--line-subtle-border` | `--line-{color}-6` | `--line-{color}-7` | Subtle borders |
+| `--line-ui-border` | `--line-{color}-7` | `--line-{color}-6` | UI element borders |
+| `--line-ui-border-hover` | `--line-{color}-8` | `--line-{color}-5` | Hovered borders |
+| `--line-solid-background` | `--line-{color}-9` | `--line-{color}-4` | Solid backgrounds |
+| `--line-solid-hover` | `--line-{color}-10` | `--line-{color}-3` | Hovered solid backgrounds |
+| `--line-low-contrast` | `--line-{color}-11` | `--line-{color}-2` | Low-contrast text |
+| `--line-high-contrast` | `--line-{color}-12` | `--line-{color}-1` | High-contrast text |
+| `--line-light` | `--line-{color}-1` | `--line-{color}-12` | Lightest value in current mode |
+| `--line-dark` | `--line-{color}-12` | `--line-{color}-1` | Darkest value in current mode |
+
+**Activation mechanism — CSS class:**
+
+```css
+/* src/schemas/blue.css */
+:where(.line-schema-blue) {
+  --line-background: var(--line-blue-1);
+  --line-subtle-background: var(--line-blue-2);
+  /* ... all 14 semantic roles */
+}
+
+:is(.dark) :where(.line-schema-blue) {
+  --line-background: var(--line-blue-12);
+  --line-subtle-background: var(--line-blue-11);
+  /* ... reversed mapping for dark mode */
+}
+```
+
+The consumer applies a schema by adding a CSS class to any container:
+
+```html
+<!-- Full page schema -->
+<body class="line-schema-blue">
+
+<!-- Scoped schema (different section) -->
+<section class="line-schema-blue">...</section>
+<aside class="line-schema-crimson">...</aside>
+```
+
+This class-based scoping means **multiple schemas can coexist on the same page** — each container gets its own semantic colour context.
+
+**Palette-specific utility classes (per schema):**
+
+Each schema file also generates utility classes for direct use. Using blue as an example:
+
+| Class | Light Mode | Dark Mode | Description |
+|-------|------------|-----------|-------------|
+| `.line-is-blue` | `color: --line-blue-1; bg: --line-blue-9` | `color: --line-blue-1; bg: --line-blue-4` | Solid button-like styling with hover |
+| `.line-is-blue-color` | `color: --line-blue-12` | `color: --line-blue-1` | High-contrast text in palette |
+| `.line-is-blue-low-contrast` | `color: --line-blue-11` | `color: --line-blue-2` | Low-contrast text |
+| `.line-is-blue-high-contrast` | `color: --line-blue-12` | `color: --line-blue-1` | High-contrast text |
+| `.line-is-blue-background` | `bg: --line-blue-1` | `bg: --line-blue-12` | App background |
+| `.line-is-blue-subtle-background` | `bg: --line-blue-2` | `bg: --line-blue-11` | Subtle background |
+| `.line-is-blue-ui-background` | `bg: --line-blue-3` (hover: 4) | `bg: --line-blue-10` (hover: 9) | UI element with hover |
+| `.line-is-blue-solid-background` | `bg: --line-blue-9` | `bg: --line-blue-4` | Solid background |
+| `.line-is-blue-border` | `border: --line-blue-7` (hover: 8) | `border: --line-blue-6` (hover: 5) | Border with hover |
+
+All utility classes use `:where()` for zero specificity and `:is(.dark)` for dark mode overrides.
+
+### 9.5 Semantic Alias Layer
+
+A semantic alias layer maps intent-based names to specific palettes. This layer sits between palette tokens and component tokens, allowing consumers to remap semantic roles without touching component code.
+
+**The 10 semantic aliases (Phase 1):**
+
+| Alias | Default Palette | Purpose |
+|-------|-----------------|---------|
+| `primary` | blue | Brand colour, primary actions |
+| `secondary` | slate | Secondary actions, less emphasis |
+| `tertiary` | mauve | Tertiary actions, complementary |
+| `danger` | red | Errors, destructive actions |
+| `warning` | amber | Caution, attention needed |
+| `success` | green | Confirmation, positive feedback |
+| `info` | cyan | Informational, contextual |
+| `accent` | violet | Visual highlights, decorative |
+| `neutral` | gray | Default, content without emphasis |
+| `surface` | sand | Cards, dialogs, elevated surfaces |
+
+Each alias provides all 12 levels: `--line-primary-1` through `--line-primary-12`.
+
+**Implementation:**
+
+```css
+/* src/aliases.css — theme defines the mapping */
+:root {
+  --line-primary-1: var(--line-blue-1);
+  --line-primary-2: var(--line-blue-2);
+  /* ... */
+  --line-primary-12: var(--line-blue-12);
+
+  --line-danger-1: var(--line-red-1);
+  /* ... */
+  --line-danger-12: var(--line-red-12);
+
+  /* ... all 10 aliases × 12 levels = 120 variables */
+}
+```
+
+**Consumer remapping:**
+
+```css
+/* Consumer overrides "danger" to use crimson instead of red */
+:root {
+  --line-danger-1: var(--line-crimson-1);
+  --line-danger-2: var(--line-crimson-2);
+  /* ... */
+  --line-danger-12: var(--line-crimson-12);
+}
+```
+
+Components use semantic aliases for intent-driven styling (e.g., `--line-danger-9` for error states) and palette tokens for decorative or specific colour needs (e.g., `--line-blue-9` for a blue avatar background).
+
+### 9.6 Theme Composition
+
+A theme file imports a colour palette and its corresponding schema:
+
+```css
+/* src/themes/blue-theme.css — this is the entire file */
+@import '../colors/blue.css';
+@import '../schemas/blue.css';
+```
+
+**Theme = colour palette + schema.** No utility tokens, no icon registration, no additional configuration.
+
+**Consumer usage:**
+
+```css
+/* Option 1: Full bundle — all 28 themes + utilities + normalize */
+@import '@websublime/line-theme/dist/line.min.css';
+
+/* Option 2: Single theme only */
+@import '@websublime/line-theme/dist/theme-blue.min.css';
+
+/* Option 3: Granular — palette and schema separately */
+@import '@websublime/line-theme/dist/colors-blue.min.css';
+@import '@websublime/line-theme/dist/schemas-blue.min.css';
+```
+
+**The full bundle (`line.css`) import chain:**
+
+```
+line.css
+├── utils/rules.css         ← Semantic tokens + Open Props utility tokens + color-scheme
+├── utils/normalize.css      ← Modern CSS reset (imports media.css internally)
+├── utils/general.css        ← Generic utility classes mapping to semantic tokens
+└── themes/*-theme.css (x28) ← All 28 palette + schema pairs
+```
+
+**What themes do NOT include:**
+
+- No utility token defaults (those live in `rules.css`, always loaded)
+- No icon library registration (theme is pure CSS, no JS side-effects)
+
+**Custom theme contract (Phase 1 — documentation):**
+
+A consumer creating a custom theme must provide:
+
+1. A colour file with 12 levels (light + dark) following the `--line-{palette}-{level}` convention
+2. A schema file mapping the 12 levels to the 14 semantic role variables
+3. Optionally, override the semantic alias mapping to use their custom palette
+
+A generator CLI (`line theme create --palette brand --base "#4F46E5"`) is a nice-to-have post-1.0.
+
+### 9.7 Light/Dark Mode
+
+Two coexisting mechanisms control light/dark mode:
+
+**Mechanism 1: OS-level preference (automatic)**
+
+In `rules.css`, `@media (prefers-color-scheme: light/dark)` sets root-level semantic tokens on `:root`:
+
+```css
+@media (prefers-color-scheme: light) {
+  :root {
+    --line-background: hsl(0, 0%, 99.0%);
+    --line-subtle-background: hsl(0, 0%, 97.5%);
+    /* ... all 12 semantic roles — neutral/gray values */
+    --line-white: #f1f1f1;
+    --line-black: #030303;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --line-background: hsl(0, 0%, 9.5%);
+    /* ... dark-optimised values */
+  }
+}
+```
+
+These provide **neutral (gray) defaults** for semantic tokens before any schema is applied. When the OS switches mode, these root tokens update automatically.
+
+**Mechanism 2: Class-based override (manual)**
+
+A `.dark` or `.light` class on `<html>` forces a mode regardless of OS preference:
+
+```css
+:where(html).dark { color-scheme: dark; }
+:where(html).light { color-scheme: light; }
+```
+
+This class also triggers dark mode in:
+- **Palette files:** `:where(html):is(.dark)` overrides palette level values
+- **Schema files:** `:is(.dark) :where(.line-schema-*)` reverses the semantic mapping
+- **Shadow tokens:** `:where(html):is(.dark)` adjusts shadow colour and strength
+
+**How a consumer forces dark mode:**
+
+```js
+document.documentElement.classList.add('dark');
+```
+
+**Interaction between mechanisms:** The `.dark` class on `<html>` overrides palette and schema tokens via higher specificity (`:is(.dark)` vs bare `:where(html)`). However, the `rules.css` root semantic tokens are set via `@media (prefers-color-scheme)` and are **not** overridden by the `.dark` class — they require a schema class to take effect. This means:
+
+- Without a schema class: root tokens follow OS preference only
+- With a schema class: schema tokens follow the `.dark` / `.light` class, overriding OS preference for that scope
+
+### 9.8 PostCSS Pipeline
+
+The build pipeline is defined in `postcss.config.cjs`:
+
+```
+postcss-import → postcss-jit-props → postcss-mixins → postcss-simple-vars
+    → postcss-nested → postcss-preset-env → postcss-custom-media → cssnano
+```
+
+| Plugin | Purpose | Notes |
+|--------|---------|-------|
+| `postcss-import` | Resolves `@import` statements, inlining all CSS into a single file | Runs first — all subsequent plugins see a flat file |
+| `postcss-jit-props` | Injects only the Open Props tokens actually used in source CSS | Configured with `--line-*` prefix rewrite. Must run early so subsequent plugins see the injected tokens |
+| `postcss-mixins` | Enables `@define-mixin` / `@mixin` syntax | Used for `font-size` and `font-weight` mixins |
+| `postcss-simple-vars` | Enables `$variable` syntax (Sass-like variables) | Used in mixin parameter interpolation |
+| `postcss-nested` | Enables `&` nesting syntax | Used throughout for nested selectors and dark mode variants |
+| `postcss-preset-env` | Polyfills modern CSS features | Heavily restricted — most features disabled (see below) |
+| `postcss-custom-media` | Resolves `@custom-media` queries into standard `@media` | Processes the breakpoint and preference queries from `media.css` |
+| `cssnano` | Minifies output CSS | Default preset |
+
+**`postcss-preset-env` configuration — most features explicitly disabled:**
+
+```js
+{
+  autoprefixer: false,
+  stage: 0,
+  features: {
+    'color-functional-notation': false,
+    'custom-media-queries': { preserve: true },
+    'custom-properties': false,        // CSS variables kept as-is (not resolved)
+    'double-position-gradients': false,
+    'focus-visible-pseudo-class': false,
+    'focus-within-pseudo-class': false,
+    'gap-properties': false,
+    'logical-properties-and-values': false,
+    'not-pseudo-class': false,
+    'place-properties': false,
+    'prefers-color-scheme-query': false
+  }
+}
+```
+
+This configuration ensures CSS custom properties are preserved in the output (not compiled away) and that modern CSS features already supported by target browsers are not unnecessarily polyfilled.
+
+### 9.9 CSS Utilities
+
+**`rules.css`** — Foundation layer
+
+- Light/dark mode root semantic tokens via `@media (prefers-color-scheme)`
+- `color-scheme` declaration for `.dark` / `.light` classes
+- All Open Props tokens (typography, spacing, shadows — see [section 9.3](#93-open-props-integration)), rewritten to `--line-*`
+- Dark mode shadow adjustments (darker shadow colour, higher strength)
+
+**`normalize.css`** — Modern CSS reset
+
+- Imports `media.css` internally
+- `box-sizing: border-box` on all elements
+- Zero-margin reset via `:where(:not(dialog))`
+- Typographic defaults using `--line-font-sans`, `--line-font-lineheight-3`, `--line-font-size-*`
+- Accessible defaults: `touch-action: manipulation`, `-webkit-tap-highlight-color: transparent`, `outline-offset: 5px` on `:focus-visible`
+- Motion-safe transitions gated behind `@media (--motionOK)`
+- Form element resets (font inheritance, padding, border-radius)
+- Table styling with computed inner radius
+- Semantic max-width constraints (`--line-size-content-*`, `--line-size-header-*`)
+- Uses `:where()` throughout for zero specificity — consumer styles always win
+
+**`general.css`** — Semantic utility classes
+
+| Class | Maps To | Notes |
+|-------|---------|-------|
+| `.line-is-background` | `var(--line-background)` | Background colour |
+| `.line-is-subtle-background` | `var(--line-subtle-background)` | Subtle background |
+| `.line-is-ui-background` | `var(--line-ui-background)` | With transition |
+| `.line-is-hover-background` | `var(--line-ui-hover-background)` | Hover state |
+| `.line-is-active-background` | `var(--line-ui-active-background)` | Active state |
+| `.line-is-subtle-border` | `var(--line-subtle-border)` | Border + outline |
+| `.line-is-ui-border` | `var(--line-ui-border)` | With transition |
+| `.line-is-ui-hover` | `var(--line-ui-border-hover)` | Border hover |
+| `.line-is-solid-background` | `var(--line-solid-background)` | With transition |
+| `.line-is-hover-solid` | `var(--line-solid-hover)` | Solid hover |
+| `.line-is-low-contrast` | `var(--line-low-contrast)` | Text colour |
+| `.line-is-high-contrast` | `var(--line-high-contrast)` | Text colour |
+| `.line-is-light` / `.line-is-dark` | `var(--line-light)` / `var(--line-dark)` | Text colour |
+| `.line-is-white` / `.line-is-black` | `var(--line-white)` / `var(--line-black)` | Fixed colours |
+
+Also includes: `.line-carousel` layout utilities, `.line-is-tiny` size class, `.line-ripple` background transition, `.line-tabular-numbers` font variant.
+
+**`media.css`** — Custom media queries
+
+| Category | Queries |
+|----------|---------|
+| Motion | `--motionOK`, `--motionNotOK` |
+| Transparency | `--opacityOK`, `--opacityNotOK` |
+| Data saver | `--useDataOK`, `--useDataNotOK` |
+| Colour scheme | `--OSdark`, `--OSlight` |
+| Contrast | `--highContrast`, `--lowContrast` |
+| Orientation | `--portrait`, `--landscape` |
+| Display | `--HDcolor` (high dynamic range) |
+| Pointer | `--touch`, `--stylus`, `--pointer`, `--mouse` |
+| Breakpoints | `--xxs-only` through `--xxl-n-above` (7 breakpoints, each with `-only`, `-n-above`, `-n-below` variants, plus `-phone` portrait combos for mobile sizes) |
+
+Breakpoint values: xxs=240px, xs=360px, sm=480px, md=768px, lg=1024px, xl=1440px, xxl=1920px.
+
+**`mixins.css`** — PostCSS mixins
+
+Two utility mixins for shorthand token access:
+
+```css
+@define-mixin font-size $size {
+  font-size: var(--line-font-size-$(size));
+}
+
+@define-mixin font-weight $weight {
+  font-weight: var(--line-font-weight-$(weight));
+}
+```
+
+Usage: `@mixin font-size 3;` compiles to `font-size: var(--line-font-size-3);`.
+
+### 9.10 Token Flow — Global to Component to Consumer
+
+The design token system follows a three-tier cascade:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  Tier 1: Global Tokens (theme package)                          │
+│                                                                 │
+│  ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐    │
+│  │ Palette        │  │ Open Props     │  │ Semantic (root) │    │
+│  │ --line-blue-9  │  │ --line-size-3  │  │ --line-background│   │
+│  │ --line-gray-12 │  │ --line-shadow-2│  │ --line-solid-hover│  │
+│  │                │  │ --line-font-*  │  │ --line-high-contrast│ │
+│  └──────┬─────────┘  └──────┬─────────┘  └────────┬────────┘   │
+│         │                   │                      │            │
+│         ▼                   ▼                      ▼            │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  Schema: .line-schema-blue maps palette → semantic        │ │
+│  └────────────────────────────────────────────────────────────┘ │
+│         │                                                       │
+│         ▼                                                       │
+│  ┌────────────────────────────────────────────────────────────┐ │
+│  │  Aliases: --line-primary-9 → --line-blue-9 (Phase 1)      │ │
+│  └────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Tier 2: Component Tokens (inside :host)                        │
+│                                                                 │
+│  :host {                                                        │
+│    --line-button-radius: var(--line-radius-2);                  │
+│    --line-button-bg: var(--line-solid-background);              │
+│    --line-button-color: var(--line-high-contrast);              │
+│  }                                                              │
+└─────────────────────────────────────────────────────────────────┘
+                            │
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  Tier 3: Consumer Overrides                                     │
+│                                                                 │
+│  /* Override a component token */                               │
+│  line-button {                                                  │
+│    --line-button-radius: 1rem;                                  │
+│  }                                                              │
+│                                                                 │
+│  /* Or bypass tokens entirely via ::part() */                   │
+│  line-button::part(root) {                                      │
+│    border-radius: 0;                                            │
+│    background: linear-gradient(135deg, pink, purple);           │
+│  }                                                              │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key principle:** Each tier can be overridden by the tier below it. Component tokens reference global tokens as defaults. Consumer overrides win over component defaults. `::part()` overrides win over everything.
+
+**Current state:** Tier 1 is implemented (requires branding refactor). Tier 2 and Tier 3 are architectural patterns to be implemented when components are built in Phase 1. The pattern is validated by Lit's CSS custom property inheritance through shadow DOM.
+
+### 9.11 CSS Cascade Strategy
+
+**Decision: `@layer` is not needed.** The `:where()` strategy is sufficient for the theme package, and shadow DOM provides natural encapsulation for component styles.
+
+**The `:where()` strategy in practice:**
+
+- Palette tokens: `:where(html)` — zero specificity
+- Schema tokens: `:where(.line-schema-*)` — zero specificity
+- Utility classes: `:where(.line-is-*)` — zero specificity
+- Normalize reset: `:where(element)` — zero specificity
+- Dark mode overrides: `:is(.dark)` — normal specificity (higher than `:where()`)
+
+**Why `@layer` is not needed:**
+
+1. **Theme package:** `:where()` gives all token declarations zero specificity. Any consumer rule wins automatically. No layers needed.
+2. **Component package:** Shadow DOM encapsulates component styles. CSS custom properties inherit through the boundary. Consumer overrides via `::part()` or custom properties operate at the document level, naturally winning over shadow DOM internals.
+3. **No cross-boundary conflicts:** There is no scenario where theme styles, component base styles, and consumer styles compete in the same cascade context. Each has its own scope (document `:where()`, shadow DOM, document selectors).
+
+### 9.12 Package Exports and Build Outputs
+
+**Package metadata (target):**
+
+```json
+{
+  "name": "@websublime/line-theme",
+  "version": "0.7.0",
+  "style": "dist/line.min.css"
+}
+```
+
+The package exposes a single `"style"` field pointing to the full minified bundle. Individual files are importable by path.
+
+**Build outputs (all minified via cssnano):**
+
+| Output | Content | Use Case |
+|--------|---------|----------|
+| `dist/line.min.css` | Full bundle: utils + all 28 themes | Quick start — everything included |
+| `dist/colors-{palette}.min.css` | Single palette (12 light + 12 dark values) | Granular: palette only |
+| `dist/schemas-{palette}.min.css` | Single schema (semantic mapping + utility classes) | Granular: schema only |
+| `dist/theme-{palette}.min.css` | Single theme (colour + schema combined) | Single-palette setup |
+| `dist/utils-rules.min.css` | Root semantic tokens + Open Props utility tokens | Foundation tokens only |
+| `dist/utils-normalize.min.css` | CSS reset | Reset only |
+| `dist/utils-general.min.css` | Semantic utility classes | Utility classes only |
+| `dist/utils-media.min.css` | Custom media queries | Media queries only |
+
+Demo swatch files (`custom/*-custom.css`) are **excluded** from all build outputs. They belong in Storybook.
+
+**Minimal consumer setup (single theme):**
+
+```css
+@import '@websublime/line-theme/dist/utils-rules.min.css';
+@import '@websublime/line-theme/dist/utils-normalize.min.css';
+@import '@websublime/line-theme/dist/theme-blue.min.css';
+```
+
+### 9.13 Decisions Log
+
+All design token questions have been resolved. This table documents the decisions for traceability.
+
+| # | Question | Decision | Phase |
+|---|----------|----------|-------|
+| T1 | Namespace prefix for all tokens | **`--line-*` prefix on everything** — palette, semantic, Open Props, component tokens, and CSS classes. Single convention, zero collision risk. | Phase 0 |
+| T2 | CSS `@layer` strategy | **Not needed.** `:where()` handles theme specificity. Shadow DOM handles component encapsulation. No scenario where layers add value. | Closed |
+| T3 | Missing Open Props tokens in build pipeline | **Activate `postcss-jit-props`** in the PostCSS pipeline with build-time rewrite from `--size-*` to `--line-size-*`. Fixes missing `--radius-*`, `--border-size-*`, `--ease-*`, `--surface-*` tokens. | Phase 0 |
+| T4 | Custom theme contract for consumers | **Document the contract in Phase 1** (colour file + schema file + optional alias override). Generator CLI is nice-to-have post-1.0. | Phase 1 |
+| T5 | Demo swatch files in production bundle | **Remove from all build outputs.** Demo classes (`custom/*.css`) migrate to Storybook. | Phase 0 |
+| T6 | Semantic alias layer | **10 aliases × 12 levels = 120 variables.** Aliases: primary (blue), secondary (slate), tertiary (mauve), danger (red), warning (amber), success (green), info (cyan), accent (violet), neutral (gray), surface (sand). Consumer can remap any alias. | Phase 1 |
+
+### 9.14 Branding Refactor (Phase 0)
+
+The existing codebase uses legacy naming that must be migrated to `line://ui` branding:
+
+| What | Current (legacy) | Target |
+|------|-------------------|--------|
+| Theme package name | `@websublime/vitamina-theme` | `@websublime/line-theme` |
+| Main CSS bundle | `vita.css` / `vita.min.css` | `line.css` / `line.min.css` |
+| Palette variables | `--blue-9` (unprefixed) | `--line-blue-9` |
+| Semantic variables | `--background` (unprefixed) | `--line-background` |
+| Open Props variables | `--size-3` (unprefixed) | `--line-size-3` |
+| Schema classes | `.schema-blue` | `.line-schema-blue` |
+| Utility classes | `.is-blue`, `.is-background` | `.line-is-blue`, `.line-is-background` |
+| Core package name | `@websublime/vitamina-core` | `@websublime/line-core` |
+| Base class | `ComponentElement` / `ComponentMixin` | `LineElement` |
+| Tag prefix | `vita-` | `line-` |
+
+This refactor is mechanical and can be automated with find-and-replace across the theme and core packages. It should be completed early in Phase 0 before any new feature work begins.
 
 ---
 
@@ -1327,7 +2112,7 @@ Each ready-to-go theme is a CSS file that:
 
 ## Appendix A: HTMX Integration (Exploratory)
 
-Web Components are browser-native. Any `<vita-dialog>` works in plain HTML served by any backend. The HTMX adapter (`VitaHtmxElement`) extends `VitaElement` to add:
+Web Components are browser-native. Any `<line-dialog>` works in plain HTML served by any backend. The HTMX adapter (`LineHtmxElement`) extends `LineElement` to add:
 
 - `hx-*` attribute forwarding
 - Server-driven state updates
@@ -1342,10 +2127,10 @@ This is exploratory and will be validated during Phase 0.
 Feature flag activated via `localStorage`:
 
 ```js
-localStorage.setItem('vita-inspector', 'true')
+localStorage.setItem('line-inspector', 'true')
 ```
 
-When active, every Vitamina component exposes:
+When active, every line://ui component exposes:
 
 - Component version
 - Documentation link
@@ -1354,3 +2139,31 @@ When active, every Vitamina component exposes:
 - Component description
 
 Accessible via a visual overlay or programmatic API. Useful for QA teams, design reviews, and developer onboarding.
+
+---
+
+## Appendix C: Brand Identity
+
+### Naming Convention
+
+| Context | Format |
+|---------|--------|
+| Brand / wordmark | `line://ui` (always lowercase, always with `://`) |
+| Tag prefix | `line-` |
+| CSS custom properties | `--line-*` |
+| npm packages | `@websublime/line-*` |
+| Base class | `LineElement` |
+| Component classes | `LineButton`, `LineDialog`, etc. |
+| Repository | `websublime/line-ui` |
+| Domain | `line-ui.websublime.com` |
+| Symbol / favicon | `://` mark |
+
+**Never use:** "Lineup UI", "LineUI", "LINEUP", "lineupui", "Line Up UI".
+
+### Brand Symbol
+
+The `://` mark — abstracted from the URI protocol notation — serves as the icon, favicon, and visual identity. The colon represents two connection nodes; the forward slashes represent the path forward.
+
+### Brand Accent
+
+Primary accent: `#c8ff00` (electric green). Adapts to `#6d8a00` in light mode contexts.
