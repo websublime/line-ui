@@ -3,7 +3,7 @@
 **Date:** 2026-03-12
 **Author:** Miguel Ramos
 **Status:** Approved
-**Version:** 0.6.0
+**Version:** 0.7.0
 
 ---
 
@@ -32,6 +32,8 @@ line://ui is a headless UI component library built as native Web Components. It 
 | Ecosystem | Pre-launch | 20k+ weekly downloads | Enterprise (Adobe products) | Enterprise (ING banking) | Enterprise (Microsoft Fluent) |
 | Theming | Headless default; optional 28-palette theme package | 30+ built-in themes | Adobe Spectrum theme | No built-in themes | Fluent Design theme |
 | SSR/SSG | Investigation planned post-Phase 1 | Partial (Astro, 11ty) | Limited | Limited | Limited |
+
+A detailed competitive component-by-component gap analysis is available in [`COMPETITIVE-COMPONENT-ANALYSIS.md`](./COMPETITIVE-COMPONENT-ANALYSIS.md).
 
 #### Framework-Specific Headless Libraries
 
@@ -154,610 +156,207 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 
 ## 3. Component Architecture
 
-### 3.1 Component Anatomy
-
-```
-┌──────────────────────────────────────────────┐
-│  <line-dialog>                               │
-│                                              │
-│  ┌─────────────┐   ┌──────────────────────┐  │
-│  │  Zag.js     │   │  Lit                 │  │
-│  │  Machine    │──▶│  Shadow DOM          │  │
-│  │             │   │                      │  │
-│  │  - State    │   │  <div part="overlay">│  │
-│  │  - A11y     │   │  <div part="content">│  │
-│  │  - Keyboard │   │  <slot>              │  │
-│  │  - Focus    │   │  <slot name="title"> │  │
-│  └─────────────┘   └──────────────────────┘  │
-│                                              │
-│  CSS Parts exposed:                          │
-│  ::part(overlay) ::part(content)             │
-│  ::part(title) ::part(close)                 │
-│                                              │
-│  Inspector metadata (feature flag):          │
-│  version, docs link, scope, qa              │
-└──────────────────────────────────────────────┘
-```
-
-**Flow:** Zag.js manages all logic (state, transitions, a11y, keyboard, focus trapping) → Lit renders shadow DOM with `part` attributes on every relevant element → Consumer styles via `::part()` or applies a theme from the theme package.
-
-### 3.2 Composition Model
-
-**Hybrid approach:**
-
-- **Simple components** (button, badge, avatar, toggle) — Single custom element with slots. No benefit in fragmenting.
-- **Complex components** (dialog, combobox, menu, tabs, accordion) — Composable sub-components. Each sub-component exposes its own `::part()` selectors. The consumer decides what to render and where.
-
-**Simple component example:**
-
-```html
-<line-button>
-  <line-icon slot="prefix" name="check"></line-icon>
-  Save
-</line-button>
-```
-
-**Complex component example (Radix-style):**
-
-```html
-<line-dialog>
-  <line-dialog-trigger>
-    <button>Open</button>
-  </line-dialog-trigger>
-  <line-dialog-content>
-    <line-dialog-title>Title</line-dialog-title>
-    <line-dialog-close></line-dialog-close>
-    <p>Content</p>
-  </line-dialog-content>
-</line-dialog>
-```
-
-**Composition via slot (Field + Input):**
-
-```html
-<line-field>
-  <span slot="label">
-    Email <line-icon name="info" size="xs"></line-icon>
-  </span>
-  <line-input type="email" required>
-    <line-icon slot="prefix" name="mail"></line-icon>
-  </line-input>
-  <span slot="hint">We use your email for login</span>
-  <span slot="error">
-    <line-icon name="alert-circle"></line-icon>
-    Invalid email address
-  </span>
-</line-field>
-```
-
-The Field does not import the Input. The Input does not know the Field exists. Both work standalone. Connected via `<slot>` and events.
-
-### 3.3 Slot vs Internal Part — Decision Rule
-
-Components expose **slots** for content the consumer controls, and **internal parts** for elements the component must coordinate with its state machine.
-
-| Who controls the action? | Approach | Examples |
-|--------------------------|----------|----------|
-| Consumer decides content and behaviour | **Slot** | prefix, suffix icons; label, hint, error text |
-| Component needs to coordinate state/action | **Internal part** | password toggle, clear button, increment/decrement steppers |
-
-A prefix icon is a slot — the component doesn't know or care what it is. A password visibility toggle is an internal part — the component must toggle the input `type` between "password" and "text" when clicked. A clear button is an internal part — it must call `CLEAR` on the machine.
-
-### 3.4 Tag Prefix
-
-**`line-`** — Short (4 chars + hyphen), brand-linked (`line://ui`), no known conflicts with other design systems.
-
-### 3.5 CSS Customisation — Dual Layer
-
-**Layer 1: CSS Custom Properties (tokens) — Quick adjustments**
-
-```css
-line-button {
-  --line-radius: 8px;
-  --line-font-size: 1rem;
-  --line-padding: 0.5rem 1rem;
-}
-```
-
-**Layer 2: `::part()` — Total control over internal elements**
-
-```css
-line-button::part(root) {
-  background: linear-gradient(135deg, pink, purple);
-  border: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-```
-
-Custom properties for consumers who want to adjust tokens without knowing internal structure. Parts for consumers who want absolute control. Complementary, not redundant.
-
-**Custom property prefix:** `--line-` (consistent with tag prefix).
-
-### 3.6 CSS Parts Naming Convention
-
-```css
-::part(root)        /* Main container */
-::part(trigger)     /* Activating element */
-::part(content)     /* Content area */
-::part(overlay)     /* Backdrop/overlay */
-::part(title)       /* Title */
-::part(description) /* Description */
-::part(close)       /* Close button */
-::part(icon)        /* Icon */
-::part(indicator)   /* State indicator */
-::part(separator)   /* Separator */
-::part(item)        /* Item in lists */
-::part(label)       /* Label */
-::part(input)       /* Internal input */
-::part(toggle)      /* Toggle element (e.g., password visibility) */
-::part(clear)       /* Clear/dismiss button */
-::part(increment)   /* Increment stepper */
-::part(decrement)   /* Decrement stepper */
-::part(remove)      /* Remove button (e.g., chip dismiss) */
-::part(overflow)    /* Overflow indicator (e.g., avatar group +N) */
-```
-
-Short, semantic names reused across components. A developer who learns the parts of one component already knows others.
-
-### 3.7 Base Class — LineElement
-
-**Note:** This describes the target architecture. The current codebase uses `ComponentElement` with `ComponentMixin`. The refactoring to `LineElement` is a Phase 0 task.
-
-```
-LitElement
-  └── LineElement (refactored base class)
-        ├── Inspector mixin (feature flag via localStorage)
-        ├── Metadata mixin (version, docs, qa)
-        ├── Direction mixin (LTR/RTL)
-        ├── FormAssociated mixin (opt-in, ElementInternals)
-        └── Zag.js machine connection (lifecycle-managed)
-              │
-              ├── Pre-built machine components
-              │     ├── LineDialog (uses @zag-js/dialog)
-              │     └── ...
-              ├── Custom machine components
-              │     ├── LineInput (uses custom createMachine)
-              │     └── ...
-              └── Static components (no machine)
-                    ├── LineBadge
-                    └── ...
-```
-
-Components declare their tier by what they assign to the `machine` property: a pre-built Zag.js machine, a custom `createMachine()` result, or nothing (static). The base class handles all three cases — connect/disconnect is automatic for machines, zero overhead for static components.
-
-### 3.8 Form Association Strategy
-
-All form control components implement `static formAssociated = true` and use `ElementInternals` to participate in native HTML `<form>` elements. This is handled as an opt-in mixin in the base class.
-
-**What `formAssociated` provides natively:**
-
-- `<line-button type="submit">` submits parent forms (including Enter key)
-- `<line-input name="email">` appears in `FormData` automatically
-- `<line-button type="reset">` resets all form controls
-- HTML5 validation (`required`, `pattern`, `minlength`) works natively
-- `:invalid`/`:valid` CSS pseudo-classes work
-- `form.checkValidity()` and `form.reportValidity()` work
-
-**What line://ui does NOT provide:**
-
-- No `<line-form>` wrapper component. Each framework (Vue, React, Angular) has its own form management solutions. The `<form>` element is native and sufficient. A `<line-form>` convenience component is a nice-to-have post-1.0.
-- No cross-field validation orchestration. This is application-level logic.
-
-**Form-associated components:** Button, Input, PasswordInput, SearchInput, DateInput, Textarea, Select, Checkbox, RadioGroup, Switch, NumberInput, Editable, ToggleGroup, Slider, Combobox, DatePicker, TimePicker, ColorPicker, PinInput, Rating, RangeSlider, FileUpload, TagInput, MentionInput, SearchField.
-
-### 3.9 State Management — Unified via Zag.js
-
-**Three tiers of state management:**
-
-| Tier | What | When to use | Examples |
-|------|------|-------------|----------|
-| **Pre-built machine** | Uses existing `@zag-js/*` package | Complex components where Zag.js provides a production-ready machine | Dialog, Select, Combobox, Tabs, Accordion |
-| **Custom machine** | Uses `createMachine()` from `@zag-js/core` | Interactive components with states (focus, error, validation) where no pre-built machine exists | Input, Textarea, Field, Tag Input, Search Field |
-| **Static** | No machine | Purely presentational components with zero interaction state | Badge, Separator, Skeleton, VisuallyHidden, Center |
-
-**Why custom machines for "simple" components like Input:**
-
-Components like Input, Textarea, and Field have rich interaction states: focus/blur, error/invalid, disabled, readonly, empty/filled, loading, required. Without a state machine, each component invents its own ad-hoc state management, leading to inconsistency.
-
-With a custom Zag.js machine, every interactive component gets:
-- **Explicit state transitions** (e.g., `idle → focused → validating → error`)
-- **Computed states** (e.g., `isEmpty`, `isInvalid`, `isFilled`) — derived, memoized, consistent
-- **Controlled/uncontrolled for free** via Zag.js `bindable` pattern — `defaultValue`/`value` + `onChange`
-- **Guards** preventing invalid transitions (e.g., no input when `disabled`)
-- **Watch** for reactive side effects (e.g., notify parent `Field` of state changes)
-- **Inspector integration** — the inspector can read any machine's state, not just pre-built ones
-
-**Custom machine example — Input:**
-
-```typescript
-const machine = createMachine<InputSchema>({
-  props({ props }) {
-    return { disabled: false, required: false, readOnly: false, ...props }
-  },
-  context({ prop, bindable }) {
-    return {
-      value: bindable(() => ({
-        defaultValue: prop("defaultValue") ?? "",
-        value: prop("value"),
-        onChange(value) { prop("onChange")?.({ value }) }
-      })),
-      error: bindable(() => ({ defaultValue: "" })),
-    }
-  },
-  computed: {
-    isEmpty({ context }) { return context.get("value") === "" },
-    isInvalid({ context }) { return context.get("error") !== "" },
-  },
-  states: {
-    idle: {
-      on: { FOCUS: { target: "focused" } }
-    },
-    focused: {
-      on: {
-        BLUR: { target: "idle", actions: ["validate"] },
-        CHANGE: { actions: ["setValue"] },
-      }
-    }
-  }
-})
-```
-
-**Collections for item-based components:**
-
-Zag.js provides `ListCollection` and `TreeCollection` from `@zag-js/collection` for components that manage lists of items. These provide navigation (next/previous/first/last), search, filtering, reordering, and disabled item support. Collections are immutable — all modifications return new instances.
-
-- **Pre-built machines using collections:** Select, Combobox, Menu, Tree View (collections built into the machine)
-- **Custom machines + collections:** Tag Input, List View, Kanban Board, Search Field (custom machine with `ListCollection` for item management)
-
-**The result:** Every interactive component in line://ui shares the same state management primitives. Whether a component uses a pre-built Zag.js machine or a custom one, the developer experience is identical: explicit states, computed values, controlled/uncontrolled support, and inspector integration.
-
-### 3.10 Field Architecture
-
-The Field is the orchestrator that connects labels, hints, errors, and required indicators to any form control. It does not import any specific control — it uses `<slot>` and events.
-
-**Slots:**
-
-| Slot | Content |
-|------|---------|
-| `label` | Free content — text, icons, tooltips, badges |
-| `default` | The form control (Input, Select, Textarea, any) |
-| `hint` | Help text — free content |
-| `error` | Error message — free content, visible when in error state |
-
-**Host data attributes (reflected on the `<line-field>` element):**
-
-| Attribute | When active | Used for |
-|-----------|-------------|----------|
-| `data-focused` | Child control has focus | Label highlight, floating label pattern |
-| `data-filled` | Child control has non-empty value | Floating label pattern, conditional hint |
-| `data-error` | Validation failed | Error styling, show error slot |
-| `data-disabled` | Child control is disabled | Opacity, cursor |
-| `data-readonly` | Child control is readonly | Differentiated styling |
-| `data-required` | Child control is required | Required indicator |
-
-**How Field detects child state (priority order):**
-
-1. **Explicit props** — `<line-field error>` overrides everything. Consumer has full control.
-2. **Child events** — Form controls emit `line-focus`, `line-blur`, `line-change`, `line-invalid`, `line-valid`. Field listens on the default slot.
-3. **Native validity** — Via `formAssociated` + `ElementInternals`, the control reports validity to the browser. Field listens for the native `invalid` event.
-
-**Label connection:**
-
-The Field generates a unique ID, sets `aria-labelledby` on the child control, and forwards clicks on the label slot to `.focus()` on the child. This works cross-shadow-boundary.
-
-**Required indicator:**
-
-When the child has `required` or the consumer sets `<line-field required>`, the Field exposes `::part(required-indicator)` in the label area. The consumer or theme styles it — could be `*`, text, icon, nothing.
-
-**Floating label:**
-
-The Field does NOT implement floating labels internally. The `data-focused` and `data-filled` host attributes enable floating labels via pure CSS (see Patterns in Storybook). A `<line-floating-field>` convenience component is a nice-to-have post-1.0.
-
-**Field-compatible controls (any component that):**
-
-1. Emits `line-focus`, `line-blur`, `line-change`, `line-invalid` events
-2. Has `formAssociated: true`
-3. Accepts `.focus()` programmatically
-
-### 3.11 Component File Structure
-
-```
-packages/components/src/dialog/
-├── dialog.ts              ← <line-dialog> root
-├── dialog-trigger.ts      ← <line-dialog-trigger>
-├── dialog-content.ts      ← <line-dialog-content>
-├── dialog-title.ts        ← <line-dialog-title>
-├── dialog-close.ts        ← <line-dialog-close>
-├── dialog.types.ts        ← Types/interfaces
-└── index.ts               ← Public exports
-```
-
-### 3.12 Icon System
-
-Abstract wrapper with an agnostic registry:
-
-```html
-<line-icon name="check" library="phosphor"></line-icon>
-<line-icon name="arrow-right" library="lucide"></line-icon>
-<line-icon src="/my-icons/custom.svg"></line-icon>
-```
-
-- `line-icon` exposes a **registry** where the consumer registers icon libraries.
-- Each library is a resolver: given a name, returns the SVG (URL, sprite, inline).
-- The component renders the SVG inside shadow DOM with `part="svg"` for customisation.
-- Zero icons bundled in core — the consumer brings their own.
-- Ready-to-go themes declare a default library (e.g., Phosphor, Lucide, Heroicons) and register the resolver automatically.
-
-### 3.13 Bundle Splitting Rule
-
-> Sub-components of a family share a single entrypoint. Independently usable components have separate entrypoints. A component belongs to a family when it requires its parent to function. Components connected via `<slot>` are always separate entrypoints — slots imply independence.
-
-**Families (single entrypoint):**
-
-| Entrypoint | Registers |
-|------------|-----------|
-| `./dialog` | line-dialog, line-dialog-trigger, line-dialog-content, line-dialog-title, line-dialog-close |
-| `./tabs` | line-tabs, line-tab-list, line-tab-trigger, line-tab-content |
-| `./accordion` | line-accordion, line-accordion-item, line-accordion-trigger, line-accordion-content |
-| `./menu` | line-menu, line-menu-trigger, line-menu-content, line-menu-item, line-menu-separator |
-| `./select` | line-select, line-select-trigger, line-select-content, line-select-item, line-select-group |
-| `./combobox` | line-combobox, line-combobox-input, line-combobox-content, line-combobox-item |
-| `./popover` | line-popover, line-popover-trigger, line-popover-content |
-| `./tooltip` | line-tooltip, line-tooltip-trigger, line-tooltip-content |
-| `./toast` | line-toast, line-toast-group |
-| `./menubar` | line-menubar, line-menubar-menu, line-menubar-trigger, line-menubar-content, line-menubar-item |
-
-**Independent entrypoints (connected via slot, work standalone):**
-
-`./button`, `./icon-button`, `./button-group`, `./split-button`, `./input`, `./password-input`, `./search-input`, `./date-input`, `./textarea`, `./field`, `./fieldset`, `./icon`, `./alert`, `./chip`, `./avatar`, `./avatar-group`, `./presence`, `./spinner`, `./editable`, etc.
-
-**The barrel export (`"."`) imports everything** — for consumers who prefer convenience over bundle size.
-
-### 3.14 Spinner
-
-**Tier:** Static (no machine, no Zag.js dependency).
-
-A standalone loading indicator. CSS-only animation — the component provides the structural markup and exposes `::part(root)` for full visual control. No opinion on shape (circle, dots, bars) or animation style.
-
-| | |
-|---|---|
-| **Tag** | `<line-spinner>` |
-| **Parts** | `root` |
-| **Props** | `size` (sm, md, lg), `speed` (slow, normal, fast), `label` (a11y, default: "Loading") |
-| **Attributes** | `role="status"`, `aria-label` from `label` prop |
-| **Slots** | `default` — optional, replaces built-in animation with consumer-provided content |
-| **Entrypoint** | `./spinner` (independent) |
-
-**Why Static:** A spinner has no interactive states, no user input, no machine logic. It renders and animates. The consumer controls appearance via `::part(root)` and CSS custom properties `--line-spinner-size`, `--line-spinner-speed`, `--line-spinner-color`.
-
-**Relationship to Button loading:** `<line-button loading>` shows a loading state but does NOT import Spinner. Button's loading visual is handled via its own `::part(loading)`. Consumers who want a spinner inside a loading button compose: `<line-button loading><line-spinner slot="prefix"></line-spinner> Saving...</line-button>`.
-
-### 3.15 Editable
-
-**Tier:** Pre-built (`@zag-js/editable`).
-
-Click-to-edit inline text. The user sees a read-only preview; clicking (or pressing Enter) switches to an input. Blur or submit saves; Escape cancels. Common pattern for table cells, profile names, settings fields.
-
-| | |
-|---|---|
-| **Tag** | `<line-editable>` |
-| **Sub-components** | `<line-editable-area>`, `<line-editable-input>`, `<line-editable-preview>`, `<line-editable-edit-trigger>`, `<line-editable-submit-trigger>`, `<line-editable-cancel-trigger>` |
-| **Parts** | root, area, input, preview, edit-trigger, submit-trigger, cancel-trigger |
-| **Props** | `value`, `default-value`, `placeholder`, `disabled`, `readonly`, `auto-resize`, `submit-mode` (blur, enter, both, none), `activation-mode` (focus, dblclick, click) |
-| **Events** | `line-value-change`, `line-value-commit`, `line-value-revert`, `line-edit`, `line-cancel` |
-| **Host attributes** | `data-editing`, `data-disabled`, `data-readonly`, `data-empty` |
-| **Entrypoint** | `./editable` (independent — sub-components in same entrypoint) |
-| **Form** | `formAssociated: true` — participates in native form submission |
-
-**Machine states:** `idle` → (click/Enter) → `editing` → (blur/submit) → `idle`. On `Escape` → revert to previous value → `idle`.
-
-**Slot/Part rule:** All sub-components are **internal parts**, not slots. The component must coordinate the read↔edit transition, manage focus between preview and input, and handle keyboard events. Consumer controls visual layout via `::part(*)`.
-
-### 3.16 Menubar
-
-**Tier:** Custom (no `@zag-js/menubar` exists — built on top of `@zag-js/menu`).
-
-Horizontal application-style menu bar (File, Edit, View...). Different from `<line-navigation-menu>` (which is for website navigation). Menubar is for desktop-app chrome — the Desktop-Inspired category depends on it.
-
-| | |
-|---|---|
-| **Tag** | `<line-menubar>` |
-| **Sub-components** | `<line-menubar-menu>`, `<line-menubar-trigger>`, `<line-menubar-content>`, `<line-menubar-item>`, `<line-menubar-separator>`, `<line-menubar-group>`, `<line-menubar-checkbox-item>`, `<line-menubar-radio-item>`, `<line-menubar-radio-group>`, `<line-menubar-sub-trigger>`, `<line-menubar-sub-content>` |
-| **Parts** | root, menu, trigger, content, item, separator, group |
-| **Props (root)** | `loop` (keyboard loops at edges), `orientation` (horizontal default) |
-| **Keyboard** | Arrow Left/Right between top-level triggers, Arrow Down opens menu, Escape closes current, Home/End first/last trigger |
-| **ARIA** | `role="menubar"` on root, `role="menuitem"` / `role="menuitemcheckbox"` / `role="menuitemradio"` on items, `aria-haspopup`, `aria-expanded` on triggers |
-| **Host attributes** | `data-orientation` |
-| **Entrypoint** | `./menubar` (family — all sub-components in one entrypoint) |
-
-**Machine:** Custom `createMachine()` coordinating N `@zag-js/menu` instances. Tracks `activeMenuIndex`, manages hover-to-open when any menu is already open, and handles arrow-key navigation between triggers. Each menu instance delegates to its own Zag.js menu machine for item navigation, submenus, and dismiss behavior.
-
-**Why not reuse `<line-menu>`:** Menubar triggers are always visible in a row, open on hover when a sibling is already open, and share a single keyboard navigation context. This is fundamentally different from a standalone dropdown menu. The internal Menu logic is shared (via Zag.js), but the orchestration layer is new.
+Cross-cutting architectural decisions — composition patterns, state management tiers, styling conventions, base class design, bundle splitting rules, and detailed per-component architectural debates — are documented in [`ARCHITECTURE.md`](./ARCHITECTURE.md).
+
+Key architectural principles referenced throughout this document:
+
+| Principle | Summary | Reference |
+|-----------|---------|-----------|
+| Composition via slot | Components connect via `<slot>`, not imports. Field does not import Input. Independence is the default. | ARCHITECTURE §2 |
+| Slot vs Internal Part rule | Consumer controls content → slot. Component coordinates state → internal part. | ARCHITECTURE §3 |
+| Dual-layer CSS | `--line-*` custom properties for token adjustments. `::part()` for total visual control. | ARCHITECTURE §4 |
+| Three tiers | Pre-built (Zag.js machine), Custom (`createMachine`), Static (no machine). | ARCHITECTURE §8 |
+| Form association | Opt-in `formAssociated` mixin via `ElementInternals`. Native `<form>` participation. | ARCHITECTURE §7 |
+| Bundle splitting | Families share one entrypoint. Independent components get separate entrypoints. Slot = independence. | ARCHITECTURE §12 |
+| Field as orchestrator | Connects label/hint/error to any control via slot + events. Does not import controls. | ARCHITECTURE §9 |
+| Parts naming | Shared vocabulary across components: `root`, `trigger`, `content`, `overlay`, etc. | ARCHITECTURE §5 |
 
 ---
 
 ## 4. Component Catalogue
 
+Each component has a product-level description below and a detailed technical specification in `.spec/`. Specs follow the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](../.spec/COMPONENT-SPEC-TEMPLATE.md).
+
 ### 4.1 Primitives Base
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Button | Custom | Slots: prefix, suffix, default (label). States: idle, pressed, loading, disabled. `formAssociated: true` — supports `type="submit\|reset\|button"` |
-| IconButton | Custom | Icon-only button. `aria-label` required (enforced via TypeScript). Same machine as Button |
-| ButtonGroup | Static | `role="group"`, border collapse, keyboard nav. Accepts any buttons via `<slot>` |
-| SplitButton | Custom | Primary action + dropdown for alternatives. Composes Button + Menu logic internally |
-| Alert | Static | Inline feedback: info, warning, error, success. Slots: icon, title, description, action, close. Dismiss via `line-dismiss` event, consumer controls DOM |
-| Badge | Static | Status, count, dot variants |
-| Chip | Static | Display tag with optional remove. Parts: root, remove. Props: removable, disabled |
-| Avatar | Static | Fallback to initials → icon. Slots: default, fallback, status. Parts: root, image, fallback |
-| AvatarGroup | Custom | Stacking with overlap, overflow counter. Machine: collapsed ↔ expanded ↔ overflow_open. Parts: root, overflow. Props: max, size, spacing |
-| Separator | Static | Horizontal/vertical, optional label slot |
-| Visually Hidden | Static | A11y utility |
-| Portal | Static | Render outside DOM parent |
-| Icon | Static | Agnostic registry wrapper |
-| Kbd / Shortcut | Static | OS-aware (Cmd vs Ctrl) |
-| Skeleton | Static | Pulse/wave animation |
-| Presence | Pre-built | Mount/unmount animations |
-| Stack | Static | Flex vertical/horizontal with gap |
-| Grid | Static | CSS Grid wrapper |
-| Center | Static | Centering utility |
-| Aspect Ratio | Static | Fixed ratio container |
-| Spinner | Static | Loading indicator. CSS-only animation (pulse/spin). Parts: root. Props: size, speed. Consumer styles the visual — no opinion on shape or animation |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Button | Custom | Primary interactive element for triggering actions. Supports form submit/reset | [spec](../.spec/0002-button.md) |
+| IconButton | Custom | Icon-only action button. Requires accessible label for screen readers | [spec](../.spec/0003-icon-button.md) |
+| ButtonGroup | Static | Visually groups related buttons with border collapse and shared navigation | [spec](../.spec/0004-button-group.md) |
+| SplitButton | Custom | Primary action with dropdown for alternatives. Composes Button + Menu internally | [spec](../.spec/0005-split-button.md) |
+| Alert | Static | Inline persistent feedback for info, warnings, errors, or success states | [spec](../.spec/0006-alert.md) |
+| Badge | Static | Small status indicator — count, dot, or label variant | [spec](../.spec/0007-badge.md) |
+| Chip | Static | Display tag with optional remove. Used for categories, filters, selections | [spec](../.spec/0008-chip.md) |
+| Avatar | Static | User or entity representation with image, initials fallback, and status | [spec](../.spec/0009-avatar.md) |
+| AvatarGroup | Custom | Stacked avatars with overflow counter. Expands on hover, popover on overflow click | [spec](../.spec/0010-avatar-group.md) |
+| Separator | Static | Visual divider between content sections. Horizontal or vertical | [spec](../.spec/0011-separator.md) |
+| Visually Hidden | Static | Accessibility utility — hides content visually, available to screen readers | [spec](../.spec/0012-visually-hidden.md) |
+| Portal | Static | Renders child content outside its DOM parent | [spec](../.spec/0013-portal.md) |
+| Icon | Static | Framework-agnostic icon wrapper with pluggable library registry | [spec](../.spec/0014-icon.md) |
+| Kbd / Shortcut | Static | Keyboard shortcut display with OS-aware rendering (Cmd vs Ctrl) | [spec](../.spec/0015-kbd.md) |
+| Skeleton | Static | Placeholder loading indicator with pulse or wave animation | [spec](../.spec/0016-skeleton.md) |
+| Presence | Pre-built | Controls mount/unmount animations for enter/exit transitions | [spec](../.spec/0017-presence.md) |
+| Stack | Static | Flex layout helper for vertical or horizontal stacking with gap | [spec](../.spec/0018-stack.md) |
+| Grid | Static | CSS Grid layout wrapper with responsive column control | [spec](../.spec/0019-grid.md) |
+| Center | Static | Centering utility for horizontal, vertical, or both axes | [spec](../.spec/0020-center.md) |
+| Aspect Ratio | Static | Maintains fixed width-to-height ratio for responsive media | [spec](../.spec/0021-aspect-ratio.md) |
+| Spinner | Static | Standalone loading indicator. CSS-only animation, no visual opinion | [spec](../.spec/0022-spinner.md) |
 
 ### 4.2 Forms — Essential
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Input | Custom | Text, email, tel, url. Slots: prefix, suffix. States: idle, focused, filled, error, disabled, readonly. `formAssociated: true`. Detects browser autofill |
-| PasswordInput | Custom | Extends Input pattern. Internal toggle part for visibility (eye/eye-off). Parts: root, input, toggle. Machine: adds hidden ↔ visible states |
-| SearchInput | Custom | Input with internal clear part. Parts: root, input, clear. Machine: adds empty ↔ filled (show/hide clear). Clear calls machine CLEAR action |
-| DateInput | Custom | Masked date field with segment navigation (day/month/year). Format prop (DD/MM/YYYY etc). No popup. States: idle, focused (with segment sub-states), filled, error. Phase 2, separate from DatePicker |
-| Textarea | Custom | Auto-resize. States: idle, focused, filled, error, disabled, readonly. Props: rows, maxRows, autoResize. `formAssociated: true` |
-| Field | Custom | Orchestrator. Slots: label, default (control), hint, error. Host data attributes: data-focused, data-filled, data-error, data-disabled, data-readonly, data-required. Parts: root, label, hint, error, required-indicator. Detects child state via events → validity → explicit props |
-| Fieldset | Static | Semantic grouping. Renders `<fieldset>` with `<legend>` via slot. Props: disabled (propagates to all formAssociated children). Parts: root, legend |
-| Checkbox | Pre-built | `@zag-js/checkbox` |
-| Radio Group | Pre-built | `@zag-js/radio-group` |
-| Switch | Pre-built | `@zag-js/switch` |
-| Select | Pre-built | `@zag-js/select` + `ListCollection` |
-| Toggle Group | Pre-built | `@zag-js/toggle-group` |
-| Slider | Pre-built | `@zag-js/slider` |
-| Number Input | Pre-built | `@zag-js/number-input`. Internal increment/decrement parts |
-| Editable | Pre-built | `@zag-js/editable`. Click-to-edit inline text. Machine: reading → editing → saving. Used in tables, settings, profile fields |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Input | Custom | Text input for email, tel, url, and plain text. Detects autofill | [spec](../.spec/0023-input.md) |
+| PasswordInput | Custom | Password field with built-in visibility toggle | [spec](../.spec/0024-password-input.md) |
+| SearchInput | Custom | Text input with built-in clear action | [spec](../.spec/0025-search-input.md) |
+| DateInput | Custom | Masked date field with segment navigation. No popup | [spec](../.spec/0026-date-input.md) |
+| Textarea | Custom | Multi-line text input with optional auto-resize | [spec](../.spec/0027-textarea.md) |
+| Field | Custom | Orchestrates label, hint, error, and required indicator for any control | [spec](../.spec/0028-field.md) |
+| Fieldset | Static | Semantic grouping of related controls with legend and disabled propagation | [spec](../.spec/0029-fieldset.md) |
+| Checkbox | Pre-built | Binary or indeterminate selection control | [spec](../.spec/0030-checkbox.md) |
+| Radio Group | Pre-built | Single selection from a set of options | [spec](../.spec/0031-radio-group.md) |
+| Switch | Pre-built | Toggle between two states (on/off) | [spec](../.spec/0032-switch.md) |
+| Select | Pre-built | Dropdown with search, groups, and keyboard navigation | [spec](../.spec/0033-select.md) |
+| Toggle Group | Pre-built | Exclusive or multi-selection between segmented options | [spec](../.spec/0034-toggle-group.md) |
+| Slider | Pre-built | Single-value selection along a range | [spec](../.spec/0035-slider.md) |
+| Number Input | Pre-built | Numeric input with increment/decrement controls | [spec](../.spec/0036-number-input.md) |
+| Editable | Pre-built | Click-to-edit inline text for tables, settings, profiles | [spec](../.spec/0037-editable.md) |
 
 ### 4.3 Overlays & Feedback
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Dialog | Pre-built | `@zag-js/dialog` — modal + non-modal |
-| Alert Dialog | Pre-built | Dialog variant with confirm/cancel |
-| Sheet | Pre-built | Side panel — overlay or push mode, any edge, header + footer slots |
-| Drawer | Pre-built | Temporary sliding panel |
-| Popover | Pre-built | `@zag-js/popover` |
-| Tooltip | Pre-built | `@zag-js/tooltip` |
-| Hover Card | Pre-built | `@zag-js/hover-card` |
-| Toast | Pre-built | `@zag-js/toast` — stack, positions |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Dialog | Pre-built | Modal or non-modal dialog for focused interactions | [spec](../.spec/0038-dialog.md) |
+| Alert Dialog | Pre-built | Confirmation dialog requiring explicit user action | [spec](../.spec/0039-alert-dialog.md) |
+| Sheet | Pre-built | Side panel — overlay or push mode, any edge | [spec](../.spec/0040-sheet.md) |
+| Drawer | Pre-built | Temporary sliding panel for supplementary content | [spec](../.spec/0041-drawer.md) |
+| Popover | Pre-built | Floating content anchored to a trigger | [spec](../.spec/0042-popover.md) |
+| Tooltip | Pre-built | Brief contextual information on hover or focus | [spec](../.spec/0043-tooltip.md) |
+| Hover Card | Pre-built | Rich preview content shown on hover | [spec](../.spec/0044-hover-card.md) |
+| Toast | Pre-built | Transient notification with stacking and auto-dismiss | [spec](../.spec/0045-toast.md) |
 
 ### 4.4 Navigation & Disclosure
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Tabs | Pre-built | `@zag-js/tabs` |
-| Accordion | Pre-built | `@zag-js/accordion` |
-| Collapsible | Pre-built | `@zag-js/collapsible` |
-| Menu / Context Menu | Pre-built | `@zag-js/menu` — nested, context |
-| Navigation Menu | Pre-built | `@zag-js/navigation-menu` |
-| Breadcrumb | Static | Slots for items |
-| Breadcrumb Trail | Custom | Clickable with dropdown showing siblings at each level. Uses `ListCollection` |
-| Pagination | Pre-built | `@zag-js/pagination` |
-| Steps / Stepper | Pre-built | `@zag-js/steps` — visual indicator |
-| Menubar | Custom | Horizontal app-style menu bar (File, Edit, View...). Different from NavigationMenu (site nav). Custom machine coordinating multiple Menu instances horizontally with keyboard nav (arrow left/right between menus) |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Tabs | Pre-built | Switchable content panels with keyboard navigation | [spec](../.spec/0046-tabs.md) |
+| Accordion | Pre-built | Vertically stacked collapsible sections | [spec](../.spec/0047-accordion.md) |
+| Collapsible | Pre-built | Single expandable/collapsible content section | [spec](../.spec/0048-collapsible.md) |
+| Menu / Context Menu | Pre-built | Dropdown or right-click menu with submenus | [spec](../.spec/0049-menu.md) |
+| Navigation Menu | Pre-built | Site-level navigation with mega-menu support | [spec](../.spec/0050-navigation-menu.md) |
+| Breadcrumb | Static | Hierarchical path showing current location | [spec](../.spec/0051-breadcrumb.md) |
+| Breadcrumb Trail | Custom | Clickable breadcrumb with sibling dropdown at each level | [spec](../.spec/0052-breadcrumb-trail.md) |
+| Pagination | Pre-built | Page-based navigation for large datasets | [spec](../.spec/0053-pagination.md) |
+| Steps / Stepper | Pre-built | Visual progress indicator for multi-step processes | [spec](../.spec/0054-steps.md) |
+| Menubar | Custom | Horizontal app-style menu bar for desktop-inspired interfaces | [spec](../.spec/0055-menubar.md) |
 
 ### 4.5 Forms — Advanced
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Combobox | Pre-built | `@zag-js/combobox` — autocomplete + `ListCollection` |
-| Date Picker | Pre-built | `@zag-js/date-picker`. Accepts any trigger via slot — can compose with DateInput for type + pick |
-| Date Range Picker | Pre-built | `@zag-js/date-picker` range mode, two-calendar view |
-| Time Picker | Pre-built | `@zag-js/time-picker` |
-| Color Picker | Pre-built | `@zag-js/color-picker` |
-| Pin Input | Pre-built | `@zag-js/pin-input` — OTP codes |
-| Rating | Pre-built | `@zag-js/rating-group` |
-| Range Slider | Pre-built | `@zag-js/range-slider` |
-| File Upload | Pre-built | `@zag-js/file-upload` — drag & drop |
-| Signature Pad | Pre-built | `@zag-js/signature-pad` |
-| Tag Input | Custom | Text to tags, autocomplete, drag reorder, multi-paste. Custom machine + `ListCollection` |
-| Mention Input | Custom | Textarea with @mention and #channel inline. Custom machine + `ListCollection` |
-| Search Field | Custom | Full search experience: suggestions dropdown, recent searches, scoped search. Different from SearchInput (Phase 2) which is just a field with clear. Custom machine + `ListCollection` |
-| Wizard / Multi-step Form | Custom | Step validation, progress tracking, branching logic |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Combobox | Pre-built | Autocomplete input with filterable options | [spec](../.spec/0056-combobox.md) |
+| Date Picker | Pre-built | Calendar popup for date selection | [spec](../.spec/0057-date-picker.md) |
+| Date Range Picker | Pre-built | Two-calendar date range selection | [spec](../.spec/0058-date-range-picker.md) |
+| Time Picker | Pre-built | Time selection with segments | [spec](../.spec/0059-time-picker.md) |
+| Color Picker | Pre-built | Visual colour selection | [spec](../.spec/0060-color-picker.md) |
+| Pin Input | Pre-built | Individual character inputs for OTP codes | [spec](../.spec/0061-pin-input.md) |
+| Rating | Pre-built | Star or custom icon rating selection | [spec](../.spec/0062-rating.md) |
+| Range Slider | Pre-built | Dual-thumb slider for value ranges | [spec](../.spec/0063-range-slider.md) |
+| File Upload | Pre-built | Drag-and-drop file selection with validation | [spec](../.spec/0064-file-upload.md) |
+| Signature Pad | Pre-built | Drawing canvas for capturing signatures | [spec](../.spec/0065-signature-pad.md) |
+| Tag Input | Custom | Text-to-tags with autocomplete and reorder | [spec](../.spec/0066-tag-input.md) |
+| Mention Input | Custom | Textarea with @mention and #channel inline | [spec](../.spec/0067-mention-input.md) |
+| Search Field | Custom | Full search with suggestions and scoped filtering | [spec](../.spec/0068-search-field.md) |
+| Wizard | Custom | Multi-step form with validation and branching | [spec](../.spec/0069-wizard.md) |
 
 ### 4.6 Data Display
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Table | Custom | Headless, sort/filter via API. Custom machine + `ListCollection` |
-| Card | Static | Composable: header, body, footer |
-| Progress | Pre-built | `@zag-js/progress` — linear + circular |
-| Progress Ring | Static | Multiple overlapping rings, each a metric |
-| Progress List / Task Steps | Custom | List of operations completing in real-time (pending → loading → done → error) |
-| Scroll Area | Pre-built | `@zag-js/scroll-area` — custom scrollbars |
-| Carousel | Pre-built | `@zag-js/carousel` |
-| Clipboard | Pre-built | `@zag-js/clipboard` |
-| QR Code | Pre-built | `@zag-js/qr-code` |
-| Timer | Pre-built | `@zag-js/timer` — countdown/stopwatch |
-| Tree View | Pre-built | `@zag-js/tree-view` + `TreeCollection` |
-| Gauge / Meter | Static | Semicircular arc with pointer, coloured zones |
-| Empty State | Static | Composable: icon + title + description + action |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Table | Custom | Headless data table with sort, filter, and selection | [spec](../.spec/0070-table.md) |
+| Card | Static | Composable container with header, body, and footer | [spec](../.spec/0071-card.md) |
+| Progress | Pre-built | Linear or circular progress indicator | [spec](../.spec/0072-progress.md) |
+| Progress Ring | Static | Multiple overlapping circular indicators | [spec](../.spec/0073-progress-ring.md) |
+| Progress List | Custom | Real-time operation status list | [spec](../.spec/0074-progress-list.md) |
+| Scroll Area | Pre-built | Custom styled scrollbar preserving native behaviour | [spec](../.spec/0075-scroll-area.md) |
+| Carousel | Pre-built | Content slider with touch and keyboard | [spec](../.spec/0076-carousel.md) |
+| Clipboard | Pre-built | Copy-to-clipboard with visual feedback | [spec](../.spec/0077-clipboard.md) |
+| QR Code | Pre-built | Dynamic QR code generation | [spec](../.spec/0078-qr-code.md) |
+| Timer | Pre-built | Countdown or stopwatch | [spec](../.spec/0079-timer.md) |
+| Tree View | Pre-built | Hierarchical expandable data display | [spec](../.spec/0080-tree-view.md) |
+| Gauge / Meter | Static | Semicircular arc with pointer and zones | [spec](../.spec/0081-gauge.md) |
+| Empty State | Static | Placeholder for empty content areas | [spec](../.spec/0082-empty-state.md) |
 
 ### 4.7 Layout & Containers
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| App Shell | Static | Sidebar + header + main + footer via slots |
-| Sidebar | Custom | Collapsible, rail mode (icons only), resizable |
-| Header / Toolbar | Static | Sticky, slots for logo, nav, actions |
-| Content Area | Static | Internal scroll, max-width, responsive padding |
-| Panel | Custom | Header/body/footer, collapsible |
-| Splitter / Resizable Panels | Pre-built | `@zag-js/splitter` |
-| Floating Panel / Window | Pre-built | `@zag-js/floating-panel` — minimize, maximize, snap, z-order |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| App Shell | Static | Full application layout via slots | [spec](../.spec/0083-app-shell.md) |
+| Sidebar | Custom | Collapsible side navigation with rail mode | [spec](../.spec/0084-sidebar.md) |
+| Header / Toolbar | Static | Sticky top bar with slots | [spec](../.spec/0085-header.md) |
+| Content Area | Static | Scrollable main content with max-width | [spec](../.spec/0086-content-area.md) |
+| Panel | Custom | Collapsible container with header/body/footer | [spec](../.spec/0087-panel.md) |
+| Splitter | Pre-built | Resizable panel divider | [spec](../.spec/0088-splitter.md) |
+| Floating Panel | Pre-built | Draggable window with minimize/maximize/snap | [spec](../.spec/0089-floating-panel.md) |
 
 ### 4.8 Desktop-Inspired
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Command Palette | Custom | Cmd+K — sections, recent, fuzzy search, shortcuts display. Custom machine + `ListCollection` |
-| Spotlight | Custom | Global search with preview pane. Custom machine + `ListCollection` |
-| Status Bar | Static | Bottom bar with contextual info, widget slots |
-| Activity Bar | Custom | Vertical icon bar switching between panels |
-| Notification Center | Custom | Side panel with notification history, grouped, dismissable. Custom machine + `ListCollection` |
-| Properties Panel | Custom | Contextual panel showing/editing properties of selected item |
-| Minimap | Static | Miniature preview of long content with viewport indicator |
-| Master-Detail | Custom | Split view: list left, detail right. Custom machine + `ListCollection` |
-| List View | Custom | Multi-select (shift+click, cmd+click), keyboard nav, drag reorder, with/without icons. Custom machine + `ListCollection` |
-| Segmented Control | Custom | Toggle between 2-5 options with sliding indicator |
-| Dock | Custom | macOS-style icon magnification on hover |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Command Palette | Custom | Cmd+K searchable command launcher | [spec](../.spec/0090-command-palette.md) |
+| Spotlight | Custom | Global search overlay with preview | [spec](../.spec/0091-spotlight.md) |
+| Status Bar | Static | Bottom information bar with widget slots | [spec](../.spec/0092-status-bar.md) |
+| Activity Bar | Custom | Vertical icon bar for panel switching | [spec](../.spec/0093-activity-bar.md) |
+| Notification Center | Custom | Grouped dismissable notification history | [spec](../.spec/0094-notification-center.md) |
+| Properties Panel | Custom | Contextual property editor for selected items | [spec](../.spec/0095-properties-panel.md) |
+| Minimap | Static | Miniature content preview with viewport indicator | [spec](../.spec/0096-minimap.md) |
+| Master-Detail | Custom | Split view: list left, detail right | [spec](../.spec/0097-master-detail.md) |
+| List View | Custom | Multi-select list with keyboard nav and reorder | [spec](../.spec/0098-list-view.md) |
+| Segmented Control | Custom | Toggle between 2-5 options with sliding indicator | [spec](../.spec/0099-segmented-control.md) |
+| Dock | Custom | macOS-style icon bar with magnification | [spec](../.spec/0100-dock.md) |
 
 ### 4.9 Innovative
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Kanban Board | Custom | Drag & drop columns + cards, headless. Custom machine + `ListCollection` |
-| Timeline | Static | Vertical/horizontal, branching |
-| Data Grid | Custom | Virtual scrolling, inline edit, column resize, sort/filter. Custom machine + `ListCollection` |
-| Infinite Scroll | Custom | Intersection Observer, skeleton/placeholder slots |
-| Marquee | Static | Continuous scrolling content |
-| Spotlight Card | Static | Cursor-following gradient/glow effect |
-| Image Comparison | Custom | Before/after slider |
-| Sparkline | Static | Mini inline charts — line, bar, area |
-| Flip Card | Static | 3D flip animation, two slots (front/back) |
-| Morph / Shared Layout | Static | View Transitions API |
-| Diff Viewer | Static | Side-by-side or unified text diff |
-| Wheel Picker | Custom | iOS-style rotary scroll selection |
-| Angle Slider | Pre-built | `@zag-js/angle-slider` — rotary input |
-| Highlight | Pre-built | `@zag-js/highlight` — text matching |
-| Tour | Pre-built | `@zag-js/tour` — product tours |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Kanban Board | Custom | Drag-and-drop workflow columns and cards | [spec](../.spec/0101-kanban-board.md) |
+| Timeline | Static | Chronological event display with branching | [spec](../.spec/0102-timeline.md) |
+| Data Grid | Custom | High-performance grid with virtual scrolling | [spec](../.spec/0103-data-grid.md) |
+| Infinite Scroll | Custom | Intersection Observer-based infinite loading | [spec](../.spec/0104-infinite-scroll.md) |
+| Marquee | Static | Continuous scrolling content | [spec](../.spec/0105-marquee.md) |
+| Spotlight Card | Static | Cursor-following gradient glow effect | [spec](../.spec/0106-spotlight-card.md) |
+| Image Comparison | Custom | Before/after slider for two images | [spec](../.spec/0107-image-comparison.md) |
+| Sparkline | Static | Mini inline chart for data-dense contexts | [spec](../.spec/0108-sparkline.md) |
+| Flip Card | Static | 3D flip animation between front and back | [spec](../.spec/0109-flip-card.md) |
+| Morph | Static | Shared layout animation via View Transitions | [spec](../.spec/0110-morph.md) |
+| Diff Viewer | Static | Side-by-side or unified text comparison | [spec](../.spec/0111-diff-viewer.md) |
+| Wheel Picker | Custom | iOS-style rotary scroll selection | [spec](../.spec/0112-wheel-picker.md) |
+| Angle Slider | Pre-built | Circular rotary input for angular values | [spec](../.spec/0113-angle-slider.md) |
+| Highlight | Pre-built | Text matching and highlighting | [spec](../.spec/0114-highlight.md) |
+| Tour | Pre-built | Step-by-step product tour | [spec](../.spec/0115-tour.md) |
 
 ### 4.10 Real-World / Domain Components
 
-| Component | Zag.js | Notes |
-|-----------|--------|-------|
-| Ballot / Poll | Custom | Voting with live animated results |
-| Reaction Bar | Custom | Emoji reactions with counter, animation, toggle |
-| Proof / Annotation | Custom | Positional pins/comments on images, layouts, documents |
-| Price / Pricing Card | Static | Currency, period, discount, strikethrough |
-| Stat Card | Static | Value + label + trend (up/down) + optional sparkline |
-| Ticket / Pass | Static | Visual notch, barcode/QR slot, tear line |
-| Chat Bubble | Static | Tail, status (sent/delivered/read), timestamp, reply, reactions slot |
-| Audio Player | Custom | Headless controls: play/pause, waveform/progress, volume, speed |
-| Video Player | Custom | Headless controls: play, seek, volume, fullscreen, PiP, captions |
-| Cookie Consent | Custom | GDPR banner with category toggles, accept/reject/customise |
-| Calendar / Event View | Custom | Day/week/month view with event slots (not date picker). Custom machine + `ListCollection` |
-| Terminal / Console | Custom | Monospace output, auto-scroll, ANSI colours, input line |
-| Receipt / Invoice | Static | Line items, subtotal, tax, total with parts per section |
-| Changelog | Static | Chronological list with version tags, categories, collapsible |
-| Weather Card | Static | Icon + temperature + condition + high/low, composable |
-| Map Marker / Pin | Custom | Customisable marker with popover, for any map library |
-| OTP / Verification | Custom | Beyond pin input — timer, resend, paste from SMS |
+| Component | Tier | Description | Spec |
+|-----------|------|-------------|------|
+| Ballot / Poll | Custom | Voting with live animated results | [spec](../.spec/0116-ballot.md) |
+| Reaction Bar | Custom | Emoji reactions with counter and toggle | [spec](../.spec/0117-reaction-bar.md) |
+| Proof / Annotation | Custom | Positional pins/comments on images/documents | [spec](../.spec/0118-proof.md) |
+| Price Card | Static | Currency display with period and discount | [spec](../.spec/0119-price-card.md) |
+| Stat Card | Static | Dashboard metric with value, label, and trend | [spec](../.spec/0120-stat-card.md) |
+| Ticket / Pass | Static | Visual ticket with notch and barcode/QR slot | [spec](../.spec/0121-ticket.md) |
+| Chat Bubble | Static | Message with tail, status, and reactions | [spec](../.spec/0122-chat-bubble.md) |
+| Audio Player | Custom | Headless audio controls | [spec](../.spec/0123-audio-player.md) |
+| Video Player | Custom | Headless video controls with PiP and captions | [spec](../.spec/0124-video-player.md) |
+| Cookie Consent | Custom | GDPR banner with category toggles | [spec](../.spec/0125-cookie-consent.md) |
+| Calendar View | Custom | Day/week/month event calendar (not date picker) | [spec](../.spec/0126-calendar-view.md) |
+| Terminal | Custom | Monospace console with ANSI colours | [spec](../.spec/0127-terminal.md) |
+| Receipt | Static | Line item layout with subtotal and total | [spec](../.spec/0128-receipt.md) |
+| Changelog | Static | Chronological release notes | [spec](../.spec/0129-changelog.md) |
+| Weather Card | Static | Composable weather display | [spec](../.spec/0130-weather-card.md) |
+| Map Marker | Custom | Customisable map pin with popover | [spec](../.spec/0131-map-marker.md) |
+| OTP Verification | Custom | Complete verification flow with timer and resend | [spec](../.spec/0132-otp-verification.md) |
 
 ### 4.11 Catalogue Summary
 
@@ -765,7 +364,7 @@ Horizontal application-style menu bar (File, Edit, View...). Different from `<li
 
 | Category | Count |
 |----------|-------|
-| Primitives Base | 20 |
+| Primitives Base | 21 |
 | Forms — Essential | 15 |
 | Overlays & Feedback | 8 |
 | Navigation & Disclosure | 10 |
@@ -775,16 +374,16 @@ Horizontal application-style menu bar (File, Edit, View...). Different from `<li
 | Desktop-Inspired | 11 |
 | Innovative | 15 |
 | Real-World / Domain | 17 |
-| **Total** | **130** |
+| **Total** | **131** |
 
 **By Tier:**
 
 | Tier | Count | Description |
 |------|-------|-------------|
 | Pre-built | 46 | Uses existing `@zag-js/*` machine |
-| Custom | 45 | Custom machine via `createMachine()` |
+| Custom | 46 | Custom machine via `createMachine()` |
 | Static | 39 | Purely presentational |
-| **Total** | **130** |
+| **Total** | **131** |
 
 ---
 
@@ -1389,115 +988,32 @@ Phase 8 ─── 18 real-world / domain ────────── v0.9.0
 
 ---
 
-## 8. Component Specification Template
+## 8. Component Specifications
 
-Individual component specs live in `.spec/`. Architecture decisions are tracked alongside component specs.
+Individual component specifications live in [`.spec/`](../.spec/). Each spec follows the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](../.spec/COMPONENT-SPEC-TEMPLATE.md).
 
-### 8.1 Spec Template
+### 8.1 Spec Structure
 
-```markdown
-# XXXX. line-{component} spec
+Each spec has two clearly separated sections:
 
-Date: YYYY-MM-DD
-Status: proposed | in-progress | done
-Phase: {roadmap phase}
+- **Part A — Requirements:** Description, use cases, anti-patterns, user expectations, connections to other components, variants. Written for PMs, designers, and developers evaluating the library.
 
-## Overview
+- **Part B — Technical Specification:** Anatomy, API (props, events, slots, parts, CSS custom properties), machine states, keyboard navigation, accessibility, bundle/entrypoint details, and markup examples. Written for developers implementing or consuming the component.
 
-Short description and when to use.
+### 8.2 Spec Lifecycle
 
-## Anatomy
+| Status | Meaning |
+|--------|---------|
+| `proposed` | Draft written, not yet reviewed |
+| `reviewed` | Reviewed by at least one other person |
+| `approved` | Ready for implementation |
+| `implemented` | Component shipped, spec is the source of truth |
 
-Visual structure — which internal elements exist.
+Specs are created **just-in-time** — before each phase begins, not upfront for the entire catalogue. This avoids waste from decisions that change during implementation.
 
-## Sub-components (if applicable)
+### 8.3 RFC Process
 
-- `line-{component}-trigger`
-- `line-{component}-content`
-- ...
-
-## Parts
-
-| Part | Element | Description |
-|------|---------|-------------|
-| root | div | Main container |
-| ... | ... | ... |
-
-## Internal Parts (component-controlled)
-
-Elements rendered by the component that the consumer styles but does not provide.
-Applies only when the component must coordinate state with the element.
-
-| Part | Element | Why internal |
-|------|---------|-------------|
-| toggle | button | Coordinates with machine to toggle input type |
-| ... | ... | ... |
-
-## Slots
-
-| Slot | Description | Content |
-|------|-------------|---------|
-| default | Primary content | Free |
-| prefix | Leading content inside the control | Free |
-| suffix | Trailing content inside the control | Free |
-| ... | ... | ... |
-
-## Custom Properties
-
-| Property | Default | Description |
-|----------|---------|-------------|
-| --line-{component}-* | ... | ... |
-
-## Properties (attributes)
-
-| Property | Type | Default | Description |
-|----------|------|---------|-------------|
-| ... | ... | ... | ... |
-
-## Events
-
-| Event | Detail | Description |
-|-------|--------|-------------|
-| ... | ... | ... |
-
-## Host Data Attributes
-
-| Attribute | When | Description |
-|-----------|------|-------------|
-| data-focused | Control has focus | Styling hook |
-| ... | ... | ... |
-
-## Keyboard
-
-| Key | Description |
-|-----|-------------|
-| ... | ... |
-
-## Accessibility
-
-ARIA roles, states, and screen reader behaviour.
-Form association details (if formAssociated).
-
-## Zag.js Machine (if applicable)
-
-Which machine is used and what context/API it exposes.
-Machine states and transitions.
-
-## Examples
-
-Basic and advanced usage snippets.
-```
-
-### 8.2 Directory Structure
-
-```
-.spec/
-├── archive/
-│   └── 0001-alert-component-spec.md
-├── COMPONENT-SPEC-TEMPLATE.md
-├── 0002-button-component-spec.md
-└── ...
-```
+New components require a spec in `.spec/` before implementation begins. The spec must be in `approved` status before any code is written. Pull requests that add new components without a corresponding spec will be rejected.
 
 ---
 
