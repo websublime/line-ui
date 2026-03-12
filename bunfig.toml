@@ -1,0 +1,4 @@
+[install]
+# Registry is set via BUN_CONFIG_REGISTRY in .env
+# This takes highest priority, overriding global ~/.npmrc
+registry = "https://registry.npmjs.org/"
