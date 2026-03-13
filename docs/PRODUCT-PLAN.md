@@ -181,7 +181,7 @@ Branding must complete first. E4 (LineElement) depends only on E1-T6 (base class
 All of the following must be true:
 
 - [ ] All packages use `line-*` naming (npm names, CSS variables, CSS classes, tag prefix, base class)
-- [ ] Foundation tokens defined in `tokens.css` (156 tokens, all `--line-*` prefixed)
+- [x] Foundation tokens defined in `tokens/` directory (~299 core tokens across 11 family files, all `--line-*` prefixed) — E8 T1 complete
 - [ ] Semantic defaults defined in `semantic-defaults.css` (split from rules.css)
 - [ ] Contrast token `--line-{palette}-contrast` added to all 28 colour files
 - [ ] All 28 schemas updated to use contrast token (`--line-solid-text`)

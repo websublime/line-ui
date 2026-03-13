@@ -73,23 +73,13 @@ Tokens that resolve to empty:
 `rules.css` with `--line-` prefix. Recommendation: define explicitly so we
 own the values and don't depend on Open Props defaults.
 
-### Gap 2 — Utility tokens UNPREFIXED
+### Gap 2 — Utility tokens UNPREFIXED ✅ RESOLVED (E8 T1)
 
-**File:** `rules.css` (~160 occurrences)
-**Impact:** Components reference `--line-font-sans` but theme defines
-`--font-sans` → mismatch → every value resolves empty.
+**Status:** All foundation tokens now live in `tokens/` directory with proper `--line-*` prefix (~299 core tokens across 11 family files). The unprefixed tokens in `rules.css` are now redundant and will be removed when E8 T2 (semantic-defaults.css) cleans up rules.css.
 
-```
---font-sans      → --line-font-sans
---size-3         → --line-size-3
---shadow-1       → --line-shadow-1
---font-weight-4  → --line-font-weight-4
-(... ~160 total)
-```
+**Original issue:** `rules.css` (~160 occurrences) defined tokens without `--line-` prefix.
 
-**Fix:** Mechanical prefix. Regex: `--font-` → `--line-font-`, `--size-` →
-`--line-size-`, `--shadow-` → `--line-shadow-`. Then update all references in
-normalize.css, general.css, mixins.css.
+**Fix applied:** E8 T1 created `tokens/` directory with all tokens properly prefixed. Remaining cleanup: remove redundant unprefixed tokens from rules.css (tracked in E8 T2).
 
 ### Gap 3 — 9 undefined tokens
 
@@ -237,10 +227,11 @@ Consumers must import the entire bundle.
 
 **Fix:** See §C for the full exports structure.
 
-### Gap 13 — Missing Foundation Token Scales (NEW)
+### Gap 13 — Missing Foundation Token Scales ✅ RESOLVED (E8 T1)
 
-**Impact:** A complete design system requires consistent token scales for
-all visual properties. The following scales are completely absent from
+**Status:** All foundation token scales are now defined in `tokens/` directory. Z-index (14 tokens), opacity (3), durations (12), easing (81), border-radius (29 incl. drawn/blob/conditional), focus-ring (3), aspect-ratio (6).
+
+**Original impact:** The following scales were completely absent from
 `rules.css`:
 
 | Missing Scale | Tokens needed | Used by |
@@ -337,21 +328,22 @@ These tokens are only defined inside `.line-schema-*` selectors, not in
 
 Schemas override these when active.
 
-### Gap 16 — `rules.css` mixes foundation and semantic tokens (NEW)
+### Gap 16 — `rules.css` mixes foundation and semantic tokens — PARTIALLY RESOLVED (E8 T1)
 
-**Impact:** `rules.css` contains both foundation tokens (`--font-sans`,
+**Status:** Foundation tokens are now in `tokens/` directory (E8 T1 complete). Semantic defaults still need extraction from `rules.css` into `semantic-defaults.css` (tracked in E8 T2). Redundant unprefixed foundation tokens in rules.css lines 39-205 need removal as part of T2 cleanup.
+
+**Original impact:** `rules.css` contained both foundation tokens (`--font-sans`,
 `--size-3`, `--shadow-1`) and the semantic role map (`--line-background`,
 `--line-solid-background`, etc. inside `prefers-color-scheme` blocks).
 
-This prevents headless consumers from importing "just tokens" without also
-getting the gray semantic layer.
+**Fix applied (partial):** `tokens/` directory created with all foundation tokens properly prefixed.
 
-**Fix:** Split `rules.css` into:
+**Remaining:** Split `rules.css` into:
 
-| File | Contents |
-|------|----------|
-| `tokens.css` | Foundation: typography, sizing, spacing, shadows, z-index, opacity, motion, radius, border-width, focus-ring, aspect-ratio |
-| `semantic-defaults.css` | The `prefers-color-scheme` light/dark blocks mapping gray scale to `--line-background`, `--line-solid-background`, etc. |
+| File | Contents | Status |
+|------|----------|--------|
+| `tokens/` directory | Foundation: typography, sizing, borders, shadows, easing, z-index, aspects, durations, opacity, focus-ring, absolute colors | ✅ Done (E8 T1) |
+| `semantic-defaults.css` | The `prefers-color-scheme` light/dark blocks mapping gray scale to `--line-background`, `--line-solid-background`, etc. | Pending (E8 T2) |
 
 ### Gap 17 — No component-level token layer (NEW)
 

@@ -1525,27 +1525,40 @@ line-button {
 
 ## Appendix A — Full Token Reference
 
-### Foundation Tokens (L1) — `tokens.css`
+### Foundation Tokens (L1) — `tokens/` directory
 
-| Category | Tokens | Count |
-|----------|--------|-------|
-| Font family | `--line-font-sans`, `--line-font-serif`, `--line-font-mono` | 3 |
-| Font weight | `--line-font-weight-1..9` | 9 |
-| Line height | `--line-font-lineheight-0..9` | 10 |
-| Letter spacing | `--line-font-letterspacing-0..9` | 10 |
-| Font size | `--line-font-size-0..9` + 4 fluid | 14 |
-| Sizing | `--line-size-000..15` + 10 fluid + 3 content + 3 header + 7 breakpoints + 16 relative | 57 |
-| Border radius | `--line-radius-1..5` + round | 6 |
-| Border width | `--line-border-1..3` | 3 |
-| Shadows | `--line-shadow-1..6` + inner 0..4 + highlight + color + strength | 13 |
-| Z-index | `--line-z-dropdown..tooltip` | 8 |
-| Opacity | `--line-opacity-disabled/overlay/placeholder` | 3 |
-| Duration | `--line-duration-instant..glacial` | 5 |
-| Easing | `--line-ease-default/in/out/in-out/spring` | 5 |
-| Focus ring | `--line-ring-width/offset/color` | 3 |
-| Aspect ratio | `--line-ratio-square/landscape/portrait/wide/ultrawide` | 5 |
-| Absolute | `--line-white`, `--line-black` | 2 |
-| **Total** | | **156** |
+Architecture: `packages/theme/src/tokens/` contains per-family CSS files with a barrel `tokens.css` that `@import`s all families. Each family is independently importable.
+
+#### Core families (implemented — E8 T1)
+
+| Family file | Categories | Count |
+|-------------|-----------|-------|
+| `typography.css` | 15 OP families + 3 custom stacks + 9 weights + 10 line-heights + 10 letter-spacings + 10 static sizes + 4 fluid sizes | 61 |
+| `sizing.css` | 17 rem + 17 px + 10 fluid + 3 content + 3 header + 7 breakpoints + 17 relative | 74 |
+| `borders.css` | 5 border-sizes + 6 radii + 6 drawn + 1 round + 5 blob + 6 conditional | 29 |
+| `shadows.css` | shadow-color + shadow-strength + highlight + 6 outer + 5 inner (+ 3 dark overrides) | 14 |
+| `easing.css` | 5 standard + 5 in + 5 out + 5 in-out + 15 elastic + 5 step + 10 aliases + 5 spring + 5 bounce + 21 named | 81 |
+| `zindex.css` | 6 OP layers + 8 semantic extensions | 14 |
+| `aspects.css` | 6 OP aspect ratios | 6 |
+| `durations.css` | 7 OP practical + 5 semantic extensions | 12 |
+| `opacity.css` | 3 semantic tokens (line:// extension) | 3 |
+| `focus.css` | 3 focus-ring tokens (line:// extension) | 3 |
+| `colors-absolute.css` | 2 absolute colors + color-scheme declarations | 2 |
+| **Core subtotal** | | **~299** |
+
+#### Decorative families (planned — E8 T10-T14)
+
+| Family file | Source | Count |
+|-------------|--------|-------|
+| `animations.css` | props.animations.css — 27 tokens + 18 @keyframes | 27 |
+| `gradients.css` | props.gradients.css — 30 gradients + space + 5 noise + 5 filters + 2 extra | 43 |
+| `masks.css` | props.masks.edges.css + props.masks.corner-cuts.css | 34 |
+| `layouts.css` | props.layouts.css — ~4 public tokens (internal mixin vars excluded) | 4 |
+| `highlights.css` | props.highlights.css | 3 |
+| `svg.css` | props.svg.css — 3 squircle tokens | 3 |
+| **Decorative subtotal** | | **~114** |
+
+| **Grand total** | | **~413** |
 
 ### Semantic Roles (L2) — per schema
 

@@ -148,7 +148,7 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 
 **Zag.js** — Production-ready state machines for 50+ UI patterns. Framework-agnostic with official Lit adapter (`@zag-js/element`). WAI-ARIA accessibility built-in. Keyboard navigation, focus management, all solved.
 
-**Foundation Tokens** — All foundation tokens (typography, spacing, shadows, motion, radius, border-width, z-index, opacity, focus-ring, aspect-ratio) are explicitly defined in `tokens.css` with the `--line-*` prefix. Open Props served as a design reference for initial values but is NOT used at runtime or build time. The `postcss-jit-props` plugin and `open-props` dependency have been removed from the pipeline. All 156 tokens are owned, versioned, and documented within the theme package.
+**Foundation Tokens** — All foundation tokens are explicitly defined in `tokens/` (a directory of per-family CSS files with a barrel `tokens.css`) under the `--line-*` prefix. Open Props served as a design reference for initial values but is NOT used at runtime or build time. Core families provide ~299 tokens (typography, sizing, borders, shadows, easing, z-index, aspects, durations, opacity, focus-ring, absolute colors). Decorative families (animations, gradients, masks, layouts, highlights, SVG) add ~114 more. All ~413 tokens are owned, versioned, and documented within the theme package.
 
 **Custom Color System** — 12 semantic levels per palette (background to high-contrast), inspired by Radix Colors. The heart of the theming system with 28 palettes supporting light/dark mode.
 
@@ -1121,33 +1121,31 @@ Foundation tokens are defined explicitly in `src/tokens.css` with the `--line-*`
 
 **Foundation tokens (L1) — complete catalogue:**
 
-| Category | Variables | Range |
+| Category | Variables | Count |
 |----------|-----------|-------|
-| Font families | `--line-font-sans`, `--line-font-serif`, `--line-font-mono` | 3 stacks |
-| Font weights | `--line-font-weight-1` through `--line-font-weight-9` | 100 to 900 |
-| Font sizes | `--line-font-size-0` through `--line-font-size-9` | 0.5rem to 3.5rem |
-| Font sizes (fluid) | `--line-font-size-fluid-0` through `--line-font-size-fluid-3` | `clamp()` responsive |
-| Line heights | `--line-font-lineheight-0` through `--line-font-lineheight-9` | 0.95 to 3 |
-| Letter spacing | `--line-font-letterspacing-0` through `--line-font-letterspacing-9` | -0.05em to 2em |
-| Spacing (absolute) | `--line-size-000`, `--line-size-00`, `--line-size-1` through `--line-size-15` | -0.5rem to 30rem |
-| Spacing (fluid) | `--line-size-fluid-1` through `--line-size-fluid-10` | `clamp()` responsive |
-| Spacing (relative) | `--line-size-relative-000` through `--line-size-relative-15` | `ch`-based |
-| Content widths | `--line-size-content-1` through `--line-size-content-3` | 20ch to 60ch |
-| Header widths | `--line-size-header-1` through `--line-size-header-3` | 20ch to 35ch |
-| Breakpoints | `--line-size-xxs` through `--line-size-xxl` | 240px to 1920px |
-| Border radii | `--line-radius-1` through `--line-radius-5`, `--line-radius-round` | 2px to 16px + 9999px |
-| Border widths | `--line-border-1` through `--line-border-3` | 1px to 4px |
-| Shadows | `--line-shadow-1` through `--line-shadow-6` + inner shadows | Multi-layer box-shadows |
-| Shadow config | `--line-shadow-color`, `--line-shadow-strength` | Dark mode overrides |
-| Z-index | `--line-z-dropdown` through `--line-z-tooltip` | 50 to 700 |
-| Opacity | `--line-opacity-disabled`, `--line-opacity-overlay`, `--line-opacity-placeholder` | 0.5 to 0.75 |
-| Motion duration | `--line-duration-instant` through `--line-duration-glacial` | 50ms to 1000ms |
-| Motion easing | `--line-ease-default`, `--line-ease-in`, `--line-ease-out`, `--line-ease-in-out`, `--line-ease-spring` | cubic-bezier values |
-| Focus ring | `--line-ring-width`, `--line-ring-offset`, `--line-ring-color` | Focus ring styling |
-| Aspect ratio | `--line-ratio-square` through `--line-ratio-ultrawide` | 1 to 21/9 |
-| Absolute colours | `--line-white`, `--line-black` | Fixed values |
+| Font families | 15 OP stacks (`--line-font-system-ui` through `--line-font-handwritten`) + 3 custom (`--line-font-sans/serif/mono`) | 18 |
+| Font weights | `--line-font-weight-1` through `--line-font-weight-9` | 9 |
+| Font sizes | `--line-font-size-0..9` (static) + `--line-font-size-fluid-0..3` (fluid) | 14 |
+| Line heights | `--line-font-lineheight-0..9` (OP 7 + 3 extensions) | 10 |
+| Letter spacing | `--line-font-letterspacing-0..9` (OP 8 + 2 extensions) | 10 |
+| Sizing (rem) | `--line-size-000..15` | 17 |
+| Sizing (px) | `--line-size-px-000..15` | 17 |
+| Sizing (fluid) | `--line-size-fluid-1..10` | 10 |
+| Sizing (content/header) | `--line-size-content-1..3`, `--line-size-header-1..3` | 6 |
+| Breakpoints | `--line-size-xxs` through `--line-size-xxl` | 7 |
+| Sizing (relative) | `--line-size-relative-000..15` | 17 |
+| Border sizes | `--line-border-size-1..5` | 5 |
+| Border radii | `--line-radius-1..6` + round + 6 drawn + 5 blob + 6 conditional | 24 |
+| Shadows | `--line-shadow-1..6` + inner 0..4 + highlight + color + strength | 14 |
+| Z-index | `--line-layer-1..5` + `--line-layer-important` + `--line-z-dropdown..tooltip` (8 semantic) | 14 |
+| Easing | Full 1:1 OP match: standard, in, out, in-out, elastic, step, spring, bounce, named curves | 81 |
+| Durations | `--line-duration-instant..gentle-2` (OP 7) + `--line-duration-xfast..glacial` (5 semantic) | 12 |
+| Opacity | `--line-opacity-disabled/overlay/placeholder` | 3 |
+| Focus ring | `--line-ring-width/offset/color` | 3 |
+| Aspect ratio | `--line-ratio-square..golden` | 6 |
+| Absolute colours | `--line-white`, `--line-black` + color-scheme | 2 |
 
-**Total: 156 foundation tokens.** Full definitions in `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phase 1.
+**Total: ~413 foundation tokens** (~299 core + ~114 decorative). Full definitions in `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Appendix A. Architecture: `tokens/` directory with per-family CSS files, each independently importable.
 
 **Contrast tokens (L0):** Each of the 28 colour palettes also defines a `--line-{palette}-contrast` token (`#fff` or `#000`) that guarantees WCAG AA 4.5:1 contrast for text on level-9 solid backgrounds. See §9.15 for the full contrast system.
 
@@ -1660,7 +1658,7 @@ All design token questions have been resolved. This table documents the decision
 |---|----------|----------|-------|
 | T1 | Namespace prefix for all tokens | **`--line-*` prefix on everything** — palette, semantic, foundation, component tokens, and CSS classes. Single convention, zero collision risk. | Phase 0 |
 | T2 | CSS `@layer` strategy | **Not needed.** `:where()` handles theme specificity. Shadow DOM handles component encapsulation. No scenario where layers add value. | Closed |
-| T3 | Foundation token ownership | **All foundation tokens defined explicitly** in `tokens.css`. No `postcss-jit-props` or `open-props` dependencies. Open Props used as a design reference only. All 156 tokens owned by the theme package. | Phase 0 |
+| T3 | Foundation token ownership | **All foundation tokens defined explicitly** in `tokens/` directory (per-family CSS files + barrel `tokens.css`). No `postcss-jit-props` or `open-props` runtime dependencies. Open Props used as a design reference only. All ~413 tokens (~299 core + ~114 decorative) owned by the theme package. | Phase 0 |
 | T4 | Custom theme contract for consumers | **Document the contract in Phase 1** (colour file + schema file + optional alias override). Generator CLI is nice-to-have post-1.0. | Phase 1 |
 | T5 | Demo swatch files in production bundle | **Remove from all build outputs.** Demo classes (`custom/*.css`) migrate to Storybook. | Phase 0 |
 | T6 | Semantic alias layer | **6 aliases × 9 intent tokens = 54 variables.** Aliases: primary (blue), danger (red), success (green), warning (amber), info (cyan), neutral (gray). Intent tokens per alias: base, hover, active, text, subtle, subtle-hover, outline, outline-hover, fg. Consumer can remap any alias. | Phase 1 |
