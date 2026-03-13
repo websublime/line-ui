@@ -13,6 +13,7 @@
   --line-high-contrast: var(--line-brown-12); /* High-contrast text (-12) */
   --line-light: var(--line-brown-1); /* Light text */
   --line-dark: var(--line-brown-12); /* Dark text */
+  --line-solid-text: var(--line-brown-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-brown) {
@@ -28,10 +29,11 @@
   --line-solid-hover: var(--line-brown-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-brown-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-brown-1); /* High-contrast text (-12) */
+  --line-solid-text: var(--line-brown-contrast); /* Solid background text */
 }
 
 :where(.line-is-brown) {
-  color: var(--line-brown-1);
+  color: var(--line-brown-contrast);
   background-color: var(--line-brown-9);
   transition: all ease-in-out 150ms;
 
@@ -41,7 +43,7 @@
 }
 
 :is(.dark) :where(.line-is-brown) {
-  color: var(--line-brown-1);
+  color: var(--line-brown-contrast);
   background-color: var(--line-brown-4);
   transition: all ease-in-out 150ms;
 

@@ -15,6 +15,7 @@
   --line-white: var(--line-pink-1); /* White text */
   --line-black: var(--line-pink-12); /* Black text */
   --line-dark: var(--line-pink-12); /* Dark text */
+  --line-solid-text: var(--line-pink-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-pink) {
@@ -30,10 +31,11 @@
   --line-solid-hover: var(--line-pink-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-pink-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-pink-1); /* High-contrast text (-12) */
+  --line-solid-text: var(--line-pink-contrast); /* Solid background text */
 }
 
 :where(.line-is-pink) {
-  color: var(--line-pink-1);
+  color: var(--line-pink-contrast);
   background-color: var(--line-pink-9);
   transition: all ease-in-out 150ms;
 
@@ -43,7 +45,7 @@
 }
 
 :is(.dark) :where(.line-is-pink) {
-  color: var(--line-pink-1);
+  color: var(--line-pink-contrast);
   background-color: var(--line-pink-4);
   transition: all ease-in-out 150ms;
 

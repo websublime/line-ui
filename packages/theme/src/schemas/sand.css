@@ -15,6 +15,7 @@
   --line-white: var(--line-sand-1); /* White text */
   --line-black: var(--line-sand-12); /* Black text */
   --line-dark: var(--line-sand-12); /* Dark text */
+  --line-solid-text: var(--line-sand-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-sand) {
@@ -30,10 +31,11 @@
   --line-solid-hover: var(--line-sand-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-sand-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-sand-1); /* High-contrast text (-12) */
+  --line-solid-text: var(--line-sand-contrast); /* Solid background text */
 }
 
 :where(.line-is-sand) {
-  color: var(--line-sand-1);
+  color: var(--line-sand-contrast);
   background-color: var(--line-sand-9);
   transition: all ease-in-out 150ms;
 
@@ -43,7 +45,7 @@
 }
 
 :is(.dark) :where(.line-is-sand) {
-  color: var(--line-sand-1);
+  color: var(--line-sand-contrast);
   background-color: var(--line-sand-4);
   transition: all ease-in-out 150ms;
 

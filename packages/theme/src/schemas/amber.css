@@ -13,6 +13,7 @@
   --line-high-contrast: var(--line-amber-12); /* High-contrast text (-12) */
   --line-light: var(--line-amber-1); /* Light text */
   --line-dark: var(--line-amber-12); /* Dark text */
+  --line-solid-text: var(--line-amber-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-amber) {
@@ -30,10 +31,11 @@
   --line-high-contrast: var(--line-amber-1); /* High-contrast text (-12) */
   --line-light: var(--line-amber-12); /* Light text */
   --line-dark: var(--line-amber-1); /* Dark text */
+  --line-solid-text: var(--line-amber-contrast); /* Solid background text */
 }
 
 :where(.line-is-amber) {
-  color: var(--line-amber-12);
+  color: var(--line-amber-contrast);
   background-color: var(--line-amber-9);
   transition: all ease-in-out 150ms;
 
@@ -43,7 +45,7 @@
 }
 
 :is(.dark) :where(.line-is-amber) {
-  color: var(--line-amber-12);
+  color: var(--line-amber-contrast);
   background-color: var(--line-amber-4);
   transition: all ease-in-out 150ms;
 

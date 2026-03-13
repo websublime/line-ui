@@ -15,6 +15,7 @@
   --line-white: var(--line-sky-1); /* White text */
   --line-black: var(--line-sky-12); /* Black text */
   --line-dark: var(--line-sky-12); /* Dark text */
+  --line-solid-text: var(--line-sky-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-sky) {
@@ -30,10 +31,11 @@
   --line-solid-hover: var(--line-sky-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-sky-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-sky-1); /* High-contrast text (-12) */
+  --line-solid-text: var(--line-sky-contrast); /* Solid background text */
 }
 
 :where(.line-is-sky) {
-  color: var(--line-sky-12);
+  color: var(--line-sky-contrast);
   background-color: var(--line-sky-9);
   transition: all ease-in-out 150ms;
 
@@ -43,7 +45,7 @@
 }
 
 :is(.dark) :where(.line-is-sky) {
-  color: var(--line-sky-12);
+  color: var(--line-sky-contrast);
   background-color: var(--line-sky-4);
   transition: all ease-in-out 150ms;
 

@@ -15,6 +15,7 @@
   --line-white: var(--line-teal-1); /* White text */
   --line-black: var(--line-teal-12); /* Black text */
   --line-dark: var(--line-teal-12); /* Dark text */
+  --line-solid-text: var(--line-teal-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-teal) {
@@ -30,10 +31,11 @@
   --line-solid-hover: var(--line-teal-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-teal-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-teal-1); /* High-contrast text (-12) */
+  --line-solid-text: var(--line-teal-contrast); /* Solid background text */
 }
 
 :where(.line-is-teal) {
-  color: var(--line-teal-1);
+  color: var(--line-teal-contrast);
   background-color: var(--line-teal-9);
   transition: all ease-in-out 150ms;
 
@@ -43,7 +45,7 @@
 }
 
 :is(.dark) :where(.line-is-teal) {
-  color: var(--line-teal-1);
+  color: var(--line-teal-contrast);
   background-color: var(--line-teal-4);
   transition: all ease-in-out 150ms;
 
