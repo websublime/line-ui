@@ -15,6 +15,9 @@
   --line-shadow-color: 220 3% 15%;
   --line-shadow-strength: 1%;
 
+  /* Deviation from OP: uses #fff2 (13% opacity) instead of OP's #fff (fully opaque).
+     Provides a subtler highlight that blends better with colored surfaces and
+     avoids harsh white lines on non-white backgrounds. */
   --line-inner-shadow-highlight: inset 0 -0.5px 0 0 #fff2, inset 0 0.5px 0 0 #0001;
 
   --line-shadow-1: 0 1px 2px -1px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 9%));
