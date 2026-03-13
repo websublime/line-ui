@@ -1,0 +1,22 @@
+/* ═══════════════════════════════════════════════════════════
+   colors-absolute.css — line://ui Absolute Color & Color Scheme Tokens
+
+   2 absolute colors + color-scheme declarations.
+   line:// extensions (not in Open Props core token system).
+   ═══════════════════════════════════════════════════════════ */
+
+:where(html) {
+  --line-white: #f1f1f1;
+  --line-black: #030303;
+}
+
+/* ── Color Scheme ── */
+
+:where(html) {
+  &.dark {
+    color-scheme: dark;
+  }
+  &.light {
+    color-scheme: light;
+  }
+}

@@ -306,313 +306,96 @@ code, not design system utilities.
 
 ## 4. Phase 1 — Foundation Token Layer (L1)
 
-> **Goal:** Create `tokens.css` — the color-free, opinion-free token layer.
+> **Goal:** Create `tokens/` directory — the color-free, opinion-free token layer.
 
-### Step 1.1 — Create `src/tokens.css`
+### Step 1.1 — Create `src/tokens/` directory with per-family CSS files
 
-Extract all foundation scales from the prefixed `rules.css` into a new file.
-Add the missing scales (z-index, opacity, motion, radius, border-width,
-focus-ring, aspect-ratio).
+The foundation token layer is split into per-family CSS files for independent
+importability, with a barrel `tokens.css` that re-exports all families.
+
+**Architecture:**
+
+```
+packages/theme/src/tokens/
+  tokens.css            # Barrel — @imports all family files below
+  typography.css        # Font families (19), weights (9), line-heights (10),
+                        #   letter-spacings (10), font-sizes static (10) + fluid (4)
+  sizing.css            # Rem (16), px (16), fluid (10), content (3),
+                        #   header (3), breakpoints (7), relative (18)
+  borders.css           # Border sizes (5), radii (6), drawn (6), round (1),
+                        #   blob (5), conditional (6)
+  shadows.css           # shadow-color, shadow-strength, shadow-1..6,
+                        #   inner-shadow-0..4, inner-shadow-highlight + dark mode
+  easing.css            # All 81 OP easing tokens (standard, in, out, in-out,
+                        #   elastic, step, spring, bounce, named curves)
+  zindex.css            # OP layers (6) + semantic z-index extensions (8)
+  aspects.css           # All 6 OP aspect ratios (including golden)
+  durations.css         # OP practical durations (7) + semantic extensions (5)
+  opacity.css           # 3 semantic tokens (disabled, overlay, placeholder)
+  focus.css             # 3 tokens (ring-width, ring-offset, ring-color)
+  colors-absolute.css   # black, white + color-scheme declarations
+```
+
+**Token count:** ~302 unique CSS custom property declarations (plus 3 dark
+mode shadow overrides). This is a full 1:1 Open Props match plus line://
+extensions for semantics that Open Props does not provide.
+
+**Key design decisions:**
+
+- All custom properties use the `--line-` prefix
+- All selectors use `:where(html)` for zero specificity
+- Dark mode shadow overrides use `:where(html):is(.dark)`
+- All values are hardcoded — no runtime `var()` dependency on Open Props
+- Font families include all 19 OP stacks plus 3 custom aliases (sans/serif/mono)
+- Line-heights extended from OP 7 to 10 tokens (added 2.25, 2.5, 3)
+- Letter-spacings extended from OP 8 to 10 tokens (added 1.5em, 2em)
+- Font-sizes renumbered: OP `--font-size-00..8` becomes `--line-font-size-0..9`
+- Shadows inline the strength calc() instead of using OP's intermediate `--shadow-strength-N` variables
+- Z-index uses semantic names (dropdown/sticky/fixed/overlay/modal/popover/toast/tooltip) alongside OP's generic layers
+- Easing includes all 81 OP tokens (no reduction to 5 semantic aliases)
+- Opacity placeholder value is 0.6 (distinct from disabled's 0.5)
+
+Each family file can be imported independently via package.json exports
+(configured in a separate task).
+
+**Barrel file** (`src/tokens.css`):
 
 ```css
-/* ═══════════════════════════════════════════════════════════
-   tokens.css — line://ui Foundation Tokens (L1)
-
-   Color-free. Semantic-free. Pure scales.
-   Import this alone for a headless setup with consistent
-   spacing, typography, and motion.
-   ═══════════════════════════════════════════════════════════ */
-
-/* ── Typography ── */
-
-:where(html) {
-  --line-font-sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
-    Cantarell, Noto Sans, sans-serif;
-  --line-font-serif: ui-serif, serif;
-  --line-font-mono: Dank Mono, Operator Mono, Inconsolata, Fira Mono,
-    ui-monospace, SF Mono, Monaco, Droid Sans Mono, Source Code Pro, monospace;
-
-  /* Weight */
-  --line-font-weight-1: 100;
-  --line-font-weight-2: 200;
-  --line-font-weight-3: 300;
-  --line-font-weight-4: 400;
-  --line-font-weight-5: 500;
-  --line-font-weight-6: 600;
-  --line-font-weight-7: 700;
-  --line-font-weight-8: 800;
-  --line-font-weight-9: 900;
-
-  /* Line Height */
-  --line-font-lineheight-0: 0.95;
-  --line-font-lineheight-1: 1.1;
-  --line-font-lineheight-2: 1.25;
-  --line-font-lineheight-3: 1.375;
-  --line-font-lineheight-4: 1.5;
-  --line-font-lineheight-5: 1.75;
-  --line-font-lineheight-6: 2;
-  --line-font-lineheight-7: 2.25;
-  --line-font-lineheight-8: 2.5;
-  --line-font-lineheight-9: 3;
-
-  /* Letter Spacing */
-  --line-font-letterspacing-0: -0.05em;
-  --line-font-letterspacing-1: 0.025em;
-  --line-font-letterspacing-2: 0.05em;
-  --line-font-letterspacing-3: 0.075em;
-  --line-font-letterspacing-4: 0.15em;
-  --line-font-letterspacing-5: 0.5em;
-  --line-font-letterspacing-6: 0.75em;
-  --line-font-letterspacing-7: 1em;
-  --line-font-letterspacing-8: 1.5em;
-  --line-font-letterspacing-9: 2em;
-
-  /* Font Size */
-  --line-font-size-0: 0.5rem;
-  --line-font-size-1: 0.75rem;
-  --line-font-size-2: 1rem;
-  --line-font-size-3: 1.1rem;
-  --line-font-size-4: 1.25rem;
-  --line-font-size-5: 1.5rem;
-  --line-font-size-6: 2rem;
-  --line-font-size-7: 2.5rem;
-  --line-font-size-8: 3rem;
-  --line-font-size-9: 3.5rem;
-  --line-font-size-fluid-0: clamp(0.75rem, 2vw, 1rem);
-  --line-font-size-fluid-1: clamp(1rem, 4vw, 1.5rem);
-  --line-font-size-fluid-2: clamp(1.5rem, 6vw, 2.5rem);
-  --line-font-size-fluid-3: clamp(2rem, 9vw, 3.5rem);
-}
-
-/* ── Sizing / Spacing ── */
-
-:where(html) {
-  --line-size-000: -0.5rem;
-  --line-size-00: -0.25rem;
-  --line-size-1: 0.25rem;
-  --line-size-2: 0.5rem;
-  --line-size-3: 1rem;
-  --line-size-4: 1.25rem;
-  --line-size-5: 1.5rem;
-  --line-size-6: 1.75rem;
-  --line-size-7: 2rem;
-  --line-size-8: 3rem;
-  --line-size-9: 4rem;
-  --line-size-10: 5rem;
-  --line-size-11: 7.5rem;
-  --line-size-12: 10rem;
-  --line-size-13: 15rem;
-  --line-size-14: 20rem;
-  --line-size-15: 30rem;
-
-  /* Fluid */
-  --line-size-fluid-1: clamp(0.5rem, 1vw, 1rem);
-  --line-size-fluid-2: clamp(1rem, 2vw, 1.5rem);
-  --line-size-fluid-3: clamp(1.5rem, 3vw, 2rem);
-  --line-size-fluid-4: clamp(2rem, 4vw, 3rem);
-  --line-size-fluid-5: clamp(4rem, 5vw, 5rem);
-  --line-size-fluid-6: clamp(5rem, 7vw, 7.5rem);
-  --line-size-fluid-7: clamp(7.5rem, 10vw, 10rem);
-  --line-size-fluid-8: clamp(10rem, 20vw, 15rem);
-  --line-size-fluid-9: clamp(15rem, 30vw, 20rem);
-  --line-size-fluid-10: clamp(20rem, 40vw, 30rem);
-
-  /* Content widths */
-  --line-size-content-1: 20ch;
-  --line-size-content-2: 45ch;
-  --line-size-content-3: 60ch;
-
-  /* Header widths */
-  --line-size-header-1: 20ch;
-  --line-size-header-2: 25ch;
-  --line-size-header-3: 35ch;
-
-  /* Breakpoints */
-  --line-size-xxs: 240px;
-  --line-size-xs: 360px;
-  --line-size-sm: 480px;
-  --line-size-md: 768px;
-  --line-size-lg: 1024px;
-  --line-size-xl: 1440px;
-  --line-size-xxl: 1920px;
-
-  /* Relative (ch-based) */
-  --line-size-relative-000: -0.5ch;
-  --line-size-relative-00: -0.25ch;
-  --line-size-relative-1: 0.25ch;
-  --line-size-relative-2: 0.5ch;
-  --line-size-relative-3: 1ch;
-  --line-size-relative-4: 1.25ch;
-  --line-size-relative-5: 1.5ch;
-  --line-size-relative-6: 1.75ch;
-  --line-size-relative-7: 2ch;
-  --line-size-relative-8: 3ch;
-  --line-size-relative-9: 4ch;
-  --line-size-relative-10: 5ch;
-  --line-size-relative-11: 7.5ch;
-  --line-size-relative-12: 10ch;
-  --line-size-relative-13: 15ch;
-  --line-size-relative-14: 20ch;
-  --line-size-relative-15: 30ch;
-}
-
-/* ── Border Radius ── */
-
-:where(html) {
-  --line-radius-1: 0.125rem;  /* 2px  — pills, tags */
-  --line-radius-2: 0.25rem;   /* 4px  — inputs, buttons */
-  --line-radius-3: 0.5rem;    /* 8px  — cards, dialogs */
-  --line-radius-4: 0.75rem;   /* 12px — large cards */
-  --line-radius-5: 1rem;      /* 16px — hero sections */
-  --line-radius-round: 9999px;/* Full round — avatars, pills */
-}
-
-/* ── Border Width ── */
-
-:where(html) {
-  --line-border-1: 1px;       /* Default borders */
-  --line-border-2: 2px;       /* Emphasis borders, focus rings */
-  --line-border-3: 4px;       /* Heavy dividers */
-}
-
-/* ── Shadows / Elevation ── */
-
-:where(html) {
-  --line-shadow-color: 220 3% 15%;
-  --line-shadow-strength: 1%;
-  --line-inner-shadow-highlight: inset 0 -0.5px 0 0 #fff2, inset 0 0.5px 0 0 #0007;
-
-  --line-shadow-1: 0 1px 2px -1px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 9%));
-  --line-shadow-2:
-    0 3px 5px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 3%)),
-    0 7px 14px -5px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 5%));
-  --line-shadow-3:
-    0 -1px 3px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 2%)),
-    0 1px 2px -5px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 2%)),
-    0 2px 5px -5px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 4%)),
-    0 4px 12px -5px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 5%)),
-    0 12px 15px -5px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 7%));
-  --line-shadow-4:
-    0 -2px 5px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 2%)),
-    0 1px 1px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 3%)),
-    0 2px 2px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 3%)),
-    0 5px 5px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 4%)),
-    0 9px 9px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 5%)),
-    0 16px 16px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 6%));
-  --line-shadow-5:
-    0 -1px 2px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 2%)),
-    0 2px 1px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 3%)),
-    0 5px 5px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 3%)),
-    0 10px 10px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 4%)),
-    0 20px 20px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 5%)),
-    0 40px 40px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 7%));
-  --line-shadow-6:
-    0 -1px 2px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 2%)),
-    0 3px 2px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 3%)),
-    0 7px 5px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 3%)),
-    0 12px 10px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 4%)),
-    0 22px 18px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 5%)),
-    0 41px 33px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 6%)),
-    0 100px 80px -2px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 7%));
-  --line-inner-shadow-0: inset 0 0 0 1px hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 9%));
-  --line-inner-shadow-1:
-    inset 0 1px 2px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 9%)),
-    var(--line-inner-shadow-highlight);
-  --line-inner-shadow-2:
-    inset 0 1px 4px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 9%)),
-    var(--line-inner-shadow-highlight);
-  --line-inner-shadow-3:
-    inset 0 2px 8px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 9%)),
-    var(--line-inner-shadow-highlight);
-  --line-inner-shadow-4:
-    inset 0 2px 14px 0 hsl(var(--line-shadow-color) / calc(var(--line-shadow-strength) + 9%)),
-    var(--line-inner-shadow-highlight);
-}
-
-:where(html):is(.dark) {
-  --line-shadow-color: 220 40% 2%;
-  --line-shadow-strength: 25%;
-}
-
-/* ── Z-Index ── */
-
-:where(html) {
-  --line-z-dropdown: 50;
-  --line-z-sticky: 100;
-  --line-z-fixed: 200;
-  --line-z-overlay: 300;
-  --line-z-modal: 400;
-  --line-z-popover: 500;
-  --line-z-toast: 600;
-  --line-z-tooltip: 700;
-}
-
-/* ── Opacity ── */
-
-:where(html) {
-  --line-opacity-disabled: 0.5;
-  --line-opacity-overlay: 0.75;
-  --line-opacity-placeholder: 0.5;
-}
-
-/* ── Motion: Duration ── */
-
-:where(html) {
-  --line-duration-instant: 50ms;
-  --line-duration-fast: 150ms;
-  --line-duration-normal: 300ms;
-  --line-duration-slow: 500ms;
-  --line-duration-glacial: 1000ms;
-}
-
-/* ── Motion: Easing ── */
-
-:where(html) {
-  --line-ease-default: cubic-bezier(0.4, 0, 0.2, 1);
-  --line-ease-in: cubic-bezier(0.4, 0, 1, 1);
-  --line-ease-out: cubic-bezier(0, 0, 0.2, 1);
-  --line-ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
-  --line-ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* ── Focus Ring ── */
-
-:where(html) {
-  --line-ring-width: 2px;
-  --line-ring-offset: 2px;
-  --line-ring-color: var(--line-ui-border, hsl(0 0% 83%));
-  /* Fallback value ensures ring works even without semantic layer */
-}
-
-/* ── Aspect Ratio ── */
-
-:where(html) {
-  --line-ratio-square: 1;
-  --line-ratio-landscape: 4 / 3;
-  --line-ratio-portrait: 3 / 4;
-  --line-ratio-wide: 16 / 9;
-  --line-ratio-ultrawide: 21 / 9;
-}
-
-/* ── Absolute Colors ── */
-
-:where(html) {
-  --line-white: #f1f1f1;
-  --line-black: #030303;
-}
-
-/* ── Color Scheme ── */
-
-:where(html) {
-  &.dark { color-scheme: dark; }
-  &.light { color-scheme: light; }
-}
+@import "./tokens/typography.css";
+@import "./tokens/sizing.css";
+@import "./tokens/borders.css";
+@import "./tokens/shadows.css";
+@import "./tokens/easing.css";
+@import "./tokens/zindex.css";
+@import "./tokens/aspects.css";
+@import "./tokens/durations.css";
+@import "./tokens/opacity.css";
+@import "./tokens/focus.css";
+@import "./tokens/colors-absolute.css";
 ```
+
+**Token families summary:**
+
+| File | Tokens | Source |
+|------|--------|--------|
+| `typography.css` | 61 | OP 19 families + 9 weights + 7 line-heights (+3 ext) + 8 letter-spacings (+2 ext) + 10 static sizes (renumbered) + 4 fluid |
+| `sizing.css` | 74 | OP 16 rem + 16 px + 10 fluid + 3 content + 3 header + 7 breakpoint + 18 relative |
+| `borders.css` | 29 | OP 5 border-sizes + 6 radii + 6 drawn + 1 round + 5 blob + 6 conditional |
+| `shadows.css` | 17+3 | OP shadow-color, strength, highlight, shadow-1..6, inner-shadow-0..4 + 3 dark overrides |
+| `easing.css` | 81 | OP all 81 (standard, in, out, in-out, elastic, step, spring, bounce, named) |
+| `zindex.css` | 14 | OP 6 layers + 8 semantic extensions |
+| `aspects.css` | 6 | OP all 6 (square, landscape, portrait, widescreen, ultrawide, golden) |
+| `durations.css` | 12 | OP 7 practical + 5 semantic extensions |
+| `opacity.css` | 3 | line:// only (disabled, overlay, placeholder) |
+| `focus.css` | 3 | line:// only (ring-width, ring-offset, ring-color) |
+| `colors-absolute.css` | 2+cs | line:// only (white, black, color-scheme) |
+| **Total** | **~305** | |
 
 ### Step 1.2 — Delete the old `rules.css`
 
-After extracting tokens.css and semantic-defaults.css (next phase), delete
-`src/utils/rules.css`. All its content will live in the two new files.
+After extracting `tokens/` and `semantic-defaults.css` (next phase), delete
+`src/utils/rules.css`. All its content will live in the new token files and
+the semantic defaults layer.
 
 ---
 

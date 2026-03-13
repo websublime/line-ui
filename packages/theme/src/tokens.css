@@ -1,0 +1,21 @@
+/* ═══════════════════════════════════════════════════════════
+   tokens.css — line://ui Foundation Tokens (L1)
+
+   Color-free. Semantic-free. Pure scales.
+   Import this alone for a headless setup with consistent
+   spacing, typography, and motion.
+
+   Barrel file — imports all token families from tokens/.
+   ═══════════════════════════════════════════════════════════ */
+
+@import "./tokens/typography.css";
+@import "./tokens/sizing.css";
+@import "./tokens/borders.css";
+@import "./tokens/shadows.css";
+@import "./tokens/easing.css";
+@import "./tokens/zindex.css";
+@import "./tokens/aspects.css";
+@import "./tokens/durations.css";
+@import "./tokens/opacity.css";
+@import "./tokens/focus.css";
+@import "./tokens/colors-absolute.css";

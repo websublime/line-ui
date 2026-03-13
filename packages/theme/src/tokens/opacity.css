@@ -1,0 +1,11 @@
+/* ═══════════════════════════════════════════════════════════
+   opacity.css — line://ui Opacity Tokens
+
+   3 semantic tokens — line:// extensions (not in Open Props).
+   ═══════════════════════════════════════════════════════════ */
+
+:where(html) {
+  --line-opacity-disabled: 0.5;
+  --line-opacity-overlay: 0.75;
+  --line-opacity-placeholder: 0.6;
+}
