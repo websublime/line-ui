@@ -20,9 +20,9 @@
 /* ── Semantic Duration Extensions (5) ── */
 
 :where(html) {
+  --line-duration-xfast: 50ms;
   --line-duration-fast: 150ms;
   --line-duration-normal: 300ms;
   --line-duration-slow: 500ms;
   --line-duration-glacial: 1000ms;
-  --line-duration-xslow: 50ms;
 }
