@@ -9,6 +9,7 @@
     "build": "rm -rf dist && bun run typecheck && bun run src/build.ts",
     "typecheck": "tsc --noEmit",
     "css:all": "postcss src/line.css -o ./dist/line.min.css",
+    "css:tokens": "postcss src/tokens.css -o ./dist/tokens.min.css",
     "css:colors:amber": "postcss src/colors/amber.css -o ./dist/colors-amber.min.css",
     "css:colors:blue": "postcss src/colors/blue.css -o ./dist/colors-blue.min.css",
     "css:colors:bronze": "postcss src/colors/bronze.css -o ./dist/colors-bronze.min.css",
