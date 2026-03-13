@@ -12,11 +12,10 @@
 
 /* ── Color Scheme ── */
 
-:where(html) {
-  &.dark {
-    color-scheme: dark;
-  }
-  &.light {
-    color-scheme: light;
-  }
+:where(html):is(.dark) {
+  color-scheme: dark;
+}
+
+:where(html):is(.light) {
+  color-scheme: light;
 }
