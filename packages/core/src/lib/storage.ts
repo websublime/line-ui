@@ -21,7 +21,7 @@ function wrapStorage(storage: Storage) {
     // eslint-disable-next-line unicorn/no-useless-undefined
     get<T = unknown>(key: string, defaults: unknown = undefined): T {
       const item = storage.getItem(key);
-      return item ? (isStringified(item) ? JSON.parse(item) : item) : defaults;
+      return (item ? (isStringified(item) ? JSON.parse(item) : item) : defaults) as T;
     },
     getAll() {
       // eslint-disable-next-line unicorn/no-useless-undefined
