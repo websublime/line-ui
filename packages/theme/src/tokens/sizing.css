@@ -1,0 +1,118 @@
+/* ═══════════════════════════════════════════════════════════
+   sizing.css — line://ui Sizing & Spacing Tokens
+
+   Rem sizes (16), px sizes (16), fluid sizes (10),
+   content widths (3), header widths (3), breakpoints (7),
+   relative/ch-based sizes (18).
+
+   Full 1:1 Open Props match (74 tokens).
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Rem Sizes (OP 16) ── */
+
+:where(html) {
+  --line-size-000: -0.5rem;
+  --line-size-00: -0.25rem;
+  --line-size-1: 0.25rem;
+  --line-size-2: 0.5rem;
+  --line-size-3: 1rem;
+  --line-size-4: 1.25rem;
+  --line-size-5: 1.5rem;
+  --line-size-6: 1.75rem;
+  --line-size-7: 2rem;
+  --line-size-8: 3rem;
+  --line-size-9: 4rem;
+  --line-size-10: 5rem;
+  --line-size-11: 7.5rem;
+  --line-size-12: 10rem;
+  --line-size-13: 15rem;
+  --line-size-14: 20rem;
+  --line-size-15: 30rem;
+}
+
+/* ── Px Sizes (OP 16) ── */
+
+:where(html) {
+  --line-size-px-000: -8px;
+  --line-size-px-00: -4px;
+  --line-size-px-1: 4px;
+  --line-size-px-2: 8px;
+  --line-size-px-3: 16px;
+  --line-size-px-4: 20px;
+  --line-size-px-5: 24px;
+  --line-size-px-6: 28px;
+  --line-size-px-7: 32px;
+  --line-size-px-8: 48px;
+  --line-size-px-9: 64px;
+  --line-size-px-10: 80px;
+  --line-size-px-11: 120px;
+  --line-size-px-12: 160px;
+  --line-size-px-13: 240px;
+  --line-size-px-14: 320px;
+  --line-size-px-15: 480px;
+}
+
+/* ── Fluid Sizes (OP 10) ── */
+
+:where(html) {
+  --line-size-fluid-1: clamp(0.5rem, 1vw, 1rem);
+  --line-size-fluid-2: clamp(1rem, 2vw, 1.5rem);
+  --line-size-fluid-3: clamp(1.5rem, 3vw, 2rem);
+  --line-size-fluid-4: clamp(2rem, 4vw, 3rem);
+  --line-size-fluid-5: clamp(4rem, 5vw, 5rem);
+  --line-size-fluid-6: clamp(5rem, 7vw, 7.5rem);
+  --line-size-fluid-7: clamp(7.5rem, 10vw, 10rem);
+  --line-size-fluid-8: clamp(10rem, 20vw, 15rem);
+  --line-size-fluid-9: clamp(15rem, 30vw, 20rem);
+  --line-size-fluid-10: clamp(20rem, 40vw, 30rem);
+}
+
+/* ── Content Widths (OP 3) ── */
+
+:where(html) {
+  --line-size-content-1: 20ch;
+  --line-size-content-2: 45ch;
+  --line-size-content-3: 60ch;
+}
+
+/* ── Header Widths (OP 3) ── */
+
+:where(html) {
+  --line-size-header-1: 20ch;
+  --line-size-header-2: 25ch;
+  --line-size-header-3: 35ch;
+}
+
+/* ── Breakpoints (OP 7) ── */
+
+:where(html) {
+  --line-size-xxs: 240px;
+  --line-size-xs: 360px;
+  --line-size-sm: 480px;
+  --line-size-md: 768px;
+  --line-size-lg: 1024px;
+  --line-size-xl: 1440px;
+  --line-size-xxl: 1920px;
+}
+
+/* ── Relative / ch-based (OP 18) ── */
+
+:where(html) {
+  --line-size-relative-000: -0.5ch;
+  --line-size-relative-00: -0.25ch;
+  --line-size-relative-1: 0.25ch;
+  --line-size-relative-2: 0.5ch;
+  --line-size-relative-3: 1ch;
+  --line-size-relative-4: 1.25ch;
+  --line-size-relative-5: 1.5ch;
+  --line-size-relative-6: 1.75ch;
+  --line-size-relative-7: 2ch;
+  --line-size-relative-8: 3ch;
+  --line-size-relative-9: 4ch;
+  --line-size-relative-10: 5ch;
+  --line-size-relative-11: 7.5ch;
+  --line-size-relative-12: 10ch;
+  --line-size-relative-13: 15ch;
+  --line-size-relative-14: 20ch;
+  --line-size-relative-15: 30ch;
+}

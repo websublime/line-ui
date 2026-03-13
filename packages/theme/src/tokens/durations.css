@@ -1,0 +1,28 @@
+/* ═══════════════════════════════════════════════════════════
+   durations.css — line://ui Duration / Timing Tokens
+
+   Open Props practical durations (7) + line:// semantic
+   extensions (5).
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── OP Practical Durations (7) ── */
+
+:where(html) {
+  --line-duration-instant: 0ms;
+  --line-duration-quick-1: 80ms;
+  --line-duration-quick-2: 120ms;
+  --line-duration-moderate-1: 180ms;
+  --line-duration-moderate-2: 260ms;
+  --line-duration-gentle-1: 320ms;
+  --line-duration-gentle-2: 420ms;
+}
+
+/* ── Semantic Duration Extensions (5) ── */
+
+:where(html) {
+  --line-duration-fast: 150ms;
+  --line-duration-normal: 300ms;
+  --line-duration-slow: 500ms;
+  --line-duration-glacial: 1000ms;
+  --line-duration-xslow: 50ms;
+}

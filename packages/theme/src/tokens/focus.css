@@ -1,0 +1,13 @@
+/* ═══════════════════════════════════════════════════════════
+   focus.css — line://ui Focus Ring Tokens
+
+   3 tokens — line:// extensions (not in Open Props).
+   Fallback value on ring-color ensures ring works even
+   without the semantic layer loaded.
+   ═══════════════════════════════════════════════════════════ */
+
+:where(html) {
+  --line-ring-width: 2px;
+  --line-ring-offset: 2px;
+  --line-ring-color: var(--line-ui-border, hsl(0 0% 83%));
+}

@@ -1,0 +1,29 @@
+/* ═══════════════════════════════════════════════════════════
+   zindex.css — line://ui Z-Index / Layer Tokens
+
+   Open Props layers (6) + line:// semantic extensions (8).
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── OP Layer Tokens (6) ── */
+
+:where(html) {
+  --line-layer-1: 1;
+  --line-layer-2: 2;
+  --line-layer-3: 3;
+  --line-layer-4: 4;
+  --line-layer-5: 5;
+  --line-layer-important: 2147483647;
+}
+
+/* ── Semantic Z-Index Extensions (8) ── */
+
+:where(html) {
+  --line-z-dropdown: 50;
+  --line-z-sticky: 100;
+  --line-z-fixed: 200;
+  --line-z-overlay: 300;
+  --line-z-modal: 400;
+  --line-z-popover: 500;
+  --line-z-toast: 600;
+  --line-z-tooltip: 700;
+}

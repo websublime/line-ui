@@ -1,0 +1,14 @@
+/* ═══════════════════════════════════════════════════════════
+   aspects.css — line://ui Aspect Ratio Tokens
+
+   Full 1:1 Open Props match — all 6 aspect ratio tokens.
+   ═══════════════════════════════════════════════════════════ */
+
+:where(html) {
+  --line-ratio-square: 1;
+  --line-ratio-landscape: 4 / 3;
+  --line-ratio-portrait: 3 / 4;
+  --line-ratio-widescreen: 16 / 9;
+  --line-ratio-ultrawide: 18 / 5;
+  --line-ratio-golden: 1.618 / 1;
+}
