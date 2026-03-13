@@ -8,14 +8,14 @@
 |
 */
 
-import { ReactiveElement } from 'lit';
+import type { ReactiveElement } from 'lit';
 
 export interface WebComponentOptions {
   // eslint-disable-next-line no-use-before-define
   [key: string]: unknown;
 }
 
-export interface ComponentMixinInterface {
+export interface LineMixinInterface {
   inspect: boolean;
   isLTR: boolean;
   dir: 'ltr' | 'rtl';
