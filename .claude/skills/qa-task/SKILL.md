@@ -93,3 +93,35 @@ After the QA agent completes:
   # If follow-up or override:
   bd label add {BEAD_ID} qa-override
   ```
+
+---
+
+## Phase 5: Track QA Findings
+
+After the verdict is resolved (regardless of PASS or FAIL), extract actionable findings from the QA comment and create tracked issues for anything that won't be addressed in the current cycle.
+
+### When to run
+
+- **PASS:** all non-positive findings (`[EXTRA]`, `[DEVIATES]`, `[RISK]`, unlogged deviations) are deferred — create issues for all of them
+- **FAIL + rework:** `[BLOCKER]` and `[MAJOR]` failures will be addressed via `/start-task` rework, but `[MINOR]` failures, `[EXTRA]`, `[RISK]`, and unlogged deviations should still be tracked
+- **FAIL + follow-up/override:** all non-positive findings should be tracked
+
+### Process
+
+1. Parse the QA comment for all findings that are NOT positive — i.e., anything that is not `[CONFORMS]`, `[PASS]`, or `[OK]`
+2. Filter out findings that will be addressed in the current cycle (e.g., `[BLOCKER]` and `[MAJOR]` when user chose rework)
+3. For remaining findings, resolve the project's **Review Findings epic**:
+   - Search for an open epic titled "Review Findings": `bd list --type epic --status open --json` and filter by title
+   - If not found, create it:
+     ```bash
+     bd create "Review Findings" --type epic --description "Persistent epic for tracking suggestions, warnings, and improvement opportunities identified during code reviews and QA that were not addressed in the current implementation cycle." --priority 3 --labels "findings"
+     ```
+   - Store the epic ID as `{FINDINGS_EPIC_ID}`
+4. Dispatch **beads-owner** to create one issue per finding:
+   ```python
+   Task(
+       subagent_type="beads-owner",
+       prompt="Create beads issues for the following QA findings from BEAD {BEAD_ID} QA validation. Each issue should be created under parent {FINDINGS_EPIC_ID} with a discovered-from:{BEAD_ID} dependency. Use label 'finding:{type}' (lowercase) for each — e.g., finding:extra, finding:deviation, finding:risk, finding:minor. Include the relevant context from the QA report. Findings:\n\n{FINDINGS_LIST}"
+   )
+   ```
+5. Inform the user how many finding issues were created and under which epic

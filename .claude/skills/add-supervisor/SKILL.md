@@ -54,4 +54,4 @@ Task(
 
 After Discovery completes:
 1. Verify the new supervisor file exists in `.claude/agents/`
-2. Inform user: "Created `{name}-supervisor.md`. You can now use it in beads tasks with `supervisor: {name}-supervisor` in the notes field."
+2. Inform user: "Created `{name}-supervisor.md`. You can now use it in beads tasks by setting `--assignee {name}-supervisor` when creating the issue."

@@ -178,6 +178,8 @@ A **FAIL** verdict requires listing the specific failures with severity. The orc
 - **MINOR only**: Override and merge, or create follow-up bead
 - Always the user's decision
 
+> **Note:** Non-positive findings (`[EXTRA]`, `[DEVIATES]`, `[RISK]`, `[MINOR]`, unlogged deviations) that are not addressed in the current cycle are automatically tracked as beads issues under the project's "Review Findings" epic. The finding type is used as a `finding:{type}` label for filtering (e.g., `finding:extra`, `finding:deviation`, `finding:risk`, `finding:minor`).
+
 ---
 
 ## Tools Available

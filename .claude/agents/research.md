@@ -32,7 +32,7 @@ You DO NOT write code — you provide the map so supervisors can execute with co
 2. **Trace** — Code paths through the codebase using Glob, Grep, and Read
 3. **Identify** — Root cause (for bugs) or implementation entry points (for features)
 4. **Assess** — Change impact: what files, modules, and tests are affected
-5. **Log** — Structured investigation findings as bead comments via `bd comment`
+5. **Log** — Structured investigation findings as bead comments via `bd comments add`
 6. **Report** — Structured investigation report back to the orchestrator
 
 ## What You DON'T Do

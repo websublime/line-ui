@@ -74,7 +74,7 @@ After the code-reviewer completes:
 **If NEEDS-REFACTORING:**
 - Present findings to user
 - Ask: "Do you want to dispatch the refactoring-supervisor to address these findings?"
-- If yes → proceed to Phase 5
+- If yes → proceed to Phase 6
 - If no → leave as-is for manual handling
 - Label stays `needs-review` — Martin will re-label after refactoring
 
@@ -90,9 +90,49 @@ After the code-reviewer completes:
 
 ---
 
-## Phase 5: Dispatch Refactoring (Optional)
+## Phase 5: Track Review Findings
 
-Only if verdict is `NEEDS-REFACTORING` and user approves:
+After the verdict is resolved (regardless of APPROVE, NEEDS-REFACTORING, or NEEDS-REWORK), extract actionable findings from the REVIEW comment and create tracked issues for anything that won't be addressed in the current cycle.
+
+### When to run
+
+- **APPROVE:** all non-`[GOOD]` findings are deferred — create issues for all of them
+- **NEEDS-REFACTORING:** after the refactoring-supervisor completes, check for remaining `[SUGGESTION]` findings that were skipped — create issues for those
+- **NEEDS-REWORK:** `[CRITICAL]` and `[WARNING]` findings will be addressed via `/start-task` rework, but any `[SUGGESTION]` findings should still be tracked
+
+### Process
+
+1. Parse the REVIEW comment for all findings that are NOT `[GOOD]`
+2. **If the refactoring-supervisor ran (Phase 6)**, also parse the REFACTORING comment:
+   - Extract all **SKIPPED** items — these are findings Martin could not fix (out of scope, architectural, risky)
+   - Extract all **DEFERRED** items — these are findings Martin deferred with `// TODO(bd-xxx)` references
+   - Remove from the REVIEW findings list any items that were **FIXED** by Martin (they're resolved)
+   - SKIPPED items always become tracked findings
+   - DEFERRED items are already tracked (Martin linked them to existing beads) — skip these
+3. Filter out findings that were already addressed (FIXED by refactoring-supervisor, or that will be addressed by NEEDS-REWORK flow — i.e., `[CRITICAL]` and `[WARNING]` when verdict is NEEDS-REWORK)
+4. For remaining findings, resolve the project's **Review Findings epic**:
+   - Search for an open epic titled "Review Findings": `bd list --type epic --status open --json` and filter by title
+   - If not found, create it:
+     ```bash
+     bd create "Review Findings" --type epic --description "Persistent epic for tracking suggestions, warnings, and improvement opportunities identified during code reviews that were not addressed in the current implementation cycle." --priority 3 --labels "findings"
+     ```
+   - Store the epic ID as `{FINDINGS_EPIC_ID}`
+5. Dispatch **beads-owner** to create one issue per finding:
+   ```python
+   Task(
+       subagent_type="beads-owner",
+       prompt="Create beads issues for the following review findings from BEAD {BEAD_ID} review. Each issue should be created under parent {FINDINGS_EPIC_ID} with a discovered-from:{BEAD_ID} dependency. Use label 'finding:{severity}' (lowercase) for each — e.g., finding:suggestion, finding:warning, finding:critical. Include the file path and line number in the description. Findings:\n\n{FINDINGS_LIST}"
+   )
+   ```
+6. Inform the user how many finding issues were created and under which epic
+
+---
+
+## Phase 6: Dispatch Refactoring (Optional)
+
+Only if verdict is `NEEDS-REFACTORING` and user approves.
+
+**Important:** After the refactoring-supervisor completes, return to Phase 5 to track any remaining findings that were not addressed.
 
 ```python
 Task(

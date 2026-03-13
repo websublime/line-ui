@@ -127,12 +127,14 @@ Verdict: [APPROVE / NEEDS-REFACTORING / NEEDS-REWORK]"
 
 ### Severity Levels
 
-| Severity | Meaning | Action |
-|----------|---------|--------|
-| **CRITICAL** | Blocks merge — bug, security hole, acceptance criteria unmet | Must fix before merge |
-| **WARNING** | Should fix — code smell, missing error handling, weak test | Fix now or create tracked bead |
-| **SUGGESTION** | Nice to have — better naming, minor optimization, style | Fix if trivial, otherwise skip |
-| **GOOD** | Positive feedback — well-structured code, good test coverage | No action — acknowledgement |
+| Severity | Meaning | Action | Label |
+|----------|---------|--------|-------|
+| **CRITICAL** | Blocks merge — bug, security hole, acceptance criteria unmet | Must fix before merge | `finding:critical` |
+| **WARNING** | Should fix — code smell, missing error handling, weak test | Fix now or create tracked bead | `finding:warning` |
+| **SUGGESTION** | Nice to have — better naming, minor optimization, style | Fix if trivial, otherwise skip | `finding:suggestion` |
+| **GOOD** | Positive feedback — well-structured code, good test coverage | No action — acknowledgement | — |
+
+> **Note:** Non-GOOD findings that are not addressed in the current review cycle are automatically tracked as beads issues under the project's "Review Findings" epic. The severity tag is used as a `finding:{severity}` label for filtering.
 
 ### Verdicts
 
