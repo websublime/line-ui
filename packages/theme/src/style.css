@@ -308,31 +308,34 @@ html {
   }
 }
 
-/* Dark mode defaults (dark is initial) */
-.logo-light {
+/* Dark mode defaults (dark is initial) —
+   .logo-for-dark    = light-colored SVG, visible on dark backgrounds
+   .logo-for-light   = dark-colored SVG, visible on light backgrounds
+   Same convention for wordmark-for-dark / wordmark-for-light */
+.logo-for-dark {
   display: block;
 }
-.logo-dark {
+.logo-for-light {
   display: none;
 }
-.wordmark-light {
+.wordmark-for-dark {
   display: block;
 }
-.wordmark-dark {
+.wordmark-for-light {
   display: none;
 }
 
 /* Light mode logo/wordmark swap */
-html.light .logo-light {
+html.light .logo-for-dark {
   display: none;
 }
-html.light .logo-dark {
+html.light .logo-for-light {
   display: block;
 }
-html.light .wordmark-light {
+html.light .wordmark-for-dark {
   display: none;
 }
-html.light .wordmark-dark {
+html.light .wordmark-for-light {
   display: block;
 }
 
