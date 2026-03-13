@@ -183,8 +183,8 @@ packages/core/
 ## Standards
 
 - Extend `ComponentElement` for all new components; use `defineWebComponent()` to register
-- Tag prefix: `vita-` (e.g., `<vita-button>`, `<vita-dialog>`)
-- CSS custom property prefix: `--vita-`
+- Tag prefix: `line-` (e.g., `<line-button>`, `<line-dialog>`)
+- CSS custom property prefix: `--line-`
 - CSS parts: short, semantic, reused names (root, trigger, content, overlay, title)
 - TypeScript strict mode — zero `any` without justification, full type coverage on public APIs
 - Biome lint passes with zero errors before every commit (`bun run lint`)
