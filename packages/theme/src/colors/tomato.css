@@ -11,6 +11,7 @@
   --line-tomato-10: hsl(10, 71.4%, 49.4%);
   --line-tomato-11: hsl(10, 82.0%, 42.0%);
   --line-tomato-12: hsl(8, 50.0%, 24.0%);
+  --line-tomato-contrast: #000;
 }
 
 :where(html):is(.dark) {

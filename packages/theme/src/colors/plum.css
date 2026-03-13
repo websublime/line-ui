@@ -11,6 +11,7 @@
   --line-plum-10: hsl(292, 50.2%, 46.9%);
   --line-plum-11: hsl(292, 60.0%, 42.5%);
   --line-plum-12: hsl(291, 57.0%, 23.2%);
+  --line-plum-contrast: #fff;
 }
 
 :where(html):is(.dark) {

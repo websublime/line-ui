@@ -11,6 +11,7 @@
   --line-cyan-10: hsl(191, 91.2%, 36.8%);
   --line-cyan-11: hsl(192, 85.0%, 31.0%);
   --line-cyan-12: hsl(192, 70.0%, 16.5%);
+  --line-cyan-contrast: #000;
 }
 
 :where(html):is(.dark) {

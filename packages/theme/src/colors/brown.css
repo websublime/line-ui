@@ -11,6 +11,7 @@
   --line-brown-10: hsl(26, 31.7%, 46.9%);
   --line-brown-11: hsl(25, 30.0%, 39.0%);
   --line-brown-12: hsl(20, 15.0%, 21.0%);
+  --line-brown-contrast: #000;
 }
 
 :where(html):is(.dark) {

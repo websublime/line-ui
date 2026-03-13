@@ -11,6 +11,7 @@
   --line-gray-10: hsl(0, 0%, 50.3%);
   --line-gray-11: hsl(0, 0%, 39.3%);
   --line-gray-12: hsl(0, 0%, 12.5%);
+  --line-gray-contrast: #000;
 }
 
 :where(html):is(.dark) {

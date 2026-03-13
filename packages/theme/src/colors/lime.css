@@ -11,6 +11,7 @@
   --line-lime-10: hsl(81, 75.0%, 60.0%);
   --line-lime-11: hsl(75, 40.0%, 29.0%);
   --line-lime-12: hsl(75, 40.0%, 18.0%);
+  --line-lime-contrast: #000;
 }
 
 :where(html):is(.dark) {

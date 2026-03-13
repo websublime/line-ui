@@ -11,6 +11,7 @@
   --line-blue-10: hsl(208, 93.5%, 47.4%);
   --line-blue-11: hsl(211, 90.0%, 42.0%);
   --line-blue-12: hsl(216, 71.0%, 23.0%);
+  --line-blue-contrast: #000;
 }
 
 :where(html):is(.dark) {

@@ -11,6 +11,7 @@
   --line-teal-10: hsl(173, 83.4%, 32.5%);
   --line-teal-11: hsl(174, 90.0%, 25.2%);
   --line-teal-12: hsl(174, 65.0%, 14.5%);
+  --line-teal-contrast: #000;
 }
 
 :where(html):is(.dark) {

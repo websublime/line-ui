@@ -11,6 +11,7 @@
   --line-mauve-10: hsl(250, 5.0%, 52.3%);
   --line-mauve-11: hsl(252, 5.0%, 40.7%);
   --line-mauve-12: hsl(260, 10.0%, 13.5%);
+  --line-mauve-contrast: #000;
 }
 
 :where(html):is(.dark) {

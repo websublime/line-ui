@@ -11,6 +11,7 @@
   --line-slate-10: hsl(227, 5.2%, 51.8%);
   --line-slate-11: hsl(220, 6.0%, 40.0%);
   --line-slate-12: hsl(210, 12.0%, 12.5%);
+  --line-slate-contrast: #000;
 }
 :where(html):is(.dark) {
   --line-slate-12: hsl(240, 5.0%, 9.8%);
