@@ -11,6 +11,7 @@
   --line-amber-10: hsl(42, 100%, 55.0%);
   --line-amber-11: hsl(25, 50.0%, 38.0%);
   --line-amber-12: hsl(25, 40.0%, 22.0%);
+  --line-amber-contrast: #000;
 }
 
 :where(html):is(.dark) {

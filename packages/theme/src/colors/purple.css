@@ -11,6 +11,7 @@
   --line-purple-10: hsl(272, 46.8%, 50.3%);
   --line-purple-11: hsl(272, 50.0%, 45.8%);
   --line-purple-12: hsl(270, 50.0%, 25.0%);
+  --line-purple-contrast: #fff;
 }
 
 :where(html):is(.dark) {

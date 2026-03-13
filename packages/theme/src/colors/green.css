@@ -11,6 +11,7 @@
   --line-green-10: hsl(152, 57.5%, 37.6%);
   --line-green-11: hsl(153, 67.0%, 28.5%);
   --line-green-12: hsl(155, 40.0%, 16.5%);
+  --line-green-contrast: #000;
 }
 
 :where(html):is(.dark) {

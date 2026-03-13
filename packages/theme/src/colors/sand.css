@@ -11,6 +11,7 @@
   --line-sand-10: hsl(60, 2.6%, 49.0%);
   --line-sand-11: hsl(50, 2.5%, 38.0%);
   --line-sand-12: hsl(50, 8.0%, 12.0%);
+  --line-sand-contrast: #000;
 }
 
 :where(html):is(.dark) {

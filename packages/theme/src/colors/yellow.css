@@ -11,6 +11,7 @@
   --line-yellow-10: hsl(52, 95.0%, 52.0%);
   --line-yellow-11: hsl(42, 50.0%, 31.0%);
   --line-yellow-12: hsl(42, 40.0%, 20.0%);
+  --line-yellow-contrast: #000;
 }
 
 :where(html):is(.dark) {

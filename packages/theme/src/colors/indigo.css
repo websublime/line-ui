@@ -11,6 +11,7 @@
   --line-indigo-10: hsl(226, 58.6%, 51.3%);
   --line-indigo-11: hsl(226, 55.0%, 45.0%);
   --line-indigo-12: hsl(226, 50.0%, 24.0%);
+  --line-indigo-contrast: #fff;
 }
 
 :where(html):is(.dark) {

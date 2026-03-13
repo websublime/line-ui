@@ -11,6 +11,7 @@
   --line-grass-10: hsl(132, 43.1%, 42.2%);
   --line-grass-11: hsl(133, 50.0%, 32.5%);
   --line-grass-12: hsl(131, 30.0%, 18.0%);
+  --line-grass-contrast: #000;
 }
 
 :where(html):is(.dark) {

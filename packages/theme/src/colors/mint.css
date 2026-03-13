@@ -11,6 +11,7 @@
   --line-mint-10: hsl(167, 62.0%, 69.0%);
   --line-mint-11: hsl(172, 50.0%, 30.5%);
   --line-mint-12: hsl(171, 50.0%, 17.5%);
+  --line-mint-contrast: #000;
 }
 
 :where(html):is(.dark) {

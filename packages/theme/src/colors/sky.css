@@ -11,6 +11,7 @@
   --line-sky-10: hsl(193, 90.0%, 71.0%);
   --line-sky-11: hsl(200, 60.0%, 36.0%);
   --line-sky-12: hsl(195, 50.0%, 20.0%);
+  --line-sky-contrast: #000;
 }
 
 :where(html):is(.dark) {

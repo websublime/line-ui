@@ -11,6 +11,7 @@
   --line-violet-10: hsl(251, 48.1%, 53.5%);
   --line-violet-11: hsl(250, 43.0%, 48.0%);
   --line-violet-12: hsl(250, 43.0%, 26.0%);
+  --line-violet-contrast: #fff;
 }
 
 :where(html):is(.dark) {
