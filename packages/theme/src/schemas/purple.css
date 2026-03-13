@@ -15,6 +15,7 @@
   --line-white: var(--line-purple-1); /* White text */
   --line-black: var(--line-purple-12); /* Black text */
   --line-dark: var(--line-purple-12); /* Dark text */
+  --line-solid-text: var(--line-purple-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-purple) {
@@ -30,10 +31,11 @@
   --line-solid-hover: var(--line-purple-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-purple-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-purple-1); /* High-contrast text (-12) */
+  --line-solid-text: var(--line-purple-contrast); /* Solid background text */
 }
 
 :where(.line-is-purple) {
-  color: var(--line-purple-1);
+  color: var(--line-purple-contrast);
   background-color: var(--line-purple-9);
   transition: all ease-in-out 150ms;
 
@@ -43,7 +45,7 @@
 }
 
 :is(.dark) :where(.line-is-purple) {
-  color: var(--line-purple-1);
+  color: var(--line-purple-contrast);
   background-color: var(--line-purple-4);
   transition: all ease-in-out 150ms;
 

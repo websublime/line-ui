@@ -13,6 +13,7 @@
   --line-high-contrast: var(--line-mauve-12); /* High-contrast text (-12) */
   --line-light: var(--line-mauve-1); /* Light text */
   --line-dark: var(--line-mauve-12); /* Dark text */
+  --line-solid-text: var(--line-mauve-contrast); /* Solid background text */
 }
 
 :is(.dark) :where(.line-schema-mauve) {
@@ -28,10 +29,11 @@
   --line-solid-hover: var(--line-mauve-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-mauve-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-mauve-1); /* High-contrast text (-12) */
+  --line-solid-text: var(--line-mauve-contrast); /* Solid background text */
 }
 
 :where(.line-is-mauve) {
-  color: var(--line-mauve-1);
+  color: var(--line-mauve-contrast);
   background-color: var(--line-mauve-9);
   transition: all ease-in-out 150ms;
 
@@ -41,7 +43,7 @@
 }
 
 :is(.dark) :where(.line-is-mauve) {
-  color: var(--line-mauve-1);
+  color: var(--line-mauve-contrast);
   background-color: var(--line-mauve-4);
   transition: all ease-in-out 150ms;
 
