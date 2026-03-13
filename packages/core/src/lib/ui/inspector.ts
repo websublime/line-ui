@@ -16,7 +16,7 @@ import type { LineElement } from '../web-component';
 @customElement('ui-inspector')
 export class UiInspector extends LitElement {
   static override styles = css`
-    .vita-inspector-container {
+    .line-inspector-container {
       display: flex;
       justify-content: center;
       white-space: nowrap;
@@ -27,7 +27,7 @@ export class UiInspector extends LitElement {
       gap: 4px;
     }
 
-    .vita-inspector-info:before {
+    .line-inspector-info:before {
       background: linear-gradient(to left top, #ff6995, #3ecdff);
       border-radius: inherit;
       content: '';
@@ -40,19 +40,19 @@ export class UiInspector extends LitElement {
       z-index: -1;
     }
 
-    .vita-pkg-scope {
+    .line-pkg-scope {
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
     }
 
-    .vita-pkg-version {
+    .line-pkg-version {
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
     }
 
-    .vita-pkg-scope,
-    .vita-pkg-scope > a,
-    .vita-pkg-version {
+    .line-pkg-scope,
+    .line-pkg-scope > a,
+    .line-pkg-version {
       background: #bd40f2;
       padding: 2px 4px;
       font-weight: 400;
@@ -127,7 +127,7 @@ export class UiInspector extends LitElement {
 
     return html`
       <style>
-        .vita-inspector-info {
+        .line-inspector-info {
           position: absolute;
           border-radius: 11px;
           box-sizing: border-box;
@@ -139,21 +139,21 @@ export class UiInspector extends LitElement {
           height: ${offsetHeight + 4}px;
         }
 
-        .vita-inspector-container {
+        .line-inspector-container {
           top: ${boundary}px;
           pointer-events: all;
         }
       </style>
-      <div class="vita-inspector-info">
+      <div class="line-inspector-info">
         <div
-          class="vita-inspector-container"
+          class="line-inspector-container"
           @mouseenter="${() => (this.isHoverInspector = true)}"
           @mouseleave="${() => (this.isHoverInspector = false)}"
         >
-          <div class="vita-pkg-scope">
+          <div class="line-pkg-scope">
             <a href="${link}" target="_blank" rel="noopener noreferrer">${scope}</a>
           </div>
-          <div class="vita-pkg-version">${version}</div>
+          <div class="line-pkg-version">${version}</div>
         </div>
       </div>
     `;

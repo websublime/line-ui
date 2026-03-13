@@ -21,7 +21,7 @@ The current codebase in `packages/core/src/` provides:
 
 - **`ComponentMixin`** (`lib/component.ts`): A mixin applied to `ReactiveElement` that provides `dir` (LTR/RTL), `inspect` (boolean), and `isLTR` (getter). Minimal -- lifecycle hooks (`connectedCallback`, `disconnectedCallback`, `updated`) are overridden but empty.
 - **`ComponentElement`** (`lib/web-component.ts`): Extends `ComponentMixin(LitElement)`. Provides `registry` (frozen `ComponentMetadata`), `options` (generic typed), `isVita` (symbol check), and attaches `InspectController`. Constructor requires `ComponentMetadata`.
-- **`InspectController`** (`lib/controllers/inspect-controller.ts`): Reactive controller that reads `localStorage('vita-inspector')` on `hostConnected` and appends a `<ui-inspector>` element to the shadow root.
+- **`InspectController`** (`lib/controllers/inspect-controller.ts`): Reactive controller that reads `localStorage('line-inspector')` on `hostConnected` and appends a `<ui-inspector>` element to the shadow root.
 - **`UiInspector`** (`lib/ui/inspector.ts`): A full LitElement component (`<ui-inspector>`) that renders a hover overlay showing scope, version, and a link. Uses hard-coded gradient styles.
 - **`ComponentHtmx`** (`lib/htmx-component.ts`): Empty shell extending `ComponentElement`. No HTMX logic.
 - **`EventController`** (`lib/controllers/event-controller.ts`): Minimal controller with a `notify()` method that awaits `updateComplete`.

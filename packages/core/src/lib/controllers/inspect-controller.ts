@@ -8,7 +8,7 @@
 |
 */
 
-import { ReactiveController } from 'lit';
+import type { ReactiveController } from 'lit';
 
 import type { ControllerHost } from '../../types/component';
 import { storage } from '../storage';
@@ -16,7 +16,7 @@ import { storage } from '../storage';
 /**
  * Inspector controller can give information about the component
  * metadata. It will also highlight the component when the mouse is over it.
- * A local storage variable (vita-inspector property key) is used to enable/disable the inspector.
+ * A local storage variable (line-inspector property key) is used to enable/disable the inspector.
  * The inspector will be enabled by default when the component
  * is created if the local storage variable is set or when
  * property inspect is present in the component.
@@ -32,14 +32,13 @@ export class InspectController implements ReactiveController {
   private host: ControllerHost;
 
   constructor(host: ControllerHost) {
-    (this.host = host).addController(this);
-
+    this.host = host;
     host.addController(this);
   }
 
   hostConnected() {
     // eslint-disable-next-line unicorn/no-useless-undefined
-    const enabled = storage.local.get('vita-inspector', undefined);
+    const enabled = storage.local.get('line-inspector', undefined);
 
     if (enabled && !this.host.inspect) {
       this.host.inspect = true;
