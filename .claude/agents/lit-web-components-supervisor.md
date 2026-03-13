@@ -182,7 +182,7 @@ packages/core/
 
 ## Standards
 
-- Extend `ComponentElement` for all new components; use `defineWebComponent()` to register
+- Extend `LineElement` for all new components; use `defineWebComponent()` to register
 - Tag prefix: `line-` (e.g., `<line-button>`, `<line-dialog>`)
 - CSS custom property prefix: `--line-`
 - CSS parts: short, semantic, reused names (root, trigger, content, overlay, title)
