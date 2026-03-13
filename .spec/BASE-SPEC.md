@@ -11,7 +11,7 @@
 
 ## 1. Overview
 
-This spec defines the foundational contracts for `LineElement` -- the base class that all 132 line://ui components will extend. It covers the three-tier architecture (Pre-built, Custom, Static), four composable mixins (FormAssociated, Inspector, Metadata, Direction), the Zag.js adapter integration, the exploratory HTMX adapter, test contracts, and lifecycle management.
+This spec defines the foundational contracts for `LineElement` -- the base class that all 131 line://ui components will extend. It covers the three-tier architecture (Pre-built, Custom, Static), four composable mixins (FormAssociated, Inspector, Metadata, Direction), the Zag.js adapter integration, the exploratory HTMX adapter, test contracts, and lifecycle management.
 
 This is an **architectural design spec**, not a UI component spec. Every API surface defined here becomes a contract that downstream components depend on. Breaking changes here cascade across the entire library.
 
@@ -497,7 +497,7 @@ function DirectionMixin<T extends Constructor<LitElement>>(base: T) {
 Key behaviors:
 - **Attribute reflection**: `dir` reflects to the host attribute so CSS selectors (`:host([dir="rtl"])`) work.
 - **Inheritance**: If no explicit `dir` attribute is set, the mixin inherits from the closest ancestor with a `dir` attribute, falling back to `document.documentElement.dir`.
-- **No MutationObserver**: Direction is read once on connect. If the document direction changes dynamically, the component re-reads on next connect or via explicit attribute set. MutationObserver would add overhead to all 132 components for a rare use case.
+- **No MutationObserver**: Direction is read once on connect. If the document direction changes dynamically, the component re-reads on next connect or via explicit attribute set. MutationObserver would add overhead to all 131 components for a rare use case.
 
 ### 3.6 FormAssociated Mixin
 
@@ -1162,7 +1162,7 @@ P0-E4-T4 (Direction) ──┼──> P0-E4-T1 (LineElement base) ──> P0-E4-
 **Trade-off:** Automatic `line-` prefix in `emitEvent()` vs letting subclasses specify the full event name.
 
 - **Automatic prefix (chosen):** Ensures consistency. `emitEvent('change')` always produces `line-change`. No component can accidentally emit an unprefixed event.
-- **Manual naming:** More flexibility, but inconsistency risk across 132 components.
+- **Manual naming:** More flexibility, but inconsistency risk across 131 components.
 
 ---
 

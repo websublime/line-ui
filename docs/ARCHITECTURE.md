@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-12
 **Status:** Living document — updated as architectural decisions evolve
-**Source:** Extracted from PRD v0.6.0 §3 (Component Architecture)
+**Source:** Extracted from PRD v0.7.0 §3 (Component Architecture)
 
 This document captures the **cross-cutting architectural decisions** that apply to all components. Individual component specifications live in `.spec/`. Product requirements live in the PRD.
 
@@ -105,13 +105,14 @@ A prefix icon is a slot — the component doesn't know or care what it is. A pas
 
 ## 4. CSS Customisation — Dual Layer
 
-**Layer 1: CSS Custom Properties (tokens) — Quick adjustments**
+**Layer 1: Component tokens (via preset) — Quick adjustments**
 
 ```css
+/* Adjust preset tokens on the host element */
 line-button {
-  --line-radius: 8px;
-  --line-font-size: 1rem;
-  --line-padding: 0.5rem 1rem;
+  --line-button-radius: var(--line-radius-round);
+  --line-button-height-md: 3rem;
+  --line-button-font-size: var(--line-font-size-3);
 }
 ```
 
@@ -125,7 +126,11 @@ line-button::part(root) {
 }
 ```
 
-Custom properties for consumers who want to adjust tokens without knowing internal structure. Parts for consumers who want absolute control. Complementary, not redundant.
+Component tokens are defined by the preset package (`@websublime/line-presets`) on the component host, following the `--line-{component}-{prop}` convention. Consumers override these for quick adjustments. `::part()` provides total control for consumers who want absolute customisation. Complementary, not redundant.
+
+**Token naming conventions:**
+- `--line-*` — Global theme tokens (e.g., `--line-radius-2`, `--line-primary`)
+- `--line-{component}-*` — Component tokens defined by preset (e.g., `--line-button-radius`)
 
 **Custom property prefix:** `--line-` (consistent with tag prefix).
 
@@ -399,3 +404,855 @@ Architectural decisions for specific components that were debated and resolved. 
 - Tracks `activeMenuIndex`, hover-to-open when sibling open, arrow key nav between triggers.
 - Different from NavigationMenu (site nav) — Menubar is desktop-app chrome.
 - Family entrypoint.
+
+---
+
+## 14. Browser Defaults Neutralisation
+
+### 14.1 The Problem
+
+Browsers impose default styles, pseudo-classes, and behaviours on native HTML elements. These defaults differ across Chrome (Blink), Safari (WebKit), and Firefox (Gecko).
+
+line://ui must neutralise ALL of these defaults so that every component renders identically across browsers, with zero visual opinion. The consumer or theme controls everything.
+
+### 14.2 Three Layers of Neutralisation
+
+| Layer | What it solves | Who is responsible |
+|-------|---------------|-------------------|
+| **Shadow DOM isolation** | Document-level styles (body margins, heading sizes, link colours) do NOT leak into components | Automatic — Shadow DOM provides this |
+| **Internal CSS reset** | Native elements INSIDE shadow DOM (`<input>`, `<button>`, `<textarea>`) still receive browser defaults. Must be neutralised. | Modular reset sheets, each component imports only what it needs |
+| **State reflection** | Native pseudo-classes (`:disabled`, `:required`, `:checked`, `:focus-visible`, etc.) don't work on custom elements. Must be replicated via host attributes and `CustomStateSet`. | Zag.js machine + `LineElement` base class |
+
+### 14.3 Modular CSS Reset — Zero Overhead Per Component
+
+**Principle: a component never carries CSS for elements it doesn't render.** A `<line-badge>` has no `<input>` — it must not carry input resets. A `<line-slider>` has no `<textarea>` — it must not carry textarea resets.
+
+The reset system is split into independent CSS files. Each file targets a specific category of native elements. Components import only the modules they need.
+
+**File structure:**
+
+```
+packages/core/src/styles/
+├── reset.common.css       ← ALL components get this (minimal)
+├── reset.input.css        ← Components with <input> in shadow DOM
+├── reset.button.css       ← Components with <button> in shadow DOM
+├── reset.textarea.css     ← Components with <textarea> in shadow DOM
+├── reset.select.css       ← Components with <select> in shadow DOM
+├── reset.range.css        ← Range/slider components
+├── reset.progress.css     ← Progress/meter components
+├── reset.summary.css      ← Details/summary components
+├── reset.fieldset.css     ← Fieldset/legend components
+├── reset.table.css        ← Table components
+├── reset.scrollbar.css    ← Scroll area components
+└── index.ts               ← Exports all modules as CSSStyleSheet objects
+```
+
+### 14.4 Reset Module Contents
+
+#### `reset.common.css` — Every component
+
+The minimum shared baseline. Applies to ALL components via `LineElement`.
+
+```css
+/* Box model */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Focus — removed from all internal elements.
+ * Machine drives data-focus-visible on host.
+ * Consumer/theme styles focus via ::part() or --line-focus-ring-* */
+*:focus {
+  outline: none;
+}
+
+/* Selection — inherit, don't impose */
+::selection {
+  background: var(--line-selection-bg, Highlight);
+  color: var(--line-selection-color, HighlightText);
+}
+
+/* Images/SVGs — block display, constrained */
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Anchor reset */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Hidden attribute must always win */
+[hidden] {
+  display: none !important;
+}
+```
+
+#### `reset.input.css` — Input, PasswordInput, SearchInput, DateInput, NumberInput, Combobox
+
+```css
+input {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  width: 100%;
+}
+
+/* Number spinner arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Search cancel button */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* Date/time picker indicators */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+/* Password reveal icon (Edge/Chrome) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  display: none;
+}
+
+/* File input button */
+input[type="file"]::file-selector-button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Placeholder */
+::placeholder {
+  color: inherit;
+  opacity: 0.5;
+}
+
+/* Autofill detection via animation trick */
+@keyframes line-autofill-start { from {} }
+@keyframes line-autofill-cancel { from {} }
+
+input:-webkit-autofill {
+  animation-name: line-autofill-start;
+}
+input:not(:-webkit-autofill) {
+  animation-name: line-autofill-cancel;
+}
+
+/* Autofill background neutralisation */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+```
+
+#### `reset.button.css` — Button, IconButton, SplitButton
+
+```css
+button {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  cursor: pointer;
+  line-height: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+```
+
+#### `reset.textarea.css` — Textarea
+
+```css
+textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  resize: none;
+  width: 100%;
+}
+
+textarea::placeholder {
+  color: inherit;
+  opacity: 0.5;
+}
+```
+
+#### `reset.select.css` — Select (native fallback scenarios)
+
+```css
+select {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  background-image: none;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  width: 100%;
+}
+```
+
+#### `reset.range.css` — Slider, RangeSlider, AngleSlider
+
+```css
+input[type="range"] {
+  appearance: none;
+  -webkit-appearance: none;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  width: 100%;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+}
+
+input[type="range"]::-moz-range-thumb {
+  border: 0;
+  background: transparent;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+input[type="range"]::-moz-range-track {
+  background: transparent;
+}
+```
+
+#### `reset.progress.css` — Progress, ProgressRing, Gauge/Meter
+
+```css
+progress, meter {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  background: transparent;
+  width: 100%;
+}
+
+/* Progress — WebKit */
+progress::-webkit-progress-bar { background: transparent; }
+progress::-webkit-progress-value { background: transparent; }
+
+/* Progress — Gecko */
+progress::-moz-progress-bar { background: transparent; }
+
+/* Meter — WebKit */
+meter::-webkit-meter-bar { background: transparent; border: 0; }
+meter::-webkit-meter-optimum-value { background: transparent; }
+meter::-webkit-meter-suboptimum-value { background: transparent; }
+meter::-webkit-meter-even-less-good-value { background: transparent; }
+
+/* Meter — Gecko */
+meter::-moz-meter-bar { background: transparent; }
+```
+
+#### `reset.summary.css` — Accordion, Collapsible
+
+```css
+summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+
+summary::marker {
+  content: '';
+}
+```
+
+#### `reset.fieldset.css` — Fieldset
+
+```css
+fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  min-width: 0;
+}
+
+legend {
+  padding: 0;
+}
+```
+
+#### `reset.table.css` — Table, DataGrid
+
+```css
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+th, td {
+  padding: 0;
+  text-align: inherit;
+  font-weight: inherit;
+}
+```
+
+#### `reset.scrollbar.css` — ScrollArea
+
+```css
+/* Standard properties (Firefox + Chrome 121+) */
+:host {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* WebKit (Chrome < 121, Safari) */
+::-webkit-scrollbar {
+  width: var(--line-scrollbar-size, 8px);
+  height: var(--line-scrollbar-size, 8px);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: var(--line-scrollbar-radius, 4px);
+}
+```
+
+### 14.5 Build Pipeline — CSS Files to Shared `CSSStyleSheet` Objects
+
+The `.css` files are real, standalone, editable files in the repository. At build time, Vite inlines them as strings. The core package exports them as singleton `CSSStyleSheet` objects.
+
+```typescript
+// packages/core/src/styles/index.ts
+import commonCSS from './reset.common.css?inline';
+import inputCSS from './reset.input.css?inline';
+import buttonCSS from './reset.button.css?inline';
+import textareaCSS from './reset.textarea.css?inline';
+import selectCSS from './reset.select.css?inline';
+import rangeCSS from './reset.range.css?inline';
+import progressCSS from './reset.progress.css?inline';
+import summaryCSS from './reset.summary.css?inline';
+import fieldsetCSS from './reset.fieldset.css?inline';
+import tableCSS from './reset.table.css?inline';
+import scrollbarCSS from './reset.scrollbar.css?inline';
+
+function createSheet(css: string): CSSStyleSheet {
+  const sheet = new CSSStyleSheet();
+  sheet.replaceSync(css);
+  return sheet;
+}
+
+export const commonReset = createSheet(commonCSS);
+export const inputReset = createSheet(inputCSS);
+export const buttonReset = createSheet(buttonCSS);
+export const textareaReset = createSheet(textareaCSS);
+export const selectReset = createSheet(selectCSS);
+export const rangeReset = createSheet(rangeCSS);
+export const progressReset = createSheet(progressCSS);
+export const summaryReset = createSheet(summaryCSS);
+export const fieldsetReset = createSheet(fieldsetCSS);
+export const tableReset = createSheet(tableCSS);
+export const scrollbarReset = createSheet(scrollbarCSS);
+```
+
+**How it works at each stage:**
+
+| Stage | What happens |
+|-------|-------------|
+| **Source** | Real `.css` files in `packages/core/src/styles/`. Editable, lintable, reviewable. |
+| **Build** | Vite `?inline` reads each CSS file and embeds it as a JavaScript string constant. Tree-shaking removes unused modules. |
+| **Runtime** | `createSheet()` runs once per module (singleton). Creates a `CSSStyleSheet` object in memory. |
+| **Adoption** | Components declare resets in `static styles`. Lit merges them with component-specific styles into `adoptedStyleSheets`. |
+| **Instances** | 1000 `<line-input>` instances share the same `inputReset` object by reference. Zero duplication. |
+
+**Browser support for `adoptedStyleSheets`:** Chrome 73+, Firefox 101+, Safari 16.4+. All within line://ui's target (latest 2 stable).
+
+### 14.6 Component Usage
+
+Each component declares exactly which reset modules it needs:
+
+```typescript
+// line-input.ts — needs common + input resets
+import { commonReset, inputReset } from '@websublime/line-core/styles';
+import { css } from 'lit';
+
+class LineInput extends LineElement {
+  static styles = [commonReset, inputReset, css`
+    :host { display: inline-flex; }
+    /* component-specific styles */
+  `];
+}
+```
+
+```typescript
+// line-badge.ts — needs common only (no native form elements)
+import { commonReset } from '@websublime/line-core/styles';
+import { css } from 'lit';
+
+class LineBadge extends LineElement {
+  static styles = [commonReset, css`
+    :host { display: inline-flex; }
+  `];
+}
+```
+
+```typescript
+// line-accordion.ts — needs common + summary resets
+import { commonReset, summaryReset } from '@websublime/line-core/styles';
+import { css } from 'lit';
+
+class LineAccordion extends LineElement {
+  static styles = [commonReset, summaryReset, css`
+    :host { display: block; }
+  `];
+}
+```
+
+```typescript
+// line-table.ts — needs common + table resets
+import { commonReset, tableReset } from '@websublime/line-core/styles';
+import { css } from 'lit';
+
+class LineTable extends LineElement {
+  static styles = [commonReset, tableReset, css`
+    :host { display: block; }
+  `];
+}
+```
+
+```typescript
+// line-slider.ts — needs common + range resets
+import { commonReset, rangeReset } from '@websublime/line-core/styles';
+import { css } from 'lit';
+
+class LineSlider extends LineElement {
+  static styles = [commonReset, rangeReset, css`
+    :host { display: block; }
+  `];
+}
+```
+
+**The `commonReset` is NOT injected automatically by `LineElement`.** Each component explicitly declares it. This keeps the base class clean and makes dependencies visible in the component source. If a future component genuinely needs zero reset (e.g., a wrapper that renders nothing), it can omit it.
+
+### 14.7 Reset Module to Component Mapping
+
+Which modules each component category uses:
+
+| Component | `common` | `input` | `button` | `textarea` | `select` | `range` | `progress` | `summary` | `fieldset` | `table` | `scrollbar` |
+|-----------|:--------:|:-------:|:--------:|:----------:|:--------:|:-------:|:----------:|:---------:|:----------:|:-------:|:-----------:|
+| Button, IconButton | x | | x | | | | | | | | |
+| ButtonGroup | x | | | | | | | | | | |
+| SplitButton | x | | x | | | | | | | | |
+| Input, PasswordInput, SearchInput, DateInput | x | x | | | | | | | | | |
+| NumberInput | x | x | x | | | | | | | | |
+| Textarea | x | | | x | | | | | | | |
+| Select | x | | | | x | | | | | | |
+| Combobox | x | x | | | | | | | | | |
+| Slider, RangeSlider | x | | | | | x | | | | | |
+| Field | x | | | | | | | | | | |
+| Fieldset | x | | | | | | | | x | | |
+| Checkbox, Radio, Switch | x | | | | | | | | | | |
+| Accordion, Collapsible | x | | | | | | | x | | | |
+| Progress, Gauge/Meter | x | | | | | | x | | | | |
+| Table, DataGrid | x | | | | | | | | | x | |
+| ScrollArea | x | | | | | | | | | | x |
+| Badge, Alert, Chip, Avatar, Separator, Skeleton, Spinner, Card, Empty State, all Static | x | | | | | | | | | | |
+| Dialog, Sheet, Popover, Tooltip, Toast | x | | | | | | | | | | |
+| Editable | x | x | | | | | | | | | |
+| FileUpload | x | x | | | | | | | | | |
+| TagInput | x | x | | | | | | | | | |
+| Rating | x | | | | | | | | | | |
+
+### 14.8 State Reflection — Pseudo-Class Equivalents
+
+Native pseudo-classes don't work on custom elements. line://ui provides two parallel APIs for consumers:
+
+**API 1: Host data attributes** (works everywhere, simple CSS selectors)
+
+```css
+line-input[data-focused] { /* focused state */ }
+line-input[data-disabled] { /* disabled state */ }
+line-input[data-invalid] { /* invalid state */ }
+```
+
+**API 2: `CustomStateSet` via `ElementInternals`** (modern, `:state()` pseudo-class)
+
+```css
+line-input:state(focused) { /* focused state */ }
+line-input:state(disabled) { /* disabled state */ }
+line-input:state(invalid) { /* invalid state */ }
+```
+
+**Both APIs reflect the same machine state simultaneously.** The base class handles the wiring:
+
+```typescript
+// In LineElement or FormAssociated mixin
+protected reflectState(name: string, active: boolean) {
+  // Data attribute (universal)
+  if (active) this.dataset[name] = '';
+  else delete this.dataset[name];
+
+  // CustomStateSet (modern)
+  if (this.#internals?.states) {
+    if (active) this.#internals.states.add(name);
+    else this.#internals.states.delete(name);
+  }
+}
+```
+
+**Complete state mapping:**
+
+| Machine state | Host attribute | CustomStateSet | Replaces native |
+|---------------|---------------|---------------|-----------------|
+| focused | `data-focused` | `:state(focused)` | `:focus` |
+| focus-visible | `data-focus-visible` | `:state(focus-visible)` | `:focus-visible` |
+| hovered | `data-hovered` | `:state(hovered)` | `:hover` |
+| active | `data-active` | `:state(active)` | `:active` |
+| disabled | `data-disabled` | `:state(disabled)` | `:disabled` |
+| readonly | `data-readonly` | `:state(readonly)` | `:read-only` |
+| required | `data-required` | `:state(required)` | `:required` |
+| checked | `data-checked` | `:state(checked)` | `:checked` |
+| indeterminate | `data-indeterminate` | `:state(indeterminate)` | `:indeterminate` |
+| invalid | `data-invalid` | `:state(invalid)` | `:invalid` (also works natively via `setValidity()`) |
+| valid | `data-valid` | `:state(valid)` | `:valid` (also works natively via `setValidity()`) |
+| empty | `data-empty` | `:state(empty)` | `:placeholder-shown` |
+| filled | `data-filled` | `:state(filled)` | -- |
+| loading | `data-loading` | `:state(loading)` | -- |
+| pressed | `data-pressed` | `:state(pressed)` | -- |
+| expanded | `data-expanded` | `:state(expanded)` | `:open` |
+| editing | `data-editing` | `:state(editing)` | -- |
+| error | `data-error` | `:state(error)` | -- |
+| autofill | `data-autofill` | `:state(autofill)` | `:-webkit-autofill` |
+| open | `data-open` | `:state(open)` | `:open` |
+
+**Note on `:valid` / `:invalid`:** These two are special — they work natively on form-associated custom elements via `ElementInternals.setValidity()`. We still reflect them as data attributes and CustomStateSet for consistency, but the native pseudo-classes also work. A consumer can use EITHER `line-input:invalid` OR `line-input[data-invalid]` OR `line-input:state(invalid)`.
+
+**Note on `CustomStateSet` browser support:** Chrome 90+, Firefox 126+, Safari 17.4+. Within line://ui's target. The `data-*` attributes provide a universal fallback that works everywhere.
+
+### 14.9 Focus Management
+
+Focus is the most visible cross-browser inconsistency. line://ui standardises it:
+
+**Internal elements:** All `outline: none` via `reset.common.css`. No browser focus ring leaks through.
+
+**Host element:** The machine determines when focus is visible (keyboard vs pointer). `data-focus-visible` is set on the host ONLY for keyboard focus. The theme or consumer styles it:
+
+```css
+/* Theme default */
+line-input[data-focus-visible]::part(root) {
+  outline: 2px solid var(--line-blue-7);
+  outline-offset: 2px;
+}
+
+/* Consumer override */
+line-input[data-focus-visible]::part(root) {
+  box-shadow: 0 0 0 3px rgba(200, 255, 0, 0.4);
+  outline: none;
+}
+```
+
+**`delegatesFocus`:** For components where the host should be focusable and delegate to the first focusable internal element, set `delegatesFocus: true` on the shadow root:
+
+```typescript
+this.attachShadow({ mode: 'open', delegatesFocus: true });
+```
+
+Useful for Input, Textarea, SearchInput — clicking anywhere on the component focuses the internal `<input>`. Supported in Chrome 53+, Firefox 94+, Safari 15+.
+
+### 14.10 Consumer-Side Reset for Slotted Content
+
+The theme package exports an optional `reset.css` for consumers who want to neutralise browser defaults on slotted (light-DOM) content. This is NOT applied automatically — consumers opt in by importing it.
+
+```css
+/* @websublime/line-theme/dist/reset.css */
+/* Uses :where() for zero specificity — never fights consumer styles */
+
+:where(line-field) :where(label),
+:where(line-field) :where(span[slot="hint"]),
+:where(line-field) :where(span[slot="error"]) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+```
+
+---
+
+## 15. Native Element Requirements Matrix
+
+### 15.1 When to Use Native Elements Inside Shadow DOM
+
+Some components MUST render a native HTML element inside their shadow DOM because certain platform APIs are only available on native elements.
+
+**Components that REQUIRE a native element internally:**
+
+| Component | Internal element | APIs that require it |
+|-----------|-----------------|---------------------|
+| Input | `<input>` | IME composition, autofill, password managers, selection API (`setSelectionRange`, `selectionStart`), mobile keyboard hints (`inputmode`, `enterkeyhint`), speech-to-text |
+| PasswordInput | `<input type="password">` | Password manager detection (1Password, Bitwarden, LastPass look for this) |
+| SearchInput | `<input>` | Autofill, IME |
+| DateInput | `<input>` (per segment) | IME for segment values, keyboard navigation |
+| Textarea | `<textarea>` | IME, selection API, speech-to-text, undo/redo stack |
+| FileUpload | `<input type="file">` | OS file dialog (no JS API exists to open it) |
+| NumberInput | `<input type="text" inputmode="numeric">` | Mobile numeric keyboard |
+
+**Components that do NOT need a native element:**
+
+Checkbox, Radio, Switch, Select, Slider, Range Slider, Color Picker, Date Picker (calendar UI), Rating, Toggle Group, Combobox (dropdown part), Editable (preview mode), and all non-form components. These use `ElementInternals` for form participation and fully custom rendering for visuals.
+
+### 15.2 Delegation Pattern
+
+When a native element lives inside the shadow DOM, the custom element must delegate certain APIs that only exist on the native element:
+
+```typescript
+class LineInput extends LineElement {
+  get #input(): HTMLInputElement {
+    return this.shadowRoot!.querySelector('input')!;
+  }
+
+  // Selection API — only available on HTMLInputElement
+  select() { this.#input.select(); }
+  setSelectionRange(start: number, end: number, direction?: string) {
+    this.#input.setSelectionRange(start, end, direction);
+  }
+  get selectionStart() { return this.#input.selectionStart; }
+  set selectionStart(v) { this.#input.selectionStart = v; }
+  get selectionEnd() { return this.#input.selectionEnd; }
+  set selectionEnd(v) { this.#input.selectionEnd = v; }
+  get selectionDirection() { return this.#input.selectionDirection; }
+  setRangeText(...args: Parameters<HTMLInputElement['setRangeText']>) {
+    this.#input.setRangeText(...args);
+  }
+}
+```
+
+The internal native element is always exposed as `::part(input)` so the consumer can style it:
+
+```css
+line-input::part(input) {
+  caret-color: var(--line-primary-9);
+}
+```
+
+### 15.3 Autofill Detection
+
+Browser autofill forces a background colour (typically light yellow) that cannot be prevented via CSS alone. The `reset.input.css` module includes an animation-based detection trick that works across all browsers:
+
+```css
+/* Already in reset.input.css */
+@keyframes line-autofill-start { from {} }
+@keyframes line-autofill-cancel { from {} }
+input:-webkit-autofill { animation-name: line-autofill-start; }
+input:not(:-webkit-autofill) { animation-name: line-autofill-cancel; }
+```
+
+The component listens for the animation and reflects state:
+
+```typescript
+this.#input.addEventListener('animationstart', (e) => {
+  if (e.animationName === 'line-autofill-start') {
+    this.reflectState('autofill', true);
+  }
+  if (e.animationName === 'line-autofill-cancel') {
+    this.reflectState('autofill', false);
+  }
+});
+```
+
+Consumer styles the autofilled state:
+
+```css
+line-input[data-autofill]::part(root) {
+  background: var(--line-warning-2);
+}
+```
+
+---
+
+## 16. Unsolvable Browser Limitations
+
+Some browser-imposed behaviours have **no CSS or JavaScript workaround**. The reset modules cannot fix them. This section documents every known case and line://ui's strategy for each.
+
+### 16.1 The Core Principle
+
+> When a native element cannot be fully neutralised, **don't use it visually**. Use it as an invisible data channel and render the visible UI entirely with custom markup.
+
+This is the fundamental reason line://ui exists. If browsers let you fully style every native control, headless libraries wouldn't need to exist.
+
+### 16.2 Complete Inventory of Unsolvable Cases
+
+#### Input Date/Time — Picker Icon (Firefox)
+
+| | |
+|---|---|
+| **Problem** | Firefox renders a calendar icon on `<input type="date">`, `<input type="time">`, and `<input type="datetime-local">`. There is NO pseudo-element to target it. `appearance: none` does NOT remove it. |
+| **Affects** | `<line-date-input>`, `<line-time-picker>` — any component using native date/time inputs internally |
+| **line://ui strategy** | `<line-date-input>` does NOT use `<input type="date">`. It uses `<input type="text">` with segment masking (day/month/year as separate navigable segments). No native picker icon exists to leak through. The date machine manages the segment state. |
+
+#### Input Date/Time — Picker Popup Cannot Be Prevented
+
+| | |
+|---|---|
+| **Problem** | Even with the icon hidden (Chrome/Safari), clicking the native date input may still open the browser's calendar popup. There is no way to prevent this via CSS or `preventDefault()`. |
+| **Affects** | Any component using `<input type="date/time/datetime-local/month/week">` |
+| **line://ui strategy** | Same as above — use `<input type="text">` with custom segment navigation. The native picker never exists. `<line-date-picker>` renders its own calendar popup via Zag.js, completely independent of the browser. |
+
+#### Input Number — Spinner Arrows (Partial)
+
+| | |
+|---|---|
+| **Problem** | Chrome/Safari: `::-webkit-inner-spin-button { display: none }` works. Firefox: `appearance: textfield` removes them BUT also changes the input's validation behaviour. There is no way in Firefox to hide the arrows while keeping `type="number"` validation. |
+| **Affects** | `<line-number-input>` |
+| **line://ui strategy** | Use `<input type="text" inputmode="numeric" pattern="[0-9]*">`. This gives the mobile numeric keyboard without native spinner arrows in ANY browser. Validation is handled by the Zag.js machine, not native number type. The internal `::part(increment)` and `::part(decrement)` are custom elements rendered by the component. |
+
+#### Select — Dropdown Options List
+
+| | |
+|---|---|
+| **Problem** | `<option>` elements inside a `<select>` dropdown are rendered by the OS, not the browser. They cannot be styled with CSS in any browser. `appearance: none` removes the select arrow but does NOT affect the dropdown list. |
+| **Affects** | Any component using native `<select>` for the dropdown |
+| **line://ui strategy** | `<line-select>` does NOT use a native `<select>` element. It renders a custom trigger via `::part(trigger)` and a custom dropdown via Popover/floating positioning (Zag.js select machine). Options are `<line-select-item>` custom elements. No native `<option>` elements exist. Form value is set via `ElementInternals.setFormValue()`. |
+
+#### Select — Mobile OS Picker (iOS Flipwheel, Android Spinner)
+
+| | |
+|---|---|
+| **Problem** | On iOS, a native `<select>` opens the system flipwheel. On Android, it opens a system spinner/dialog. These provide excellent UX for their platform. A custom `<select>` replacement loses this UX entirely. |
+| **Affects** | `<line-select>` on mobile |
+| **line://ui strategy** | Documented trade-off. `<line-select>` provides consistent cross-platform UI (custom dropdown). Consumers who prefer the native mobile picker for specific use cases can use a native `<select>` with `<line-field>` — the Field accepts any form control via slot. A future `native-mobile` prop is a nice-to-have post-1.0. |
+
+#### File Input — OS Dialog
+
+| | |
+|---|---|
+| **Problem** | There is NO JavaScript API to open a file dialog programmatically without a native `<input type="file">`. The `showOpenFilePicker()` API exists but is Chrome-only. |
+| **Affects** | `<line-file-upload>` |
+| **line://ui strategy** | A hidden `<input type="file">` lives inside the shadow DOM. It is invisible (zero dimensions, `opacity: 0`, `position: absolute`). The visible UI is fully custom — drop zone, file list, previews. Clicking the custom trigger calls `.click()` on the hidden native input. |
+
+#### Color Input — OS Color Dialog
+
+| | |
+|---|---|
+| **Problem** | `<input type="color">` opens the OS-level color picker. This cannot be styled, prevented, or replaced. |
+| **Affects** | Would affect any component using native `<input type="color">` |
+| **line://ui strategy** | `<line-color-picker>` does NOT use `<input type="color">`. It renders its own spectrum/hue/alpha UI via the Zag.js color-picker machine. Form value is set via `ElementInternals.setFormValue()`. No OS dialog involved. |
+
+#### Autofill — Forced Background Colour
+
+| | |
+|---|---|
+| **Problem** | When a browser autofills an `<input>`, it forces a background colour that CANNOT be prevented via CSS. `background: transparent !important` is ignored. |
+| **Affects** | Any component with `<input>` in shadow DOM |
+| **line://ui strategy** | Mitigation, not solution. The `reset.input.css` includes the `transition: background-color 5000s` hack that delays the forced background indefinitely. The animation-based autofill detection (section 15.3) reflects `data-autofill` on the host so consumers can apply their own override styling. This is the best possible workaround — no library has a complete fix. |
+
+#### Password Managers — Shadow DOM Detection
+
+| | |
+|---|---|
+| **Problem** | Password managers (1Password, Bitwarden, LastPass) look for `<input type="password">` to inject their autofill UI. Some managers detect inputs inside shadow DOM, some don't. |
+| **Affects** | `<line-password-input>` |
+| **line://ui strategy** | `<line-password-input>` always uses a real `<input type="password">` inside shadow DOM. The `name` and `autocomplete` attributes are forwarded from the host to the internal input. This maximises compatibility. Managers that don't support shadow DOM detection will miss it — this is a known limitation of ALL Web Component form libraries. |
+
+#### Scrollbar — Firefox Styling Limitations
+
+| | |
+|---|---|
+| **Problem** | Firefox only supports `scrollbar-width` and `scrollbar-color`. Chrome/Safari support the full `::-webkit-scrollbar-*` family. There is no way to achieve the same level of scrollbar customisation in Firefox as in Chrome. |
+| **Affects** | `<line-scroll-area>` |
+| **line://ui strategy** | `<line-scroll-area>` uses the Zag.js scroll-area machine which renders its OWN scrollbar overlay. The native scrollbar is hidden. The custom scrollbar is rendered as `::part(scrollbar-thumb)` and `::part(scrollbar-track)`. Consistent across all browsers. |
+
+#### Details/Summary — Animation
+
+| | |
+|---|---|
+| **Problem** | The native `<details>` element has no built-in animation for open/close. The new `::details-content` pseudo-element (Chrome 131+) is not supported in Firefox or Safari. |
+| **Affects** | Would affect any component using native `<details>` for disclosure |
+| **line://ui strategy** | `<line-accordion>` and `<line-collapsible>` do NOT use native `<details>`. They use Zag.js accordion/collapsible machines with custom rendering. The `<line-presence>` component handles enter/exit animations. Fully cross-browser. |
+
+#### Textarea — Resize Handle Appearance
+
+| | |
+|---|---|
+| **Problem** | `resize: none` removes the handle completely. But if you WANT a resize handle with custom styling, there is no standard pseudo-element. Chrome/Safari have `::-webkit-resizer` but Firefox has nothing. |
+| **Affects** | `<line-textarea>` |
+| **line://ui strategy** | `resize: none` is set in `reset.textarea.css`. If the consumer wants resize, `<line-textarea>` exposes an `auto-resize` prop (machine-driven auto-height) or a `resize` prop that re-enables native resize. A custom resize handle rendered as `::part(resize-handle)` is a nice-to-have post-1.0. |
+
+### 16.3 Summary — Strategy Per Case
+
+| Problem | Strategy | Native element used? |
+|---------|----------|---------------------|
+| Date/time picker icon (Firefox) | **Avoid** — use `<input type="text">` with segment masking | No native date input |
+| Date/time picker popup | **Avoid** — custom calendar/time UI via Zag.js | No native date input |
+| Number spinner arrows (Firefox) | **Avoid** — use `<input type="text" inputmode="numeric">` | Text input, not number |
+| Select dropdown options | **Avoid** — fully custom dropdown, no native `<select>` | No native select |
+| Mobile OS select picker | **Documented trade-off** — custom dropdown on all platforms | No native select |
+| File dialog | **Hidden native** — invisible `<input type="file">`, custom visible UI | Hidden file input |
+| Color dialog | **Avoid** — fully custom color picker UI | No native color input |
+| Autofill forced background | **Mitigate** — delay hack + detection + state reflection | Native input (unavoidable) |
+| Password manager detection | **Best effort** — real `<input type="password">` + attribute forwarding | Native password input |
+| Scrollbar styling (Firefox) | **Replace** — custom scrollbar overlay, native hidden | Native scrollbar hidden |
+| Details animation | **Avoid** — custom disclosure components with Presence | No native details |
+| Textarea resize handle | **Reset** — `resize: none`, custom auto-resize or re-enable via prop | Native textarea |
+
+**Pattern summary:** The dominant strategy is **avoidance** — don't use the native element that causes the problem. Render custom UI powered by Zag.js machines. Use `ElementInternals` for form integration. The native element only appears when there is literally no alternative (file dialog, password manager detection, text input for IME/autofill).

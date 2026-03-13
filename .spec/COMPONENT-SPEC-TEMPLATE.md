@@ -126,11 +126,16 @@ Elements rendered by the component that the consumer styles via `::part()` but d
 
 _If none, write "None — all content is consumer-provided via slots."_
 
-#### 8.6 CSS Custom Properties
+#### 8.6 CSS Custom Properties (Preset)
+
+> **Note:** These tokens are defined by the preset package
+> (`@websublime/line-presets`) on the component host element, not
+> by the component itself. Components are headless. Consumers override
+> these tokens for quick adjustments, or use `::part()` for total control.
 
 | Property | Default | Controls |
 |----------|---------|----------|
-| `--line-{component}-{prop}` | `var(--line-{global-token})` | {what it affects} |
+| `--line-{component}-{prop}` | `var(--line-{token})` | {what it affects} |
 
 #### 8.7 Host Data Attributes
 
@@ -236,7 +241,7 @@ _If not:_ Not form-associated.
 
 ```css
 line-{component} {
-  --line-{component}-{prop}: {value};
+  --line-{component}-{prop}: {value}; /* Override preset token */
 }
 
 line-{component}::part(root) {

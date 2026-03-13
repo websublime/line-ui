@@ -98,7 +98,7 @@ npm install @websublime/line-components @websublime/line-theme
 
 ```css
 /* Import a theme (or don't — components work headless) */
-@import '@websublime/line-theme/dist/theme-blue.min.css';
+@import '@websublime/line-theme/themes/blue';
 ```
 
 ```html
@@ -128,10 +128,10 @@ npm install @websublime/line-components @websublime/line-theme
 ## Style it your way
 
 ```css
-/* Quick: adjust tokens */
+/* Adjust preset component tokens */
 line-button {
-  --line-button-radius: 9999px;
-  --line-button-bg: var(--line-primary-9);
+  --line-button-radius: var(--line-radius-round);
+  --line-button-height-md: 3rem;
 }
 
 /* Full control: override parts */
@@ -243,7 +243,8 @@ Phase 8 ─── 18 real-world / domain ────────── v0.9.0
 packages/
 ├── core/           ← LineElement base class, mixins, utilities
 ├── components/     ← All 131 components (tree-shakeable)
-├── theme/          ← 28-palette theme system + Open Props tokens
+├── theme/          ← Design tokens, 28-palette colour system, semantic aliases
+├── presets/        ← Visual presets (CSS-only, component styling)
 ├── icons/          ← Agnostic icon registry + resolvers
 ├── site/           ← Documentation site (Astro)
 └── storybook/      ← Interactive component playground
@@ -251,7 +252,10 @@ packages/
 docs/
 ├── PRODUCT-REQUIREMENTS-SPECIFICATION.md
 ├── ARCHITECTURE.md
-└── COMPETITIVE-COMPONENT-ANALYSIS.md
+├── PRODUCT-PLAN.md
+├── COMPETITIVE-COMPONENT-ANALYSIS.md
+├── DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md
+└── THEME-GAP-ANALYSIS.md
 
 .spec/
 ├── COMPONENT-SPEC-TEMPLATE.md
@@ -268,7 +272,7 @@ docs/
 | **Bundler** | [Vite 7+](https://vitejs.dev) with [Rolldown](https://rolldown.rs) |
 | **Components** | [Lit 3+](https://lit.dev) |
 | **State machines** | [Zag.js](https://zagjs.com) |
-| **Tokens** | [Open Props](https://open-props.style) + custom colour system |
+| **Tokens** | Custom foundation tokens (`tokens.css`) + 28-palette colour system |
 | **Lint & format** | [Biome](https://biomejs.dev) |
 
 <br/>

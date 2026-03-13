@@ -17,9 +17,9 @@ line://ui is a headless UI component library built as native Web Components. It 
 - **Lint & Format**: Biome (replaces ESLint + Prettier)
 - **Component Framework**: Lit 3+
 - **Component Logic**: Zag.js (state machines)
-- **Utility Tokens**: Open Props (sizes, shadows, easings, typography) — all rewritten to `--line-*` at build time
+- **Foundation Tokens**: Explicitly defined in `tokens.css` (sizes, shadows, easings, typography, z-index, opacity, motion, radius, border-width, focus-ring) — 1:1 match with Open Props values, prefixed as `--line-*`
 - **Color Tokens**: Custom 12-level semantic system (28 palettes, light/dark mode)
-- **CSS Processing**: PostCSS (plugins: import, jit-props, mixins, simple-vars, nested, preset-env, custom-media, cssnano)
+- **CSS Processing**: PostCSS (plugins: import, mixins, simple-vars, nested, preset-env, custom-media, cssnano)
 - **Versioning**: Changesets
 - **Types**: TypeScript 5.9+ with API Extractor
 
@@ -35,7 +35,7 @@ Agents and contributors must understand the three-tier documentation structure:
 
 ```
 docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
-│   What & Why — product vision, component catalogue (132 components),
+│   What & Why — product vision, component catalogue (131 components),
 │   design token decisions, roadmap, phases, success metrics
 │
 ├── docs/ARCHITECTURE.md
@@ -48,6 +48,12 @@ docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
 │
 ├── docs/COMPETITIVE-COMPONENT-ANALYSIS.md
 │     Positioning — component-by-component gap analysis vs Shoelace, Spectrum, etc.
+│
+├── docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md
+│     Layers — foundation tokens, semantic defaults, aliases, schemas, presets explained
+│
+├── docs/THEME-GAP-ANALYSIS.md
+│     Gaps — what is implemented vs what is specified, with actionable tasks
 │
 └── .spec/
       Detail — architecture and per-component API contracts.
@@ -65,6 +71,8 @@ docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
 | Understanding execution order, dependencies, done criteria | PRODUCT-PLAN |
 | Implementing any system or component | `.spec/` — find the matching spec by name |
 | Comparing with competitors, identifying gaps | COMPETITIVE-COMPONENT-ANALYSIS |
+| Understanding design system layers (tokens, aliases, presets) | DESIGN-SYSTEM-IMPLEMENTATION-GUIDE |
+| Finding theme implementation gaps and next tasks | THEME-GAP-ANALYSIS |
 
 ## Repository Structure
 
@@ -148,6 +156,7 @@ For visual changes (new UI, modified display):
 |---------|-------------------|---------------------|---------|
 | core | `@websublime/line-core` | `@websublime/vitamina-core` | 0.2.0 |
 | theme | `@websublime/line-theme` | `@websublime/vitamina-theme` | 0.6.0 |
+| presets | `@websublime/line-presets` | — | — |
 
 > **Branding refactor pending (Phase 0):** Package names, CSS variables, class names, and tag prefixes must be migrated from `vita-*` to `line-*`. See PRD §9.14 for the full migration table.
 

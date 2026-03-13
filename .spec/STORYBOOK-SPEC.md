@@ -29,7 +29,7 @@
 
 ## 1. Overview
 
-This spec defines the setup and configuration decisions for Storybook 8 within the line://ui monorepo. It covers stack choices, CEM integration for auto-generated API docs, story conventions, addon strategy, theme switching mechanics, and documentation page content. The goal is to prevent ad-hoc decisions during implementation and establish conventions that scale from Phase 0 (foundation pages) through Phase 8 (132 components).
+This spec defines the setup and configuration decisions for Storybook 8 within the line://ui monorepo. It covers stack choices, CEM integration for auto-generated API docs, story conventions, addon strategy, theme switching mechanics, and documentation page content. The goal is to prevent ad-hoc decisions during implementation and establish conventions that scale from Phase 0 (foundation pages) through Phase 8 (131 components).
 
 ### 1.1 What This Spec Is
 
@@ -617,7 +617,7 @@ Note: `argTypes` are partially auto-populated from the CEM manifest. Manual `arg
    - How to install: `bun add @websublime/line-theme`
 3. **Applying a theme**
    - Import the full bundle: `@import '@websublime/line-theme/dist/line.min.css'`
-   - Or import a single palette: `@import '@websublime/line-theme/dist/theme-blue.min.css'`
+   - Or import a single palette: `@import '@websublime/line-theme/themes/blue'`
    - Add the schema class: `<body class="line-schema-blue">`
 4. **Light and dark mode**
    - Add `.dark` class to `<html>` or any ancestor
@@ -695,7 +695,7 @@ Foundation stories visualize the design token system. Each section has both an M
 ### 10.2 Typography
 
 **MDX page content:**
-- Open Props typography tokens used: `--line-font-size-*`, `--line-font-weight-*`, `--line-line-height-*`, `--line-font-*`
+- Foundation typography tokens: `--line-font-size-*`, `--line-font-weight-*`, `--line-line-height-*`, `--line-font-*`
 - How components reference type tokens
 - Font loading considerations (no fonts bundled; consumer brings their own)
 
@@ -707,7 +707,7 @@ Foundation stories visualize the design token system. Each section has both an M
 ### 10.3 Spacing & Sizing
 
 **MDX page content:**
-- Open Props spacing tokens: `--line-size-*`
+- Foundation spacing tokens: `--line-size-*`
 - Radius tokens: `--line-radius-*`
 - How components use spacing tokens
 
@@ -718,7 +718,7 @@ Foundation stories visualize the design token system. Each section has both an M
 ### 10.4 Shadows & Elevation
 
 **MDX page content:**
-- Open Props shadow tokens: `--line-shadow-*`
+- Foundation shadow tokens: `--line-shadow-*`
 - Elevation hierarchy
 
 **CSF3 stories:**
@@ -728,7 +728,7 @@ Foundation stories visualize the design token system. Each section has both an M
 ### 10.5 Motion & Easings
 
 **MDX page content:**
-- Open Props easing tokens: `--line-ease-*`
+- Foundation easing tokens: `--line-ease-*`
 - Duration tokens
 - When to use which easing curve
 

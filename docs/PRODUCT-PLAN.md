@@ -17,7 +17,7 @@ This document is the execution plan that bridges the PRD (what to build) and the
 | Phase | Name | Version | Epics | Key Deliverables | Prerequisites |
 |-------|------|---------|-------|------------------|---------------|
 | 0 | Foundation | v0.1.0 | 7 | Branding refactor, LineElement base class, monorepo restructure, theme v2, testing/CI/CD, Storybook, icon registry | None |
-| 1 | Core Primitives | v0.2.0 | 5 | 21 components (Button, Alert, Badge, Avatar, layout utilities, etc.), semantic aliases, custom theme docs | Phase 0 |
+| 1 | Core Primitives | v0.2.0 | 5 | 20 components (Button, Alert, Badge, Avatar, layout utilities, etc.), semantic aliases, custom theme docs | Phase 0 |
 | 2 | Essential Forms | v0.3.0 | 3 | 15 form components (Input, Field, Checkbox, Select, etc.), Field orchestration, formAssociated validation | Phase 1 |
 | 3 | Overlays & Navigation | v0.4.0 | 3 | 16 components (Dialog, Popover, Toast, Tabs, Accordion, Menu, etc.) | Phase 1 |
 | 4 | Advanced Forms | v0.5.0 | 2 | 13 components (Combobox, DatePicker, ColorPicker, FileUpload, etc.) | Phase 2, Phase 3 |
@@ -25,7 +25,7 @@ This document is the execution plan that bridges the PRD (what to build) and the
 | 6 | Layout & Desktop-Inspired | v0.7.0 | 2 | 17 components (AppShell, Sidebar, CommandPalette, Splitter, etc.) | Phase 5 |
 | 7 | Innovative | v0.8.0 | 2 | 17 components (KanbanBoard, DataGrid, Dock, Tour, etc.) | Phase 5 |
 | 8 | Real-World / Domain | v0.9.0 | 2 | 18 components (Ballot, AudioPlayer, Terminal, CalendarView, etc.) | Phase 5 |
-| -- | Full catalogue | v1.0.0 | -- | 132 components total, stable API, migration guides, public site | All phases |
+| -- | Full catalogue | v1.0.0 | -- | 131 components total, stable API, migration guides, public site | All phases |
 
 > **Note:** Site content (`packages/site/`) is scaffolded in Phase 0 (P0-E3-T4) but content pages are developed incrementally from Phase 1 onward as parallel work. The v1.0.0 milestone requires the public site to be live.
 
@@ -54,7 +54,7 @@ This epic must complete before all other Phase 0 work. Everything downstream dep
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P0-E2-T1 | Activate postcss-jit-props in pipeline | Add `postcss-jit-props` to `postcss.config.cjs` with the `--line-*` prefix rewrite configuration. Validate that Open Props tokens (`--line-size-3`, `--line-radius-2`, `--line-shadow-3`, etc.) resolve correctly in the build output. | P0-E1-T3 | Violet | M | PRD 9.3, 9.8, Decision T3 |
+| P0-E2-T1 | Define foundation tokens explicitly | Create `src/tokens.css` with all foundation token scales (typography, sizing, shadows, z-index, opacity, motion, radius, border-width, focus-ring, aspect-ratio). Create `src/semantic-defaults.css` extracted from `rules.css`. Remove `postcss-jit-props` and `open-props` from devDependencies. Add contrast tokens (`--line-{palette}-contrast`) to all 28 colour files. Update all 28 schemas to use contrast token. Reference: `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phases 1-3. | P0-E1-T3 | Violet | L | PRD 9.3, 9.15 |
 | P0-E2-T2 | Add postcss-custom-media to pipeline | Ensure `postcss-custom-media` is active in the pipeline so that custom media queries from `media.css` are resolved. Verify breakpoint and preference queries work. | P0-E1-T3 | Violet | S | PRD 9.8 |
 | P0-E2-T3 | Remove demo files from production bundle | Exclude `custom/*-custom.css` demo swatch files from all build outputs. Move them to a location suitable for Storybook consumption only. | P0-E1-T1 | Violet | S | PRD 9.12, Decision T5 |
 | P0-E2-T4 | Configure Vite 7+ with Rolldown | Verify or update Vite to 7+ with Rolldown for library mode builds. Ensure both core and theme packages build correctly with the new bundler. | P0-E1-T5, P0-E1-T1 | Luna | M | PRD 2 |
@@ -127,7 +127,7 @@ P0-E1 (Branding Refactor)
   T8 (validate branding) ◄──────────────────ALL┘
 
 P0-E2 (Build Pipeline)                      depends on E1
-  T1 (jit-props) ◄── E1-T3
+  T1 (tokens.css) ◄── E1-T3
   T2 (custom-media) ◄── E1-T3
   T3 (remove demos) ◄── E1-T1
   T4 (Vite 7+) ◄── E1-T5, E1-T1
@@ -181,7 +181,12 @@ Branding must complete first. E4 (LineElement) depends only on E1-T6 (base class
 All of the following must be true:
 
 - [ ] All packages use `line-*` naming (npm names, CSS variables, CSS classes, tag prefix, base class)
-- [ ] `postcss-jit-props` is active and Open Props tokens resolve with `--line-*` prefix
+- [ ] Foundation tokens defined in `tokens.css` (156 tokens, all `--line-*` prefixed)
+- [ ] Semantic defaults defined in `semantic-defaults.css` (split from rules.css)
+- [ ] Contrast token `--line-{palette}-contrast` added to all 28 colour files
+- [ ] All 28 schemas updated to use contrast token (`--line-solid-text`)
+- [ ] `postcss-jit-props` and `open-props` removed from devDependencies
+- [ ] Build outputs restructured: dist/tokens.min.css, dist/semantic-defaults.min.css, dist/aliases.min.css, dist/colors/, dist/schemas/, dist/themes/
 - [ ] Demo/swatch files are excluded from production CSS outputs
 - [ ] Monorepo has 6 packages: core, components, theme, icons, site, storybook
 - [ ] `bun install` and `bun run build` work from root across all packages
@@ -199,12 +204,17 @@ All of the following must be true:
 - [ ] Icon registry API is implemented with zero bundled icons
 - [ ] HTMX integration spike is documented with go/no-go recommendation
 - [ ] A developer can create a new component using `LineElement`, build it, test it, and see it in Storybook
+- [ ] Build-time token validation (var() cross-reference ensures no undefined token references)
+- [ ] Contrast validation script verifies WCAG AA for all 28 palettes (light + dark)
+- [ ] Token parity tests confirm light/dark mode produce equivalent token sets
+- [ ] Snapshot tests of generated CSS outputs detect unintended regressions
+- [ ] Playwright visual regression of theme showcase page established as baseline
 
 ---
 
 ## 3. Phase 1 -- Core Primitives (v0.2.0) -- DETAILED
 
-Phase 1 delivers 21 components that validate the entire architecture: base class, parts convention, slot/part decision rule, per-component build pipeline, bundle splitting, CEM documentation, and testing.
+Phase 1 delivers 20 components that validate the entire architecture: base class, parts convention, slot/part decision rule, per-component build pipeline, bundle splitting, CEM documentation, and testing.
 
 ### 3.1 Epic 1: Semantic Alias Layer & Theme Documentation
 
@@ -212,96 +222,107 @@ These are theme-level tasks that must complete before components can reference s
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E1-T1 | Implement semantic alias layer | Create `src/aliases.css` defining 10 aliases (primary, secondary, tertiary, danger, warning, success, info, accent, neutral, surface) x 12 levels = 120 variables. Default palette mappings as documented. | Phase 0 complete | Violet | M | PRD 9.5, Decision T6 |
+| P1-E1-T1 | Implement semantic alias layer | Create `src/aliases.css` defining 6 aliases (primary, danger, success, warning, info, neutral) x 9 intent tokens = 54 variables. Intent tokens per alias: base, hover, active, text, subtle, subtle-hover, outline, outline-hover, fg. Default palette mappings as documented. Reference: `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phase 4. | Phase 0 complete | Violet | M | PRD 9.5, Decision T6 |
 | P1-E1-T2 | Document custom theme contract | Create Storybook documentation page explaining how consumers create custom themes: colour file (12 levels, light+dark), schema file (14 semantic roles), optional alias override. Include a step-by-step example. | P1-E1-T1 | Violet | M | PRD 9.6, Decision T4 |
 | P1-E1-T3 | Rebuild theme bundle with aliases | Rebuild the full theme bundle (`line.css`) to include the alias layer. Verify all documented build outputs (per-palette, per-schema, per-theme, utils) are correct. | P1-E1-T1 | Violet | S | PRD 9.12 |
 
-### 3.2 Epic 2: Component Specs (Just-in-Time)
-
-Specs must be written and approved before implementation begins. All 21 components need specs.
+### 3.2 Epic 2: Preset Package Scaffold
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E2-T1 | Write specs for static primitives | Write `.spec/` files for: Alert, Badge, Chip, Avatar, Separator, VisuallyHidden, Portal, Kbd, Skeleton, Stack, Grid, Center, AspectRatio, Spinner. 14 specs following `COMPONENT-SPEC-TEMPLATE.md`. | Phase 0 complete | Luna | L | PRD 4.1, 8.1 |
-| P1-E2-T2 | Write specs for interactive primitives | Write `.spec/` files for: Button, IconButton, ButtonGroup, AvatarGroup, Presence. 5 specs. | Phase 0 complete | Luna | M | PRD 4.1, 8.1 |
-| P1-E2-T3 | Write spec for Icon component | Write `.spec/` for Icon component -- depends on icon registry being complete (Phase 0). | Phase 0 complete | Luna | S | PRD 4.1, ARCH 11 |
-| P1-E2-T4 | Review and approve all Phase 1 specs | All 21 specs reviewed, status set to `approved`. | P1-E2-T1 through P1-E2-T3 | Luna | M | PRD 8.2, 8.3 |
+| P1-E2-T1 | Scaffold presets package | Create `packages/presets/` with `package.json` (`@websublime/line-presets`), `postcss.config.mjs`, `src/index.css`. Configure as workspace package with `peerDependency` on `@websublime/line-theme >= 0.8.0`. | Phase 0 complete | Luna | S | PRD 9.16 |
+| P1-E2-T2 | Write preset styles for Phase 1 components | Create per-component CSS files in `presets/src/` for all 20 Phase 1 components. Uses `::part()` selectors and `--line-{component}-*` tokens. Reference: `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phase 7. | P1-E2-T1, P1-E5 (all) | Luna | L | PRD 9.16 |
 
-### 3.3 Epic 3: Static Components (no machine)
+### 3.3 Epic 3: Component Specs (Just-in-Time)
+
+Specs must be written and approved before implementation begins. All 20 components need specs.
+
+| Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
+|---------|-------|-------------|--------------|------------|------------|-----------|
+| P1-E3-T1 | Write specs for static primitives | Write `.spec/` files for: Alert, Badge, Chip, Avatar, Separator, VisuallyHidden, Portal, Kbd, Skeleton, Stack, Grid, Center, AspectRatio, Spinner. 14 specs following `COMPONENT-SPEC-TEMPLATE.md`. | Phase 0 complete | Luna | L | PRD 4.1, 8.1 |
+| P1-E3-T2 | Write specs for interactive primitives | Write `.spec/` files for: Button, IconButton, ButtonGroup, AvatarGroup, Presence. 5 specs. | Phase 0 complete | Luna | M | PRD 4.1, 8.1 |
+| P1-E3-T3 | Write spec for Icon component | Write `.spec/` for Icon component -- depends on icon registry being complete (Phase 0). | Phase 0 complete | Luna | S | PRD 4.1, ARCH 11 |
+| P1-E3-T4 | Review and approve all Phase 1 specs | All 20 specs reviewed, status set to `approved`. | P1-E3-T1 through P1-E3-T3 | Luna | M | PRD 8.2, 8.3 |
+
+### 3.4 Epic 4: Static Components (no machine)
 
 Static components are presentational only, with zero interaction state. These are the fastest to build and validate the base class, parts, slots, and CSS custom property patterns.
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E3-T0 | Implement Alert | Static component. Slots: default, icon, action. Parts: root, icon, content, action. Variants: info, success, warning, danger. Dismissible via Presence. Spec: `.spec/0001-alert.md`. | P1-E2-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
-| P1-E3-T1 | Implement Badge | Static component. Parts: root. Variants: count, dot, label. Spec: `.spec/0007-badge.md`. | P1-E2-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
-| P1-E3-T2 | Implement Chip | Static component. Parts: root, remove. Slots: default, prefix. Spec: `.spec/0008-chip.md`. | P1-E2-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
-| P1-E3-T3 | Implement Avatar | Static component. Slots: default, fallback, status. Parts: root, image, fallback. Spec: `.spec/0009-avatar.md`. | P1-E2-T4, P1-E1-T3 | Luna | S | PRD 4.1, ARCH 13.2 |
-| P1-E3-T4 | Implement Separator | Static component. Horizontal or vertical. Parts: root. Spec: `.spec/0011-separator.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T5 | Implement VisuallyHidden | Static utility component. Spec: `.spec/0012-visually-hidden.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T6 | Implement Portal | Static component. Renders children outside DOM parent. Spec: `.spec/0013-portal.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T7 | Implement Kbd / Shortcut | Static component. OS-aware rendering. Spec: `.spec/0015-kbd.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T8 | Implement Skeleton | Static component. Pulse or wave animation. Spec: `.spec/0016-skeleton.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T9 | Implement Stack | Static layout helper. Spec: `.spec/0018-stack.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T10 | Implement Grid | Static layout wrapper. Spec: `.spec/0019-grid.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T11 | Implement Center | Static centering utility. Spec: `.spec/0020-center.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T12 | Implement AspectRatio | Static ratio container. Spec: `.spec/0021-aspect-ratio.md`. | P1-E2-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T13 | Implement Spinner | Static, CSS-only animation. Parts: root. Props: size, speed, label. Spec: `.spec/0022-spinner.md`. | P1-E2-T4 | Luna | S | PRD 4.1, ARCH 13.5 |
+| P1-E3-T0 | Implement Alert | Static component. Slots: default, icon, action. Parts: root, icon, content, action. Variants: info, success, warning, danger. Dismissible via Presence. Spec: `.spec/0001-alert.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
+| P1-E3-T1 | Implement Badge | Static component. Parts: root. Variants: count, dot, label. Spec: `.spec/0007-badge.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
+| P1-E3-T2 | Implement Chip | Static component. Parts: root, remove. Slots: default, prefix. Spec: `.spec/0008-chip.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
+| P1-E3-T3 | Implement Avatar | Static component. Slots: default, fallback, status. Parts: root, image, fallback. Spec: `.spec/0009-avatar.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1, ARCH 13.2 |
+| P1-E3-T4 | Implement Separator | Static component. Horizontal or vertical. Parts: root. Spec: `.spec/0011-separator.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T5 | Implement VisuallyHidden | Static utility component. Spec: `.spec/0012-visually-hidden.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T6 | Implement Portal | Static component. Renders children outside DOM parent. Spec: `.spec/0013-portal.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T7 | Implement Kbd / Shortcut | Static component. OS-aware rendering. Spec: `.spec/0015-kbd.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T8 | Implement Skeleton | Static component. Pulse or wave animation. Spec: `.spec/0016-skeleton.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T9 | Implement Stack | Static layout helper. Spec: `.spec/0018-stack.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T10 | Implement Grid | Static layout wrapper. Spec: `.spec/0019-grid.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T11 | Implement Center | Static centering utility. Spec: `.spec/0020-center.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T12 | Implement AspectRatio | Static ratio container. Spec: `.spec/0021-aspect-ratio.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T13 | Implement Spinner | Static, CSS-only animation. Parts: root. Props: size, speed, label. Spec: `.spec/0022-spinner.md`. | P1-E3-T4 | Luna | S | PRD 4.1, ARCH 13.5 |
 
-### 3.4 Epic 4: Interactive Components (Custom/Pre-built machines)
+### 3.5 Epic 5: Interactive Components (Custom/Pre-built machines)
 
 These components use Zag.js machines and validate the full state management integration.
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E4-T1 | Implement Button | Custom machine. `formAssociated: true`. States: idle/pressed/loading/disabled. Slots: prefix/suffix/default. Spec: `.spec/0002-button.md`. First machine-based component -- validates Zag.js + Lit + parts pattern. | P1-E2-T4, P1-E1-T3 | Luna | L | PRD 4.1, ARCH 13.1 |
+| P1-E4-T1 | Implement Button | Custom machine. `formAssociated: true`. States: idle/pressed/loading/disabled. Slots: prefix/suffix/default. Spec: `.spec/0002-button.md`. First machine-based component -- validates Zag.js + Lit + parts pattern. | P1-E3-T4, P1-E1-T3 | Luna | L | PRD 4.1, ARCH 13.1 |
 | P1-E4-T2 | Implement IconButton | Custom machine (shares with Button). `aria-label` required. Spec: `.spec/0003-icon-button.md`. | P1-E4-T1 | Luna | M | PRD 4.1, ARCH 13.1 |
-| P1-E4-T3 | Implement ButtonGroup | Static. `role="group"`. Border collapse. Slot-based, does NOT import Button. Spec: `.spec/0004-button-group.md`. | P1-E2-T4 | Luna | S | PRD 4.1, ARCH 13.1 |
+| P1-E4-T3 | Implement ButtonGroup | Static. `role="group"`. Border collapse. Slot-based, does NOT import Button. Spec: `.spec/0004-button-group.md`. | P1-E3-T4 | Luna | S | PRD 4.1, ARCH 13.1 |
 | P1-E4-T4 | Implement AvatarGroup | Custom machine. States: collapsed/expanded/overflow_open. Hover expands, click on overflow opens popover. Spec: `.spec/0010-avatar-group.md`. | P1-E3-T3 | Luna | M | PRD 4.1, ARCH 13.2 |
-| P1-E4-T5 | Implement Presence | Pre-built (`@zag-js/presence`). Mount/unmount animations. Spec: `.spec/0017-presence.md`. First pre-built machine component. | P1-E2-T4 | Luna | M | PRD 4.1 |
-| P1-E4-T6 | Implement Icon | Static wrapper with registry integration. Spec: `.spec/0014-icon.md`. Depends on icon registry from Phase 0. | P1-E2-T4 | Luna | M | PRD 4.1, ARCH 11 |
+| P1-E4-T5 | Implement Presence | Pre-built (`@zag-js/presence`). Mount/unmount animations. Spec: `.spec/0017-presence.md`. First pre-built machine component. | P1-E3-T4 | Luna | M | PRD 4.1 |
+| P1-E4-T6 | Implement Icon | Static wrapper with registry integration. Spec: `.spec/0014-icon.md`. Depends on icon registry from Phase 0. | P1-E3-T4 | Luna | M | PRD 4.1, ARCH 11 |
 
-### 3.5 Epic 5: Phase 1 Validation & Release
+### 3.6 Epic 6: Phase 1 Validation & Release
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E5-T1 | Write Storybook stories for all 21 components | Each component gets: Overview, Playground, Anatomy, Parts & Properties, Slots, Accessibility, Examples, API. | P1-E3 (all), P1-E4 (all) | Luna | L | PRD 5.1 |
-| P1-E5-T2 | Run full test suite | Verify all 21 components pass the 8-point test checklist: renders, reactive props, slots, parts, custom properties, events, keyboard nav, axe-core. | P1-E3 (all), P1-E4 (all) | Luna | M | PRD 5.2 |
-| P1-E5-T3 | Verify bundle splitting | Validate that family entrypoints and independent entrypoints work as documented. Verify tree-shaking. Verify barrel export works. | P1-E3 (all), P1-E4 (all) | Luna | M | ARCH 12 |
-| P1-E5-T4 | Generate and verify CEM manifest | Run CEM analyzer, verify `custom-elements.json` contains all 21 components with correct props, events, slots, parts, CSS properties. | P1-E3 (all), P1-E4 (all) | Luna | S | PRD 5.1 |
-| P1-E5-T5 | Create Changesets for all components | Add changeset entries for the v0.2.0 release. | P1-E5-T2 | Olive | S | PRD 6.4 |
-| P1-E5-T6 | Visual regression baseline | Run Playwright visual regression for all 21 components. Establish baseline screenshots. | P1-E5-T1 | Olive | M | PRD 5.2 |
+| P1-E6-T1 | Write Storybook stories for all 20 components | Each component gets: Overview, Playground, Anatomy, Parts & Properties, Slots, Accessibility, Examples, API. | P1-E3 (all), P1-E4 (all) | Luna | L | PRD 5.1 |
+| P1-E6-T2 | Run full test suite | Verify all 20 components pass the 8-point test checklist: renders, reactive props, slots, parts, custom properties, events, keyboard nav, axe-core. | P1-E3 (all), P1-E4 (all) | Luna | M | PRD 5.2 |
+| P1-E6-T3 | Verify bundle splitting | Validate that family entrypoints and independent entrypoints work as documented. Verify tree-shaking. Verify barrel export works. | P1-E3 (all), P1-E4 (all) | Luna | M | ARCH 12 |
+| P1-E6-T4 | Generate and verify CEM manifest | Run CEM analyzer, verify `custom-elements.json` contains all 20 components with correct props, events, slots, parts, CSS properties. | P1-E3 (all), P1-E4 (all) | Luna | S | PRD 5.1 |
+| P1-E6-T5 | Create Changesets for all components | Add changeset entries for the v0.2.0 release. | P1-E6-T2 | Olive | S | PRD 6.4 |
+| P1-E6-T6 | Visual regression baseline | Run Playwright visual regression for all 20 components. Establish baseline screenshots. | P1-E6-T1 | Olive | M | PRD 5.2 |
 
-### 3.6 Dependency Graph
+### 3.7 Dependency Graph
 
 ```
-P1-E1 (Aliases & Theme Docs)        P1-E2 (Specs)
+P1-E1 (Aliases & Theme Docs)        P1-E3 (Specs)
   T1 (aliases) ──► T3 (rebuild)       T1 (static specs) ──┐
   T1 ──► T2 (custom theme docs)       T2 (interactive) ──┼──► T4 (approve)
                                        T3 (icon spec) ────┘
 
-P1-E3 (Static Components) ◄── E2-T4 (approved specs) + E1-T3 (aliases)
-  T1..T13 all independent of each other, all depend on E2-T4
+P1-E2 (Preset Package) ◄── Phase 0 complete
+  T1 (scaffold) ──► T2 (preset styles) ◄── E5 (all components)
 
-P1-E4 (Interactive Components) ◄── E2-T4 + E1-T3
+P1-E4 (Static Components) ◄── E3-T4 (approved specs) + E1-T3 (aliases)
+  T1..T13 all independent of each other, all depend on E3-T4
+
+P1-E5 (Interactive Components) ◄── E3-T4 + E1-T3
   T1 (Button) ──► T2 (IconButton)
-  E3-T3 (Avatar) ──► T4 (AvatarGroup)
+  E4-T3 (Avatar) ──► T4 (AvatarGroup)
   T3 (ButtonGroup), T5 (Presence), T6 (Icon) -- independent
 
-P1-E5 (Validation) ◄── E3 (all) + E4 (all)
+P1-E6 (Validation) ◄── E4 (all) + E5 (all)
   T1 (stories) ──► T6 (visual regression)
   T2 (test suite) ──► T5 (changesets)
   T3 (bundle splitting) -- independent
   T4 (CEM) -- independent
 ```
 
-### 3.7 Done Criteria for Phase 1
+### 3.8 Done Criteria for Phase 1
 
 All of the following must be true:
 
-- [ ] 21 components implemented and registered with `line-` prefix
-- [ ] All 21 component specs in `.spec/` with status `approved` or `implemented`
-- [ ] Semantic alias layer (10 x 12 = 120 variables) is live in the theme package
+- [ ] 20 components implemented and registered with `line-` prefix
+- [ ] All 20 component specs in `.spec/` with status `approved` or `implemented`
+- [ ] Semantic alias layer (6 x 9 = 54 variables) is live in the theme package
+- [ ] `@websublime/line-presets` package scaffolded with component styles for all 20 Phase 1 components
 - [ ] Custom theme contract documented in Storybook
 - [ ] Every component passes the 8-point test checklist (renders, props, slots, parts, custom properties, events, keyboard, axe-core)
 - [ ] Every component has a complete Storybook entry (Overview, Playground, Anatomy, Parts, Slots, A11y, Examples, API)
@@ -527,10 +548,10 @@ All of the following must be true:
 
 After Phase 8 completes, the final milestone is the v1.0.0 release:
 
-- [ ] All 132 components shipped and documented
+- [ ] All 131 components shipped and documented
 - [ ] All component specs at status `implemented`
 - [ ] Public site live at `line-ui.websublime.com`
 - [ ] Storybook deployed with all components
 - [ ] Breaking changes policy switches to strict semver
 - [ ] Migration guide from pre-1.0 published
-- [ ] npm packages published as stable (`@websublime/line-core`, `@websublime/line-components`, `@websublime/line-theme`, `@websublime/line-icons`)
+- [ ] npm packages published as stable (`@websublime/line-core`, `@websublime/line-components`, `@websublime/line-theme`, `@websublime/line-presets`, `@websublime/line-icons`)
