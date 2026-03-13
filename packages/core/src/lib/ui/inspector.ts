@@ -8,10 +8,10 @@
 |
 */
 
-import { LitElement, css, html, nothing } from 'lit';
+import { css, html, LitElement, nothing } from 'lit';
 import { customElement } from 'lit/decorators.js';
 
-import { ComponentElement } from '../web-component';
+import type { LineElement } from '../web-component';
 
 @customElement('ui-inspector')
 export class UiInspector extends LitElement {
@@ -65,7 +65,7 @@ export class UiInspector extends LitElement {
 
   hasInspectorVisible = false;
 
-  host!: ComponentElement;
+  host!: LineElement;
 
   set isHoverInspector(value: boolean) {
     this.isInspecting = value;

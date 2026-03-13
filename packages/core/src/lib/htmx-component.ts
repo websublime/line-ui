@@ -8,16 +8,12 @@
 |
 */
 
-import type { ComponentMetadata, WebComponentOptions } from '../types/component';
-import { Constructor } from '../types/general';
+import type { WebComponentOptions } from '../types/component';
+import type { Constructor } from '../types/general';
 
-import { ComponentElement } from './web-component';
+import { LineElement } from './web-component';
 
-export class ComponentHtmx extends ComponentElement<WebComponentOptions> {
-  constructor(registry: ComponentMetadata) {
-    super(registry);
-  }
-}
+export class LineHtmxElement extends LineElement<WebComponentOptions> {}
 
 /**
  * Register a custom element Lit class component. This function will
@@ -25,11 +21,11 @@ export class ComponentHtmx extends ComponentElement<WebComponentOptions> {
  *
  * @public
  */
-export function defineHtmxComponent<ComponentHtmx extends ComponentElement>(
+export function defineHtmxComponent<HtmxComponent extends LineElement>(
   name: string,
-  component: Constructor<ComponentHtmx>,
+  component: Constructor<HtmxComponent>,
   options: WebComponentOptions = {}
-): Constructor<ComponentHtmx> {
+): Constructor<HtmxComponent> {
   Object.defineProperty(component.prototype, 'componentOptions', {
     enumerable: true,
     value: options,

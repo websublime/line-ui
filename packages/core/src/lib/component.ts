@@ -8,16 +8,14 @@
 |
 */
 
-import { PropertyValues, ReactiveElement } from 'lit';
+import type { PropertyValues, ReactiveElement } from 'lit';
 
-import type { ComponentMixinInterface } from '../types/component';
+import type { LineMixinInterface } from '../types/component';
 import type { Constructor } from '../types/general';
 import { property } from '../utilities/decorators';
 
-export function ComponentMixin<T extends Constructor<ReactiveElement>>(
-  constructor: T
-): T & Constructor<ComponentMixinInterface> {
-  class SuperElement extends constructor {
+export function LineMixin<T extends Constructor<ReactiveElement>>(superClass: T): T & Constructor<LineMixinInterface> {
+  class SuperElement extends superClass {
     /**
      * @public
      */

@@ -9,14 +9,19 @@
 */
 export type {
   ComponentMetadata,
-  ComponentMixinInterface,
   ControllerHost,
+  LineMixinInterface,
   WebComponentOptions
 } from './types/component';
 
-export type { ValueOf, Constructor } from './types/general';
+export type { Constructor, ValueOf } from './types/general';
 
 export type {
+  AttributePart,
+  BooleanAttributePart,
+  ChildPart,
+  CompiledTemplate,
+  CompiledTemplateResult,
   DirectiveParent,
   Disconnectable,
   ElementPart,
@@ -35,10 +40,5 @@ export type {
   StyleInfo,
   SVGTemplateResult,
   TemplateResult,
-  AttributePart,
-  BooleanAttributePart,
-  ChildPart,
-  CompiledTemplate,
-  CompiledTemplateResult,
   ValueSanitizer
 } from './types/lit';

@@ -1,9 +1,8 @@
-import { css } from 'lit';
 import { html } from 'lit/html.js';
 
 // eslint-disable-next-line import/no-unassigned-import
 import './lib/ui/inspector.js';
-import { ComponentElement, defineWebComponent } from './lib/web-component.js';
+import { defineWebComponent, LineElement } from './lib/web-component.js';
 import type { ComponentMetadata } from './types/component.js';
 import { property } from './utilities/decorators.js';
 
@@ -25,7 +24,7 @@ const headMetadata: ComponentMetadata = {
   version: '0.0.1'
 };
 
-export class HeadComponent extends ComponentElement {
+export class HeadComponent extends LineElement {
   @property({ type: String })
   override title = 'HeadComponent';
 
@@ -38,7 +37,7 @@ export class HeadComponent extends ComponentElement {
   }
 }
 
-export class CardComponent extends ComponentElement {
+export class CardComponent extends LineElement {
   @property({ type: String })
   override title = 'Card Component!';
 

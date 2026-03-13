@@ -8,16 +8,16 @@
 |
 */
 
-import { LitElement, ReactiveElement } from 'lit';
+import { LitElement, type ReactiveElement } from 'lit';
 
 import type { ComponentMetadata, WebComponentOptions } from '../types/component';
 import type { Constructor } from '../types/general';
 import { property } from '../utilities/decorators';
 
-import { ComponentMixin } from './component';
+import { LineMixin } from './component';
 import { InspectController } from './controllers/inspect-controller';
 
-const id = Symbol.for('VITA');
+const id = Symbol.for('LINE');
 
 /**
  * Extend your components from this. Will have QA tag and metadata
@@ -25,9 +25,7 @@ const id = Symbol.for('VITA');
  *
  * @public
  */
-export class ComponentElement<Options = WebComponentOptions> extends ComponentMixin<Constructor<ReactiveElement>>(
-  LitElement
-) {
+export class LineElement<Options = WebComponentOptions> extends LineMixin<Constructor<ReactiveElement>>(LitElement) {
   readonly componentOptions!: Options;
   declare inspect: boolean;
 
@@ -51,7 +49,7 @@ export class ComponentElement<Options = WebComponentOptions> extends ComponentMi
     this.requestUpdate('options', oldValue);
   }
 
-  get isVita() {
+  get isLine() {
     return this.webComponentId === id;
   }
 
@@ -82,7 +80,7 @@ export class ComponentElement<Options = WebComponentOptions> extends ComponentMi
  *
  * @public
  */
-export function defineWebComponent<WebComponent extends ComponentElement>(
+export function defineWebComponent<WebComponent extends LineElement>(
   name: string,
   component: Constructor<WebComponent>,
   options: WebComponentOptions = {}
