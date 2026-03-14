@@ -12,6 +12,8 @@
   --line-low-contrast: var(--line-bronze-11); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-bronze-12); /* High-contrast text (-12) */
   --line-light: var(--line-bronze-1); /* Light text */
+  --line-white: var(--line-bronze-1); /* White text */
+  --line-black: var(--line-bronze-12); /* Black text */
   --line-dark: var(--line-bronze-12); /* Dark text */
   --line-solid-text: var(--line-bronze-contrast); /* Solid background text */
 }
@@ -30,6 +32,8 @@
   --line-low-contrast: var(--line-bronze-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-bronze-1); /* High-contrast text (-12) */
   --line-light: var(--line-bronze-12); /* Light text */
+  --line-white: var(--line-bronze-1); /* White text */
+  --line-black: var(--line-bronze-12); /* Black text */
   --line-dark: var(--line-bronze-1); /* Dark text */
   --line-solid-text: var(--line-bronze-contrast); /* Solid background text */
 }
