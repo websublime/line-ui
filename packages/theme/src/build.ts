@@ -29,7 +29,7 @@ const DIST = join(ROOT, 'dist');
 const CONCURRENCY = 16;
 
 // ---------------------------------------------------------------------------
-// PostCSS plugin chain (mirrors postcss.config.cjs)
+// PostCSS plugin chain (mirrors postcss.config.mjs — keep both in sync)
 // ---------------------------------------------------------------------------
 
 async function createProcessor(): Promise<postcss.Processor> {

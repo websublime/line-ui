@@ -9,6 +9,9 @@ import postcssSimpleVars from 'postcss-simple-vars';
 // TODO(line-ui-c5q.1): Add postcss-jit-props plugin here for Open Props utility token
 // injection with --line-* prefix rewrite. The dependency is already installed; it needs
 // to be activated in this pipeline. See PRD 9.3 and Decision T3.
+//
+// NOTE: This plugin chain is duplicated in src/build.ts:createProcessor().
+// If you add/remove/reconfigure a plugin here, update build.ts to match.
 export default {
   plugins: [
     postcssImport(),
