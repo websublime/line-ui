@@ -1,0 +1,48 @@
+/* ═══════════════════════════════════════════════════════════
+   semantic-defaults.css — line://ui Semantic Role Defaults (L2)
+
+   Maps the neutral gray scale to semantic role tokens.
+   Schemas (.line-schema-*) override these when active.
+
+   Requires: tokens.css (for --line-white, --line-black)
+   ═══════════════════════════════════════════════════════════ */
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --line-background: hsl(0, 0%, 99.0%);
+    --line-subtle-background: hsl(0, 0%, 97.5%);
+    --line-ui-background: hsl(0, 0%, 94.6%);
+    --line-ui-hover-background: hsl(0, 0%, 92.0%);
+    --line-ui-active-background: hsl(0, 0%, 89.5%);
+    --line-subtle-border: hsl(0, 0%, 86.8%);
+    --line-ui-border: hsl(0, 0%, 83.0%);
+    --line-ui-border-hover: hsl(0, 0%, 73.2%);
+    --line-solid-background: hsl(0, 0%, 55.2%);
+    --line-solid-hover: hsl(0, 0%, 50.3%);
+    --line-low-contrast: hsl(0, 0%, 39.3%);
+    --line-high-contrast: hsl(0, 0%, 12.5%);
+    --line-solid-text: #000;
+    --line-light: var(--line-white);
+    --line-dark: var(--line-black);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --line-background: hsl(0, 0%, 9.5%);
+    --line-subtle-background: hsl(0, 0%, 10.5%);
+    --line-ui-background: hsl(0, 0%, 15.8%);
+    --line-ui-hover-background: hsl(0, 0%, 18.9%);
+    --line-ui-active-background: hsl(0, 0%, 21.7%);
+    --line-subtle-border: hsl(0, 0%, 24.7%);
+    --line-ui-border: hsl(0, 0%, 29.1%);
+    --line-ui-border-hover: hsl(0, 0%, 37.5%);
+    --line-solid-background: hsl(0, 0%, 43.0%);
+    --line-solid-hover: hsl(0, 0%, 50.7%);
+    --line-low-contrast: hsl(0, 0%, 69.5%);
+    --line-high-contrast: hsl(0, 0%, 93.5%);
+    --line-solid-text: #fff;
+    --line-light: var(--line-white);
+    --line-dark: var(--line-black);
+  }
+}

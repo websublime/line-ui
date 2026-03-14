@@ -97,7 +97,7 @@
     "css:utils:general": "postcss src/utils/general.css -o ./dist/utils-general.min.css",
     "css:utils:media": "postcss src/utils/media.css -o ./dist/utils-media.min.css",
     "css:utils:normalize": "postcss src/utils/normalize.css -o ./dist/utils-normalize.min.css",
-    "css:utils:rules": "postcss src/utils/rules.css -o ./dist/utils-rules.min.css"
+    "css:semantic": "postcss src/semantic-defaults.css -o ./dist/semantic-defaults.min.css"
   },
   "devDependencies": {
     "@types/bun": "^1.3.10",
