@@ -32,6 +32,8 @@
   --line-low-contrast: var(--line-pink-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-pink-1); /* High-contrast text (-12) */
   --line-light: var(--line-pink-12); /* Light text */
+  --line-white: var(--line-pink-1); /* White text */
+  --line-black: var(--line-pink-12); /* Black text */
   --line-dark: var(--line-pink-1); /* Dark text */
   --line-solid-text: var(--line-pink-contrast); /* Solid background text */
 }
