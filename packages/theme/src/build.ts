@@ -227,7 +227,11 @@ async function processEntry(
 }
 
 /**
- * Run tasks with a concurrency limit.
+ * Run tasks with a concurrency limit using a work-stealing pattern.
+ *
+ * Thread safety: `index++` is safe here because JS is single-threaded.
+ * Each worker reads and increments `index` synchronously before the `await`,
+ * so no two workers can claim the same task index.
  */
 async function runWithConcurrency<T>(
   tasks: (() => Promise<T>)[],
@@ -292,6 +296,7 @@ async function main(): Promise<void> {
 
   console.info(`Processing ${entries.length} CSS entries...\n`);
 
+  // Safe to mutate: each task runs sequentially within its worker (single-threaded).
   let failed = 0;
   const tasks = entries.map((entry) => async () => {
     try {
