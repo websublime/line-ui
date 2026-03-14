@@ -112,7 +112,6 @@ const EXCLUDED_BASENAMES = new Set(['mixins.css', 'style.css', 'rules.css']);
  *   src/tokens.css                -> tokens.min.css
  *   src/semantic-defaults.css     -> semantic-defaults.min.css
  *   src/aliases.css               -> aliases.min.css
- *   src/vita.css                  -> vita.min.css
  *   src/line.css                  -> line.min.css
  */
 function computeOutFile(srcPath: string): string {
@@ -181,7 +180,6 @@ async function discoverEntries(): Promise<EntryPoint[]> {
     'tokens.css',
     'semantic-defaults.css',
     'aliases.css',
-    'vita.css',
     'line.css',
   ];
 
