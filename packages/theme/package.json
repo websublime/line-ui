@@ -3,7 +3,7 @@
   "version": "0.6.0",
   "description": "Base theme for Vitamin",
   "type": "module",
-  "style": "dist/vita.min.css",
+  "style": "dist/line.min.css",
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && bun run src/build.ts",
