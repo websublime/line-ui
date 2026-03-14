@@ -29,6 +29,8 @@
   --line-solid-hover: var(--line-cyan-3); /* Hovered solid backgrounds (-10) */
   --line-low-contrast: var(--line-cyan-2); /* Low-contrast text (-11) */
   --line-high-contrast: var(--line-cyan-1); /* High-contrast text (-12) */
+  --line-light: var(--line-cyan-12); /* Light text */
+  --line-dark: var(--line-cyan-1); /* Dark text */
   --line-solid-text: var(--line-cyan-contrast); /* Solid background text */
 }
 
