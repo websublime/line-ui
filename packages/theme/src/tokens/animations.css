@@ -2,7 +2,7 @@
    animations.css — line://ui Animation Tokens
 
    Full 1:1 Open Props match — 23 animation shorthand tokens
-   + 18 @keyframes (with dark mode variants for bloom animations).
+   + 23 @keyframes (with dark mode variants for bloom animations).
 
    Source reference: open-props/src/props.animations.css
    ═══════════════════════════════════════════════════════════ */
@@ -46,7 +46,7 @@
   --line-animation-pulse: pulse 2s var(--line-ease-out-3) infinite;
 }
 
-/* ── @keyframes (18) ── */
+/* ── @keyframes (23) ── */
 
 @keyframes fade-in {
   to {
