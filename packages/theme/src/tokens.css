@@ -18,4 +18,5 @@
 @import "./tokens/durations.css";
 @import "./tokens/opacity.css";
 @import "./tokens/focus.css";
+@import "./tokens/animations.css";
 @import "./tokens/colors-absolute.css";

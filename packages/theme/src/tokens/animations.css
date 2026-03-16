@@ -1,0 +1,292 @@
+/* ═══════════════════════════════════════════════════════════
+   animations.css — line://ui Animation Tokens
+
+   Full 1:1 Open Props match — 23 animation shorthand tokens
+   + 18 @keyframes (with dark mode variants for bloom animations).
+
+   Source reference: open-props/src/props.animations.css
+   ═══════════════════════════════════════════════════════════ */
+
+/* ── Animation Shorthand Tokens (23) ── */
+
+:where(html) {
+  /* Fade */
+  --line-animation-fade-in: fade-in 0.5s var(--line-ease-3);
+  --line-animation-fade-in-bloom: fade-in-bloom 2s var(--line-ease-3);
+  --line-animation-fade-out: fade-out 0.5s var(--line-ease-3);
+  --line-animation-fade-out-bloom: fade-out-bloom 2s var(--line-ease-3);
+
+  /* Scale */
+  --line-animation-scale-up: scale-up 0.5s var(--line-ease-3);
+  --line-animation-scale-down: scale-down 0.5s var(--line-ease-3);
+
+  /* Slide Out */
+  --line-animation-slide-out-up: slide-out-up 0.5s var(--line-ease-3);
+  --line-animation-slide-out-down: slide-out-down 0.5s var(--line-ease-3);
+  --line-animation-slide-out-right: slide-out-right 0.5s var(--line-ease-3);
+  --line-animation-slide-out-left: slide-out-left 0.5s var(--line-ease-3);
+
+  /* Slide In */
+  --line-animation-slide-in-up: slide-in-up 0.5s var(--line-ease-3);
+  --line-animation-slide-in-down: slide-in-down 0.5s var(--line-ease-3);
+  --line-animation-slide-in-right: slide-in-right 0.5s var(--line-ease-3);
+  --line-animation-slide-in-left: slide-in-left 0.5s var(--line-ease-3);
+
+  /* Shake */
+  --line-animation-shake-x: shake-x 0.75s var(--line-ease-out-5);
+  --line-animation-shake-y: shake-y 0.75s var(--line-ease-out-5);
+  --line-animation-shake-z: shake-z 1s var(--line-ease-in-out-3);
+
+  /* Continuous */
+  --line-animation-spin: spin 2s linear infinite;
+  --line-animation-ping: ping 5s var(--line-ease-out-3) infinite;
+  --line-animation-blink: blink 1s var(--line-ease-out-3) infinite;
+  --line-animation-float: float 3s var(--line-ease-in-out-3) infinite;
+  --line-animation-bounce: bounce 2s var(--line-ease-squish-2) infinite;
+  --line-animation-pulse: pulse 2s var(--line-ease-out-3) infinite;
+}
+
+/* ── @keyframes (18) ── */
+
+@keyframes fade-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-in-bloom {
+  0% {
+    opacity: 0;
+    filter: brightness(1) blur(20px);
+  }
+  10% {
+    opacity: 1;
+    filter: brightness(2) blur(10px);
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-out-bloom {
+  100% {
+    opacity: 0;
+    filter: brightness(1) blur(20px);
+  }
+  10% {
+    opacity: 1;
+    filter: brightness(2) blur(10px);
+  }
+  0% {
+    opacity: 1;
+    filter: brightness(1) blur(0);
+  }
+}
+
+@keyframes scale-up {
+  to {
+    transform: scale(1.25);
+  }
+}
+
+@keyframes scale-down {
+  to {
+    transform: scale(0.75);
+  }
+}
+
+@keyframes slide-out-up {
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slide-out-down {
+  to {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes slide-out-right {
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes slide-out-left {
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-in-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes slide-in-down {
+  from {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes slide-in-left {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes shake-x {
+  0%,
+  100% {
+    transform: translateX(0%);
+  }
+  20% {
+    transform: translateX(-5%);
+  }
+  40% {
+    transform: translateX(5%);
+  }
+  60% {
+    transform: translateX(-5%);
+  }
+  80% {
+    transform: translateX(5%);
+  }
+}
+
+@keyframes shake-y {
+  0%,
+  100% {
+    transform: translateY(0%);
+  }
+  20% {
+    transform: translateY(-5%);
+  }
+  40% {
+    transform: translateY(5%);
+  }
+  60% {
+    transform: translateY(-5%);
+  }
+  80% {
+    transform: translateY(5%);
+  }
+}
+
+@keyframes shake-z {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-2deg);
+  }
+  40% {
+    transform: rotate(2deg);
+  }
+  60% {
+    transform: rotate(-2deg);
+  }
+  80% {
+    transform: rotate(2deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes ping {
+  90%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes float {
+  50% {
+    transform: translateY(-25%);
+  }
+}
+
+@keyframes bounce {
+  25% {
+    transform: translateY(-20%);
+  }
+  40% {
+    transform: translateY(-3%);
+  }
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  50% {
+    transform: scale(0.9, 0.9);
+  }
+}
+
+/* ── Dark Mode Bloom Variants ── */
+
+@media (prefers-color-scheme: dark) {
+  @keyframes fade-in-bloom {
+    0% {
+      opacity: 0;
+      filter: brightness(1) blur(20px);
+    }
+    10% {
+      opacity: 1;
+      filter: brightness(0.5) blur(10px);
+    }
+    100% {
+      opacity: 1;
+      filter: brightness(1) blur(0);
+    }
+  }
+
+  @keyframes fade-out-bloom {
+    100% {
+      opacity: 0;
+      filter: brightness(1) blur(20px);
+    }
+    10% {
+      opacity: 1;
+      filter: brightness(0.5) blur(10px);
+    }
+    0% {
+      opacity: 1;
+      filter: brightness(1) blur(0);
+    }
+  }
+}
