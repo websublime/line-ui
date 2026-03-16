@@ -1,0 +1,20 @@
+/* ═══════════════════════════════════════════════════════════
+   highlights.css — line://ui Highlight Tokens
+
+   Highlight tokens (2) + composite (1).
+
+   Full 1:1 Open Props match (3 tokens).
+   ═══════════════════════════════════════════════════════════ */
+
+:where(html) {
+  /* ── Highlight ── */
+
+  --line-highlight-size: 10px;
+  --line-highlight-color: hsl(0 0% 0% / 20%);
+
+  --line-highlight: 0 0 0 var(--line-highlight-size) var(--line-highlight-color);
+
+  @media (--OSdark) {
+    --line-highlight-color: hsl(0 0% 100% / 20%);
+  }
+}
