@@ -1,8 +1,8 @@
 @define-mixin font-size $size {
-  font-size: var(--font-size-$(size));
+  font-size: var(--line-font-size-$(size));
 }
 
 @define-mixin font-weight $weight {
-  font-weight: var(--font-weight-$(weight));
+  font-weight: var(--line-font-weight-$(weight));
 }
 
