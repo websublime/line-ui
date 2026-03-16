@@ -281,10 +281,10 @@ html {
   }
 
   &-tagline {
-    font-size: var(--font-size-fluid-1, clamp(1rem, 4vw, 1.5rem));
+    font-size: var(--line-font-size-fluid-1);
     color: var(--line-low-contrast);
     max-width: 40ch;
-    line-height: var(--font-lineheight-4, 1.5);
+    line-height: var(--line-font-lineheight-4);
   }
 
   &-meta {
@@ -292,9 +292,9 @@ html {
     gap: 1.5rem;
     flex-wrap: wrap;
     justify-content: center;
-    font-size: var(--font-size-1, 0.75rem);
+    font-size: var(--line-font-size-1);
     color: var(--line-solid-background);
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
   }
 }
 
@@ -335,7 +335,7 @@ html.light .wordmark-for-light {
 }
 
 .ui-container {
-  padding: var(--size-3, 1rem);
+  padding: var(--line-size-3);
 }
 
 .showcase-main {
@@ -360,16 +360,16 @@ html.light .wordmark-for-light {
   margin-bottom: 2rem;
 
   & h2 {
-    font-size: var(--font-size-fluid-2, clamp(1.5rem, 6vw, 2.5rem));
+    font-size: var(--line-font-size-fluid-2);
     color: var(--line-high-contrast);
-    font-weight: var(--font-weight-7, 700);
+    font-weight: var(--line-font-weight-7);
     margin-bottom: 0.5rem;
     max-inline-size: none;
   }
 
   & p {
     color: var(--line-low-contrast);
-    font-size: var(--font-size-2, 1rem);
+    font-size: var(--line-font-size-2);
     max-inline-size: 60ch;
   }
 }
@@ -378,20 +378,20 @@ html.light .wordmark-for-light {
   margin-bottom: 2.5rem;
 
   & h3 {
-    font-size: var(--font-size-4, 1.25rem);
+    font-size: var(--line-font-size-4);
     color: var(--line-high-contrast);
     margin-bottom: 1rem;
-    font-weight: var(--font-weight-6, 600);
+    font-weight: var(--line-font-weight-6);
   }
 }
 
 .showcase-label {
-  font-size: var(--font-size-0, 0.5rem);
-  font-family: var(--font-mono);
+  font-size: var(--line-font-size-0);
+  font-family: var(--line-font-mono);
   color: var(--line-solid-background);
   margin-bottom: 0.5rem;
   text-transform: uppercase;
-  letter-spacing: var(--font-letterspacing-3, 0.075em);
+  letter-spacing: var(--line-font-letterspacing-3);
 }
 
 /* --- Color scales grid --- */
@@ -399,15 +399,15 @@ html.light .wordmark-for-light {
   &-container {
     display: grid;
     grid-template-columns: repeat(14, minmax(0, 1fr));
-    gap: var(--size-2, 0.5rem);
-    margin-bottom: var(--size-4, 1.25rem);
+    gap: var(--line-size-2);
+    margin-bottom: var(--line-size-4);
   }
 
   &-square {
-    height: var(--size-7, 2rem);
-    width: var(--size-7, 2rem);
+    height: var(--line-size-7);
+    width: var(--line-size-7);
     display: flex;
-    padding: var(--size-2, 0.5rem);
+    padding: var(--line-size-2);
     align-items: center;
     justify-content: center;
     border-radius: var(--line-radius-2);
@@ -427,7 +427,7 @@ html.light .wordmark-for-light {
 
   & .scale-label {
     font-size: 0.6875rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     color: var(--line-low-contrast);
     text-align: right;
     padding-right: 0.5rem;
@@ -446,8 +446,8 @@ html.light .wordmark-for-light {
       align-items: center;
       justify-content: center;
       font-size: 0.625rem;
-      font-family: var(--font-mono);
-      font-weight: var(--font-weight-7, 700);
+      font-family: var(--line-font-mono);
+      font-weight: var(--line-font-weight-7);
       color: var(--line-high-contrast);
       background-color: hsl(0 0% 0% / 0.25);
       border-radius: 3px;
@@ -460,7 +460,7 @@ html.light .wordmark-for-light {
   grid-template-columns: repeat(4, minmax(0, 1fr));
 
   div {
-    height: var(--size-7, 2rem);
+    height: var(--line-size-7);
     outline-color: var(--line-ui-border);
     outline-style: solid;
     outline-width: 1px;
@@ -487,7 +487,7 @@ html.light .wordmark-for-light {
 
   div {
     display: flex;
-    height: var(--size-8, 3rem);
+    height: var(--line-size-8);
     justify-content: center;
     align-items: center;
     outline-style: solid;
@@ -512,7 +512,7 @@ html.light .wordmark-for-light {
   border-radius: var(--line-radius-2);
   outline: 1px solid var(--line-subtle-border);
   font-size: 0.6875rem;
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   text-align: center;
   word-break: break-all;
   transition: all 0.15s ease;
@@ -529,7 +529,7 @@ html.light .wordmark-for-light {
   padding: 0.75rem 0.5rem;
   border-radius: var(--line-radius-2);
   font-size: 0.625rem;
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   text-align: center;
   outline: 1px solid var(--line-subtle-border);
   transition: all 0.15s ease;
@@ -551,7 +551,7 @@ html.light .wordmark-for-light {
     flex-shrink: 0;
     width: 14ch;
     font-size: 0.6875rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     color: var(--line-solid-background);
   }
 
@@ -567,16 +567,16 @@ html.light .wordmark-for-light {
   margin-bottom: 1rem;
 
   & .ff-name {
-    font-size: var(--font-size-0, 0.5rem);
-    font-family: var(--font-mono);
+    font-size: var(--line-font-size-0);
+    font-family: var(--line-font-mono);
     color: var(--line-solid-background);
     text-transform: uppercase;
-    letter-spacing: var(--font-letterspacing-3, 0.075em);
+    letter-spacing: var(--line-font-letterspacing-3);
     margin-bottom: 0.75rem;
   }
 
   & .ff-sample {
-    font-size: var(--font-size-5, 1.5rem);
+    font-size: var(--line-font-size-5);
     color: var(--line-high-contrast);
   }
 }
@@ -592,7 +592,7 @@ html.light .wordmark-for-light {
     flex-shrink: 0;
     width: 16ch;
     font-size: 0.6875rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     color: var(--line-solid-background);
     text-align: right;
   }
@@ -607,7 +607,7 @@ html.light .wordmark-for-light {
 
   & .size-value {
     font-size: 0.625rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     color: var(--line-low-contrast);
     flex-shrink: 0;
   }
@@ -628,7 +628,7 @@ html.light .wordmark-for-light {
   border-radius: var(--line-radius-2);
   background-color: var(--line-subtle-background);
   font-size: 0.75rem;
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   color: var(--line-low-contrast);
 }
 
@@ -643,7 +643,7 @@ html.light .wordmark-for-light {
   padding: 0.75rem 1.5rem;
   border-radius: var(--line-radius-2);
   font-size: 0.875rem;
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   cursor: pointer;
   text-align: center;
   user-select: none;
@@ -676,7 +676,7 @@ html.light .wordmark-for-light {
   border-radius: var(--line-radius-2);
   cursor: pointer;
   text-align: center;
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   font-size: 0.8125rem;
 
   & .ripple-circle {
@@ -707,10 +707,10 @@ html.light .wordmark-for-light {
 
   & .spinner-label {
     font-size: 0.625rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     color: var(--line-low-contrast);
     text-transform: uppercase;
-    letter-spacing: var(--font-letterspacing-2, 0.05em);
+    letter-spacing: var(--line-font-letterspacing-2);
   }
 }
 
@@ -765,9 +765,9 @@ html.light .wordmark-for-light {
 
   & .theme-panel-title {
     font-size: 0.6875rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     text-transform: uppercase;
-    letter-spacing: var(--font-letterspacing-2, 0.05em);
+    letter-spacing: var(--line-font-letterspacing-2);
     margin-bottom: 1rem;
     color: var(--line-high-contrast);
   }
@@ -782,7 +782,7 @@ html.light .wordmark-for-light {
     padding: 0.5rem 1rem;
     border-radius: var(--line-radius-2);
     font-size: 0.75rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     cursor: pointer;
   }
 }
@@ -792,7 +792,7 @@ html.light .wordmark-for-light {
   padding: 1.5rem;
   border-radius: var(--line-radius-2);
   margin-bottom: 1rem;
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   font-size: 0.8125rem;
 }
 
@@ -808,11 +808,11 @@ html.light .wordmark-for-light {
   background-color: var(--line-subtle-background);
 
   & h4 {
-    font-size: var(--font-size-1, 0.75rem);
-    font-family: var(--font-mono);
+    font-size: var(--line-font-size-1);
+    font-family: var(--line-font-mono);
     color: var(--line-solid-background);
     text-transform: uppercase;
-    letter-spacing: var(--font-letterspacing-2, 0.05em);
+    letter-spacing: var(--line-font-letterspacing-2);
     margin-bottom: 1rem;
     max-inline-size: none;
   }
@@ -820,32 +820,32 @@ html.light .wordmark-for-light {
 
 .showcase-normalize-headings {
   & h1 {
-    font-size: var(--font-size-8, 3rem);
+    font-size: var(--line-font-size-8);
     margin-bottom: 0.5rem;
     max-inline-size: none;
   }
   & h2 {
-    font-size: var(--font-size-6, 2rem);
+    font-size: var(--line-font-size-6);
     margin-bottom: 0.5rem;
     max-inline-size: none;
   }
   & h3 {
-    font-size: var(--font-size-5, 1.5rem);
+    font-size: var(--line-font-size-5);
     margin-bottom: 0.5rem;
   }
   & h4 {
-    font-size: var(--font-size-4, 1.25rem);
+    font-size: var(--line-font-size-4);
     margin-bottom: 0.5rem;
     text-transform: none;
     letter-spacing: normal;
     max-inline-size: none;
   }
   & h5 {
-    font-size: var(--font-size-3, 1.1rem);
+    font-size: var(--line-font-size-3);
     margin-bottom: 0.5rem;
   }
   & h6 {
-    font-size: var(--font-size-2, 1rem);
+    font-size: var(--line-font-size-2);
     margin-bottom: 0.5rem;
   }
 }
@@ -875,7 +875,7 @@ html.light .wordmark-for-light {
   & button {
     padding: 0.5rem 1rem;
     border-radius: var(--line-radius-2);
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     cursor: pointer;
   }
 }
@@ -894,12 +894,12 @@ html.light .wordmark-for-light {
   }
 
   & th {
-    font-family: var(--font-mono);
-    font-weight: var(--font-weight-6, 600);
+    font-family: var(--line-font-mono);
+    font-weight: var(--line-font-weight-6);
     color: var(--line-high-contrast);
     font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: var(--font-letterspacing-2, 0.05em);
+    letter-spacing: var(--line-font-letterspacing-2);
   }
 
   & td {
@@ -907,7 +907,7 @@ html.light .wordmark-for-light {
   }
 
   & td:first-child {
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     font-size: 0.75rem;
     color: var(--line-solid-background);
   }
@@ -928,10 +928,10 @@ html.light .wordmark-for-light {
 
   & .misc-title {
     font-size: 0.625rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
     color: var(--line-solid-background);
     text-transform: uppercase;
-    letter-spacing: var(--font-letterspacing-2, 0.05em);
+    letter-spacing: var(--line-font-letterspacing-2);
     margin-bottom: 0.75rem;
   }
 }
@@ -955,7 +955,7 @@ html.light .wordmark-for-light {
     justify-content: center;
     border-radius: var(--line-radius-2);
     font-size: 0.75rem;
-    font-family: var(--font-mono);
+    font-family: var(--line-font-mono);
   }
 }
 
@@ -965,16 +965,16 @@ html.light .wordmark-for-light {
   border-radius: var(--line-radius-2);
   background-color: var(--line-subtle-background);
   color: var(--line-high-contrast);
-  line-height: var(--font-lineheight-5, 1.75);
+  line-height: var(--line-font-lineheight-5);
 }
 
 /* --- Footer --- */
 .showcase-footer {
   text-align: center;
   padding: 3rem 1.5rem;
-  font-size: var(--font-size-1, 0.75rem);
+  font-size: var(--line-font-size-1);
   color: var(--line-solid-background);
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   border-top: 1px solid var(--line-subtle-border);
 }
 
@@ -989,7 +989,7 @@ html.light .wordmark-for-light {
   padding: 1rem;
   border-radius: var(--line-radius-2);
   text-align: center;
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   font-size: 0.75rem;
   cursor: pointer;
   user-select: none;
@@ -1009,7 +1009,7 @@ html.light .wordmark-for-light {
   border: 1px solid var(--line-ui-border);
   background-color: var(--line-ui-background);
   color: var(--line-high-contrast);
-  font-family: var(--font-mono);
+  font-family: var(--line-font-mono);
   font-size: 0.8125rem;
   text-decoration: none;
   cursor: pointer;
