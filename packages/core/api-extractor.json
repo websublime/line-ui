@@ -8,12 +8,12 @@
   },
   "apiReport": {
     "enabled": true,
-    "reportFileName": "vitamin-core.api.md",
+    "reportFileName": "line-core.api.md",
     "reportFolder": "./dist/docs/"
   },
   "docModel": {
     "enabled": true,
-    "apiJsonFilePath": "./dist/vitamin-core.api.json"
+    "apiJsonFilePath": "./dist/line-core.api.json"
   },
   "dtsRollup": {
     "enabled": true,
