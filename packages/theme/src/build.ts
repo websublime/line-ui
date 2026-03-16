@@ -16,6 +16,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, relative, resolve } from 'node:path';
 import { Glob } from 'bun';
 import postcss from 'postcss';
+import { createPlugins } from './postcss-pipeline';
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -29,55 +30,11 @@ const DIST = join(ROOT, 'dist');
 const CONCURRENCY = 16;
 
 // ---------------------------------------------------------------------------
-// PostCSS plugin chain (mirrors postcss.config.mjs — keep both in sync)
+// PostCSS processor (plugin chain defined in postcss-pipeline.ts)
 // ---------------------------------------------------------------------------
 
 async function createProcessor(): Promise<postcss.Processor> {
-  const [
-    { default: postcssImport },
-    { default: postcssMixins },
-    { default: postcssSimpleVars },
-    { default: postcssNested },
-    { default: postcssPresetEnv },
-    { default: customMedia },
-    { default: cssNano },
-  ] = await Promise.all([
-    import('postcss-import'),
-    import('postcss-mixins'),
-    import('postcss-simple-vars'),
-    import('postcss-nested'),
-    import('postcss-preset-env'),
-    import('postcss-custom-media'),
-    import('cssnano'),
-  ]);
-
-  return postcss([
-    postcssImport(),
-    postcssMixins(),
-    postcssSimpleVars(),
-    postcssNested(),
-    (postcssPresetEnv as any)({
-      autoprefixer: false,
-      features: {
-        'color-functional-notation': false,
-        'custom-media-queries': { preserve: true },
-        'custom-properties': false,
-        'double-position-gradients': false,
-        'focus-visible-pseudo-class': false,
-        'focus-within-pseudo-class': false,
-        'gap-properties': false,
-        'logical-properties-and-values': false,
-        'not-pseudo-class': false,
-        'place-properties': false,
-        'prefers-color-scheme-query': false,
-      },
-      stage: 0,
-    }),
-    customMedia(),
-    (cssNano as any)({
-      preset: 'default',
-    }),
-  ]);
+  return postcss(await createPlugins());
 }
 
 // ---------------------------------------------------------------------------
