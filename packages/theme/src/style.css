@@ -625,7 +625,7 @@ html.light .wordmark-for-light {
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--line-radius-3);
+  border-radius: var(--line-radius-2);
   background-color: var(--line-subtle-background);
   font-size: 0.75rem;
   font-family: var(--font-mono);
@@ -759,7 +759,7 @@ html.light .wordmark-for-light {
 }
 
 .showcase-theme-panel {
-  border-radius: var(--line-radius-3);
+  border-radius: var(--line-radius-2);
   padding: 1.5rem;
   outline: 1px solid var(--line-subtle-border);
 
@@ -790,7 +790,7 @@ html.light .wordmark-for-light {
 /* --- Cross-palette combos --- */
 .showcase-combo-card {
   padding: 1.5rem;
-  border-radius: var(--line-radius-3);
+  border-radius: var(--line-radius-2);
   margin-bottom: 1rem;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
