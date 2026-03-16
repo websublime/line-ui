@@ -99,7 +99,6 @@
 }
 
 :where(.line-is-grass-ui-background) {
-  transition: colors ease-in-out 150ms;
   background-color: var(--line-grass-3);
 
   &:hover {
@@ -108,7 +107,6 @@
 }
 
 :is(.dark) :where(.line-is-grass-ui-background) {
-  transition: colors ease-in-out 150ms;
   background-color: var(--line-grass-10);
 
   &:hover {
@@ -148,11 +146,11 @@
   background-color: var(--line-grass-6);
 }
 
-:where(.line-is-grass-ui-hover-background) {
+:where(.line-is-grass-ui-border-hover-background) {
   background-color: var(--line-grass-8);
 }
 
-:is(.dark) :where(.line-is-grass-ui-hover-background) {
+:is(.dark) :where(.line-is-grass-ui-border-hover-background) {
   background-color: var(--line-grass-5);
 }
 
@@ -189,7 +187,6 @@
 }
 
 :where(.line-is-grass-border) {
-  transition: colors ease-in-out 150ms;
   outline-color: var(--line-grass-7);
   border-color: var(--line-grass-7);
 
@@ -200,7 +197,6 @@
 }
 
 :is(.dark) :where(.line-is-grass-border) {
-  transition: colors ease-in-out 150ms;
   outline-color: var(--line-grass-6);
   border-color: var(--line-grass-6);
 

@@ -99,7 +99,6 @@
 }
 
 :where(.line-is-plum-ui-background) {
-  transition: colors ease-in-out 150ms;
   background-color: var(--line-plum-3);
 
   &:hover {
@@ -108,7 +107,6 @@
 }
 
 :is(.dark) :where(.line-is-plum-ui-background) {
-  transition: colors ease-in-out 150ms;
   background-color: var(--line-plum-10);
 
   &:hover {
@@ -148,11 +146,11 @@
   background-color: var(--line-plum-6);
 }
 
-:where(.line-is-plum-ui-hover-background) {
+:where(.line-is-plum-ui-border-hover-background) {
   background-color: var(--line-plum-8);
 }
 
-:is(.dark) :where(.line-is-plum-ui-hover-background) {
+:is(.dark) :where(.line-is-plum-ui-border-hover-background) {
   background-color: var(--line-plum-5);
 }
 
@@ -189,7 +187,6 @@
 }
 
 :where(.line-is-plum-border) {
-  transition: colors ease-in-out 150ms;
   outline-color: var(--line-plum-7);
   border-color: var(--line-plum-7);
 
@@ -200,7 +197,6 @@
 }
 
 :is(.dark) :where(.line-is-plum-border) {
-  transition: colors ease-in-out 150ms;
   outline-color: var(--line-plum-6);
   border-color: var(--line-plum-6);
 

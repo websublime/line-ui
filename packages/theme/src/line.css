@@ -1,7 +1,7 @@
 @import "./tokens.css";
 @import "./semantic-defaults.css";
 @import "./utils/normalize.css";
-@import "./utils/general.css";
+@import "./utils/utilities.css";
 
 @import "./themes/gray-theme.css";
 @import "./themes/mauve-theme.css";
