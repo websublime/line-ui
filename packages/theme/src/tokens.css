@@ -21,4 +21,5 @@
 @import "./tokens/animations.css";
 @import "./tokens/gradients.css";
 @import "./tokens/masks.css";
+@import "./tokens/layouts.css";
 @import "./tokens/colors-absolute.css";
