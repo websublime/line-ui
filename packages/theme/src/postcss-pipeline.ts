@@ -45,8 +45,11 @@ export async function createPlugins(): Promise<AcceptedPlugin[]> {
     postcssMixins(),
     postcssSimpleVars(),
     postcssNested(),
-    (postcssPresetEnv as any)({
-      autoprefixer: false,
+    postcssPresetEnv({
+      // The shipped types for postcss-preset-env@9 only accept autoprefixer.Options,
+      // but the runtime also accepts `false` to disable autoprefixer entirely.
+      // Use a targeted assertion instead of casting the whole call to `any`.
+      autoprefixer: false as never,
       features: {
         'color-functional-notation': false,
         'custom-media-queries': { preserve: true },
@@ -63,7 +66,7 @@ export async function createPlugins(): Promise<AcceptedPlugin[]> {
       stage: 0
     }),
     customMedia(),
-    (cssNano as any)({
+    cssNano({
       preset: 'default'
     })
   ];
