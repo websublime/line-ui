@@ -99,7 +99,6 @@
 }
 
 :where(.line-is-amber-ui-background) {
-  transition: colors ease-in-out 150ms;
   background-color: var(--line-amber-3);
 
   &:hover {
@@ -108,7 +107,6 @@
 }
 
 :is(.dark) :where(.line-is-amber-ui-background) {
-  transition: colors ease-in-out 150ms;
   background-color: var(--line-amber-10);
 
   &:hover {
@@ -148,11 +146,11 @@
   background-color: var(--line-amber-6);
 }
 
-:where(.line-is-amber-ui-hover-background) {
+:where(.line-is-amber-ui-border-hover-background) {
   background-color: var(--line-amber-8);
 }
 
-:is(.dark) :where(.line-is-amber-ui-hover-background) {
+:is(.dark) :where(.line-is-amber-ui-border-hover-background) {
   background-color: var(--line-amber-5);
 }
 
@@ -189,7 +187,6 @@
 }
 
 :where(.line-is-amber-border) {
-  transition: colors ease-in-out 150ms;
   outline-color: var(--line-amber-7);
   border-color: var(--line-amber-7);
 
@@ -200,7 +197,6 @@
 }
 
 :is(.dark) :where(.line-is-amber-border) {
-  transition: colors ease-in-out 150ms;
   outline-color: var(--line-amber-6);
   border-color: var(--line-amber-6);
 
