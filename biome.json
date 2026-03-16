@@ -27,7 +27,8 @@
         "noUnusedImports": "error",
         "noUnusedVariables": "error",
         "noUnknownMediaFeatureName": "off",
-        "noUnknownPseudoClass": "off"
+        "noUnknownPseudoClass": "off",
+        "noInvalidDirectionInLinearGradient": "off"
       },
       "style": {
         "noParameterAssign": "error",
