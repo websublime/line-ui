@@ -11,7 +11,7 @@ const metadata: ComponentMetadata = {
   link: 'https://websublime.dev',
   name: 'Card Component',
   qa: 'card-component',
-  scope: '@websublime/vitamin-core/card',
+  scope: '@websublime/line-core/card',
   version: '0.0.1'
 };
 
@@ -20,7 +20,7 @@ const headMetadata: ComponentMetadata = {
   link: 'https://websublime.dev',
   name: 'Head Component',
   qa: 'head-component',
-  scope: '@websublime/vitamin-core/head',
+  scope: '@websublime/line-core/head',
   version: '0.0.1'
 };
 

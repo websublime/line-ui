@@ -1,7 +1,7 @@
 {
-  "name": "@websublime/vitamin-theme",
+  "name": "@websublime/line-theme",
   "version": "0.6.0",
-  "description": "Base theme for Vitamin",
+  "description": "Base theme for line://ui",
   "type": "module",
   "style": "dist/line.min.css",
   "scripts": {
