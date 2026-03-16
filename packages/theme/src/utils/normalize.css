@@ -1,6 +1,10 @@
 @import "./media.css";
 
-*, ::before, ::after { box-sizing: border-box; }
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
 
 :where(:not(dialog)) {
   margin: 0;
@@ -29,7 +33,7 @@
     transition: outline-offset 145ms var(--ease-2);
   }
   :where(:not(:active):focus-visible) {
-    transition-duration: .25s;
+    transition-duration: 0.25s;
   }
 }
 
@@ -57,9 +61,15 @@
   max-inline-size: var(--size-header-2);
 }
 
-:where(h3) { font-size: var(--font-size-5) }
-:where(h4) { font-size: var(--font-size-4) }
-:where(h5) { font-size: var(--font-size-3) }
+:where(h3) {
+  font-size: var(--font-size-5);
+}
+:where(h4) {
+  font-size: var(--font-size-4);
+}
+:where(h5) {
+  font-size: var(--font-size-3);
+}
 
 :where(h3, h4, h5, h6, dt) {
   max-inline-size: var(--size-header-3);
@@ -77,7 +87,16 @@
   }
 }
 
-:where(a[href], area, button, input:not([type="text"], [type="email"], [type="number"], [type="password"], [type=""], [type="tel"], [type="url"]), label[for], select, summary, [tabindex]:not([tabindex*="-"])) {
+:where(
+    a[href],
+    area,
+    button,
+    input:not([type="text"], [type="email"], [type="number"], [type="password"], [type=""], [type="tel"], [type="url"]),
+    label[for],
+    select,
+    summary,
+    [tabindex]:not([tabindex*="-"])
+  ) {
   cursor: pointer;
 }
 
@@ -116,7 +135,7 @@
 
 ::placeholder {
   color: var(--line-gray-7);
-  opacity: .75;
+  opacity: 0.75;
 }
 
 :where(input:not([type="range"]), textarea) {
@@ -126,14 +145,16 @@
 
 :where(select) {
   padding-inline: var(--size-relative-4) 0;
-  padding-block: .75ch;
+  padding-block: 0.75ch;
 }
 
-:where(textarea, select, input:not([type="button"],[type="submit"],[type="reset"])) {
+:where(textarea, select, input:not([type="button"], [type="submit"], [type="reset"])) {
   border-radius: var(--radius-2);
 }
 
-:where(textarea) { resize: block }
+:where(textarea) {
+  resize: block;
+}
 
 :where(input[type="checkbox"], input[type="radio"]) {
   block-size: var(--size-3);
@@ -144,8 +165,12 @@
   inline-size: var(--size-10);
 }
 
-:where(code, kbd, samp, pre) { font-family: var(--font-mono) }
-:where(:not(pre) > code, kbd) { white-space: nowrap }
+:where(code, kbd, samp, pre) {
+  font-family: var(--font-mono);
+}
+:where(:not(pre) > code, kbd) {
+  white-space: nowrap;
+}
 
 :where(pre) {
   white-space: pre;
@@ -172,18 +197,29 @@
   padding-inline: var(--size-1);
 }
 
-:where(ol, ul) { padding-inline-start: var(--size-8) }
-:where(li) { padding-inline-start: var(--size-2) }
-:where(li, dd, figcaption) { max-inline-size: var(--size-content-2) }
-:where(p) { max-inline-size: var(--size-content-3); text-wrap: pretty; }
-:where(dt, summary) { font-weight: var(--font-weight-7) }
+:where(ol, ul) {
+  padding-inline-start: var(--size-8);
+}
+:where(li) {
+  padding-inline-start: var(--size-2);
+}
+:where(li, dd, figcaption) {
+  max-inline-size: var(--size-content-2);
+}
+:where(p) {
+  max-inline-size: var(--size-content-3);
+  text-wrap: pretty;
+}
+:where(dt, summary) {
+  font-weight: var(--font-weight-7);
+}
 
 :where(dt:not(:first-of-type)) {
   margin-block-start: var(--size-5);
 }
 
 :where(small) {
-  font-size: max(.5em, var(--font-size-0));
+  font-size: max(0.5em, var(--font-size-0));
   max-inline-size: var(--size-content-1);
 }
 
@@ -263,7 +299,7 @@
 }
 
 :where(sup) {
-  font-size: .5em;
+  font-size: 0.5em;
 }
 
 :where(table) {
@@ -306,12 +342,12 @@
   text-wrap: pretty;
 }
 
-:where(td,th) {
+:where(td, th) {
   text-align: left;
   padding: var(--size-2);
 }
 
-:where(:is(td,th):not([align])) {
+:where(:is(td, th):not([align])) {
   text-align: center;
 }
 
