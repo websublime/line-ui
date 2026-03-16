@@ -46,7 +46,8 @@
             "allow": ["error", "info", "group"]
           }
         },
-        "noExplicitAny": "warn"
+        "noExplicitAny": "warn",
+        "noUnknownAtRules": "off"
       },
       "performance": {
         "noBarrelFile": "warn"
