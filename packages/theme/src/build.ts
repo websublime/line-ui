@@ -114,13 +114,7 @@ async function discoverEntries(): Promise<EntryPoint[]> {
   const entries: EntryPoint[] = [];
 
   // Directory-based entries
-  const dirPatterns = [
-    'colors/*.css',
-    'schemas/*.css',
-    'themes/*-theme.css',
-    'custom/*-custom.css',
-    'utils/*.css',
-  ];
+  const dirPatterns = ['colors/*.css', 'schemas/*.css', 'themes/*-theme.css', 'custom/*-custom.css', 'utils/*.css'];
 
   for (const pattern of dirPatterns) {
     const glob = new Glob(pattern);
@@ -133,12 +127,7 @@ async function discoverEntries(): Promise<EntryPoint[]> {
   }
 
   // Root-level entry files (only if they exist)
-  const rootEntries = [
-    'tokens.css',
-    'semantic-defaults.css',
-    'aliases.css',
-    'line.css',
-  ];
+  const rootEntries = ['tokens.css', 'semantic-defaults.css', 'aliases.css', 'reset.css', 'line.css'];
 
   for (const file of rootEntries) {
     const srcPath = join(SRC, file);
@@ -160,14 +149,11 @@ async function discoverEntries(): Promise<EntryPoint[]> {
 /**
  * Process a single CSS entry point through PostCSS.
  */
-async function processEntry(
-  processor: postcss.Processor,
-  entry: EntryPoint,
-): Promise<void> {
+async function processEntry(processor: postcss.Processor, entry: EntryPoint): Promise<void> {
   const css = readFileSync(entry.src, 'utf-8');
   const result = await processor.process(css, {
     from: entry.src,
-    to: join(DIST, entry.outFile),
+    to: join(DIST, entry.outFile)
   });
 
   const outPath = join(DIST, entry.outFile);
@@ -179,6 +165,7 @@ async function processEntry(
 
   // Log warnings
   for (const warning of result.warnings()) {
+    // biome-ignore lint/suspicious/noConsole: Build script needs console output
     console.warn(`  [warn] ${entry.outFile}: ${warning.text}`);
   }
 }
@@ -190,10 +177,7 @@ async function processEntry(
  * Each worker reads and increments `index` synchronously before the `await`,
  * so no two workers can claim the same task index.
  */
-async function runWithConcurrency<T>(
-  tasks: (() => Promise<T>)[],
-  limit: number,
-): Promise<T[]> {
+async function runWithConcurrency<T>(tasks: (() => Promise<T>)[], limit: number): Promise<T[]> {
   const results: T[] = [];
   let index = 0;
 
@@ -204,9 +188,7 @@ async function runWithConcurrency<T>(
     }
   }
 
-  const workers = Array.from({ length: Math.min(limit, tasks.length) }, () =>
-    worker(),
-  );
+  const workers = Array.from({ length: Math.min(limit, tasks.length) }, () => worker());
   await Promise.all(workers);
   return results;
 }
@@ -262,18 +244,14 @@ async function main(): Promise<void> {
     } catch (err) {
       failed++;
       console.error(`  FAILED: ${entry.outFile}`);
-      console.error(
-        `    ${err instanceof Error ? err.message : String(err)}`,
-      );
+      console.error(`    ${err instanceof Error ? err.message : String(err)}`);
     }
   });
 
   await runWithConcurrency(tasks, CONCURRENCY);
 
   const elapsed = ((performance.now() - startTime) / 1000).toFixed(2);
-  console.info(
-    `\n${entries.length - failed}/${entries.length} entries built in ${elapsed}s`,
-  );
+  console.info(`\n${entries.length - failed}/${entries.length} entries built in ${elapsed}s`);
 
   if (failed > 0) {
     console.error(`${failed} entry(ies) failed.`);

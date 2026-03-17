@@ -4,6 +4,13 @@
   "description": "Base theme for line://ui",
   "type": "module",
   "style": "dist/line.min.css",
+  "exports": {
+    ".": "./dist/line.min.css",
+    "./reset": "./dist/reset.min.css",
+    "./tokens": "./dist/tokens.min.css",
+    "./semantic-defaults": "./dist/semantic-defaults.min.css",
+    "./aliases": "./dist/aliases.min.css"
+  },
   "scripts": {
     "dev": "vite",
     "build": "rm -rf dist && bun run src/build.ts",
