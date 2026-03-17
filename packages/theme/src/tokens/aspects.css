@@ -1,7 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
    aspects.css — line://ui Aspect Ratio Tokens
 
-   Full 1:1 Open Props match — all 6 aspect ratio tokens.
+   6 aspect ratio tokens.
+
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {

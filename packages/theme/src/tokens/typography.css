@@ -1,16 +1,14 @@
 /* ═══════════════════════════════════════════════════════════
    typography.css — line://ui Typography Tokens
 
-   Font families, weights, line-heights, letter-spacings,
-   and font-sizes (static + fluid).
+   62 typography tokens: 19 families, 9 weights,
+   10 line-heights, 10 letter-spacings,
+   10 static + 4 fluid font-sizes.
 
-   Open Props 1:1 mapping (19 families, 9 weights, 7 line-heights,
-   8 letter-spacings, 10 static + 4 fluid font-sizes)
-   plus line:// extensions (3 extra line-heights, 2 extra
-   letter-spacings, renumbered font-size scale to 10 steps).
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Font Families (OP 19) ── */
+/* ── Font Families (19) ── */
 
 :where(html) {
   --line-font-system-ui: system-ui, sans-serif;
@@ -32,7 +30,7 @@
   --line-font-didone: Didot, Bodoni MT, Noto Serif Display, URW Palladio L, P052, Sylfaen, serif;
   --line-font-handwritten: Segoe Print, Bradley Hand, Chilanka, TSCu_Comic, casual, cursive;
 
-  /* Custom stacks — line:// defines its own sans/serif/mono (not OP aliases) */
+  /* Custom stacks — line:// defines its own sans/serif/mono */
   --line-font-sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
   --line-font-serif: ui-serif, serif;
   --line-font-mono:
@@ -40,7 +38,7 @@
     monospace;
 }
 
-/* ── Font Weights (OP 9) ── */
+/* ── Font Weights (9) ── */
 
 :where(html) {
   --line-font-weight-1: 100;
@@ -54,9 +52,8 @@
   --line-font-weight-9: 900;
 }
 
-/* ── Line Height (OP 7 + 3 line:// extensions = 10) ──
-   OP --font-lineheight-00..5 mapped to --line-font-lineheight-0..6.
-   Extensions: 7 (2.25), 8 (2.5), 9 (3). */
+/* ── Line Height (10) ──
+   Base scale 0..6, extensions: 7 (2.25), 8 (2.5), 9 (3). */
 
 :where(html) {
   --line-font-lineheight-0: 0.95;
@@ -71,7 +68,7 @@
   --line-font-lineheight-9: 3;
 }
 
-/* ── Letter Spacing (OP 8 + 2 line:// extensions = 10) ── */
+/* ── Letter Spacing (10) ── */
 
 :where(html) {
   --line-font-letterspacing-0: -0.05em;
@@ -86,7 +83,7 @@
   --line-font-letterspacing-9: 2em;
 }
 
-/* ── Font Size — Static (OP 10 renumbered to 0..9) ── */
+/* ── Font Size — Static (10, numbered 0..9) ── */
 
 :where(html) {
   --line-font-size-0: 0.5rem;
@@ -101,7 +98,7 @@
   --line-font-size-9: 3.5rem;
 }
 
-/* ── Font Size — Fluid (OP 4) ── */
+/* ── Font Size — Fluid (4) ── */
 
 :where(html) {
   --line-font-size-fluid-0: clamp(0.75rem, 2vw, 1rem);

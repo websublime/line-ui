@@ -1,12 +1,13 @@
 /* ═══════════════════════════════════════════════════════════
    easing.css — line://ui Easing Tokens
 
-   Full 1:1 Open Props match — all 81 easing tokens:
-   Standard (5), ease-in (5), ease-out (5), ease-in-out (5),
-   elastic-out (5), elastic-in (5), elastic-in-out (5),
-   step (5), elastic aliases (5), squish aliases (5),
-   spring (5, linear()), bounce (5, linear()),
+   81 easing tokens: standard (5), ease-in (5), ease-out (5),
+   ease-in-out (5), elastic-out (5), elastic-in (5),
+   elastic-in-out (5), step (5), elastic aliases (5),
+   squish aliases (5), spring (5, linear()), bounce (5, linear()),
    named curves (21: circ, cubic, expo, quad, quart, quint, sine).
+
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {

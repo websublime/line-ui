@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
    svg.css — line://ui SVG Squircle Tokens
 
-   SVG squircle tokens (3).
+   3 SVG squircle tokens.
 
-   Full 1:1 Open Props match (3 tokens).
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {

@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════════════════
    sizing.css — line://ui Sizing & Spacing Tokens
 
-   Rem sizes (16), px sizes (16), fluid sizes (10),
-   content widths (3), header widths (3), breakpoints (7),
-   relative/ch-based sizes (18).
+   74 sizing and spacing tokens: rem sizes (16), px sizes (16),
+   fluid sizes (10), content widths (3), header widths (3),
+   breakpoints (7), relative/ch-based sizes (18).
 
-   Full 1:1 Open Props match (74 tokens).
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Rem Sizes (OP 16) ── */
+/* ── Rem Sizes (16) ── */
 
 :where(html) {
   --line-size-000: -0.5rem;
@@ -30,7 +30,7 @@
   --line-size-15: 30rem;
 }
 
-/* ── Px Sizes (OP 16) ── */
+/* ── Px Sizes (16) ── */
 
 :where(html) {
   --line-size-px-000: -8px;
@@ -52,7 +52,7 @@
   --line-size-px-15: 480px;
 }
 
-/* ── Fluid Sizes (OP 10) ── */
+/* ── Fluid Sizes (10) ── */
 
 :where(html) {
   --line-size-fluid-1: clamp(0.5rem, 1vw, 1rem);
@@ -67,7 +67,7 @@
   --line-size-fluid-10: clamp(20rem, 40vw, 30rem);
 }
 
-/* ── Content Widths (OP 3) ── */
+/* ── Content Widths (3) ── */
 
 :where(html) {
   --line-size-content-1: 20ch;
@@ -75,7 +75,7 @@
   --line-size-content-3: 60ch;
 }
 
-/* ── Header Widths (OP 3) ── */
+/* ── Header Widths (3) ── */
 
 :where(html) {
   --line-size-header-1: 20ch;
@@ -83,7 +83,7 @@
   --line-size-header-3: 35ch;
 }
 
-/* ── Breakpoints (OP 7) ── */
+/* ── Breakpoints (7) ── */
 
 :where(html) {
   --line-size-xxs: 240px;
@@ -95,7 +95,7 @@
   --line-size-xxl: 1920px;
 }
 
-/* ── Relative / ch-based (OP 18) ── */
+/* ── Relative / ch-based (18) ── */
 
 :where(html) {
   --line-size-relative-000: -0.5ch;

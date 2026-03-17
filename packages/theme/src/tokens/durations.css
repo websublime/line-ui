@@ -1,11 +1,13 @@
 /* ═══════════════════════════════════════════════════════════
    durations.css — line://ui Duration / Timing Tokens
 
-   Open Props practical durations (7) + line:// semantic
-   extensions (5).
+   12 duration / timing tokens: practical durations (7),
+   semantic extensions (5).
+
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
-/* ── OP Practical Durations (7) ── */
+/* ── Practical Durations (7) ── */
 
 :where(html) {
   --line-duration-instant: 0ms;
