@@ -44,7 +44,7 @@ async function createProcessor(): Promise<postcss.Processor> {
 interface EntryPoint {
   /** Absolute path to the source CSS file. */
   src: string;
-  /** Output filename (e.g., "colors-amber.min.css"). */
+  /** Output filename (e.g., "colors/amber.min.css"). */
   outFile: string;
 }
 
