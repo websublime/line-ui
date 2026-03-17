@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════════════════════════
    animations.css — line://ui Animation Tokens
 
-   Full 1:1 Open Props match — 23 animation shorthand tokens
-   + 23 @keyframes (with dark mode variants for bloom animations).
+   23 animation shorthand tokens + 23 @keyframes
+   (with dark mode variants for bloom animations).
 
-   Source reference: open-props/src/props.animations.css
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 /* ── Animation Shorthand Tokens (23) ── */
