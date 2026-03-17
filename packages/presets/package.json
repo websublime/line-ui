@@ -1,0 +1,50 @@
+{
+  "name": "@websublime/line-presets",
+  "version": "0.1.0",
+  "description": "Default visual preset for line://ui components",
+  "type": "module",
+  "style": "dist/preset.min.css",
+  "exports": {
+    ".": "./dist/preset.min.css",
+    "./*": "./dist/*.min.css"
+  },
+  "scripts": {
+    "build": "postcss src/default/index.css -o dist/preset.min.css"
+  },
+  "peerDependencies": {
+    "@websublime/line-theme": "workspace:*"
+  },
+  "devDependencies": {
+    "cssnano": "^6.0.1",
+    "postcss": "^8.4.31",
+    "postcss-cli": "^11.0.0",
+    "postcss-import": "^15.1.0",
+    "postcss-nested": "^6.0.1"
+  },
+  "keywords": [
+    "presets",
+    "websublime",
+    "css",
+    "ui",
+    "web-components"
+  ],
+  "author": {
+    "email": "hello@miguelramos.dev",
+    "name": "miguelramos",
+    "url": "https://github.com/miguelramos"
+  },
+  "license": "ISC",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:websublime/vitamin.git",
+    "directory": "packages/presets"
+  },
+  "files": [
+    "dist/",
+    "./LICENSE.md",
+    "./README.md"
+  ]
+}
