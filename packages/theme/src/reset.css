@@ -1,0 +1,168 @@
+/**
+ * Consumer-side reset for slotted / light-DOM content inside line-* components.
+ *
+ * This file is OPTIONAL — consumers must explicitly import it.
+ * All selectors use :where() for zero specificity, so consumer styles
+ * always win without needing to increase specificity.
+ *
+ * Usage:
+ *   @import '@websublime/line-theme/reset';
+ *
+ * Or load the built file directly:
+ *   <link rel="stylesheet" href="@websublime/line-theme/dist/reset.min.css">
+ */
+
+/* ---------------------------------------------------------------------------
+ * 1. Global slotted content resets
+ *
+ * Targets common light-DOM elements when they appear inside any line-*
+ * custom element. Resets spacing, font inheritance, and box model so
+ * that component-level styles have a clean baseline.
+ * --------------------------------------------------------------------------- */
+
+:where([class*="line-"]) :where(h1, h2, h3, h4, h5, h6, p, ul, ol, dl, blockquote, figure, pre, hr) {
+  margin: 0;
+  padding: 0;
+}
+
+:where([class*="line-"]) :where(h1, h2, h3, h4, h5, h6, p, span, label, a, small, strong, em) {
+  font: inherit;
+}
+
+:where([class*="line-"]) :where(ul, ol) {
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+:where([class*="line-"]) :where(img, svg, video) {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+/* ---------------------------------------------------------------------------
+ * 2. Field component — labels, hints, errors
+ *
+ * Spec reference: ARCHITECTURE.md §14.10
+ * --------------------------------------------------------------------------- */
+
+:where(line-field) :where(label) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+:where(line-field) :where(span[slot="hint"]),
+:where(line-field) :where(span[slot="error"]) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+ * 3. Form-adjacent components — input wrappers, select, textarea
+ *
+ * Reset native form elements when slotted into line-* form components.
+ * --------------------------------------------------------------------------- */
+
+:where(line-input, line-textarea, line-select, line-number-field, line-combobox, line-pin-input) :where(label) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+:where(line-input, line-textarea, line-select, line-number-field, line-combobox, line-pin-input)
+  :where(span[slot="hint"]),
+:where(line-input, line-textarea, line-select, line-number-field, line-combobox, line-pin-input)
+  :where(span[slot="error"]),
+:where(line-input, line-textarea, line-select, line-number-field, line-combobox, line-pin-input)
+  :where(span[slot="description"]) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Content containers — card, dialog, alert, drawer, popover, tooltip
+ *
+ * These components accept arbitrary slotted content. Reset spacing
+ * and font inheritance for common elements that appear inside them.
+ * --------------------------------------------------------------------------- */
+
+:where(line-card, line-dialog, line-alert, line-drawer, line-popover, line-tooltip, line-callout, line-banner)
+  :where(h1, h2, h3, h4, h5, h6) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+:where(line-card, line-dialog, line-alert, line-drawer, line-popover, line-tooltip, line-callout, line-banner)
+  :where(p) {
+  margin: 0;
+  padding: 0;
+}
+
+:where(line-card, line-dialog, line-alert, line-drawer, line-popover, line-tooltip, line-callout, line-banner)
+  :where(ul, ol) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  padding-inline-start: 0;
+}
+
+/* ---------------------------------------------------------------------------
+ * 5. Navigation components — tabs, breadcrumb, menu, pagination
+ *
+ * Reset list and link styling for items slotted into navigation patterns.
+ * --------------------------------------------------------------------------- */
+
+:where(line-tabs, line-breadcrumb, line-menu, line-pagination, line-navigation-menu) :where(a) {
+  text-decoration: none;
+  color: inherit;
+  font: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+:where(line-tabs, line-breadcrumb, line-menu, line-pagination, line-navigation-menu) :where(ul, ol, li) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * 6. Button resets for slotted buttons
+ *
+ * When native <button> elements are slotted into line-* components,
+ * strip the default browser button chrome.
+ * --------------------------------------------------------------------------- */
+
+:where(line-dialog, line-alert, line-drawer, line-toolbar, line-card) :where(button:not([class])) {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+ * 7. Table resets for slotted tables
+ *
+ * When <table> is slotted into line-* components, collapse borders
+ * and remove spacing for a clean baseline.
+ * --------------------------------------------------------------------------- */
+
+:where(line-card, line-dialog, line-drawer) :where(table) {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+:where(line-card, line-dialog, line-drawer) :where(th, td) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  text-align: start;
+}
