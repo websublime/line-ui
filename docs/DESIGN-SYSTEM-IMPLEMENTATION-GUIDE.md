@@ -1551,14 +1551,14 @@ Architecture: `packages/theme/src/tokens/` contains per-family CSS files with a 
 | Family file | Source | Count |
 |-------------|--------|-------|
 | `animations.css` | props.animations.css — 23 tokens + 23 @keyframes | 23 |
-| `gradients.css` | props.gradients.css — 30 gradients + space + 5 noise + 5 filters + 2 extra | 43 |
+| `gradients.css` | props.gradients.css — 30 gradients + space + 5 noise + 5 filters | 41 |
 | `masks.css` | props.masks.edges.css + props.masks.corner-cuts.css | 34 |
 | `layouts.css` | props.layouts.css — ~4 public tokens (internal mixin vars excluded) | 4 |
 | `highlights.css` | props.highlights.css | 3 |
 | `svg.css` | props.svg.css — 3 squircle tokens | 3 |
-| **Decorative subtotal** | | **~110** |
+| **Decorative subtotal** | | **~108** |
 
-| **Grand total** | | **~409** |
+| **Grand total** | | **~407** |
 
 ### Semantic Roles (L2) — per schema
 
