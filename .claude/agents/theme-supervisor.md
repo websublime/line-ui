@@ -149,12 +149,12 @@ packages/theme/
       normalize.css       # Modern CSS reset
       mixins.css          # PostCSS mixins
     tokens.css            # L1: Foundation tokens (typography, sizing, shadows, motion, etc.)
-    semantic-defaults.css # L2: Gray-based prefers-color-scheme defaults
+    semantic.css          # L2: Gray-based prefers-color-scheme defaults
     aliases.css           # L3: 6 aliases × 9 intent tokens = 54 variables
     line.css              # Main bundle that imports all of the above
   dist/                   # Built output — minified CSS files
     tokens.min.css
-    semantic-defaults.min.css
+    semantic.min.css
     normalize.min.css
     utilities.min.css
     aliases.min.css
@@ -170,7 +170,7 @@ packages/theme/
 
 **You handle:**
 - Foundation tokens in `tokens.css` (156 tokens, no external dependencies)
-- Semantic defaults in `semantic-defaults.css`
+- Semantic defaults in `semantic.css`
 - Aliases in `aliases.css`
 - Colour palette files in `src/colors/` (including `--line-{palette}-contrast` tokens)
 - Schema files in `src/schemas/` (including `--line-solid-text` semantic token)

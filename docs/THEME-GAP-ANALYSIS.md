@@ -75,7 +75,7 @@ own the values and don't depend on Open Props defaults.
 
 ### Gap 2 — Utility tokens UNPREFIXED ✅ RESOLVED (E8 T1)
 
-**Status:** All foundation tokens now live in `tokens/` directory with proper `--line-*` prefix (~299 core tokens across 11 family files). The unprefixed tokens in `rules.css` are now redundant and will be removed when E8 T2 (semantic-defaults.css) cleans up rules.css.
+**Status:** All foundation tokens now live in `tokens/` directory with proper `--line-*` prefix (~299 core tokens across 11 family files). The unprefixed tokens in `rules.css` are now redundant and will be removed when E8 T2 (semantic.css) cleans up rules.css.
 
 **Original issue:** `rules.css` (~160 occurrences) defined tokens without `--line-` prefix.
 
@@ -330,7 +330,7 @@ Schemas override these when active.
 
 ### Gap 16 — `rules.css` mixes foundation and semantic tokens — PARTIALLY RESOLVED (E8 T1)
 
-**Status:** Foundation tokens are now in `tokens/` directory (E8 T1 complete). Semantic defaults still need extraction from `rules.css` into `semantic-defaults.css` (tracked in E8 T2). Redundant unprefixed foundation tokens in rules.css lines 39-205 need removal as part of T2 cleanup.
+**Status:** Foundation tokens are now in `tokens/` directory (E8 T1 complete). Semantic defaults still need extraction from `rules.css` into `semantic.css` (tracked in E8 T2). Redundant unprefixed foundation tokens in rules.css lines 39-205 need removal as part of T2 cleanup.
 
 **Original impact:** `rules.css` contained both foundation tokens (`--font-sans`,
 `--size-3`, `--shadow-1`) and the semantic role map (`--line-background`,
@@ -343,7 +343,7 @@ Schemas override these when active.
 | File | Contents | Status |
 |------|----------|--------|
 | `tokens/` directory | Foundation: typography, sizing, borders, shadows, easing, z-index, aspects, durations, opacity, focus-ring, absolute colors | ✅ Done (E8 T1) |
-| `semantic-defaults.css` | The `prefers-color-scheme` light/dark blocks mapping gray scale to `--line-background`, `--line-solid-background`, etc. | Pending (E8 T2) |
+| `semantic.css` | The `prefers-color-scheme` light/dark blocks mapping gray scale to `--line-background`, `--line-solid-background`, etc. | Pending (E8 T2) |
 
 ### Gap 17 — No component-level token layer (NEW)
 
@@ -557,7 +557,7 @@ Single monolithic output: `line.css` imports everything including demos.
 @websublime/line-theme/
 ├── dist/
 │   ├── tokens.min.css              ← L1: foundation tokens only (no colors, no semantic)
-│   ├── semantic-defaults.min.css   ← L2: gray-based prefers-color-scheme defaults
+│   ├── semantic.min.css            ← L2: gray-based prefers-color-scheme defaults
 │   ├── normalize.min.css           ← Document reset (optional)
 │   ├── utilities.min.css           ← .line-is-* utility classes
 │   ├── aliases.min.css             ← L3: primary/danger/success/warning/info/neutral
@@ -587,7 +587,7 @@ Single monolithic output: `line.css` imports everything including demos.
   "exports": {
     ".":           "./dist/line.min.css",
     "./tokens":    "./dist/tokens.min.css",
-    "./semantic":  "./dist/semantic-defaults.min.css",
+    "./semantic":  "./dist/semantic.min.css",
     "./normalize": "./dist/normalize.min.css",
     "./utilities": "./dist/utilities.min.css",
     "./aliases":   "./dist/aliases.min.css",
@@ -858,7 +858,7 @@ P0-7. Remove custom/* imports from line.css (Gap 4)
 ### Phase 1 — Architecture
 
 ```
-P1-1. Split rules.css into tokens.css + semantic-defaults.css (Gap 16)
+P1-1. Split rules.css into tokens.css + semantic.css (Gap 16)
 P1-2. Add missing foundation scales (z-index, opacity, motion, focus-ring, aspect-ratio) (Gap 13)
 P1-3. Create aliases.css (Gap 6)
 P1-4. Wrap general.css utilities in :where() (Gap 5)

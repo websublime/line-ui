@@ -1096,7 +1096,7 @@ Dark mode values are **not** simply inverted — each level has independently cr
 | Token Category | Namespace | Examples | Defined In |
 |----------------|-----------|----------|------------|
 | Palette colours | `--line-{color}-{level}` | `--line-blue-1`, `--line-gray-12`, `--line-crimson-9` | `src/colors/*.css` |
-| Semantic roles | `--line-{role}` | `--line-background`, `--line-solid-hover`, `--line-high-contrast` | `src/schemas/*.css`, `src/utils/semantic-defaults.css` |
+| Semantic roles | `--line-{role}` | `--line-background`, `--line-solid-hover`, `--line-high-contrast` | `src/schemas/*.css`, `src/semantic.css` |
 | Foundation tokens | `--line-{token}` | `--line-size-3`, `--line-font-size-2`, `--line-shadow-3` | `src/tokens.css` |
 | Semantic aliases | `--line-{alias}[-{intent}]` | `--line-primary`, `--line-primary-hover`, `--line-danger-text` | `src/aliases.css` (Phase 1) |
 | Component tokens | `--line-{component}-{prop}` | `--line-button-radius`, `--line-input-bg` | Component `:host` styles |
@@ -1114,7 +1114,7 @@ Foundation tokens are defined explicitly in `src/tokens.css` with the `--line-*`
 |-------|------|------------|----------|
 | L0 | Primitives | `colors/*.css` | Raw palette values: `--line-blue-1..12`, `--line-blue-contrast` |
 | L1 | Foundation tokens | `tokens.css` | Named scales: typography, sizing, shadows, z-index, opacity, motion, radius, border-width, focus-ring, aspect-ratio |
-| L2 | Semantic roles | `semantic-defaults.css` + `schemas/*.css` | Context-mapped: `--line-background`, `--line-solid-background`, `--line-solid-text` |
+| L2 | Semantic roles | `semantic.css` + `schemas/*.css` | Context-mapped: `--line-background`, `--line-solid-background`, `--line-solid-text` |
 | L3 | Semantic aliases | `aliases.css` | Intent-mapped: `--line-primary`, `--line-danger`, etc. (6 aliases × 9 tokens = 54 variables) |
 | L4 | Component tokens | `@websublime/line-presets` | Scoped: `--line-button-radius`, `--line-input-height` |
 | L5 | Component styles | `@websublime/line-presets` | Visual opinions via `::part()` selectors |
@@ -1333,7 +1333,7 @@ A theme file imports a colour palette and its corresponding schema:
 ```
 line.css
 ├── tokens.css               ← L1: Foundation tokens (typography, sizing, shadows, motion, etc.)
-├── semantic-defaults.css     ← L2: Gray-based prefers-color-scheme defaults
+├── semantic.css              ← L2: Gray-based prefers-color-scheme defaults
 ├── utils/normalize.css       ← Modern CSS reset (imports media.css internally)
 ├── utils/utilities.css       ← Utility classes mapping to semantic tokens
 ├── themes/*-theme.css (x28)  ← All 28 palette + schema pairs
@@ -1361,7 +1361,7 @@ Two coexisting mechanisms control light/dark mode:
 
 **Mechanism 1: OS-level preference (automatic)**
 
-In `semantic-defaults.css`, `@media (prefers-color-scheme: light/dark)` sets root-level semantic tokens on `:root`:
+In `semantic.css`, `@media (prefers-color-scheme: light/dark)` sets root-level semantic tokens on `:root`:
 
 ```css
 @media (prefers-color-scheme: light) {
@@ -1404,7 +1404,7 @@ This class also triggers dark mode in:
 document.documentElement.classList.add('dark');
 ```
 
-**Interaction between mechanisms:** The `.dark` class on `<html>` overrides palette and schema tokens via higher specificity (`:is(.dark)` vs bare `:where(html)`). However, the `semantic-defaults.css` root semantic tokens are set via `@media (prefers-color-scheme)` and are **not** overridden by the `.dark` class — they require a schema class to take effect. This means:
+**Interaction between mechanisms:** The `.dark` class on `<html>` overrides palette and schema tokens via higher specificity (`:is(.dark)` vs bare `:where(html)`). However, the `semantic.css` root semantic tokens are set via `@media (prefers-color-scheme)` and are **not** overridden by the `.dark` class — they require a schema class to take effect. This means:
 
 - Without a schema class: root tokens follow OS preference only
 - With a schema class: schema tokens follow the `.dark` / `.light` class, overriding OS preference for that scope
@@ -1454,7 +1454,7 @@ This configuration ensures CSS custom properties are preserved in the output (no
 
 ### 9.9 CSS Utilities
 
-**`semantic-defaults.css`** — Foundation layer
+**`semantic.css`** — Foundation layer
 
 - Light/dark mode root semantic tokens via `@media (prefers-color-scheme)`
 - `color-scheme` declaration for `.dark` / `.light` classes
@@ -1614,7 +1614,7 @@ The design token system follows a three-tier cascade:
   "exports": {
     ".":           "./dist/line.min.css",
     "./tokens":    "./dist/tokens.min.css",
-    "./semantic":  "./dist/semantic-defaults.min.css",
+    "./semantic":  "./dist/semantic.min.css",
     "./normalize": "./dist/normalize.min.css",
     "./utilities": "./dist/utilities.min.css",
     "./aliases":   "./dist/aliases.min.css",
@@ -1631,7 +1631,7 @@ The design token system follows a three-tier cascade:
 |--------|-----------------|---------|----------|
 | `dist/line.min.css` | `.` | Full bundle: all layers + all 28 themes | Quick start |
 | `dist/tokens.min.css` | `./tokens` | L1: Foundation tokens (no colours) | Headless setup |
-| `dist/semantic-defaults.min.css` | `./semantic` | L2: Gray prefers-color-scheme defaults | Foundation + reset |
+| `dist/semantic.min.css` | `./semantic` | L2: Gray prefers-color-scheme defaults | Foundation + reset |
 | `dist/normalize.min.css` | `./normalize` | CSS reset | Document reset |
 | `dist/utilities.min.css` | `./utilities` | Semantic utility classes | Utility classes |
 | `dist/aliases.min.css` | `./aliases` | L3: 6 aliases × 9 intent tokens | Intent tokens |
