@@ -53,19 +53,21 @@ interface EntryPoint {
  * - mixins.css: contains only @define-mixin declarations, not standalone CSS
  * - style.css: dev/showcase file, not a distributable entry
  * - rules.css: consumed via @import by other files (legacy semantic defaults)
- * - tokens/ subdirectory: consumed via @import by tokens.css barrel
  */
 const EXCLUDED_BASENAMES = new Set(['mixins.css', 'style.css', 'rules.css']);
 
 /**
  * Compute the output filename for a given source path.
  *
- * Naming conventions (backward compatible with existing dist/):
- *   src/colors/{name}.css         -> colors-{name}.min.css
- *   src/schemas/{name}.css        -> schemas-{name}.min.css
- *   src/themes/{name}-theme.css   -> theme-{name}.min.css  (singular, strip '-theme')
- *   src/custom/{name}-custom.css  -> custom-{name}.min.css (strip '-custom')
- *   src/utils/{name}.css          -> utils-{name}.min.css
+ * Naming conventions (subdirectory-based for granular exports):
+ *   src/colors/{name}.css         -> colors/{name}.min.css
+ *   src/schemas/{name}.css        -> schemas/{name}.min.css
+ *   src/themes/{name}-theme.css   -> themes/{name}.min.css  (strip '-theme')
+ *   src/custom/{name}-custom.css  -> custom/{name}.min.css  (strip '-custom')
+ *   src/tokens/{name}.css         -> tokens/{name}.min.css
+ *   src/utils/normalize.css       -> normalize.min.css      (promoted to root)
+ *   src/utils/utilities.css       -> utilities.min.css       (promoted to root)
+ *   src/utils/{name}.css          -> utils/{name}.min.css    (other utils)
  *   src/tokens.css                -> tokens.min.css
  *   src/semantic-defaults.css     -> semantic-defaults.min.css
  *   src/aliases.css               -> aliases.min.css
@@ -86,24 +88,31 @@ function computeOutFile(srcPath: string): string {
 
   switch (dir) {
     case 'colors':
-      return `colors-${file}.min.css`;
+      return `colors/${file}.min.css`;
     case 'schemas':
-      return `schemas-${file}.min.css`;
+      return `schemas/${file}.min.css`;
+    case 'tokens':
+      return `tokens/${file}.min.css`;
     case 'themes': {
-      // amber-theme.css -> theme-amber.min.css (singular prefix, strip '-theme')
+      // amber-theme.css -> themes/amber.min.css (strip '-theme')
       const name = file.replace(/-theme$/, '');
-      return `theme-${name}.min.css`;
+      return `themes/${name}.min.css`;
     }
     case 'custom': {
-      // amber-custom.css -> custom-amber.min.css (strip '-custom')
+      // amber-custom.css -> custom/amber.min.css (strip '-custom')
       const name = file.replace(/-custom$/, '');
-      return `custom-${name}.min.css`;
+      return `custom/${name}.min.css`;
     }
-    case 'utils':
-      return `utils-${file}.min.css`;
+    case 'utils': {
+      // Promote normalize and utilities to root-level dist
+      if (file === 'normalize' || file === 'utilities') {
+        return `${file}.min.css`;
+      }
+      return `utils/${file}.min.css`;
+    }
     default:
-      // Fallback: dir-file.min.css
-      return `${dir}-${file}.min.css`;
+      // Fallback: dir/file.min.css
+      return `${dir}/${file}.min.css`;
   }
 }
 
@@ -114,7 +123,14 @@ async function discoverEntries(): Promise<EntryPoint[]> {
   const entries: EntryPoint[] = [];
 
   // Directory-based entries
-  const dirPatterns = ['colors/*.css', 'schemas/*.css', 'themes/*-theme.css', 'custom/*-custom.css', 'utils/*.css'];
+  const dirPatterns = [
+    'colors/*.css',
+    'schemas/*.css',
+    'themes/*-theme.css',
+    'custom/*-custom.css',
+    'tokens/*.css',
+    'utils/*.css'
+  ];
 
   for (const pattern of dirPatterns) {
     const glob = new Glob(pattern);

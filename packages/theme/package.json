@@ -8,8 +8,14 @@
     ".": "./dist/line.min.css",
     "./reset": "./dist/reset.min.css",
     "./tokens": "./dist/tokens.min.css",
+    "./tokens/*": "./dist/tokens/*.min.css",
     "./semantic-defaults": "./dist/semantic-defaults.min.css",
-    "./aliases": "./dist/aliases.min.css"
+    "./aliases": "./dist/aliases.min.css",
+    "./normalize": "./dist/normalize.min.css",
+    "./utilities": "./dist/utilities.min.css",
+    "./colors/*": "./dist/colors/*.min.css",
+    "./schemas/*": "./dist/schemas/*.min.css",
+    "./themes/*": "./dist/themes/*.min.css"
   },
   "scripts": {
     "dev": "vite",
