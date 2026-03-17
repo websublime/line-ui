@@ -32,6 +32,8 @@
 @import "./themes/amber-theme.css";
 @import "./themes/orange-theme.css";
 
+@import "./aliases.css";
+
 @import "./custom/gray-custom.css";
 @import "./custom/mauve-custom.css";
 @import "./custom/slate-custom.css";
