@@ -45,7 +45,7 @@
 │  L3 — Semantic Aliases         (aliases.css)                │
 │  Intent: --line-primary, --line-danger, --line-success       │
 ├─────────────────────────────────────────────────────────────┤
-│  L2 — Semantic Roles           (semantic-defaults + schemas) │
+│  L2 — Semantic Roles           (semantic + schemas)           │
 │  Context: --line-background, --line-solid-background         │
 ├─────────────────────────────────────────────────────────────┤
 │  L1 — Foundation Tokens        (tokens.css)                 │
@@ -87,7 +87,7 @@ Each layer is independently consumable. A consumer can stop at any layer:
 ```
 packages/theme/src/
 ├── utils/
-│   ├── rules.css            → SPLIT INTO tokens.css + semantic-defaults.css
+│   ├── rules.css            → SPLIT INTO tokens.css + semantic.css
 │   ├── normalize.css        → KEEP (fix token references)
 │   ├── general.css          → RENAME TO utilities.css (fix + wrap :where())
 │   ├── mixins.css           → KEEP (fix token references)
@@ -104,7 +104,7 @@ packages/theme/src/
 ├── custom/                  → DELETE (demo files, not for production)
 ├── aliases.css              → NEW
 ├── tokens.css               → NEW (extracted from rules.css)
-├── semantic-defaults.css    → NEW (extracted from rules.css)
+├── semantic.css             → NEW (extracted from rules.css)
 └── line.css                 → REWRITE (new import order, no custom/*)
 ```
 
@@ -113,7 +113,7 @@ packages/theme/src/
 ```
 packages/theme/dist/
 ├── tokens.min.css                ← L1: foundation only
-├── semantic-defaults.min.css     ← L2: gray prefers-color-scheme
+├── semantic.min.css              ← L2: gray prefers-color-scheme
 ├── normalize.min.css             ← Document reset
 ├── utilities.min.css             ← Utility classes
 ├── aliases.min.css               ← L3: primary/danger/success/warning/info
@@ -393,7 +393,7 @@ Each family file can be imported independently via package.json exports
 
 ### Step 1.2 — Delete the old `rules.css`
 
-After extracting `tokens/` and `semantic-defaults.css` (next phase), delete
+After extracting `tokens/` and `semantic.css` (next phase), delete
 `src/utils/rules.css`. All its content will live in the new token files and
 the semantic defaults layer.
 
@@ -401,16 +401,16 @@ the semantic defaults layer.
 
 ## 5. Phase 2 — Semantic Defaults Layer (L2)
 
-> **Goal:** Create `semantic-defaults.css` — gray-based default semantic roles.
+> **Goal:** Create `semantic.css` — gray-based default semantic roles.
 
-### Step 2.1 — Create `src/semantic-defaults.css`
+### Step 2.1 — Create `src/semantic.css`
 
 This file contains only the `prefers-color-scheme` blocks that map gray
 values to semantic role tokens. It is independent from any palette.
 
 ```css
 /* ═══════════════════════════════════════════════════════════
-   semantic-defaults.css — line://ui Semantic Role Defaults (L2)
+   semantic.css — line://ui Semantic Role Defaults (L2)
 
    Maps the neutral gray scale to semantic role tokens.
    Schemas (.line-schema-*) override these when active.
@@ -815,7 +815,7 @@ these are demo code, not design system utilities.
 @import "./tokens.css";
 
 /* L2 — Semantic defaults (gray, prefers-color-scheme) */
-@import "./semantic-defaults.css";
+@import "./semantic.css";
 
 /* Normalize (document reset) */
 @import "./utils/normalize.css";
@@ -888,7 +888,7 @@ Add new scripts for the new entry points:
 
     "css:all": "postcss src/line.css -o ./dist/line.min.css",
     "css:tokens": "postcss src/tokens.css -o ./dist/tokens.min.css",
-    "css:semantic": "postcss src/semantic-defaults.css -o ./dist/semantic-defaults.min.css",
+    "css:semantic": "postcss src/semantic.css -o ./dist/semantic.min.css",
     "css:normalize": "postcss src/utils/normalize.css -o ./dist/normalize.min.css",
     "css:utilities": "postcss src/utils/utilities.css -o ./dist/utilities.min.css",
     "css:aliases": "postcss src/aliases.css -o ./dist/aliases.min.css",
@@ -924,7 +924,7 @@ dist/theme-amber.min.css       →    dist/themes/amber.min.css
   "exports": {
     ".": "./dist/line.min.css",
     "./tokens": "./dist/tokens.min.css",
-    "./semantic": "./dist/semantic-defaults.min.css",
+    "./semantic": "./dist/semantic.min.css",
     "./normalize": "./dist/normalize.min.css",
     "./utilities": "./dist/utilities.min.css",
     "./aliases": "./dist/aliases.min.css",
@@ -1412,7 +1412,7 @@ yields ≥ 4.5:1 against the level-9 background. Run as part of CI.
 ```bash
 # Verify all expected files exist
 ls dist/tokens.min.css
-ls dist/semantic-defaults.min.css
+ls dist/semantic.min.css
 ls dist/normalize.min.css
 ls dist/utilities.min.css
 ls dist/aliases.min.css

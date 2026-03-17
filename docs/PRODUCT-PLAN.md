@@ -54,7 +54,7 @@ This epic must complete before all other Phase 0 work. Everything downstream dep
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P0-E2-T1 | Define foundation tokens explicitly | Create `src/tokens.css` with all foundation token scales (typography, sizing, shadows, z-index, opacity, motion, radius, border-width, focus-ring, aspect-ratio). Create `src/semantic-defaults.css` extracted from `rules.css`. Remove `postcss-jit-props` and `open-props` from devDependencies. Add contrast tokens (`--line-{palette}-contrast`) to all 28 colour files. Update all 28 schemas to use contrast token. Reference: `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phases 1-3. | P0-E1-T3 | Violet | L | PRD 9.3, 9.15 |
+| P0-E2-T1 | Define foundation tokens explicitly | Create `src/tokens.css` with all foundation token scales (typography, sizing, shadows, z-index, opacity, motion, radius, border-width, focus-ring, aspect-ratio). Create `src/semantic.css` extracted from `rules.css`. Remove `postcss-jit-props` and `open-props` from devDependencies. Add contrast tokens (`--line-{palette}-contrast`) to all 28 colour files. Update all 28 schemas to use contrast token. Reference: `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phases 1-3. | P0-E1-T3 | Violet | L | PRD 9.3, 9.15 |
 | P0-E2-T2 | Add postcss-custom-media to pipeline | Ensure `postcss-custom-media` is active in the pipeline so that custom media queries from `media.css` are resolved. Verify breakpoint and preference queries work. | P0-E1-T3 | Violet | S | PRD 9.8 |
 | P0-E2-T3 | Remove demo files from production bundle | Exclude `custom/*-custom.css` demo swatch files from all build outputs. Move them to a location suitable for Storybook consumption only. | P0-E1-T1 | Violet | S | PRD 9.12, Decision T5 |
 | P0-E2-T4 | Configure Vite 7+ with Rolldown | Verify or update Vite to 7+ with Rolldown for library mode builds. Ensure both core and theme packages build correctly with the new bundler. | P0-E1-T5, P0-E1-T1 | Luna | M | PRD 2 |
@@ -182,11 +182,11 @@ All of the following must be true:
 
 - [ ] All packages use `line-*` naming (npm names, CSS variables, CSS classes, tag prefix, base class)
 - [x] Foundation tokens defined in `tokens/` directory (~299 core tokens across 11 family files, all `--line-*` prefixed) — E8 T1 complete
-- [ ] Semantic defaults defined in `semantic-defaults.css` (split from rules.css)
+- [ ] Semantic defaults defined in `semantic.css` (split from rules.css)
 - [ ] Contrast token `--line-{palette}-contrast` added to all 28 colour files
 - [ ] All 28 schemas updated to use contrast token (`--line-solid-text`)
 - [ ] `postcss-jit-props` and `open-props` removed from devDependencies
-- [ ] Build outputs restructured: dist/tokens.min.css, dist/semantic-defaults.min.css, dist/aliases.min.css, dist/colors/, dist/schemas/, dist/themes/
+- [ ] Build outputs restructured: dist/tokens.min.css, dist/semantic.min.css, dist/aliases.min.css, dist/colors/, dist/schemas/, dist/themes/
 - [ ] Demo/swatch files are excluded from production CSS outputs
 - [ ] Monorepo has 6 packages: core, components, theme, icons, site, storybook
 - [ ] `bun install` and `bun run build` work from root across all packages
