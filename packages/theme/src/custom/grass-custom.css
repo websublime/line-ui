@@ -6,61 +6,61 @@
 
   :nth-child(2) {
     background: var(--line-grass-1);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(3) {
     background: var(--line-grass-2);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(4) {
     background: var(--line-grass-3);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(5) {
     background: var(--line-grass-4);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(6) {
     background: var(--line-grass-5);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(7) {
     background: var(--line-grass-6);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(8) {
     background: var(--line-grass-7);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(9) {
     background: var(--line-grass-8);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(10) {
     background: var(--line-grass-9);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(11) {
     background: var(--line-grass-10);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(12) {
     background: var(--line-grass-11);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 
   :nth-child(13) {
     background: var(--line-grass-12);
-    box-shadow: var(--shadow-3);
+    box-shadow: var(--line-shadow-3);
   }
 }
