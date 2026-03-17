@@ -9,7 +9,7 @@
     "./reset": "./dist/reset.min.css",
     "./tokens": "./dist/tokens.min.css",
     "./tokens/*": "./dist/tokens/*.min.css",
-    "./semantic": "./dist/semantic-defaults.min.css",
+    "./semantic": "./dist/semantic.min.css",
     "./aliases": "./dist/aliases.min.css",
     "./normalize": "./dist/normalize.min.css",
     "./utilities": "./dist/utilities.min.css",

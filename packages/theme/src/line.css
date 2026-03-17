@@ -1,5 +1,5 @@
 @import "./tokens.css";
-@import "./semantic-defaults.css";
+@import "./semantic.css";
 @import "./utils/normalize.css";
 @import "./utils/utilities.css";
 

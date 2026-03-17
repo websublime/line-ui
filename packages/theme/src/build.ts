@@ -69,7 +69,7 @@ const EXCLUDED_BASENAMES = new Set(['mixins.css', 'style.css', 'rules.css']);
  *   src/utils/utilities.css       -> utilities.min.css       (promoted to root)
  *   src/utils/{name}.css          -> utils/{name}.min.css    (other utils)
  *   src/tokens.css                -> tokens.min.css
- *   src/semantic-defaults.css     -> semantic-defaults.min.css
+ *   src/semantic.css               -> semantic.min.css
  *   src/aliases.css               -> aliases.min.css
  *   src/line.css                  -> line.min.css
  */
@@ -143,7 +143,7 @@ async function discoverEntries(): Promise<EntryPoint[]> {
   }
 
   // Root-level entry files (only if they exist)
-  const rootEntries = ['tokens.css', 'semantic-defaults.css', 'aliases.css', 'reset.css', 'line.css'];
+  const rootEntries = ['tokens.css', 'semantic.css', 'aliases.css', 'reset.css', 'line.css'];
 
   for (const file of rootEntries) {
     const srcPath = join(SRC, file);
