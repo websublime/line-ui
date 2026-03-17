@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
    layouts.css — line://ui Layout Tokens
 
-   Grid cell (2), RAM (1), Holy Grail (1).
+   4 layout tokens: grid cell (2), RAM (1), Holy Grail (1).
 
-   Full 1:1 Open Props match (4 tokens).
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {

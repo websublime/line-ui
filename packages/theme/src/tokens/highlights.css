@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
    highlights.css — line://ui Highlight Tokens
 
-   Highlight tokens (2) + composite (1).
+   3 highlight tokens: base (2) + composite (1).
 
-   Full 1:1 Open Props match (3 tokens).
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {

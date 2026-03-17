@@ -1,9 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
    masks.css — line://ui Mask Tokens
 
-   Edge masks (25), corner-cut masks (9).
+   34 mask tokens: edge masks (25), corner-cut masks (9).
 
-   Full 1:1 Open Props match (34 tokens).
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {

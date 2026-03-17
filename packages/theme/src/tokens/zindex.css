@@ -1,10 +1,13 @@
 /* ═══════════════════════════════════════════════════════════
    zindex.css — line://ui Z-Index / Layer Tokens
 
-   Open Props layers (6) + line:// semantic extensions (8).
+   14 z-index / layer tokens: base layers (6),
+   semantic extensions (8).
+
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
-/* ── OP Layer Tokens (6) ── */
+/* ── Base Layer Tokens (6) ── */
 
 :where(html) {
   --line-layer-1: 1;

@@ -1,9 +1,11 @@
 /* ═══════════════════════════════════════════════════════════
    focus.css — line://ui Focus Ring Tokens
 
-   3 tokens — line:// extensions (not in Open Props).
+   3 focus ring tokens (width, offset, color).
    Fallback value on ring-color ensures ring works even
    without the semantic layer loaded.
+
+   Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {
