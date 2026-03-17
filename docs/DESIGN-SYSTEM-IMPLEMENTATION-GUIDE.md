@@ -1550,15 +1550,15 @@ Architecture: `packages/theme/src/tokens/` contains per-family CSS files with a 
 
 | Family file | Source | Count |
 |-------------|--------|-------|
-| `animations.css` | props.animations.css — 27 tokens + 18 @keyframes | 27 |
+| `animations.css` | props.animations.css — 23 tokens + 23 @keyframes | 23 |
 | `gradients.css` | props.gradients.css — 30 gradients + space + 5 noise + 5 filters + 2 extra | 43 |
 | `masks.css` | props.masks.edges.css + props.masks.corner-cuts.css | 34 |
 | `layouts.css` | props.layouts.css — ~4 public tokens (internal mixin vars excluded) | 4 |
 | `highlights.css` | props.highlights.css | 3 |
 | `svg.css` | props.svg.css — 3 squircle tokens | 3 |
-| **Decorative subtotal** | | **~114** |
+| **Decorative subtotal** | | **~110** |
 
-| **Grand total** | | **~413** |
+| **Grand total** | | **~409** |
 
 ### Semantic Roles (L2) — per schema
 
@@ -1576,9 +1576,11 @@ Architecture: `packages/theme/src/tokens/` contains per-family CSS files with a 
 | `--line-solid-hover` | 10 | Hovered solid |
 | `--line-low-contrast` | 11 | Low-contrast text |
 | `--line-high-contrast` | 12 | High-contrast text |
-| `--line-solid-text` | contrast | Text on solid bg |
 | `--line-light` | 1 | Light text |
+| `--line-white` | 1 | White override |
+| `--line-black` | 12 | Black override |
 | `--line-dark` | 12 | Dark text |
+| `--line-solid-text` | contrast | Text on solid bg |
 
 ### Semantic Aliases (L3) — per intent × 9 tokens
 
