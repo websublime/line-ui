@@ -1,0 +1,21 @@
+{
+  "name": "@websublime/showcase",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@lit-labs/router": "^0.1.3",
+    "@websublime/line-theme": "workspace:*",
+    "culori": "^4.0.1",
+    "lit": "^3.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vite": "^7.0.0"
+  }
+}

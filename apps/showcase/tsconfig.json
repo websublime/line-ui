@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "useDefineForClassFields": false,
+    "declaration": false,
+    "emitDeclarationOnly": false,
+    "importHelpers": false,
+    "experimentalDecorators": true,
+    "rootDir": "./src",
+    "plugins": [
+      {
+        "name": "ts-lit-plugin",
+        "strict": true
+      }
+    ]
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts"],
+  "extends": "../../tsconfig.base.json",
+  "exclude": ["dist"]
+}
