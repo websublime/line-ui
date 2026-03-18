@@ -217,6 +217,30 @@
           <h3>Button Variants per Alias</h3>
           <div class="sc-l3-variants" id="l3-variants"></div>
         </div>
+
+        <!-- Override explanation -->
+        <div class="sc-subsection">
+          <h3>Schema vs Aliases</h3>
+          <div class="sc-l3-explainer">
+            <p>
+              <strong>Schemas</strong> control ambient UI colors (backgrounds, borders, surfaces).
+              <strong>Aliases</strong> express semantic intent (primary action, danger, success).
+              They are independent layers — switching the active schema does <em>not</em> change
+              aliases, because intent colors carry fixed meaning.
+            </p>
+            <p>
+              To rebrand, override <code>--line-primary</code> in your own CSS.
+              The other aliases (danger, success, warning, info) should stay fixed
+              as they carry universal meaning.
+            </p>
+          </div>
+
+          <h3>Override Example</h3>
+          <p class="sc-label" style="margin-bottom:0.75rem">Pick a palette below to override --line-primary and see the result</p>
+          <div class="sc-l3-override-picks" id="l3-override-picks"></div>
+          <pre class="sc-l3-override-code" id="l3-override-code"></pre>
+          <div class="sc-l3-override-preview" id="l3-override-preview"></div>
+        </div>
       </section>
 
     </main>

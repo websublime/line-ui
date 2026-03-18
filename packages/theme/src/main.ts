@@ -579,6 +579,7 @@ function renderL2Strip() {
 function buildL3() {
   buildAliasCards();
   buildAliasVariants();
+  buildOverrideDemo();
 }
 
 function buildAliasCards() {
@@ -698,6 +699,123 @@ function buildAliasVariants() {
       )
     );
   }
+}
+
+/* ── Override demo ── */
+
+const OVERRIDE_SUFFIXES = [
+  ['', '9'],
+  ['-hover', '10'],
+  ['-active', '11'],
+  ['-text', 'contrast'],
+  ['-subtle', '3'],
+  ['-subtle-hover', '4'],
+  ['-outline', '7'],
+  ['-outline-hover', '8'],
+  ['-fg', '11']
+] as const;
+
+function buildOverrideDemo() {
+  const picks = $('#l3-override-picks');
+  const codeBlock = $('#l3-override-code');
+  const preview = $('#l3-override-preview');
+  if (!(picks && codeBlock && preview)) return;
+
+  let overridePalette: Palette | null = null;
+
+  // Build palette picker buttons
+  for (const p of PALETTES) {
+    const btn = el('button', {
+      class: 'sc-override-pick',
+      'data-palette': p,
+      style: `background-color: var(--line-${p}-9)`
+    });
+    btn.addEventListener('click', () => {
+      overridePalette = overridePalette === p ? null : p;
+      renderOverride();
+    });
+    picks.appendChild(btn);
+  }
+
+  function renderOverride() {
+    // Update active state on picks
+    for (const btn of $$('.sc-override-pick')) {
+      btn.classList.toggle('is-active', btn.dataset.palette === overridePalette);
+    }
+
+    if (!overridePalette) {
+      codeBlock.textContent = '/* default — no override */\n--line-primary: var(--line-blue-9);';
+      applyOverride(null);
+      renderPreview();
+      return;
+    }
+
+    // Show the CSS override code
+    const lines = OVERRIDE_SUFFIXES.map(
+      ([suffix, level]) =>
+        `  --line-primary${suffix}: var(--line-${overridePalette}${level === 'contrast' ? '-contrast' : `-${level}`});`
+    );
+    codeBlock.textContent = `:root {\n${lines.join('\n')}\n}`;
+
+    applyOverride(overridePalette);
+    renderPreview();
+  }
+
+  function applyOverride(palette: Palette | null) {
+    const root = document.documentElement;
+    const source = palette || 'blue';
+    for (const [suffix, level] of OVERRIDE_SUFFIXES) {
+      const token = level === 'contrast' ? `--line-${source}-contrast` : `--line-${source}-${level}`;
+      root.style.setProperty(`--line-primary${suffix}`, `var(${token})`);
+    }
+  }
+
+  function renderPreview() {
+    preview.innerHTML = '';
+
+    const solid = el(
+      'button',
+      {
+        class: 'sc-btn',
+        style: 'background-color: var(--line-primary); color: var(--line-primary-text); border: none'
+      },
+      ['Primary Solid']
+    );
+
+    const outline = el(
+      'button',
+      {
+        class: 'sc-btn',
+        style: 'background: transparent; border: 1px solid var(--line-primary-outline); color: var(--line-primary-fg)'
+      },
+      ['Primary Outline']
+    );
+
+    const subtle = el(
+      'button',
+      {
+        class: 'sc-btn',
+        style: 'background-color: var(--line-primary-subtle); color: var(--line-primary-fg); border: none'
+      },
+      ['Primary Subtle']
+    );
+
+    const card = el('div', { class: 'sc-l3-override-card' });
+    card.appendChild(
+      el(
+        'div',
+        {
+          style:
+            'background-color: var(--line-primary-subtle); padding: 1rem; border-radius: var(--line-radius-2); margin-bottom: 0.75rem'
+        },
+        [el('span', { style: 'color: var(--line-primary-fg); font-weight: 600' }, ['Rebranded card'])]
+      )
+    );
+
+    preview.append(solid, outline, subtle, card);
+  }
+
+  renderOverride();
 }
 
 /* ── Boot ── */
