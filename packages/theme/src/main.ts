@@ -121,10 +121,6 @@ function setSchema(palette: Palette) {
   const classes = Array.from(body.classList).filter((c) => !c.startsWith('line-schema-'));
   body.className = [...classes, `line-schema-${palette}`].join(' ');
 
-  // Update palette bar active state
-  for (const btn of $$('.sc-palette-btn')) {
-    btn.classList.toggle('is-active', btn.dataset.palette === palette);
-  }
   // Update mini grid active state
   for (const mini of $$('.sc-l0-mini')) {
     mini.classList.toggle('is-active', mini.dataset.palette === palette);
@@ -140,7 +136,6 @@ function setSchema(palette: Palette) {
    ================================================================ */
 
 function setup() {
-  buildPaletteBar();
   buildL0();
   buildL1();
   buildL2();
@@ -198,24 +193,6 @@ function setupHeaderDots() {
 
   for (const section of $$('.sc-section')) {
     observer.observe(section);
-  }
-}
-
-/* ================================================================
-   Palette Bar
-   ================================================================ */
-
-function buildPaletteBar() {
-  const bar = $('#palette-bar')!;
-  for (const p of PALETTES) {
-    const btn = el('button', {
-      class: 'sc-palette-btn',
-      'data-palette': p,
-      title: p,
-      style: `background-color: var(--line-${p}-9)`
-    });
-    btn.addEventListener('click', () => setSchema(p));
-    bar.appendChild(btn);
   }
 }
 
@@ -564,11 +541,13 @@ function buildL2Panels() {
 
     const grid = el('div', { class: 'sc-l2-tokens' });
     for (let i = 0; i < SEMANTIC_TOKENS.length; i++) {
+      // Levels 1-7 are light backgrounds (dark text), 8-12 are dark (white text)
+      const textColor = i < 7 ? '#000' : '#fff';
       const cell = el(
         'div',
         {
           class: 'sc-l2-cell',
-          style: `background-color: var(${SEMANTIC_TOKENS[i]})`,
+          style: `background-color: var(${SEMANTIC_TOKENS[i]}); color: ${textColor}`,
           title: `${SEMANTIC_TOKENS[i]} — ${SEMANTIC_ROLES[i]}`
         },
         [String(i + 1)]
