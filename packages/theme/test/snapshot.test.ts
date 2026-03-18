@@ -68,17 +68,18 @@ describe('CSS Snapshot Tests', () => {
   });
 
   describe('Per-palette color snapshots', () => {
+    const colorFiles = listDistFiles('colors');
+
     test('28 color files exist in dist/colors/', () => {
-      const files = listDistFiles('colors');
-      expect(files.length).toBe(28);
+      expect(colorFiles.length).toBe(28);
     });
 
-    // Snapshot a representative subset to keep test output manageable
-    const samplePalettes = ['blue', 'red', 'gray', 'amber', 'green', 'cyan'];
-
-    for (const palette of samplePalettes) {
+    // Snapshot all 28 palettes — color files are the primary contrast-bearing
+    // output and regressions in any of them must be caught.
+    for (const file of colorFiles) {
+      const palette = file.replace('.min.css', '');
       test(`colors/${palette}.min.css snapshot`, () => {
-        const content = readDistFile(`colors/${palette}.min.css`);
+        const content = readDistFile(`colors/${file}`);
         expect(content).not.toBeNull();
         expect(content).toMatchSnapshot();
       });
