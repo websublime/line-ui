@@ -87,16 +87,16 @@ describe('CSS Snapshot Tests', () => {
   });
 
   describe('Per-palette schema snapshots', () => {
+    const schemaFiles = listDistFiles('schemas');
+
     test('28 schema files exist in dist/schemas/', () => {
-      const files = listDistFiles('schemas');
-      expect(files.length).toBe(28);
+      expect(schemaFiles.length).toBe(28);
     });
 
-    const samplePalettes = ['blue', 'red', 'gray'];
-
-    for (const palette of samplePalettes) {
+    for (const file of schemaFiles) {
+      const palette = file.replace('.min.css', '');
       test(`schemas/${palette}.min.css snapshot`, () => {
-        const content = readDistFile(`schemas/${palette}.min.css`);
+        const content = readDistFile(`schemas/${file}`);
         expect(content).not.toBeNull();
         expect(content).toMatchSnapshot();
       });
@@ -104,16 +104,16 @@ describe('CSS Snapshot Tests', () => {
   });
 
   describe('Per-palette theme snapshots', () => {
+    const themeFiles = listDistFiles('themes');
+
     test('28 theme files exist in dist/themes/', () => {
-      const files = listDistFiles('themes');
-      expect(files.length).toBe(28);
+      expect(themeFiles.length).toBe(28);
     });
 
-    const samplePalettes = ['blue', 'red', 'gray'];
-
-    for (const palette of samplePalettes) {
+    for (const file of themeFiles) {
+      const palette = file.replace('.min.css', '');
       test(`themes/${palette}.min.css snapshot`, () => {
-        const content = readDistFile(`themes/${palette}.min.css`);
+        const content = readDistFile(`themes/${file}`);
         expect(content).not.toBeNull();
         expect(content).toMatchSnapshot();
       });
