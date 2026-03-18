@@ -1,14 +1,14 @@
 /* ═══════════════════════════════════════════════════════════
    sizing.css — line://ui Sizing & Spacing Tokens
 
-   74 sizing and spacing tokens: rem sizes (16), px sizes (16),
+   74 sizing and spacing tokens: rem sizes (17), px sizes (17),
    fluid sizes (10), content widths (3), header widths (3),
-   breakpoints (7), relative/ch-based sizes (18).
+   breakpoints (7), relative/ch-based sizes (17).
 
    Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
-/* ── Rem Sizes (16) ── */
+/* ── Rem Sizes (17) ── */
 
 :where(html) {
   --line-size-000: -0.5rem;
@@ -30,7 +30,7 @@
   --line-size-15: 30rem;
 }
 
-/* ── Px Sizes (16) ── */
+/* ── Px Sizes (17) ── */
 
 :where(html) {
   --line-size-px-000: -8px;
@@ -95,7 +95,7 @@
   --line-size-xxl: 1920px;
 }
 
-/* ── Relative / ch-based (18) ── */
+/* ── Relative / ch-based (17) ── */
 
 :where(html) {
   --line-size-relative-000: -0.5ch;
