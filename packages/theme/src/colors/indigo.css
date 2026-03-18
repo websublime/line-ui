@@ -27,4 +27,5 @@
   --line-indigo-3: hsl(230, 73.9%, 63.3%);
   --line-indigo-2: hsl(235, 100%, 80.0%);
   --line-indigo-1: hsl(235, 93.0%, 93.0%);
+  --line-indigo-contrast: #fff;
 }

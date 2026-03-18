@@ -26,4 +26,5 @@
   --line-slate-3: hsl(218, 5.3%, 51.5%);
   --line-slate-2: hsl(220, 7.0%, 70.0%);
   --line-slate-1: hsl(220, 7.0%, 93.5%);
+  --line-slate-contrast: #fff;
 }

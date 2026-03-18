@@ -130,8 +130,7 @@ describe('WCAG Contrast Validation', () => {
         }
       });
 
-      // TODO: Fix dark mode contrast — see line-ui-p3v.27
-      test.todo('dark mode: contrast token vs level-9 equivalent meets WCAG AA (4.5:1)', () => {
+      test('dark mode: contrast token vs level-9 equivalent meets WCAG AA (4.5:1)', () => {
         const contrastKey = `--line-${palette}-contrast`;
 
         // The contrast token might be redeclared in dark mode, or inherited from light

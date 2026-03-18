@@ -26,4 +26,5 @@
   --line-olive-3: hsl(106, 4.6%, 49.3%);
   --line-olive-2: hsl(110, 5.0%, 68.8%);
   --line-olive-1: hsl(110, 7.0%, 93.0%);
+  --line-olive-contrast: #fff;
 }

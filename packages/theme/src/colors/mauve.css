@@ -27,4 +27,5 @@
   --line-mauve-3: hsl(252, 4.3%, 52.3%);
   --line-mauve-2: hsl(250, 6.0%, 70.5%);
   --line-mauve-1: hsl(240, 7.0%, 93.8%);
+  --line-mauve-contrast: #fff;
 }
