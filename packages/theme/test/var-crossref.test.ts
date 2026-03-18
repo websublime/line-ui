@@ -33,11 +33,12 @@ const SRC_DIR = resolve(THEME_ROOT, 'src');
 // ---------------------------------------------------------------------------
 
 /**
- * Files to exclude from var() cross-reference scanning.
- * - mixins.css: uses PostCSS mixin interpolation syntax $(var) inside var(),
+ * Files to exclude from var() cross-reference scanning, specified as
+ * relative paths from src/ to avoid ambiguous basename matching.
+ * - utils/mixins.css: uses PostCSS mixin interpolation syntax $(var) inside var(),
  *   producing incomplete references like var(--line-font-size-) at parse time.
  */
-const EXCLUDED_FILES = new Set(['mixins.css']);
+const EXCLUDED_FILES = new Set(['utils/mixins.css']);
 
 function collectCssFiles(dir: string): string[] {
   const files: string[] = [];
@@ -47,7 +48,7 @@ function collectCssFiles(dir: string): string[] {
 
     if (entry.isDirectory()) {
       files.push(...collectCssFiles(fullPath));
-    } else if (entry.name.endsWith('.css') && !EXCLUDED_FILES.has(entry.name)) {
+    } else if (entry.name.endsWith('.css') && !EXCLUDED_FILES.has(relative(SRC_DIR, fullPath))) {
       files.push(fullPath);
     }
   }
