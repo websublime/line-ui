@@ -2,6 +2,8 @@
    masks.css — line://ui Mask Tokens
 
    34 mask tokens: edge masks (25), corner-cut masks (9).
+     Edge: scoop (6), scalloped (7), drip (6), zig-zag (6).
+     Corner-cut: circles (3), squares (3), angles (3).
 
    Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
