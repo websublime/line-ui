@@ -140,22 +140,18 @@ describe('WCAG Contrast Validation', () => {
         const level4DarkKey = `--line-${palette}-4`;
         const solidBgValue = dark.get(level4DarkKey);
 
-        if (!(solidBgValue && contrastValue)) {
-          // Some palettes may not have dark mode yet; skip gracefully
-          return;
-        }
+        const solidBg = assertDefined(solidBgValue, `${level4DarkKey} (dark mode)`);
+        const contrast = assertDefined(contrastValue, `${contrastKey} (dark or light fallback)`);
 
-        const bgRgb = resolveColor(solidBgValue);
-        const fgRgb = resolveColor(contrastValue);
-
-        if (!(bgRgb && fgRgb)) return;
+        const bgRgb = assertNonNull(resolveColor(solidBg), `resolveColor(${level4DarkKey})`);
+        const fgRgb = assertNonNull(resolveColor(contrast), `resolveColor(${contrastKey})`);
 
         const ratio = contrastRatio(bgRgb, fgRgb);
 
         if (ratio < WCAG_AA_NORMAL) {
           throw new Error(
             `${palette} dark: contrast ratio ${ratio.toFixed(2)}:1 ` +
-              `(${contrastValue} on ${solidBgValue}) ` +
+              `(${contrast} on ${solidBg}) ` +
               `is below WCAG AA threshold of ${WCAG_AA_NORMAL}:1`
           );
         }
