@@ -27,4 +27,5 @@
   --line-violet-3: hsl(253, 63.2%, 64.1%);
   --line-violet-2: hsl(255, 100%, 80.0%);
   --line-violet-1: hsl(250, 93.0%, 93.0%);
+  --line-violet-contrast: #fff;
 }

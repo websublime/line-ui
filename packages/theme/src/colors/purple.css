@@ -27,4 +27,5 @@
   --line-purple-3: hsl(271, 57.8%, 61.2%);
   --line-purple-2: hsl(270, 90.0%, 78.0%);
   --line-purple-1: hsl(275, 75.0%, 91.5%);
+  --line-purple-contrast: #fff;
 }

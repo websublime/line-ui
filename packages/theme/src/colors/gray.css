@@ -27,4 +27,5 @@
   --line-gray-3: hsl(0, 0%, 50.7%);
   --line-gray-2: hsl(0, 0%, 69.5%);
   --line-gray-1: hsl(0, 0%, 93.5%);
+  --line-gray-contrast: #fff;
 }

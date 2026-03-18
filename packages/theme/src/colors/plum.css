@@ -27,4 +27,5 @@
   --line-plum-3: hsl(291, 51.2%, 60.2%);
   --line-plum-2: hsl(290, 70.0%, 74.0%);
   --line-plum-1: hsl(300, 60.0%, 89.5%);
+  --line-plum-contrast: #fff;
 }
