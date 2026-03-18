@@ -10,8 +10,23 @@ html {
   font-family: "JetBrains Mono", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color-scheme: light;
+}
+
+html.dark {
+  color-scheme: dark;
 }
 
 body {
   min-height: 100dvh;
+  background-color: var(--line-gray-1, #fafafa);
+  color: var(--line-gray-12, #1a1a1a);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+html.dark body {
+  background-color: var(--line-gray-1, #111111);
+  color: var(--line-gray-12, #eeeeee);
 }

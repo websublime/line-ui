@@ -9,44 +9,95 @@ import '@websublime/line-theme/colors/blue';
 import '@websublime/line-theme/schemas/blue';
 import '@websublime/line-theme/aliases';
 
-// Page imports (lazy stubs for now)
+// Navigation component
+import './components/sc-nav.js';
+
+// Page imports
 import './pages/home.js';
+import './pages/colors.js';
+import './pages/typography.js';
+import './pages/spacing.js';
+import './pages/motion.js';
+import './pages/surfaces.js';
+import './pages/decorative.js';
+import './pages/semantic.js';
+import './pages/elements.js';
+import './pages/themes.js';
+import './pages/generator.js';
 
 @customElement('sc-app')
 export class ScApp extends LitElement {
   private router = new Router(this, [
     { path: '/', render: () => html`<sc-page-home></sc-page-home>` },
-    { path: '/tokens/colors', render: () => html`<sc-page-placeholder data-page="colors"></sc-page-placeholder>` },
+    {
+      path: '/tokens/colors',
+      render: () => html`<sc-page-colors></sc-page-colors>`
+    },
     {
       path: '/tokens/typography',
-      render: () => html`<sc-page-placeholder data-page="typography"></sc-page-placeholder>`
+      render: () => html`<sc-page-typography></sc-page-typography>`
     },
-    { path: '/tokens/spacing', render: () => html`<sc-page-placeholder data-page="spacing"></sc-page-placeholder>` },
-    { path: '/tokens/motion', render: () => html`<sc-page-placeholder data-page="motion"></sc-page-placeholder>` },
-    { path: '/tokens/surfaces', render: () => html`<sc-page-placeholder data-page="surfaces"></sc-page-placeholder>` },
+    {
+      path: '/tokens/spacing',
+      render: () => html`<sc-page-spacing></sc-page-spacing>`
+    },
+    {
+      path: '/tokens/motion',
+      render: () => html`<sc-page-motion></sc-page-motion>`
+    },
+    {
+      path: '/tokens/surfaces',
+      render: () => html`<sc-page-surfaces></sc-page-surfaces>`
+    },
     {
       path: '/tokens/decorative',
-      render: () => html`<sc-page-placeholder data-page="decorative"></sc-page-placeholder>`
+      render: () => html`<sc-page-decorative></sc-page-decorative>`
     },
-    { path: '/semantic', render: () => html`<sc-page-placeholder data-page="semantic"></sc-page-placeholder>` },
-    { path: '/elements', render: () => html`<sc-page-placeholder data-page="elements"></sc-page-placeholder>` },
-    { path: '/themes', render: () => html`<sc-page-placeholder data-page="themes"></sc-page-placeholder>` },
-    { path: '/generator', render: () => html`<sc-page-placeholder data-page="generator"></sc-page-placeholder>` }
+    {
+      path: '/semantic',
+      render: () => html`<sc-page-semantic></sc-page-semantic>`
+    },
+    {
+      path: '/elements',
+      render: () => html`<sc-page-elements></sc-page-elements>`
+    },
+    {
+      path: '/themes',
+      render: () => html`<sc-page-themes></sc-page-themes>`
+    },
+    {
+      path: '/generator',
+      render: () => html`<sc-page-generator></sc-page-generator>`
+    }
   ]);
 
   static override styles = css`
     :host {
-      display: block;
+      display: grid;
+      grid-template-columns: var(--sc-sidebar-width, 260px) 1fr;
       min-height: 100dvh;
     }
 
     main {
-      padding: 1rem;
+      padding: 2rem;
+      overflow-y: auto;
+      min-height: 100dvh;
+    }
+
+    @media (max-width: 768px) {
+      :host {
+        grid-template-columns: 1fr;
+      }
+
+      main {
+        padding: 3.5rem 1rem 1rem;
+      }
     }
   `;
 
   override render() {
     return html`
+      <sc-nav></sc-nav>
       <main>${this.router.outlet()}</main>
     `;
   }
