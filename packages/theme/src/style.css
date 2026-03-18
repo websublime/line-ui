@@ -1068,6 +1068,28 @@ body {
   margin-bottom: 1rem;
 }
 
+.sc-override-reset {
+  padding: 0.125rem 0.5rem;
+  font-family: inherit;
+  font-size: var(--line-font-size-0);
+  border: 1px solid var(--line-ui-border);
+  border-radius: var(--line-radius-1);
+  background: transparent;
+  color: var(--line-low-contrast);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-inline-start: 0.5rem;
+}
+
+.sc-override-reset:hover {
+  border-color: var(--line-ui-border-hover);
+  color: var(--line-high-contrast);
+}
+
+.sc-override-reset.is-hidden {
+  display: none;
+}
+
 .sc-override-pick {
   width: 20px;
   height: 20px;
