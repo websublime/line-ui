@@ -42,11 +42,6 @@ interface FamilyConfig {
    * These are line-only extensions and will not be flagged.
    */
   lineOnlyTokens?: string[];
-  /**
-   * If true, skip value comparison (structural divergence too large).
-   * Still validates that all expected tokens exist by name.
-   */
-  skipValueComparison?: boolean;
 }
 
 const FAMILIES: FamilyConfig[] = [
@@ -98,8 +93,8 @@ const FAMILIES: FamilyConfig[] = [
       '--shadow-strength-7',
       '--shadow-strength-8',
       '--shadow-strength-10'
-    ],
-    skipValueComparison: true // Structural divergence: inline calc vs var refs
+    ]
+    // Note: value comparison is not performed — structural divergence (inline calc vs var refs)
   },
   {
     lineFile: 'zindex',
