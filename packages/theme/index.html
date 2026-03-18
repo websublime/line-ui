@@ -4,871 +4,238 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/branding/symbol-mark.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <title>line://ui Theme Showcase</title>
   </head>
-  <body class="line-schema-gray">
+  <body class="line-schema-blue">
 
     <!-- ============================================================
-         NAV
+         HEADER
          ============================================================ -->
-    <nav class="ui-nav">
-      <div class="ui-nav-logo">
-        <img src="/branding/symbol-mark.svg" alt="line://ui" class="logo-for-dark" />
-        <img src="/branding/symbol-mark-dark.svg" alt="line://ui" class="logo-for-light" />
+    <header class="sc-header">
+      <div class="sc-header-logo">
+        <img src="/branding/symbol-mark.svg" alt="line://ui" class="logo-dark" />
+        <img src="/branding/symbol-mark-dark.svg" alt="line://ui" class="logo-light" />
       </div>
 
-      <div class="ui-nav-links">
-        <a href="#palettes">Palettes</a>
-        <a href="#schemas">Schemas</a>
-        <a href="#utilities">Utilities</a>
-        <a href="#typography">Type</a>
-        <a href="#spacing">Spacing</a>
-        <a href="#shadows">Shadows</a>
-        <a href="#interactive">States</a>
-        <a href="#loading">Loading</a>
-        <a href="#multitheme">Themes</a>
-        <a href="#combos">Combos</a>
-        <a href="#normalize">Normalize</a>
-        <a href="#media">Media</a>
-        <a href="#misc">Misc</a>
+      <div class="sc-header-dots">
+        <span class="sc-header-dot" data-layer="l0" title="L0 Primitives"></span>
+        <span class="sc-header-dot" data-layer="l1" title="L1 Foundation"></span>
+        <span class="sc-header-dot" data-layer="l2" title="L2 Semantic"></span>
+        <span class="sc-header-dot" data-layer="l3" title="L3 Aliases"></span>
       </div>
 
-      <div class="ui-nav-actions">
-        <div class="ui-nav-colors">
-          <button data-theme="line-schema-gray" class="ui-nav-button ui-nav-button-active line-is-gray-border"><span class="ui-nav-color line-is-gray">G</span></button>
-          <button data-theme="line-schema-mauve" class="ui-nav-button line-is-mauve-border"><span class="ui-nav-color line-is-mauve">M</span></button>
-          <button data-theme="line-schema-slate" class="ui-nav-button line-is-slate-border"><span class="ui-nav-color line-is-slate">S</span></button>
-          <button data-theme="line-schema-sage" class="ui-nav-button line-is-sage-border"><span class="ui-nav-color line-is-sage">S</span></button>
-          <button data-theme="line-schema-olive" class="ui-nav-button line-is-olive-border"><span class="ui-nav-color line-is-olive">O</span></button>
-          <button data-theme="line-schema-sand" class="ui-nav-button line-is-sand-border"><span class="ui-nav-color line-is-sand">S</span></button>
-          <button data-theme="line-schema-tomato" class="ui-nav-button line-is-tomato-border"><span class="ui-nav-color line-is-tomato">T</span></button>
-          <button data-theme="line-schema-red" class="ui-nav-button line-is-red-border"><span class="ui-nav-color line-is-red">R</span></button>
-          <button data-theme="line-schema-crimson" class="ui-nav-button line-is-crimson-border"><span class="ui-nav-color line-is-crimson">C</span></button>
-          <button data-theme="line-schema-pink" class="ui-nav-button line-is-pink-border"><span class="ui-nav-color line-is-pink">P</span></button>
-          <button data-theme="line-schema-plum" class="ui-nav-button line-is-plum-border"><span class="ui-nav-color line-is-plum">P</span></button>
-          <button data-theme="line-schema-purple" class="ui-nav-button line-is-purple-border"><span class="ui-nav-color line-is-purple">P</span></button>
-          <button data-theme="line-schema-violet" class="ui-nav-button line-is-violet-border"><span class="ui-nav-color line-is-violet">V</span></button>
-          <button data-theme="line-schema-indigo" class="ui-nav-button line-is-indigo-border"><span class="ui-nav-color line-is-indigo">I</span></button>
-          <button data-theme="line-schema-blue" class="ui-nav-button line-is-blue-border"><span class="ui-nav-color line-is-blue">B</span></button>
-          <button data-theme="line-schema-cyan" class="ui-nav-button line-is-cyan-border"><span class="ui-nav-color line-is-cyan">C</span></button>
-          <button data-theme="line-schema-teal" class="ui-nav-button line-is-teal-border"><span class="ui-nav-color line-is-teal">T</span></button>
-          <button data-theme="line-schema-green" class="ui-nav-button line-is-green-border"><span class="ui-nav-color line-is-green">G</span></button>
-          <button data-theme="line-schema-grass" class="ui-nav-button line-is-grass-border"><span class="ui-nav-color line-is-grass">G</span></button>
-          <button data-theme="line-schema-brown" class="ui-nav-button line-is-brown-border"><span class="ui-nav-color line-is-brown">B</span></button>
-          <button data-theme="line-schema-bronze" class="ui-nav-button line-is-bronze-border"><span class="ui-nav-color line-is-bronze">B</span></button>
-          <button data-theme="line-schema-gold" class="ui-nav-button line-is-gold-border"><span class="ui-nav-color line-is-gold">G</span></button>
-          <button data-theme="line-schema-sky" class="ui-nav-button line-is-sky-border"><span class="ui-nav-color line-is-sky">S</span></button>
-          <button data-theme="line-schema-mint" class="ui-nav-button line-is-mint-border"><span class="ui-nav-color line-is-mint">M</span></button>
-          <button data-theme="line-schema-lime" class="ui-nav-button line-is-lime-border"><span class="ui-nav-color line-is-lime">L</span></button>
-          <button data-theme="line-schema-yellow" class="ui-nav-button line-is-yellow-border"><span class="ui-nav-color line-is-yellow">Y</span></button>
-          <button data-theme="line-schema-amber" class="ui-nav-button line-is-amber-border"><span class="ui-nav-color line-is-amber">A</span></button>
-          <button data-theme="line-schema-orange" class="ui-nav-button line-is-orange-border"><span class="ui-nav-color line-is-orange">O</span></button>
-        </div>
-        <button class="ui-theme-button"></button>
+      <div class="sc-header-actions">
+        <button class="sc-toggle" id="mode-toggle">
+          <span class="sc-toggle-dot"></span>
+          <span id="mode-label">dark</span>
+        </button>
       </div>
-    </nav>
+    </header>
+
+    <!-- Palette picker bar -->
+    <nav class="sc-palettes" id="palette-bar"></nav>
 
     <!-- ============================================================
          HERO
          ============================================================ -->
-    <header class="showcase-hero">
-      <div class="showcase-hero-wordmark">
-        <img src="/branding/logo-wordmark.svg" alt="line://ui" class="wordmark-for-dark" style="height:56px" />
-        <img src="/branding/logo-wordmark-dark.svg" alt="line://ui" class="wordmark-for-light" style="height:56px" />
-      </div>
-      <p class="showcase-hero-tagline">
-        A comprehensive CSS design system with 28 color palettes, 12-level semantic scales,
-        light and dark modes, and full token coverage.
+    <div class="sc-hero">
+      <div class="sc-hero-wordmark">line<span class="accent">://</span>ui</div>
+      <p class="sc-hero-tagline">
+        Design system showcase. L0 primitives, L1 foundation tokens, L2 semantic
+        defaults, and L3 aliases — all wired and interactive.
       </p>
-      <div class="showcase-hero-meta">
-        <span>28 palettes</span>
-        <span>12-level scales</span>
-        <span>336 color tokens</span>
-        <span>light + dark</span>
-      </div>
-    </header>
+    </div>
 
-    <main class="showcase-main">
+    <main class="sc-main">
 
       <!-- ============================================================
-           1. COLOR PALETTE SCALES
+           L0 — Primitives
            ============================================================ -->
-      <section id="palettes" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Color Palette Scales</h2>
-          <p>All 28 palettes with 12-level semantic scales. Hover any swatch to see its level number.</p>
+      <section id="l0" class="sc-section">
+        <div class="sc-section-hdr">
+          <h2>L0 — Primitives</h2>
+          <p>12-step semantic scale for the active palette. Hover to inspect, click mini-grid to switch.</p>
         </div>
 
-        <div class="scales-grid">
-          <div class="scale-row"><span class="scale-label">Gray</span><div class="scale-swatch ui-scale-gray" data-level="1" style="background:var(--line-gray-1)"></div><div class="scale-swatch ui-scale-gray" data-level="2" style="background:var(--line-gray-2)"></div><div class="scale-swatch ui-scale-gray" data-level="3" style="background:var(--line-gray-3)"></div><div class="scale-swatch ui-scale-gray" data-level="4" style="background:var(--line-gray-4)"></div><div class="scale-swatch ui-scale-gray" data-level="5" style="background:var(--line-gray-5)"></div><div class="scale-swatch ui-scale-gray" data-level="6" style="background:var(--line-gray-6)"></div><div class="scale-swatch ui-scale-gray" data-level="7" style="background:var(--line-gray-7)"></div><div class="scale-swatch ui-scale-gray" data-level="8" style="background:var(--line-gray-8)"></div><div class="scale-swatch ui-scale-gray" data-level="9" style="background:var(--line-gray-9)"></div><div class="scale-swatch ui-scale-gray" data-level="10" style="background:var(--line-gray-10)"></div><div class="scale-swatch ui-scale-gray" data-level="11" style="background:var(--line-gray-11)"></div><div class="scale-swatch ui-scale-gray" data-level="12" style="background:var(--line-gray-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Mauve</span><div class="scale-swatch" data-level="1" style="background:var(--line-mauve-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-mauve-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-mauve-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-mauve-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-mauve-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-mauve-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-mauve-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-mauve-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-mauve-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-mauve-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-mauve-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-mauve-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Slate</span><div class="scale-swatch" data-level="1" style="background:var(--line-slate-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-slate-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-slate-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-slate-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-slate-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-slate-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-slate-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-slate-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-slate-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-slate-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-slate-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-slate-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Sage</span><div class="scale-swatch" data-level="1" style="background:var(--line-sage-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-sage-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-sage-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-sage-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-sage-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-sage-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-sage-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-sage-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-sage-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-sage-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-sage-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-sage-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Olive</span><div class="scale-swatch" data-level="1" style="background:var(--line-olive-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-olive-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-olive-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-olive-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-olive-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-olive-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-olive-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-olive-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-olive-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-olive-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-olive-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-olive-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Sand</span><div class="scale-swatch" data-level="1" style="background:var(--line-sand-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-sand-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-sand-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-sand-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-sand-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-sand-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-sand-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-sand-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-sand-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-sand-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-sand-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-sand-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Tomato</span><div class="scale-swatch" data-level="1" style="background:var(--line-tomato-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-tomato-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-tomato-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-tomato-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-tomato-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-tomato-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-tomato-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-tomato-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-tomato-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-tomato-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-tomato-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-tomato-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Red</span><div class="scale-swatch" data-level="1" style="background:var(--line-red-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-red-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-red-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-red-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-red-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-red-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-red-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-red-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-red-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-red-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-red-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-red-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Crimson</span><div class="scale-swatch" data-level="1" style="background:var(--line-crimson-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-crimson-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-crimson-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-crimson-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-crimson-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-crimson-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-crimson-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-crimson-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-crimson-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-crimson-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-crimson-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-crimson-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Pink</span><div class="scale-swatch" data-level="1" style="background:var(--line-pink-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-pink-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-pink-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-pink-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-pink-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-pink-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-pink-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-pink-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-pink-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-pink-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-pink-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-pink-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Plum</span><div class="scale-swatch" data-level="1" style="background:var(--line-plum-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-plum-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-plum-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-plum-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-plum-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-plum-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-plum-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-plum-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-plum-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-plum-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-plum-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-plum-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Purple</span><div class="scale-swatch" data-level="1" style="background:var(--line-purple-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-purple-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-purple-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-purple-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-purple-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-purple-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-purple-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-purple-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-purple-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-purple-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-purple-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-purple-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Violet</span><div class="scale-swatch" data-level="1" style="background:var(--line-violet-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-violet-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-violet-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-violet-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-violet-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-violet-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-violet-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-violet-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-violet-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-violet-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-violet-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-violet-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Indigo</span><div class="scale-swatch" data-level="1" style="background:var(--line-indigo-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-indigo-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-indigo-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-indigo-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-indigo-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-indigo-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-indigo-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-indigo-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-indigo-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-indigo-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-indigo-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-indigo-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Blue</span><div class="scale-swatch" data-level="1" style="background:var(--line-blue-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-blue-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-blue-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-blue-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-blue-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-blue-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-blue-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-blue-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-blue-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-blue-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-blue-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-blue-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Cyan</span><div class="scale-swatch" data-level="1" style="background:var(--line-cyan-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-cyan-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-cyan-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-cyan-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-cyan-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-cyan-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-cyan-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-cyan-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-cyan-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-cyan-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-cyan-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-cyan-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Teal</span><div class="scale-swatch" data-level="1" style="background:var(--line-teal-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-teal-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-teal-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-teal-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-teal-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-teal-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-teal-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-teal-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-teal-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-teal-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-teal-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-teal-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Green</span><div class="scale-swatch" data-level="1" style="background:var(--line-green-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-green-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-green-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-green-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-green-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-green-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-green-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-green-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-green-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-green-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-green-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-green-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Grass</span><div class="scale-swatch" data-level="1" style="background:var(--line-grass-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-grass-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-grass-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-grass-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-grass-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-grass-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-grass-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-grass-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-grass-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-grass-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-grass-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-grass-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Brown</span><div class="scale-swatch" data-level="1" style="background:var(--line-brown-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-brown-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-brown-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-brown-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-brown-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-brown-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-brown-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-brown-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-brown-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-brown-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-brown-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-brown-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Bronze</span><div class="scale-swatch" data-level="1" style="background:var(--line-bronze-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-bronze-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-bronze-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-bronze-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-bronze-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-bronze-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-bronze-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-bronze-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-bronze-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-bronze-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-bronze-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-bronze-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Gold</span><div class="scale-swatch" data-level="1" style="background:var(--line-gold-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-gold-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-gold-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-gold-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-gold-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-gold-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-gold-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-gold-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-gold-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-gold-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-gold-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-gold-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Sky</span><div class="scale-swatch" data-level="1" style="background:var(--line-sky-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-sky-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-sky-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-sky-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-sky-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-sky-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-sky-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-sky-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-sky-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-sky-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-sky-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-sky-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Mint</span><div class="scale-swatch" data-level="1" style="background:var(--line-mint-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-mint-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-mint-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-mint-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-mint-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-mint-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-mint-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-mint-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-mint-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-mint-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-mint-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-mint-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Lime</span><div class="scale-swatch" data-level="1" style="background:var(--line-lime-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-lime-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-lime-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-lime-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-lime-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-lime-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-lime-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-lime-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-lime-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-lime-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-lime-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-lime-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Yellow</span><div class="scale-swatch" data-level="1" style="background:var(--line-yellow-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-yellow-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-yellow-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-yellow-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-yellow-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-yellow-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-yellow-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-yellow-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-yellow-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-yellow-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-yellow-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-yellow-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Amber</span><div class="scale-swatch" data-level="1" style="background:var(--line-amber-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-amber-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-amber-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-amber-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-amber-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-amber-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-amber-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-amber-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-amber-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-amber-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-amber-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-amber-12)"></div></div>
-          <div class="scale-row"><span class="scale-label">Orange</span><div class="scale-swatch" data-level="1" style="background:var(--line-orange-1)"></div><div class="scale-swatch" data-level="2" style="background:var(--line-orange-2)"></div><div class="scale-swatch" data-level="3" style="background:var(--line-orange-3)"></div><div class="scale-swatch" data-level="4" style="background:var(--line-orange-4)"></div><div class="scale-swatch" data-level="5" style="background:var(--line-orange-5)"></div><div class="scale-swatch" data-level="6" style="background:var(--line-orange-6)"></div><div class="scale-swatch" data-level="7" style="background:var(--line-orange-7)"></div><div class="scale-swatch" data-level="8" style="background:var(--line-orange-8)"></div><div class="scale-swatch" data-level="9" style="background:var(--line-orange-9)"></div><div class="scale-swatch" data-level="10" style="background:var(--line-orange-10)"></div><div class="scale-swatch" data-level="11" style="background:var(--line-orange-11)"></div><div class="scale-swatch" data-level="12" style="background:var(--line-orange-12)"></div></div>
-        </div>
-
-        <!-- Neutrals -->
-        <div class="showcase-subsection" style="margin-top:2rem">
-          <h3>Neutral Tokens</h3>
-          <div class="ui-scale-container ui-neutral">
-            <div class="ui-light">Light</div>
-            <div class="ui-dark">Dark</div>
-            <div class="ui-white">White</div>
-            <div class="ui-black">Black</div>
+        <!-- Active palette strip -->
+        <div class="sc-subsection">
+          <h3>Active Palette Strip</h3>
+          <div class="sc-l0-strip" id="l0-strip"></div>
+          <div class="sc-l0-labels">
+            <span>bg</span><span>subtle</span><span>ui-bg</span><span>ui:hov</span>
+            <span>ui:act</span><span>s-brd</span><span>ui-brd</span><span>brd:hov</span>
+            <span>solid</span><span>sol:hov</span><span>lo-txt</span><span>hi-txt</span>
           </div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           2. SEMANTIC SCHEMA CLASSES
-           ============================================================ -->
-      <section id="schemas" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Semantic Schema Classes</h2>
-          <p>Semantic utility classes that map to the active schema palette. These adapt when you switch palettes in the nav above.</p>
-        </div>
-
-        <div class="showcase-tokens-grid">
-          <div class="showcase-token-card line-is-background">.line-is-background</div>
-          <div class="showcase-token-card line-is-subtle-background">.line-is-subtle-background</div>
-          <div class="showcase-token-card line-is-ui-background">.line-is-ui-background</div>
-          <div class="showcase-token-card line-is-hover-background">.line-is-hover-background</div>
-          <div class="showcase-token-card line-is-active-background">.line-is-active-background</div>
-          <div class="showcase-token-card line-is-subtle-border" style="outline:none;border:2px solid">.line-is-subtle-border</div>
-          <div class="showcase-token-card line-is-ui-border" style="outline:none;border:2px solid">.line-is-ui-border</div>
-          <div class="showcase-token-card line-is-ui-hover" style="outline:none;border:2px solid">.line-is-ui-hover</div>
-          <div class="showcase-token-card line-is-solid-background">.line-is-solid-background</div>
-          <div class="showcase-token-card line-is-hover-solid">.line-is-hover-solid</div>
-          <div class="showcase-token-card line-is-low-contrast" style="background:var(--line-subtle-background)">.line-is-low-contrast</div>
-          <div class="showcase-token-card line-is-high-contrast" style="background:var(--line-subtle-background)">.line-is-high-contrast</div>
-          <div class="showcase-token-card line-is-light" style="background:var(--line-ui-background)">.line-is-light</div>
-          <div class="showcase-token-card line-is-dark" style="background:var(--line-ui-background)">.line-is-dark</div>
-          <div class="showcase-token-card line-is-white" style="background:var(--line-ui-background)">.line-is-white</div>
-          <div class="showcase-token-card line-is-black" style="background:var(--line-ui-background)">.line-is-black</div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           3. PER-PALETTE SOLID CLASSES
-           ============================================================ -->
-      <section id="utilities" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Per-Palette Utility Classes</h2>
-          <p>Solid background and border classes for all 28 palettes. Hover to see the transition effect.</p>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Solid + Border (.line-is-{palette} .line-is-{palette}-border)</h3>
-          <div class="showcase-tokens-grid">
-            <div class="showcase-token-card line-is-amber line-is-amber-border">.line-is-amber</div>
-            <div class="showcase-token-card line-is-blue line-is-blue-border">.line-is-blue</div>
-            <div class="showcase-token-card line-is-bronze line-is-bronze-border">.line-is-bronze</div>
-            <div class="showcase-token-card line-is-brown line-is-brown-border">.line-is-brown</div>
-            <div class="showcase-token-card line-is-crimson line-is-crimson-border">.line-is-crimson</div>
-            <div class="showcase-token-card line-is-cyan line-is-cyan-border">.line-is-cyan</div>
-            <div class="showcase-token-card line-is-gold line-is-gold-border">.line-is-gold</div>
-            <div class="showcase-token-card line-is-grass line-is-grass-border">.line-is-grass</div>
-            <div class="showcase-token-card line-is-gray line-is-gray-border">.line-is-gray</div>
-            <div class="showcase-token-card line-is-green line-is-green-border">.line-is-green</div>
-            <div class="showcase-token-card line-is-indigo line-is-indigo-border">.line-is-indigo</div>
-            <div class="showcase-token-card line-is-lime line-is-lime-border">.line-is-lime</div>
-            <div class="showcase-token-card line-is-mauve line-is-mauve-border">.line-is-mauve</div>
-            <div class="showcase-token-card line-is-mint line-is-mint-border">.line-is-mint</div>
-            <div class="showcase-token-card line-is-olive line-is-olive-border">.line-is-olive</div>
-            <div class="showcase-token-card line-is-orange line-is-orange-border">.line-is-orange</div>
-            <div class="showcase-token-card line-is-pink line-is-pink-border">.line-is-pink</div>
-            <div class="showcase-token-card line-is-plum line-is-plum-border">.line-is-plum</div>
-            <div class="showcase-token-card line-is-purple line-is-purple-border">.line-is-purple</div>
-            <div class="showcase-token-card line-is-red line-is-red-border">.line-is-red</div>
-            <div class="showcase-token-card line-is-sage line-is-sage-border">.line-is-sage</div>
-            <div class="showcase-token-card line-is-sand line-is-sand-border">.line-is-sand</div>
-            <div class="showcase-token-card line-is-sky line-is-sky-border">.line-is-sky</div>
-            <div class="showcase-token-card line-is-slate line-is-slate-border">.line-is-slate</div>
-            <div class="showcase-token-card line-is-teal line-is-teal-border">.line-is-teal</div>
-            <div class="showcase-token-card line-is-tomato line-is-tomato-border">.line-is-tomato</div>
-            <div class="showcase-token-card line-is-violet line-is-violet-border">.line-is-violet</div>
-            <div class="showcase-token-card line-is-yellow line-is-yellow-border">.line-is-yellow</div>
-          </div>
-        </div>
-
-        <!-- Extended per-palette utilities (show blue as representative) -->
-        <div class="showcase-subsection">
-          <h3>Extended Utility Classes (Blue as example)</h3>
-          <p style="margin-bottom:1rem;color:var(--line-low-contrast);font-size:0.875rem">All 17 .line-is-* variants available for every palette.</p>
-          <div class="showcase-palette-utils">
-            <div class="showcase-palette-util-card line-is-blue line-is-blue-border">.line-is-blue</div>
-            <div class="showcase-palette-util-card line-is-blue-color" style="background:var(--line-subtle-background)">.line-is-blue-color</div>
-            <div class="showcase-palette-util-card line-is-blue-low-contrast" style="background:var(--line-subtle-background)">.line-is-blue-low-contrast</div>
-            <div class="showcase-palette-util-card line-is-blue-high-contrast" style="background:var(--line-subtle-background)">.line-is-blue-high-contrast</div>
-            <div class="showcase-palette-util-card line-is-blue-background">.line-is-blue-background</div>
-            <div class="showcase-palette-util-card line-is-blue-subtle-background">.line-is-blue-subtle-background</div>
-            <div class="showcase-palette-util-card line-is-blue-ui-background">.line-is-blue-ui-background</div>
-            <div class="showcase-palette-util-card line-is-blue-ui-hover-background">.line-is-blue-ui-hover-background</div>
-            <div class="showcase-palette-util-card line-is-blue-ui-active-background">.line-is-blue-ui-active-background</div>
-            <div class="showcase-palette-util-card line-is-blue-subtle-element-background">.line-is-blue-subtle-element-background</div>
-            <div class="showcase-palette-util-card line-is-blue-ui-element-background">.line-is-blue-ui-element-background</div>
-            <div class="showcase-palette-util-card line-is-blue-solid-background">.line-is-blue-solid-background</div>
-            <div class="showcase-palette-util-card line-is-blue-hover-solid-background">.line-is-blue-hover-solid-background</div>
-            <div class="showcase-palette-util-card line-is-blue-low-contrast-background">.line-is-blue-low-contrast-background</div>
-            <div class="showcase-palette-util-card line-is-blue-high-contrast-background">.line-is-blue-high-contrast-background</div>
-            <div class="showcase-palette-util-card line-is-blue-border" style="outline:none;border:2px solid">.line-is-blue-border</div>
-          </div>
-        </div>
-
-        <!-- Show a second palette: crimson -->
-        <div class="showcase-subsection">
-          <h3>Extended Utility Classes (Crimson)</h3>
-          <div class="showcase-palette-utils">
-            <div class="showcase-palette-util-card line-is-crimson line-is-crimson-border">.line-is-crimson</div>
-            <div class="showcase-palette-util-card line-is-crimson-color" style="background:var(--line-subtle-background)">.line-is-crimson-color</div>
-            <div class="showcase-palette-util-card line-is-crimson-low-contrast" style="background:var(--line-subtle-background)">.line-is-crimson-low-contrast</div>
-            <div class="showcase-palette-util-card line-is-crimson-high-contrast" style="background:var(--line-subtle-background)">.line-is-crimson-high-contrast</div>
-            <div class="showcase-palette-util-card line-is-crimson-background">.line-is-crimson-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-subtle-background">.line-is-crimson-subtle-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-ui-background">.line-is-crimson-ui-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-ui-hover-background">.line-is-crimson-ui-hover-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-ui-active-background">.line-is-crimson-ui-active-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-subtle-element-background">.line-is-crimson-subtle-element-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-ui-element-background">.line-is-crimson-ui-element-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-solid-background">.line-is-crimson-solid-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-hover-solid-background">.line-is-crimson-hover-solid-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-low-contrast-background">.line-is-crimson-low-contrast-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-high-contrast-background">.line-is-crimson-high-contrast-background</div>
-            <div class="showcase-palette-util-card line-is-crimson-border" style="outline:none;border:2px solid">.line-is-crimson-border</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           4. TYPOGRAPHY
-           ============================================================ -->
-      <section id="typography" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Typography Tokens</h2>
-          <p>Font families, sizes, weights, line-heights, and letter-spacing from the design token system.</p>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Font Families</h3>
-          <div class="showcase-font-family"><div class="ff-name">--font-sans</div><div class="ff-sample" style="font-family:var(--font-sans)">The quick brown fox jumps over the lazy dog</div></div>
-          <div class="showcase-font-family"><div class="ff-name">--font-serif</div><div class="ff-sample" style="font-family:var(--font-serif)">The quick brown fox jumps over the lazy dog</div></div>
-          <div class="showcase-font-family"><div class="ff-name">--font-mono</div><div class="ff-sample" style="font-family:var(--font-mono)">The quick brown fox jumps over the lazy dog</div></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Font Sizes (--font-size-0 to 9)</h3>
-          <div class="showcase-type-row"><span class="type-label">--font-size-0</span><span class="type-sample" style="font-size:var(--font-size-0)">0.5rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-1</span><span class="type-sample" style="font-size:var(--font-size-1)">0.75rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-2</span><span class="type-sample" style="font-size:var(--font-size-2)">1rem (base)</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-3</span><span class="type-sample" style="font-size:var(--font-size-3)">1.1rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-4</span><span class="type-sample" style="font-size:var(--font-size-4)">1.25rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-5</span><span class="type-sample" style="font-size:var(--font-size-5)">1.5rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-6</span><span class="type-sample" style="font-size:var(--font-size-6)">2rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-7</span><span class="type-sample" style="font-size:var(--font-size-7)">2.5rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-8</span><span class="type-sample" style="font-size:var(--font-size-8)">3rem</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-9</span><span class="type-sample" style="font-size:var(--font-size-9)">3.5rem</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Fluid Font Sizes</h3>
-          <div class="showcase-type-row"><span class="type-label">--font-size-fluid-0</span><span class="type-sample" style="font-size:var(--font-size-fluid-0)">clamp(0.75rem, 2vw, 1rem)</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-fluid-1</span><span class="type-sample" style="font-size:var(--font-size-fluid-1)">clamp(1rem, 4vw, 1.5rem)</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-fluid-2</span><span class="type-sample" style="font-size:var(--font-size-fluid-2)">clamp(1.5rem, 6vw, 2.5rem)</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-size-fluid-3</span><span class="type-sample" style="font-size:var(--font-size-fluid-3)">clamp(2rem, 9vw, 3.5rem)</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Font Weights (1-9)</h3>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-1</span><span class="type-sample" style="font-weight:var(--font-weight-1);font-size:var(--font-size-4)">100 Thin</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-2</span><span class="type-sample" style="font-weight:var(--font-weight-2);font-size:var(--font-size-4)">200 Extra Light</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-3</span><span class="type-sample" style="font-weight:var(--font-weight-3);font-size:var(--font-size-4)">300 Light</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-4</span><span class="type-sample" style="font-weight:var(--font-weight-4);font-size:var(--font-size-4)">400 Regular</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-5</span><span class="type-sample" style="font-weight:var(--font-weight-5);font-size:var(--font-size-4)">500 Medium</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-6</span><span class="type-sample" style="font-weight:var(--font-weight-6);font-size:var(--font-size-4)">600 Semi Bold</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-7</span><span class="type-sample" style="font-weight:var(--font-weight-7);font-size:var(--font-size-4)">700 Bold</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-8</span><span class="type-sample" style="font-weight:var(--font-weight-8);font-size:var(--font-size-4)">800 Extra Bold</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-weight-9</span><span class="type-sample" style="font-weight:var(--font-weight-9);font-size:var(--font-size-4)">900 Black</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Line Heights (0-9)</h3>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-0</span><span class="type-sample" style="line-height:var(--font-lineheight-0);background:var(--line-subtle-background);padding:0.5rem">0.95 - Tight packing</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-1</span><span class="type-sample" style="line-height:var(--font-lineheight-1);background:var(--line-subtle-background);padding:0.5rem">1.1 - Headings</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-2</span><span class="type-sample" style="line-height:var(--font-lineheight-2);background:var(--line-subtle-background);padding:0.5rem">1.25 - Compact</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-3</span><span class="type-sample" style="line-height:var(--font-lineheight-3);background:var(--line-subtle-background);padding:0.5rem">1.375 - Default body</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-4</span><span class="type-sample" style="line-height:var(--font-lineheight-4);background:var(--line-subtle-background);padding:0.5rem">1.5 - Comfortable</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-5</span><span class="type-sample" style="line-height:var(--font-lineheight-5);background:var(--line-subtle-background);padding:0.5rem">1.75 - Spacious</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-6</span><span class="type-sample" style="line-height:var(--font-lineheight-6);background:var(--line-subtle-background);padding:0.5rem">2 - Double</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-7</span><span class="type-sample" style="line-height:var(--font-lineheight-7);background:var(--line-subtle-background);padding:0.5rem">2.25 - Extra spacious</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-8</span><span class="type-sample" style="line-height:var(--font-lineheight-8);background:var(--line-subtle-background);padding:0.5rem">2.5 - Very loose</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-lineheight-9</span><span class="type-sample" style="line-height:var(--font-lineheight-9);background:var(--line-subtle-background);padding:0.5rem">3 - Maximum</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Letter Spacing (0-9)</h3>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-0</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-0)">-0.05em Tight</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-1</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-1)">0.025em Normal</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-2</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-2)">0.05em Wide</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-3</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-3)">0.075em Wider</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-4</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-4)">0.15em Widest</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-5</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-5)">0.5em Ultra</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-6</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-6)">0.75em Extreme</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-7</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-7)">1em Maximum</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-8</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-8)">1.5em Mega</span></div>
-          <div class="showcase-type-row"><span class="type-label">--font-letterspacing-9</span><span class="type-sample" style="letter-spacing:var(--font-letterspacing-9)">2em Hyper</span></div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           5. SPACING & SIZE TOKENS
-           ============================================================ -->
-      <section id="spacing" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Spacing &amp; Size Tokens</h2>
-          <p>Visual bars showing the relative size of each token from --size-000 through --size-15.</p>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Core Sizes</h3>
-          <div class="showcase-size-bar"><span class="size-label">--size-000</span><div class="size-visual" style="width:0.5rem;opacity:0.4"></div><span class="size-value">-0.5rem (negative)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-00</span><div class="size-visual" style="width:0.25rem;opacity:0.4"></div><span class="size-value">-0.25rem (negative)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-1</span><div class="size-visual" style="width:var(--size-1)"></div><span class="size-value">0.25rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-2</span><div class="size-visual" style="width:var(--size-2)"></div><span class="size-value">0.5rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-3</span><div class="size-visual" style="width:var(--size-3)"></div><span class="size-value">1rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-4</span><div class="size-visual" style="width:var(--size-4)"></div><span class="size-value">1.25rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-5</span><div class="size-visual" style="width:var(--size-5)"></div><span class="size-value">1.5rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-6</span><div class="size-visual" style="width:var(--size-6)"></div><span class="size-value">1.75rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-7</span><div class="size-visual" style="width:var(--size-7)"></div><span class="size-value">2rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-8</span><div class="size-visual" style="width:var(--size-8)"></div><span class="size-value">3rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-9</span><div class="size-visual" style="width:var(--size-9)"></div><span class="size-value">4rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-10</span><div class="size-visual" style="width:var(--size-10)"></div><span class="size-value">5rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-11</span><div class="size-visual" style="width:var(--size-11)"></div><span class="size-value">7.5rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-12</span><div class="size-visual" style="width:var(--size-12)"></div><span class="size-value">10rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-13</span><div class="size-visual" style="width:var(--size-13)"></div><span class="size-value">15rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-14</span><div class="size-visual" style="width:min(var(--size-14),100%)"></div><span class="size-value">20rem</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-15</span><div class="size-visual" style="width:min(var(--size-15),100%)"></div><span class="size-value">30rem</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Fluid Sizes (viewport-responsive)</h3>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-1</span><div class="size-visual" style="width:var(--size-fluid-1)"></div><span class="size-value">clamp(0.5rem,1vw,1rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-2</span><div class="size-visual" style="width:var(--size-fluid-2)"></div><span class="size-value">clamp(1rem,2vw,1.5rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-3</span><div class="size-visual" style="width:var(--size-fluid-3)"></div><span class="size-value">clamp(1.5rem,3vw,2rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-4</span><div class="size-visual" style="width:var(--size-fluid-4)"></div><span class="size-value">clamp(2rem,4vw,3rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-5</span><div class="size-visual" style="width:var(--size-fluid-5)"></div><span class="size-value">clamp(4rem,5vw,5rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-6</span><div class="size-visual" style="width:min(var(--size-fluid-6),100%)"></div><span class="size-value">clamp(5rem,7vw,7.5rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-7</span><div class="size-visual" style="width:min(var(--size-fluid-7),100%)"></div><span class="size-value">clamp(7.5rem,10vw,10rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-8</span><div class="size-visual" style="width:min(var(--size-fluid-8),100%)"></div><span class="size-value">clamp(10rem,20vw,15rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-9</span><div class="size-visual" style="width:min(var(--size-fluid-9),100%)"></div><span class="size-value">clamp(15rem,30vw,20rem)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-fluid-10</span><div class="size-visual" style="width:min(var(--size-fluid-10),100%)"></div><span class="size-value">clamp(20rem,40vw,30rem)</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Content &amp; Header Widths</h3>
-          <div class="showcase-size-bar"><span class="size-label">--size-content-1</span><div class="size-visual" style="width:min(var(--size-content-1),100%)"></div><span class="size-value">20ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-content-2</span><div class="size-visual" style="width:min(var(--size-content-2),100%)"></div><span class="size-value">45ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-content-3</span><div class="size-visual" style="width:min(var(--size-content-3),100%)"></div><span class="size-value">60ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-header-1</span><div class="size-visual" style="width:min(var(--size-header-1),100%)"></div><span class="size-value">20ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-header-2</span><div class="size-visual" style="width:min(var(--size-header-2),100%)"></div><span class="size-value">25ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-header-3</span><div class="size-visual" style="width:min(var(--size-header-3),100%)"></div><span class="size-value">35ch</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Breakpoint Sizes</h3>
-          <div class="showcase-size-bar"><span class="size-label">--size-xxs</span><div class="size-visual" style="width:min(240px,100%)"></div><span class="size-value">240px</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-xs</span><div class="size-visual" style="width:min(360px,100%)"></div><span class="size-value">360px</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-sm</span><div class="size-visual" style="width:min(480px,100%)"></div><span class="size-value">480px</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-md</span><div class="size-visual" style="width:min(768px,100%)"></div><span class="size-value">768px</span></div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Relative Sizes (ch units)</h3>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-000</span><div class="size-visual" style="width:0.5ch;opacity:0.4"></div><span class="size-value">-0.5ch (negative)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-00</span><div class="size-visual" style="width:0.25ch;opacity:0.4"></div><span class="size-value">-0.25ch (negative)</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-1</span><div class="size-visual" style="width:var(--size-relative-1)"></div><span class="size-value">0.25ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-2</span><div class="size-visual" style="width:var(--size-relative-2)"></div><span class="size-value">0.5ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-3</span><div class="size-visual" style="width:var(--size-relative-3)"></div><span class="size-value">1ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-4</span><div class="size-visual" style="width:var(--size-relative-4)"></div><span class="size-value">1.25ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-5</span><div class="size-visual" style="width:var(--size-relative-5)"></div><span class="size-value">1.5ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-6</span><div class="size-visual" style="width:var(--size-relative-6)"></div><span class="size-value">1.75ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-7</span><div class="size-visual" style="width:var(--size-relative-7)"></div><span class="size-value">2ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-8</span><div class="size-visual" style="width:var(--size-relative-8)"></div><span class="size-value">3ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-9</span><div class="size-visual" style="width:var(--size-relative-9)"></div><span class="size-value">4ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-10</span><div class="size-visual" style="width:var(--size-relative-10)"></div><span class="size-value">5ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-11</span><div class="size-visual" style="width:var(--size-relative-11)"></div><span class="size-value">7.5ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-12</span><div class="size-visual" style="width:var(--size-relative-12)"></div><span class="size-value">10ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-13</span><div class="size-visual" style="width:var(--size-relative-13)"></div><span class="size-value">15ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-14</span><div class="size-visual" style="width:min(var(--size-relative-14),100%)"></div><span class="size-value">20ch</span></div>
-          <div class="showcase-size-bar"><span class="size-label">--size-relative-15</span><div class="size-visual" style="width:min(var(--size-relative-15),100%)"></div><span class="size-value">30ch</span></div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           6. SHADOWS
-           ============================================================ -->
-      <section id="shadows" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Shadow Tokens</h2>
-          <p>Six elevation levels plus inner shadows. Shadows adapt automatically in dark mode.</p>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Elevation Shadows</h3>
-          <div class="showcase-shadow-grid">
-            <div class="showcase-shadow-card" style="box-shadow:var(--shadow-1)">--shadow-1</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--shadow-2)">--shadow-2</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--shadow-3)">--shadow-3</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--shadow-4)">--shadow-4</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--shadow-5)">--shadow-5</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--shadow-6)">--shadow-6</div>
-          </div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Inner Shadows</h3>
-          <div class="showcase-shadow-grid">
-            <div class="showcase-shadow-card" style="box-shadow:var(--inner-shadow-0)">--inner-shadow-0</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--inner-shadow-1)">--inner-shadow-1</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--inner-shadow-2)">--inner-shadow-2</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--inner-shadow-3)">--inner-shadow-3</div>
-            <div class="showcase-shadow-card" style="box-shadow:var(--inner-shadow-4)">--inner-shadow-4</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           7. INTERACTIVE STATES
-           ============================================================ -->
-      <section id="interactive" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Interactive States &amp; Transitions</h2>
-          <p>Hover, focus, active, and focus-visible states. All transitions are 150ms ease-in-out from the framework.</p>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Hover Transitions (150ms)</h3>
-          <p style="margin-bottom:1rem;color:var(--line-low-contrast);font-size:0.875rem">Hover each element to see its color transition.</p>
-          <div class="showcase-transition-grid">
-            <div class="showcase-transition-card line-is-blue line-is-blue-border">.line-is-blue (hover bg 9 to 10)</div>
-            <div class="showcase-transition-card line-is-crimson line-is-crimson-border">.line-is-crimson (hover bg)</div>
-            <div class="showcase-transition-card line-is-green line-is-green-border">.line-is-green (hover bg)</div>
-            <div class="showcase-transition-card line-is-amber line-is-amber-border">.line-is-amber (hover bg)</div>
-            <div class="showcase-transition-card line-is-violet-ui-background line-is-violet-border">.line-is-violet-ui-background (hover)</div>
-            <div class="showcase-transition-card line-is-teal-ui-background line-is-teal-border">.line-is-teal-border (hover border)</div>
-          </div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Focus-Visible (Tab to focus)</h3>
-          <p style="margin-bottom:1rem;color:var(--line-low-contrast);font-size:0.875rem">Use Tab key to cycle through these elements and see the outline-offset transition.</p>
-          <div class="showcase-focus-demo">
-            <button class="line-is-blue line-is-blue-border">Blue Button</button>
-            <button class="line-is-crimson line-is-crimson-border">Crimson Button</button>
-            <button class="line-is-green line-is-green-border">Green Button</button>
-            <a href="#interactive" class="line-is-violet line-is-violet-border">Violet Link</a>
-            <button class="line-is-amber line-is-amber-border">Amber Button</button>
-          </div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Click Interactions (Toggle Active)</h3>
-          <p style="margin-bottom:1rem;color:var(--line-low-contrast);font-size:0.875rem">Click cards to toggle their active state.</p>
-          <div class="showcase-interactive-grid">
-            <div class="showcase-click-card line-is-blue-ui-background line-is-blue-border" style="outline:1px solid">Click to toggle (blue)</div>
-            <div class="showcase-click-card line-is-crimson-ui-background line-is-crimson-border" style="outline:1px solid">Click to toggle (crimson)</div>
-            <div class="showcase-click-card line-is-green-ui-background line-is-green-border" style="outline:1px solid">Click to toggle (green)</div>
-            <div class="showcase-click-card line-is-amber-ui-background line-is-amber-border" style="outline:1px solid">Click to toggle (amber)</div>
-          </div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Ripple Effect (.ripple)</h3>
-          <p style="margin-bottom:1rem;color:var(--line-low-contrast);font-size:0.875rem">Click anywhere in the box to trigger a ripple animation.</p>
-          <div class="showcase-ripple-area ripple line-is-indigo line-is-indigo-border" style="outline:1px solid">
-            Click for ripple effect
-          </div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Selection Styling</h3>
-          <p style="margin-bottom:1rem;color:var(--line-low-contrast);font-size:0.875rem">Select text below to see the schema-colored ::selection style.</p>
-          <div class="showcase-selection-demo">
-            Select this text to see the custom selection color that adapts to the active schema palette.
-            The ::selection pseudo-element uses --line-low-contrast for text and --line-ui-active-background for the highlight.
-          </div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           8. LOADING STATES / SPINNERS
-           ============================================================ -->
-      <section id="loading" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Loading States</h2>
-          <p>CSS-only spinners and loading animations using palette color tokens. Keyframes defined in showcase styles.</p>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Spinners</h3>
-          <div class="showcase-spinner-grid">
-            <div class="showcase-spinner-cell"><div class="showcase-spinner" style="--spinner-color:var(--line-blue-9)"></div><span class="spinner-label">Blue</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-spinner" style="--spinner-color:var(--line-crimson-9)"></div><span class="spinner-label">Crimson</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-spinner" style="--spinner-color:var(--line-green-9)"></div><span class="spinner-label">Green</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-spinner" style="--spinner-color:var(--line-amber-9)"></div><span class="spinner-label">Amber</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-spinner" style="--spinner-color:var(--line-violet-9)"></div><span class="spinner-label">Violet</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-spinner" style="--spinner-color:var(--line-teal-9)"></div><span class="spinner-label">Teal</span></div>
-          </div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Pulse Dots</h3>
-          <div class="showcase-spinner-grid">
-            <div class="showcase-spinner-cell"><div class="showcase-pulse-dot" style="--spinner-color:var(--line-blue-9)"></div><span class="spinner-label">Blue</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-pulse-dot" style="--spinner-color:var(--line-pink-9)"></div><span class="spinner-label">Pink</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-pulse-dot" style="--spinner-color:var(--line-orange-9)"></div><span class="spinner-label">Orange</span></div>
-          </div>
-        </div>
-
-        <div class="showcase-subsection">
-          <h3>Bounce Dots</h3>
-          <div class="showcase-spinner-grid">
-            <div class="showcase-spinner-cell"><div class="showcase-bounce-dots" style="--spinner-color:var(--line-indigo-9)"><span></span><span></span><span></span></div><span class="spinner-label">Indigo</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-bounce-dots" style="--spinner-color:var(--line-grass-9)"><span></span><span></span><span></span></div><span class="spinner-label">Grass</span></div>
-            <div class="showcase-spinner-cell"><div class="showcase-bounce-dots" style="--spinner-color:var(--line-tomato-9)"><span></span><span></span><span></span></div><span class="spinner-label">Tomato</span></div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           9. MULTIPLE THEMES SIMULTANEOUSLY
-           ============================================================ -->
-      <section id="multitheme" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Multiple Themes Simultaneously</h2>
-          <p>Side-by-side panels each with a different .line-schema-{palette} class. Proves schemas coexist on one page.</p>
-        </div>
-
-        <div class="showcase-multitheme-grid">
-          <div class="showcase-theme-panel line-schema-blue" style="background:var(--line-background)">
-            <div class="theme-panel-title">Blue Schema</div>
-            <div class="theme-panel-body">Semantic tokens resolve to the blue palette inside this panel.</div>
-            <div class="theme-panel-btn line-is-solid-background" style="color:var(--line-white)">Solid Button</div>
-          </div>
-          <div class="showcase-theme-panel line-schema-crimson" style="background:var(--line-background)">
-            <div class="theme-panel-title">Crimson Schema</div>
-            <div class="theme-panel-body">Same markup, different palette. Crimson tokens take over here.</div>
-            <div class="theme-panel-btn line-is-solid-background" style="color:var(--line-white)">Solid Button</div>
-          </div>
-          <div class="showcase-theme-panel line-schema-green" style="background:var(--line-background)">
-            <div class="theme-panel-title">Green Schema</div>
-            <div class="theme-panel-body">Green palette resolves all semantic tokens within this panel.</div>
-            <div class="theme-panel-btn line-is-solid-background" style="color:var(--line-white)">Solid Button</div>
-          </div>
-          <div class="showcase-theme-panel line-schema-amber" style="background:var(--line-background)">
-            <div class="theme-panel-title">Amber Schema</div>
-            <div class="theme-panel-body">Amber palette. Warm tones from the same semantic system.</div>
-            <div class="theme-panel-btn line-is-solid-background" style="color:var(--line-white)">Solid Button</div>
-          </div>
-          <div class="showcase-theme-panel line-schema-violet" style="background:var(--line-background)">
-            <div class="theme-panel-title">Violet Schema</div>
-            <div class="theme-panel-body">Violet palette. Cool purple tones with the same token structure.</div>
-            <div class="theme-panel-btn line-is-solid-background" style="color:var(--line-white)">Solid Button</div>
-          </div>
-          <div class="showcase-theme-panel line-schema-teal" style="background:var(--line-background)">
-            <div class="theme-panel-title">Teal Schema</div>
-            <div class="theme-panel-body">Teal palette. All six panels coexist with independent schemas.</div>
-            <div class="theme-panel-btn line-is-solid-background" style="color:var(--line-white)">Solid Button</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ============================================================
-           10. CROSS-PALETTE COLOR COMBINATIONS
-           ============================================================ -->
-      <section id="combos" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Cross-Palette Color Combinations</h2>
-          <p>Mixing utility classes from different palettes on the same element.</p>
-        </div>
-
-        <div class="showcase-combo-card line-is-blue-background line-is-red-border" style="outline:3px solid;color:var(--line-green-11)">
-          .line-is-blue-background + .line-is-red-border + color: var(--line-green-11)
-        </div>
-        <div class="showcase-combo-card line-is-amber-subtle-background line-is-violet-border" style="outline:2px solid;color:var(--line-crimson-11)">
-          .line-is-amber-subtle-background + .line-is-violet-border + color: var(--line-crimson-11)
-        </div>
-        <div class="showcase-combo-card line-is-teal-ui-background line-is-orange-border" style="outline:2px solid;color:var(--line-indigo-12)">
-          .line-is-teal-ui-background + .line-is-orange-border + color: var(--line-indigo-12)
-        </div>
-        <div class="showcase-combo-card line-is-pink-solid-background line-is-cyan-border" style="outline:2px solid;color:var(--line-yellow-3)">
-          .line-is-pink-solid-background + .line-is-cyan-border + color: var(--line-yellow-3)
-        </div>
-      </section>
-
-      <!-- ============================================================
-           11. NORMALIZE ELEMENT DEMOS
-           ============================================================ -->
-      <section id="normalize" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Normalize &amp; Element Demos</h2>
-          <p>Native HTML elements styled by the normalize layer. No extra classes needed.</p>
-        </div>
-
-        <div class="showcase-normalize-grid">
-          <!-- Headings -->
-          <div class="showcase-normalize-block">
-            <h4>Headings</h4>
-            <div class="showcase-normalize-headings">
-              <h1>Heading 1</h1>
-              <h2>Heading 2</h2>
-              <h3>Heading 3</h3>
-              <h4>Heading 4</h4>
-              <h5>Heading 5</h5>
-              <h6>Heading 6</h6>
+          <div class="sc-l0-detail" id="l0-detail">
+            <div class="sc-l0-detail-swatch" id="l0-detail-swatch"></div>
+            <div class="sc-l0-detail-info">
+              <span class="sc-l0-detail-token" id="l0-detail-token"></span>
+              <span class="sc-l0-detail-value" id="l0-detail-value"></span>
+              <span class="sc-l0-detail-role" id="l0-detail-role"></span>
             </div>
           </div>
+        </div>
 
-          <!-- Links & Text -->
-          <div class="showcase-normalize-block">
-            <h4>Links &amp; Inline Text</h4>
-            <p>Regular paragraph text with <a href="#normalize">a styled link</a> inside it. Also: <strong>strong</strong>, <em>emphasized</em>, <code>inline code</code>, <kbd>Ctrl+C</kbd>, <mark>highlighted</mark>, and <small>small text</small>.</p>
-            <p><abbr title="Cascading Style Sheets">CSS</abbr> abbreviation with <sup>superscript</sup> text.</p>
+        <!-- Contrast token demo -->
+        <div class="sc-subsection">
+          <h3>Contrast Token</h3>
+          <div class="sc-l0-contrast" id="l0-contrast">
+            <span id="l0-contrast-text">--line-{palette}-contrast on solid-9</span>
+          </div>
+        </div>
+
+        <!-- All 28 palettes mini grid -->
+        <div class="sc-subsection">
+          <h3>All 28 Palettes (level 9 — click to switch)</h3>
+          <div class="sc-l0-all-palettes" id="l0-all-palettes"></div>
+        </div>
+
+        <!-- Color-mix demo -->
+        <div class="sc-subsection sc-colormix">
+          <h3>Color Mix (oklch)</h3>
+          <div class="sc-colormix-controls">
+            <select id="cmix-a"></select>
+            <select id="cmix-b"></select>
+            <input type="range" id="cmix-range" min="0" max="100" value="50" />
+            <span class="sc-colormix-pct" id="cmix-pct">50%</span>
+          </div>
+          <div class="sc-colormix-strip" id="cmix-strip"></div>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           L1 — Foundation Tokens
+           ============================================================ -->
+      <section id="l1" class="sc-section">
+        <div class="sc-section-hdr">
+          <h2>L1 — Foundation Tokens</h2>
+          <p>Color-free, semantic-free scales from tokens.css. Typography, spacing, radius, shadows, motion, z-index, duration, and opacity.</p>
+        </div>
+
+        <div class="sc-l1-grid">
+          <!-- Type scale -->
+          <div class="sc-l1-card">
+            <h4>Type Scale</h4>
+            <div id="l1-type"></div>
           </div>
 
-          <!-- Lists -->
-          <div class="showcase-normalize-block">
-            <h4>Lists</h4>
-            <ul>
-              <li>Unordered item one</li>
-              <li>Unordered item two</li>
-              <li>Unordered item three</li>
-            </ul>
-            <ol>
-              <li>Ordered item one</li>
-              <li>Ordered item two</li>
-              <li>Ordered item three</li>
-            </ol>
-            <dl>
-              <dt>Definition term</dt>
-              <dd>Definition description for the term above.</dd>
-            </dl>
+          <!-- Spacing -->
+          <div class="sc-l1-card">
+            <h4>Spacing / Sizes</h4>
+            <div id="l1-sizes"></div>
           </div>
 
-          <!-- Forms -->
-          <div class="showcase-normalize-block">
-            <h4>Form Elements</h4>
-            <div class="showcase-form-demo">
-              <label>Text input <input type="text" placeholder="Placeholder text" /></label>
-              <label>Email <input type="email" placeholder="email@example.com" /></label>
-              <label>Select <select><option>Option 1</option><option>Option 2</option><option>Option 3</option></select></label>
-              <label>Textarea <textarea rows="3" placeholder="Multi-line text"></textarea></label>
-              <label style="flex-direction:row;gap:0.5rem;align-items:center"><input type="checkbox" /> Checkbox</label>
-              <label style="flex-direction:row;gap:0.5rem;align-items:center"><input type="radio" name="radio-demo" /> Radio A</label>
-              <label style="flex-direction:row;gap:0.5rem;align-items:center"><input type="radio" name="radio-demo" /> Radio B</label>
-              <button class="line-is-blue line-is-blue-border">Submit</button>
+          <!-- Border radius -->
+          <div class="sc-l1-card">
+            <h4>Border Radius</h4>
+            <div class="sc-radius-grid" id="l1-radius"></div>
+          </div>
+
+          <!-- Shadows -->
+          <div class="sc-l1-card">
+            <h4>Elevation / Shadows</h4>
+            <div class="sc-shadow-grid" id="l1-shadows"></div>
+          </div>
+
+          <!-- Easing / motion -->
+          <div class="sc-l1-card" style="grid-column: 1 / -1">
+            <h4>Motion / Easing</h4>
+            <div class="sc-easing-grid" id="l1-easing"></div>
+          </div>
+
+          <!-- Z-index -->
+          <div class="sc-l1-card">
+            <h4>Z-Index Stacking</h4>
+            <div class="sc-zindex-chart" id="l1-zindex"></div>
+          </div>
+
+          <!-- Duration + Opacity -->
+          <div class="sc-l1-card">
+            <h4>Duration + Opacity</h4>
+            <div id="l1-duration"></div>
+            <div style="margin-top:1rem">
+              <div class="sc-label">Opacity</div>
+              <div class="sc-opacity-grid" id="l1-opacity"></div>
             </div>
-          </div>
-
-          <!-- Code & Pre -->
-          <div class="showcase-normalize-block">
-            <h4>Code Blocks</h4>
-            <pre><code>const theme = 'line-schema-blue';
-document.body.classList.add(theme);
-// All semantic tokens now resolve to blue palette</code></pre>
-          </div>
-
-          <!-- Blockquote -->
-          <div class="showcase-normalize-block">
-            <h4>Blockquote</h4>
-            <blockquote>
-              <p>Design systems are the infrastructure of digital products. They are the invisible architecture that enables consistent, scalable user experiences.</p>
-              <cite>-- Design Systems Handbook</cite>
-            </blockquote>
-          </div>
-
-          <!-- Details/Summary -->
-          <div class="showcase-normalize-block">
-            <h4>Details &amp; Summary</h4>
-            <details>
-              <summary>Click to expand</summary>
-              <p>Hidden content revealed by the details/summary pattern. Styled with padding, border-radius, and font-weight from normalize.</p>
-            </details>
-          </div>
-
-          <!-- Table -->
-          <div class="showcase-normalize-block">
-            <h4>Table</h4>
-            <table>
-              <thead>
-                <tr><th>Token</th><th>Value</th><th>Usage</th></tr>
-              </thead>
-              <tbody>
-                <tr><td>--line-background</td><td>palette-1</td><td>App background</td></tr>
-                <tr><td>--line-solid-background</td><td>palette-9</td><td>Solid fills</td></tr>
-                <tr><td>--line-high-contrast</td><td>palette-12</td><td>Primary text</td></tr>
-              </tbody>
-              <tfoot>
-                <tr><th colspan="3">12-level semantic scale</th></tr>
-              </tfoot>
-            </table>
-          </div>
-
-          <!-- HR -->
-          <div class="showcase-normalize-block">
-            <h4>Horizontal Rule</h4>
-            <p>Content above the rule.</p>
-            <hr />
-            <p>Content below the rule.</p>
           </div>
         </div>
       </section>
 
       <!-- ============================================================
-           12. MEDIA QUERIES
+           L2 — Semantic Roles
            ============================================================ -->
-      <section id="media" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Custom Media Queries</h2>
-          <p>All @custom-media queries defined in utils/media.css. Used with @media (--name) syntax.</p>
+      <section id="l2" class="sc-section">
+        <div class="sc-section-hdr">
+          <h2>L2 — Semantic Roles</h2>
+          <p>Gray-based defaults via prefers-color-scheme, then themed when a schema class is applied.</p>
         </div>
 
-        <div class="showcase-subsection">
-          <h3>Motion &amp; Preferences</h3>
-          <table class="showcase-media-table">
-            <thead><tr><th>Query</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>--motionOK</td><td>prefers-reduced-motion: no-preference</td></tr>
-              <tr><td>--motionNotOK</td><td>prefers-reduced-motion: reduce</td></tr>
-              <tr><td>--opacityOK</td><td>prefers-reduced-transparency: no-preference</td></tr>
-              <tr><td>--useDataOK</td><td>prefers-reduced-data: no-preference</td></tr>
-              <tr><td>--OSdark</td><td>prefers-color-scheme: dark</td></tr>
-              <tr><td>--OSlight</td><td>prefers-color-scheme: light</td></tr>
-              <tr><td>--highContrast</td><td>prefers-contrast: more</td></tr>
-              <tr><td>--lowContrast</td><td>prefers-contrast: less</td></tr>
-              <tr><td>--portrait</td><td>orientation: portrait</td></tr>
-              <tr><td>--landscape</td><td>orientation: landscape</td></tr>
-              <tr><td>--HDcolor</td><td>dynamic-range: high</td></tr>
-            </tbody>
-          </table>
+        <!-- Light/Dark side-by-side -->
+        <div class="sc-subsection">
+          <h3>12 Semantic Tokens (gray defaults)</h3>
+          <div class="sc-l2-panels" id="l2-panels"></div>
         </div>
 
-        <div class="showcase-subsection">
-          <h3>Input Device</h3>
-          <table class="showcase-media-table">
-            <thead><tr><th>Query</th><th>Description</th></tr></thead>
-            <tbody>
-              <tr><td>--touch</td><td>hover: none, pointer: coarse</td></tr>
-              <tr><td>--stylus</td><td>hover: none, pointer: fine</td></tr>
-              <tr><td>--pointer</td><td>hover: hover, pointer: coarse</td></tr>
-              <tr><td>--mouse</td><td>hover: hover, pointer: fine</td></tr>
-            </tbody>
-          </table>
+        <!-- Themed strip -->
+        <div class="sc-subsection">
+          <h3>Themed Semantic Strip</h3>
+          <p class="sc-label" style="margin-bottom:0.75rem">With .line-schema-{palette} applied</p>
+          <div class="sc-l2-strip" id="l2-strip"></div>
         </div>
 
-        <div class="showcase-subsection">
-          <h3>Responsive Breakpoints</h3>
-          <table class="showcase-media-table">
-            <thead><tr><th>Query</th><th>Range</th></tr></thead>
-            <tbody>
-              <tr><td>--xxs-only</td><td>0 - 240px</td></tr>
-              <tr><td>--xs-only</td><td>240px - 360px</td></tr>
-              <tr><td>--sm-only</td><td>360px - 480px</td></tr>
-              <tr><td>--sm-n-below / --phone</td><td>max-width: 480px</td></tr>
-              <tr><td>--md-only</td><td>480px - 768px</td></tr>
-              <tr><td>--md-n-above</td><td>min-width: 768px</td></tr>
-              <tr><td>--md-n-below</td><td>max-width: 768px</td></tr>
-              <tr><td>--lg-only</td><td>768px - 1024px</td></tr>
-              <tr><td>--lg-n-above</td><td>min-width: 1024px</td></tr>
-              <tr><td>--xl-only</td><td>1024px - 1440px</td></tr>
-              <tr><td>--xl-n-above</td><td>min-width: 1440px</td></tr>
-              <tr><td>--xxl-only</td><td>min-width: 1920px</td></tr>
-            </tbody>
-          </table>
+        <!-- Component preview -->
+        <div class="sc-subsection">
+          <h3>Component Preview</h3>
+          <div class="sc-l2-preview">
+            <div class="sc-l2-preview-title">Card with Semantic Tokens</div>
+            <div class="sc-preview-btns">
+              <button class="sc-btn sc-btn-solid">Solid</button>
+              <button class="sc-btn sc-btn-outline">Outline</button>
+              <button class="sc-btn sc-btn-subtle">Subtle</button>
+            </div>
+            <input class="sc-preview-input" type="text" placeholder="Input with semantic border..." />
+            <label class="sc-preview-checkbox">
+              <input type="checkbox" checked />
+              Checkbox using semantic tokens
+            </label>
+          </div>
         </div>
       </section>
 
       <!-- ============================================================
-           13. MISCELLANEOUS UTILITIES
+           L3 — Aliases
            ============================================================ -->
-      <section id="misc" class="showcase-section">
-        <div class="showcase-section-header">
-          <h2>Miscellaneous Utilities</h2>
-          <p>Carousel scroll-snap, shadow-current-color, tabular numbers, and tiny size class.</p>
+      <section id="l3" class="sc-section">
+        <div class="sc-section-hdr">
+          <h2>L3 — Semantic Aliases</h2>
+          <p>6 intent aliases mapping to palette tokens. Click a card to inspect its 9-token anatomy.</p>
         </div>
 
-        <div class="showcase-misc-grid">
-          <!-- Carousel -->
-          <div class="showcase-misc-card" style="grid-column:1/-1">
-            <div class="misc-title">.carousel / .carousel-container / .carousel-slides</div>
-            <div class="showcase-carousel-demo carousel-container" style="scroll-snap-type:x mandatory">
-              <div class="carousel-slide carousel-slides line-is-blue" style="scroll-snap-align:start;scroll-snap-stop:always">1</div>
-              <div class="carousel-slide carousel-slides line-is-crimson" style="scroll-snap-align:start;scroll-snap-stop:always">2</div>
-              <div class="carousel-slide carousel-slides line-is-green" style="scroll-snap-align:start;scroll-snap-stop:always">3</div>
-              <div class="carousel-slide carousel-slides line-is-amber" style="scroll-snap-align:start;scroll-snap-stop:always">4</div>
-              <div class="carousel-slide carousel-slides line-is-violet" style="scroll-snap-align:start;scroll-snap-stop:always">5</div>
-              <div class="carousel-slide carousel-slides line-is-teal" style="scroll-snap-align:start;scroll-snap-stop:always">6</div>
-              <div class="carousel-slide carousel-slides line-is-pink" style="scroll-snap-align:start;scroll-snap-stop:always">7</div>
-              <div class="carousel-slide carousel-slides line-is-orange" style="scroll-snap-align:start;scroll-snap-stop:always">8</div>
-            </div>
-          </div>
+        <div class="sc-l3-grid" id="l3-grid"></div>
 
-          <!-- Shadow Current Color -->
-          <div class="showcase-misc-card">
-            <div class="misc-title">.shadown-current-color</div>
-            <div class="shadown-current-color line-is-blue-color" style="padding:1rem;font-size:1.25rem;font-weight:var(--font-weight-7)">
-              Shadow from currentColor
-            </div>
-          </div>
-
-          <!-- Tabular Numbers -->
-          <div class="showcase-misc-card">
-            <div class="misc-title">.tabular-numbers</div>
-            <div style="font-size:1.25rem;color:var(--line-high-contrast)">
-              <div>Without: 1,234,567.89</div>
-              <div class="tabular-numbers">With: 1,234,567.89</div>
-              <div class="tabular-numbers">With: 9,876,543.21</div>
-            </div>
-          </div>
-
-          <!-- Tiny -->
-          <div class="showcase-misc-card">
-            <div class="misc-title">.line-is-tiny</div>
-            <div style="display:flex;gap:0.5rem;align-items:center;justify-content:center">
-              <span class="line-is-tiny line-is-blue line-is-blue-border" style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-2,5px);outline:1px solid">tiny</span>
-              <span class="line-is-tiny line-is-crimson line-is-crimson-border" style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-2,5px);outline:1px solid">tiny</span>
-              <span class="line-is-tiny line-is-green line-is-green-border" style="display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius-2,5px);outline:1px solid">tiny</span>
-            </div>
-          </div>
+        <div class="sc-subsection">
+          <h3>Button Variants per Alias</h3>
+          <div class="sc-l3-variants" id="l3-variants"></div>
         </div>
       </section>
 
     </main>
 
-    <footer class="showcase-footer">
-      line://ui Theme Showcase &mdash; @websublime/line-theme v0.6.0
+    <!-- ============================================================
+         FOOTER
+         ============================================================ -->
+    <footer class="sc-footer">
+      <div class="sc-footer-brand">line<span class="accent">://</span>ui</div>
+      <div>@websublime</div>
+      <div class="sc-footer-meta">
+        <span>28 palettes</span>
+        <span>336 color tokens</span>
+        <span>54 alias variables</span>
+        <span>6 intent aliases</span>
+      </div>
     </footer>
 
     <script type="module" src="/src/main.ts"></script>
