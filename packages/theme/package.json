@@ -21,6 +21,8 @@
     "build": "rm -rf dist && bun run src/build.ts",
     "build:css": "bun run src/build.ts",
     "build:css:single": "bun run src/build.ts --entry",
+    "test": "bun test",
+    "test:no-snapshot": "bun test --test-name-pattern '^(?!.*snapshot)' test/",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
