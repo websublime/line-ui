@@ -1024,10 +1024,30 @@ Useful for Input, Textarea, SearchInput — clicking anywhere on the component f
 
 The theme package exports an optional `reset.css` for consumers who want to neutralise browser defaults on slotted (light-DOM) content. This is NOT applied automatically — consumers opt in by importing it.
 
-```css
-/* @websublime/line-theme/dist/reset.css */
-/* Uses :where() for zero specificity — never fights consumer styles */
+**Usage:**
 
+```css
+@import '@websublime/line-theme/reset';
+/* or: <link rel="stylesheet" href="@websublime/line-theme/dist/reset.min.css"> */
+```
+
+All selectors use `:where()` for zero specificity, so consumer styles always win without needing to increase specificity.
+
+**Scope — the reset covers seven categories:**
+
+| # | Category | Target components | What it resets |
+|---|----------|-------------------|----------------|
+| 1 | Global slotted content | Any element with a `line-*` class | Margin, padding, font inheritance, list-style, media sizing on common HTML elements (`h1`–`h6`, `p`, `ul`, `ol`, `img`, `svg`, etc.) |
+| 2 | Field component | `line-field` | Labels, hint/error slots — margin, padding, font inheritance |
+| 3 | Form-adjacent components | `line-input`, `line-textarea`, `line-select`, `line-number-field`, `line-combobox`, `line-pin-input` | Labels, hint/error/description slots — margin, padding, font inheritance |
+| 4 | Content containers | `line-card`, `line-dialog`, `line-alert`, `line-drawer`, `line-popover`, `line-tooltip`, `line-callout`, `line-banner` | Headings, paragraphs, lists — margin, padding, list-style |
+| 5 | Navigation components | `line-tabs`, `line-breadcrumb`, `line-menu`, `line-pagination`, `line-navigation-menu` | Links, lists — text-decoration, color, margin, padding, list-style |
+| 6 | Slotted button resets | `line-dialog`, `line-alert`, `line-drawer`, `line-toolbar`, `line-card` | Bare `<button>` elements — appearance, background, border, cursor |
+| 7 | Slotted table resets | `line-card`, `line-dialog`, `line-drawer` | `<table>`, `<th>`, `<td>` — border-collapse, spacing, alignment |
+
+**Example (field component):**
+
+```css
 :where(line-field) :where(label),
 :where(line-field) :where(span[slot="hint"]),
 :where(line-field) :where(span[slot="error"]) {
