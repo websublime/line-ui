@@ -480,7 +480,7 @@ The theme package requires additional testing beyond component-level tests to en
 | Build-time contrast validation | Automated WCAG AA checker | Verifies 4.5:1 minimum contrast for all 28 palettes × semantic pairs (solid-background vs solid-text, background vs high-contrast, etc.) × light/dark mode. Runs against generated CSS values. |
 | Token parity tests | Bun test assertions | Asserts that light and dark mode variants declare identical token sets. Every `--line-*` token defined in `:where(html)` must also be defined in `:is(.dark)` (and vice versa). |
 | CSS snapshot tests | Bun test + snapshot | Generates and snapshots the compiled CSS output per palette/theme combination. Detects unintended changes to token values, selector specificity, or output structure. |
-| Visual regression (theme showcase) | Playwright screenshots in CI | Captures screenshots of the theme showcase page for each palette (28) × mode (light/dark) = 56 screenshots. Diffs against baseline to detect visual regressions. |
+| Visual regression (showcase app) | Playwright screenshots in CI | Captures screenshots of the `apps/showcase/` pages for each palette (28) × mode (light/dark) = 56 screenshots. Diffs against baseline to detect visual regressions. |
 | `@property` registration with fallbacks | Development-time detection | Registers key tokens via CSS `@property` with obvious fallback values (e.g., `hotpink`) during development. Any `hotpink` visible in the UI indicates an undefined token, making missing tokens immediately visible without build tooling. |
 
 ### 5.3 Public Site
@@ -498,7 +498,7 @@ The theme package requires additional testing beyond component-level tests to en
 | Landing page | Value proposition, hero, features |
 | Docs | Per-component documentation with curated examples |
 | Getting started | Installation, quick start, theming |
-| Theming showcase | Interactive theme browser |
+| Theming showcase | Interactive theme browser (`apps/showcase/`) |
 | Changelog | Release notes (auto-generated via Changesets) |
 | Storybook link | Link to deployed Storybook |
 

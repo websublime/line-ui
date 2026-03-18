@@ -51,10 +51,9 @@ interface EntryPoint {
 /**
  * Files/patterns to EXCLUDE from entry discovery:
  * - mixins.css: contains only @define-mixin declarations, not standalone CSS
- * - style.css: dev/showcase file, not a distributable entry
  * - rules.css: consumed via @import by other files (legacy semantic defaults)
  */
-const EXCLUDED_BASENAMES = new Set(['mixins.css', 'style.css', 'rules.css']);
+const EXCLUDED_BASENAMES = new Set(['mixins.css', 'rules.css']);
 
 /**
  * Compute the output filename for a given source path.
