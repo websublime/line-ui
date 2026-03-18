@@ -208,7 +208,7 @@ All of the following must be true:
 - [ ] Contrast validation script verifies WCAG AA for all 28 palettes (light + dark)
 - [ ] Token parity tests confirm light/dark mode produce equivalent token sets
 - [ ] Snapshot tests of generated CSS outputs detect unintended regressions
-- [ ] Playwright visual regression of theme showcase page established as baseline
+- [ ] Playwright visual regression of `apps/showcase/` established as baseline
 
 ---
 
@@ -369,7 +369,7 @@ All of the following must be true:
 - [ ] Changeset entries for v0.3.0
 
 ### Parallel Work
-- Theming showcase on site
+- Theming showcase app (`apps/showcase/` — see `.spec/SHOWCASE-APP-SPEC.md`)
 
 ---
 

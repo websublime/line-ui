@@ -18,7 +18,6 @@
     "./themes/*": "./dist/themes/*.min.css"
   },
   "scripts": {
-    "dev": "vite",
     "build": "rm -rf dist && bun run src/build.ts",
     "build:css": "bun run src/build.ts",
     "build:css:single": "bun run src/build.ts --entry",
@@ -33,8 +32,7 @@
     "postcss-nested": "^6.0.1",
     "postcss-preset-env": "^9.2.0",
     "postcss-simple-vars": "^7.0.1",
-    "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "typescript": "^5.0.2"
   },
   "keywords": [
     "theme",
