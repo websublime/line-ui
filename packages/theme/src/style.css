@@ -217,37 +217,6 @@ html.light .logo-light {
   background: var(--line-high-contrast);
 }
 
-/* --- Palette picker --- */
-.sc-palettes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2px;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--line-subtle-border);
-  background-color: var(--line-background);
-  transition: background-color 0.3s ease;
-}
-
-.sc-palette-btn {
-  width: 24px;
-  height: 24px;
-  border-radius: var(--line-radius-1);
-  border: 2px solid transparent;
-  cursor: pointer;
-  padding: 0;
-  transition:
-    border-color 0.15s ease,
-    transform 0.1s ease;
-}
-
-.sc-palette-btn:hover {
-  transform: scale(1.15);
-}
-
-.sc-palette-btn.is-active {
-  border-color: var(--line-high-contrast);
-}
-
 /* --- Main --- */
 .sc-main {
   max-width: 1200px;
@@ -260,18 +229,6 @@ html.light .logo-light {
   text-align: center;
   padding: 5rem 2rem 3rem;
   animation: sc-fade-in 0.6s ease-out both;
-}
-
-.sc-hero-wordmark {
-  font-size: var(--line-font-size-fluid-3);
-  font-weight: var(--line-font-weight-7);
-  color: var(--line-high-contrast);
-  letter-spacing: var(--line-font-letterspacing-0);
-  margin-bottom: 0.75rem;
-}
-
-.sc-hero-wordmark .accent {
-  color: #c8ff00;
 }
 
 .sc-hero-tagline {
@@ -823,7 +780,7 @@ html.light .logo-light {
   align-items: center;
   justify-content: center;
   font-size: 0.5rem;
-  color: var(--line-high-contrast);
+  font-weight: 600;
 }
 
 /* Themed semantic strip */
