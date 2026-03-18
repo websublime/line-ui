@@ -1,6 +1,6 @@
 # SHOWCASE-APP-SPEC — line://ui Design System Showcase Application
 
-**Status:** DRAFT
+**Status:** APPROVED
 **Created:** 2026-03-18
 **Last updated:** 2026-03-18
 
@@ -83,7 +83,7 @@ apps/showcase/
     │   ├── decorative.ts       # /tokens/decorative
     │   ├── semantic.ts         # /semantic
     │   ├── elements.ts         # /elements
-    │   ├── presets.ts          # /presets
+    │   ├── themes.ts           # /themes
     │   └── generator.ts        # /generator
     └── components/
         ├── sc-nav.ts           # Sidebar navigation
@@ -111,7 +111,7 @@ Component prefix: `sc-` (showcase) to avoid collision with `line-` components.
 | `/tokens/decorative` | decorative | 41 gradients/noise, 34 masks, 3 highlights, 3 SVG squircles, 4 layouts |
 | `/semantic` | semantic | L2 semantic defaults (light/dark), L3 aliases, override demo |
 | `/elements` | elements | Normalize/reset: all native HTML elements with applied tokens |
-| `/presets` | presets | Pre-built theme previews (each palette as a complete theme) |
+| `/themes` | themes | Pre-built theme previews (each palette as color + schema bundle) |
 | `/generator` | generator | Palette generator: color picker → 12-level palette → theme preview → CSS export |
 
 ### 3.1 Router Configuration
@@ -130,7 +130,7 @@ private router = new Router(this, [
   { path: '/tokens/decorative',  render: () => html`<sc-page-decorative></sc-page-decorative>` },
   { path: '/semantic',           render: () => html`<sc-page-semantic></sc-page-semantic>` },
   { path: '/elements',           render: () => html`<sc-page-elements></sc-page-elements>` },
-  { path: '/presets',            render: () => html`<sc-page-presets></sc-page-presets>` },
+  { path: '/themes',             render: () => html`<sc-page-themes></sc-page-themes>` },
   { path: '/generator',          render: () => html`<sc-page-generator></sc-page-generator>` },
 ]);
 ```
@@ -277,17 +277,19 @@ Each element shown in a card with:
 - Token name(s) that affect it
 - Before/after toggle (with/without normalize)
 
-### 4.10 Presets (`/presets`)
+### 4.10 Themes (`/themes`)
 
-**Purpose:** Preview ready-to-go theme combinations.
+**Purpose:** Preview the 28 ready-to-go theme bundles from `packages/theme/src/themes/`. Each theme is a color palette + schema bundle (e.g., `blue-theme.css` = `colors/blue.css` + `schemas/blue.css`).
+
+> **Note:** This page showcases **themes** (L0 color + L2 schema), not **presets** (L4+L5 component styles from `@websublime/line-presets`). The presets package does not exist yet (Phase 1, Epic 2). When it ships, it may get its own route or app.
 
 **Content:**
-1. **Preset cards** — one per palette (28 total), each showing:
+1. **Theme cards** — one per palette (28 total), each showing:
    - Full UI mockup (card, buttons, input, text) themed with that palette's schema
    - Light and dark mode side-by-side
    - Import snippet: `import '@websublime/line-theme/themes/blue'`
-2. **Preset comparison** — select 2-3 presets to compare side-by-side
-3. **Usage code** — how to apply a preset in a real app
+2. **Theme comparison** — select 2-3 themes to compare side-by-side
+3. **Usage code** — how to apply a theme in a real app
 
 ### 4.11 Generator (`/generator`)
 
@@ -324,7 +326,7 @@ Each element shown in a card with:
 
 Sidebar navigation present on all pages:
 - Logo/wordmark at top
-- Route links grouped by category (Tokens, Semantic, Elements, Tools)
+- Route links grouped by category (Tokens, Semantic, Elements, Themes, Tools)
 - Active route indicator
 - Dark/light mode toggle
 - Schema palette picker (compact)
@@ -449,7 +451,7 @@ The previous `packages/theme/index.html` + `src/main.ts` + `src/style.css` showc
 **Phase C — Semantic & Elements:**
 10. Semantic page (migrate from current L2+L3 sections)
 11. Elements page (native HTML element showcase)
-12. Presets page
+12. Themes page
 
 **Phase D — Generator:**
 13. Palette generator with culori
@@ -476,6 +478,6 @@ Build as needed during page implementation. `sc-token-card`, `sc-code-block`, an
 10. Generated palettes can be exported as CSS, downloaded as .css file
 11. Generated palettes show WCAG AA contrast check
 12. App consumes `@websublime/line-theme` via package imports (dogfooding)
-13. Presets page shows all 28 theme presets with light/dark comparison
+13. Themes page shows all 28 theme bundles (color + schema) with light/dark comparison
 14. Routes load lazily (code splitting)
 15. App runs on Vite dev server with HMR
