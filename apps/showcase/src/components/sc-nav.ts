@@ -1,5 +1,5 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 
 const PALETTES = [
@@ -72,7 +72,13 @@ const NAV_GROUPS: NavGroup[] = [
 
 @customElement('sc-nav')
 export class ScNav extends LitElement {
-  @state() private _darkMode = false;
+  /**
+   * Whether the component should render in dark mode.
+   * Set by the parent sc-app to propagate dark mode styling
+   * without relying on :host-context() (unsupported in Firefox/Safari).
+   */
+  @property({ type: Boolean, reflect: true }) dark = false;
+
   @state() private _schema: Palette = 'blue';
   @state() private _mobileOpen = false;
   @state() private _currentPath = '/';
@@ -90,24 +96,26 @@ export class ScNav extends LitElement {
       height: 100dvh;
       overflow-y: auto;
       background: var(--line-gray-2, #f5f5f5);
-      border-inline-end: 1px solid var(--line-gray-6, #d4d4d4);
-      padding: 1.5rem 1rem;
+      border-inline-end: var(--line-border-size-1) solid var(--line-gray-6, #d4d4d4);
+      padding: var(--line-size-5) var(--line-size-3);
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
-      z-index: 100;
-      transition: transform 0.25s ease, background-color 0.2s ease,
-        border-color 0.2s ease;
+      gap: var(--line-size-5);
+      z-index: var(--line-z-sticky);
+      transition:
+        transform var(--line-duration-moderate-2) var(--line-ease-2),
+        background-color var(--line-duration-moderate-1) var(--line-ease-2),
+        border-color var(--line-duration-moderate-1) var(--line-ease-2);
     }
 
-    :host-context(html.dark) .sidebar {
+    :host([dark]) .sidebar {
       background: var(--line-gray-2, #1c1c1c);
       border-inline-end-color: var(--line-gray-6, #3a3a3a);
     }
 
     .logo {
-      font-size: 1.25rem;
-      font-weight: 700;
+      font-size: var(--line-font-size-4);
+      font-weight: var(--line-font-weight-7);
       letter-spacing: -0.02em;
       text-decoration: none;
       color: inherit;
@@ -118,13 +126,13 @@ export class ScNav extends LitElement {
     }
 
     .nav-group-label {
-      font-size: 0.6875rem;
-      font-weight: 600;
+      font-size: var(--line-font-size-1);
+      font-weight: var(--line-font-weight-6);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: var(--line-font-letterspacing-3);
       color: var(--line-gray-9, #a1a1a1);
-      padding: 0 0.5rem;
-      margin-block-end: 0.25rem;
+      padding: 0 var(--line-size-2);
+      margin-block-end: var(--line-size-1);
     }
 
     .nav-group {
@@ -135,13 +143,15 @@ export class ScNav extends LitElement {
 
     .nav-link {
       display: block;
-      padding: 0.375rem 0.5rem;
-      border-radius: 0.375rem;
+      padding: 0.375rem var(--line-size-2);
+      border-radius: var(--line-radius-2);
       text-decoration: none;
-      font-size: 0.8125rem;
-      font-weight: 500;
+      font-size: var(--line-font-size-1);
+      font-weight: var(--line-font-weight-5);
       color: var(--line-gray-11, #6b6b6b);
-      transition: background-color 0.15s ease, color 0.15s ease;
+      transition:
+        background-color var(--line-duration-fast) var(--line-ease-2),
+        color var(--line-duration-fast) var(--line-ease-2);
     }
 
     .nav-link:hover {
@@ -149,7 +159,7 @@ export class ScNav extends LitElement {
       color: var(--line-gray-12, #1a1a1a);
     }
 
-    :host-context(html.dark) .nav-link:hover {
+    :host([dark]) .nav-link:hover {
       background: var(--line-gray-4, #2c2c2c);
       color: var(--line-gray-12, #eeeeee);
     }
@@ -157,10 +167,10 @@ export class ScNav extends LitElement {
     .nav-link.active {
       background: var(--line-blue-4, #dbeafe);
       color: var(--line-blue-11, #1d4ed8);
-      font-weight: 600;
+      font-weight: var(--line-font-weight-6);
     }
 
-    :host-context(html.dark) .nav-link.active {
+    :host([dark]) .nav-link.active {
       background: var(--line-blue-4, #172554);
       color: var(--line-blue-11, #60a5fa);
     }
@@ -170,19 +180,19 @@ export class ScNav extends LitElement {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
-      padding-block-start: 1rem;
-      border-block-start: 1px solid var(--line-gray-6, #d4d4d4);
+      padding-block-start: var(--line-size-3);
+      border-block-start: var(--line-border-size-1) solid var(--line-gray-6, #d4d4d4);
     }
 
-    :host-context(html.dark) .controls {
+    :host([dark]) .controls {
       border-block-start-color: var(--line-gray-6, #3a3a3a);
     }
 
     .control-label {
-      font-size: 0.6875rem;
-      font-weight: 600;
+      font-size: var(--line-font-size-1);
+      font-weight: var(--line-font-weight-6);
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: var(--line-font-letterspacing-3);
       color: var(--line-gray-9, #a1a1a1);
     }
 
@@ -190,53 +200,57 @@ export class ScNav extends LitElement {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 0.5rem;
+      gap: var(--line-size-2);
     }
 
     .toggle-btn {
       appearance: none;
       background: var(--line-gray-4, #e5e5e5);
-      border: 1px solid var(--line-gray-7, #c4c4c4);
-      border-radius: 0.375rem;
+      border: var(--line-border-size-1) solid var(--line-gray-7, #c4c4c4);
+      border-radius: var(--line-radius-2);
       padding: 0.375rem 0.75rem;
       font-family: inherit;
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: var(--line-font-size-1);
+      font-weight: var(--line-font-weight-6);
       cursor: pointer;
       color: var(--line-gray-12, #1a1a1a);
-      transition: background-color 0.15s ease, border-color 0.15s ease,
-        color 0.15s ease;
+      transition:
+        background-color var(--line-duration-fast) var(--line-ease-2),
+        border-color var(--line-duration-fast) var(--line-ease-2),
+        color var(--line-duration-fast) var(--line-ease-2);
     }
 
     .toggle-btn:hover {
       background: var(--line-gray-5, #d9d9d9);
     }
 
-    :host-context(html.dark) .toggle-btn {
+    :host([dark]) .toggle-btn {
       background: var(--line-gray-4, #2c2c2c);
       border-color: var(--line-gray-7, #484848);
       color: var(--line-gray-12, #eeeeee);
     }
 
-    :host-context(html.dark) .toggle-btn:hover {
+    :host([dark]) .toggle-btn:hover {
       background: var(--line-gray-5, #363636);
     }
 
     .schema-select {
       appearance: none;
       width: 100%;
-      padding: 0.375rem 0.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid var(--line-gray-7, #c4c4c4);
+      padding: 0.375rem var(--line-size-2);
+      border-radius: var(--line-radius-2);
+      border: var(--line-border-size-1) solid var(--line-gray-7, #c4c4c4);
       background: var(--line-gray-3, #eeeeee);
       color: var(--line-gray-12, #1a1a1a);
       font-family: inherit;
-      font-size: 0.75rem;
-      font-weight: 500;
+      font-size: var(--line-font-size-1);
+      font-weight: var(--line-font-weight-5);
       cursor: pointer;
       text-transform: capitalize;
-      transition: background-color 0.15s ease, border-color 0.15s ease,
-        color 0.15s ease;
+      transition:
+        background-color var(--line-duration-fast) var(--line-ease-2),
+        border-color var(--line-duration-fast) var(--line-ease-2),
+        color var(--line-duration-fast) var(--line-ease-2);
     }
 
     .schema-select:hover {
@@ -244,11 +258,11 @@ export class ScNav extends LitElement {
     }
 
     .schema-select:focus-visible {
-      outline: 2px solid var(--line-blue-9, #3b82f6);
-      outline-offset: 2px;
+      outline: var(--line-ring-width) solid var(--line-blue-9, #3b82f6);
+      outline-offset: var(--line-ring-offset);
     }
 
-    :host-context(html.dark) .schema-select {
+    :host([dark]) .schema-select {
       background: var(--line-gray-3, #232323);
       border-color: var(--line-gray-7, #484848);
       color: var(--line-gray-12, #eeeeee);
@@ -260,20 +274,22 @@ export class ScNav extends LitElement {
       position: fixed;
       top: 0.75rem;
       left: 0.75rem;
-      z-index: 200;
+      z-index: var(--line-z-fixed);
       appearance: none;
       background: var(--line-gray-3, #eeeeee);
-      border: 1px solid var(--line-gray-7, #c4c4c4);
-      border-radius: 0.375rem;
-      padding: 0.5rem;
+      border: var(--line-border-size-1) solid var(--line-gray-7, #c4c4c4);
+      border-radius: var(--line-radius-2);
+      padding: var(--line-size-2);
       cursor: pointer;
       color: var(--line-gray-12, #1a1a1a);
-      font-size: 1.25rem;
+      font-size: var(--line-font-size-4);
       line-height: 1;
-      transition: background-color 0.15s ease, color 0.15s ease;
+      transition:
+        background-color var(--line-duration-fast) var(--line-ease-2),
+        color var(--line-duration-fast) var(--line-ease-2);
     }
 
-    :host-context(html.dark) .hamburger {
+    :host([dark]) .hamburger {
       background: var(--line-gray-3, #232323);
       border-color: var(--line-gray-7, #484848);
       color: var(--line-gray-12, #eeeeee);
@@ -283,6 +299,7 @@ export class ScNav extends LitElement {
       display: none;
     }
 
+    /* Breakpoint: --line-size-md (768px) */
     @media (max-width: 768px) {
       .hamburger {
         display: block;
@@ -301,10 +318,10 @@ export class ScNav extends LitElement {
         position: fixed;
         inset: 0;
         background: rgb(0 0 0 / 0.4);
-        z-index: 50;
+        z-index: var(--line-z-dropdown);
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.25s ease;
+        transition: opacity var(--line-duration-moderate-2) var(--line-ease-2);
       }
 
       .overlay.visible {
@@ -328,7 +345,7 @@ export class ScNav extends LitElement {
 
   private _loadPreferences(): void {
     const storedMode = localStorage.getItem('line-mode');
-    this._darkMode = storedMode === 'dark';
+    this.dark = storedMode === 'dark';
     this._applyMode();
 
     const storedSchema = localStorage.getItem('line-schema');
@@ -340,7 +357,7 @@ export class ScNav extends LitElement {
 
   private _applyMode(): void {
     const root = document.documentElement;
-    if (this._darkMode) {
+    if (this.dark) {
       root.classList.add('dark');
       root.classList.remove('light');
     } else {
@@ -376,12 +393,12 @@ export class ScNav extends LitElement {
   }
 
   private _toggleMode(): void {
-    this._darkMode = !this._darkMode;
-    localStorage.setItem('line-mode', this._darkMode ? 'dark' : 'light');
+    this.dark = !this.dark;
+    localStorage.setItem('line-mode', this.dark ? 'dark' : 'light');
     this._applyMode();
     this.dispatchEvent(
       new CustomEvent('mode-change', {
-        detail: { mode: this._darkMode ? 'dark' : 'light' },
+        detail: { mode: this.dark ? 'dark' : 'light' },
         bubbles: true,
         composed: true
       })
@@ -463,9 +480,9 @@ export class ScNav extends LitElement {
             <button
               class="toggle-btn"
               @click=${this._toggleMode}
-              aria-label=${this._darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label=${this.dark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
-              ${this._darkMode ? 'Light' : 'Dark'}
+              ${this.dark ? 'Light' : 'Dark'}
             </button>
           </div>
 
