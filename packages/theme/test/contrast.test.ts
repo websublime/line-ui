@@ -77,7 +77,9 @@ function resolveColor(value: string): [number, number, number] | null {
 // ---------------------------------------------------------------------------
 
 describe('WCAG Contrast Validation', () => {
-  expect(PALETTES.length).toBe(28);
+  test('discovers exactly 28 palettes', () => {
+    expect(PALETTES.length).toBe(28);
+  });
 
   for (const palette of PALETTES) {
     describe(`${palette}`, () => {
@@ -94,15 +96,12 @@ describe('WCAG Contrast Validation', () => {
         expect(level9Value).toBeDefined();
         expect(contrastValue).toBeDefined();
 
-        if (!(level9Value && contrastValue)) return;
-
-        const bgRgb = resolveColor(level9Value);
-        const fgRgb = resolveColor(contrastValue);
+        // expect().toBeDefined() throws on failure, so these are guaranteed non-null
+        const bgRgb = resolveColor(level9Value!);
+        const fgRgb = resolveColor(contrastValue!);
 
         expect(bgRgb).not.toBeNull();
         expect(fgRgb).not.toBeNull();
-
-        if (!(bgRgb && fgRgb)) return;
 
         const ratio = contrastRatio(bgRgb, fgRgb);
 
@@ -154,12 +153,15 @@ describe('WCAG Contrast Validation', () => {
         const fgValue = light.get(level12Key);
         const bgValue = light.get(level1Key);
 
-        if (!(fgValue && bgValue)) return;
+        expect(fgValue).toBeDefined();
+        expect(bgValue).toBeDefined();
 
-        const fgRgb = resolveColor(fgValue);
-        const bgRgb = resolveColor(bgValue);
+        // expect().toBeDefined() throws on failure, so these are guaranteed non-null
+        const fgRgb = resolveColor(fgValue!);
+        const bgRgb = resolveColor(bgValue!);
 
-        if (!(fgRgb && bgRgb)) return;
+        expect(fgRgb).not.toBeNull();
+        expect(bgRgb).not.toBeNull();
 
         const ratio = contrastRatio(fgRgb, bgRgb);
 
