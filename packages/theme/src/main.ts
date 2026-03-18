@@ -737,7 +737,16 @@ function buildOverrideDemo() {
     picks.appendChild(btn);
   }
 
+  // Reset button
+  const resetBtn = el('button', { class: 'sc-override-reset' }, ['reset']);
+  resetBtn.addEventListener('click', () => {
+    overridePalette = null;
+    renderOverride();
+  });
+  picks.appendChild(resetBtn);
+
   function renderOverride() {
+    resetBtn.classList.toggle('is-hidden', overridePalette === null);
     // Update active state on picks
     for (const btn of $$('.sc-override-pick')) {
       btn.classList.toggle('is-active', btn.dataset.palette === overridePalette);
