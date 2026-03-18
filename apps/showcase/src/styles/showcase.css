@@ -1,10 +1,6 @@
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Dogfood: normalize from the theme package is imported via
+   app.ts as `import '@websublime/line-theme/normalize'`.
+   That provides box-sizing, margin reset, and base element styles. */
 
 html {
   font-family: "JetBrains Mono", monospace;
@@ -22,8 +18,8 @@ body {
   background-color: var(--line-gray-1, #fafafa);
   color: var(--line-gray-12, #1a1a1a);
   transition:
-    background-color 0.2s ease,
-    color 0.2s ease;
+    background-color var(--line-duration-moderate-1, 180ms) var(--line-ease-2),
+    color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
 }
 
 html.dark body {

@@ -1,6 +1,6 @@
 import { Router } from '@lit-labs/router';
 import { css, html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
+import { customElement, state } from 'lit/decorators.js';
 
 // Validate theme imports resolve correctly
 import '@websublime/line-theme';
@@ -8,6 +8,7 @@ import '@websublime/line-theme/tokens';
 import '@websublime/line-theme/colors/blue';
 import '@websublime/line-theme/schemas/blue';
 import '@websublime/line-theme/aliases';
+import '@websublime/line-theme/normalize';
 
 // Navigation component
 import './components/sc-nav.js';
@@ -27,6 +28,8 @@ import './pages/generator.js';
 
 @customElement('sc-app')
 export class ScApp extends LitElement {
+  @state() private _darkMode = false;
+
   private router = new Router(this, [
     { path: '/', render: () => html`<sc-page-home></sc-page-home>` },
     {
@@ -79,25 +82,40 @@ export class ScApp extends LitElement {
     }
 
     main {
-      padding: 2rem;
+      padding: var(--line-size-7);
       overflow-y: auto;
       min-height: 100dvh;
     }
 
+    /* Breakpoint: --line-size-md (768px) */
     @media (max-width: 768px) {
       :host {
         grid-template-columns: 1fr;
       }
 
       main {
-        padding: 3.5rem 1rem 1rem;
+        padding: var(--line-size-8) var(--line-size-3) var(--line-size-3);
       }
     }
   `;
 
+  override connectedCallback(): void {
+    super.connectedCallback();
+    const storedMode = localStorage.getItem('line-mode');
+    this._darkMode = storedMode === 'dark';
+  }
+
+  private _handleModeChange(e: Event): void {
+    const detail = (e as CustomEvent).detail;
+    this._darkMode = detail.mode === 'dark';
+  }
+
   override render() {
     return html`
-      <sc-nav></sc-nav>
+      <sc-nav
+        ?dark=${this._darkMode}
+        @mode-change=${this._handleModeChange}
+      ></sc-nav>
       <main>${this.router.outlet()}</main>
     `;
   }
