@@ -73,6 +73,26 @@ function resolveColor(value: string): [number, number, number] | null {
 }
 
 // ---------------------------------------------------------------------------
+// Assertion helpers
+// ---------------------------------------------------------------------------
+
+/** Assert a value is defined and return it with narrowed type. */
+function assertDefined<T>(value: T | undefined, label: string): T {
+  if (value === undefined) {
+    throw new Error(`Expected ${label} to be defined`);
+  }
+  return value;
+}
+
+/** Assert a value is non-null and return it with narrowed type. */
+function assertNonNull<T>(value: T | null, label: string): T {
+  if (value === null) {
+    throw new Error(`Expected ${label} to be non-null`);
+  }
+  return value;
+}
+
+// ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
 
@@ -93,15 +113,11 @@ describe('WCAG Contrast Validation', () => {
         const level9Value = light.get(level9Key);
         const contrastValue = light.get(contrastKey);
 
-        expect(level9Value).toBeDefined();
-        expect(contrastValue).toBeDefined();
+        const level9 = assertDefined(level9Value, level9Key);
+        const contrast = assertDefined(contrastValue, contrastKey);
 
-        // expect().toBeDefined() throws on failure, so these are guaranteed non-null
-        const bgRgb = resolveColor(level9Value!);
-        const fgRgb = resolveColor(contrastValue!);
-
-        expect(bgRgb).not.toBeNull();
-        expect(fgRgb).not.toBeNull();
+        const bgRgb = assertNonNull(resolveColor(level9), `resolveColor(${level9Key})`);
+        const fgRgb = assertNonNull(resolveColor(contrast), `resolveColor(${contrastKey})`);
 
         const ratio = contrastRatio(bgRgb, fgRgb);
 
@@ -153,15 +169,11 @@ describe('WCAG Contrast Validation', () => {
         const fgValue = light.get(level12Key);
         const bgValue = light.get(level1Key);
 
-        expect(fgValue).toBeDefined();
-        expect(bgValue).toBeDefined();
+        const fg = assertDefined(fgValue, level12Key);
+        const bg = assertDefined(bgValue, level1Key);
 
-        // expect().toBeDefined() throws on failure, so these are guaranteed non-null
-        const fgRgb = resolveColor(fgValue!);
-        const bgRgb = resolveColor(bgValue!);
-
-        expect(fgRgb).not.toBeNull();
-        expect(bgRgb).not.toBeNull();
+        const fgRgb = assertNonNull(resolveColor(fg), `resolveColor(${level12Key})`);
+        const bgRgb = assertNonNull(resolveColor(bg), `resolveColor(${level1Key})`);
 
         const ratio = contrastRatio(fgRgb, bgRgb);
 
