@@ -10,17 +10,29 @@
 import { readFileSync } from 'node:fs';
 
 /**
+ * Strip CSS comments (both block and line) to prevent false matches
+ * when parsing custom property declarations.
+ */
+function stripComments(css: string): string {
+  return css.replace(/\/\*[\s\S]*?\*\//g, '');
+}
+
+/**
  * Extract all CSS custom property declarations (--name: value) from CSS text.
  * Returns a Map of property name -> value.
+ *
+ * Comments are stripped before parsing to avoid matching declarations
+ * inside commented-out code.
  */
 export function extractDeclarations(css: string): Map<string, string> {
   const declarations = new Map<string, string>();
+  const cleaned = stripComments(css);
 
   // Match --property-name: value (handles multiline values by matching until ; or })
   // We need to handle multiline values like shadows that span multiple lines
   const regex = /(--[\w-]+)\s*:\s*([^;{}]+)/g;
 
-  for (const match of css.matchAll(regex)) {
+  for (const match of cleaned.matchAll(regex)) {
     const name = match[1].trim();
     const value = match[2].trim();
     declarations.set(name, value);
@@ -31,12 +43,14 @@ export function extractDeclarations(css: string): Map<string, string> {
 
 /**
  * Extract only the custom property names declared in CSS text.
+ * Comments are stripped before parsing.
  */
 export function extractDeclaredNames(css: string): Set<string> {
   const names = new Set<string>();
+  const cleaned = stripComments(css);
   const regex = /(--[\w-]+)\s*:/g;
 
-  for (const match of css.matchAll(regex)) {
+  for (const match of cleaned.matchAll(regex)) {
     names.add(match[1]);
   }
 
@@ -46,6 +60,7 @@ export function extractDeclaredNames(css: string): Set<string> {
 /**
  * Extract all var(--name) references from CSS text.
  * Returns a Set of referenced custom property names.
+ * Comments are stripped before parsing.
  *
  * Handles:
  * - var(--name)
@@ -54,9 +69,10 @@ export function extractDeclaredNames(css: string): Set<string> {
  */
 export function extractVarReferences(css: string): Set<string> {
   const refs = new Set<string>();
+  const cleaned = stripComments(css);
   const regex = /var\(\s*(--[\w-]+)/g;
 
-  for (const match of css.matchAll(regex)) {
+  for (const match of cleaned.matchAll(regex)) {
     refs.add(match[1]);
   }
 
