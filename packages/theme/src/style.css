@@ -114,20 +114,6 @@ body {
   min-height: 100dvh;
 }
 
-/* --- Dark/Light logo swap --- */
-.logo-dark {
-  display: block;
-}
-.logo-light {
-  display: none;
-}
-html.light .logo-dark {
-  display: none;
-}
-html.light .logo-light {
-  display: block;
-}
-
 /* --- Header --- */
 .sc-header {
   position: sticky;
@@ -145,9 +131,29 @@ html.light .logo-light {
     border-color 0.3s ease;
 }
 
-.sc-header-logo img {
-  height: 24px;
-  display: block;
+.sc-header-brand {
+  font-size: var(--line-font-size-2);
+  font-weight: var(--line-font-weight-7);
+  color: var(--line-high-contrast);
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.sc-header-sep {
+  color: var(--line-subtle-border);
+  margin: 0 0.75rem;
+  font-weight: 300;
+}
+
+.sc-header-subtitle {
+  font-size: var(--line-font-size-0);
+  font-weight: 400;
+  color: var(--line-low-contrast);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
 }
 
 .sc-header-dots {
