@@ -195,9 +195,9 @@ export class ScPageColors extends LitElement {
       border-radius: var(--line-radius-2, 4px);
     }
 
-    .pass-aa { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-    .pass-aaa { background: rgba(34, 197, 94, 0.3); color: #22c55e; }
-    .fail { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+    .pass-aa { background: color-mix(in srgb, var(--line-green-9) 20%, transparent); color: var(--line-green-9); }
+    .pass-aaa { background: color-mix(in srgb, var(--line-green-9) 30%, transparent); color: var(--line-green-9); }
+    .fail { background: color-mix(in srgb, var(--line-red-9) 20%, transparent); color: var(--line-red-9); }
 
     .contrast-tokens {
       font-family: 'IBM Plex Mono', monospace;
@@ -420,8 +420,8 @@ export class ScPageColors extends LitElement {
       transform: translateX(-50%);
       font-size: 9px;
       font-family: 'IBM Plex Mono', monospace;
-      color: rgba(255, 255, 255, 0.7);
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      color: var(--line-high-contrast, #fff);
+      text-shadow: 0 1px 2px color-mix(in srgb, var(--line-background, #111) 50%, transparent);
     }
 
     .mix-code {
