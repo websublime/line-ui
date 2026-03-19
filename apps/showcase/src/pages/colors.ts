@@ -1,4 +1,4 @@
-import { css, html, LitElement, nothing } from 'lit';
+import { css, html, LitElement, nothing, type PropertyValues } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -457,8 +457,10 @@ export class ScPageColors extends LitElement {
     }
   }
 
-  override updated(): void {
-    this._computeContrast();
+  protected override willUpdate(changed: PropertyValues): void {
+    if (changed.has('_activePalette')) {
+      this._computeContrast();
+    }
   }
 
   private _computeContrast(): void {
