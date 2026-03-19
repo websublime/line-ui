@@ -42,6 +42,11 @@ export class ScSwatch extends LitElement {
       z-index: 1;
     }
 
+    .swatch:focus-visible {
+      outline: 2px solid var(--line-solid-background, #c8ff00);
+      outline-offset: 2px;
+    }
+
     .swatch.sm {
       width: 32px;
       height: 32px;
@@ -162,6 +167,13 @@ export class ScSwatch extends LitElement {
       });
   }
 
+  private _handleKeydown(e: KeyboardEvent): void {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      this._handleClick();
+    }
+  }
+
   private _handleMouseEnter(): void {
     this._hovered = true;
     // Resolve computed color value from the host document
@@ -187,9 +199,15 @@ export class ScSwatch extends LitElement {
       <div
         class="swatch ${this.size}"
         style=${bgStyle}
+        tabindex="0"
+        role="button"
+        aria-label="Copy ${this._tokenName}"
         @click=${this._handleClick}
+        @keydown=${this._handleKeydown}
         @mouseenter=${this._handleMouseEnter}
         @mouseleave=${this._handleMouseLeave}
+        @focus=${this._handleMouseEnter}
+        @blur=${this._handleMouseLeave}
         title="${this._tokenName}"
       >
         ${this._copied ? html`<div class="copied-badge">&#10003;</div>` : nothing}
