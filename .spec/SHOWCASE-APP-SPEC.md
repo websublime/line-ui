@@ -160,7 +160,7 @@ private _renderPanel() {
 **Sections:**
 1. **Active palette strip** — 12-step grid with hover inspection (token name, HSL value, semantic role)
 2. **Contrast token demo** — solid-9 background with contrast text, WCAG ratio display
-3. **All 28 palettes grid** — 14×2 mini swatches at level 9, click to switch active palette
+3. **All 28 palettes grid** — responsive `auto-fill minmax(80px, 1fr)` grid of mini swatches at level 9, click to switch active palette (deviates from original 14×2 fixed layout for better responsiveness across viewport sizes)
 4. **Full palette explorer** — expandable view of all 12 levels for each palette
 5. **Color-mix demo** — two palette selectors + range slider, 12-step blended strip using `color-mix(in oklch)`
 6. **Copy-to-clipboard** — click any swatch to copy `var(--line-{palette}-{level})`
