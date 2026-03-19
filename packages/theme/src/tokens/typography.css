@@ -87,6 +87,9 @@
 
 :where(html) {
   --line-font-size-0: 0.5rem;
+  /* Open Props convention: the double-zero suffix (00) denotes a half-step
+     between 0 and 1, not a value below 0. The name sorts after 0 alphabetically
+     but the value (0.625rem) sits between 0 (0.5rem) and 1 (0.75rem). */
   --line-font-size-00: 0.625rem;
   --line-font-size-1: 0.75rem;
   --line-font-size-2: 1rem;
