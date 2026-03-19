@@ -145,7 +145,7 @@ export class ScNav extends LitElement {
       white-space: nowrap;
       border: none;
       background: none;
-      font-family: var(--line-font-mono, monospace);
+      font-family: inherit;
       transition: color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
     }
     .nav-btn:hover { color: var(--line-high-contrast, #ddd); }
@@ -174,7 +174,7 @@ export class ScNav extends LitElement {
       color: var(--line-low-contrast, #999);
       cursor: pointer;
       background: var(--line-subtle-background, #161616);
-      font-family: var(--line-font-mono, monospace);
+      font-family: inherit;
       white-space: nowrap;
       transition:
         border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
@@ -200,7 +200,7 @@ export class ScNav extends LitElement {
       color: var(--line-low-contrast, #999);
       cursor: pointer;
       background: transparent;
-      font-family: var(--line-font-mono, monospace);
+      font-family: inherit;
       white-space: nowrap;
       transition:
         border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
@@ -221,7 +221,7 @@ export class ScNav extends LitElement {
       font-weight: var(--line-font-weight-7, 700);
       color: var(--line-low-contrast, #999);
       background: transparent;
-      font-family: var(--line-font-mono, monospace);
+      font-family: inherit;
       cursor: pointer;
       letter-spacing: 0.03em;
       transition:
@@ -295,7 +295,7 @@ export class ScNav extends LitElement {
       color: var(--line-low-contrast, #999);
       cursor: pointer;
       background: transparent;
-      font-family: var(--line-font-mono, monospace);
+      font-family: inherit;
       text-align: left;
       letter-spacing: 0.01em;
       transition:

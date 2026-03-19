@@ -3,9 +3,7 @@
    That provides box-sizing, margin reset, and base element styles. */
 
 html {
-  font-family: "JetBrains Mono", monospace;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Geist", system-ui, sans-serif;
   color-scheme: dark;
 }
 
@@ -25,4 +23,28 @@ body {
 html.light body {
   background-color: var(--line-background, #fafafa);
   color: var(--line-high-contrast, #1a1a1a);
+}
+
+/* View Transitions API — panel crossfade */
+::view-transition-old(panel-content) {
+  animation: 180ms ease-out both fade-out;
+}
+::view-transition-new(panel-content) {
+  animation: 260ms ease-out 80ms both fade-in-up;
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

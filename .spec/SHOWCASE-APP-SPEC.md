@@ -2,7 +2,7 @@
 
 **Status:** APPROVED
 **Created:** 2026-03-18
-**Last updated:** 2026-03-18
+**Last updated:** 2026-03-19
 
 ---
 
@@ -41,25 +41,22 @@ Rationale: apps vs packages separation is standard monorepo convention. The show
 | Concern | Choice | Rationale |
 |---------|--------|-----------|
 | Component framework | Lit 3+ | Project standard, dogfooding |
-| Router | @lit-labs/router | Official Lit router, reactive controllers, URLPattern API, lightweight |
+| Navigation | Panel-based (PanelKey) | Simpler than URL routing; single-page tool, not a multi-page site. State persisted in localStorage. See §10 Decision D2 |
 | Color science | culori | 8KB, typed, OKLCH support for palette generation |
-| Theme | @websublime/line-theme | Consumed as package — validates exports |
+| Theme | @websublime/line-theme | Consumed as full bundle — validates exports |
 | Build | Vite 7+ | Project standard |
-| Fonts | JetBrains Mono (Google Fonts) | Monospace aesthetic from current showcase |
+| UI Font | Geist (Google Fonts) | Crisp sans-serif rendering across all browsers. See §10 Decision D3 |
+| Code Font | IBM Plex Mono (Google Fonts) | Monospace for token names, code blocks, and code snippets only |
 
 ### 2.3 Dependency on Theme Package
 
-The showcase imports the theme as a real consumer would:
+The showcase imports the theme as a single full bundle:
 
 ```ts
-import '@websublime/line-theme';              // Full bundle
-import '@websublime/line-theme/tokens';       // Just foundation tokens
-import '@websublime/line-theme/colors/blue';  // Individual palette
-import '@websublime/line-theme/schemas/blue'; // Schema mapping
-import '@websublime/line-theme/aliases';      // Semantic aliases
+import '@websublime/line-theme';  // Full bundle: all palettes, schemas, tokens, aliases, normalize
 ```
 
-This validates that `package.json` exports resolve correctly.
+This validates that the full bundle export resolves correctly and includes all necessary CSS. Individual sub-path exports (`/tokens`, `/colors/*`, `/schemas/*`, `/aliases`) remain available for consumer apps that want tree-shaking.
 
 ### 2.4 Directory Structure
 
@@ -70,7 +67,7 @@ apps/showcase/
 ├── vite.config.ts
 ├── tsconfig.json
 └── src/
-    ├── app.ts                  # App shell + router setup
+    ├── app.ts                  # App shell + panel-based rendering
     ├── styles/
     │   └── showcase.css        # App-level styles (not distributed)
     ├── pages/
@@ -86,7 +83,7 @@ apps/showcase/
     │   ├── themes.ts           # /themes
     │   └── generator.ts        # /generator
     └── components/
-        ├── sc-nav.ts           # Sidebar navigation
+        ├── sc-nav.ts           # Top bar navigation with inline pill nav + hamburger dropdown
         ├── sc-token-card.ts    # Reusable token display card
         ├── sc-code-block.ts    # Code snippet + copy-to-clipboard
         ├── sc-color-picker.ts  # HSL/OKLCH color picker for generator
@@ -98,41 +95,43 @@ Component prefix: `sc-` (showcase) to avoid collision with `line-` components.
 
 ---
 
-## 3. Routes
+## 3. Panels
 
-| Path | Page | Description |
-|------|------|-------------|
-| `/` | home | Overview with summary cards linking to each section |
-| `/tokens/colors` | colors | L0: 28 palettes × 12 levels, contrast tokens, color-mix demo |
-| `/tokens/typography` | typography | 62 tokens: font families, sizes, weights, line-heights, letter-spacings |
-| `/tokens/spacing` | spacing | 74 tokens: rem, px, fluid, breakpoints, content/header widths, ch-based |
-| `/tokens/motion` | motion | 81 easings, 12 durations, 23 animations with live keyframe demos |
-| `/tokens/surfaces` | surfaces | 24 shadows, 29 borders/radii, 3 opacity, 3 focus ring, 6 aspects |
-| `/tokens/decorative` | decorative | 41 gradients/noise, 34 masks, 3 highlights, 3 SVG squircles, 4 layouts |
-| `/semantic` | semantic | L2 semantic defaults (light/dark), L3 aliases, override demo |
-| `/elements` | elements | Normalize/reset: all native HTML elements with applied tokens |
-| `/themes` | themes | Pre-built theme previews (each palette as color + schema bundle) |
-| `/generator` | generator | Palette generator: color picker → 12-level palette → theme preview → CSS export |
+Navigation is panel-based (not URL-routed). The app shell tracks the active panel via a `PanelKey` type and renders the corresponding page component via a switch statement. Panel state is persisted in `localStorage('line-panel')`. See §10 Decision D2.
 
-### 3.1 Router Configuration
+| PanelKey | Page | Description |
+|----------|------|-------------|
+| `colors` | colors | L0: 28 palettes × 12 levels, contrast tokens, color-mix demo |
+| `typography` | typography | 62 tokens: font families, sizes, weights, line-heights, letter-spacings |
+| `spacing` | spacing | 74 tokens: rem, px, fluid, breakpoints, content/header widths, ch-based |
+| `motion` | motion | 81 easings, 12 durations, 23 animations with live keyframe demos |
+| `surfaces` | surfaces | 24 shadows, 29 borders/radii, 3 opacity, 3 focus ring, 6 aspects |
+| `decorative` | decorative | 41 gradients/noise, 34 masks, 3 highlights, 3 SVG squircles, 4 layouts |
+| `semantic` | semantic | L2 semantic defaults (light/dark), L3 aliases, override demo |
+| `elements` | elements | Normalize/reset: all native HTML elements with applied tokens |
+| `themes` | themes | Pre-built theme previews (each palette as color + schema bundle) |
+| `generator` | generator | Palette generator: color picker → 12-level palette → theme preview → CSS export |
+
+### 3.1 Panel Configuration
 
 ```ts
-import { Router } from '@lit-labs/router';
+export type PanelKey =
+  | 'colors' | 'typography' | 'spacing' | 'motion' | 'surfaces'
+  | 'decorative' | 'semantic' | 'elements' | 'themes' | 'generator';
 
-// In app shell
-private router = new Router(this, [
-  { path: '/',                   render: () => html`<sc-page-home></sc-page-home>` },
-  { path: '/tokens/colors',      render: () => html`<sc-page-colors></sc-page-colors>` },
-  { path: '/tokens/typography',  render: () => html`<sc-page-typography></sc-page-typography>` },
-  { path: '/tokens/spacing',     render: () => html`<sc-page-spacing></sc-page-spacing>` },
-  { path: '/tokens/motion',      render: () => html`<sc-page-motion></sc-page-motion>` },
-  { path: '/tokens/surfaces',    render: () => html`<sc-page-surfaces></sc-page-surfaces>` },
-  { path: '/tokens/decorative',  render: () => html`<sc-page-decorative></sc-page-decorative>` },
-  { path: '/semantic',           render: () => html`<sc-page-semantic></sc-page-semantic>` },
-  { path: '/elements',           render: () => html`<sc-page-elements></sc-page-elements>` },
-  { path: '/themes',             render: () => html`<sc-page-themes></sc-page-themes>` },
-  { path: '/generator',          render: () => html`<sc-page-generator></sc-page-generator>` },
-]);
+// In app shell — renders active panel via switch
+private _renderPanel() {
+  switch (this._panel) {
+    case 'colors':     return html`<sc-page-colors></sc-page-colors>`;
+    case 'typography': return html`<sc-page-typography></sc-page-typography>`;
+    // ... etc
+  }
+}
+
+// Navigation via custom events from sc-nav
+@sc-navigate=${this._handleNavigate}   // detail: { panel: PanelKey }
+@sc-schema-change=${this._handleSchemaChange}  // detail: { schema: string }
+@sc-mode-change=${this._handleModeChange}      // detail: { light: boolean }
 ```
 
 ---
@@ -324,13 +323,31 @@ Each element shown in a card with:
 
 ### 5.1 `sc-nav`
 
-Sidebar navigation present on all pages:
-- Logo/wordmark at top
-- Route links grouped by category (Tokens, Semantic, Elements, Themes, Tools)
-- Active route indicator
-- Dark/light mode toggle
-- Schema palette picker (compact)
-- Collapsible on mobile (hamburger)
+Horizontal top bar navigation, sticky at the top of the viewport:
+
+**Layout:** Logo left → inline pill nav (desktop) → controls right (schema chip, mode toggle, hamburger menu)
+
+**Properties:**
+- `panel: PanelKey` — active panel (highlights corresponding nav button)
+- `schema: string` — active schema name (displayed in chip)
+- `light: boolean` (reflect: true) — light mode flag; dark is default
+
+**Desktop (≥769px):** Inline horizontal nav buttons with animated pill/underline indicator that slides to the active item. Hamburger menu button also visible.
+
+**Mobile (<768px):** Inline nav hidden, hamburger menu visible.
+
+**Hamburger dropdown:** Visible on all screen sizes. Opens a panel below the top bar with a 5-column grid of nav buttons, "Current: {panel}" footer, and "tap to navigate" hint. Closes on outside click.
+
+**Events emitted:**
+- `sc-navigate` — `detail: { panel: PanelKey }` — user selected a panel
+- `sc-schema-change` — `detail: { schema: string }` — schema cycled
+- `sc-mode-change` — `detail: { light: boolean }` — mode toggled
+
+**Styling:**
+- Dark: frosted glass `rgba(8, 8, 8, 0.92)` with `backdrop-filter: blur(12px)`
+- Light: `rgba(250, 250, 250, 0.97)`
+- Uses semantic tokens for all colors (`--line-high-contrast`, `--line-low-contrast`, `--line-ui-border`, etc.)
+- Uses `:host([light])` selectors for light mode (cross-browser, no `:host-context()`)
 
 ### 5.2 `sc-token-card`
 
@@ -378,15 +395,22 @@ Page section wrapper:
 
 ### 6.1 Dark/Light Mode Toggle
 
-- Persists across routes (stored in `localStorage`)
-- Toggles `html.dark` / `html.light` class
-- Smooth transition on all themed elements
+- **Dark is the default.** The `light` boolean attribute toggles ON for light mode. See §10 Decision D4.
+- Persists in `localStorage('line-mode')` as `'dark'` or `'light'`
+- Toggles `html.dark` / `html.light` class on `document.documentElement`
+- `color-scheme: dark` by default on `<html>`, `color-scheme: light` on `html.light`
+- `<html class="dark">` set in `index.html` to prevent FOUC before JS hydrates
+- Uses `:host([light])` CSS selectors in components (cross-browser; `:host-context()` is NOT supported in Firefox/Safari)
+- Smooth transition via `--line-duration-moderate-1` and `--line-ease-2` tokens
 
 ### 6.2 Schema Palette Picker
 
-- Compact picker in the nav sidebar
-- Changes `body.line-schema-{palette}`
-- Persists across routes (`localStorage`)
+- Compact **cycling chip button** in the top bar controls (not a dropdown). See §10 Decision D5.
+- Shows a colored dot (using `--line-solid-background` accent) + current schema name
+- Clicking cycles to the next schema in the 28-palette list
+- Changes `body.line-schema-{palette}` class
+- Persists in `localStorage('line-schema')`
+- `<body class="line-schema-violet">` set in `index.html` to prevent FOUC
 - Affects all pages that use semantic tokens
 
 ### 6.3 Copy-to-Clipboard
@@ -401,28 +425,28 @@ Global token search (cmd+k) — deferred to post-launch iteration. Architecture 
 
 ## 7. Token Inventory Summary
 
-| Category | Tokens | Route |
+| Category | Tokens | Panel |
 |----------|--------|-------|
-| Color palettes | 364 (28×13) | /tokens/colors |
-| Typography | 62 | /tokens/typography |
-| Sizing & spacing | 74 | /tokens/spacing |
-| Easing | 81 | /tokens/motion |
-| Animations | 46 (23 tokens + 23 keyframes) | /tokens/motion |
-| Durations | 12 | /tokens/motion |
-| Gradients & noise | 41 | /tokens/decorative |
-| Masks | 34 | /tokens/decorative |
-| Borders & radii | 29 | /tokens/surfaces |
-| Shadows | 24 | /tokens/surfaces |
-| Z-index & layers | 14 | /tokens/surfaces |
-| Aspect ratios | 6 | /tokens/surfaces |
-| Focus ring | 3 | /tokens/surfaces |
-| Opacity | 3 | /tokens/surfaces |
-| Highlights | 3 | /tokens/decorative |
-| SVG squircles | 3 | /tokens/decorative |
-| Layouts | 4 | /tokens/decorative |
-| Colors absolute | 2 | /tokens/colors |
-| Semantic defaults | 14 | /semantic |
-| Aliases | 54 | /semantic |
+| Color palettes | 364 (28×13) | colors |
+| Typography | 62 | typography |
+| Sizing & spacing | 74 | spacing |
+| Easing | 81 | motion |
+| Animations | 46 (23 tokens + 23 keyframes) | motion |
+| Durations | 12 | motion |
+| Gradients & noise | 41 | decorative |
+| Masks | 34 | decorative |
+| Borders & radii | 29 | surfaces |
+| Shadows | 24 | surfaces |
+| Z-index & layers | 14 | surfaces |
+| Aspect ratios | 6 | surfaces |
+| Focus ring | 3 | surfaces |
+| Opacity | 3 | surfaces |
+| Highlights | 3 | decorative |
+| SVG squircles | 3 | decorative |
+| Layouts | 4 | decorative |
+| Colors absolute | 2 | colors |
+| Semantic defaults | 14 | semantic |
+| Aliases | 54 | semantic |
 | **Total** | **~873** | |
 
 ---
@@ -435,9 +459,9 @@ The previous `packages/theme/index.html` + `src/main.ts` + `src/style.css` showc
 
 ### 8.2 Phased Implementation
 
-**Phase A — Scaffold & Core:**
-1. Create `apps/showcase/` with Vite + Lit + @lit-labs/router
-2. App shell with `sc-nav` sidebar, route configuration, dark/light toggle, schema picker
+**Phase A — Scaffold & Core:** ✅
+1. ✅ Create `apps/showcase/` with Vite + Lit (panel-based, no router)
+2. ✅ App shell with `sc-nav` top bar, panel rendering, dark/light toggle, schema cycling chip
 3. Home page with navigation cards
 
 **Phase B — Token Pages:**
@@ -467,8 +491,8 @@ Build as needed during page implementation. `sc-token-card`, `sc-code-block`, an
 ## 9. Acceptance Criteria
 
 1. All ~873 tokens are visible and interactive somewhere in the app
-2. Dark/light mode toggle works globally across all routes
-3. Schema palette switching works globally
+2. Dark/light mode toggle works globally across all panels
+3. Schema palette cycling works globally
 4. Every token name is copyable to clipboard
 5. Color-mix demo uses native CSS `color-mix(in oklch)`
 6. All 23 animations have live demos
@@ -479,5 +503,57 @@ Build as needed during page implementation. `sc-token-card`, `sc-code-block`, an
 11. Generated palettes show WCAG AA contrast check
 12. App consumes `@websublime/line-theme` via package imports (dogfooding)
 13. Themes page shows all 28 theme bundles (color + schema) with light/dark comparison
-14. Routes load lazily (code splitting)
+14. Panel switching is instant (all pages imported upfront; code splitting deferred)
 15. App runs on Vite dev server with HMR
+
+---
+
+## 10. Decision Log
+
+### D1 — Top bar navigation instead of sidebar (2026-03-19)
+
+**Decision:** Replace the sidebar navigation with a horizontal top bar containing inline pill nav (desktop), hamburger dropdown (all sizes), and compact controls.
+
+**Why:** Mobile-first design, more content space, cleaner layout. The sidebar consumed 260px of horizontal space and required a different mobile layout. The top bar is consistent across breakpoints.
+
+**Supersedes:** Original spec §5.1 (sidebar navigation).
+
+### D2 — Panel-based rendering instead of URL router (2026-03-19)
+
+**Decision:** Remove `@lit-labs/router` dependency. Use a `PanelKey` union type and `switch` statement to render the active page component. Panel state persisted in `localStorage('line-panel')`.
+
+**Why:** The showcase is a single-page tool, not a multi-page site. URL routing added complexity (URLPattern polyfills, shadow DOM click interception, route configuration) without clear benefit. Panel switching is simpler and instant.
+
+**Supersedes:** Original spec §2.2 (router row), §3.1 (router configuration).
+
+### D3 — Geist + IBM Plex Mono instead of JetBrains Mono (2026-03-19)
+
+**Decision:** Use Geist (Vercel, sans-serif) for all UI text. Use IBM Plex Mono for token names, code blocks, and code snippets only.
+
+**Why:** JetBrains Mono caused blurry/soft rendering in Firefox, especially at smaller sizes and with `-webkit-font-smoothing: antialiased`. Geist provides crisp sans-serif rendering across all browsers. Separating UI font (sans) from code font (mono) follows standard design system practice.
+
+**Supersedes:** Original spec §2.2 (fonts row).
+
+### D4 — Dark as default mode (2026-03-19)
+
+**Decision:** Dark mode is the default. The `light` boolean property/attribute is toggled ON for light mode. Uses `:host([light])` CSS selectors.
+
+**Why:** (1) `:host-context()` has no Firefox/Safari support — a Chrome-only feature. `:host([light])` is cross-browser. (2) Design system showcases look best in dark mode. (3) `<html class="dark">` + `<body class="line-schema-violet">` set in index.html prevents FOUC before JS hydrates.
+
+**Supersedes:** Original spec §6.1 (toggle between html.dark/html.light).
+
+### D5 — Schema cycling chip instead of dropdown picker (2026-03-19)
+
+**Decision:** Schema selection is a compact chip button that cycles through all 28 schemas on click, showing a colored accent dot + schema name.
+
+**Why:** Simpler UX than a dropdown/select. Fits the compact top bar layout. 28 schemas are quickly cycleable. The accent dot provides immediate visual feedback of the active schema's color.
+
+**Supersedes:** Original spec §6.2 (compact picker in nav sidebar).
+
+### D6 — Semantic tokens for all UI colors (2026-03-19)
+
+**Decision:** All UI elements in the showcase use semantic tokens from schemas (`--line-high-contrast`, `--line-low-contrast`, `--line-background`, `--line-subtle-background`, `--line-ui-background`, `--line-ui-border`, `--line-subtle-border`, `--line-solid-background`). Raw palette stops (`--line-gray-N`) are NOT used for UI elements.
+
+**Why:** The gray palette scale is non-inverted — `--line-gray-1` is always light (~93-99%) and `--line-gray-12` is always dark (~9-12%) in both modes. Using raw stops like `--line-gray-8` (21.7% in dark mode) for text on a dark background produces ~2:1 contrast ratio — unreadable. Semantic tokens are designed to provide correct contrast in both modes.
+
+**Impact:** All pages and shared components must follow this rule. The showcase must be the exemplar of proper token usage.
