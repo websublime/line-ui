@@ -545,7 +545,7 @@ export class ScPageSurfaces extends LitElement {
       color: var(--line-high-contrast, #fff);
       font-size: var(--line-font-size-2, 1rem);
       font-family: 'IBM Plex Mono', monospace;
-      width: 260px;
+      width: min(260px, 100%);
       box-sizing: border-box;
     }
 
