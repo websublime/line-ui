@@ -9,7 +9,9 @@
     "./*": "./dist/*.min.css"
   },
   "scripts": {
-    "build": "postcss src/default/index.css -o dist/preset.min.css"
+    "build": "postcss src/default/index.css -o dist/preset.min.css",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "peerDependencies": {
     "@websublime/line-theme": "workspace:*"
