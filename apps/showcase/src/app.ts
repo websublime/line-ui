@@ -44,6 +44,7 @@ export class ScApp extends LitElement {
 
   static override styles = css`
     :host {
+      --_max-w: 1400px;
       display: flex;
       flex-direction: column;
       min-height: 100dvh;
@@ -51,7 +52,7 @@ export class ScApp extends LitElement {
 
     main {
       flex: 1;
-      max-width: 1400px;
+      max-width: var(--_max-w);
       width: 100%;
       margin: 0 auto;
       padding: var(--line-size-7, 2rem) var(--line-size-5, 1.5rem);
