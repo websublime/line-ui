@@ -27,10 +27,11 @@ html.light body {
 
 /* View Transitions API — panel crossfade */
 ::view-transition-old(panel-content) {
-  animation: 180ms ease-out both fade-out;
+  animation: var(--line-duration-moderate-1, 180ms) var(--line-ease-out-2, ease-out) both fade-out;
 }
 ::view-transition-new(panel-content) {
-  animation: 260ms ease-out 80ms both fade-in-up;
+  animation: var(--line-duration-moderate-2, 260ms) var(--line-ease-out-2, ease-out) var(--line-duration-quick-1, 80ms)
+    both fade-in-up;
 }
 
 @keyframes fade-out {
