@@ -13,6 +13,9 @@ export class ScPageHome extends LitElement {
       margin-block-end: 0.5rem;
     }
 
+    /* TODO(line-ui-6zy.3): Replace raw palette stops with semantic tokens
+       (--line-blue-9 -> --line-solid-background, --line-gray-11 -> --line-low-contrast)
+       when home page is fully implemented */
     .accent {
       color: var(--line-blue-9, #3b82f6);
     }
