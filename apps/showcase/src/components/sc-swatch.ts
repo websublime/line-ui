@@ -43,8 +43,8 @@ export class ScSwatch extends LitElement {
     }
 
     .swatch:focus-visible {
-      outline: 2px solid var(--line-solid-background, #c8ff00);
-      outline-offset: 2px;
+      outline: var(--line-ring-width, 2px) solid var(--line-ring-color, var(--line-ui-border, hsl(0 0% 83%)));
+      outline-offset: var(--line-ring-offset, 2px);
     }
 
     .swatch.sm {
@@ -174,14 +174,14 @@ export class ScSwatch extends LitElement {
     }
   }
 
-  private _handleMouseEnter(): void {
+  private _showTooltip(): void {
     this._hovered = true;
     // Resolve computed color value from the host document
     const resolved = getComputedStyle(document.documentElement).getPropertyValue(this._tokenName).trim();
     this._resolvedColor = resolved || '(unresolved)';
   }
 
-  private _handleMouseLeave(): void {
+  private _hideTooltip(): void {
     this._hovered = false;
   }
 
@@ -204,10 +204,10 @@ export class ScSwatch extends LitElement {
         aria-label="Copy ${this._tokenName}"
         @click=${this._handleClick}
         @keydown=${this._handleKeydown}
-        @mouseenter=${this._handleMouseEnter}
-        @mouseleave=${this._handleMouseLeave}
-        @focus=${this._handleMouseEnter}
-        @blur=${this._handleMouseLeave}
+        @mouseenter=${this._showTooltip}
+        @mouseleave=${this._hideTooltip}
+        @focus=${this._showTooltip}
+        @blur=${this._hideTooltip}
         title="${this._tokenName}"
       >
         ${this._copied ? html`<div class="copied-badge">&#10003;</div>` : nothing}
