@@ -29,30 +29,39 @@ export class ScNav extends LitElement {
 
   static override styles = css`
     :host {
+      /* Layout-local custom properties for repeated magic numbers */
+      --_topbar-h: 52px;
+      --_max-w: 1400px;
+      --_ctrl-pad-block: var(--line-size-1, 0.25rem);
+      --_dot-size: 7px;
+
       display: block;
+      /* Intentional raw rgba for translucent backdrop-filter effect;
+         semantic tokens don't support alpha-channel blending. */
       background: rgba(8, 8, 8, 0.92);
       border-bottom: var(--line-border-size-1, 1px) solid var(--line-ui-background, #222);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       position: relative;
-      z-index: 100;
+      z-index: var(--line-z-sticky, 100);
       transition:
         background var(--line-duration-moderate-1, 180ms) var(--line-ease-2),
         border-color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
     }
 
     :host([light]) {
+      /* Intentional raw rgba — see :host comment above */
       background: rgba(250, 250, 250, 0.97);
       border-bottom-color: var(--line-ui-background, #e5e5e5);
     }
 
     /* ── Top bar ── */
     .topbar {
-      height: 52px;
+      height: var(--_topbar-h);
       display: flex;
       align-items: center;
       padding: 0 var(--line-size-5, 1.5rem);
-      max-width: 1400px;
+      max-width: var(--_max-w);
       margin: 0 auto;
       width: 100%;
       box-sizing: border-box;
@@ -97,14 +106,14 @@ export class ScNav extends LitElement {
       background: var(--line-solid-background, #c8ff00);
       border-radius: 2px 2px 0 0;
       transition:
-        left  280ms cubic-bezier(0.4, 0, 0.2, 1),
-        width 280ms cubic-bezier(0.4, 0, 0.2, 1);
+        left  var(--line-duration-moderate-2, 260ms) var(--line-ease-4),
+        width var(--line-duration-moderate-2, 260ms) var(--line-ease-4);
       pointer-events: none;
     }
 
     .nav-btn {
       padding: 0 var(--line-size-3, 1rem);
-      height: 52px;
+      height: var(--_topbar-h);
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -136,7 +145,7 @@ export class ScNav extends LitElement {
       display: flex;
       align-items: center;
       gap: var(--line-size-1, 0.25rem);
-      padding: 5px var(--line-size-3, 1rem);
+      padding: var(--_ctrl-pad-block) var(--line-size-3, 1rem);
       border: var(--line-border-size-1, 1px) solid var(--line-ui-active-background, #2e2e2e);
       border-radius: var(--line-radius-2, 4px);
       font-size: var(--line-font-size-0, 0.5rem);
@@ -154,7 +163,7 @@ export class ScNav extends LitElement {
     :host([light]) .schema-chip { background: var(--line-ui-background, #eee); border-color: var(--line-subtle-border, #d4d4d4); color: var(--line-low-contrast, #666); }
 
     .schema-dot {
-      width: 7px; height: 7px;
+      width: var(--_dot-size); height: var(--_dot-size);
       border-radius: 50%;
       background: var(--line-solid-background, #c8ff00);
       flex-shrink: 0;
@@ -162,7 +171,7 @@ export class ScNav extends LitElement {
     }
 
     .mode-btn {
-      padding: 5px var(--line-size-3, 1rem);
+      padding: var(--_ctrl-pad-block) var(--line-size-3, 1rem);
       border: var(--line-border-size-1, 1px) solid var(--line-ui-active-background, #2e2e2e);
       border-radius: var(--line-radius-2, 4px);
       font-size: var(--line-font-size-0, 0.5rem);
@@ -183,8 +192,8 @@ export class ScNav extends LitElement {
     .menu-btn {
       display: flex;
       align-items: center;
-      gap: 7px;
-      padding: 5px var(--line-size-3, 1rem);
+      gap: var(--_dot-size);
+      padding: var(--_ctrl-pad-block) var(--line-size-3, 1rem);
       border: var(--line-border-size-1, 1px) solid var(--line-ui-active-background, #2e2e2e);
       border-radius: var(--line-radius-2, 4px);
       font-size: var(--line-font-size-0, 0.5rem);
@@ -209,7 +218,9 @@ export class ScNav extends LitElement {
       color: var(--line-solid-background, #1a1a1a);
     }
 
-    /* hamburger icon */
+    /* Hamburger icon — 3-bar icon: 14x10px box, 1.5px bars spaced evenly.
+       Bars rotate into an X on open: middle bar fades, top/bottom translateY
+       by half the box height minus half the bar height (4.25px) and rotate ±45deg. */
     .hb { width: 14px; height: 10px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; }
     .hb span {
       display: block; height: 1.5px; background: currentColor; border-radius: 1px;
@@ -225,7 +236,7 @@ export class ScNav extends LitElement {
     .dropdown {
       overflow: hidden;
       max-height: 0;
-      transition: max-height var(--line-duration-moderate-2, 260ms) cubic-bezier(0.4, 0, 0.2, 1);
+      transition: max-height var(--line-duration-moderate-2, 260ms) var(--line-ease-4);
       border-bottom: 0px solid transparent;
     }
     .dropdown.open {
@@ -236,7 +247,7 @@ export class ScNav extends LitElement {
 
     .dropdown-inner {
       padding: var(--line-size-5, 1.5rem) var(--line-size-5, 1.5rem) var(--line-size-6, 1.75rem);
-      max-width: 1400px;
+      max-width: var(--_max-w);
       margin: 0 auto;
     }
 
@@ -315,6 +326,9 @@ export class ScNav extends LitElement {
     :host([light]) .dd-cur strong { color: var(--line-high-contrast, #222); }
 
     /* ── Responsive ── */
+    /* Breakpoint matches --line-size-md (768px) from the token system.
+       CSS custom properties cannot be used in media queries;
+       PostCSS custom media is not available in Lit tagged template styles. */
     /* Desktop: inline nav visible alongside menu button */
     @media (min-width: 769px) {
       .nav-inline { display: block; }
