@@ -184,7 +184,7 @@ export class ScPageColors extends LitElement {
       font-weight: var(--line-font-weight-7, 700);
       padding: var(--line-size-1, 0.25rem) var(--line-size-3, 1rem);
       border-radius: var(--line-radius-2, 4px);
-      background: rgba(0, 0, 0, 0.3);
+      background: color-mix(in srgb, var(--line-black) 30%, transparent);
     }
 
     .contrast-pass {
