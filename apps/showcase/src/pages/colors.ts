@@ -311,7 +311,7 @@ export class ScPageColors extends LitElement {
     }
 
     .explorer-chevron {
-      font-size: var(--line-font-size-1);
+      font-size: var(--line-font-size-1, 0.75rem);
       color: var(--line-low-contrast, #999);
       transition: transform var(--line-duration-quick-2, 120ms) var(--line-ease-2);
     }
