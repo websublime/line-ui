@@ -15,8 +15,8 @@ html.light {
 
 body {
   min-height: 100dvh;
-  background-color: var(--line-gray-1, #111111);
-  color: var(--line-gray-12, #eeeeee);
+  background-color: var(--line-gray-12, #111111);
+  color: var(--line-gray-1, #eeeeee);
   transition:
     background-color var(--line-duration-moderate-1, 180ms) var(--line-ease-2),
     color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
