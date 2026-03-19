@@ -5,10 +5,13 @@ import { customElement, state } from 'lit/decorators.js';
 // tokens, aliases, normalize, and utilities.
 import '@websublime/line-theme';
 
+import { isValidSchema } from './constants.js';
+
 // Navigation component
 import './components/sc-nav.js';
 
 // Page imports
+// TODO(line-ui-6zy.3): home page is imported but not rendered — wire into panel system when home page task is implemented
 import './pages/home.js';
 import './pages/colors.js';
 import './pages/typography.js';
@@ -32,37 +35,6 @@ export type PanelKey =
   | 'elements'
   | 'themes'
   | 'generator';
-
-const ALL_SCHEMAS = [
-  'amber',
-  'blue',
-  'bronze',
-  'brown',
-  'crimson',
-  'cyan',
-  'gold',
-  'grass',
-  'gray',
-  'green',
-  'indigo',
-  'lime',
-  'mauve',
-  'mint',
-  'olive',
-  'orange',
-  'pink',
-  'plum',
-  'purple',
-  'red',
-  'sage',
-  'sand',
-  'sky',
-  'slate',
-  'teal',
-  'tomato',
-  'violet',
-  'yellow'
-];
 
 @customElement('sc-app')
 export class ScApp extends LitElement {
@@ -110,7 +82,7 @@ export class ScApp extends LitElement {
 
     // Restore persisted schema
     const storedSchema = localStorage.getItem('line-schema');
-    if (storedSchema && ALL_SCHEMAS.includes(storedSchema)) {
+    if (storedSchema && isValidSchema(storedSchema)) {
       this._schema = storedSchema;
     }
     this._applySchema();

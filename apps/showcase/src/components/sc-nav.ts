@@ -2,37 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import type { PanelKey } from '../app.js';
-
-const ALL_SCHEMAS = [
-  'amber',
-  'blue',
-  'bronze',
-  'brown',
-  'crimson',
-  'cyan',
-  'gold',
-  'grass',
-  'gray',
-  'green',
-  'indigo',
-  'lime',
-  'mauve',
-  'mint',
-  'olive',
-  'orange',
-  'pink',
-  'plum',
-  'purple',
-  'red',
-  'sage',
-  'sand',
-  'sky',
-  'slate',
-  'teal',
-  'tomato',
-  'violet',
-  'yellow'
-];
+import { ALL_SCHEMAS } from '../constants.js';
 
 const NAV_ITEMS: { key: PanelKey; label: string }[] = [
   { key: 'colors', label: 'Colors' },
@@ -405,7 +375,7 @@ export class ScNav extends LitElement {
   }
 
   private _cycleSchema(): void {
-    const i = ALL_SCHEMAS.indexOf(this.schema);
+    const i = (ALL_SCHEMAS as readonly string[]).indexOf(this.schema);
     const next = ALL_SCHEMAS[(i + 1) % ALL_SCHEMAS.length];
     this.dispatchEvent(
       new CustomEvent('sc-schema-change', {
