@@ -84,6 +84,16 @@ export class ScApp extends LitElement {
       margin: 0 auto;
       padding: var(--line-size-7, 2rem) var(--line-size-5, 1.5rem);
       box-sizing: border-box;
+      view-transition-name: panel-content;
+    }
+
+    /* Fallback fade-in for browsers without View Transitions API */
+    @keyframes panel-fade-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    main.panel-enter {
+      animation: panel-fade-in var(--line-duration-moderate-2, 260ms) var(--line-ease-2) both;
     }
   `;
 
@@ -150,8 +160,28 @@ export class ScApp extends LitElement {
 
   private _handleNavigate(e: Event): void {
     const detail = (e as CustomEvent).detail as { panel: PanelKey };
-    this._panel = detail.panel;
-    localStorage.setItem('line-panel', this._panel);
+    const next = detail.panel;
+    if (next === this._panel) return;
+
+    localStorage.setItem('line-panel', next);
+
+    // View Transitions API (Chrome 111+, Safari 18+) — smooth crossfade
+    if (document.startViewTransition) {
+      document.startViewTransition(() => {
+        this._panel = next;
+        this.updateComplete;
+      });
+    } else {
+      // Fallback: CSS keyframe fade-in
+      this._panel = next;
+      const main = this.shadowRoot?.querySelector('main');
+      if (main) {
+        main.classList.remove('panel-enter');
+        // Force reflow to restart animation
+        void main.offsetWidth;
+        main.classList.add('panel-enter');
+      }
+    }
   }
 
   private _handleSchemaChange(e: Event): void {
