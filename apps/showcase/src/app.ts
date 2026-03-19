@@ -1,13 +1,9 @@
 import { css, html, LitElement, nothing } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
-// Validate theme imports resolve correctly
+// Full theme bundle: all color palettes (with dark-mode overrides), schemas,
+// tokens, aliases, normalize, and utilities.
 import '@websublime/line-theme';
-import '@websublime/line-theme/tokens';
-import '@websublime/line-theme/colors/blue';
-import '@websublime/line-theme/schemas/blue';
-import '@websublime/line-theme/aliases';
-import '@websublime/line-theme/normalize';
 
 // Navigation component
 import './components/sc-nav.js';

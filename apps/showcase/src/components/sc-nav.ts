@@ -211,7 +211,7 @@ export class ScNav extends LitElement {
 
     /* ── Hamburger / menu button ── */
     .menu-btn {
-      display: none;
+      display: flex;
       align-items: center;
       gap: 7px;
       padding: 5px var(--line-size-3, 1rem);
@@ -345,17 +345,14 @@ export class ScNav extends LitElement {
     :host([light]) .dd-cur strong { color: var(--line-gray-10, #666); }
 
     /* ── Responsive ── */
-    /* Desktop: inline nav visible, menu-btn hidden */
+    /* Desktop: inline nav visible alongside menu button */
     @media (min-width: 769px) {
       .nav-inline { display: block; }
-      .menu-btn   { display: none; }
-      .dropdown   { display: none; }
     }
 
-    /* Mobile: inline nav hidden, menu-btn + dropdown visible */
+    /* Mobile: inline nav hidden, menu button always visible */
     @media (max-width: 768px) {
       .nav-inline { display: none; }
-      .menu-btn   { display: flex; }
       .logo       { flex: 1; }
     }
   `;
