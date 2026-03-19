@@ -1,6 +1,7 @@
-/* Dogfood: normalize from the theme package is imported via
-   app.ts as `import '@websublime/line-theme/normalize'`.
-   That provides box-sizing, margin reset, and base element styles. */
+/* Dogfood: the full theme bundle is imported via
+   app.ts as `import '@websublime/line-theme'`.
+   That provides all color palettes, schemas, tokens, aliases,
+   normalize, and utilities. */
 
 html {
   font-family: "Geist", system-ui, sans-serif;
