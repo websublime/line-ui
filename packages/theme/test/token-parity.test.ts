@@ -70,6 +70,7 @@ const FAMILIES: FamilyConfig[] = [
       '--line-font-lineheight-7',
       '--line-font-lineheight-8',
       '--line-font-lineheight-9',
+      '--line-font-size-00', // OP has no font-size-00; line adds it at 0.625rem (10px)
       '--line-font-size-9', // OP stops at size-8; line adds size-9
       '--line-font-letterspacing-6',
       '--line-font-letterspacing-7',

@@ -135,14 +135,14 @@ export class ScPageColors extends LitElement {
     }
 
     .strip-level {
-      font-size: 10px;
+      font-size: var(--line-font-size-00, 0.625rem);
       font-family: 'IBM Plex Mono', monospace;
       color: var(--line-low-contrast, #999);
       text-align: center;
     }
 
     .strip-semantic {
-      font-size: 9px;
+      font-size: var(--line-font-size-0, 0.5rem);
       font-family: 'IBM Plex Mono', monospace;
       color: var(--line-low-contrast, #999);
       text-align: center;
@@ -201,7 +201,7 @@ export class ScPageColors extends LitElement {
 
     .contrast-tokens {
       font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
+      font-size: var(--line-font-size-1, 0.75rem);
       opacity: 0.8;
     }
 
@@ -243,7 +243,7 @@ export class ScPageColors extends LitElement {
     }
 
     .palette-name {
-      font-size: 11px;
+      font-size: var(--line-font-size-1, 0.75rem);
       font-weight: var(--line-font-weight-6, 600);
       color: var(--line-low-contrast, #999);
       text-align: center;
@@ -343,7 +343,7 @@ export class ScPageColors extends LitElement {
     }
 
     .mix-selector-label {
-      font-size: 11px;
+      font-size: var(--line-font-size-1, 0.75rem);
       font-weight: var(--line-font-weight-6, 600);
       color: var(--line-low-contrast, #999);
       text-transform: uppercase;
@@ -418,7 +418,7 @@ export class ScPageColors extends LitElement {
       bottom: 4px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 9px;
+      font-size: var(--line-font-size-0, 0.5rem);
       font-family: 'IBM Plex Mono', monospace;
       color: var(--line-high-contrast, #fff);
       text-shadow: 0 1px 2px color-mix(in srgb, var(--line-background, #111) 50%, transparent);

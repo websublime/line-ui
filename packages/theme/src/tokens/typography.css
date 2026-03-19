@@ -83,10 +83,11 @@
   --line-font-letterspacing-9: 2em;
 }
 
-/* ── Font Size — Static (10, numbered 0..9) ── */
+/* ── Font Size — Static (11, numbered 00, 0..9) ── */
 
 :where(html) {
   --line-font-size-0: 0.5rem;
+  --line-font-size-00: 0.625rem;
   --line-font-size-1: 0.75rem;
   --line-font-size-2: 1rem;
   --line-font-size-3: 1.1rem;
