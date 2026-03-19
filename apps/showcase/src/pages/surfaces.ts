@@ -661,8 +661,8 @@ export class ScPageSurfaces extends LitElement {
     return html`
       <sc-section
         heading="Border Radii"
-        description="29 radius tokens across 5 categories: standard, drawn, round, blob, and conditional (viewport-responsive)."
-        .count=${29}
+        description="24 radius tokens across 5 categories: standard, drawn, round, blob, and conditional (viewport-responsive)."
+        .count=${24}
       >
         <!-- Standard radii -->
         <div class="radius-subsection">
