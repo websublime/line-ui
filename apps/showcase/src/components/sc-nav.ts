@@ -1,8 +1,9 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import type { PanelKey } from '../app.js';
 
-const PALETTES = [
+const ALL_SCHEMAS = [
   'amber',
   'blue',
   'bronze',
@@ -31,478 +32,472 @@ const PALETTES = [
   'tomato',
   'violet',
   'yellow'
-] as const;
+];
 
-type Palette = (typeof PALETTES)[number];
-
-interface NavGroup {
-  label: string;
-  routes: { path: string; label: string }[];
-}
-
-const NAV_GROUPS: NavGroup[] = [
-  {
-    label: 'Tokens',
-    routes: [
-      { path: '/tokens/colors', label: 'Colors' },
-      { path: '/tokens/typography', label: 'Typography' },
-      { path: '/tokens/spacing', label: 'Spacing' },
-      { path: '/tokens/motion', label: 'Motion' },
-      { path: '/tokens/surfaces', label: 'Surfaces' },
-      { path: '/tokens/decorative', label: 'Decorative' }
-    ]
-  },
-  {
-    label: 'Semantic',
-    routes: [{ path: '/semantic', label: 'Semantic' }]
-  },
-  {
-    label: 'Elements',
-    routes: [{ path: '/elements', label: 'Elements' }]
-  },
-  {
-    label: 'Themes',
-    routes: [{ path: '/themes', label: 'Themes' }]
-  },
-  {
-    label: 'Tools',
-    routes: [{ path: '/generator', label: 'Generator' }]
-  }
+const NAV_ITEMS: { key: PanelKey; label: string }[] = [
+  { key: 'colors', label: 'Colors' },
+  { key: 'typography', label: 'Typography' },
+  { key: 'spacing', label: 'Spacing' },
+  { key: 'motion', label: 'Motion' },
+  { key: 'surfaces', label: 'Surfaces' },
+  { key: 'decorative', label: 'Decorative' },
+  { key: 'semantic', label: 'Semantic' },
+  { key: 'elements', label: 'Elements' },
+  { key: 'themes', label: 'Themes' },
+  { key: 'generator', label: 'Generator' }
 ];
 
 @customElement('sc-nav')
 export class ScNav extends LitElement {
-  /**
-   * Whether the component should render in dark mode.
-   * Set by the parent sc-app to propagate dark mode styling
-   * without relying on :host-context() (unsupported in Firefox/Safari).
-   */
-  @property({ type: Boolean, reflect: true }) dark = false;
+  @property({ type: String }) panel: PanelKey = 'colors';
+  @property({ type: String }) schema = 'violet';
+  @property({ type: Boolean, reflect: true }) light = false;
 
-  @state() private _schema: Palette = 'blue';
-  @state() private _mobileOpen = false;
-  @state() private _currentPath = '/';
+  @state() private _open = false;
+  @state() private _pillLeft = 0;
+  @state() private _pillWidth = 0;
 
   static override styles = css`
     :host {
       display: block;
-    }
-
-    .sidebar {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: var(--sc-sidebar-width, 260px);
-      height: 100dvh;
-      overflow-y: auto;
-      background: var(--line-gray-2, #f5f5f5);
-      border-inline-end: var(--line-border-size-1) solid var(--line-gray-6, #d4d4d4);
-      padding: var(--line-size-5) var(--line-size-3);
-      display: flex;
-      flex-direction: column;
-      gap: var(--line-size-5);
-      z-index: var(--line-z-sticky);
+      background: rgba(8, 8, 8, 0.92);
+      border-bottom: var(--line-border-size-1, 1px) solid var(--line-gray-4, #222);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      position: relative;
+      z-index: 100;
       transition:
-        transform var(--line-duration-moderate-2) var(--line-ease-2),
-        background-color var(--line-duration-moderate-1) var(--line-ease-2),
-        border-color var(--line-duration-moderate-1) var(--line-ease-2);
+        background var(--line-duration-moderate-1, 180ms) var(--line-ease-2),
+        border-color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
     }
 
-    :host([dark]) .sidebar {
-      background: var(--line-gray-2, #1c1c1c);
-      border-inline-end-color: var(--line-gray-6, #3a3a3a);
+    :host([light]) {
+      background: rgba(250, 250, 250, 0.97);
+      border-bottom-color: var(--line-gray-4, #e5e5e5);
+    }
+
+    /* ── Top bar ── */
+    .topbar {
+      height: 52px;
+      display: flex;
+      align-items: center;
+      padding: 0 var(--line-size-5, 1.5rem);
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .logo {
-      font-size: var(--line-font-size-4);
-      font-weight: var(--line-font-weight-7);
-      letter-spacing: -0.02em;
-      text-decoration: none;
-      color: inherit;
+      font-size: var(--line-font-size-2, 1rem);
+      font-weight: var(--line-font-weight-8, 800);
+      color: var(--line-gray-12, #fff);
+      letter-spacing: -0.03em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
     }
+    :host([light]) .logo { color: var(--line-gray-12, #1a1a1a); }
+    .logo-ac { color: var(--line-solid-background, #c8ff00); }
 
-    .logo .accent {
-      color: var(--line-blue-9, #3b82f6);
+    /* Desktop inline nav — hidden on mobile */
+    .nav-inline {
+      flex: 1;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      position: relative;
+      margin-left: var(--line-size-6, 1.75rem);
     }
+    .nav-inline::-webkit-scrollbar { display: none; }
 
-    .nav-group-label {
-      font-size: var(--line-font-size-1);
-      font-weight: var(--line-font-weight-6);
-      text-transform: uppercase;
-      letter-spacing: var(--line-font-letterspacing-3);
-      color: var(--line-gray-9, #a1a1a1);
-      padding: 0 var(--line-size-2);
-      margin-block-end: var(--line-size-1);
-    }
-
-    .nav-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.125rem;
-    }
-
-    .nav-link {
-      display: block;
-      padding: 0.375rem var(--line-size-2);
-      border-radius: var(--line-radius-2);
-      text-decoration: none;
-      font-size: var(--line-font-size-1);
-      font-weight: var(--line-font-weight-5);
-      color: var(--line-gray-11, #6b6b6b);
-      transition:
-        background-color var(--line-duration-fast) var(--line-ease-2),
-        color var(--line-duration-fast) var(--line-ease-2);
-    }
-
-    .nav-link:hover {
-      background: var(--line-gray-4, #e5e5e5);
-      color: var(--line-gray-12, #1a1a1a);
-    }
-
-    :host([dark]) .nav-link:hover {
-      background: var(--line-gray-4, #2c2c2c);
-      color: var(--line-gray-12, #eeeeee);
-    }
-
-    .nav-link.active {
-      background: var(--line-blue-4, #dbeafe);
-      color: var(--line-blue-11, #1d4ed8);
-      font-weight: var(--line-font-weight-6);
-    }
-
-    :host([dark]) .nav-link.active {
-      background: var(--line-blue-4, #172554);
-      color: var(--line-blue-11, #60a5fa);
-    }
-
-    .controls {
-      margin-block-start: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      padding-block-start: var(--line-size-3);
-      border-block-start: var(--line-border-size-1) solid var(--line-gray-6, #d4d4d4);
-    }
-
-    :host([dark]) .controls {
-      border-block-start-color: var(--line-gray-6, #3a3a3a);
-    }
-
-    .control-label {
-      font-size: var(--line-font-size-1);
-      font-weight: var(--line-font-weight-6);
-      text-transform: uppercase;
-      letter-spacing: var(--line-font-letterspacing-3);
-      color: var(--line-gray-9, #a1a1a1);
-    }
-
-    .mode-toggle {
+    .nav-row {
       display: flex;
       align-items: center;
+      position: relative;
+      width: max-content;
+      min-width: 100%;
+    }
+
+    .pill {
+      position: absolute;
+      bottom: 0;
+      height: 2px;
+      background: var(--line-solid-background, #c8ff00);
+      border-radius: 2px 2px 0 0;
+      transition:
+        left  280ms cubic-bezier(0.4, 0, 0.2, 1),
+        width 280ms cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: none;
+    }
+
+    .nav-btn {
+      padding: 0 var(--line-size-3, 1rem);
+      height: 52px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      font-size: var(--line-font-size-1, 0.75rem);
+      font-weight: var(--line-font-weight-6, 600);
+      color: var(--line-gray-8, #555);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      border: none;
+      background: none;
+      font-family: var(--line-font-mono, monospace);
+      transition: color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
+    }
+    .nav-btn:hover { color: var(--line-gray-10, #888); }
+    :host([light]) .nav-btn { color: var(--line-gray-8, #aaa); }
+    :host([light]) .nav-btn:hover { color: var(--line-gray-11, #555); }
+    .nav-btn.active { color: var(--line-solid-background, #c8ff00); }
+
+    /* ── Right controls ── */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: var(--line-size-2, 0.5rem);
+      flex-shrink: 0;
+      margin-left: var(--line-size-3, 1rem);
+    }
+
+    .schema-chip {
+      display: flex;
+      align-items: center;
+      gap: var(--line-size-1, 0.25rem);
+      padding: 5px var(--line-size-3, 1rem);
+      border: var(--line-border-size-1, 1px) solid var(--line-gray-5, #2e2e2e);
+      border-radius: var(--line-radius-2, 4px);
+      font-size: var(--line-font-size-0, 0.5rem);
+      font-weight: var(--line-font-weight-6, 600);
+      color: var(--line-gray-9, #555);
+      cursor: pointer;
+      background: var(--line-gray-2, #161616);
+      font-family: var(--line-font-mono, monospace);
+      white-space: nowrap;
+      transition:
+        border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
+        color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
+    }
+    .schema-chip:hover { border-color: var(--line-gray-7, #444); color: var(--line-gray-10, #888); }
+    :host([light]) .schema-chip { background: var(--line-gray-3, #eee); border-color: var(--line-gray-6, #d4d4d4); color: var(--line-gray-9, #888); }
+
+    .schema-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--line-solid-background, #c8ff00);
+      flex-shrink: 0;
+      transition: background var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
+    }
+
+    .mode-btn {
+      padding: 5px var(--line-size-3, 1rem);
+      border: var(--line-border-size-1, 1px) solid var(--line-gray-5, #2e2e2e);
+      border-radius: var(--line-radius-2, 4px);
+      font-size: var(--line-font-size-0, 0.5rem);
+      font-weight: var(--line-font-weight-6, 600);
+      color: var(--line-gray-9, #555);
+      cursor: pointer;
+      background: transparent;
+      font-family: var(--line-font-mono, monospace);
+      white-space: nowrap;
+      transition:
+        border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
+        color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
+    }
+    .mode-btn:hover { border-color: var(--line-gray-7, #444); color: var(--line-gray-10, #888); }
+    :host([light]) .mode-btn { border-color: var(--line-gray-6, #d4d4d4); color: var(--line-gray-9, #888); }
+
+    /* ── Hamburger / menu button ── */
+    .menu-btn {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      padding: 5px var(--line-size-3, 1rem);
+      border: var(--line-border-size-1, 1px) solid var(--line-gray-5, #2e2e2e);
+      border-radius: var(--line-radius-2, 4px);
+      font-size: var(--line-font-size-0, 0.5rem);
+      font-weight: var(--line-font-weight-7, 700);
+      color: var(--line-gray-8, #666);
+      background: transparent;
+      font-family: var(--line-font-mono, monospace);
+      cursor: pointer;
+      letter-spacing: 0.03em;
+      transition:
+        border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
+        color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
+    }
+    .menu-btn:hover { border-color: var(--line-gray-7, #444); color: var(--line-gray-10, #888); }
+    .menu-btn.open {
+      border-color: var(--line-solid-background, #c8ff00);
+      color: var(--line-solid-background, #c8ff00);
+    }
+    :host([light]) .menu-btn { border-color: var(--line-gray-6, #d4d4d4); color: var(--line-gray-9, #888); }
+    :host([light]) .menu-btn.open {
+      border-color: var(--line-solid-background, #1a1a1a);
+      color: var(--line-solid-background, #1a1a1a);
+    }
+
+    /* hamburger icon */
+    .hb { width: 14px; height: 10px; display: flex; flex-direction: column; justify-content: space-between; flex-shrink: 0; }
+    .hb span {
+      display: block; height: 1.5px; background: currentColor; border-radius: 1px;
+      transition:
+        transform var(--line-duration-moderate-1, 180ms) var(--line-ease-2),
+        opacity   var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
+    }
+    .menu-btn.open .hb span:nth-child(1) { transform: translateY(4.25px) rotate(45deg); }
+    .menu-btn.open .hb span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .menu-btn.open .hb span:nth-child(3) { transform: translateY(-4.25px) rotate(-45deg); }
+
+    /* ── Dropdown ── */
+    .dropdown {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height var(--line-duration-moderate-2, 260ms) cubic-bezier(0.4, 0, 0.2, 1);
+      border-bottom: 0px solid transparent;
+    }
+    .dropdown.open {
+      max-height: 360px;
+      border-bottom: var(--line-border-size-1, 1px) solid var(--line-gray-4, #222);
+    }
+    :host([light]) .dropdown.open { border-bottom-color: var(--line-gray-4, #e5e5e5); }
+
+    .dropdown-inner {
+      padding: var(--line-size-5, 1.5rem) var(--line-size-5, 1.5rem) var(--line-size-6, 1.75rem);
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .dd-label {
+      font-size: var(--line-font-size-0, 0.5rem);
+      font-weight: var(--line-font-weight-7, 700);
+      color: var(--line-gray-6, #444);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: var(--line-size-3, 1rem);
+    }
+    :host([light]) .dd-label { color: var(--line-gray-8, #aaa); }
+
+    .dd-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: var(--line-size-2, 0.5rem);
+    }
+
+    .dd-item {
+      padding: var(--line-size-3, 1rem) var(--line-size-3, 1rem);
+      border-radius: var(--line-radius-2, 4px);
+      border: var(--line-border-size-1, 1px) solid var(--line-gray-3, #1e1e1e);
+      font-size: var(--line-font-size-1, 0.75rem);
+      font-weight: var(--line-font-weight-6, 600);
+      color: var(--line-gray-8, #555);
+      cursor: pointer;
+      background: transparent;
+      font-family: var(--line-font-mono, monospace);
+      text-align: left;
+      letter-spacing: 0.01em;
+      transition:
+        background var(--line-duration-quick-1, 80ms) var(--line-ease-2),
+        border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
+        color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
+    }
+    .dd-item:hover {
+      background: var(--line-gray-2, #161616);
+      border-color: var(--line-gray-5, #333);
+      color: var(--line-gray-10, #aaa);
+    }
+    :host([light]) .dd-item {
+      border-color: var(--line-gray-5, #e5e5e5);
+      color: var(--line-gray-9, #888);
+    }
+    :host([light]) .dd-item:hover {
+      background: var(--line-gray-3, #eee);
+      border-color: var(--line-gray-7, #bbb);
+      color: var(--line-gray-11, #444);
+    }
+    .dd-item.active {
+      border-color: var(--line-solid-background, #c8ff00);
+      color: var(--line-solid-background, #c8ff00);
+      background: var(--line-gray-2, #0d0d0d);
+    }
+    :host([light]) .dd-item.active {
+      background: var(--line-gray-3, #f0f0f0);
+    }
+
+    .dd-footer {
+      display: flex;
       justify-content: space-between;
-      gap: var(--line-size-2);
+      align-items: center;
+      margin-top: var(--line-size-4, 1.25rem);
+      padding-top: var(--line-size-4, 1.25rem);
+      border-top: var(--line-border-size-1, 1px) solid var(--line-gray-3, #1a1a1a);
+    }
+    :host([light]) .dd-footer { border-top-color: var(--line-gray-5, #e8e8e8); }
+
+    .dd-cur {
+      font-size: var(--line-font-size-0, 0.5rem);
+      color: var(--line-gray-6, #444);
+    }
+    .dd-cur strong { color: var(--line-gray-9, #666); font-weight: var(--line-font-weight-6, 600); }
+    :host([light]) .dd-cur { color: var(--line-gray-8, #aaa); }
+    :host([light]) .dd-cur strong { color: var(--line-gray-10, #666); }
+
+    /* ── Responsive ── */
+    /* Desktop: inline nav visible, menu-btn hidden */
+    @media (min-width: 769px) {
+      .nav-inline { display: block; }
+      .menu-btn   { display: none; }
+      .dropdown   { display: none; }
     }
 
-    .toggle-btn {
-      appearance: none;
-      background: var(--line-gray-4, #e5e5e5);
-      border: var(--line-border-size-1) solid var(--line-gray-7, #c4c4c4);
-      border-radius: var(--line-radius-2);
-      padding: 0.375rem 0.75rem;
-      font-family: inherit;
-      font-size: var(--line-font-size-1);
-      font-weight: var(--line-font-weight-6);
-      cursor: pointer;
-      color: var(--line-gray-12, #1a1a1a);
-      transition:
-        background-color var(--line-duration-fast) var(--line-ease-2),
-        border-color var(--line-duration-fast) var(--line-ease-2),
-        color var(--line-duration-fast) var(--line-ease-2);
-    }
-
-    .toggle-btn:hover {
-      background: var(--line-gray-5, #d9d9d9);
-    }
-
-    :host([dark]) .toggle-btn {
-      background: var(--line-gray-4, #2c2c2c);
-      border-color: var(--line-gray-7, #484848);
-      color: var(--line-gray-12, #eeeeee);
-    }
-
-    :host([dark]) .toggle-btn:hover {
-      background: var(--line-gray-5, #363636);
-    }
-
-    .schema-select {
-      appearance: none;
-      width: 100%;
-      padding: 0.375rem var(--line-size-2);
-      border-radius: var(--line-radius-2);
-      border: var(--line-border-size-1) solid var(--line-gray-7, #c4c4c4);
-      background: var(--line-gray-3, #eeeeee);
-      color: var(--line-gray-12, #1a1a1a);
-      font-family: inherit;
-      font-size: var(--line-font-size-1);
-      font-weight: var(--line-font-weight-5);
-      cursor: pointer;
-      text-transform: capitalize;
-      transition:
-        background-color var(--line-duration-fast) var(--line-ease-2),
-        border-color var(--line-duration-fast) var(--line-ease-2),
-        color var(--line-duration-fast) var(--line-ease-2);
-    }
-
-    .schema-select:hover {
-      border-color: var(--line-gray-8, #a3a3a3);
-    }
-
-    .schema-select:focus-visible {
-      outline: var(--line-ring-width) solid var(--line-blue-9, #3b82f6);
-      outline-offset: var(--line-ring-offset);
-    }
-
-    :host([dark]) .schema-select {
-      background: var(--line-gray-3, #232323);
-      border-color: var(--line-gray-7, #484848);
-      color: var(--line-gray-12, #eeeeee);
-    }
-
-    /* Hamburger (mobile only) */
-    .hamburger {
-      display: none;
-      position: fixed;
-      top: 0.75rem;
-      left: 0.75rem;
-      z-index: var(--line-z-fixed);
-      appearance: none;
-      background: var(--line-gray-3, #eeeeee);
-      border: var(--line-border-size-1) solid var(--line-gray-7, #c4c4c4);
-      border-radius: var(--line-radius-2);
-      padding: var(--line-size-2);
-      cursor: pointer;
-      color: var(--line-gray-12, #1a1a1a);
-      font-size: var(--line-font-size-4);
-      line-height: 1;
-      transition:
-        background-color var(--line-duration-fast) var(--line-ease-2),
-        color var(--line-duration-fast) var(--line-ease-2);
-    }
-
-    :host([dark]) .hamburger {
-      background: var(--line-gray-3, #232323);
-      border-color: var(--line-gray-7, #484848);
-      color: var(--line-gray-12, #eeeeee);
-    }
-
-    .overlay {
-      display: none;
-    }
-
-    /* Breakpoint: --line-size-md (768px) */
+    /* Mobile: inline nav hidden, menu-btn + dropdown visible */
     @media (max-width: 768px) {
-      .hamburger {
-        display: block;
-      }
-
-      .sidebar {
-        transform: translateX(-100%);
-      }
-
-      .sidebar.open {
-        transform: translateX(0);
-      }
-
-      .overlay {
-        display: block;
-        position: fixed;
-        inset: 0;
-        background: rgb(0 0 0 / 0.4);
-        z-index: var(--line-z-dropdown);
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity var(--line-duration-moderate-2) var(--line-ease-2);
-      }
-
-      .overlay.visible {
-        opacity: 1;
-        pointer-events: auto;
-      }
+      .nav-inline { display: none; }
+      .menu-btn   { display: flex; }
+      .logo       { flex: 1; }
     }
   `;
 
-  override connectedCallback(): void {
-    super.connectedCallback();
-    this._loadPreferences();
-    this._currentPath = window.location.pathname;
-    window.addEventListener('popstate', this._onPopState);
+  override updated(changed: Map<string, unknown>): void {
+    if (changed.has('panel') || changed.has('schema')) {
+      requestAnimationFrame(() => this._updatePill());
+    }
+  }
+
+  override firstUpdated(): void {
+    requestAnimationFrame(() => this._updatePill());
+    // Close dropdown on outside click
+    document.addEventListener('click', this._handleOutsideClick);
   }
 
   override disconnectedCallback(): void {
     super.disconnectedCallback();
-    window.removeEventListener('popstate', this._onPopState);
+    document.removeEventListener('click', this._handleOutsideClick);
   }
 
-  private _loadPreferences(): void {
-    const storedMode = localStorage.getItem('line-mode');
-    this.dark = storedMode === 'dark';
-    this._applyMode();
-
-    const storedSchema = localStorage.getItem('line-schema');
-    if (storedSchema && PALETTES.includes(storedSchema as Palette)) {
-      this._schema = storedSchema as Palette;
+  private _handleOutsideClick = (e: MouseEvent): void => {
+    if (this._open && !this.shadowRoot?.contains(e.composedPath()[0] as Node)) {
+      this._open = false;
     }
-    this._applySchema();
-  }
-
-  private _applyMode(): void {
-    const root = document.documentElement;
-    if (this.dark) {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    } else {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    }
-  }
-
-  private _applySchema(): void {
-    const body = document.body;
-    // Remove any existing schema classes
-    for (const cls of Array.from(body.classList)) {
-      if (cls.startsWith('line-schema-')) {
-        body.classList.remove(cls);
-      }
-    }
-    body.classList.add(`line-schema-${this._schema}`);
-  }
-
-  private _onPopState = (): void => {
-    this._currentPath = window.location.pathname;
   };
 
-  private _handleNavClick(e: Event): void {
-    // Update the current path for active highlighting
-    // The Router in sc-app intercepts the click and handles navigation
-    const anchor = (e.composedPath() as Element[]).find((el) => el.tagName === 'A');
-    if (anchor) {
-      this._currentPath = (anchor as HTMLAnchorElement).pathname;
-      // Close mobile nav on route selection
-      this._mobileOpen = false;
-    }
+  private _updatePill(): void {
+    const row = this.shadowRoot?.querySelector('.nav-row') as HTMLElement | null;
+    const active = this.shadowRoot?.querySelector('.nav-btn.active') as HTMLElement | null;
+    const scroll = this.shadowRoot?.querySelector('.nav-inline') as HTMLElement | null;
+    if (!(row && active)) return;
+    const rb = row.getBoundingClientRect();
+    const ab = active.getBoundingClientRect();
+    const scrollLeft = scroll?.scrollLeft ?? 0;
+    this._pillLeft = ab.left - rb.left + scrollLeft;
+    this._pillWidth = ab.width;
+    active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'nearest' });
+  }
+
+  private _navigate(key: PanelKey): void {
+    this._open = false;
+    this.dispatchEvent(
+      new CustomEvent('sc-navigate', {
+        detail: { panel: key },
+        bubbles: true,
+        composed: true
+      })
+    );
+  }
+
+  private _cycleSchema(): void {
+    const i = ALL_SCHEMAS.indexOf(this.schema);
+    const next = ALL_SCHEMAS[(i + 1) % ALL_SCHEMAS.length];
+    this.dispatchEvent(
+      new CustomEvent('sc-schema-change', {
+        detail: { schema: next },
+        bubbles: true,
+        composed: true
+      })
+    );
   }
 
   private _toggleMode(): void {
-    this.dark = !this.dark;
-    localStorage.setItem('line-mode', this.dark ? 'dark' : 'light');
-    this._applyMode();
     this.dispatchEvent(
-      new CustomEvent('mode-change', {
-        detail: { mode: this.dark ? 'dark' : 'light' },
+      new CustomEvent('sc-mode-change', {
+        detail: { light: !this.light },
         bubbles: true,
         composed: true
       })
     );
   }
 
-  private _handleSchemaChange(e: Event): void {
-    const select = e.target as HTMLSelectElement;
-    this._schema = select.value as Palette;
-    localStorage.setItem('line-schema', this._schema);
-    this._applySchema();
-    this.dispatchEvent(
-      new CustomEvent('schema-change', {
-        detail: { schema: this._schema },
-        bubbles: true,
-        composed: true
-      })
-    );
-  }
-
-  private _toggleMobileNav(): void {
-    this._mobileOpen = !this._mobileOpen;
-  }
-
-  private _closeMobileNav(): void {
-    this._mobileOpen = false;
-  }
-
-  private _renderNavGroups() {
-    return NAV_GROUPS.map(
-      (group) => html`
-        <div class="nav-section">
-          <div class="nav-group-label">${group.label}</div>
-          <div class="nav-group" @click=${this._handleNavClick}>
-            ${group.routes.map(
-              (route) => html`
-                <a
-                  class=${classMap({
-                    'nav-link': true,
-                    active: this._currentPath === route.path
-                  })}
-                  href=${route.path}
-                  >${route.label}</a
-                >
-              `
-            )}
-          </div>
-        </div>
-      `
-    );
+  private _toggleMenu(): void {
+    this._open = !this._open;
   }
 
   override render() {
+    const currentLabel = NAV_ITEMS.find((n) => n.key === this.panel)?.label ?? '';
+
     return html`
-      <button
-        class="hamburger"
-        @click=${this._toggleMobileNav}
-        aria-label=${this._mobileOpen ? 'Close navigation' : 'Open navigation'}
-        aria-expanded=${this._mobileOpen}
-      >
-        ${this._mobileOpen ? '\u2715' : '\u2630'}
-      </button>
+      <div class="topbar">
+        <div class="logo">line<span class="logo-ac">://</span>ui</div>
 
-      <div
-        class=${classMap({ overlay: true, visible: this._mobileOpen })}
-        @click=${this._closeMobileNav}
-      ></div>
-
-      <nav class=${classMap({ sidebar: true, open: this._mobileOpen })}>
-        <a class="logo" href="/"
-          >line<span class="accent">://</span>ui</a
-        >
-
-        ${this._renderNavGroups()}
-
-        <div class="controls">
-          <div class="mode-toggle">
-            <span class="control-label">Mode</span>
-            <button
-              class="toggle-btn"
-              @click=${this._toggleMode}
-              aria-label=${this.dark ? 'Switch to light mode' : 'Switch to dark mode'}
-            >
-              ${this.dark ? 'Light' : 'Dark'}
-            </button>
-          </div>
-
-          <div>
-            <span class="control-label">Schema</span>
-            <select
-              class="schema-select"
-              .value=${this._schema}
-              @change=${this._handleSchemaChange}
-              aria-label="Select color schema"
-            >
-              ${PALETTES.map(
-                (palette) => html`
-                  <option value=${palette}>${palette}</option>
-                `
-              )}
-            </select>
+        <!-- Desktop: inline pill nav -->
+        <div class="nav-inline">
+          <div class="nav-row">
+            <div class="pill" style="left:${this._pillLeft}px;width:${this._pillWidth}px"></div>
+            ${NAV_ITEMS.map(
+              ({ key, label }) => html`
+              <button
+                class=${classMap({ 'nav-btn': true, active: this.panel === key })}
+                @click=${() => this._navigate(key)}
+              >${label}</button>
+            `
+            )}
           </div>
         </div>
-      </nav>
+
+        <div class="controls">
+          <div class="schema-chip" @click=${this._cycleSchema}>
+            <div class="schema-dot"></div>
+            <span>${this.schema}</span>
+          </div>
+          <button class="mode-btn" @click=${this._toggleMode}>
+            ${this.light ? 'Dark' : 'Light'}
+          </button>
+          <!-- Mobile: hamburger -->
+          <button
+            class=${classMap({ 'menu-btn': true, open: this._open })}
+            @click=${this._toggleMenu}
+            aria-expanded=${this._open}
+            aria-label=${this._open ? 'Close menu' : 'Open menu'}
+          >
+            <div class="hb">
+              <span></span><span></span><span></span>
+            </div>
+            Menu
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile: dropdown -->
+      <div class=${classMap({ dropdown: true, open: this._open })}>
+        <div class="dropdown-inner">
+          <div class="dd-label">Navigate</div>
+          <div class="dd-grid">
+            ${NAV_ITEMS.map(
+              ({ key, label }) => html`
+              <button
+                class=${classMap({ 'dd-item': true, active: this.panel === key })}
+                @click=${() => this._navigate(key)}
+              >${label}</button>
+            `
+            )}
+          </div>
+          <div class="dd-footer">
+            <span class="dd-cur">Current: <strong>${currentLabel}</strong></span>
+            <span class="dd-cur">tap to navigate</span>
+          </div>
+        </div>
+      </div>
     `;
   }
 }

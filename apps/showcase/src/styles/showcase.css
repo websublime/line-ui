@@ -6,23 +6,23 @@ html {
   font-family: "JetBrains Mono", monospace;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color-scheme: light;
+  color-scheme: dark;
 }
 
-html.dark {
-  color-scheme: dark;
+html.light {
+  color-scheme: light;
 }
 
 body {
   min-height: 100dvh;
-  background-color: var(--line-gray-1, #fafafa);
-  color: var(--line-gray-12, #1a1a1a);
+  background-color: var(--line-gray-1, #111111);
+  color: var(--line-gray-12, #eeeeee);
   transition:
     background-color var(--line-duration-moderate-1, 180ms) var(--line-ease-2),
     color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
 }
 
-html.dark body {
-  background-color: var(--line-gray-1, #111111);
-  color: var(--line-gray-12, #eeeeee);
+html.light body {
+  background-color: var(--line-gray-1, #fafafa);
+  color: var(--line-gray-12, #1a1a1a);
 }
