@@ -131,7 +131,7 @@ export class ScSwatch extends LitElement {
       background: color-mix(in srgb, var(--line-background, #111) 60%, transparent);
       border-radius: var(--line-radius-2, 4px);
       color: var(--line-high-contrast, #fff);
-      font-size: 16px;
+      font-size: var(--line-font-size-2, 16px);
       pointer-events: none;
       animation: fade-out 600ms var(--line-ease-2) forwards;
     }
