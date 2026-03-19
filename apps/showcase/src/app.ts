@@ -167,9 +167,9 @@ export class ScApp extends LitElement {
 
     // View Transitions API (Chrome 111+, Safari 18+) — smooth crossfade
     if (document.startViewTransition) {
-      document.startViewTransition(() => {
+      document.startViewTransition(async () => {
         this._panel = next;
-        this.updateComplete;
+        await this.updateComplete;
       });
     } else {
       // Fallback: CSS keyframe fade-in
