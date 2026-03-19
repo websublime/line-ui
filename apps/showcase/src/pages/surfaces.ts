@@ -187,16 +187,29 @@ export class ScPageSurfaces extends LitElement {
     .token-box.copied::after {
       content: '\\2713';
       position: absolute;
-      top: 0;
-      right: -4px;
-      font-size: var(--line-font-size-00, 0.625rem);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -70%);
+      font-size: var(--line-font-size-4, 1.5rem);
+      font-weight: var(--line-font-weight-8, 800);
       color: var(--line-solid-background, #c8ff00);
-      animation: fade-check 700ms var(--line-ease-2) forwards;
+      background: var(--line-background, #111);
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: var(--line-radius-round, 1e5px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--line-border-size-2, 2px) solid var(--line-solid-background, #c8ff00);
+      animation: pop-check 700ms var(--line-ease-2) forwards;
+      pointer-events: none;
     }
 
-    @keyframes fade-check {
-      0% { opacity: 1; }
-      70% { opacity: 1; }
+    @keyframes pop-check {
+      0% { opacity: 0; transform: translate(-50%, -70%) scale(0.5); }
+      15% { opacity: 1; transform: translate(-50%, -70%) scale(1.1); }
+      30% { transform: translate(-50%, -70%) scale(1); }
+      75% { opacity: 1; }
       100% { opacity: 0; }
     }
 
