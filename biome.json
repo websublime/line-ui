@@ -25,10 +25,7 @@
       },
       "correctness": {
         "noUnusedImports": "error",
-        "noUnusedVariables": "error",
-        "noUnknownMediaFeatureName": "off",
-        "noUnknownPseudoClass": "off",
-        "noInvalidDirectionInLinearGradient": "off"
+        "noUnusedVariables": "error"
       },
       "style": {
         "noParameterAssign": "error",
@@ -47,8 +44,7 @@
             "allow": ["error", "info", "group"]
           }
         },
-        "noExplicitAny": "warn",
-        "noUnknownAtRules": "off"
+        "noExplicitAny": "warn"
       },
       "performance": {
         "noBarrelFile": "warn"

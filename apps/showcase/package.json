@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
     "@lit-labs/router": "^0.1.3",
