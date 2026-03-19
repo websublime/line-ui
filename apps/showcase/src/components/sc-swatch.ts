@@ -66,7 +66,7 @@ export class ScSwatch extends LitElement {
     .label {
       display: block;
       margin-top: var(--line-size-1, 0.25rem);
-      font-size: 10px;
+      font-size: var(--line-font-size-00, 0.625rem);
       font-family: 'IBM Plex Mono', monospace;
       color: var(--line-low-contrast, #999);
       text-align: center;
@@ -85,7 +85,7 @@ export class ScSwatch extends LitElement {
       background: var(--line-subtle-background, #161616);
       border: var(--line-border-size-1, 1px) solid var(--line-ui-background, #222);
       border-radius: var(--line-radius-2, 4px);
-      font-size: 11px;
+      font-size: var(--line-font-size-1, 0.75rem);
       color: var(--line-high-contrast, #fff);
       white-space: nowrap;
       pointer-events: none;

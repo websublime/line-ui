@@ -31,7 +31,7 @@ export class ScCodeBlock extends LitElement {
     }
 
     .lang {
-      font-size: 10px;
+      font-size: var(--line-font-size-00, 0.625rem);
       font-family: 'IBM Plex Mono', monospace;
       font-weight: var(--line-font-weight-6, 600);
       color: var(--line-low-contrast, #999);
@@ -42,7 +42,7 @@ export class ScCodeBlock extends LitElement {
     .copy-btn {
       border: none;
       background: none;
-      font-size: 11px;
+      font-size: var(--line-font-size-1, 0.75rem);
       font-family: 'IBM Plex Mono', monospace;
       color: var(--line-low-contrast, #999);
       cursor: pointer;
