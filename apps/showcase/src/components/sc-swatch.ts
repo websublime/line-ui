@@ -148,12 +148,18 @@ export class ScSwatch extends LitElement {
 
   private _handleClick(): void {
     const text = this._tokenVar;
-    navigator.clipboard.writeText(text).then(() => {
-      this._copied = true;
-      setTimeout(() => {
-        this._copied = false;
-      }, 700);
-    });
+    navigator.clipboard
+      .writeText(text)
+      .then(() => {
+        this._copied = true;
+        setTimeout(() => {
+          this._copied = false;
+        }, 700);
+      })
+      .catch(() => {
+        // Clipboard access denied (iframe sandbox, non-HTTPS).
+        // No visual feedback is shown, which signals the failure to the user.
+      });
   }
 
   private _handleMouseEnter(): void {

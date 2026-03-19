@@ -76,12 +76,18 @@ export class ScCodeBlock extends LitElement {
   `;
 
   private _handleCopy(): void {
-    navigator.clipboard.writeText(this.code).then(() => {
-      this._copied = true;
-      setTimeout(() => {
-        this._copied = false;
-      }, 1200);
-    });
+    navigator.clipboard
+      .writeText(this.code)
+      .then(() => {
+        this._copied = true;
+        setTimeout(() => {
+          this._copied = false;
+        }, 1200);
+      })
+      .catch(() => {
+        // Clipboard access denied (iframe sandbox, non-HTTPS).
+        // The button stays as "Copy" (no "Copied!" feedback), signalling the failure.
+      });
   }
 
   override render() {
