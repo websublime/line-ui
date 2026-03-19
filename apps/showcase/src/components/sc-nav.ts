@@ -61,7 +61,7 @@ export class ScNav extends LitElement {
     :host {
       display: block;
       background: rgba(8, 8, 8, 0.92);
-      border-bottom: var(--line-border-size-1, 1px) solid var(--line-gray-4, #222);
+      border-bottom: var(--line-border-size-1, 1px) solid var(--line-ui-background, #222);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       position: relative;
@@ -73,7 +73,7 @@ export class ScNav extends LitElement {
 
     :host([light]) {
       background: rgba(250, 250, 250, 0.97);
-      border-bottom-color: var(--line-gray-4, #e5e5e5);
+      border-bottom-color: var(--line-ui-background, #e5e5e5);
     }
 
     /* ── Top bar ── */
@@ -91,13 +91,13 @@ export class ScNav extends LitElement {
     .logo {
       font-size: var(--line-font-size-2, 1rem);
       font-weight: var(--line-font-weight-8, 800);
-      color: var(--line-gray-12, #fff);
+      color: var(--line-high-contrast, #fff);
       letter-spacing: -0.03em;
       white-space: nowrap;
       flex-shrink: 0;
       transition: color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
     }
-    :host([light]) .logo { color: var(--line-gray-12, #1a1a1a); }
+    :host([light]) .logo { color: var(--line-high-contrast, #1a1a1a); }
     .logo-ac { color: var(--line-solid-background, #c8ff00); }
 
     /* Desktop inline nav — hidden on mobile */
@@ -140,7 +140,7 @@ export class ScNav extends LitElement {
       cursor: pointer;
       font-size: var(--line-font-size-1, 0.75rem);
       font-weight: var(--line-font-weight-6, 600);
-      color: var(--line-gray-8, #555);
+      color: var(--line-low-contrast, #999);
       letter-spacing: 0.02em;
       white-space: nowrap;
       border: none;
@@ -148,9 +148,9 @@ export class ScNav extends LitElement {
       font-family: var(--line-font-mono, monospace);
       transition: color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
     }
-    .nav-btn:hover { color: var(--line-gray-10, #888); }
-    :host([light]) .nav-btn { color: var(--line-gray-8, #aaa); }
-    :host([light]) .nav-btn:hover { color: var(--line-gray-11, #555); }
+    .nav-btn:hover { color: var(--line-high-contrast, #ddd); }
+    :host([light]) .nav-btn { color: var(--line-low-contrast, #666); }
+    :host([light]) .nav-btn:hover { color: var(--line-high-contrast, #222); }
     .nav-btn.active { color: var(--line-solid-background, #c8ff00); }
 
     /* ── Right controls ── */
@@ -167,21 +167,21 @@ export class ScNav extends LitElement {
       align-items: center;
       gap: var(--line-size-1, 0.25rem);
       padding: 5px var(--line-size-3, 1rem);
-      border: var(--line-border-size-1, 1px) solid var(--line-gray-5, #2e2e2e);
+      border: var(--line-border-size-1, 1px) solid var(--line-ui-active-background, #2e2e2e);
       border-radius: var(--line-radius-2, 4px);
       font-size: var(--line-font-size-0, 0.5rem);
       font-weight: var(--line-font-weight-6, 600);
-      color: var(--line-gray-9, #555);
+      color: var(--line-low-contrast, #999);
       cursor: pointer;
-      background: var(--line-gray-2, #161616);
+      background: var(--line-subtle-background, #161616);
       font-family: var(--line-font-mono, monospace);
       white-space: nowrap;
       transition:
         border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
         color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
     }
-    .schema-chip:hover { border-color: var(--line-gray-7, #444); color: var(--line-gray-10, #888); }
-    :host([light]) .schema-chip { background: var(--line-gray-3, #eee); border-color: var(--line-gray-6, #d4d4d4); color: var(--line-gray-9, #888); }
+    .schema-chip:hover { border-color: var(--line-ui-border, #444); color: var(--line-high-contrast, #ddd); }
+    :host([light]) .schema-chip { background: var(--line-ui-background, #eee); border-color: var(--line-subtle-border, #d4d4d4); color: var(--line-low-contrast, #666); }
 
     .schema-dot {
       width: 7px; height: 7px;
@@ -193,11 +193,11 @@ export class ScNav extends LitElement {
 
     .mode-btn {
       padding: 5px var(--line-size-3, 1rem);
-      border: var(--line-border-size-1, 1px) solid var(--line-gray-5, #2e2e2e);
+      border: var(--line-border-size-1, 1px) solid var(--line-ui-active-background, #2e2e2e);
       border-radius: var(--line-radius-2, 4px);
       font-size: var(--line-font-size-0, 0.5rem);
       font-weight: var(--line-font-weight-6, 600);
-      color: var(--line-gray-9, #555);
+      color: var(--line-low-contrast, #999);
       cursor: pointer;
       background: transparent;
       font-family: var(--line-font-mono, monospace);
@@ -206,8 +206,8 @@ export class ScNav extends LitElement {
         border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
         color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
     }
-    .mode-btn:hover { border-color: var(--line-gray-7, #444); color: var(--line-gray-10, #888); }
-    :host([light]) .mode-btn { border-color: var(--line-gray-6, #d4d4d4); color: var(--line-gray-9, #888); }
+    .mode-btn:hover { border-color: var(--line-ui-border, #444); color: var(--line-high-contrast, #ddd); }
+    :host([light]) .mode-btn { border-color: var(--line-subtle-border, #d4d4d4); color: var(--line-low-contrast, #666); }
 
     /* ── Hamburger / menu button ── */
     .menu-btn {
@@ -215,11 +215,11 @@ export class ScNav extends LitElement {
       align-items: center;
       gap: 7px;
       padding: 5px var(--line-size-3, 1rem);
-      border: var(--line-border-size-1, 1px) solid var(--line-gray-5, #2e2e2e);
+      border: var(--line-border-size-1, 1px) solid var(--line-ui-active-background, #2e2e2e);
       border-radius: var(--line-radius-2, 4px);
       font-size: var(--line-font-size-0, 0.5rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: var(--line-gray-8, #666);
+      color: var(--line-low-contrast, #999);
       background: transparent;
       font-family: var(--line-font-mono, monospace);
       cursor: pointer;
@@ -228,12 +228,12 @@ export class ScNav extends LitElement {
         border-color var(--line-duration-quick-1, 80ms) var(--line-ease-2),
         color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
     }
-    .menu-btn:hover { border-color: var(--line-gray-7, #444); color: var(--line-gray-10, #888); }
+    .menu-btn:hover { border-color: var(--line-ui-border, #444); color: var(--line-high-contrast, #ddd); }
     .menu-btn.open {
       border-color: var(--line-solid-background, #c8ff00);
       color: var(--line-solid-background, #c8ff00);
     }
-    :host([light]) .menu-btn { border-color: var(--line-gray-6, #d4d4d4); color: var(--line-gray-9, #888); }
+    :host([light]) .menu-btn { border-color: var(--line-subtle-border, #d4d4d4); color: var(--line-low-contrast, #666); }
     :host([light]) .menu-btn.open {
       border-color: var(--line-solid-background, #1a1a1a);
       color: var(--line-solid-background, #1a1a1a);
@@ -260,9 +260,9 @@ export class ScNav extends LitElement {
     }
     .dropdown.open {
       max-height: 360px;
-      border-bottom: var(--line-border-size-1, 1px) solid var(--line-gray-4, #222);
+      border-bottom: var(--line-border-size-1, 1px) solid var(--line-ui-background, #222);
     }
-    :host([light]) .dropdown.open { border-bottom-color: var(--line-gray-4, #e5e5e5); }
+    :host([light]) .dropdown.open { border-bottom-color: var(--line-ui-background, #e5e5e5); }
 
     .dropdown-inner {
       padding: var(--line-size-5, 1.5rem) var(--line-size-5, 1.5rem) var(--line-size-6, 1.75rem);
@@ -273,12 +273,12 @@ export class ScNav extends LitElement {
     .dd-label {
       font-size: var(--line-font-size-0, 0.5rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: var(--line-gray-6, #444);
+      color: var(--line-low-contrast, #999);
       letter-spacing: 0.1em;
       text-transform: uppercase;
       margin-bottom: var(--line-size-3, 1rem);
     }
-    :host([light]) .dd-label { color: var(--line-gray-8, #aaa); }
+    :host([light]) .dd-label { color: var(--line-low-contrast, #666); }
 
     .dd-grid {
       display: grid;
@@ -289,10 +289,10 @@ export class ScNav extends LitElement {
     .dd-item {
       padding: var(--line-size-3, 1rem) var(--line-size-3, 1rem);
       border-radius: var(--line-radius-2, 4px);
-      border: var(--line-border-size-1, 1px) solid var(--line-gray-3, #1e1e1e);
+      border: var(--line-border-size-1, 1px) solid var(--line-ui-background, #1e1e1e);
       font-size: var(--line-font-size-1, 0.75rem);
       font-weight: var(--line-font-weight-6, 600);
-      color: var(--line-gray-8, #555);
+      color: var(--line-low-contrast, #999);
       cursor: pointer;
       background: transparent;
       font-family: var(--line-font-mono, monospace);
@@ -304,26 +304,26 @@ export class ScNav extends LitElement {
         color var(--line-duration-quick-1, 80ms) var(--line-ease-2);
     }
     .dd-item:hover {
-      background: var(--line-gray-2, #161616);
-      border-color: var(--line-gray-5, #333);
-      color: var(--line-gray-10, #aaa);
+      background: var(--line-subtle-background, #161616);
+      border-color: var(--line-ui-active-background, #333);
+      color: var(--line-high-contrast, #ddd);
     }
     :host([light]) .dd-item {
-      border-color: var(--line-gray-5, #e5e5e5);
-      color: var(--line-gray-9, #888);
+      border-color: var(--line-ui-active-background, #e5e5e5);
+      color: var(--line-low-contrast, #666);
     }
     :host([light]) .dd-item:hover {
-      background: var(--line-gray-3, #eee);
-      border-color: var(--line-gray-7, #bbb);
-      color: var(--line-gray-11, #444);
+      background: var(--line-ui-background, #eee);
+      border-color: var(--line-ui-border, #bbb);
+      color: var(--line-high-contrast, #222);
     }
     .dd-item.active {
       border-color: var(--line-solid-background, #c8ff00);
       color: var(--line-solid-background, #c8ff00);
-      background: var(--line-gray-2, #0d0d0d);
+      background: var(--line-subtle-background, #0d0d0d);
     }
     :host([light]) .dd-item.active {
-      background: var(--line-gray-3, #f0f0f0);
+      background: var(--line-ui-background, #f0f0f0);
     }
 
     .dd-footer {
@@ -332,17 +332,17 @@ export class ScNav extends LitElement {
       align-items: center;
       margin-top: var(--line-size-4, 1.25rem);
       padding-top: var(--line-size-4, 1.25rem);
-      border-top: var(--line-border-size-1, 1px) solid var(--line-gray-3, #1a1a1a);
+      border-top: var(--line-border-size-1, 1px) solid var(--line-ui-background, #1a1a1a);
     }
-    :host([light]) .dd-footer { border-top-color: var(--line-gray-5, #e8e8e8); }
+    :host([light]) .dd-footer { border-top-color: var(--line-ui-active-background, #e8e8e8); }
 
     .dd-cur {
       font-size: var(--line-font-size-0, 0.5rem);
-      color: var(--line-gray-6, #444);
+      color: var(--line-low-contrast, #999);
     }
-    .dd-cur strong { color: var(--line-gray-9, #666); font-weight: var(--line-font-weight-6, 600); }
-    :host([light]) .dd-cur { color: var(--line-gray-8, #aaa); }
-    :host([light]) .dd-cur strong { color: var(--line-gray-10, #666); }
+    .dd-cur strong { color: var(--line-high-contrast, #ddd); font-weight: var(--line-font-weight-6, 600); }
+    :host([light]) .dd-cur { color: var(--line-low-contrast, #666); }
+    :host([light]) .dd-cur strong { color: var(--line-high-contrast, #222); }
 
     /* ── Responsive ── */
     /* Desktop: inline nav visible alongside menu button */
