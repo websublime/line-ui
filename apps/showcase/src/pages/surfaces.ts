@@ -297,6 +297,13 @@ export class ScPageSurfaces extends LitElement {
       border: var(--line-border-size-1, 1px) solid var(--line-ui-background, #222);
     }
 
+    /*
+     * Light/dark comparison panels use hardcoded colors intentionally.
+     * They simulate fixed light and dark environments regardless of
+     * the current theme, so the shadow differences are always visible.
+     * --line-shadow-color and --line-shadow-strength mirror the token
+     * defaults from shadows.css for each mode.
+     */
     .shadow-comparison-panel.light-panel {
       background: #f8f8f8;
       --line-shadow-color: 220 3% 15%;
@@ -319,7 +326,7 @@ export class ScPageSurfaces extends LitElement {
     }
 
     .light-panel .panel-label {
-      color: #333;
+      color: #333; /* hardcoded — fixed light-mode simulation */
     }
 
     .dark-panel .panel-label {
@@ -341,7 +348,7 @@ export class ScPageSurfaces extends LitElement {
     }
 
     .light-panel .comparison-card {
-      background: #fff;
+      background: #fff; /* hardcoded — fixed light-mode simulation */
     }
 
     .dark-panel .comparison-card {
@@ -355,7 +362,7 @@ export class ScPageSurfaces extends LitElement {
     }
 
     .light-panel .comparison-card-label {
-      color: #333;
+      color: #333; /* hardcoded — fixed light-mode simulation */
     }
 
     .dark-panel .comparison-card-label {
