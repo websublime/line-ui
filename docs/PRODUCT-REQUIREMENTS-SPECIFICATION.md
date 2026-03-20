@@ -478,7 +478,7 @@ The theme package requires additional testing beyond component-level tests to en
 |---------------|----------------|-------------------|
 | Build-time token validation | PostCSS plugin or build script | Cross-references all `var()` usage in source CSS against declared tokens in `tokens.css`, `colors/*.css`, `schemas/*.css`, and `aliases.css`. Fails the build if any token is referenced but undefined. |
 | Build-time contrast validation | Automated WCAG AA checker | Verifies 4.5:1 minimum contrast for all 28 palettes × semantic pairs (solid-background vs solid-text, background vs high-contrast, etc.) × light/dark mode. Runs against generated CSS values. |
-| Token parity tests | Bun test assertions | Asserts that light and dark mode variants declare identical token sets. Every `--line-*` token defined in `:where(html)` must also be defined in `:is(.dark)` (and vice versa). |
+| Token parity tests | Bun test assertions | Verifies that every palette token uses `light-dark()` with both a light and dark value in a single declaration. With `light-dark()`, parity is structural — each token is one declaration containing both mode values. The contrast token (`--line-{palette}-contrast`) is an exception: it is a single static value, not a `light-dark()` pair. |
 | CSS snapshot tests | Bun test + snapshot | Generates and snapshots the compiled CSS output per palette/theme combination. Detects unintended changes to token values, selector specificity, or output structure. |
 | Visual regression (showcase app) | Playwright screenshots in CI | Captures screenshots of the `apps/showcase/` pages for each palette (28) × mode (light/dark) = 56 screenshots. Diffs against baseline to detect visual regressions. |
 | `@property` registration with fallbacks | Development-time detection | Registers key tokens via CSS `@property` with obvious fallback values (e.g., `hotpink`) during development. Any `hotpink` visible in the UI indicates an undefined token, making missing tokens immediately visible without build tooling. |
@@ -1070,24 +1070,19 @@ All palettes are **colour-named** (not semantic). A semantic alias layer (`--lin
 
 **Naming pattern:** `--line-{palette}-{level}`, e.g., `--line-blue-1`, `--line-crimson-9`, `--line-gray-12`.
 
-Each palette file (e.g., `src/colors/blue.css`) defines light mode values on `:where(html)` and dark mode values on `:where(html):is(.dark)`:
+Each palette file (e.g., `src/colors/blue.css`) defines both light and dark mode values in a single declaration block using CSS `light-dark()`:
 
 ```css
 /* src/colors/blue.css */
 :where(html) {
-  --line-blue-1: hsl(206, 100%, 99.2%);
-  --line-blue-2: hsl(210, 100%, 98.0%);
+  --line-blue-1: light-dark(hsl(206, 100%, 99.2%), hsl(205, 100%, 88.0%));
+  --line-blue-2: light-dark(hsl(210, 100%, 98.0%), hsl(205, 100%, 71.0%));
   /* ... through --line-blue-12 */
-}
-
-:where(html):is(.dark) {
-  --line-blue-12: hsl(212, 35.0%, 9.2%);
-  --line-blue-11: hsl(216, 50.0%, 11.8%);
-  /* ... through --line-blue-1 — note: numbering is reversed in dark mode */
+  --line-blue-contrast: #000;
 }
 ```
 
-Dark mode values are **not** simply inverted — each level has independently crafted HSL values optimised for dark backgrounds. The level numbering reverses in dark mode (level 12 becomes the darkest, level 1 becomes the lightest) to maintain the semantic meaning: level 1 is always "background", level 12 is always "high contrast text", regardless of mode.
+The `light-dark()` function takes two arguments: the light mode value first, and the dark mode value second. The active value is determined by the computed `color-scheme` property (see [section 9.7](#97-lightdark-mode)). Dark mode values are **not** simply inverted — each level has independently crafted HSL values optimised for dark backgrounds. The semantic meaning is preserved in both modes: level 1 is always "background", level 12 is always "high contrast text".
 
 ### 9.2 Variable Namespace
 
@@ -1177,17 +1172,14 @@ Schemas map the 12 palette levels to **semantic role variables**. Each palette h
 ```css
 /* src/schemas/blue.css */
 :where(.line-schema-blue) {
-  --line-background: var(--line-blue-1);
-  --line-subtle-background: var(--line-blue-2);
-  /* ... all 14 semantic roles */
-}
-
-:is(.dark) :where(.line-schema-blue) {
-  --line-background: var(--line-blue-12);
-  --line-subtle-background: var(--line-blue-11);
-  /* ... reversed mapping for dark mode */
+  --line-background: light-dark(var(--line-blue-1), var(--line-blue-12));
+  --line-subtle-background: light-dark(var(--line-blue-2), var(--line-blue-11));
+  /* ... all 14 semantic roles via light-dark() */
+  --line-solid-text: var(--line-blue-contrast);
 }
 ```
+
+Schema files use `light-dark()` to map semantic roles to palette levels in a single declaration block. The light argument maps levels 1-12 ascending; the dark argument maps levels 12-1 descending, preserving semantic meaning across modes.
 
 The consumer applies a schema by adding a CSS class to any container:
 
@@ -1218,7 +1210,7 @@ Each schema file also generates utility classes for direct use. Using blue as an
 | `.line-is-blue-solid-background` | `bg: --line-blue-9` | `bg: --line-blue-4` | Solid background |
 | `.line-is-blue-border` | `border: --line-blue-7` (hover: 8) | `border: --line-blue-6` (hover: 5) | Border with hover |
 
-All utility classes use `:where()` for zero specificity and `:is(.dark)` for dark mode overrides.
+All utility classes use `:where()` for zero specificity and `light-dark()` for dark mode values. The active mode is determined by the computed `color-scheme` property (see [section 9.7](#97-lightdark-mode)).
 
 ### 9.5 Semantic Alias Layer
 
@@ -1333,7 +1325,7 @@ A theme file imports a colour palette and its corresponding schema:
 ```
 line.css
 ├── tokens.css               ← L1: Foundation tokens (typography, sizing, shadows, motion, etc.)
-├── semantic.css              ← L2: Gray-based prefers-color-scheme defaults
+├── semantic.css              ← L2: Gray-based light-dark() defaults
 ├── utils/normalize.css       ← Modern CSS reset (imports media.css internally)
 ├── utils/utilities.css       ← Utility classes mapping to semantic tokens
 ├── themes/*-theme.css (x28)  ← All 28 palette + schema pairs
@@ -1357,57 +1349,70 @@ A generator CLI (`line theme create --palette brand --base "#4F46E5"`) is a nice
 
 ### 9.7 Light/Dark Mode
 
-Two coexisting mechanisms control light/dark mode:
+A single mechanism controls light/dark mode: the CSS `light-dark()` function, triggered by the `color-scheme` property.
 
-**Mechanism 1: OS-level preference (automatic)**
+**How it works:**
 
-In `semantic.css`, `@media (prefers-color-scheme: light/dark)` sets root-level semantic tokens on `:root`:
+All colour tokens (palettes, schemas, semantic defaults, utility classes) use `light-dark(lightValue, darkValue)` to declare both mode values in a single CSS declaration. The browser resolves which value to use based on the computed `color-scheme` property on the element (or inherited from an ancestor).
 
 ```css
-@media (prefers-color-scheme: light) {
-  :root {
-    --line-background: hsl(0, 0%, 99.0%);
-    --line-subtle-background: hsl(0, 0%, 97.5%);
-    /* ... all 12 semantic roles — neutral/gray values */
-    --line-white: #f1f1f1;
-    --line-black: #030303;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --line-background: hsl(0, 0%, 9.5%);
-    /* ... dark-optimised values */
-  }
-}
+/* Single declaration — both modes in one line */
+--line-blue-1: light-dark(hsl(206, 100%, 99.2%), hsl(205, 100%, 88.0%));
 ```
 
-These provide **neutral (gray) defaults** for semantic tokens before any schema is applied. When the OS switches mode, these root tokens update automatically.
+**OS-level preference (automatic):**
 
-**Mechanism 2: Class-based override (manual)**
+The foundation layer (`colors-absolute.css`) sets `color-scheme: light dark` on `:where(html)`, which tells the browser to follow the OS preference. All `light-dark()` tokens resolve automatically — no media queries needed for colour tokens.
 
-A `.dark` or `.light` class on `<html>` forces a mode regardless of OS preference:
+**Programmatic toggle (consumer API):**
+
+```js
+// Force dark mode
+document.documentElement.style.colorScheme = 'dark';
+
+// Force light mode
+document.documentElement.style.colorScheme = 'light';
+
+// Return to OS preference
+document.documentElement.style.colorScheme = '';
+```
+
+Setting `style.colorScheme` on `<html>` changes the computed `color-scheme` for the entire document, causing all `light-dark()` tokens to resolve to their dark or light argument immediately. This is the **primary** programmatic API.
+
+**Class-based override (`.dark` / `.light`):**
+
+The `.dark` and `.light` classes on `<html>` are a **supported public API** that sets `color-scheme` via CSS:
 
 ```css
-:where(html).dark { color-scheme: dark; }
+:where(html).dark  { color-scheme: dark; }
 :where(html).light { color-scheme: light; }
 ```
 
-This class also triggers dark mode in:
-- **Palette files:** `:where(html):is(.dark)` overrides palette level values
-- **Schema files:** `:is(.dark) :where(.line-schema-*)` reverses the semantic mapping
-- **Shadow tokens:** `:where(html):is(.dark)` adjusts shadow colour and strength
+These classes exist because shadow tokens (`shadows.css`) use partial HSL control variables that cannot be wrapped in `light-dark()`. Shadow tokens use `@media (prefers-color-scheme)` for OS preference and `:where(html).dark` for programmatic override. Adding the `.dark` class alongside `style.colorScheme` ensures shadow tokens also respond to programmatic mode changes.
 
-**How a consumer forces dark mode:**
+**Recommended consumer pattern:**
 
 ```js
-document.documentElement.classList.add('dark');
+function setMode(mode) {
+  const html = document.documentElement;
+  // Primary: triggers all light-dark() tokens
+  html.style.colorScheme = mode;
+  // Secondary: triggers shadow token overrides
+  html.classList.toggle('dark', mode === 'dark');
+  html.classList.toggle('light', mode === 'light');
+}
 ```
 
-**Interaction between mechanisms:** The `.dark` class on `<html>` overrides palette and schema tokens via higher specificity (`:is(.dark)` vs bare `:where(html)`). However, the `semantic.css` root semantic tokens are set via `@media (prefers-color-scheme)` and are **not** overridden by the `.dark` class — they require a schema class to take effect. This means:
+**Shadow DOM compatibility:** The `color-scheme` property inherits through Shadow DOM boundaries, so all `light-dark()` tokens inside web components resolve correctly without any additional hacks.
 
-- Without a schema class: root tokens follow OS preference only
-- With a schema class: schema tokens follow the `.dark` / `.light` class, overriding OS preference for that scope
+**Exception — shadow tokens:**
+
+`shadows.css` defines shadow control variables (`--line-shadow-color`, `--line-shadow-strength`) as partial HSL values (e.g., `50% 50%`) which are not valid CSS `<color>` values. Since `light-dark()` only works with complete colour values, shadow tokens use the legacy dual-mechanism approach:
+
+1. `@media (prefers-color-scheme: dark)` — responds to OS preference
+2. `:where(html).dark` — responds to programmatic `.dark` class toggle
+
+This is the **only** exception in the token system. All colour palettes, schemas, semantic defaults, and utility classes use `light-dark()` exclusively.
 
 ### 9.8 PostCSS Pipeline
 
@@ -1456,10 +1461,10 @@ This configuration ensures CSS custom properties are preserved in the output (no
 
 **`semantic.css`** — Foundation layer
 
-- Light/dark mode root semantic tokens via `@media (prefers-color-scheme)`
-- `color-scheme` declaration for `.dark` / `.light` classes
+- Light/dark mode root semantic tokens via `light-dark()` (gray-based neutral defaults)
+- Mode is triggered by the `color-scheme` property (see [section 9.7](#97-lightdark-mode))
 - All foundation tokens (typography, spacing, shadows — see [section 9.3](#93-foundation-token-system)), defined with `--line-*` prefix
-- Dark mode shadow adjustments (darker shadow colour, higher strength)
+- Dark mode shadow adjustments use the legacy `@media (prefers-color-scheme)` + `.dark` class mechanism (shadow control variables are partial HSL tokens incompatible with `light-dark()`)
 
 **`normalize.css`** — Modern CSS reset
 
@@ -1594,7 +1599,7 @@ The design token system follows a three-tier cascade:
 - Schema tokens: `:where(.line-schema-*)` — zero specificity
 - Utility classes: `:where(.line-is-*)` — zero specificity
 - Normalize reset: `:where(element)` — zero specificity
-- Dark mode overrides: `:is(.dark)` — normal specificity (higher than `:where()`)
+- Dark mode: `light-dark()` within `:where()` declarations — zero specificity (no separate dark override selectors needed, except for shadow tokens which use `:where(html).dark`)
 
 **Why `@layer` is not needed:**
 
@@ -1631,7 +1636,7 @@ The design token system follows a three-tier cascade:
 |--------|-----------------|---------|----------|
 | `dist/line.min.css` | `.` | Full bundle: all layers + all 28 themes | Quick start |
 | `dist/tokens.min.css` | `./tokens` | L1: Foundation tokens (no colours) | Headless setup |
-| `dist/semantic.min.css` | `./semantic` | L2: Gray prefers-color-scheme defaults | Foundation + reset |
+| `dist/semantic.min.css` | `./semantic` | L2: Gray light-dark() defaults | Foundation + reset |
 | `dist/normalize.min.css` | `./normalize` | CSS reset | Document reset |
 | `dist/utilities.min.css` | `./utilities` | Semantic utility classes | Utility classes |
 | `dist/aliases.min.css` | `./aliases` | L3: 6 aliases × 9 intent tokens | Intent tokens |
