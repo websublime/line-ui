@@ -284,9 +284,9 @@ export default preview;
 ```
 
 Key decisions:
-- **Two `withThemeByClassName` decorators:** One for palette (schema class on `body`), one for mode (dark class on `html`). This matches the existing theme system where `.line-schema-blue` on a container activates the blue palette and `.dark` on an ancestor activates dark mode.
+- **Two `withThemeByClassName` decorators:** One for palette (schema class on `body`), one for mode (dark/light class on `html`). The mode decorator should also set `document.documentElement.style.colorScheme` as the primary trigger for all `light-dark()` tokens. The `.dark`/`.light` class is secondary, needed for shadow token overrides.
 - **All 28 palettes registered:** Every palette from the theme package is available in the toolbar dropdown. This is essential for visual QA across palettes.
-- **`parentSelector` placement:** Schema class goes on `body` (scoped to preview), dark class goes on `html` (matches real-world usage where `.dark` is on `<html>` or `<body>`).
+- **`parentSelector` placement:** Schema class goes on `body` (scoped to preview), mode class goes on `html`. The mode toggle must set both `style.colorScheme` and the `.dark`/`.light` class to ensure all tokens (including shadows) respond correctly.
 
 ### 4.3 CEM Manifest Path
 
@@ -433,18 +433,18 @@ The a11y panel runs axe-core on every story. Zero violations is a hard requireme
 
 ### 7.1 Mechanism
 
-The theme package uses a **CSS class** system:
+The theme package uses a **`light-dark()` + `color-scheme`** system:
 
 1. **Palette activation:** `.line-schema-{palette}` class on a container (e.g., `.line-schema-blue` on `<body>`)
-2. **Dark mode:** `.dark` class on an ancestor (typically `<html>`)
+2. **Dark mode:** The primary trigger is the `color-scheme` property (set via `style.colorScheme` on `<html>`). The `.dark`/`.light` class on `<html>` is a secondary trigger needed for shadow token overrides.
 3. **Both are independent** -- any palette works in light or dark mode
 
-> **Note:** The `.dark` class is NOT prefixed with `line-` (unlike `.line-schema-*` and `.line-is-*`). It remains `.dark` because it is a global mode toggle, not a component-scoped class. This was verified during the branding refactor (E1-T4).
+> **Note:** The `.dark`/`.light` classes are NOT prefixed with `line-` (unlike `.line-schema-*` and `.line-is-*`). They remain `.dark`/`.light` because they are global mode toggles, not component-scoped classes. They are a supported public API that sets `color-scheme` via CSS and triggers shadow token overrides.
 
 Storybook's `@storybook/addon-themes` with `withThemeByClassName` maps directly to this system. Two toolbar dropdowns appear:
 
 - **Palette dropdown:** Lists all 28 palettes. Applies `.line-schema-{palette}` to `<body>` in the preview iframe.
-- **Mode dropdown:** Light / Dark. Applies `.dark` to `<html>` in the preview iframe.
+- **Mode dropdown:** Light / Dark. Applies `.dark`/`.light` class to `<html>` and should also set `style.colorScheme` on `<html>` in the preview iframe to trigger all `light-dark()` tokens.
 
 ### 7.2 CSS Loading
 
@@ -620,9 +620,10 @@ Note: `argTypes` are partially auto-populated from the CEM manifest. Manual `arg
    - Or import a single palette: `@import '@websublime/line-theme/themes/blue'`
    - Add the schema class: `<body class="line-schema-blue">`
 4. **Light and dark mode**
-   - Add `.dark` class to `<html>` or any ancestor
-   - How the 12-level scale inverts in dark mode (levels 1-12 map to 12-1)
-   - `prefers-color-scheme` media query integration
+   - All colour tokens use `light-dark()` — mode is determined by the `color-scheme` property
+   - Programmatic toggle: `document.documentElement.style.colorScheme = 'dark'` (also add `.dark` class for shadow tokens)
+   - OS preference works automatically via `color-scheme: light dark` on `<html>`
+   - How the 12-level scale inverts in dark mode (levels 1-12 map to 12-1 inside `light-dark()` arguments)
 5. **The 12-level semantic scale**
    - Table: level 1 (background) through level 12 (high-contrast text)
    - Diagram showing the semantic role of each level
