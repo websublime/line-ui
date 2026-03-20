@@ -78,9 +78,21 @@
     var(--line-inner-shadow-highlight);
 }
 
-/* ── Dark Mode Override ── */
+/* ── Dark Mode Override ──
+   Shadow control variables use partial HSL tokens and percentages,
+   NOT valid <color> values, so light-dark() cannot be used here.
+   We use both @media and .dark class to cover OS preference and
+   programmatic toggle (html.dark sets color-scheme: dark). ── */
 
-:where(html):is(.dark) {
+@media (prefers-color-scheme: dark) {
+  :where(html) {
+    --line-shadow-color: 220 40% 2%;
+    --line-shadow-strength: 25%;
+    --line-inner-shadow-highlight: inset 0 -0.5px 0 0 #fff1, inset 0 0.5px 0 0 #0007;
+  }
+}
+
+:where(html).dark {
   --line-shadow-color: 220 40% 2%;
   --line-shadow-strength: 25%;
   --line-inner-shadow-highlight: inset 0 -0.5px 0 0 #fff1, inset 0 0.5px 0 0 #0007;
