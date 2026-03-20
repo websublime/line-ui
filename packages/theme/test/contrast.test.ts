@@ -41,27 +41,57 @@ const PALETTES = readdirSync(COLORS_DIR)
 /**
  * Parse a color file and extract declarations per mode.
  *
- * Light mode: declarations inside `:where(html) { ... }` (first block)
- * Dark mode: declarations inside `:where(html):is(.dark) { ... }` block
+ * After the light-dark() migration, palette files use a single block:
+ *   --line-blue-1: light-dark(hsl(...light...), hsl(...dark...));
+ *   --line-blue-contrast: #000;  (static, same in both modes)
+ *   --line-gray-contrast: light-dark(#000, #fff);  (different per mode)
+ *
+ * This parser extracts the light and dark values from light-dark() wrappers,
+ * and treats non-wrapped values as identical in both modes.
  */
 function parseColorFile(filePath: string): {
   light: Map<string, string>;
   dark: Map<string, string>;
 } {
   const css = readFileSync(filePath, 'utf-8');
+  const allDecls = extractDeclarations(css);
 
-  // Split by the dark mode selector
-  const darkSplit = css.split(':is(.dark)');
+  const light = new Map<string, string>();
+  const dark = new Map<string, string>();
 
-  // Everything before the dark mode block is light mode
-  const lightCss = darkSplit[0] || '';
-  // Everything after is dark mode
-  const darkCss = darkSplit.length > 1 ? darkSplit.slice(1).join(':is(.dark)') : '';
+  for (const [name, value] of allDecls) {
+    const ldMatch = value.match(/^light-dark\(\s*(.*)\s*\)$/);
+    if (ldMatch) {
+      // Split on the comma that separates the two arguments.
+      // Both args may contain commas (e.g., hsl(206, 100%, 50.0%)),
+      // so we find the split point by counting parentheses.
+      const inner = ldMatch[1];
+      let depth = 0;
+      let splitIdx = -1;
+      for (let i = 0; i < inner.length; i++) {
+        if (inner[i] === '(') depth++;
+        else if (inner[i] === ')') depth--;
+        else if (inner[i] === ',' && depth === 0) {
+          splitIdx = i;
+          break;
+        }
+      }
+      if (splitIdx !== -1) {
+        light.set(name, inner.substring(0, splitIdx).trim());
+        dark.set(name, inner.substring(splitIdx + 1).trim());
+      } else {
+        // Fallback: treat as same in both modes
+        light.set(name, value);
+        dark.set(name, value);
+      }
+    } else {
+      // Static value — same in both modes
+      light.set(name, value);
+      dark.set(name, value);
+    }
+  }
 
-  return {
-    light: extractDeclarations(lightCss),
-    dark: extractDeclarations(darkCss)
-  };
+  return { light, dark };
 }
 
 /**
