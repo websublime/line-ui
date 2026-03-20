@@ -11,7 +11,6 @@ import { isValidSchema } from './constants.js';
 import './components/sc-nav.js';
 
 // Page imports
-// TODO(line-ui-6zy.3): home page is imported but not rendered — wire into panel system when home page task is implemented
 import './pages/home.js';
 import './pages/colors.js';
 import './pages/typography.js';
@@ -25,6 +24,7 @@ import './pages/themes.js';
 import './pages/generator.js';
 
 export type PanelKey =
+  | 'home'
   | 'colors'
   | 'typography'
   | 'spacing'
@@ -38,7 +38,7 @@ export type PanelKey =
 
 @customElement('sc-app')
 export class ScApp extends LitElement {
-  @state() private _panel: PanelKey = 'colors';
+  @state() private _panel: PanelKey = 'home';
   @state() private _schema = 'violet';
   @state() private _light = false;
 
@@ -97,6 +97,7 @@ export class ScApp extends LitElement {
 
   private _isValidPanel(value: string): value is PanelKey {
     return [
+      'home',
       'colors',
       'typography',
       'spacing',
@@ -177,6 +178,8 @@ export class ScApp extends LitElement {
 
   private _renderPanel() {
     switch (this._panel) {
+      case 'home':
+        return html`<sc-page-home ?light=${this._light}></sc-page-home>`;
       case 'colors':
         return html`<sc-page-colors></sc-page-colors>`;
       case 'typography':

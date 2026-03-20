@@ -74,6 +74,7 @@ export class ScNav extends LitElement {
       letter-spacing: -0.03em;
       white-space: nowrap;
       flex-shrink: 0;
+      cursor: pointer;
       transition: color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
     }
     :host([light]) .logo { color: var(--line-high-contrast, #1a1a1a); }
@@ -419,7 +420,7 @@ export class ScNav extends LitElement {
 
     return html`
       <div class="topbar">
-        <div class="logo">line<span class="logo-ac">://</span>ui</div>
+        <div class="logo" @click=${() => this._navigate('home' as PanelKey)}>line<span class="logo-ac">://</span>ui</div>
 
         <!-- Desktop: inline pill nav -->
         <div class="nav-inline">
