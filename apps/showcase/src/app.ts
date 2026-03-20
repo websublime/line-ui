@@ -112,9 +112,17 @@ export class ScApp extends LitElement {
 
   private _applyMode(): void {
     const root = document.documentElement;
-    // Set color-scheme directly — this is the single trigger for light-dark()
+    const mode = this._light ? 'light' : 'dark';
+
+    // Primary trigger: style.colorScheme drives light-dark() resolution
     // and inherits through shadow DOM boundaries.
-    root.style.colorScheme = this._light ? 'light' : 'dark';
+    root.style.colorScheme = mode;
+
+    // Secondary trigger: .dark/.light class is needed because shadows.css
+    // control variables (partial HSL tokens, not <color> values) cannot use
+    // light-dark() and rely on :where(html).dark selector instead.
+    root.classList.remove('light', 'dark');
+    root.classList.add(mode);
   }
 
   private _applySchema(): void {

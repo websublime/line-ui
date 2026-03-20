@@ -82,7 +82,9 @@
    Shadow control variables use partial HSL tokens and percentages,
    NOT valid <color> values, so light-dark() cannot be used here.
    We use both @media and .dark class to cover OS preference and
-   programmatic toggle (html.dark sets color-scheme: dark). ── */
+   programmatic toggle. Consumers using style.colorScheme MUST also
+   add the .dark/.light class on <html> for shadow tokens to respond.
+   See colors-absolute.css for the class-based color-scheme overrides. ── */
 
 @media (prefers-color-scheme: dark) {
   :where(html) {

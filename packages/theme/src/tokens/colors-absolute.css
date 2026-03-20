@@ -14,7 +14,11 @@
   --line-black: #030303;
 }
 
-/* ── Color Scheme Overrides ── */
+/* ── Color Scheme Overrides ──
+   TODO(line-ui-p3v.45): Document whether .dark/.light class overrides are a
+   long-term public API or a transitional mechanism. Currently they are
+   required by shadows.css (which cannot use light-dark() for partial HSL
+   tokens) and by consumers who set the class for programmatic toggle. ── */
 
 :where(html).dark {
   color-scheme: dark;
