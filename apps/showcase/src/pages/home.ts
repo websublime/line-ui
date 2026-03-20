@@ -149,43 +149,23 @@ export class ScPageHome extends LitElement {
     .hero::before {
       content: '';
       position: absolute;
-      inset: 0;
-      background:
-        radial-gradient(
-          ellipse 100% 80% at 50% 0%,
-          color-mix(in oklch, var(--line-solid-background, #c8ff00) 22%, transparent) 0%,
-          transparent 70%
-        ),
-        radial-gradient(
-          ellipse 60% 50% at 30% 20%,
-          color-mix(in oklch, var(--line-solid-background, #c8ff00) 14%, transparent) 0%,
-          transparent 60%
-        ),
-        radial-gradient(
-          ellipse 60% 50% at 70% 20%,
-          color-mix(in oklch, var(--line-solid-background, #c8ff00) 14%, transparent) 0%,
-          transparent 60%
-        );
+      inset: -20% -10%;
+      background: radial-gradient(
+        ellipse 60% 70% at 50% 40%,
+        color-mix(in oklch, var(--line-solid-background) 18%, transparent) 0%,
+        color-mix(in oklch, var(--line-solid-background) 6%, transparent) 40%,
+        transparent 70%
+      );
       pointer-events: none;
       z-index: 0;
     }
     :host([light]) .hero::before {
-      background:
-        radial-gradient(
-          ellipse 100% 80% at 50% 0%,
-          color-mix(in oklch, var(--line-solid-background, #c8ff00) 16%, transparent) 0%,
-          transparent 70%
-        ),
-        radial-gradient(
-          ellipse 60% 50% at 30% 20%,
-          color-mix(in oklch, var(--line-solid-background, #c8ff00) 10%, transparent) 0%,
-          transparent 60%
-        ),
-        radial-gradient(
-          ellipse 60% 50% at 70% 20%,
-          color-mix(in oklch, var(--line-solid-background, #c8ff00) 10%, transparent) 0%,
-          transparent 60%
-        );
+      background: radial-gradient(
+        ellipse 60% 70% at 50% 40%,
+        color-mix(in oklch, var(--line-solid-background) 12%, transparent) 0%,
+        color-mix(in oklch, var(--line-solid-background) 4%, transparent) 40%,
+        transparent 70%
+      );
     }
 
     .hero::after {
@@ -236,7 +216,7 @@ export class ScPageHome extends LitElement {
 
     .tagline {
       font-size: var(--line-font-size-3, 1.25rem);
-      color: color-mix(in oklch, var(--line-solid-background) 50%, var(--line-low-contrast));
+      color: var(--line-low-contrast);
       margin: var(--line-size-3, 1rem) 0 0;
       font-weight: var(--line-font-weight-4, 400);
     }
@@ -263,7 +243,7 @@ export class ScPageHome extends LitElement {
 
     .section-subtitle {
       font-size: var(--line-font-size-2, 1rem);
-      color: color-mix(in oklch, var(--line-solid-background) 60%, var(--line-low-contrast));
+      color: var(--line-low-contrast);
       margin-top: var(--line-size-1, 0.25rem);
       margin-bottom: var(--line-size-6, 2rem);
       line-height: var(--line-lineheight-3, 1.6);
@@ -353,7 +333,7 @@ export class ScPageHome extends LitElement {
     .comp-card-title {
       font-size: var(--line-font-size-3, 1.25rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: color-mix(in oklch, var(--line-solid-background) 40%, var(--line-high-contrast));
+      color: var(--line-high-contrast);
       margin: 0 0 var(--line-size-2, 0.5rem);
     }
 
@@ -467,7 +447,7 @@ export class ScPageHome extends LitElement {
     .comp-image-title {
       font-size: var(--line-font-size-2, 1rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: color-mix(in oklch, var(--line-solid-background) 40%, var(--line-high-contrast));
+      color: var(--line-high-contrast);
       margin: 0 0 var(--line-size-1, 0.25rem);
     }
 
@@ -574,7 +554,7 @@ export class ScPageHome extends LitElement {
     .comp-login-heading {
       font-size: var(--line-font-size-3, 1.25rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: color-mix(in oklch, var(--line-solid-background) 40%, var(--line-high-contrast));
+      color: var(--line-high-contrast);
       margin: 0;
     }
 
@@ -807,7 +787,7 @@ export class ScPageHome extends LitElement {
     .card-title {
       font-size: var(--line-font-size-2, 1rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: color-mix(in oklch, var(--line-solid-background) 30%, var(--line-high-contrast));
+      color: var(--line-high-contrast);
       margin-bottom: var(--line-size-1, 0.25rem);
     }
 
