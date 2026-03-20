@@ -112,13 +112,9 @@ export class ScApp extends LitElement {
 
   private _applyMode(): void {
     const root = document.documentElement;
-    if (this._light) {
-      root.classList.add('light');
-      root.classList.remove('dark');
-    } else {
-      root.classList.add('dark');
-      root.classList.remove('light');
-    }
+    // Set color-scheme directly — this is the single trigger for light-dark()
+    // and inherits through shadow DOM boundaries.
+    root.style.colorScheme = this._light ? 'light' : 'dark';
   }
 
   private _applySchema(): void {
