@@ -3,6 +3,7 @@ import { customElement, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
 import '../components/sc-section.js';
+import { copyToken } from '../utils/clipboard.js';
 
 /* ─────────────────────────────────────────────────────────
    Token data — sourced from packages/theme/src/tokens/
@@ -104,22 +105,6 @@ const ASPECT_RATIOS = [
   { token: '--line-ratio-ultrawide', value: '18 / 5', label: 'Ultrawide', ratio: '18 / 5' },
   { token: '--line-ratio-golden', value: '1.618 / 1', label: 'Golden', ratio: '1.618 / 1' }
 ] as const;
-
-/**
- * Copy a CSS token reference to the clipboard and flash visual feedback.
- */
-function copyToken(token: string, el: HTMLElement): void {
-  const text = `var(${token})`;
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      el.classList.add('copied');
-      setTimeout(() => el.classList.remove('copied'), 700);
-    })
-    .catch(() => {
-      /* Clipboard denied — no feedback */
-    });
-}
 
 @customElement('sc-page-surfaces')
 export class ScPageSurfaces extends LitElement {
