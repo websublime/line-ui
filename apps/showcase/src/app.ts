@@ -73,12 +73,13 @@ export class ScApp extends LitElement {
   override connectedCallback(): void {
     super.connectedCallback();
 
-    // Restore persisted mode
+    // Restore persisted mode — fall back to OS preference
     const storedMode = localStorage.getItem('line-mode');
-    if (storedMode === 'light') {
-      this._light = true;
+    if (storedMode === 'light' || storedMode === 'dark') {
+      this._light = storedMode === 'light';
+    } else {
+      this._light = window.matchMedia('(prefers-color-scheme: light)').matches;
     }
-    // Default is dark (light = false)
     this._applyMode();
 
     // Restore persisted schema
