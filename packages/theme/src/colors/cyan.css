@@ -1,30 +1,15 @@
 :where(html) {
-  --line-cyan-1: hsl(185, 60.0%, 98.7%);
-  --line-cyan-2: hsl(185, 73.3%, 97.1%);
-  --line-cyan-3: hsl(186, 70.2%, 94.4%);
-  --line-cyan-4: hsl(186, 63.8%, 90.6%);
-  --line-cyan-5: hsl(187, 58.3%, 85.4%);
-  --line-cyan-6: hsl(188, 54.6%, 78.4%);
-  --line-cyan-7: hsl(189, 53.7%, 68.7%);
-  --line-cyan-8: hsl(189, 60.3%, 52.5%);
-  --line-cyan-9: hsl(190, 95.0%, 39.0%);
-  --line-cyan-10: hsl(191, 91.2%, 36.8%);
-  --line-cyan-11: hsl(192, 85.0%, 31.0%);
-  --line-cyan-12: hsl(192, 70.0%, 16.5%);
+  --line-cyan-1: light-dark(hsl(185, 60.0%, 98.7%), hsl(190, 80.0%, 84.0%));
+  --line-cyan-2: light-dark(hsl(185, 73.3%, 97.1%), hsl(190, 90.0%, 54.0%));
+  --line-cyan-3: light-dark(hsl(186, 70.2%, 94.4%), hsl(190, 84.0%, 46.0%));
+  --line-cyan-4: light-dark(hsl(186, 63.8%, 90.6%), hsl(190, 95.0%, 39.0%));
+  --line-cyan-5: light-dark(hsl(187, 58.3%, 85.4%), hsl(192, 59.8%, 39.0%));
+  --line-cyan-6: light-dark(hsl(188, 54.6%, 78.4%), hsl(192, 56.6%, 26.5%));
+  --line-cyan-7: light-dark(hsl(189, 53.7%, 68.7%), hsl(192, 54.6%, 20.1%));
+  --line-cyan-8: light-dark(hsl(189, 60.3%, 52.5%), hsl(193, 53.4%, 16.5%));
+  --line-cyan-9: light-dark(hsl(190, 95.0%, 39.0%), hsl(193, 52.6%, 14.1%));
+  --line-cyan-10: light-dark(hsl(191, 91.2%, 36.8%), hsl(193, 51.9%, 11.9%));
+  --line-cyan-11: light-dark(hsl(192, 85.0%, 31.0%), hsl(193, 51.1%, 8.8%));
+  --line-cyan-12: light-dark(hsl(192, 70.0%, 16.5%), hsl(192, 60.0%, 7.2%));
   --line-cyan-contrast: #000;
-}
-
-:where(html):is(.dark) {
-  --line-cyan-12: hsl(192, 60.0%, 7.2%);
-  --line-cyan-11: hsl(193, 51.1%, 8.8%);
-  --line-cyan-10: hsl(193, 51.9%, 11.9%);
-  --line-cyan-9: hsl(193, 52.6%, 14.1%);
-  --line-cyan-8: hsl(193, 53.4%, 16.5%);
-  --line-cyan-7: hsl(192, 54.6%, 20.1%);
-  --line-cyan-6: hsl(192, 56.6%, 26.5%);
-  --line-cyan-5: hsl(192, 59.8%, 39.0%);
-  --line-cyan-4: hsl(190, 95.0%, 39.0%);
-  --line-cyan-3: hsl(190, 84.0%, 46.0%);
-  --line-cyan-2: hsl(190, 90.0%, 54.0%);
-  --line-cyan-1: hsl(190, 80.0%, 84.0%);
 }

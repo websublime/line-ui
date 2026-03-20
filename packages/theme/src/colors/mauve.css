@@ -1,31 +1,15 @@
 :where(html) {
-  --line-mauve-1: hsl(300, 26.0%, 99.0%);
-  --line-mauve-2: hsl(270, 20.0%, 98.0%);
-  --line-mauve-3: hsl(267, 13.8%, 95.3%);
-  --line-mauve-4: hsl(265, 12.2%, 92.7%);
-  --line-mauve-5: hsl(263, 11.6%, 90.3%);
-  --line-mauve-6: hsl(261, 11.1%, 87.7%);
-  --line-mauve-7: hsl(257, 10.8%, 84.3%);
-  --line-mauve-8: hsl(249, 10.4%, 75.5%);
-  --line-mauve-9: hsl(252, 6.0%, 57.3%);
-  --line-mauve-10: hsl(250, 5.0%, 52.3%);
-  --line-mauve-11: hsl(252, 5.0%, 40.7%);
-  --line-mauve-12: hsl(260, 10.0%, 13.5%);
-  --line-mauve-contrast: #000;
-}
-
-:where(html):is(.dark) {
-  --line-mauve-12: hsl(300, 5.0%, 9.5%);
-  --line-mauve-11: hsl(300, 7.1%, 11.0%);
-  --line-mauve-10: hsl(290, 6.2%, 16.2%);
-  --line-mauve-9: hsl(285, 5.8%, 19.5%);
-  --line-mauve-8: hsl(280, 5.6%, 22.4%);
-  --line-mauve-7: hsl(276, 5.4%, 25.7%);
-  --line-mauve-6: hsl(269, 5.3%, 30.3%);
-  --line-mauve-5: hsl(258, 5.0%, 39.2%);
-  --line-mauve-4: hsl(250, 5.0%, 45.0%);
-  --line-mauve-3: hsl(252, 4.3%, 52.3%);
-  --line-mauve-2: hsl(250, 6.0%, 70.5%);
-  --line-mauve-1: hsl(240, 7.0%, 93.8%);
-  --line-mauve-contrast: #fff;
+  --line-mauve-1: light-dark(hsl(300, 26.0%, 99.0%), hsl(240, 7.0%, 93.8%));
+  --line-mauve-2: light-dark(hsl(270, 20.0%, 98.0%), hsl(250, 6.0%, 70.5%));
+  --line-mauve-3: light-dark(hsl(267, 13.8%, 95.3%), hsl(252, 4.3%, 52.3%));
+  --line-mauve-4: light-dark(hsl(265, 12.2%, 92.7%), hsl(250, 5.0%, 45.0%));
+  --line-mauve-5: light-dark(hsl(263, 11.6%, 90.3%), hsl(258, 5.0%, 39.2%));
+  --line-mauve-6: light-dark(hsl(261, 11.1%, 87.7%), hsl(269, 5.3%, 30.3%));
+  --line-mauve-7: light-dark(hsl(257, 10.8%, 84.3%), hsl(276, 5.4%, 25.7%));
+  --line-mauve-8: light-dark(hsl(249, 10.4%, 75.5%), hsl(280, 5.6%, 22.4%));
+  --line-mauve-9: light-dark(hsl(252, 6.0%, 57.3%), hsl(285, 5.8%, 19.5%));
+  --line-mauve-10: light-dark(hsl(250, 5.0%, 52.3%), hsl(290, 6.2%, 16.2%));
+  --line-mauve-11: light-dark(hsl(252, 5.0%, 40.7%), hsl(300, 7.1%, 11.0%));
+  --line-mauve-12: light-dark(hsl(260, 10.0%, 13.5%), hsl(300, 5.0%, 9.5%));
+  --line-mauve-contrast: light-dark(#000, #fff);
 }
