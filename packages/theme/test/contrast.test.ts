@@ -39,6 +39,23 @@ const PALETTES = readdirSync(COLORS_DIR)
 // ---------------------------------------------------------------------------
 
 /**
+ * Split a light-dark() inner string into its two arguments.
+ * Handles nested parentheses (e.g., hsl(206, 100%, 50.0%)).
+ * Returns [lightValue, darkValue] or null if no valid split found.
+ */
+function splitLightDarkArgs(inner: string): [string, string] | null {
+  let depth = 0;
+  for (let i = 0; i < inner.length; i++) {
+    if (inner[i] === '(') depth++;
+    else if (inner[i] === ')') depth--;
+    else if (inner[i] === ',' && depth === 0) {
+      return [inner.substring(0, i).trim(), inner.substring(i + 1).trim()];
+    }
+  }
+  return null;
+}
+
+/**
  * Parse a color file and extract declarations per mode.
  *
  * After the light-dark() migration, palette files use a single block:
@@ -61,31 +78,18 @@ function parseColorFile(filePath: string): {
 
   for (const [name, value] of allDecls) {
     const ldMatch = value.match(/^light-dark\(\s*(.*)\s*\)$/);
-    if (ldMatch) {
-      // Split on the comma that separates the two arguments.
-      // Both args may contain commas (e.g., hsl(206, 100%, 50.0%)),
-      // so we find the split point by counting parentheses.
-      const inner = ldMatch[1];
-      let depth = 0;
-      let splitIdx = -1;
-      for (let i = 0; i < inner.length; i++) {
-        if (inner[i] === '(') depth++;
-        else if (inner[i] === ')') depth--;
-        else if (inner[i] === ',' && depth === 0) {
-          splitIdx = i;
-          break;
-        }
-      }
-      if (splitIdx !== -1) {
-        light.set(name, inner.substring(0, splitIdx).trim());
-        dark.set(name, inner.substring(splitIdx + 1).trim());
-      } else {
-        // Fallback: treat as same in both modes
-        light.set(name, value);
-        dark.set(name, value);
-      }
-    } else {
+    if (!ldMatch) {
       // Static value — same in both modes
+      light.set(name, value);
+      dark.set(name, value);
+      continue;
+    }
+
+    const args = splitLightDarkArgs(ldMatch[1]);
+    if (args) {
+      light.set(name, args[0]);
+      dark.set(name, args[1]);
+    } else {
       light.set(name, value);
       dark.set(name, value);
     }
