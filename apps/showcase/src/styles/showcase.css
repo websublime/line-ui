@@ -5,25 +5,17 @@
 
 html {
   font-family: "Geist", system-ui, sans-serif;
-  color-scheme: dark;
-}
-
-html.light {
-  color-scheme: light;
+  /* color-scheme is set via style.colorScheme in app.ts (_applyMode).
+     Default dark is applied on connectedCallback. */
 }
 
 body {
   min-height: 100dvh;
-  background-color: var(--line-background, #111111);
-  color: var(--line-high-contrast, #eeeeee);
+  background-color: var(--line-background);
+  color: var(--line-high-contrast);
   transition:
     background-color var(--line-duration-moderate-1, 180ms) var(--line-ease-2),
     color var(--line-duration-moderate-1, 180ms) var(--line-ease-2);
-}
-
-html.light body {
-  background-color: var(--line-background, #fafafa);
-  color: var(--line-high-contrast, #1a1a1a);
 }
 
 /* View Transitions API — panel crossfade */
