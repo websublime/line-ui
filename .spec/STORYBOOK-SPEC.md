@@ -277,6 +277,23 @@ const preview: Preview = {
       defaultTheme: 'Light',
       parentSelector: 'html',
     }),
+
+    // Companion decorator: sync style.colorScheme with the mode class.
+    // withThemeByClassName only toggles classes — it has no mechanism for
+    // setting inline styles. This decorator runs AFTER withThemeByClassName
+    // (Storybook executes decorators bottom-to-top, so placing it after in
+    // the array means it sees the class already applied). It checks whether
+    // the .dark class is present on <html> and sets style.colorScheme
+    // accordingly. This is the primary trigger for all light-dark() tokens;
+    // the .dark/.light class is secondary (needed for shadow token overrides).
+    //
+    // Note: document.documentElement here refers to the preview iframe's
+    // <html>, NOT the parent Storybook shell — which is the correct target.
+    (storyFn) => {
+      const root = document.documentElement;
+      root.style.colorScheme = root.classList.contains('dark') ? 'dark' : 'light';
+      return storyFn();
+    },
   ],
 };
 
@@ -284,9 +301,9 @@ export default preview;
 ```
 
 Key decisions:
-- **Two `withThemeByClassName` decorators:** One for palette (schema class on `body`), one for mode (dark/light class on `html`). The mode decorator should also set `document.documentElement.style.colorScheme` as the primary trigger for all `light-dark()` tokens. The `.dark`/`.light` class is secondary, needed for shadow token overrides.
+- **Two `withThemeByClassName` decorators + a companion:** One `withThemeByClassName` for palette (schema class on `body`), one for mode (dark/light class on `html`). Because `withThemeByClassName` only toggles classes and cannot set inline styles, a companion decorator (shown in the code sample above) syncs `document.documentElement.style.colorScheme` based on whether the `.dark` class is present. The `colorScheme` property is the primary trigger for all `light-dark()` tokens; the `.dark`/`.light` class is secondary, needed for shadow token overrides.
 - **All 28 palettes registered:** Every palette from the theme package is available in the toolbar dropdown. This is essential for visual QA across palettes.
-- **`parentSelector` placement:** Schema class goes on `body` (scoped to preview), mode class goes on `html`. The mode toggle must set both `style.colorScheme` and the `.dark`/`.light` class to ensure all tokens (including shadows) respond correctly.
+- **`parentSelector` placement:** Schema class goes on `body` (scoped to preview), mode class goes on `html`. The companion decorator (see code sample above) ensures both `style.colorScheme` and the `.dark`/`.light` class are set on every mode toggle, so all tokens — including shadow overrides — respond correctly.
 
 ### 4.3 CEM Manifest Path
 
@@ -444,7 +461,7 @@ The theme package uses a **`light-dark()` + `color-scheme`** system:
 Storybook's `@storybook/addon-themes` with `withThemeByClassName` maps directly to this system. Two toolbar dropdowns appear:
 
 - **Palette dropdown:** Lists all 28 palettes. Applies `.line-schema-{palette}` to `<body>` in the preview iframe.
-- **Mode dropdown:** Light / Dark. Applies `.dark`/`.light` class to `<html>` and should also set `style.colorScheme` on `<html>` in the preview iframe to trigger all `light-dark()` tokens.
+- **Mode dropdown:** Light / Dark. Applies `.dark`/`.light` class to `<html>` via `withThemeByClassName`. A companion decorator in the `preview.ts` decorators array (see section 4.2) syncs `style.colorScheme` on `<html>` in the preview iframe to trigger all `light-dark()` tokens. Both mechanisms are required: `colorScheme` for `light-dark()` token resolution, `.dark`/`.light` class for shadow token overrides.
 
 ### 7.2 CSS Loading
 
