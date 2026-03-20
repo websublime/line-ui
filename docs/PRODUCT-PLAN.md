@@ -206,7 +206,7 @@ All of the following must be true:
 - [ ] A developer can create a new component using `LineElement`, build it, test it, and see it in Storybook
 - [ ] Build-time token validation (var() cross-reference ensures no undefined token references)
 - [ ] Contrast validation script verifies WCAG AA for all 28 palettes (light + dark)
-- [ ] Token parity tests confirm light/dark mode produce equivalent token sets
+- [ ] Token parity tests confirm each palette token uses `light-dark()` with both mode values in a single declaration (parity is structural with `light-dark()`)
 - [ ] Snapshot tests of generated CSS outputs detect unintended regressions
 - [ ] Playwright visual regression of `apps/showcase/` established as baseline
 
