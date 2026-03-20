@@ -5,6 +5,7 @@ import type { PanelKey } from '../app.js';
 import { ALL_SCHEMAS } from '../constants.js';
 
 const NAV_ITEMS: { key: PanelKey; label: string }[] = [
+  { key: 'home', label: 'Home' },
   { key: 'colors', label: 'Colors' },
   { key: 'typography', label: 'Typography' },
   { key: 'spacing', label: 'Spacing' },
