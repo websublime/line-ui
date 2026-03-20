@@ -397,9 +397,9 @@ Page section wrapper:
 
 - **Dark is the default.** The `light` boolean attribute toggles ON for light mode. See §10 Decision D4.
 - Persists in `localStorage('line-mode')` as `'dark'` or `'light'`
-- Toggles `html.dark` / `html.light` class on `document.documentElement`
-- `color-scheme: dark` by default on `<html>`, `color-scheme: light` on `html.light`
-- `<html class="dark">` set in `index.html` to prevent FOUC before JS hydrates
+- Primary trigger: sets `document.documentElement.style.colorScheme` to `'dark'` or `'light'` (triggers all `light-dark()` tokens)
+- Secondary trigger: toggles `.dark` / `.light` class on `document.documentElement` (triggers shadow token overrides)
+- `<html class="dark" style="color-scheme: dark">` set in `index.html` to prevent FOUC before JS hydrates
 - Uses `:host([light])` CSS selectors in components (cross-browser; `:host-context()` is NOT supported in Firefox/Safari)
 - Smooth transition via `--line-duration-moderate-1` and `--line-ease-2` tokens
 
@@ -538,7 +538,7 @@ Build as needed during page implementation. `sc-token-card`, `sc-code-block`, an
 
 **Decision:** Dark mode is the default. The `light` boolean property/attribute is toggled ON for light mode. Uses `:host([light])` CSS selectors.
 
-**Why:** (1) `:host-context()` has no Firefox/Safari support — a Chrome-only feature. `:host([light])` is cross-browser. (2) Design system showcases look best in dark mode. (3) `<html class="dark">` + `<body class="line-schema-violet">` set in index.html prevents FOUC before JS hydrates.
+**Why:** (1) `:host-context()` has no Firefox/Safari support — a Chrome-only feature. `:host([light])` is cross-browser. (2) Design system showcases look best in dark mode. (3) `<html class="dark" style="color-scheme: dark">` + `<body class="line-schema-violet">` set in index.html prevents FOUC before JS hydrates. The primary mode trigger is `style.colorScheme` (for `light-dark()` tokens); the `.dark` class is secondary (for shadow token overrides).
 
 **Supersedes:** Original spec §6.1 (toggle between html.dark/html.light).
 
