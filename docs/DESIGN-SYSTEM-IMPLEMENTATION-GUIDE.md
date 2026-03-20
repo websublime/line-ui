@@ -485,7 +485,7 @@ All 12 palette levels use `light-dark()` to declare both mode values in a single
 }
 ```
 
-**Contrast token rule:** The contrast token is determined by the level-9 colour in each mode. In dark mode, level-9 becomes a much darker shade, so ALL palettes use `#fff` as their contrast color in dark mode. Only the light mode value differs across palettes (some use `#000`, some use `#fff`).
+**Contrast token rule:** The contrast token is determined by the level-9 colour in each mode (this value is resolved at build time, not via `light-dark()`). In dark mode, level-9 becomes a much darker shade, so ALL palettes use `#fff` as their contrast color in dark mode. Only the light mode value differs across palettes (some use `#000`, some use `#fff`).
 
 ### Step 3.2 — Update all 28 schema files
 
