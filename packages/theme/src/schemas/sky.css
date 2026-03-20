@@ -1,207 +1,106 @@
 :where(.line-schema-sky) {
-  --line-background: var(--line-sky-1); /* App background (-1) */
-  --line-subtle-background: var(--line-sky-2); /* Subtle background (-2) */
-  --line-ui-background: var(--line-sky-3); /* UI element background (-3) */
-  --line-ui-hover-background: var(--line-sky-4); /* Hovered UI element background  (-4)*/
-  --line-ui-active-background: var(--line-sky-5); /* Active / Selected UI element background (-5) */
-  --line-subtle-border: var(--line-sky-6); /* Subtle borders and separators (-6) */
-  --line-ui-border: var(--line-sky-7); /* UI element border and focus rings (-7) */
-  --line-ui-border-hover: var(--line-sky-8); /* Hovered UI element border (-8) */
-  --line-solid-background: var(--line-sky-9); /* Solid backgrounds (-9) */
-  --line-solid-hover: var(--line-sky-10); /* Hovered solid backgrounds (-10) */
-  --line-low-contrast: var(--line-sky-11); /* Low-contrast text (-11) */
-  --line-high-contrast: var(--line-sky-12); /* High-contrast text (-12) */
-  --line-light: var(--line-sky-1); /* Light text */
+  --line-background: light-dark(var(--line-sky-1), var(--line-sky-12)); /* App background (-1) */
+  --line-subtle-background: light-dark(var(--line-sky-2), var(--line-sky-11)); /* Subtle background (-2) */
+  --line-ui-background: light-dark(var(--line-sky-3), var(--line-sky-10)); /* UI element background (-3) */
+  --line-ui-hover-background: light-dark(var(--line-sky-4), var(--line-sky-9)); /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: light-dark(
+    var(--line-sky-5),
+    var(--line-sky-8)
+  ); /* Active / Selected UI element background (-5) */
+  --line-subtle-border: light-dark(var(--line-sky-6), var(--line-sky-7)); /* Subtle borders and separators (-6) */
+  --line-ui-border: light-dark(var(--line-sky-7), var(--line-sky-6)); /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: light-dark(var(--line-sky-8), var(--line-sky-5)); /* Hovered UI element border (-8) */
+  --line-solid-background: light-dark(var(--line-sky-9), var(--line-sky-4)); /* Solid backgrounds (-9) */
+  --line-solid-hover: light-dark(var(--line-sky-10), var(--line-sky-3)); /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: light-dark(var(--line-sky-11), var(--line-sky-2)); /* Low-contrast text (-11) */
+  --line-high-contrast: light-dark(var(--line-sky-12), var(--line-sky-1)); /* High-contrast text (-12) */
+  --line-light: light-dark(var(--line-sky-1), var(--line-sky-12)); /* Light text */
   --line-white: var(--line-sky-1); /* White text */
   --line-black: var(--line-sky-12); /* Black text */
-  --line-dark: var(--line-sky-12); /* Dark text */
-  --line-solid-text: var(--line-sky-contrast); /* Solid background text */
-}
-
-:is(.dark) :where(.line-schema-sky) {
-  --line-background: var(--line-sky-12); /* App background (-1) */
-  --line-subtle-background: var(--line-sky-11); /* Subtle background (-2) */
-  --line-ui-background: var(--line-sky-10); /* UI element background (-3) */
-  --line-ui-hover-background: var(--line-sky-9); /* Hovered UI element background  (-4)*/
-  --line-ui-active-background: var(--line-sky-8); /* Active / Selected UI element background (-5) */
-  --line-subtle-border: var(--line-sky-7); /* Subtle borders and separators (-6) */
-  --line-ui-border: var(--line-sky-6); /* UI element border and focus rings (-7) */
-  --line-ui-border-hover: var(--line-sky-5); /* Hovered UI element border (-8) */
-  --line-solid-background: var(--line-sky-4); /* Solid backgrounds (-9) */
-  --line-solid-hover: var(--line-sky-3); /* Hovered solid backgrounds (-10) */
-  --line-low-contrast: var(--line-sky-2); /* Low-contrast text (-11) */
-  --line-high-contrast: var(--line-sky-1); /* High-contrast text (-12) */
-  --line-light: var(--line-sky-12); /* Light text */
-  --line-white: var(--line-sky-1); /* White text */
-  --line-black: var(--line-sky-12); /* Black text */
-  --line-dark: var(--line-sky-1); /* Dark text */
+  --line-dark: light-dark(var(--line-sky-12), var(--line-sky-1)); /* Dark text */
   --line-solid-text: var(--line-sky-contrast); /* Solid background text */
 }
 
 :where(.line-is-sky) {
   color: var(--line-sky-contrast);
-  background-color: var(--line-sky-9);
+  background-color: light-dark(var(--line-sky-9), var(--line-sky-4));
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--line-sky-10);
-  }
-}
-
-:is(.dark) :where(.line-is-sky) {
-  color: var(--line-sky-contrast);
-  background-color: var(--line-sky-4);
-  transition: all ease-in-out 150ms;
-
-  &:hover {
-    background-color: var(--line-sky-3);
+    background-color: light-dark(var(--line-sky-10), var(--line-sky-3));
   }
 }
 
 :where(.line-is-sky-color) {
-  color: var(--line-sky-12);
-}
-
-:is(.dark) :where(.line-is-sky-color) {
-  color: var(--line-sky-1);
+  color: light-dark(var(--line-sky-12), var(--line-sky-1));
 }
 
 :where(.line-is-sky-low-contrast) {
-  color: var(--line-sky-11);
-}
-
-:is(.dark) :where(.line-is-sky-low-contrast) {
-  color: var(--line-sky-2);
+  color: light-dark(var(--line-sky-11), var(--line-sky-2));
 }
 
 :where(.line-is-sky-high-contrast) {
-  color: var(--line-sky-12);
-}
-
-:is(.dark) :where(.line-is-sky-high-contrast) {
-  color: var(--line-sky-1);
+  color: light-dark(var(--line-sky-12), var(--line-sky-1));
 }
 
 :where(.line-is-sky-background) {
-  background-color: var(--line-sky-1);
-}
-
-:is(.dark) :where(.line-is-sky-background) {
-  background-color: var(--line-sky-12);
+  background-color: light-dark(var(--line-sky-1), var(--line-sky-12));
 }
 
 :where(.line-is-sky-subtle-background) {
-  background-color: var(--line-sky-2);
-}
-
-:is(.dark) :where(.line-is-sky-subtle-background) {
-  background-color: var(--line-sky-11);
+  background-color: light-dark(var(--line-sky-2), var(--line-sky-11));
 }
 
 :where(.line-is-sky-ui-background) {
-  background-color: var(--line-sky-3);
+  background-color: light-dark(var(--line-sky-3), var(--line-sky-10));
 
   &:hover {
-    background-color: var(--line-sky-4);
-  }
-}
-
-:is(.dark) :where(.line-is-sky-ui-background) {
-  background-color: var(--line-sky-10);
-
-  &:hover {
-    background-color: var(--line-sky-9);
+    background-color: light-dark(var(--line-sky-4), var(--line-sky-9));
   }
 }
 
 :where(.line-is-sky-ui-hover-background) {
-  background-color: var(--line-sky-4);
-}
-
-:is(.dark) :where(.line-is-sky-ui-hover-background) {
-  background-color: var(--line-sky-9);
+  background-color: light-dark(var(--line-sky-4), var(--line-sky-9));
 }
 
 :where(.line-is-sky-ui-active-background) {
-  background-color: var(--line-sky-5);
-}
-
-:is(.dark) :where(.line-is-sky-ui-active-background) {
-  background-color: var(--line-sky-8);
+  background-color: light-dark(var(--line-sky-5), var(--line-sky-8));
 }
 
 :where(.line-is-sky-subtle-element-background) {
-  background-color: var(--line-sky-6);
-}
-
-:is(.dark) :where(.line-is-sky-subtle-element-background) {
-  background-color: var(--line-sky-7);
+  background-color: light-dark(var(--line-sky-6), var(--line-sky-7));
 }
 
 :where(.line-is-sky-ui-element-background) {
-  background-color: var(--line-sky-7);
-}
-
-:is(.dark) :where(.line-is-sky-ui-element-background) {
-  background-color: var(--line-sky-6);
+  background-color: light-dark(var(--line-sky-7), var(--line-sky-6));
 }
 
 :where(.line-is-sky-ui-border-hover-background) {
-  background-color: var(--line-sky-8);
-}
-
-:is(.dark) :where(.line-is-sky-ui-border-hover-background) {
-  background-color: var(--line-sky-5);
+  background-color: light-dark(var(--line-sky-8), var(--line-sky-5));
 }
 
 :where(.line-is-sky-solid-background) {
-  background-color: var(--line-sky-9);
-}
-
-:is(.dark) :where(.line-is-sky-solid-background) {
-  background-color: var(--line-sky-4);
+  background-color: light-dark(var(--line-sky-9), var(--line-sky-4));
 }
 
 :where(.line-is-sky-hover-solid-background) {
-  background-color: var(--line-sky-10);
-}
-
-:is(.dark) :where(.line-is-sky-hover-solid-background) {
-  background-color: var(--line-sky-3);
+  background-color: light-dark(var(--line-sky-10), var(--line-sky-3));
 }
 
 :where(.line-is-sky-low-contrast-background) {
-  background-color: var(--line-sky-11);
-}
-
-:is(.dark) :where(.line-is-sky-low-contrast-background) {
-  background-color: var(--line-sky-2);
+  background-color: light-dark(var(--line-sky-11), var(--line-sky-2));
 }
 
 :where(.line-is-sky-high-contrast-background) {
-  background-color: var(--line-sky-12);
-}
-
-:is(.dark) :where(.line-is-sky-high-contrast-background) {
-  background-color: var(--line-sky-1);
+  background-color: light-dark(var(--line-sky-12), var(--line-sky-1));
 }
 
 :where(.line-is-sky-border) {
-  outline-color: var(--line-sky-7);
-  border-color: var(--line-sky-7);
+  outline-color: light-dark(var(--line-sky-7), var(--line-sky-6));
+  border-color: light-dark(var(--line-sky-7), var(--line-sky-6));
 
   &:hover {
-    outline-color: var(--line-sky-8);
-    border-color: var(--line-sky-8);
-  }
-}
-
-:is(.dark) :where(.line-is-sky-border) {
-  outline-color: var(--line-sky-6);
-  border-color: var(--line-sky-6);
-
-  &:hover {
-    outline-color: var(--line-sky-5);
-    border-color: var(--line-sky-5);
+    outline-color: light-dark(var(--line-sky-8), var(--line-sky-5));
+    border-color: light-dark(var(--line-sky-8), var(--line-sky-5));
   }
 }

@@ -1,207 +1,115 @@
 :where(.line-schema-crimson) {
-  --line-background: var(--line-crimson-1); /* App background (-1) */
-  --line-subtle-background: var(--line-crimson-2); /* Subtle background (-2) */
-  --line-ui-background: var(--line-crimson-3); /* UI element background (-3) */
-  --line-ui-hover-background: var(--line-crimson-4); /* Hovered UI element background  (-4)*/
-  --line-ui-active-background: var(--line-crimson-5); /* Active / Selected UI element background (-5) */
-  --line-subtle-border: var(--line-crimson-6); /* Subtle borders and separators (-6) */
-  --line-ui-border: var(--line-crimson-7); /* UI element border and focus rings (-7) */
-  --line-ui-border-hover: var(--line-crimson-8); /* Hovered UI element border (-8) */
-  --line-solid-background: var(--line-crimson-9); /* Solid backgrounds (-9) */
-  --line-solid-hover: var(--line-crimson-10); /* Hovered solid backgrounds (-10) */
-  --line-low-contrast: var(--line-crimson-11); /* Low-contrast text (-11) */
-  --line-high-contrast: var(--line-crimson-12); /* High-contrast text (-12) */
-  --line-light: var(--line-crimson-1); /* Light text */
+  --line-background: light-dark(var(--line-crimson-1), var(--line-crimson-12)); /* App background (-1) */
+  --line-subtle-background: light-dark(var(--line-crimson-2), var(--line-crimson-11)); /* Subtle background (-2) */
+  --line-ui-background: light-dark(var(--line-crimson-3), var(--line-crimson-10)); /* UI element background (-3) */
+  --line-ui-hover-background: light-dark(
+    var(--line-crimson-4),
+    var(--line-crimson-9)
+  ); /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: light-dark(
+    var(--line-crimson-5),
+    var(--line-crimson-8)
+  ); /* Active / Selected UI element background (-5) */
+  --line-subtle-border: light-dark(
+    var(--line-crimson-6),
+    var(--line-crimson-7)
+  ); /* Subtle borders and separators (-6) */
+  --line-ui-border: light-dark(
+    var(--line-crimson-7),
+    var(--line-crimson-6)
+  ); /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: light-dark(var(--line-crimson-8), var(--line-crimson-5)); /* Hovered UI element border (-8) */
+  --line-solid-background: light-dark(var(--line-crimson-9), var(--line-crimson-4)); /* Solid backgrounds (-9) */
+  --line-solid-hover: light-dark(var(--line-crimson-10), var(--line-crimson-3)); /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: light-dark(var(--line-crimson-11), var(--line-crimson-2)); /* Low-contrast text (-11) */
+  --line-high-contrast: light-dark(var(--line-crimson-12), var(--line-crimson-1)); /* High-contrast text (-12) */
+  --line-light: light-dark(var(--line-crimson-1), var(--line-crimson-12)); /* Light text */
   --line-white: var(--line-crimson-1); /* White text */
   --line-black: var(--line-crimson-12); /* Black text */
-  --line-dark: var(--line-crimson-12); /* Dark text */
-  --line-solid-text: var(--line-crimson-contrast); /* Solid background text */
-}
-
-:is(.dark) :where(.line-schema-crimson) {
-  --line-background: var(--line-crimson-12); /* App background (-1) */
-  --line-subtle-background: var(--line-crimson-11); /* Subtle background (-2) */
-  --line-ui-background: var(--line-crimson-10); /* UI element background (-3) */
-  --line-ui-hover-background: var(--line-crimson-9); /* Hovered UI element background  (-4)*/
-  --line-ui-active-background: var(--line-crimson-8); /* Active / Selected UI element background (-5) */
-  --line-subtle-border: var(--line-crimson-7); /* Subtle borders and separators (-6) */
-  --line-ui-border: var(--line-crimson-6); /* UI element border and focus rings (-7) */
-  --line-ui-border-hover: var(--line-crimson-5); /* Hovered UI element border (-8) */
-  --line-solid-background: var(--line-crimson-4); /* Solid backgrounds (-9) */
-  --line-solid-hover: var(--line-crimson-3); /* Hovered solid backgrounds (-10) */
-  --line-low-contrast: var(--line-crimson-2); /* Low-contrast text (-11) */
-  --line-high-contrast: var(--line-crimson-1); /* High-contrast text (-12) */
-  --line-light: var(--line-crimson-12); /* Light text */
-  --line-white: var(--line-crimson-1); /* White text */
-  --line-black: var(--line-crimson-12); /* Black text */
-  --line-dark: var(--line-crimson-1); /* Dark text */
+  --line-dark: light-dark(var(--line-crimson-12), var(--line-crimson-1)); /* Dark text */
   --line-solid-text: var(--line-crimson-contrast); /* Solid background text */
 }
 
 :where(.line-is-crimson) {
   color: var(--line-crimson-contrast);
-  background-color: var(--line-crimson-9);
+  background-color: light-dark(var(--line-crimson-9), var(--line-crimson-4));
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--line-crimson-10);
-  }
-}
-
-:is(.dark) :where(.line-is-crimson) {
-  color: var(--line-crimson-contrast);
-  background-color: var(--line-crimson-4);
-  transition: all ease-in-out 150ms;
-
-  &:hover {
-    background-color: var(--line-crimson-3);
+    background-color: light-dark(var(--line-crimson-10), var(--line-crimson-3));
   }
 }
 
 :where(.line-is-crimson-color) {
-  color: var(--line-crimson-12);
-}
-
-:is(.dark) :where(.line-is-crimson-color) {
-  color: var(--line-crimson-1);
+  color: light-dark(var(--line-crimson-12), var(--line-crimson-1));
 }
 
 :where(.line-is-crimson-low-contrast) {
-  color: var(--line-crimson-11);
-}
-
-:is(.dark) :where(.line-is-crimson-low-contrast) {
-  color: var(--line-crimson-2);
+  color: light-dark(var(--line-crimson-11), var(--line-crimson-2));
 }
 
 :where(.line-is-crimson-high-contrast) {
-  color: var(--line-crimson-12);
-}
-
-:is(.dark) :where(.line-is-crimson-high-contrast) {
-  color: var(--line-crimson-1);
+  color: light-dark(var(--line-crimson-12), var(--line-crimson-1));
 }
 
 :where(.line-is-crimson-background) {
-  background-color: var(--line-crimson-1);
-}
-
-:is(.dark) :where(.line-is-crimson-background) {
-  background-color: var(--line-crimson-12);
+  background-color: light-dark(var(--line-crimson-1), var(--line-crimson-12));
 }
 
 :where(.line-is-crimson-subtle-background) {
-  background-color: var(--line-crimson-2);
-}
-
-:is(.dark) :where(.line-is-crimson-subtle-background) {
-  background-color: var(--line-crimson-11);
+  background-color: light-dark(var(--line-crimson-2), var(--line-crimson-11));
 }
 
 :where(.line-is-crimson-ui-background) {
-  background-color: var(--line-crimson-3);
+  background-color: light-dark(var(--line-crimson-3), var(--line-crimson-10));
 
   &:hover {
-    background-color: var(--line-crimson-4);
-  }
-}
-
-:is(.dark) :where(.line-is-crimson-ui-background) {
-  background-color: var(--line-crimson-10);
-
-  &:hover {
-    background-color: var(--line-crimson-9);
+    background-color: light-dark(var(--line-crimson-4), var(--line-crimson-9));
   }
 }
 
 :where(.line-is-crimson-ui-hover-background) {
-  background-color: var(--line-crimson-4);
-}
-
-:is(.dark) :where(.line-is-crimson-ui-hover-background) {
-  background-color: var(--line-crimson-9);
+  background-color: light-dark(var(--line-crimson-4), var(--line-crimson-9));
 }
 
 :where(.line-is-crimson-ui-active-background) {
-  background-color: var(--line-crimson-5);
-}
-
-:is(.dark) :where(.line-is-crimson-ui-active-background) {
-  background-color: var(--line-crimson-8);
+  background-color: light-dark(var(--line-crimson-5), var(--line-crimson-8));
 }
 
 :where(.line-is-crimson-subtle-element-background) {
-  background-color: var(--line-crimson-6);
-}
-
-:is(.dark) :where(.line-is-crimson-subtle-element-background) {
-  background-color: var(--line-crimson-7);
+  background-color: light-dark(var(--line-crimson-6), var(--line-crimson-7));
 }
 
 :where(.line-is-crimson-ui-element-background) {
-  background-color: var(--line-crimson-7);
-}
-
-:is(.dark) :where(.line-is-crimson-ui-element-background) {
-  background-color: var(--line-crimson-6);
+  background-color: light-dark(var(--line-crimson-7), var(--line-crimson-6));
 }
 
 :where(.line-is-crimson-ui-border-hover-background) {
-  background-color: var(--line-crimson-8);
-}
-
-:is(.dark) :where(.line-is-crimson-ui-border-hover-background) {
-  background-color: var(--line-crimson-5);
+  background-color: light-dark(var(--line-crimson-8), var(--line-crimson-5));
 }
 
 :where(.line-is-crimson-solid-background) {
-  background-color: var(--line-crimson-9);
-}
-
-:is(.dark) :where(.line-is-crimson-solid-background) {
-  background-color: var(--line-crimson-4);
+  background-color: light-dark(var(--line-crimson-9), var(--line-crimson-4));
 }
 
 :where(.line-is-crimson-hover-solid-background) {
-  background-color: var(--line-crimson-10);
-}
-
-:is(.dark) :where(.line-is-crimson-hover-solid-background) {
-  background-color: var(--line-crimson-3);
+  background-color: light-dark(var(--line-crimson-10), var(--line-crimson-3));
 }
 
 :where(.line-is-crimson-low-contrast-background) {
-  background-color: var(--line-crimson-11);
-}
-
-:is(.dark) :where(.line-is-crimson-low-contrast-background) {
-  background-color: var(--line-crimson-2);
+  background-color: light-dark(var(--line-crimson-11), var(--line-crimson-2));
 }
 
 :where(.line-is-crimson-high-contrast-background) {
-  background-color: var(--line-crimson-12);
-}
-
-:is(.dark) :where(.line-is-crimson-high-contrast-background) {
-  background-color: var(--line-crimson-1);
+  background-color: light-dark(var(--line-crimson-12), var(--line-crimson-1));
 }
 
 :where(.line-is-crimson-border) {
-  outline-color: var(--line-crimson-7);
-  border-color: var(--line-crimson-7);
+  outline-color: light-dark(var(--line-crimson-7), var(--line-crimson-6));
+  border-color: light-dark(var(--line-crimson-7), var(--line-crimson-6));
 
   &:hover {
-    outline-color: var(--line-crimson-8);
-    border-color: var(--line-crimson-8);
-  }
-}
-
-:is(.dark) :where(.line-is-crimson-border) {
-  outline-color: var(--line-crimson-6);
-  border-color: var(--line-crimson-6);
-
-  &:hover {
-    outline-color: var(--line-crimson-5);
-    border-color: var(--line-crimson-5);
+    outline-color: light-dark(var(--line-crimson-8), var(--line-crimson-5));
+    border-color: light-dark(var(--line-crimson-8), var(--line-crimson-5));
   }
 }

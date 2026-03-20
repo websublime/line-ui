@@ -2,21 +2,24 @@
    colors-absolute.css — line://ui Absolute Color & Color Scheme Tokens
 
    2 absolute color tokens + color-scheme declarations.
+   color-scheme: light dark follows OS preference by default.
+   Override with .dark or .light class, or style.colorScheme property.
 
    Explicitly defined within the line://ui token system.
    ═══════════════════════════════════════════════════════════ */
 
 :where(html) {
+  color-scheme: light dark;
   --line-white: #f1f1f1;
   --line-black: #030303;
 }
 
-/* ── Color Scheme ── */
+/* ── Color Scheme Overrides ── */
 
-:where(html):is(.dark) {
+:where(html).dark {
   color-scheme: dark;
 }
 
-:where(html):is(.light) {
+:where(html).light {
   color-scheme: light;
 }

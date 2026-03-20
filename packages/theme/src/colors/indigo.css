@@ -1,31 +1,15 @@
 :where(html) {
-  --line-indigo-1: hsl(225, 60.0%, 99.4%);
-  --line-indigo-2: hsl(223, 100%, 98.6%);
-  --line-indigo-3: hsl(223, 98.4%, 97.1%);
-  --line-indigo-4: hsl(223, 92.9%, 95.0%);
-  --line-indigo-5: hsl(224, 87.1%, 92.0%);
-  --line-indigo-6: hsl(224, 81.9%, 87.8%);
-  --line-indigo-7: hsl(225, 77.4%, 82.1%);
-  --line-indigo-8: hsl(226, 75.4%, 74.5%);
-  --line-indigo-9: hsl(226, 70.0%, 55.5%);
-  --line-indigo-10: hsl(226, 58.6%, 51.3%);
-  --line-indigo-11: hsl(226, 55.0%, 45.0%);
-  --line-indigo-12: hsl(226, 50.0%, 24.0%);
-  --line-indigo-contrast: #fff;
-}
-
-:where(html):is(.dark) {
-  --line-indigo-12: hsl(229, 24.0%, 10.0%);
-  --line-indigo-11: hsl(230, 36.4%, 12.9%);
-  --line-indigo-10: hsl(228, 42.7%, 18.1%);
-  --line-indigo-9: hsl(227, 45.6%, 21.4%);
-  --line-indigo-8: hsl(227, 47.8%, 24.4%);
-  --line-indigo-7: hsl(226, 50.3%, 28.8%);
-  --line-indigo-6: hsl(226, 53.3%, 36.6%);
-  --line-indigo-5: hsl(226, 60.0%, 52.0%);
-  --line-indigo-4: hsl(226, 70.0%, 55.5%);
-  --line-indigo-3: hsl(230, 73.9%, 63.3%);
-  --line-indigo-2: hsl(235, 100%, 80.0%);
-  --line-indigo-1: hsl(235, 93.0%, 93.0%);
+  --line-indigo-1: light-dark(hsl(225, 60.0%, 99.4%), hsl(235, 93.0%, 93.0%));
+  --line-indigo-2: light-dark(hsl(223, 100%, 98.6%), hsl(235, 100%, 80.0%));
+  --line-indigo-3: light-dark(hsl(223, 98.4%, 97.1%), hsl(230, 73.9%, 63.3%));
+  --line-indigo-4: light-dark(hsl(223, 92.9%, 95.0%), hsl(226, 70.0%, 55.5%));
+  --line-indigo-5: light-dark(hsl(224, 87.1%, 92.0%), hsl(226, 60.0%, 52.0%));
+  --line-indigo-6: light-dark(hsl(224, 81.9%, 87.8%), hsl(226, 53.3%, 36.6%));
+  --line-indigo-7: light-dark(hsl(225, 77.4%, 82.1%), hsl(226, 50.3%, 28.8%));
+  --line-indigo-8: light-dark(hsl(226, 75.4%, 74.5%), hsl(227, 47.8%, 24.4%));
+  --line-indigo-9: light-dark(hsl(226, 70.0%, 55.5%), hsl(227, 45.6%, 21.4%));
+  --line-indigo-10: light-dark(hsl(226, 58.6%, 51.3%), hsl(228, 42.7%, 18.1%));
+  --line-indigo-11: light-dark(hsl(226, 55.0%, 45.0%), hsl(230, 36.4%, 12.9%));
+  --line-indigo-12: light-dark(hsl(226, 50.0%, 24.0%), hsl(229, 24.0%, 10.0%));
   --line-indigo-contrast: #fff;
 }

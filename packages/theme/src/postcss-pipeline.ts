@@ -54,6 +54,7 @@ export async function createPlugins(): Promise<AcceptedPlugin[]> {
         'focus-visible-pseudo-class': false,
         'focus-within-pseudo-class': false,
         'gap-properties': false,
+        'light-dark-function': false,
         'logical-properties-and-values': false,
         'not-pseudo-class': false,
         'place-properties': false,

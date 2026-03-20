@@ -1,207 +1,109 @@
 :where(.line-schema-slate) {
-  --line-background: var(--line-slate-1); /* App background (-1) */
-  --line-subtle-background: var(--line-slate-2); /* Subtle background (-2) */
-  --line-ui-background: var(--line-slate-3); /* UI element background (-3) */
-  --line-ui-hover-background: var(--line-slate-4); /* Hovered UI element background  (-4)*/
-  --line-ui-active-background: var(--line-slate-5); /* Active / Selected UI element background (-5) */
-  --line-subtle-border: var(--line-slate-6); /* Subtle borders and separators (-6) */
-  --line-ui-border: var(--line-slate-7); /* UI element border and focus rings (-7) */
-  --line-ui-border-hover: var(--line-slate-8); /* Hovered UI element border (-8) */
-  --line-solid-background: var(--line-slate-9); /* Solid backgrounds (-9) */
-  --line-solid-hover: var(--line-slate-10); /* Hovered solid backgrounds (-10) */
-  --line-low-contrast: var(--line-slate-11); /* Low-contrast text (-11) */
-  --line-high-contrast: var(--line-slate-12); /* High-contrast text (-12) */
-  --line-light: var(--line-slate-1); /* Light text */
+  --line-background: light-dark(var(--line-slate-1), var(--line-slate-12)); /* App background (-1) */
+  --line-subtle-background: light-dark(var(--line-slate-2), var(--line-slate-11)); /* Subtle background (-2) */
+  --line-ui-background: light-dark(var(--line-slate-3), var(--line-slate-10)); /* UI element background (-3) */
+  --line-ui-hover-background: light-dark(
+    var(--line-slate-4),
+    var(--line-slate-9)
+  ); /* Hovered UI element background  (-4)*/
+  --line-ui-active-background: light-dark(
+    var(--line-slate-5),
+    var(--line-slate-8)
+  ); /* Active / Selected UI element background (-5) */
+  --line-subtle-border: light-dark(var(--line-slate-6), var(--line-slate-7)); /* Subtle borders and separators (-6) */
+  --line-ui-border: light-dark(var(--line-slate-7), var(--line-slate-6)); /* UI element border and focus rings (-7) */
+  --line-ui-border-hover: light-dark(var(--line-slate-8), var(--line-slate-5)); /* Hovered UI element border (-8) */
+  --line-solid-background: light-dark(var(--line-slate-9), var(--line-slate-4)); /* Solid backgrounds (-9) */
+  --line-solid-hover: light-dark(var(--line-slate-10), var(--line-slate-3)); /* Hovered solid backgrounds (-10) */
+  --line-low-contrast: light-dark(var(--line-slate-11), var(--line-slate-2)); /* Low-contrast text (-11) */
+  --line-high-contrast: light-dark(var(--line-slate-12), var(--line-slate-1)); /* High-contrast text (-12) */
+  --line-light: light-dark(var(--line-slate-1), var(--line-slate-12)); /* Light text */
   --line-white: var(--line-slate-1); /* White text */
   --line-black: var(--line-slate-12); /* Black text */
-  --line-dark: var(--line-slate-12); /* Dark text */
-  --line-solid-text: var(--line-slate-contrast); /* Solid background text */
-}
-
-:is(.dark) :where(.line-schema-slate) {
-  --line-background: var(--line-slate-12); /* App background (-1) */
-  --line-subtle-background: var(--line-slate-11); /* Subtle background (-2) */
-  --line-ui-background: var(--line-slate-10); /* UI element background (-3) */
-  --line-ui-hover-background: var(--line-slate-9); /* Hovered UI element background  (-4)*/
-  --line-ui-active-background: var(--line-slate-8); /* Active / Selected UI element background (-5) */
-  --line-subtle-border: var(--line-slate-7); /* Subtle borders and separators (-6) */
-  --line-ui-border: var(--line-slate-6); /* UI element border and focus rings (-7) */
-  --line-ui-border-hover: var(--line-slate-5); /* Hovered UI element border (-8) */
-  --line-solid-background: var(--line-slate-4); /* Solid backgrounds (-9) */
-  --line-solid-hover: var(--line-slate-3); /* Hovered solid backgrounds (-10) */
-  --line-low-contrast: var(--line-slate-2); /* Low-contrast text (-11) */
-  --line-high-contrast: var(--line-slate-1); /* High-contrast text (-12) */
-  --line-light: var(--line-slate-12); /* Light text */
-  --line-white: var(--line-slate-1); /* White text */
-  --line-black: var(--line-slate-12); /* Black text */
-  --line-dark: var(--line-slate-1); /* Dark text */
+  --line-dark: light-dark(var(--line-slate-12), var(--line-slate-1)); /* Dark text */
   --line-solid-text: var(--line-slate-contrast); /* Solid background text */
 }
 
 :where(.line-is-slate) {
   color: var(--line-slate-contrast);
-  background-color: var(--line-slate-9);
+  background-color: light-dark(var(--line-slate-9), var(--line-slate-4));
   transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--line-slate-10);
-  }
-}
-
-:is(.dark) :where(.line-is-slate) {
-  color: var(--line-slate-contrast);
-  background-color: var(--line-slate-4);
-  transition: all ease-in-out 150ms;
-
-  &:hover {
-    background-color: var(--line-slate-3);
+    background-color: light-dark(var(--line-slate-10), var(--line-slate-3));
   }
 }
 
 :where(.line-is-slate-color) {
-  color: var(--line-slate-12);
-}
-
-:is(.dark) :where(.line-is-slate-color) {
-  color: var(--line-slate-1);
+  color: light-dark(var(--line-slate-12), var(--line-slate-1));
 }
 
 :where(.line-is-slate-low-contrast) {
-  color: var(--line-slate-11);
-}
-
-:is(.dark) :where(.line-is-slate-low-contrast) {
-  color: var(--line-slate-2);
+  color: light-dark(var(--line-slate-11), var(--line-slate-2));
 }
 
 :where(.line-is-slate-high-contrast) {
-  color: var(--line-slate-12);
-}
-
-:is(.dark) :where(.line-is-slate-high-contrast) {
-  color: var(--line-slate-1);
+  color: light-dark(var(--line-slate-12), var(--line-slate-1));
 }
 
 :where(.line-is-slate-background) {
-  background-color: var(--line-slate-1);
-}
-
-:is(.dark) :where(.line-is-slate-background) {
-  background-color: var(--line-slate-12);
+  background-color: light-dark(var(--line-slate-1), var(--line-slate-12));
 }
 
 :where(.line-is-slate-subtle-background) {
-  background-color: var(--line-slate-2);
-}
-
-:is(.dark) :where(.line-is-slate-subtle-background) {
-  background-color: var(--line-slate-11);
+  background-color: light-dark(var(--line-slate-2), var(--line-slate-11));
 }
 
 :where(.line-is-slate-ui-background) {
-  background-color: var(--line-slate-3);
+  background-color: light-dark(var(--line-slate-3), var(--line-slate-10));
 
   &:hover {
-    background-color: var(--line-slate-4);
-  }
-}
-
-:is(.dark) :where(.line-is-slate-ui-background) {
-  background-color: var(--line-slate-10);
-
-  &:hover {
-    background-color: var(--line-slate-9);
+    background-color: light-dark(var(--line-slate-4), var(--line-slate-9));
   }
 }
 
 :where(.line-is-slate-ui-hover-background) {
-  background-color: var(--line-slate-4);
-}
-
-:is(.dark) :where(.line-is-slate-ui-hover-background) {
-  background-color: var(--line-slate-9);
+  background-color: light-dark(var(--line-slate-4), var(--line-slate-9));
 }
 
 :where(.line-is-slate-ui-active-background) {
-  background-color: var(--line-slate-5);
-}
-
-:is(.dark) :where(.line-is-slate-ui-active-background) {
-  background-color: var(--line-slate-8);
+  background-color: light-dark(var(--line-slate-5), var(--line-slate-8));
 }
 
 :where(.line-is-slate-subtle-element-background) {
-  background-color: var(--line-slate-6);
-}
-
-:is(.dark) :where(.line-is-slate-subtle-element-background) {
-  background-color: var(--line-slate-7);
+  background-color: light-dark(var(--line-slate-6), var(--line-slate-7));
 }
 
 :where(.line-is-slate-ui-element-background) {
-  background-color: var(--line-slate-7);
-}
-
-:is(.dark) :where(.line-is-slate-ui-element-background) {
-  background-color: var(--line-slate-6);
+  background-color: light-dark(var(--line-slate-7), var(--line-slate-6));
 }
 
 :where(.line-is-slate-ui-border-hover-background) {
-  background-color: var(--line-slate-8);
-}
-
-:is(.dark) :where(.line-is-slate-ui-border-hover-background) {
-  background-color: var(--line-slate-5);
+  background-color: light-dark(var(--line-slate-8), var(--line-slate-5));
 }
 
 :where(.line-is-slate-solid-background) {
-  background-color: var(--line-slate-9);
-}
-
-:is(.dark) :where(.line-is-slate-solid-background) {
-  background-color: var(--line-slate-4);
+  background-color: light-dark(var(--line-slate-9), var(--line-slate-4));
 }
 
 :where(.line-is-slate-hover-solid-background) {
-  background-color: var(--line-slate-10);
-}
-
-:is(.dark) :where(.line-is-slate-hover-solid-background) {
-  background-color: var(--line-slate-3);
+  background-color: light-dark(var(--line-slate-10), var(--line-slate-3));
 }
 
 :where(.line-is-slate-low-contrast-background) {
-  background-color: var(--line-slate-11);
-}
-
-:is(.dark) :where(.line-is-slate-low-contrast-background) {
-  background-color: var(--line-slate-2);
+  background-color: light-dark(var(--line-slate-11), var(--line-slate-2));
 }
 
 :where(.line-is-slate-high-contrast-background) {
-  background-color: var(--line-slate-12);
-}
-
-:is(.dark) :where(.line-is-slate-high-contrast-background) {
-  background-color: var(--line-slate-1);
+  background-color: light-dark(var(--line-slate-12), var(--line-slate-1));
 }
 
 :where(.line-is-slate-border) {
-  outline-color: var(--line-slate-7);
-  border-color: var(--line-slate-7);
+  outline-color: light-dark(var(--line-slate-7), var(--line-slate-6));
+  border-color: light-dark(var(--line-slate-7), var(--line-slate-6));
 
   &:hover {
-    outline-color: var(--line-slate-8);
-    border-color: var(--line-slate-8);
-  }
-}
-
-:is(.dark) :where(.line-is-slate-border) {
-  outline-color: var(--line-slate-6);
-  border-color: var(--line-slate-6);
-
-  &:hover {
-    outline-color: var(--line-slate-5);
-    border-color: var(--line-slate-5);
+    outline-color: light-dark(var(--line-slate-8), var(--line-slate-5));
+    border-color: light-dark(var(--line-slate-8), var(--line-slate-5));
   }
 }

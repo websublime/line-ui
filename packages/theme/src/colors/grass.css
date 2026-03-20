@@ -1,30 +1,15 @@
 :where(html) {
-  --line-grass-1: hsl(116, 50.0%, 98.9%);
-  --line-grass-2: hsl(120, 60.0%, 97.1%);
-  --line-grass-3: hsl(120, 53.6%, 94.8%);
-  --line-grass-4: hsl(121, 47.5%, 91.4%);
-  --line-grass-5: hsl(122, 42.6%, 86.5%);
-  --line-grass-6: hsl(124, 39.0%, 79.7%);
-  --line-grass-7: hsl(126, 37.1%, 70.2%);
-  --line-grass-8: hsl(131, 38.1%, 56.3%);
-  --line-grass-9: hsl(131, 41.0%, 46.5%);
-  --line-grass-10: hsl(132, 43.1%, 42.2%);
-  --line-grass-11: hsl(133, 50.0%, 32.5%);
-  --line-grass-12: hsl(131, 30.0%, 18.0%);
+  --line-grass-1: light-dark(hsl(116, 50.0%, 98.9%), hsl(120, 60.0%, 85.0%));
+  --line-grass-2: light-dark(hsl(120, 60.0%, 97.1%), hsl(131, 50.0%, 63.0%));
+  --line-grass-3: light-dark(hsl(120, 53.6%, 94.8%), hsl(131, 41.7%, 55.0%));
+  --line-grass-4: light-dark(hsl(121, 47.5%, 91.4%), hsl(131, 41.0%, 46.5%));
+  --line-grass-5: light-dark(hsl(122, 42.6%, 86.5%), hsl(131, 35.3%, 40.0%));
+  --line-grass-6: light-dark(hsl(124, 39.0%, 79.7%), hsl(135, 34.4%, 27.1%));
+  --line-grass-7: light-dark(hsl(126, 37.1%, 70.2%), hsl(137, 32.3%, 20.6%));
+  --line-grass-8: light-dark(hsl(131, 38.1%, 56.3%), hsl(137, 30.3%, 17.1%));
+  --line-grass-9: light-dark(hsl(131, 41.0%, 46.5%), hsl(138, 28.4%, 14.8%));
+  --line-grass-10: light-dark(hsl(132, 43.1%, 42.2%), hsl(138, 25.8%, 12.5%));
+  --line-grass-11: light-dark(hsl(133, 50.0%, 32.5%), hsl(138, 20.8%, 9.4%));
+  --line-grass-12: light-dark(hsl(131, 30.0%, 18.0%), hsl(146, 30.0%, 7.4%));
   --line-grass-contrast: #000;
-}
-
-:where(html):is(.dark) {
-  --line-grass-12: hsl(146, 30.0%, 7.4%);
-  --line-grass-11: hsl(138, 20.8%, 9.4%);
-  --line-grass-10: hsl(138, 25.8%, 12.5%);
-  --line-grass-9: hsl(138, 28.4%, 14.8%);
-  --line-grass-8: hsl(137, 30.3%, 17.1%);
-  --line-grass-7: hsl(137, 32.3%, 20.6%);
-  --line-grass-6: hsl(135, 34.4%, 27.1%);
-  --line-grass-5: hsl(131, 35.3%, 40.0%);
-  --line-grass-4: hsl(131, 41.0%, 46.5%);
-  --line-grass-3: hsl(131, 41.7%, 55.0%);
-  --line-grass-2: hsl(131, 50.0%, 63.0%);
-  --line-grass-1: hsl(120, 60.0%, 85.0%);
 }

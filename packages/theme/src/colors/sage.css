@@ -1,30 +1,15 @@
 :where(html) {
-  --line-sage-1: hsl(155, 30.0%, 98.8%);
-  --line-sage-2: hsl(150, 14.3%, 97.3%);
-  --line-sage-3: hsl(150, 8.0%, 94.5%);
-  --line-sage-4: hsl(150, 6.0%, 92.0%);
-  --line-sage-5: hsl(150, 4.9%, 89.5%);
-  --line-sage-6: hsl(150, 4.3%, 86.7%);
-  --line-sage-7: hsl(150, 3.7%, 82.8%);
-  --line-sage-8: hsl(150, 2.9%, 72.9%);
-  --line-sage-9: hsl(155, 3.5%, 54.2%);
-  --line-sage-10: hsl(158, 2.9%, 49.3%);
-  --line-sage-11: hsl(155, 3.0%, 38.5%);
-  --line-sage-12: hsl(155, 12.0%, 11.5%);
-  --line-sage-contrast: #000;
-}
-:where(html):is(.dark) {
-  --line-sage-12: hsl(155, 7.0%, 9.2%);
-  --line-sage-11: hsl(150, 7.7%, 10.2%);
-  --line-sage-10: hsl(151, 5.5%, 15.2%);
-  --line-sage-9: hsl(152, 4.7%, 18.3%);
-  --line-sage-8: hsl(153, 4.2%, 21.1%);
-  --line-sage-7: hsl(153, 3.7%, 24.2%);
-  --line-sage-6: hsl(154, 3.3%, 28.7%);
-  --line-sage-5: hsl(156, 2.6%, 37.1%);
-  --line-sage-4: hsl(155, 6.0%, 41.5%);
-  --line-sage-3: hsl(157, 4.6%, 49.2%);
-  --line-sage-2: hsl(155, 5.0%, 68.3%);
-  --line-sage-1: hsl(155, 7.0%, 93.0%);
-  --line-sage-contrast: #fff;
+  --line-sage-1: light-dark(hsl(155, 30.0%, 98.8%), hsl(155, 7.0%, 93.0%));
+  --line-sage-2: light-dark(hsl(150, 14.3%, 97.3%), hsl(155, 5.0%, 68.3%));
+  --line-sage-3: light-dark(hsl(150, 8.0%, 94.5%), hsl(157, 4.6%, 49.2%));
+  --line-sage-4: light-dark(hsl(150, 6.0%, 92.0%), hsl(155, 6.0%, 41.5%));
+  --line-sage-5: light-dark(hsl(150, 4.9%, 89.5%), hsl(156, 2.6%, 37.1%));
+  --line-sage-6: light-dark(hsl(150, 4.3%, 86.7%), hsl(154, 3.3%, 28.7%));
+  --line-sage-7: light-dark(hsl(150, 3.7%, 82.8%), hsl(153, 3.7%, 24.2%));
+  --line-sage-8: light-dark(hsl(150, 2.9%, 72.9%), hsl(153, 4.2%, 21.1%));
+  --line-sage-9: light-dark(hsl(155, 3.5%, 54.2%), hsl(152, 4.7%, 18.3%));
+  --line-sage-10: light-dark(hsl(158, 2.9%, 49.3%), hsl(151, 5.5%, 15.2%));
+  --line-sage-11: light-dark(hsl(155, 3.0%, 38.5%), hsl(150, 7.7%, 10.2%));
+  --line-sage-12: light-dark(hsl(155, 12.0%, 11.5%), hsl(155, 7.0%, 9.2%));
+  --line-sage-contrast: light-dark(#000, #fff);
 }
