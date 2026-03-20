@@ -1,5 +1,5 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 import '../components/sc-section.js';
 import { copyToken } from '../utils/clipboard.js';
@@ -330,6 +330,8 @@ const ANIMATIONS: readonly AnimationToken[] = [
 
 @customElement('sc-page-motion')
 export class ScPageMotion extends LitElement {
+  @property({ type: Boolean, reflect: true }) light = false;
+
   /** Set of easing card IDs currently animating. */
   @state() private _animatingEasings = new Set<string>();
 
@@ -342,6 +344,11 @@ export class ScPageMotion extends LitElement {
   static override styles = css`
     :host {
       display: block;
+      --_bloom-brightness: 0.5;
+    }
+
+    :host([light]) {
+      --_bloom-brightness: 2;
     }
 
     /* ── Page header ── */
@@ -665,7 +672,7 @@ export class ScPageMotion extends LitElement {
 
     @keyframes fade-in-bloom {
       0% { opacity: 0; filter: brightness(1) blur(20px); }
-      10% { opacity: 1; filter: brightness(2) blur(10px); }
+      10% { opacity: 1; filter: brightness(var(--_bloom-brightness)) blur(10px); }
       100% { opacity: 1; filter: brightness(1) blur(0); }
     }
 
@@ -676,7 +683,7 @@ export class ScPageMotion extends LitElement {
 
     @keyframes fade-out-bloom {
       0% { opacity: 1; filter: brightness(1) blur(0); }
-      10% { opacity: 1; filter: brightness(2) blur(10px); }
+      10% { opacity: 1; filter: brightness(var(--_bloom-brightness)) blur(10px); }
       100% { opacity: 0; filter: brightness(1) blur(20px); }
     }
 
