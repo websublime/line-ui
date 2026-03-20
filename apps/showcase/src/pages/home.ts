@@ -138,7 +138,7 @@ export class ScPageHome extends LitElement {
       display: block;
     }
 
-    /* ── Hero (A: gradient background) ── */
+    /* ── Hero (full width, gradient background) ── */
     .hero {
       position: relative;
       text-align: center;
@@ -234,7 +234,6 @@ export class ScPageHome extends LitElement {
     }
     :host([light]) .tagline { color: var(--line-low-contrast, #666); }
 
-    /* ── Intro blurb ── */
     .intro {
       text-align: center;
       max-width: 600px;
@@ -245,55 +244,7 @@ export class ScPageHome extends LitElement {
     }
     :host([light]) .intro { color: var(--line-low-contrast, #666); }
 
-    /* ── Code snippet ── */
-    .snippet {
-      max-width: 640px;
-      margin: 0 auto var(--line-size-9, 4rem);
-    }
-
-    /* ── Stats ── */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--line-size-3, 1rem);
-      margin-bottom: var(--line-size-9, 4rem);
-    }
-
-    @media (max-width: 600px) {
-      .stats { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    .stat {
-      text-align: center;
-      padding: var(--line-size-5, 1.5rem) var(--line-size-3, 1rem);
-      background: var(--line-subtle-background, #161616);
-      border: var(--line-border-size-1, 1px) solid var(--line-ui-background, #222);
-      border-radius: var(--line-radius-2, 4px);
-    }
-    :host([light]) .stat {
-      background: var(--line-subtle-background, #fafafa);
-      border-color: var(--line-ui-background, #e5e5e5);
-    }
-
-    .stat-value {
-      font-size: clamp(1.5rem, 3vw, 2rem);
-      font-weight: 800;
-      color: var(--line-solid-background, #c8ff00);
-      font-family: 'IBM Plex Mono', monospace;
-      letter-spacing: -0.02em;
-    }
-
-    .stat-label {
-      font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
-      margin-top: var(--line-size-1, 0.25rem);
-      font-weight: var(--line-font-weight-6, 600);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    :host([light]) .stat-label { color: var(--line-low-contrast, #666); }
-
-    /* ── Section title ── */
+    /* ── Section header (full width above two-column) ── */
     .section-title {
       font-size: var(--line-font-size-1, 0.75rem);
       font-weight: var(--line-font-weight-7, 700);
@@ -314,19 +265,63 @@ export class ScPageHome extends LitElement {
     }
     :host([light]) .section-subtitle { color: var(--line-low-contrast, #666); }
 
-    /* ── Built with tokens — compositions grid ── */
-    .compositions-grid {
+    /* ── Two-column showcase layout ── */
+    .showcase {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: var(--line-size-4, 1.25rem);
+      grid-template-columns: 45% 55%;
+      gap: var(--line-size-6, 2rem);
       margin-bottom: var(--line-size-9, 4rem);
+      align-items: start;
     }
 
-    @media (max-width: 900px) {
-      .compositions-grid { grid-template-columns: repeat(2, 1fr); }
+    @media (max-width: 768px) {
+      .showcase {
+        grid-template-columns: 1fr;
+      }
     }
-    @media (max-width: 560px) {
-      .compositions-grid { grid-template-columns: 1fr; }
+
+    /* ── Left column: code snippet ── */
+    .showcase-code {
+      position: sticky;
+      top: var(--line-size-6, 2rem);
+    }
+
+    @media (max-width: 768px) {
+      .showcase-code {
+        position: static;
+      }
+    }
+
+    /* ── Right column: compositions showcase wall ── */
+    .showcase-wall {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-rows: auto;
+      gap: var(--line-size-4, 1.25rem);
+    }
+
+    @media (max-width: 768px) {
+      .showcase-wall {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    @media (max-width: 480px) {
+      .showcase-wall {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Named grid placements for visual interest */
+    .showcase-wall .comp-card {
+      grid-column: 1 / -1;
+    }
+
+    .showcase-wall .comp-login {
+      grid-row: span 2;
+    }
+
+    .showcase-wall .comp-pricing {
+      grid-column: 1 / -1;
     }
 
     /* ── Shared composition card shell ── */
@@ -433,7 +428,7 @@ export class ScPageHome extends LitElement {
     }
 
     .comp-image-placeholder {
-      height: 140px;
+      height: 120px;
       background: linear-gradient(
         135deg,
         var(--line-subtle-background, #161616) 0%,
@@ -700,7 +695,49 @@ export class ScPageHome extends LitElement {
       background: var(--line-hover-background, #f5f5f5);
     }
 
-    /* ── Card grid ── */
+    /* ── Stats row (full width) ── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--line-size-3, 1rem);
+      margin-bottom: var(--line-size-9, 4rem);
+    }
+
+    @media (max-width: 600px) {
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    .stat {
+      text-align: center;
+      padding: var(--line-size-5, 1.5rem) var(--line-size-3, 1rem);
+      background: var(--line-subtle-background, #161616);
+      border: var(--line-border-size-1, 1px) solid var(--line-ui-background, #222);
+      border-radius: var(--line-radius-2, 4px);
+    }
+    :host([light]) .stat {
+      background: var(--line-subtle-background, #fafafa);
+      border-color: var(--line-ui-background, #e5e5e5);
+    }
+
+    .stat-value {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      color: var(--line-solid-background, #c8ff00);
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: var(--line-font-size-1, 0.75rem);
+      color: var(--line-low-contrast, #999);
+      margin-top: var(--line-size-1, 0.25rem);
+      font-weight: var(--line-font-weight-6, 600);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    :host([light]) .stat-label { color: var(--line-low-contrast, #666); }
+
+    /* ── Explore card grid (full width) ── */
     .card-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -803,13 +840,116 @@ export class ScPageHome extends LitElement {
         The design system for the AI — future is bright!
       </p>
 
-      <div class="snippet">
-        <sc-code-block
-          language="css"
-          .code=${CSS_SNIPPET}
-        ></sc-code-block>
+      <!-- ── Built with tokens — full-width header ── -->
+      <div class="section-title">Built with tokens</div>
+      <p class="section-subtitle">
+        Native HTML elements styled purely with
+        <span style="font-family: 'IBM Plex Mono', monospace;">--line-*</span>
+        design tokens. No components required.
+      </p>
+
+      <!-- ── Two-column showcase ── -->
+      <div class="showcase">
+
+        <!-- LEFT: Code snippet -->
+        <div class="showcase-code">
+          <sc-code-block
+            language="css"
+            .code=${CSS_SNIPPET}
+          ></sc-code-block>
+        </div>
+
+        <!-- RIGHT: Compositions showcase wall -->
+        <div class="showcase-wall">
+
+          <!-- 1. Content card (spans full width of right column) -->
+          <div class="comp comp-card">
+            <div class="comp-card-body">
+              <h3 class="comp-card-title">Token-driven styling</h3>
+              <p class="comp-card-text">
+                Every surface, color, and spacing value comes from semantic
+                tokens. Switch schemas and the entire UI adapts — no component
+                changes needed.
+              </p>
+            </div>
+            <div class="comp-card-footer">
+              <span class="comp-card-footer-label">Tokens used</span>
+              <span class="comp-card-footer-value">12</span>
+            </div>
+          </div>
+
+          <!-- 2. Login form (tall, spans 2 rows) -->
+          <div class="comp comp-login">
+            <h3 class="comp-login-heading">Sign in</h3>
+            <div class="comp-login-field">
+              <label class="comp-login-label">Email</label>
+              <input
+                class="comp-login-input"
+                type="email"
+                placeholder="you@example.com"
+                autocomplete="off"
+              />
+            </div>
+            <div class="comp-login-field">
+              <label class="comp-login-label">Password</label>
+              <input
+                class="comp-login-input"
+                type="password"
+                placeholder="Enter password"
+                autocomplete="off"
+              />
+            </div>
+            <button class="comp-login-submit" type="button">Continue</button>
+            <div class="comp-login-divider">or</div>
+            <button class="comp-login-ghost" type="button">Sign in with SSO</button>
+          </div>
+
+          <!-- 3. Info banner (beside login, top) -->
+          <div class="comp comp-info">
+            <div class="comp-info-indicator"></div>
+            <div>
+              <p class="comp-info-title">Schema applied</p>
+              <p class="comp-info-text">
+                The active color schema maps 12 semantic stops to your
+                chosen palette. Switch schemas and every surface adapts.
+              </p>
+            </div>
+          </div>
+
+          <!-- 4. Image card (beside login, bottom) -->
+          <div class="comp comp-image-card">
+            <div class="comp-image-placeholder">
+              <div class="comp-image-icon"></div>
+            </div>
+            <div class="comp-image-caption">
+              <h3 class="comp-image-title">Visual tokens</h3>
+              <p class="comp-image-desc">
+                Gradients, shadows, and radii adapt across light and
+                dark modes using semantic color references.
+              </p>
+            </div>
+          </div>
+
+          <!-- 5. Pricing card (spans full width of right column) -->
+          <div class="comp comp-pricing">
+            <span class="comp-pricing-plan">Pro</span>
+            <div class="comp-pricing-price">
+              $0<span class="comp-pricing-period"> /forever</span>
+            </div>
+            <ul class="comp-pricing-features">
+              <li>440+ design tokens</li>
+              <li>28 color palettes</li>
+              <li>Light and dark modes</li>
+              <li>Framework-agnostic</li>
+              <li>MIT licensed</li>
+            </ul>
+            <button class="comp-pricing-cta" type="button">Get started</button>
+          </div>
+
+        </div>
       </div>
 
+      <!-- ── Stats row (full width) ── -->
       <div class="stats">
         ${STATS.map(
           (s) => html`
@@ -821,103 +961,7 @@ export class ScPageHome extends LitElement {
         )}
       </div>
 
-      <!-- ── Built with tokens ── -->
-      <div class="section-title">Built with tokens</div>
-      <p class="section-subtitle">
-        Native HTML elements styled purely with
-        <span style="font-family: 'IBM Plex Mono', monospace;">--line-*</span>
-        design tokens. No components required.
-      </p>
-
-      <div class="compositions-grid">
-
-        <!-- 1. Content card -->
-        <div class="comp comp-card">
-          <div class="comp-card-body">
-            <h3 class="comp-card-title">Headless by design</h3>
-            <p class="comp-card-text">
-              Every component ships zero opinions on visuals.
-              Semantic tokens and <span style="font-family: 'IBM Plex Mono', monospace;">::part()</span>
-              give you full control over the look and feel.
-            </p>
-          </div>
-          <div class="comp-card-footer">
-            <span class="comp-card-footer-label">Tokens used</span>
-            <span class="comp-card-footer-value">12</span>
-          </div>
-        </div>
-
-        <!-- 2. Info banner -->
-        <div class="comp comp-info">
-          <div class="comp-info-indicator"></div>
-          <div>
-            <p class="comp-info-title">Schema applied</p>
-            <p class="comp-info-text">
-              The active color schema automatically maps 12 semantic
-              stops to your chosen palette. Switch schemas and every
-              surface adapts instantly.
-            </p>
-          </div>
-        </div>
-
-        <!-- 3. Image card -->
-        <div class="comp comp-image-card">
-          <div class="comp-image-placeholder">
-            <div class="comp-image-icon"></div>
-          </div>
-          <div class="comp-image-caption">
-            <h3 class="comp-image-title">Visual tokens</h3>
-            <p class="comp-image-desc">
-              Gradients, shadows, and radii adapt across light and
-              dark modes using semantic color references.
-            </p>
-          </div>
-        </div>
-
-        <!-- 4. Pricing card -->
-        <div class="comp comp-pricing">
-          <span class="comp-pricing-plan">Pro</span>
-          <div class="comp-pricing-price">
-            $0<span class="comp-pricing-period"> /forever</span>
-          </div>
-          <ul class="comp-pricing-features">
-            <li>440+ design tokens</li>
-            <li>28 color palettes</li>
-            <li>Light and dark modes</li>
-            <li>Framework-agnostic</li>
-            <li>MIT licensed</li>
-          </ul>
-          <button class="comp-pricing-cta" type="button">Get started</button>
-        </div>
-
-        <!-- 5. Login form -->
-        <div class="comp comp-login">
-          <h3 class="comp-login-heading">Sign in</h3>
-          <div class="comp-login-field">
-            <label class="comp-login-label">Email</label>
-            <input
-              class="comp-login-input"
-              type="email"
-              placeholder="you@example.com"
-              autocomplete="off"
-            />
-          </div>
-          <div class="comp-login-field">
-            <label class="comp-login-label">Password</label>
-            <input
-              class="comp-login-input"
-              type="password"
-              placeholder="Enter password"
-              autocomplete="off"
-            />
-          </div>
-          <button class="comp-login-submit" type="button">Continue</button>
-          <div class="comp-login-divider">or</div>
-          <button class="comp-login-ghost" type="button">Sign in with SSO</button>
-        </div>
-
-      </div>
-
+      <!-- ── Explore card grid (full width) ── -->
       <div class="section-title">Explore</div>
       <div class="card-grid">
         ${NAV_CARDS.map(
