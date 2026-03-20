@@ -496,6 +496,8 @@ export class ScPageMotion extends LitElement {
     }
 
     .easing-card .token-value {
+      /* 9px — one step below --line-font-size-00 (10px). No design token exists
+         at this size; used here to fit long cubic-bezier values in narrow cards. */
       font-size: 0.5625rem;
       opacity: 0.7;
       line-height: 1.3;
@@ -505,6 +507,7 @@ export class ScPageMotion extends LitElement {
       display: inline-block;
       padding: 1px 6px;
       border-radius: var(--line-radius-1, 2px);
+      /* 9px — matches .token-value; keeps badge text visually subordinate. */
       font-size: 0.5625rem;
       font-family: 'IBM Plex Mono', monospace;
       background: var(--line-ui-background, #222);
