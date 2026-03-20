@@ -136,78 +136,95 @@ export class ScPageHome extends LitElement {
   static override styles = css`
     :host {
       display: block;
-    }
-
-    /* ── Hero (full width, gradient background) ── */
-    .hero {
       position: relative;
-      text-align: center;
-      padding: var(--line-size-11, 7.5rem) 0 var(--line-size-8, 3rem);
-      overflow: hidden;
     }
 
-    .hero::before {
+    /* ── Page-wide gradient background ── */
+    :host::before {
       content: '';
       position: absolute;
-      inset: -20% -10%;
-      background: radial-gradient(
-        ellipse 60% 70% at 50% 40%,
-        color-mix(in oklch, var(--line-solid-background) 18%, transparent) 0%,
-        color-mix(in oklch, var(--line-solid-background) 6%, transparent) 40%,
-        transparent 70%
-      );
+      inset: 0;
+      background:
+        radial-gradient(
+          ellipse 80% 50% at 50% 15%,
+          color-mix(in oklch, var(--line-solid-background) 20%, transparent) 0%,
+          color-mix(in oklch, var(--line-solid-background) 8%, transparent) 35%,
+          transparent 65%
+        ),
+        radial-gradient(
+          ellipse 50% 30% at 20% 60%,
+          color-mix(in oklch, var(--line-solid-background) 6%, transparent) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse 50% 30% at 80% 45%,
+          color-mix(in oklch, var(--line-solid-background) 6%, transparent) 0%,
+          transparent 50%
+        );
       pointer-events: none;
       z-index: 0;
     }
-    :host([light]) .hero::before {
-      background: radial-gradient(
-        ellipse 60% 70% at 50% 40%,
-        color-mix(in oklch, var(--line-solid-background) 12%, transparent) 0%,
-        color-mix(in oklch, var(--line-solid-background) 4%, transparent) 40%,
-        transparent 70%
-      );
+    :host([light])::before {
+      background:
+        radial-gradient(
+          ellipse 80% 50% at 50% 15%,
+          color-mix(in oklch, var(--line-solid-background) 14%, transparent) 0%,
+          color-mix(in oklch, var(--line-solid-background) 5%, transparent) 35%,
+          transparent 65%
+        ),
+        radial-gradient(
+          ellipse 50% 30% at 20% 60%,
+          color-mix(in oklch, var(--line-solid-background) 4%, transparent) 0%,
+          transparent 50%
+        ),
+        radial-gradient(
+          ellipse 50% 30% at 80% 45%,
+          color-mix(in oklch, var(--line-solid-background) 4%, transparent) 0%,
+          transparent 50%
+        );
     }
 
-    .hero::after {
+    /* ── Dot grid pattern across page ── */
+    :host::after {
       content: '';
       position: absolute;
       inset: 0;
       background-image: radial-gradient(
-        color-mix(in oklch, var(--line-ui-border, #444) 25%, transparent) 1px,
+        color-mix(in oklch, var(--line-solid-background) 20%, var(--line-ui-border, #444)) 1px,
         transparent 1px
       );
       background-size: 24px 24px;
-      opacity: 0.4;
+      opacity: 0.25;
       pointer-events: none;
       z-index: 0;
-      mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 0%, transparent 70%);
-      -webkit-mask-image: radial-gradient(ellipse 70% 50% at 50% 30%, black 0%, transparent 70%);
+      mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
+      -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
     }
-    :host([light]) .hero::after {
-      opacity: 0.5;
+    :host([light])::after {
+      opacity: 0.3;
     }
 
-    .hero > * {
+    :host > * {
       position: relative;
       z-index: 1;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: var(--line-size-11, 7.5rem) 0 var(--line-size-8, 3rem);
     }
 
     .wordmark {
       font-size: clamp(2.5rem, 6vw, 4rem);
       font-weight: 800;
       letter-spacing: -0.04em;
-      color: var(--line-high-contrast, #fff);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-high-contrast));
       margin: 0;
       line-height: 1.1;
       text-shadow:
-        0 0 60px color-mix(in oklch, var(--line-solid-background, #c8ff00) 35%, transparent),
-        0 0 120px color-mix(in oklch, var(--line-solid-background, #c8ff00) 15%, transparent);
-    }
-    :host([light]) .wordmark {
-      color: var(--line-high-contrast, #1a1a1a);
-      text-shadow:
-        0 0 60px color-mix(in oklch, var(--line-solid-background, #c8ff00) 25%, transparent),
-        0 0 120px color-mix(in oklch, var(--line-solid-background, #c8ff00) 10%, transparent);
+        0 0 60px color-mix(in oklch, var(--line-solid-background) 35%, transparent),
+        0 0 120px color-mix(in oklch, var(--line-solid-background) 15%, transparent);
     }
 
     .wordmark-accent {
@@ -216,7 +233,7 @@ export class ScPageHome extends LitElement {
 
     .tagline {
       font-size: var(--line-font-size-3, 1.25rem);
-      color: var(--line-low-contrast);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-low-contrast));
       margin: var(--line-size-3, 1rem) 0 0;
       font-weight: var(--line-font-weight-4, 400);
     }
@@ -227,9 +244,8 @@ export class ScPageHome extends LitElement {
       margin: 0 auto var(--line-size-8, 3rem);
       font-size: var(--line-font-size-2, 1rem);
       line-height: var(--line-lineheight-3, 1.6);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
     }
-    :host([light]) .intro { color: var(--line-low-contrast, #666); }
 
     /* ── Section header (full width above two-column) ── */
     .section-title {
@@ -243,7 +259,7 @@ export class ScPageHome extends LitElement {
 
     .section-subtitle {
       font-size: var(--line-font-size-2, 1rem);
-      color: var(--line-low-contrast);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       margin-top: var(--line-size-1, 0.25rem);
       margin-bottom: var(--line-size-6, 2rem);
       line-height: var(--line-lineheight-3, 1.6);
@@ -333,17 +349,16 @@ export class ScPageHome extends LitElement {
     .comp-card-title {
       font-size: var(--line-font-size-3, 1.25rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: var(--line-high-contrast);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-high-contrast));
       margin: 0 0 var(--line-size-2, 0.5rem);
     }
 
     .comp-card-text {
       font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       line-height: var(--line-lineheight-3, 1.6);
       margin: 0;
     }
-    :host([light]) .comp-card-text { color: var(--line-low-contrast, #666); }
 
     .comp-card-footer {
       padding: var(--line-size-3, 1rem) var(--line-size-5, 1.5rem);
@@ -358,12 +373,11 @@ export class ScPageHome extends LitElement {
 
     .comp-card-footer-label {
       font-size: var(--line-font-size-00, 0.625rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       text-transform: uppercase;
       letter-spacing: 0.06em;
       font-weight: var(--line-font-weight-6, 600);
     }
-    :host([light]) .comp-card-footer-label { color: var(--line-low-contrast, #666); }
 
     .comp-card-footer-value {
       font-size: var(--line-font-size-00, 0.625rem);
@@ -392,18 +406,16 @@ export class ScPageHome extends LitElement {
     .comp-info-title {
       font-size: var(--line-font-size-1, 0.75rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: var(--line-high-contrast, #fff);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-high-contrast));
       margin: 0 0 var(--line-size-1, 0.25rem);
     }
-    :host([light]) .comp-info-title { color: var(--line-high-contrast, #1a1a1a); }
 
     .comp-info-text {
       font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       line-height: var(--line-lineheight-3, 1.6);
       margin: 0;
     }
-    :host([light]) .comp-info-text { color: var(--line-low-contrast, #666); }
 
     /* ── 3. Image card ── */
     .comp-image-card {
@@ -447,17 +459,16 @@ export class ScPageHome extends LitElement {
     .comp-image-title {
       font-size: var(--line-font-size-2, 1rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: var(--line-high-contrast);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-high-contrast));
       margin: 0 0 var(--line-size-1, 0.25rem);
     }
 
     .comp-image-desc {
       font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       margin: 0;
       line-height: var(--line-lineheight-3, 1.6);
     }
-    :host([light]) .comp-image-desc { color: var(--line-low-contrast, #666); }
 
     /* ── 4. Pricing card ── */
     .comp-pricing {
@@ -478,17 +489,16 @@ export class ScPageHome extends LitElement {
     .comp-pricing-price {
       font-size: clamp(1.75rem, 3vw, 2.25rem);
       font-weight: 800;
-      color: var(--line-high-contrast, #fff);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-high-contrast));
       font-family: 'IBM Plex Mono', monospace;
       letter-spacing: -0.03em;
       margin: 0 0 var(--line-size-1, 0.25rem);
       line-height: 1.1;
     }
-    :host([light]) .comp-pricing-price { color: var(--line-high-contrast, #1a1a1a); }
 
     .comp-pricing-period {
       font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       font-weight: var(--line-font-weight-4, 400);
       font-family: inherit;
     }
@@ -505,12 +515,11 @@ export class ScPageHome extends LitElement {
 
     .comp-pricing-features li {
       font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       line-height: var(--line-lineheight-3, 1.6);
       padding-left: var(--line-size-4, 1.25rem);
       position: relative;
     }
-    :host([light]) .comp-pricing-features li { color: var(--line-low-contrast, #666); }
 
     .comp-pricing-features li::before {
       content: '';
@@ -554,7 +563,7 @@ export class ScPageHome extends LitElement {
     .comp-login-heading {
       font-size: var(--line-font-size-3, 1.25rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: var(--line-high-contrast);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-high-contrast));
       margin: 0;
     }
 
@@ -567,11 +576,10 @@ export class ScPageHome extends LitElement {
     .comp-login-label {
       font-size: var(--line-font-size-00, 0.625rem);
       font-weight: var(--line-font-weight-6, 600);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-    :host([light]) .comp-login-label { color: var(--line-low-contrast, #666); }
 
     .comp-login-input {
       padding: var(--line-size-3, 1rem);
@@ -711,13 +719,12 @@ export class ScPageHome extends LitElement {
 
     .stat-label {
       font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       margin-top: var(--line-size-1, 0.25rem);
       font-weight: var(--line-font-weight-6, 600);
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
-    :host([light]) .stat-label { color: var(--line-low-contrast, #666); }
 
     /* ── Explore card grid (full width) ── */
     .card-grid {
@@ -787,17 +794,16 @@ export class ScPageHome extends LitElement {
     .card-title {
       font-size: var(--line-font-size-2, 1rem);
       font-weight: var(--line-font-weight-7, 700);
-      color: var(--line-high-contrast);
+      color: color-mix(in oklch, var(--line-solid-background) 15%, var(--line-high-contrast));
       margin-bottom: var(--line-size-1, 0.25rem);
     }
 
     .card-desc {
       font-size: var(--line-font-size-1, 0.75rem);
-      color: var(--line-low-contrast, #999);
+      color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
       line-height: var(--line-lineheight-3, 1.6);
       flex: 1;
     }
-    :host([light]) .card-desc { color: var(--line-low-contrast, #666); }
   `;
 
   private _navigate(panel: string): void {
