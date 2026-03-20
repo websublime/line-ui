@@ -211,8 +211,8 @@ export class ScPageHome extends LitElement {
 
     /* ── Hero ── */
     .hero {
-      text-align: center;
-      padding: var(--line-size-11, 7.5rem) 0 var(--line-size-8, 3rem);
+      text-align: left;
+      padding: var(--line-size-5, 1.5rem) 0 var(--line-size-8, 3rem);
     }
 
     .wordmark {
@@ -239,9 +239,9 @@ export class ScPageHome extends LitElement {
     }
 
     .intro {
-      text-align: center;
+      text-align: left;
       max-width: 600px;
-      margin: 0 auto var(--line-size-8, 3rem);
+      margin: 0 0 var(--line-size-8, 3rem);
       font-size: var(--line-font-size-2, 1rem);
       line-height: var(--line-lineheight-3, 1.6);
       color: color-mix(in oklch, var(--line-solid-background) 10%, var(--line-low-contrast));
