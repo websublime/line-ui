@@ -281,8 +281,9 @@ const preview: Preview = {
     // Companion decorator: sync style.colorScheme with the mode class.
     // withThemeByClassName only toggles classes — it has no mechanism for
     // setting inline styles. This decorator runs AFTER withThemeByClassName
-    // (Storybook executes decorators bottom-to-top, so placing it after in
-    // the array means it sees the class already applied). It checks whether
+    // (Storybook executes decorators first-to-last — each wraps the next —
+    // so placing it later in the array means withThemeByClassName has already
+    // set the class by the time this decorator reads it). It checks whether
     // the .dark class is present on <html> and sets style.colorScheme
     // accordingly. This is the primary trigger for all light-dark() tokens;
     // the .dark/.light class is secondary (needed for shadow token overrides).
