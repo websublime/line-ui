@@ -180,7 +180,7 @@ export class ScApp extends LitElement {
       case 'spacing':
         return html`<sc-page-spacing></sc-page-spacing>`;
       case 'motion':
-        return html`<sc-page-motion></sc-page-motion>`;
+        return html`<sc-page-motion ?light=${this._light}></sc-page-motion>`;
       case 'surfaces':
         return html`<sc-page-surfaces></sc-page-surfaces>`;
       case 'decorative':
