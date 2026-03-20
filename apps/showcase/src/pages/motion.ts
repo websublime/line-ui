@@ -2,6 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, state } from 'lit/decorators.js';
 
 import '../components/sc-section.js';
+import { copyToken } from '../utils/clipboard.js';
 
 /* ─────────────────────────────────────────────────────────
    Token data — sourced from packages/theme/src/tokens/
@@ -322,23 +323,6 @@ const ANIMATIONS: readonly AnimationToken[] = [
     continuous: true
   }
 ] as const;
-
-/* ─────────────────────────────────────────────────────────
-   Copy helper
-   ───────────────────────────────────────────────────────── */
-
-function copyToken(token: string, el: HTMLElement): void {
-  const text = `var(${token})`;
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      el.classList.add('copied');
-      setTimeout(() => el.classList.remove('copied'), 700);
-    })
-    .catch(() => {
-      /* Clipboard denied — no feedback */
-    });
-}
 
 /* ─────────────────────────────────────────────────────────
    Component
