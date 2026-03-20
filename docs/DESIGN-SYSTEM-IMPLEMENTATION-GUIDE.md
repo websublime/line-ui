@@ -113,7 +113,7 @@ packages/theme/src/
 ```
 packages/theme/dist/
 ├── tokens.min.css                ← L1: foundation only
-├── semantic.min.css              ← L2: gray prefers-color-scheme
+├── semantic.min.css              ← L2: gray light-dark() defaults
 ├── normalize.min.css             ← Document reset
 ├── utilities.min.css             ← Utility classes
 ├── aliases.min.css               ← L3: primary/danger/success/warning/info
@@ -344,7 +344,7 @@ extensions for semantics that Open Props does not provide.
 
 - All custom properties use the `--line-` prefix
 - All selectors use `:where(html)` for zero specificity
-- Dark mode shadow overrides use `:where(html):is(.dark)`
+- Dark mode shadow overrides use `:where(html).dark` + `@media (prefers-color-scheme: dark)` (this is the **only exception** — all other tokens use `light-dark()` with `color-scheme` as the trigger)
 - All values are hardcoded — no runtime `var()` dependency on Open Props
 - Font families include all 19 OP stacks plus 3 custom aliases (sans/serif/mono)
 - Line-heights extended from OP 7 to 10 tokens (added 2.25, 2.5, 3)
@@ -405,8 +405,9 @@ the semantic defaults layer.
 
 ### Step 2.1 — Create `src/semantic.css`
 
-This file contains only the `prefers-color-scheme` blocks that map gray
-values to semantic role tokens. It is independent from any palette.
+This file maps gray values to semantic role tokens using `light-dark()`.
+It is independent from any palette. The active mode is determined by the
+`color-scheme` property (set in `colors-absolute.css`).
 
 ```css
 /* ═══════════════════════════════════════════════════════════
@@ -414,48 +415,27 @@ values to semantic role tokens. It is independent from any palette.
 
    Maps the neutral gray scale to semantic role tokens.
    Schemas (.line-schema-*) override these when active.
+   Uses light-dark() with color-scheme as the single trigger.
 
    Requires: tokens.css (for --line-white, --line-black)
    ═══════════════════════════════════════════════════════════ */
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --line-background: hsl(0, 0%, 99.0%);
-    --line-subtle-background: hsl(0, 0%, 97.5%);
-    --line-ui-background: hsl(0, 0%, 94.6%);
-    --line-ui-hover-background: hsl(0, 0%, 92.0%);
-    --line-ui-active-background: hsl(0, 0%, 89.5%);
-    --line-subtle-border: hsl(0, 0%, 86.8%);
-    --line-ui-border: hsl(0, 0%, 83.0%);
-    --line-ui-border-hover: hsl(0, 0%, 73.2%);
-    --line-solid-background: hsl(0, 0%, 55.2%);
-    --line-solid-hover: hsl(0, 0%, 50.3%);
-    --line-low-contrast: hsl(0, 0%, 39.3%);
-    --line-high-contrast: hsl(0, 0%, 12.5%);
-    --line-solid-text: #000;
-    --line-light: var(--line-white);
-    --line-dark: var(--line-black);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --line-background: hsl(0, 0%, 9.5%);
-    --line-subtle-background: hsl(0, 0%, 10.5%);
-    --line-ui-background: hsl(0, 0%, 15.8%);
-    --line-ui-hover-background: hsl(0, 0%, 18.9%);
-    --line-ui-active-background: hsl(0, 0%, 21.7%);
-    --line-subtle-border: hsl(0, 0%, 24.7%);
-    --line-ui-border: hsl(0, 0%, 29.1%);
-    --line-ui-border-hover: hsl(0, 0%, 37.5%);
-    --line-solid-background: hsl(0, 0%, 43.0%);
-    --line-solid-hover: hsl(0, 0%, 50.7%);
-    --line-low-contrast: hsl(0, 0%, 69.5%);
-    --line-high-contrast: hsl(0, 0%, 93.5%);
-    --line-solid-text: #fff;
-    --line-light: var(--line-white);
-    --line-dark: var(--line-black);
-  }
+:root {
+  --line-background: light-dark(hsl(0, 0%, 99.0%), hsl(0, 0%, 9.5%));
+  --line-subtle-background: light-dark(hsl(0, 0%, 97.5%), hsl(0, 0%, 10.5%));
+  --line-ui-background: light-dark(hsl(0, 0%, 94.6%), hsl(0, 0%, 15.8%));
+  --line-ui-hover-background: light-dark(hsl(0, 0%, 92.0%), hsl(0, 0%, 18.9%));
+  --line-ui-active-background: light-dark(hsl(0, 0%, 89.5%), hsl(0, 0%, 21.7%));
+  --line-subtle-border: light-dark(hsl(0, 0%, 86.8%), hsl(0, 0%, 24.7%));
+  --line-ui-border: light-dark(hsl(0, 0%, 83.0%), hsl(0, 0%, 29.1%));
+  --line-ui-border-hover: light-dark(hsl(0, 0%, 73.2%), hsl(0, 0%, 37.5%));
+  --line-solid-background: light-dark(hsl(0, 0%, 55.2%), hsl(0, 0%, 43.0%));
+  --line-solid-hover: light-dark(hsl(0, 0%, 50.3%), hsl(0, 0%, 50.7%));
+  --line-low-contrast: light-dark(hsl(0, 0%, 39.3%), hsl(0, 0%, 69.5%));
+  --line-high-contrast: light-dark(hsl(0, 0%, 12.5%), hsl(0, 0%, 93.5%));
+  --line-solid-text: light-dark(#000, #fff);
+  --line-light: var(--line-white);
+  --line-dark: var(--line-black);
 }
 ```
 
@@ -487,36 +467,25 @@ at the end of the `:where(html)` light block AND the dark block.
 
 ```css
 :where(html) {
-  --line-blue-1: hsl(206, 100%, 99.2%);
-  /* ... existing 2-12 ... */
-  --line-blue-contrast: #000;              /* ← ADD */
-}
-
-:where(html):is(.dark) {
-  --line-blue-12: hsl(212, 35.0%, 9.2%);
-  /* ... existing 11-1 ... */
-  --line-blue-contrast: #fff;              /* ← ADD (dark mode: always white) */
+  --line-blue-1: light-dark(hsl(206, 100%, 99.2%), hsl(205, 100%, 88.0%));
+  /* ... all 12 levels use light-dark(lightVal, darkVal) ... */
+  --line-blue-contrast: #000;              /* ← ADD: single value, not light-dark() */
 }
 ```
+
+All 12 palette levels use `light-dark()` to declare both mode values in a single block on `:where(html)`. The contrast token is a single static value (not wrapped in `light-dark()`) because it represents the WCAG-compliant text colour for the palette's level-9 solid background.
 
 **Example — `src/colors/violet.css`:**
 
 ```css
 :where(html) {
-  --line-violet-1: hsl(252, 100%, 99.0%);
+  --line-violet-1: light-dark(hsl(252, 100%, 99.0%), ...);
   /* ... */
-  --line-violet-contrast: #fff;            /* ← white in light mode too */
-}
-
-:where(html):is(.dark) {
-  /* ... */
-  --line-violet-contrast: #fff;            /* ← stays white */
+  --line-violet-contrast: #fff;            /* ← white in both modes */
 }
 ```
 
-**Dark mode rule:** In dark mode, level-9 becomes a much darker shade, so
-ALL palettes use `#fff` as their contrast color in dark mode. Only the
-light mode differs.
+**Contrast token rule:** The contrast token is determined by the level-9 colour in each mode. In dark mode, level-9 becomes a much darker shade, so ALL palettes use `#fff` as their contrast color in dark mode. Only the light mode value differs across palettes (some use `#000`, some use `#fff`).
 
 ### Step 3.2 — Update all 28 schema files
 
@@ -529,47 +498,31 @@ In each schema file, update the `.line-is-{palette}` class and add the
 /* ── Schema (add --line-solid-text) ── */
 
 :where(.line-schema-blue) {
-  --line-background: var(--line-blue-1);
-  /* ... existing mappings ... */
-  --line-light: var(--line-blue-1);
-  --line-dark: var(--line-blue-12);
-  --line-solid-text: var(--line-blue-contrast);  /* ← ADD */
-}
-
-:is(.dark) :where(.line-schema-blue) {
-  --line-background: var(--line-blue-12);
-  /* ... existing dark mappings ... */
+  --line-background: light-dark(var(--line-blue-1), var(--line-blue-12));
+  /* ... all semantic roles use light-dark(lightLevel, darkLevel) ... */
   --line-solid-text: var(--line-blue-contrast);  /* ← ADD */
 }
 
 /* ── Utility: solid color class (fix contrast) ── */
 
 :where(.line-is-blue) {
-  color: var(--line-blue-contrast);              /* ← CHANGE from var(--line-blue-1) */
-  background-color: var(--line-blue-9);
-  transition: all var(--line-duration-fast) var(--line-ease-default);
+  color: var(--line-blue-contrast);
+  background-color: light-dark(var(--line-blue-9), var(--line-blue-4));
+  transition: all ease-in-out 150ms;
 
   &:hover {
-    background-color: var(--line-blue-10);
-  }
-}
-
-:is(.dark) :where(.line-is-blue) {
-  color: var(--line-blue-contrast);              /* ← CHANGE from var(--line-blue-1) */
-  background-color: var(--line-blue-4);
-  transition: all var(--line-duration-fast) var(--line-ease-default);
-
-  &:hover {
-    background-color: var(--line-blue-3);
+    background-color: light-dark(var(--line-blue-10), var(--line-blue-3));
   }
 }
 ```
 
+Schema files use `light-dark()` to map semantic roles to palette levels in a single declaration block — no separate `:is(.dark)` override block is needed. The `light-dark()` function resolves based on the computed `color-scheme` property.
+
 **Repeat for all 28 schema files.** The change is mechanical:
 
 1. Replace `color: var(--line-{palette}-1)` → `color: var(--line-{palette}-contrast)` in `.line-is-{palette}`
-2. Add `--line-solid-text: var(--line-{palette}-contrast)` to `.line-schema-{palette}` (both light and dark)
-3. Replace hardcoded `ease-in-out 150ms` → `var(--line-duration-fast) var(--line-ease-default)`
+2. Add `--line-solid-text: var(--line-{palette}-contrast)` to `.line-schema-{palette}`
+3. Wrap light/dark level references in `light-dark()` (e.g., `light-dark(var(--line-blue-9), var(--line-blue-4))`)
 
 **For the 5 palettes already using level-12 (amber, yellow, lime, mint, sky),**
 the change is the same — `var(--line-{palette}-12)` → `var(--line-{palette}-contrast)`.
@@ -814,7 +767,7 @@ these are demo code, not design system utilities.
 /* L1 — Foundation */
 @import "./tokens.css";
 
-/* L2 — Semantic defaults (gray, prefers-color-scheme) */
+/* L2 — Semantic defaults (gray, light-dark()) */
 @import "./semantic.css";
 
 /* Normalize (document reset) */
