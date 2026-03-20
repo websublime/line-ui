@@ -190,18 +190,18 @@ export class ScPageHome extends LitElement {
       position: absolute;
       inset: 0;
       background-image: radial-gradient(
-        color-mix(in oklch, var(--line-solid-background) 20%, var(--line-ui-border, #444)) 1px,
-        transparent 1px
+        color-mix(in oklch, var(--line-solid-background) 15%, var(--line-ui-border, #444)) 0.5px,
+        transparent 0.5px
       );
-      background-size: 24px 24px;
-      opacity: 0.25;
+      background-size: 20px 20px;
+      opacity: 0.2;
       pointer-events: none;
       z-index: 0;
-      mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
-      -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 60%);
+      mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 40%, transparent 65%);
+      -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 5%, black 40%, transparent 65%);
     }
     :host([light])::after {
-      opacity: 0.3;
+      opacity: 0.25;
     }
 
     :host > * {
@@ -212,7 +212,11 @@ export class ScPageHome extends LitElement {
     /* ── Hero ── */
     .hero {
       text-align: left;
-      padding: var(--line-size-5, 1.5rem) 0 var(--line-size-8, 3rem);
+      padding: var(--line-size-6, 2rem);
+      margin-bottom: var(--line-size-8, 3rem);
+      background: color-mix(in oklch, var(--line-solid-background) 5%, var(--line-subtle-background));
+      border: 1px solid color-mix(in oklch, var(--line-solid-background) 10%, var(--line-ui-background));
+      border-radius: var(--line-radius-3, 8px);
     }
 
     .wordmark {
