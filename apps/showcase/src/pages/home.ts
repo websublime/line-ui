@@ -142,7 +142,7 @@ export class ScPageHome extends LitElement {
     /* ── Page-wide gradient background ── */
     :host::before {
       content: '';
-      position: absolute;
+      position: fixed;
       inset: 0;
       background:
         radial-gradient(
@@ -187,7 +187,7 @@ export class ScPageHome extends LitElement {
     /* ── Dot grid pattern across page ── */
     :host::after {
       content: '';
-      position: absolute;
+      position: fixed;
       inset: 0;
       background-image: radial-gradient(
         color-mix(in oklch, var(--line-solid-background) 15%, var(--line-ui-border, #444)) 0.5px,
