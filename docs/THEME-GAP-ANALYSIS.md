@@ -334,7 +334,7 @@ Schemas override these when active.
 
 **Original impact:** `rules.css` contained both foundation tokens (`--font-sans`,
 `--size-3`, `--shadow-1`) and the semantic role map (`--line-background`,
-`--line-solid-background`, etc. inside `prefers-color-scheme` blocks).
+`--line-solid-background`, etc. via `light-dark()`).
 
 **Fix applied (partial):** `tokens/` directory created with all foundation tokens properly prefixed.
 
@@ -343,7 +343,7 @@ Schemas override these when active.
 | File | Contents | Status |
 |------|----------|--------|
 | `tokens/` directory | Foundation: typography, sizing, borders, shadows, easing, z-index, aspects, durations, opacity, focus-ring, absolute colors | ✅ Done (E8 T1) |
-| `semantic.css` | The `prefers-color-scheme` light/dark blocks mapping gray scale to `--line-background`, `--line-solid-background`, etc. | Pending (E8 T2) |
+| `semantic.css` | Gray-based `light-dark()` defaults mapping gray scale to `--line-background`, `--line-solid-background`, etc. | Done (uses `light-dark()` with `color-scheme` trigger) |
 
 ### Gap 17 — No component-level token layer (NEW)
 
@@ -557,7 +557,7 @@ Single monolithic output: `line.css` imports everything including demos.
 @websublime/line-theme/
 ├── dist/
 │   ├── tokens.min.css              ← L1: foundation tokens only (no colors, no semantic)
-│   ├── semantic.min.css            ← L2: gray-based prefers-color-scheme defaults
+│   ├── semantic.min.css            ← L2: gray-based light-dark() defaults
 │   ├── normalize.min.css           ← Document reset (optional)
 │   ├── utilities.min.css           ← .line-is-* utility classes
 │   ├── aliases.min.css             ← L3: primary/danger/success/warning/info/neutral
@@ -831,7 +831,7 @@ entire visual character without touching the theme or the components.
 - Palette files (`--line-blue-1` through `--line-blue-12`) ✅
 - Schema files (`.line-schema-blue`, `.line-is-blue`) ✅
 - Semantic role variables (`--line-background`, `--line-solid-background`) ✅
-- Dark mode mechanism (`.dark` class + `:is(.dark)`) ✅
+- Dark mode mechanism (`light-dark()` + `color-scheme` property, with `.dark`/`.light` class as secondary trigger for shadow tokens) ✅
 - PostCSS pipeline plugins (all present except jit-props) ✅
 - Build script (`src/build.ts`) ✅
 - Package name (`@websublime/line-theme`) ✅
