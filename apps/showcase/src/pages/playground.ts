@@ -5,7 +5,7 @@ export type { PlaygroundBlockConfig } from './playground-config.js';
 
 @customElement('sc-page-playground')
 export class ScPagePlayground extends LitElement {
-  @property({ type: Boolean }) light = false;
+  @property({ type: Boolean, reflect: true }) light = false;
   @property({ type: String }) schema = 'violet';
 
   static override styles = css`
@@ -41,6 +41,7 @@ export class ScPagePlayground extends LitElement {
       font-size: var(--line-font-size-4, 1.5rem);
       font-weight: var(--line-font-weight-8, 800);
       color: var(--line-high-contrast, #fff);
+      /* Tighten tracking for large display headings */
       letter-spacing: -0.02em;
       margin: 0 0 var(--line-size-4, 1.25rem);
     }
@@ -74,8 +75,8 @@ export class ScPagePlayground extends LitElement {
     }
 
     .accent-dot {
-      width: 10px;
-      height: 10px;
+      width: var(--line-size-2, 10px);
+      height: var(--line-size-2, 10px);
       border-radius: 50%;
       background: var(--line-solid-background, #c8ff00);
       flex-shrink: 0;
@@ -199,8 +200,8 @@ export class ScPagePlayground extends LitElement {
     }
 
     .mobile-accent-dot {
-      width: 8px;
-      height: 8px;
+      width: var(--line-size-1, 8px);
+      height: var(--line-size-1, 8px);
       border-radius: 50%;
       background: var(--line-solid-background, #c8ff00);
       flex-shrink: 0;
