@@ -1,6 +1,8 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+import '../components/sc-product-card.js';
+
 export type { PlaygroundBlockConfig } from './playground-config.js';
 
 @customElement('sc-page-playground')
@@ -186,7 +188,7 @@ export class ScPagePlayground extends LitElement {
       font-style: italic;
     }
 
-    /* ── E-commerce product card block (T3) ── */
+    /* ── E-commerce product card grid (T3) ── */
     .product-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -200,196 +202,86 @@ export class ScPagePlayground extends LitElement {
       }
     }
 
-    .product-card {
-      border-radius: var(--line-radius-3, 8px);
-      overflow: hidden;
-      border: var(--line-border-size-1, 1px) solid;
-      display: flex;
-      flex-direction: column;
-    }
+    /*
+     * Consumer styles for <sc-product-card> via ::part().
+     * All design system tokens (--line-*) are applied HERE, not inside the component.
+     */
 
-    .product-card--slate {
+    /* ── Slate-variant card ── */
+    .product-card-slate::part(card) {
       background: light-dark(var(--line-slate-2), var(--line-slate-11));
       border-color: light-dark(var(--line-slate-6), var(--line-slate-7));
     }
 
-    .product-card--mauve {
-      background: light-dark(var(--line-mauve-2), var(--line-mauve-11));
-      border-color: light-dark(var(--line-mauve-6), var(--line-mauve-7));
-    }
-
-    .product-image {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      display: block;
+    .product-card-slate::part(image),
+    .product-card-slate::part(image-placeholder) {
       background: light-dark(var(--line-slate-3), var(--line-slate-10));
     }
 
-    .product-image-placeholder {
-      width: 100%;
-      height: 200px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: light-dark(var(--line-slate-3), var(--line-slate-10));
-    }
-
-    .product-image-placeholder svg {
-      width: 64px;
-      height: 64px;
-      opacity: 0.4;
-    }
-
-    .card-body {
-      padding: var(--line-size-4, 1.25rem);
-      display: flex;
-      flex-direction: column;
-      gap: var(--line-size-3, 1rem);
-      flex: 1;
-    }
-
-    .product-title {
-      font-size: var(--line-font-size-2, 1rem);
-      font-weight: var(--line-font-weight-7, 700);
-      margin: 0;
-      letter-spacing: -0.01em;
-    }
-
-    .product-card--slate .product-title {
+    .product-card-slate::part(title) {
       color: light-dark(var(--line-slate-12), var(--line-slate-1));
     }
 
-    .product-card--mauve .product-title {
-      color: light-dark(var(--line-mauve-12), var(--line-mauve-1));
-    }
-
-    .product-desc {
-      font-size: var(--line-font-size-1, 0.875rem);
-      line-height: var(--line-line-height-3, 1.6);
-      margin: 0;
-    }
-
-    .product-card--slate .product-desc {
+    .product-card-slate::part(description) {
       color: light-dark(var(--line-slate-11), var(--line-slate-2));
     }
 
-    .product-card--mauve .product-desc {
-      color: light-dark(var(--line-mauve-11), var(--line-mauve-2));
-    }
-
-    .price-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--line-size-2, 0.5rem);
-    }
-
-    .price {
-      font-size: var(--line-font-size-3, 1.25rem);
-      font-weight: var(--line-font-weight-8, 800);
-      color: var(--line-solid-background);
-    }
-
-    .rating {
-      font-size: var(--line-font-size-1, 0.875rem);
-      color: var(--line-warning);
-      letter-spacing: 0.05em;
-    }
-
-    .size-chips {
-      display: flex;
-      gap: var(--line-size-2, 0.5rem);
-      flex-wrap: wrap;
-    }
-
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 36px;
-      height: 32px;
-      padding: 0 var(--line-size-2, 0.5rem);
-      border-radius: var(--line-radius-2, 4px);
-      font-size: var(--line-font-size-0, 0.75rem);
-      font-weight: var(--line-font-weight-6, 600);
-      cursor: pointer;
-      border: var(--line-border-size-1, 1px) solid;
-      transition: all 150ms ease-in-out;
-    }
-
-    .product-card--slate .chip {
+    .product-card-slate::part(chip) {
       background: light-dark(var(--line-slate-3), var(--line-slate-10));
       color: light-dark(var(--line-slate-11), var(--line-slate-2));
       border-color: light-dark(var(--line-slate-6), var(--line-slate-7));
     }
 
-    .product-card--mauve .chip {
+    /* ── Mauve-variant card ── */
+    .product-card-mauve::part(card) {
+      background: light-dark(var(--line-mauve-2), var(--line-mauve-11));
+      border-color: light-dark(var(--line-mauve-6), var(--line-mauve-7));
+    }
+
+    .product-card-mauve::part(image),
+    .product-card-mauve::part(image-placeholder) {
+      background: light-dark(var(--line-mauve-3), var(--line-mauve-10));
+    }
+
+    .product-card-mauve::part(title) {
+      color: light-dark(var(--line-mauve-12), var(--line-mauve-1));
+    }
+
+    .product-card-mauve::part(description) {
+      color: light-dark(var(--line-mauve-11), var(--line-mauve-2));
+    }
+
+    .product-card-mauve::part(chip) {
       background: light-dark(var(--line-mauve-3), var(--line-mauve-10));
       color: light-dark(var(--line-mauve-11), var(--line-mauve-2));
       border-color: light-dark(var(--line-mauve-6), var(--line-mauve-7));
     }
 
-    .chip.active {
+    /* ── Shared accent styles (both variants) ── */
+    sc-product-card::part(price) {
+      color: var(--line-solid-background);
+    }
+
+    sc-product-card::part(rating) {
+      color: var(--line-warning);
+    }
+
+    sc-product-card::part(chip-active) {
       background: var(--line-solid-background);
       color: var(--line-solid-text, #fff);
       border-color: var(--line-solid-background);
     }
 
-    .color-dots {
-      display: flex;
-      gap: var(--line-size-2, 0.5rem);
-      align-items: center;
-    }
-
-    .dot {
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 2px solid transparent;
-      transition: border-color 150ms ease-in-out;
-    }
-
-    .dot.selected {
+    sc-product-card::part(dot-selected) {
       border-color: var(--line-high-contrast, #fff);
     }
 
-    .dot--crimson {
-      background: var(--line-crimson-9);
-    }
-
-    .dot--violet {
-      background: var(--line-violet-9);
-    }
-
-    .dot--slate {
-      background: var(--line-slate-9);
-    }
-
-    .dot--indigo {
-      background: var(--line-indigo-9);
-    }
-
-    .dot--teal {
-      background: var(--line-teal-9);
-    }
-
-    .add-to-cart {
-      width: 100%;
-      padding: var(--line-size-3, 1rem);
-      border: none;
-      border-radius: var(--line-radius-2, 4px);
+    sc-product-card::part(button) {
       background: var(--line-solid-background);
       color: var(--line-solid-text, #fff);
-      font-size: var(--line-font-size-1, 0.875rem);
-      font-weight: var(--line-font-weight-7, 700);
-      cursor: pointer;
-      transition: background 150ms ease-in-out;
-      margin-top: auto;
     }
 
-    .add-to-cart:hover {
+    sc-product-card::part(button):hover {
       background: var(--line-solid-hover);
     }
 
@@ -452,20 +344,6 @@ export class ScPagePlayground extends LitElement {
     }
   `;
 
-  private _handleImageError(event: Event) {
-    const img = event.target as HTMLImageElement;
-    const placeholder = document.createElement('div');
-    placeholder.className = 'product-image-placeholder';
-    placeholder.innerHTML = `
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="12" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
-        <circle cx="22" cy="26" r="5" stroke="currentColor" stroke-width="2"/>
-        <path d="M8 40 L24 28 L36 38 L44 32 L56 42" stroke="currentColor" stroke-width="2" fill="none"/>
-      </svg>
-    `;
-    img.replaceWith(placeholder);
-  }
-
   override render() {
     return html`
       <!-- Mobile: collapsed accent bar -->
@@ -518,72 +396,44 @@ export class ScPagePlayground extends LitElement {
           <div class="block-wrapper">
             <div class="product-grid">
               <!-- Card 1: Slate base -->
-              <div class="product-card product-card--slate" part="product-card-1">
-                <img
-                  class="product-image"
-                  src="https://picsum.photos/400/300?random=1"
-                  alt="Classic Sneaker"
-                  loading="lazy"
-                  @error=${this._handleImageError}
-                />
-                <div class="card-body">
-                  <h3 class="product-title">Classic Sneaker</h3>
-                  <p class="product-desc">
-                    Timeless design meets modern comfort. Crafted with premium
-                    materials for everyday wear.
-                  </p>
-                  <div class="price-row">
-                    <span class="price">$89.00</span>
-                    <span class="rating" aria-label="4 out of 5 stars">★★★★☆</span>
-                  </div>
-                  <div class="size-chips">
-                    <span class="chip">S</span>
-                    <span class="chip active">M</span>
-                    <span class="chip">L</span>
-                    <span class="chip">XL</span>
-                  </div>
-                  <div class="color-dots">
-                    <span class="dot dot--crimson" title="Crimson"></span>
-                    <span class="dot dot--violet" title="Violet"></span>
-                    <span class="dot dot--slate selected" title="Slate"></span>
-                  </div>
-                  <button class="add-to-cart" type="button">Add to Cart</button>
-                </div>
-              </div>
+              <sc-product-card
+                class="product-card-slate"
+                heading="Classic Sneaker"
+                description="Timeless design meets modern comfort. Crafted with premium materials for everyday wear."
+                price="$89.00"
+                rating="★★★★☆"
+                rating-label="4 out of 5 stars"
+                image-src="https://picsum.photos/400/300?random=1"
+                image-alt="Classic Sneaker"
+                button-label="Add to Cart"
+                sizes="S,M,L,XL"
+                active-size="1"
+                .colors=${[
+                  { color: 'var(--line-crimson-9)', label: 'Crimson' },
+                  { color: 'var(--line-violet-9)', label: 'Violet' },
+                  { color: 'var(--line-slate-9)', label: 'Slate', selected: true }
+                ]}
+              ></sc-product-card>
 
               <!-- Card 2: Mauve base -->
-              <div class="product-card product-card--mauve" part="product-card-2">
-                <img
-                  class="product-image"
-                  src="https://picsum.photos/400/300?random=2"
-                  alt="Heritage Backpack"
-                  loading="lazy"
-                  @error=${this._handleImageError}
-                />
-                <div class="card-body">
-                  <h3 class="product-title">Heritage Backpack</h3>
-                  <p class="product-desc">
-                    Water-resistant canvas with leather accents. Built to carry
-                    your essentials in style.
-                  </p>
-                  <div class="price-row">
-                    <span class="price">$129.00</span>
-                    <span class="rating" aria-label="5 out of 5 stars">★★★★★</span>
-                  </div>
-                  <div class="size-chips">
-                    <span class="chip active">S</span>
-                    <span class="chip">M</span>
-                    <span class="chip">L</span>
-                    <span class="chip">XL</span>
-                  </div>
-                  <div class="color-dots">
-                    <span class="dot dot--indigo" title="Indigo"></span>
-                    <span class="dot dot--teal selected" title="Teal"></span>
-                    <span class="dot dot--crimson" title="Crimson"></span>
-                  </div>
-                  <button class="add-to-cart" type="button">Add to Cart</button>
-                </div>
-              </div>
+              <sc-product-card
+                class="product-card-mauve"
+                heading="Heritage Backpack"
+                description="Water-resistant canvas with leather accents. Built to carry your essentials in style."
+                price="$129.00"
+                rating="★★★★★"
+                rating-label="5 out of 5 stars"
+                image-src="https://picsum.photos/400/300?random=2"
+                image-alt="Heritage Backpack"
+                button-label="Add to Cart"
+                sizes="S,M,L,XL"
+                active-size="0"
+                .colors=${[
+                  { color: 'var(--line-indigo-9)', label: 'Indigo' },
+                  { color: 'var(--line-teal-9)', label: 'Teal', selected: true },
+                  { color: 'var(--line-crimson-9)', label: 'Crimson' }
+                ]}
+              ></sc-product-card>
             </div>
           </div>
           <div class="block-wrapper">
