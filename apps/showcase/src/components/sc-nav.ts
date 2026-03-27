@@ -15,7 +15,8 @@ const NAV_ITEMS: { key: PanelKey; label: string }[] = [
   { key: 'semantic', label: 'Semantic' },
   { key: 'elements', label: 'Elements' },
   { key: 'themes', label: 'Themes' },
-  { key: 'generator', label: 'Generator' }
+  { key: 'generator', label: 'Generator' },
+  { key: 'playground', label: 'Playground' }
 ];
 
 @customElement('sc-nav')

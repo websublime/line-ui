@@ -22,6 +22,7 @@ import './pages/semantic.js';
 import './pages/elements.js';
 import './pages/themes.js';
 import './pages/generator.js';
+import './pages/playground.js';
 
 export type PanelKey =
   | 'home'
@@ -34,7 +35,8 @@ export type PanelKey =
   | 'semantic'
   | 'elements'
   | 'themes'
-  | 'generator';
+  | 'generator'
+  | 'playground';
 
 @customElement('sc-app')
 export class ScApp extends LitElement {
@@ -108,7 +110,8 @@ export class ScApp extends LitElement {
       'semantic',
       'elements',
       'themes',
-      'generator'
+      'generator',
+      'playground'
     ].includes(value);
   }
 
@@ -201,6 +204,8 @@ export class ScApp extends LitElement {
         return html`<sc-page-themes></sc-page-themes>`;
       case 'generator':
         return html`<sc-page-generator></sc-page-generator>`;
+      case 'playground':
+        return html`<sc-page-playground ?light=${this._light} .schema=${this._schema}></sc-page-playground>`;
       default:
         return nothing;
     }
