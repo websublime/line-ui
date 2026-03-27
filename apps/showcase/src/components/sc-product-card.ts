@@ -1,5 +1,5 @@
 import { css, html, LitElement, nothing } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
 
 /**
  * Headless e-commerce product card component.
@@ -35,6 +35,9 @@ export class ScProductCard extends LitElement {
 
   /** Button label text */
   @property({ type: String, attribute: 'button-label' }) buttonLabel = 'Add to Cart';
+
+  /** Tracks whether the image failed to load, triggering placeholder rendering */
+  @state() private _imageError = false;
 
   /** Comma-separated list of size chip labels (e.g. "S,M,L,XL") */
   @property({ type: String }) sizes = '';
@@ -217,19 +220,8 @@ export class ScProductCard extends LitElement {
     }
   `;
 
-  private _handleImageError(event: Event) {
-    const img = event.target as HTMLImageElement;
-    const placeholder = document.createElement('div');
-    placeholder.className = 'image-placeholder';
-    placeholder.setAttribute('part', 'image-placeholder');
-    placeholder.innerHTML = `
-      <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="8" y="12" width="48" height="36" rx="4" stroke="currentColor" stroke-width="2"/>
-        <circle cx="22" cy="26" r="5" stroke="currentColor" stroke-width="2"/>
-        <path d="M8 40 L24 28 L36 38 L44 32 L56 42" stroke="currentColor" stroke-width="2" fill="none"/>
-      </svg>
-    `;
-    img.replaceWith(placeholder);
+  private _handleImageError() {
+    this._imageError = true;
   }
 
   private _renderSizeChips() {
@@ -251,6 +243,10 @@ export class ScProductCard extends LitElement {
 
   private _renderColorDots() {
     if (!this.colors || this.colors.length === 0) return nothing;
+    // NOTE: Showcase-only pattern. Color values come from the consumer via .colors
+    // property binding and are inserted as inline styles. In production line://ui
+    // components, user-supplied values must be sanitized before inline style injection
+    // to prevent CSS injection vectors (e.g. url() exfiltration via background-image).
     return html`
       <div class="color-dots" part="color-dots">
         ${this.colors.map(
@@ -271,7 +267,7 @@ export class ScProductCard extends LitElement {
     return html`
       <div class="card" part="card">
         ${
-          this.imageSrc
+          this.imageSrc && !this._imageError
             ? html`
               <img
                 class="image"
