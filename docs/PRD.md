@@ -176,188 +176,188 @@ Key architectural principles referenced throughout this document:
 
 ## 4. Component Catalogue
 
-Each component has a product-level description below and a detailed technical specification in `.spec/`. Specs follow the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](../.spec/COMPONENT-SPEC-TEMPLATE.md).
+Each component has a product-level description below and a detailed technical specification in `docs/specs/`. Specs follow the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md).
 
 ### 4.1 Primitives Base
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Button | Custom | Primary interactive element for triggering actions. Supports form submit/reset | [spec](../.spec/0002-button.md) |
-| IconButton | Custom | Icon-only action button. Requires accessible label for screen readers | [spec](../.spec/0003-icon-button.md) |
-| ButtonGroup | Static | Visually groups related buttons with border collapse and shared navigation | [spec](../.spec/0004-button-group.md) |
-| SplitButton | Custom | Primary action with dropdown for alternatives. Composes Button + Menu internally | [spec](../.spec/0005-split-button.md) |
-| Alert | Static | Inline persistent feedback for info, warnings, errors, or success states | [spec](../.spec/0006-alert.md) |
-| Badge | Static | Small status indicator — count, dot, or label variant | [spec](../.spec/0007-badge.md) |
-| Chip | Static | Display tag with optional remove. Used for categories, filters, selections | [spec](../.spec/0008-chip.md) |
-| Avatar | Static | User or entity representation with image, initials fallback, and status | [spec](../.spec/0009-avatar.md) |
-| AvatarGroup | Custom | Stacked avatars with overflow counter. Expands on hover, popover on overflow click | [spec](../.spec/0010-avatar-group.md) |
-| Separator | Static | Visual divider between content sections. Horizontal or vertical | [spec](../.spec/0011-separator.md) |
-| Visually Hidden | Static | Accessibility utility — hides content visually, available to screen readers | [spec](../.spec/0012-visually-hidden.md) |
-| Portal | Static | Renders child content outside its DOM parent | [spec](../.spec/0013-portal.md) |
-| Icon | Static | Framework-agnostic icon wrapper with pluggable library registry | [spec](../.spec/0014-icon.md) |
-| Kbd / Shortcut | Static | Keyboard shortcut display with OS-aware rendering (Cmd vs Ctrl) | [spec](../.spec/0015-kbd.md) |
-| Skeleton | Static | Placeholder loading indicator with pulse or wave animation | [spec](../.spec/0016-skeleton.md) |
-| Presence | Pre-built | Controls mount/unmount animations for enter/exit transitions | [spec](../.spec/0017-presence.md) |
-| Stack | Static | Flex layout helper for vertical or horizontal stacking with gap | [spec](../.spec/0018-stack.md) |
-| Grid | Static | CSS Grid layout wrapper with responsive column control | [spec](../.spec/0019-grid.md) |
-| Center | Static | Centering utility for horizontal, vertical, or both axes | [spec](../.spec/0020-center.md) |
-| Aspect Ratio | Static | Maintains fixed width-to-height ratio for responsive media | [spec](../.spec/0021-aspect-ratio.md) |
-| Spinner | Static | Standalone loading indicator. CSS-only animation, no visual opinion | [spec](../.spec/0022-spinner.md) |
+| Button | Custom | Primary interactive element for triggering actions. Supports form submit/reset | [spec](./specs/0002-button.md) |
+| IconButton | Custom | Icon-only action button. Requires accessible label for screen readers | [spec](./specs/0003-icon-button.md) |
+| ButtonGroup | Static | Visually groups related buttons with border collapse and shared navigation | [spec](./specs/0004-button-group.md) |
+| SplitButton | Custom | Primary action with dropdown for alternatives. Composes Button + Menu internally | [spec](./specs/0005-split-button.md) |
+| Alert | Static | Inline persistent feedback for info, warnings, errors, or success states | [spec](./specs/0006-alert.md) |
+| Badge | Static | Small status indicator — count, dot, or label variant | [spec](./specs/0007-badge.md) |
+| Chip | Static | Display tag with optional remove. Used for categories, filters, selections | [spec](./specs/0008-chip.md) |
+| Avatar | Static | User or entity representation with image, initials fallback, and status | [spec](./specs/0009-avatar.md) |
+| AvatarGroup | Custom | Stacked avatars with overflow counter. Expands on hover, popover on overflow click | [spec](./specs/0010-avatar-group.md) |
+| Separator | Static | Visual divider between content sections. Horizontal or vertical | [spec](./specs/0011-separator.md) |
+| Visually Hidden | Static | Accessibility utility — hides content visually, available to screen readers | [spec](./specs/0012-visually-hidden.md) |
+| Portal | Static | Renders child content outside its DOM parent | [spec](./specs/0013-portal.md) |
+| Icon | Static | Framework-agnostic icon wrapper with pluggable library registry | [spec](./specs/0014-icon.md) |
+| Kbd / Shortcut | Static | Keyboard shortcut display with OS-aware rendering (Cmd vs Ctrl) | [spec](./specs/0015-kbd.md) |
+| Skeleton | Static | Placeholder loading indicator with pulse or wave animation | [spec](./specs/0016-skeleton.md) |
+| Presence | Pre-built | Controls mount/unmount animations for enter/exit transitions | [spec](./specs/0017-presence.md) |
+| Stack | Static | Flex layout helper for vertical or horizontal stacking with gap | [spec](./specs/0018-stack.md) |
+| Grid | Static | CSS Grid layout wrapper with responsive column control | [spec](./specs/0019-grid.md) |
+| Center | Static | Centering utility for horizontal, vertical, or both axes | [spec](./specs/0020-center.md) |
+| Aspect Ratio | Static | Maintains fixed width-to-height ratio for responsive media | [spec](./specs/0021-aspect-ratio.md) |
+| Spinner | Static | Standalone loading indicator. CSS-only animation, no visual opinion | [spec](./specs/0022-spinner.md) |
 
 ### 4.2 Forms — Essential
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Input | Custom | Text input for email, tel, url, and plain text. Detects autofill | [spec](../.spec/0023-input.md) |
-| PasswordInput | Custom | Password field with built-in visibility toggle | [spec](../.spec/0024-password-input.md) |
-| SearchInput | Custom | Text input with built-in clear action | [spec](../.spec/0025-search-input.md) |
-| DateInput | Custom | Masked date field with segment navigation. No popup | [spec](../.spec/0026-date-input.md) |
-| Textarea | Custom | Multi-line text input with optional auto-resize | [spec](../.spec/0027-textarea.md) |
-| Field | Custom | Orchestrates label, hint, error, and required indicator for any control | [spec](../.spec/0028-field.md) |
-| Fieldset | Static | Semantic grouping of related controls with legend and disabled propagation | [spec](../.spec/0029-fieldset.md) |
-| Checkbox | Pre-built | Binary or indeterminate selection control | [spec](../.spec/0030-checkbox.md) |
-| Radio Group | Pre-built | Single selection from a set of options | [spec](../.spec/0031-radio-group.md) |
-| Switch | Pre-built | Toggle between two states (on/off) | [spec](../.spec/0032-switch.md) |
-| Select | Pre-built | Dropdown with search, groups, and keyboard navigation | [spec](../.spec/0033-select.md) |
-| Toggle Group | Pre-built | Exclusive or multi-selection between segmented options | [spec](../.spec/0034-toggle-group.md) |
-| Slider | Pre-built | Single-value selection along a range | [spec](../.spec/0035-slider.md) |
-| Number Input | Pre-built | Numeric input with increment/decrement controls | [spec](../.spec/0036-number-input.md) |
-| Editable | Pre-built | Click-to-edit inline text for tables, settings, profiles | [spec](../.spec/0037-editable.md) |
+| Input | Custom | Text input for email, tel, url, and plain text. Detects autofill | [spec](./specs/0023-input.md) |
+| PasswordInput | Custom | Password field with built-in visibility toggle | [spec](./specs/0024-password-input.md) |
+| SearchInput | Custom | Text input with built-in clear action | [spec](./specs/0025-search-input.md) |
+| DateInput | Custom | Masked date field with segment navigation. No popup | [spec](./specs/0026-date-input.md) |
+| Textarea | Custom | Multi-line text input with optional auto-resize | [spec](./specs/0027-textarea.md) |
+| Field | Custom | Orchestrates label, hint, error, and required indicator for any control | [spec](./specs/0028-field.md) |
+| Fieldset | Static | Semantic grouping of related controls with legend and disabled propagation | [spec](./specs/0029-fieldset.md) |
+| Checkbox | Pre-built | Binary or indeterminate selection control | [spec](./specs/0030-checkbox.md) |
+| Radio Group | Pre-built | Single selection from a set of options | [spec](./specs/0031-radio-group.md) |
+| Switch | Pre-built | Toggle between two states (on/off) | [spec](./specs/0032-switch.md) |
+| Select | Pre-built | Dropdown with search, groups, and keyboard navigation | [spec](./specs/0033-select.md) |
+| Toggle Group | Pre-built | Exclusive or multi-selection between segmented options | [spec](./specs/0034-toggle-group.md) |
+| Slider | Pre-built | Single-value selection along a range | [spec](./specs/0035-slider.md) |
+| Number Input | Pre-built | Numeric input with increment/decrement controls | [spec](./specs/0036-number-input.md) |
+| Editable | Pre-built | Click-to-edit inline text for tables, settings, profiles | [spec](./specs/0037-editable.md) |
 
 ### 4.3 Overlays & Feedback
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Dialog | Pre-built | Modal or non-modal dialog for focused interactions | [spec](../.spec/0038-dialog.md) |
-| Alert Dialog | Pre-built | Confirmation dialog requiring explicit user action | [spec](../.spec/0039-alert-dialog.md) |
-| Sheet | Pre-built | Side panel — overlay or push mode, any edge | [spec](../.spec/0040-sheet.md) |
-| Drawer | Pre-built | Temporary sliding panel for supplementary content | [spec](../.spec/0041-drawer.md) |
-| Popover | Pre-built | Floating content anchored to a trigger | [spec](../.spec/0042-popover.md) |
-| Tooltip | Pre-built | Brief contextual information on hover or focus | [spec](../.spec/0043-tooltip.md) |
-| Hover Card | Pre-built | Rich preview content shown on hover | [spec](../.spec/0044-hover-card.md) |
-| Toast | Pre-built | Transient notification with stacking and auto-dismiss | [spec](../.spec/0045-toast.md) |
+| Dialog | Pre-built | Modal or non-modal dialog for focused interactions | [spec](./specs/0038-dialog.md) |
+| Alert Dialog | Pre-built | Confirmation dialog requiring explicit user action | [spec](./specs/0039-alert-dialog.md) |
+| Sheet | Pre-built | Side panel — overlay or push mode, any edge | [spec](./specs/0040-sheet.md) |
+| Drawer | Pre-built | Temporary sliding panel for supplementary content | [spec](./specs/0041-drawer.md) |
+| Popover | Pre-built | Floating content anchored to a trigger | [spec](./specs/0042-popover.md) |
+| Tooltip | Pre-built | Brief contextual information on hover or focus | [spec](./specs/0043-tooltip.md) |
+| Hover Card | Pre-built | Rich preview content shown on hover | [spec](./specs/0044-hover-card.md) |
+| Toast | Pre-built | Transient notification with stacking and auto-dismiss | [spec](./specs/0045-toast.md) |
 
 ### 4.4 Navigation & Disclosure
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Tabs | Pre-built | Switchable content panels with keyboard navigation | [spec](../.spec/0046-tabs.md) |
-| Accordion | Pre-built | Vertically stacked collapsible sections | [spec](../.spec/0047-accordion.md) |
-| Collapsible | Pre-built | Single expandable/collapsible content section | [spec](../.spec/0048-collapsible.md) |
-| Menu / Context Menu | Pre-built | Dropdown or right-click menu with submenus | [spec](../.spec/0049-menu.md) |
-| Navigation Menu | Pre-built | Site-level navigation with mega-menu support | [spec](../.spec/0050-navigation-menu.md) |
-| Breadcrumb | Static | Hierarchical path showing current location | [spec](../.spec/0051-breadcrumb.md) |
-| Breadcrumb Trail | Custom | Clickable breadcrumb with sibling dropdown at each level | [spec](../.spec/0052-breadcrumb-trail.md) |
-| Pagination | Pre-built | Page-based navigation for large datasets | [spec](../.spec/0053-pagination.md) |
-| Steps / Stepper | Pre-built | Visual progress indicator for multi-step processes | [spec](../.spec/0054-steps.md) |
-| Menubar | Custom | Horizontal app-style menu bar for desktop-inspired interfaces | [spec](../.spec/0055-menubar.md) |
+| Tabs | Pre-built | Switchable content panels with keyboard navigation | [spec](./specs/0046-tabs.md) |
+| Accordion | Pre-built | Vertically stacked collapsible sections | [spec](./specs/0047-accordion.md) |
+| Collapsible | Pre-built | Single expandable/collapsible content section | [spec](./specs/0048-collapsible.md) |
+| Menu / Context Menu | Pre-built | Dropdown or right-click menu with submenus | [spec](./specs/0049-menu.md) |
+| Navigation Menu | Pre-built | Site-level navigation with mega-menu support | [spec](./specs/0050-navigation-menu.md) |
+| Breadcrumb | Static | Hierarchical path showing current location | [spec](./specs/0051-breadcrumb.md) |
+| Breadcrumb Trail | Custom | Clickable breadcrumb with sibling dropdown at each level | [spec](./specs/0052-breadcrumb-trail.md) |
+| Pagination | Pre-built | Page-based navigation for large datasets | [spec](./specs/0053-pagination.md) |
+| Steps / Stepper | Pre-built | Visual progress indicator for multi-step processes | [spec](./specs/0054-steps.md) |
+| Menubar | Custom | Horizontal app-style menu bar for desktop-inspired interfaces | [spec](./specs/0055-menubar.md) |
 
 ### 4.5 Forms — Advanced
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Combobox | Pre-built | Autocomplete input with filterable options | [spec](../.spec/0056-combobox.md) |
-| Date Picker | Pre-built | Calendar popup for date selection | [spec](../.spec/0057-date-picker.md) |
-| Date Range Picker | Pre-built | Two-calendar date range selection | [spec](../.spec/0058-date-range-picker.md) |
-| Time Picker | Pre-built | Time selection with segments | [spec](../.spec/0059-time-picker.md) |
-| Color Picker | Pre-built | Visual colour selection | [spec](../.spec/0060-color-picker.md) |
-| Pin Input | Pre-built | Individual character inputs for OTP codes | [spec](../.spec/0061-pin-input.md) |
-| Rating | Pre-built | Star or custom icon rating selection | [spec](../.spec/0062-rating.md) |
-| Range Slider | Pre-built | Dual-thumb slider for value ranges | [spec](../.spec/0063-range-slider.md) |
-| File Upload | Pre-built | Drag-and-drop file selection with validation | [spec](../.spec/0064-file-upload.md) |
-| Signature Pad | Pre-built | Drawing canvas for capturing signatures | [spec](../.spec/0065-signature-pad.md) |
-| Tag Input | Custom | Text-to-tags with autocomplete and reorder | [spec](../.spec/0066-tag-input.md) |
-| Mention Input | Custom | Textarea with @mention and #channel inline | [spec](../.spec/0067-mention-input.md) |
-| Search Field | Custom | Full search with suggestions and scoped filtering | [spec](../.spec/0068-search-field.md) |
-| Wizard | Custom | Multi-step form with validation and branching | [spec](../.spec/0069-wizard.md) |
+| Combobox | Pre-built | Autocomplete input with filterable options | [spec](./specs/0056-combobox.md) |
+| Date Picker | Pre-built | Calendar popup for date selection | [spec](./specs/0057-date-picker.md) |
+| Date Range Picker | Pre-built | Two-calendar date range selection | [spec](./specs/0058-date-range-picker.md) |
+| Time Picker | Pre-built | Time selection with segments | [spec](./specs/0059-time-picker.md) |
+| Color Picker | Pre-built | Visual colour selection | [spec](./specs/0060-color-picker.md) |
+| Pin Input | Pre-built | Individual character inputs for OTP codes | [spec](./specs/0061-pin-input.md) |
+| Rating | Pre-built | Star or custom icon rating selection | [spec](./specs/0062-rating.md) |
+| Range Slider | Pre-built | Dual-thumb slider for value ranges | [spec](./specs/0063-range-slider.md) |
+| File Upload | Pre-built | Drag-and-drop file selection with validation | [spec](./specs/0064-file-upload.md) |
+| Signature Pad | Pre-built | Drawing canvas for capturing signatures | [spec](./specs/0065-signature-pad.md) |
+| Tag Input | Custom | Text-to-tags with autocomplete and reorder | [spec](./specs/0066-tag-input.md) |
+| Mention Input | Custom | Textarea with @mention and #channel inline | [spec](./specs/0067-mention-input.md) |
+| Search Field | Custom | Full search with suggestions and scoped filtering | [spec](./specs/0068-search-field.md) |
+| Wizard | Custom | Multi-step form with validation and branching | [spec](./specs/0069-wizard.md) |
 
 ### 4.6 Data Display
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Table | Custom | Headless data table with sort, filter, and selection | [spec](../.spec/0070-table.md) |
-| Card | Static | Composable container with header, body, and footer | [spec](../.spec/0071-card.md) |
-| Progress | Pre-built | Linear or circular progress indicator | [spec](../.spec/0072-progress.md) |
-| Progress Ring | Static | Multiple overlapping circular indicators | [spec](../.spec/0073-progress-ring.md) |
-| Progress List | Custom | Real-time operation status list | [spec](../.spec/0074-progress-list.md) |
-| Scroll Area | Pre-built | Custom styled scrollbar preserving native behaviour | [spec](../.spec/0075-scroll-area.md) |
-| Carousel | Pre-built | Content slider with touch and keyboard | [spec](../.spec/0076-carousel.md) |
-| Clipboard | Pre-built | Copy-to-clipboard with visual feedback | [spec](../.spec/0077-clipboard.md) |
-| QR Code | Pre-built | Dynamic QR code generation | [spec](../.spec/0078-qr-code.md) |
-| Timer | Pre-built | Countdown or stopwatch | [spec](../.spec/0079-timer.md) |
-| Tree View | Pre-built | Hierarchical expandable data display | [spec](../.spec/0080-tree-view.md) |
-| Gauge / Meter | Static | Semicircular arc with pointer and zones | [spec](../.spec/0081-gauge.md) |
-| Empty State | Static | Placeholder for empty content areas | [spec](../.spec/0082-empty-state.md) |
+| Table | Custom | Headless data table with sort, filter, and selection | [spec](./specs/0070-table.md) |
+| Card | Static | Composable container with header, body, and footer | [spec](./specs/0071-card.md) |
+| Progress | Pre-built | Linear or circular progress indicator | [spec](./specs/0072-progress.md) |
+| Progress Ring | Static | Multiple overlapping circular indicators | [spec](./specs/0073-progress-ring.md) |
+| Progress List | Custom | Real-time operation status list | [spec](./specs/0074-progress-list.md) |
+| Scroll Area | Pre-built | Custom styled scrollbar preserving native behaviour | [spec](./specs/0075-scroll-area.md) |
+| Carousel | Pre-built | Content slider with touch and keyboard | [spec](./specs/0076-carousel.md) |
+| Clipboard | Pre-built | Copy-to-clipboard with visual feedback | [spec](./specs/0077-clipboard.md) |
+| QR Code | Pre-built | Dynamic QR code generation | [spec](./specs/0078-qr-code.md) |
+| Timer | Pre-built | Countdown or stopwatch | [spec](./specs/0079-timer.md) |
+| Tree View | Pre-built | Hierarchical expandable data display | [spec](./specs/0080-tree-view.md) |
+| Gauge / Meter | Static | Semicircular arc with pointer and zones | [spec](./specs/0081-gauge.md) |
+| Empty State | Static | Placeholder for empty content areas | [spec](./specs/0082-empty-state.md) |
 
 ### 4.7 Layout & Containers
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| App Shell | Static | Full application layout via slots | [spec](../.spec/0083-app-shell.md) |
-| Sidebar | Custom | Collapsible side navigation with rail mode | [spec](../.spec/0084-sidebar.md) |
-| Header / Toolbar | Static | Sticky top bar with slots | [spec](../.spec/0085-header.md) |
-| Content Area | Static | Scrollable main content with max-width | [spec](../.spec/0086-content-area.md) |
-| Panel | Custom | Collapsible container with header/body/footer | [spec](../.spec/0087-panel.md) |
-| Splitter | Pre-built | Resizable panel divider | [spec](../.spec/0088-splitter.md) |
-| Floating Panel | Pre-built | Draggable window with minimize/maximize/snap | [spec](../.spec/0089-floating-panel.md) |
+| App Shell | Static | Full application layout via slots | [spec](./specs/0083-app-shell.md) |
+| Sidebar | Custom | Collapsible side navigation with rail mode | [spec](./specs/0084-sidebar.md) |
+| Header / Toolbar | Static | Sticky top bar with slots | [spec](./specs/0085-header.md) |
+| Content Area | Static | Scrollable main content with max-width | [spec](./specs/0086-content-area.md) |
+| Panel | Custom | Collapsible container with header/body/footer | [spec](./specs/0087-panel.md) |
+| Splitter | Pre-built | Resizable panel divider | [spec](./specs/0088-splitter.md) |
+| Floating Panel | Pre-built | Draggable window with minimize/maximize/snap | [spec](./specs/0089-floating-panel.md) |
 
 ### 4.8 Desktop-Inspired
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Command Palette | Custom | Cmd+K searchable command launcher | [spec](../.spec/0090-command-palette.md) |
-| Spotlight | Custom | Global search overlay with preview | [spec](../.spec/0091-spotlight.md) |
-| Status Bar | Static | Bottom information bar with widget slots | [spec](../.spec/0092-status-bar.md) |
-| Activity Bar | Custom | Vertical icon bar for panel switching | [spec](../.spec/0093-activity-bar.md) |
-| Notification Center | Custom | Grouped dismissable notification history | [spec](../.spec/0094-notification-center.md) |
-| Properties Panel | Custom | Contextual property editor for selected items | [spec](../.spec/0095-properties-panel.md) |
-| Minimap | Static | Miniature content preview with viewport indicator | [spec](../.spec/0096-minimap.md) |
-| Master-Detail | Custom | Split view: list left, detail right | [spec](../.spec/0097-master-detail.md) |
-| List View | Custom | Multi-select list with keyboard nav and reorder | [spec](../.spec/0098-list-view.md) |
-| Segmented Control | Custom | Toggle between 2-5 options with sliding indicator | [spec](../.spec/0099-segmented-control.md) |
-| Dock | Custom | macOS-style icon bar with magnification | [spec](../.spec/0100-dock.md) |
+| Command Palette | Custom | Cmd+K searchable command launcher | [spec](./specs/0090-command-palette.md) |
+| Spotlight | Custom | Global search overlay with preview | [spec](./specs/0091-spotlight.md) |
+| Status Bar | Static | Bottom information bar with widget slots | [spec](./specs/0092-status-bar.md) |
+| Activity Bar | Custom | Vertical icon bar for panel switching | [spec](./specs/0093-activity-bar.md) |
+| Notification Center | Custom | Grouped dismissable notification history | [spec](./specs/0094-notification-center.md) |
+| Properties Panel | Custom | Contextual property editor for selected items | [spec](./specs/0095-properties-panel.md) |
+| Minimap | Static | Miniature content preview with viewport indicator | [spec](./specs/0096-minimap.md) |
+| Master-Detail | Custom | Split view: list left, detail right | [spec](./specs/0097-master-detail.md) |
+| List View | Custom | Multi-select list with keyboard nav and reorder | [spec](./specs/0098-list-view.md) |
+| Segmented Control | Custom | Toggle between 2-5 options with sliding indicator | [spec](./specs/0099-segmented-control.md) |
+| Dock | Custom | macOS-style icon bar with magnification | [spec](./specs/0100-dock.md) |
 
 ### 4.9 Innovative
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Kanban Board | Custom | Drag-and-drop workflow columns and cards | [spec](../.spec/0101-kanban-board.md) |
-| Timeline | Static | Chronological event display with branching | [spec](../.spec/0102-timeline.md) |
-| Data Grid | Custom | High-performance grid with virtual scrolling | [spec](../.spec/0103-data-grid.md) |
-| Infinite Scroll | Custom | Intersection Observer-based infinite loading | [spec](../.spec/0104-infinite-scroll.md) |
-| Marquee | Static | Continuous scrolling content | [spec](../.spec/0105-marquee.md) |
-| Spotlight Card | Static | Cursor-following gradient glow effect | [spec](../.spec/0106-spotlight-card.md) |
-| Image Comparison | Custom | Before/after slider for two images | [spec](../.spec/0107-image-comparison.md) |
-| Sparkline | Static | Mini inline chart for data-dense contexts | [spec](../.spec/0108-sparkline.md) |
-| Flip Card | Static | 3D flip animation between front and back | [spec](../.spec/0109-flip-card.md) |
-| Morph | Static | Shared layout animation via View Transitions | [spec](../.spec/0110-morph.md) |
-| Diff Viewer | Static | Side-by-side or unified text comparison | [spec](../.spec/0111-diff-viewer.md) |
-| Wheel Picker | Custom | iOS-style rotary scroll selection | [spec](../.spec/0112-wheel-picker.md) |
-| Angle Slider | Pre-built | Circular rotary input for angular values | [spec](../.spec/0113-angle-slider.md) |
-| Highlight | Pre-built | Text matching and highlighting | [spec](../.spec/0114-highlight.md) |
-| Tour | Pre-built | Step-by-step product tour | [spec](../.spec/0115-tour.md) |
+| Kanban Board | Custom | Drag-and-drop workflow columns and cards | [spec](./specs/0101-kanban-board.md) |
+| Timeline | Static | Chronological event display with branching | [spec](./specs/0102-timeline.md) |
+| Data Grid | Custom | High-performance grid with virtual scrolling | [spec](./specs/0103-data-grid.md) |
+| Infinite Scroll | Custom | Intersection Observer-based infinite loading | [spec](./specs/0104-infinite-scroll.md) |
+| Marquee | Static | Continuous scrolling content | [spec](./specs/0105-marquee.md) |
+| Spotlight Card | Static | Cursor-following gradient glow effect | [spec](./specs/0106-spotlight-card.md) |
+| Image Comparison | Custom | Before/after slider for two images | [spec](./specs/0107-image-comparison.md) |
+| Sparkline | Static | Mini inline chart for data-dense contexts | [spec](./specs/0108-sparkline.md) |
+| Flip Card | Static | 3D flip animation between front and back | [spec](./specs/0109-flip-card.md) |
+| Morph | Static | Shared layout animation via View Transitions | [spec](./specs/0110-morph.md) |
+| Diff Viewer | Static | Side-by-side or unified text comparison | [spec](./specs/0111-diff-viewer.md) |
+| Wheel Picker | Custom | iOS-style rotary scroll selection | [spec](./specs/0112-wheel-picker.md) |
+| Angle Slider | Pre-built | Circular rotary input for angular values | [spec](./specs/0113-angle-slider.md) |
+| Highlight | Pre-built | Text matching and highlighting | [spec](./specs/0114-highlight.md) |
+| Tour | Pre-built | Step-by-step product tour | [spec](./specs/0115-tour.md) |
 
 ### 4.10 Real-World / Domain Components
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Ballot / Poll | Custom | Voting with live animated results | [spec](../.spec/0116-ballot.md) |
-| Reaction Bar | Custom | Emoji reactions with counter and toggle | [spec](../.spec/0117-reaction-bar.md) |
-| Proof / Annotation | Custom | Positional pins/comments on images/documents | [spec](../.spec/0118-proof.md) |
-| Price Card | Static | Currency display with period and discount | [spec](../.spec/0119-price-card.md) |
-| Stat Card | Static | Dashboard metric with value, label, and trend | [spec](../.spec/0120-stat-card.md) |
-| Ticket / Pass | Static | Visual ticket with notch and barcode/QR slot | [spec](../.spec/0121-ticket.md) |
-| Chat Bubble | Static | Message with tail, status, and reactions | [spec](../.spec/0122-chat-bubble.md) |
-| Audio Player | Custom | Headless audio controls | [spec](../.spec/0123-audio-player.md) |
-| Video Player | Custom | Headless video controls with PiP and captions | [spec](../.spec/0124-video-player.md) |
-| Cookie Consent | Custom | GDPR banner with category toggles | [spec](../.spec/0125-cookie-consent.md) |
-| Calendar View | Custom | Day/week/month event calendar (not date picker) | [spec](../.spec/0126-calendar-view.md) |
-| Terminal | Custom | Monospace console with ANSI colours | [spec](../.spec/0127-terminal.md) |
-| Receipt | Static | Line item layout with subtotal and total | [spec](../.spec/0128-receipt.md) |
-| Changelog | Static | Chronological release notes | [spec](../.spec/0129-changelog.md) |
-| Weather Card | Static | Composable weather display | [spec](../.spec/0130-weather-card.md) |
-| Map Marker | Custom | Customisable map pin with popover | [spec](../.spec/0131-map-marker.md) |
-| OTP Verification | Custom | Complete verification flow with timer and resend | [spec](../.spec/0132-otp-verification.md) |
+| Ballot / Poll | Custom | Voting with live animated results | [spec](./specs/0116-ballot.md) |
+| Reaction Bar | Custom | Emoji reactions with counter and toggle | [spec](./specs/0117-reaction-bar.md) |
+| Proof / Annotation | Custom | Positional pins/comments on images/documents | [spec](./specs/0118-proof.md) |
+| Price Card | Static | Currency display with period and discount | [spec](./specs/0119-price-card.md) |
+| Stat Card | Static | Dashboard metric with value, label, and trend | [spec](./specs/0120-stat-card.md) |
+| Ticket / Pass | Static | Visual ticket with notch and barcode/QR slot | [spec](./specs/0121-ticket.md) |
+| Chat Bubble | Static | Message with tail, status, and reactions | [spec](./specs/0122-chat-bubble.md) |
+| Audio Player | Custom | Headless audio controls | [spec](./specs/0123-audio-player.md) |
+| Video Player | Custom | Headless video controls with PiP and captions | [spec](./specs/0124-video-player.md) |
+| Cookie Consent | Custom | GDPR banner with category toggles | [spec](./specs/0125-cookie-consent.md) |
+| Calendar View | Custom | Day/week/month event calendar (not date picker) | [spec](./specs/0126-calendar-view.md) |
+| Terminal | Custom | Monospace console with ANSI colours | [spec](./specs/0127-terminal.md) |
+| Receipt | Static | Line item layout with subtotal and total | [spec](./specs/0128-receipt.md) |
+| Changelog | Static | Chronological release notes | [spec](./specs/0129-changelog.md) |
+| Weather Card | Static | Composable weather display | [spec](./specs/0130-weather-card.md) |
+| Map Marker | Custom | Customisable map pin with popover | [spec](./specs/0131-map-marker.md) |
+| OTP Verification | Custom | Complete verification flow with timer and resend | [spec](./specs/0132-otp-verification.md) |
 
 ### 4.11 Catalogue Summary
 
@@ -1004,7 +1004,7 @@ Phase 8 ─── 18 real-world / domain ────────── v0.9.0
 
 ## 8. Component Specifications
 
-Individual component specifications live in [`.spec/`](../.spec/). Each spec follows the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](../.spec/COMPONENT-SPEC-TEMPLATE.md).
+Individual component specifications live in [`docs/specs/`](./specs/). Each spec follows the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md).
 
 ### 8.1 Spec Structure
 
@@ -1027,7 +1027,7 @@ Specs are created **just-in-time** — before each phase begins, not upfront for
 
 ### 8.3 RFC Process
 
-New components require a spec in `.spec/` before implementation begins. The spec must be in `approved` status before any code is written. Pull requests that add new components without a corresponding spec will be rejected.
+New components require a spec in `docs/specs/` before implementation begins. The spec must be in `approved` status before any code is written. Pull requests that add new components without a corresponding spec will be rejected.
 
 ---
 
@@ -1757,7 +1757,7 @@ Full implementation details in `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phas
 - **Bug reports and feature requests** via GitHub Issues.
 - **Pull requests welcome** — must include or reference a component spec.
 - **No Discord or community chat** at this stage.
-- **RFC process:** New components require a spec in `.spec/` before implementation begins.
+- **RFC process:** New components require a spec in `docs/specs/` before implementation begins.
 - **Code of conduct:** To be added.
 
 ---

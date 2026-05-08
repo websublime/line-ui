@@ -31,20 +31,43 @@ line://ui is a headless UI component library built as native Web Components. It 
 
 ## Documentation Hierarchy
 
-Agents and contributors must understand the three-tier documentation structure:
+Agents and contributors must understand the documentation structure (mister-anderson v0.4.0 layout):
 
 ```
-docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
-│   What & Why — product vision, component catalogue (131 components),
-│   design token decisions, roadmap, phases, success metrics
+docs/MANIFESTO.md
+│   Foundation — vision, principles, governing laws, out-of-scope. Every other
+│   doc must align with the principles and governing laws here.
 │
-├── docs/ARCHITECTURE.md
+├── docs/PRD.md (v0.7.0, APPROVED)
+│     What & Why — product vision, component catalogue (131 components),
+│     design token decisions, roadmap, phases, success metrics
+│
+├── docs/ARCHITECTURE.md (APPROVED, living)
 │     How — composition patterns, state management tiers (Pre-built/Custom/Static),
 │     CSS dual-layer strategy, base class design, bundle splitting, form association
 │
+├── docs/plans/
+│     When — per-phase execution plans (00-plan-foundation.md is APPROVED).
+│     Each plan covers one phase: scope, epic/task breakdown, dependencies,
+│     done criteria. Future phases (01-08) are split when reached via
+│     /specification {NN}.
+│
 ├── docs/PRODUCT-PLAN.md
-│     When — phased execution plan, epic/task breakdown, dependency graphs,
-│     done criteria per phase, critical path
+│     Roadmap — multi-phase overview that bridges PRD and the per-phase plans.
+│     Phase 0 detail is now in docs/plans/00-plan-foundation.md. Phases 1-8
+│     remain as overviews here.
+│
+├── docs/specs/
+│     Detail — architecture and per-component API contracts.
+│     Naming: {NN}-spec-{name}.md (NN = phase number, e.g. 00-spec-base.md).
+│     Every spec follows COMPONENT-SPEC-TEMPLATE.md and has a status
+│     (DRAFT → APPROVED → IMPLEMENTED). Specs are created just-in-time
+│     before implementation begins. Historical per-component specs live in
+│     docs/specs/archive/.
+│
+├── docs/research/
+│     Validation — research notes for plan assumptions, prefixed with phase
+│     number (00-research-*.md).
 │
 ├── docs/COMPETITIVE-COMPONENT-ANALYSIS.md
 │     Positioning — component-by-component gap analysis vs Shoelace, Spectrum, etc.
@@ -52,24 +75,19 @@ docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md (PRD v0.7.0)
 ├── docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md
 │     Layers — foundation tokens, semantic defaults, aliases, schemas, presets explained
 │
-├── docs/THEME-GAP-ANALYSIS.md
-│     Gaps — what is implemented vs what is specified, with actionable tasks
-│
-└── .spec/
-      Detail — architecture and per-component API contracts.
-      Every spec follows COMPONENT-SPEC-TEMPLATE.md and has a status
-      (DRAFT → APPROVED → IMPLEMENTED). Specs are created just-in-time
-      before implementation begins.
-      Naming: {SYSTEM}-SPEC.md for infrastructure (BASE-SPEC, ICON-REGISTRY-SPEC,
-      STORYBOOK-SPEC), {NNNN}-{component}.md for components (0002-button.md).
+└── docs/THEME-GAP-ANALYSIS.md
+      Gaps — what is implemented vs what is specified, with actionable tasks
 ```
 
 | Task | Start here |
 |------|-----------|
-| Understanding project goals, phases, decisions | PRD |
+| Understanding the product's foundational vision, principles, and laws | MANIFESTO |
+| Understanding project goals, phases, decisions | PRD (`docs/PRD.md`) |
 | Learning composition patterns, tier classification, CSS strategy | ARCHITECTURE |
-| Understanding execution order, dependencies, done criteria | PRODUCT-PLAN |
-| Implementing any system or component | `.spec/` — find the matching spec by name |
+| Understanding the multi-phase roadmap | `docs/PRODUCT-PLAN.md` |
+| Working on a specific phase (scope, tasks, dependencies, done criteria) | `docs/plans/{NN}-plan-*.md` |
+| Implementing any system or component | `docs/specs/` — find the matching `{NN}-spec-{name}.md` |
+| Validating technical assumptions before spec | `docs/research/{NN}-research-*.md` |
 | Comparing with competitors, identifying gaps | COMPETITIVE-COMPONENT-ANALYSIS |
 | Understanding design system layers (tokens, aliases, presets) | DESIGN-SYSTEM-IMPLEMENTATION-GUIDE |
 | Finding theme implementation gaps and next tasks | THEME-GAP-ANALYSIS |
@@ -97,15 +115,20 @@ vitamin/
 │           ├── themes/              # Ready-to-go themes per palette
 │           ├── utils/               # Normalize, media queries, rules, general
 │           └── line.css             # Main CSS bundle (target, currently vita.css)
-├── docs/                             # Product requirements & planning docs
-│   ├── PRODUCT-REQUIREMENTS-SPECIFICATION.md
-│   ├── ARCHITECTURE.md
-│   ├── PRODUCT-PLAN.md
-│   └── COMPETITIVE-COMPONENT-ANALYSIS.md
-├── .spec/                            # Architecture & component specs (API contracts)
-│   ├── COMPONENT-SPEC-TEMPLATE.md    # Template for all specs
-│   ├── {SYSTEM}-SPEC.md              # Infrastructure specs (e.g., BASE-SPEC, ICON-REGISTRY-SPEC)
-│   └── {NNNN}-{component}.md         # Per-component specs (e.g., 0002-button.md)
+├── docs/                             # Product, planning, and reference docs
+│   ├── MANIFESTO.md                  # Vision, principles, governing laws (APPROVED)
+│   ├── PRD.md                        # Product Requirements Specification (APPROVED)
+│   ├── ARCHITECTURE.md               # Cross-cutting architectural decisions (APPROVED)
+│   ├── PRODUCT-PLAN.md               # Multi-phase roadmap (overview)
+│   ├── plans/                        # Per-phase plans (e.g. 00-plan-foundation.md)
+│   ├── specs/                        # Architecture & component specs (API contracts)
+│   │   ├── COMPONENT-SPEC-TEMPLATE.md    # Template for all specs
+│   │   ├── {NN}-spec-{name}.md       # Phase-prefixed specs (e.g. 00-spec-base.md)
+│   │   └── archive/                  # Historical per-component specs (0001-..., 0002-...)
+│   ├── research/                     # Phase-prefixed research notes (00-research-*.md)
+│   ├── COMPETITIVE-COMPONENT-ANALYSIS.md
+│   ├── DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md
+│   └── THEME-GAP-ANALYSIS.md
 ├── .changeset/                       # Changesets configuration
 ├── .github/                          # GitHub workflows & config
 ├── .githooks/                        # Git hooks (core.hooksPath)

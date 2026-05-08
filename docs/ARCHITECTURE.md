@@ -359,7 +359,7 @@ Abstract wrapper with an agnostic registry:
 
 ## 13. Detailed Component Decisions
 
-Architectural decisions for specific components that were debated and resolved. These inform the individual `.spec/` files but are documented here because they establish patterns reused across the catalogue.
+Architectural decisions for specific components that were debated and resolved. These inform the individual `docs/specs/` files but are documented here because they establish patterns reused across the catalogue.
 
 ### 13.1 Button Ecosystem
 
