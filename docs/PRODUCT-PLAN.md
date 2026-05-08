@@ -1,14 +1,19 @@
-# line://ui -- Product Execution Plan
+# line://ui -- Product Execution Plan (Multi-Phase Roadmap)
 
 **Date:** 2026-03-12
-**Status:** DRAFT
+**Status:** ROADMAP — see per-phase plans for the authoritative execution detail
 **Author:** Grace (product-manager)
 **References:**
-- PRD: `docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md` (v0.7.0, Approved)
-- Architecture: `docs/ARCHITECTURE.md`
+- PRD: [`docs/PRD.md`](./PRD.md) (v0.7.0, APPROVED)
+- Architecture: [`docs/ARCHITECTURE.md`](./ARCHITECTURE.md)
+- Manifesto: [`docs/MANIFESTO.md`](./MANIFESTO.md)
 - Project context: `CLAUDE.md`
 
-This document is the execution plan that bridges the PRD (what to build) and the issue tracker (individual tasks). It answers: what gets done, in what order, what blocks what, and how we know a phase is complete.
+This document is the multi-phase roadmap that bridges the PRD (what to build) and the per-phase plans (how & when each phase is executed).
+
+> **Phase 0** detail is now authoritative in [`docs/plans/00-plan-foundation.md`](./plans/00-plan-foundation.md). The §2 content below is preserved for historical reference but should not be edited — update the per-phase plan instead.
+>
+> **Phases 1–8** remain as overviews here and will be split into per-phase plans (`docs/plans/{NN}-plan-*.md`) when each phase is reached via `/specification {NN}`.
 
 ---
 
@@ -75,10 +80,10 @@ This epic must complete before all other Phase 0 work. Everything downstream dep
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P0-E4-T1 | Refactor LineElement base class | Refactor the renamed `LineElement` to support three tiers: pre-built Zag.js machine, custom `createMachine()`, and static (no machine). Lifecycle-managed machine connect/disconnect. Zero overhead for static components. Spec: `.spec/BASE-SPEC.md` §2. | P0-E4-T3, P0-E4-T4 | Luna | L | ARCH 6, ARCH 8 |
-| P0-E4-T2 | Implement Inspector behavior | Refactor the existing inspector controller into a built-in behavior on `LineElement`. Feature flag via `localStorage`. Expose metadata: version, docs link, scope, QA tags. Expose CSS parts for inspector overlay. Spec: `.spec/BASE-SPEC.md` §3.4. | P0-E4-T1 | Luna | M | PRD 7.2 (Inspector task), Appendix B |
-| P0-E4-T3 | Implement Metadata mixin | Mixin that provides component version, documentation URL, and description as properties. Consumed by Inspector behavior. Spec: `.spec/BASE-SPEC.md` §3.3. | P0-E1-T6 | Luna | S | ARCH 6 |
-| P0-E4-T4 | Implement Direction mixin | Mixin for LTR/RTL detection and `dir` attribute management. Spec: `.spec/BASE-SPEC.md` §3.5. | P0-E1-T6 | Luna | S | ARCH 6, PRD 1.7 (RTL) |
+| P0-E4-T1 | Refactor LineElement base class | Refactor the renamed `LineElement` to support three tiers: pre-built Zag.js machine, custom `createMachine()`, and static (no machine). Lifecycle-managed machine connect/disconnect. Zero overhead for static components. Spec: `docs/specs/BASE-SPEC.md` §2. | P0-E4-T3, P0-E4-T4 | Luna | L | ARCH 6, ARCH 8 |
+| P0-E4-T2 | Implement Inspector behavior | Refactor the existing inspector controller into a built-in behavior on `LineElement`. Feature flag via `localStorage`. Expose metadata: version, docs link, scope, QA tags. Expose CSS parts for inspector overlay. Spec: `docs/specs/BASE-SPEC.md` §3.4. | P0-E4-T1 | Luna | M | PRD 7.2 (Inspector task), Appendix B |
+| P0-E4-T3 | Implement Metadata mixin | Mixin that provides component version, documentation URL, and description as properties. Consumed by Inspector behavior. Spec: `docs/specs/BASE-SPEC.md` §3.3. | P0-E1-T6 | Luna | S | ARCH 6 |
+| P0-E4-T4 | Implement Direction mixin | Mixin for LTR/RTL detection and `dir` attribute management. Spec: `docs/specs/BASE-SPEC.md` §3.5. | P0-E1-T6 | Luna | S | ARCH 6, PRD 1.7 (RTL) |
 | P0-E4-T5 | Implement FormAssociated mixin | Opt-in mixin using `ElementInternals` for native `<form>` participation. Provides `setFormValue()`, `reportValidity()`, `checkValidity()`, `:invalid`/`:valid` states. | P0-E4-T1 | Luna | L | ARCH 7, PRD 7.2 (FormAssociated task) |
 | P0-E4-T6 | Validate Zag.js integration | Spike: integrate `@zag-js/element` adapter with `LineElement`. Validate that pre-built machines connect correctly and that custom `createMachine()` works. Document any maturity risks. | P0-E4-T1 | Luna | M | PRD 7.2 (LineElement refactor), ARCH 8 |
 | P0-E4-T7 | Validate HTMX integration | Spike: validate `LineHtmxElement` adapter with `hx-*` forwarding, server-driven state, swap-aware lifecycle. Document findings and decide if exploratory or committed for Phase 1. Non-blocking — does not gate Phase 0 completion. | P0-E4-T1 | Luna | M | PRD 7.2 (HTMX task), Appendix A |
@@ -239,9 +244,9 @@ Specs must be written and approved before implementation begins. All 20 componen
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E3-T1 | Write specs for static primitives | Write `.spec/` files for: Alert, Badge, Chip, Avatar, Separator, VisuallyHidden, Portal, Kbd, Skeleton, Stack, Grid, Center, AspectRatio, Spinner. 14 specs following `COMPONENT-SPEC-TEMPLATE.md`. | Phase 0 complete | Luna | L | PRD 4.1, 8.1 |
-| P1-E3-T2 | Write specs for interactive primitives | Write `.spec/` files for: Button, IconButton, ButtonGroup, AvatarGroup, Presence. 5 specs. | Phase 0 complete | Luna | M | PRD 4.1, 8.1 |
-| P1-E3-T3 | Write spec for Icon component | Write `.spec/` for Icon component -- depends on icon registry being complete (Phase 0). | Phase 0 complete | Luna | S | PRD 4.1, ARCH 11 |
+| P1-E3-T1 | Write specs for static primitives | Write `docs/specs/` files for: Alert, Badge, Chip, Avatar, Separator, VisuallyHidden, Portal, Kbd, Skeleton, Stack, Grid, Center, AspectRatio, Spinner. 14 specs following `COMPONENT-SPEC-TEMPLATE.md`. | Phase 0 complete | Luna | L | PRD 4.1, 8.1 |
+| P1-E3-T2 | Write specs for interactive primitives | Write `docs/specs/` files for: Button, IconButton, ButtonGroup, AvatarGroup, Presence. 5 specs. | Phase 0 complete | Luna | M | PRD 4.1, 8.1 |
+| P1-E3-T3 | Write spec for Icon component | Write `docs/specs/` for Icon component -- depends on icon registry being complete (Phase 0). | Phase 0 complete | Luna | S | PRD 4.1, ARCH 11 |
 | P1-E3-T4 | Review and approve all Phase 1 specs | All 20 specs reviewed, status set to `approved`. | P1-E3-T1 through P1-E3-T3 | Luna | M | PRD 8.2, 8.3 |
 
 ### 3.4 Epic 4: Static Components (no machine)
@@ -250,20 +255,20 @@ Static components are presentational only, with zero interaction state. These ar
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E3-T0 | Implement Alert | Static component. Slots: default, icon, action. Parts: root, icon, content, action. Variants: info, success, warning, danger. Dismissible via Presence. Spec: `.spec/0001-alert.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
-| P1-E3-T1 | Implement Badge | Static component. Parts: root. Variants: count, dot, label. Spec: `.spec/0007-badge.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
-| P1-E3-T2 | Implement Chip | Static component. Parts: root, remove. Slots: default, prefix. Spec: `.spec/0008-chip.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
-| P1-E3-T3 | Implement Avatar | Static component. Slots: default, fallback, status. Parts: root, image, fallback. Spec: `.spec/0009-avatar.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1, ARCH 13.2 |
-| P1-E3-T4 | Implement Separator | Static component. Horizontal or vertical. Parts: root. Spec: `.spec/0011-separator.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T5 | Implement VisuallyHidden | Static utility component. Spec: `.spec/0012-visually-hidden.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T6 | Implement Portal | Static component. Renders children outside DOM parent. Spec: `.spec/0013-portal.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T7 | Implement Kbd / Shortcut | Static component. OS-aware rendering. Spec: `.spec/0015-kbd.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T8 | Implement Skeleton | Static component. Pulse or wave animation. Spec: `.spec/0016-skeleton.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T9 | Implement Stack | Static layout helper. Spec: `.spec/0018-stack.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T10 | Implement Grid | Static layout wrapper. Spec: `.spec/0019-grid.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T11 | Implement Center | Static centering utility. Spec: `.spec/0020-center.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T12 | Implement AspectRatio | Static ratio container. Spec: `.spec/0021-aspect-ratio.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
-| P1-E3-T13 | Implement Spinner | Static, CSS-only animation. Parts: root. Props: size, speed, label. Spec: `.spec/0022-spinner.md`. | P1-E3-T4 | Luna | S | PRD 4.1, ARCH 13.5 |
+| P1-E3-T0 | Implement Alert | Static component. Slots: default, icon, action. Parts: root, icon, content, action. Variants: info, success, warning, danger. Dismissible via Presence. Spec: `docs/specs/0001-alert.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
+| P1-E3-T1 | Implement Badge | Static component. Parts: root. Variants: count, dot, label. Spec: `docs/specs/0007-badge.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
+| P1-E3-T2 | Implement Chip | Static component. Parts: root, remove. Slots: default, prefix. Spec: `docs/specs/0008-chip.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1 |
+| P1-E3-T3 | Implement Avatar | Static component. Slots: default, fallback, status. Parts: root, image, fallback. Spec: `docs/specs/0009-avatar.md`. | P1-E3-T4, P1-E1-T3 | Luna | S | PRD 4.1, ARCH 13.2 |
+| P1-E3-T4 | Implement Separator | Static component. Horizontal or vertical. Parts: root. Spec: `docs/specs/0011-separator.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T5 | Implement VisuallyHidden | Static utility component. Spec: `docs/specs/0012-visually-hidden.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T6 | Implement Portal | Static component. Renders children outside DOM parent. Spec: `docs/specs/0013-portal.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T7 | Implement Kbd / Shortcut | Static component. OS-aware rendering. Spec: `docs/specs/0015-kbd.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T8 | Implement Skeleton | Static component. Pulse or wave animation. Spec: `docs/specs/0016-skeleton.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T9 | Implement Stack | Static layout helper. Spec: `docs/specs/0018-stack.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T10 | Implement Grid | Static layout wrapper. Spec: `docs/specs/0019-grid.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T11 | Implement Center | Static centering utility. Spec: `docs/specs/0020-center.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T12 | Implement AspectRatio | Static ratio container. Spec: `docs/specs/0021-aspect-ratio.md`. | P1-E3-T4 | Luna | S | PRD 4.1 |
+| P1-E3-T13 | Implement Spinner | Static, CSS-only animation. Parts: root. Props: size, speed, label. Spec: `docs/specs/0022-spinner.md`. | P1-E3-T4 | Luna | S | PRD 4.1, ARCH 13.5 |
 
 ### 3.5 Epic 5: Interactive Components (Custom/Pre-built machines)
 
@@ -271,12 +276,12 @@ These components use Zag.js machines and validate the full state management inte
 
 | Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
 |---------|-------|-------------|--------------|------------|------------|-----------|
-| P1-E4-T1 | Implement Button | Custom machine. `formAssociated: true`. States: idle/pressed/loading/disabled. Slots: prefix/suffix/default. Spec: `.spec/0002-button.md`. First machine-based component -- validates Zag.js + Lit + parts pattern. | P1-E3-T4, P1-E1-T3 | Luna | L | PRD 4.1, ARCH 13.1 |
-| P1-E4-T2 | Implement IconButton | Custom machine (shares with Button). `aria-label` required. Spec: `.spec/0003-icon-button.md`. | P1-E4-T1 | Luna | M | PRD 4.1, ARCH 13.1 |
-| P1-E4-T3 | Implement ButtonGroup | Static. `role="group"`. Border collapse. Slot-based, does NOT import Button. Spec: `.spec/0004-button-group.md`. | P1-E3-T4 | Luna | S | PRD 4.1, ARCH 13.1 |
-| P1-E4-T4 | Implement AvatarGroup | Custom machine. States: collapsed/expanded/overflow_open. Hover expands, click on overflow opens popover. Spec: `.spec/0010-avatar-group.md`. | P1-E3-T3 | Luna | M | PRD 4.1, ARCH 13.2 |
-| P1-E4-T5 | Implement Presence | Pre-built (`@zag-js/presence`). Mount/unmount animations. Spec: `.spec/0017-presence.md`. First pre-built machine component. | P1-E3-T4 | Luna | M | PRD 4.1 |
-| P1-E4-T6 | Implement Icon | Static wrapper with registry integration. Spec: `.spec/0014-icon.md`. Depends on icon registry from Phase 0. | P1-E3-T4 | Luna | M | PRD 4.1, ARCH 11 |
+| P1-E4-T1 | Implement Button | Custom machine. `formAssociated: true`. States: idle/pressed/loading/disabled. Slots: prefix/suffix/default. Spec: `docs/specs/0002-button.md`. First machine-based component -- validates Zag.js + Lit + parts pattern. | P1-E3-T4, P1-E1-T3 | Luna | L | PRD 4.1, ARCH 13.1 |
+| P1-E4-T2 | Implement IconButton | Custom machine (shares with Button). `aria-label` required. Spec: `docs/specs/0003-icon-button.md`. | P1-E4-T1 | Luna | M | PRD 4.1, ARCH 13.1 |
+| P1-E4-T3 | Implement ButtonGroup | Static. `role="group"`. Border collapse. Slot-based, does NOT import Button. Spec: `docs/specs/0004-button-group.md`. | P1-E3-T4 | Luna | S | PRD 4.1, ARCH 13.1 |
+| P1-E4-T4 | Implement AvatarGroup | Custom machine. States: collapsed/expanded/overflow_open. Hover expands, click on overflow opens popover. Spec: `docs/specs/0010-avatar-group.md`. | P1-E3-T3 | Luna | M | PRD 4.1, ARCH 13.2 |
+| P1-E4-T5 | Implement Presence | Pre-built (`@zag-js/presence`). Mount/unmount animations. Spec: `docs/specs/0017-presence.md`. First pre-built machine component. | P1-E3-T4 | Luna | M | PRD 4.1 |
+| P1-E4-T6 | Implement Icon | Static wrapper with registry integration. Spec: `docs/specs/0014-icon.md`. Depends on icon registry from Phase 0. | P1-E3-T4 | Luna | M | PRD 4.1, ARCH 11 |
 
 ### 3.6 Epic 6: Phase 1 Validation & Release
 
@@ -320,7 +325,7 @@ P1-E6 (Validation) ◄── E4 (all) + E5 (all)
 All of the following must be true:
 
 - [ ] 20 components implemented and registered with `line-` prefix
-- [ ] All 20 component specs in `.spec/` with status `approved` or `implemented`
+- [ ] All 20 component specs in `docs/specs/` with status `approved` or `implemented`
 - [ ] Semantic alias layer (6 x 9 = 54 variables) is live in the theme package
 - [ ] `@websublime/line-presets` package scaffolded with component styles for all 20 Phase 1 components
 - [ ] Custom theme contract documented in Storybook
@@ -340,7 +345,7 @@ All of the following must be true:
 ### Epics
 
 **E1: Form Component Specs**
-- Write and approve `.spec/` files for all 15 components: Input (`.spec/0023-input.md`), PasswordInput (`.spec/0024-password-input.md`), SearchInput (`.spec/0025-search-input.md`), DateInput (`.spec/0026-date-input.md`), Textarea (`.spec/0027-textarea.md`), Field (`.spec/0028-field.md`), Fieldset (`.spec/0029-fieldset.md`), Checkbox (`.spec/0030-checkbox.md`), RadioGroup (`.spec/0031-radio-group.md`), Switch (`.spec/0032-switch.md`), Select (`.spec/0033-select.md`), ToggleGroup (`.spec/0034-toggle-group.md`), Slider (`.spec/0035-slider.md`), NumberInput (`.spec/0036-number-input.md`), Editable (`.spec/0037-editable.md`).
+- Write and approve `docs/specs/` files for all 15 components: Input (`docs/specs/0023-input.md`), PasswordInput (`docs/specs/0024-password-input.md`), SearchInput (`docs/specs/0025-search-input.md`), DateInput (`docs/specs/0026-date-input.md`), Textarea (`docs/specs/0027-textarea.md`), Field (`docs/specs/0028-field.md`), Fieldset (`docs/specs/0029-fieldset.md`), Checkbox (`docs/specs/0030-checkbox.md`), RadioGroup (`docs/specs/0031-radio-group.md`), Switch (`docs/specs/0032-switch.md`), Select (`docs/specs/0033-select.md`), ToggleGroup (`docs/specs/0034-toggle-group.md`), Slider (`docs/specs/0035-slider.md`), NumberInput (`docs/specs/0036-number-input.md`), Editable (`docs/specs/0037-editable.md`).
 
 **E2: Custom Machine Form Controls**
 - Input, PasswordInput, SearchInput, DateInput, Textarea, Field, Fieldset (7 components)
@@ -369,7 +374,7 @@ All of the following must be true:
 - [ ] Changeset entries for v0.3.0
 
 ### Parallel Work
-- Theming showcase app (`apps/showcase/` — see `.spec/SHOWCASE-APP-SPEC.md`)
+- Theming showcase app (`apps/showcase/` — see `docs/specs/SHOWCASE-APP-SPEC.md`)
 
 ---
 
@@ -378,17 +383,17 @@ All of the following must be true:
 ### Epics
 
 **E1: Overlay Component Specs & Implementation**
-- Dialog (`.spec/0038-dialog.md`), AlertDialog (`.spec/0039-alert-dialog.md`), Sheet (`.spec/0040-sheet.md`), Drawer (`.spec/0041-drawer.md`), Popover (`.spec/0042-popover.md`), Tooltip (`.spec/0043-tooltip.md`), HoverCard (`.spec/0044-hover-card.md`), Toast (`.spec/0045-toast.md`)
+- Dialog (`docs/specs/0038-dialog.md`), AlertDialog (`docs/specs/0039-alert-dialog.md`), Sheet (`docs/specs/0040-sheet.md`), Drawer (`docs/specs/0041-drawer.md`), Popover (`docs/specs/0042-popover.md`), Tooltip (`docs/specs/0043-tooltip.md`), HoverCard (`docs/specs/0044-hover-card.md`), Toast (`docs/specs/0045-toast.md`)
 - All pre-built machines. Focus management, portal rendering, animations via Presence.
 - Dialog and Popover are family entrypoints with sub-components.
 
 **E2: Navigation Component Specs & Implementation**
-- Tabs (`.spec/0046-tabs.md`), Accordion (`.spec/0047-accordion.md`), Collapsible (`.spec/0048-collapsible.md`), Menu (`.spec/0049-menu.md`), Breadcrumb (`.spec/0051-breadcrumb.md`), BreadcrumbTrail (`.spec/0052-breadcrumb-trail.md`)
+- Tabs (`docs/specs/0046-tabs.md`), Accordion (`docs/specs/0047-accordion.md`), Collapsible (`docs/specs/0048-collapsible.md`), Menu (`docs/specs/0049-menu.md`), Breadcrumb (`docs/specs/0051-breadcrumb.md`), BreadcrumbTrail (`docs/specs/0052-breadcrumb-trail.md`)
 - Menu is a family entrypoint. Tabs and Accordion are family entrypoints.
 
 **E3: Compound Components**
-- SplitButton (`.spec/0005-split-button.md`) -- depends on Button (Phase 1) + Menu (E2)
-- Menubar (`.spec/0055-menubar.md`) -- custom machine coordinating N Menu instances
+- SplitButton (`docs/specs/0005-split-button.md`) -- depends on Button (Phase 1) + Menu (E2)
+- Menubar (`docs/specs/0055-menubar.md`) -- custom machine coordinating N Menu instances
 
 ### Key Dependencies
 - Phase 1 complete (Portal, Presence, Button)
@@ -412,11 +417,11 @@ All of the following must be true:
 ### Epics
 
 **E1: Pre-built Machine Advanced Controls**
-- Combobox (`.spec/0056-combobox.md`), DatePicker (`.spec/0057-date-picker.md`), DateRangePicker (`.spec/0058-date-range-picker.md`), TimePicker (`.spec/0059-time-picker.md`), ColorPicker (`.spec/0060-color-picker.md`), PinInput (`.spec/0061-pin-input.md`), Rating (`.spec/0062-rating.md`), RangeSlider (`.spec/0063-range-slider.md`), FileUpload (`.spec/0064-file-upload.md`), SignaturePad (`.spec/0065-signature-pad.md`)
+- Combobox (`docs/specs/0056-combobox.md`), DatePicker (`docs/specs/0057-date-picker.md`), DateRangePicker (`docs/specs/0058-date-range-picker.md`), TimePicker (`docs/specs/0059-time-picker.md`), ColorPicker (`docs/specs/0060-color-picker.md`), PinInput (`docs/specs/0061-pin-input.md`), Rating (`docs/specs/0062-rating.md`), RangeSlider (`docs/specs/0063-range-slider.md`), FileUpload (`docs/specs/0064-file-upload.md`), SignaturePad (`docs/specs/0065-signature-pad.md`)
 - The most complex pre-built machines. Uses `ListCollection` from `@zag-js/collection` (Combobox).
 
 **E2: Custom Machine Advanced Controls**
-- TagInput (`.spec/0066-tag-input.md`), MentionInput (`.spec/0067-mention-input.md`), SearchField (`.spec/0068-search-field.md`)
+- TagInput (`docs/specs/0066-tag-input.md`), MentionInput (`docs/specs/0067-mention-input.md`), SearchField (`docs/specs/0068-search-field.md`)
 - Uses `ListCollection` for TagInput and SearchField.
 
 ### Key Dependencies
@@ -439,13 +444,13 @@ All of the following must be true:
 ### Epics
 
 **E1: Data Display Components**
-- Table (`.spec/0070-table.md`), Card (`.spec/0071-card.md`), Progress (`.spec/0072-progress.md`), ProgressRing (`.spec/0073-progress-ring.md`), ProgressList (`.spec/0074-progress-list.md`), ScrollArea (`.spec/0075-scroll-area.md`), Carousel (`.spec/0076-carousel.md`), Clipboard (`.spec/0077-clipboard.md`), QRCode (`.spec/0078-qr-code.md`), Timer (`.spec/0079-timer.md`), TreeView (`.spec/0080-tree-view.md`), EmptyState (`.spec/0082-empty-state.md`)
+- Table (`docs/specs/0070-table.md`), Card (`docs/specs/0071-card.md`), Progress (`docs/specs/0072-progress.md`), ProgressRing (`docs/specs/0073-progress-ring.md`), ProgressList (`docs/specs/0074-progress-list.md`), ScrollArea (`docs/specs/0075-scroll-area.md`), Carousel (`docs/specs/0076-carousel.md`), Clipboard (`docs/specs/0077-clipboard.md`), QRCode (`docs/specs/0078-qr-code.md`), Timer (`docs/specs/0079-timer.md`), TreeView (`docs/specs/0080-tree-view.md`), EmptyState (`docs/specs/0082-empty-state.md`)
 
 **E2: Advanced Navigation**
-- NavigationMenu (`.spec/0050-navigation-menu.md`), Pagination (`.spec/0053-pagination.md`), Steps (`.spec/0054-steps.md`)
+- NavigationMenu (`docs/specs/0050-navigation-menu.md`), Pagination (`docs/specs/0053-pagination.md`), Steps (`docs/specs/0054-steps.md`)
 
 **E3: Multi-step Form**
-- Wizard (`.spec/0069-wizard.md`) -- depends on Field/form controls from Phase 2 and Steps from E2
+- Wizard (`docs/specs/0069-wizard.md`) -- depends on Field/form controls from Phase 2 and Steps from E2
 
 ### Key Dependencies
 - Phase 3 complete (Menu for NavigationMenu, Popover for context menus within Table)
@@ -468,10 +473,10 @@ All of the following must be true:
 ### Epics
 
 **E1: Layout Components**
-- AppShell (`.spec/0083-app-shell.md`), Sidebar (`.spec/0084-sidebar.md`), Header (`.spec/0085-header.md`), ContentArea (`.spec/0086-content-area.md`), Panel (`.spec/0087-panel.md`), Splitter (`.spec/0088-splitter.md`), FloatingPanel (`.spec/0089-floating-panel.md`)
+- AppShell (`docs/specs/0083-app-shell.md`), Sidebar (`docs/specs/0084-sidebar.md`), Header (`docs/specs/0085-header.md`), ContentArea (`docs/specs/0086-content-area.md`), Panel (`docs/specs/0087-panel.md`), Splitter (`docs/specs/0088-splitter.md`), FloatingPanel (`docs/specs/0089-floating-panel.md`)
 
 **E2: Desktop-Inspired Components**
-- CommandPalette (`.spec/0090-command-palette.md`), Spotlight (`.spec/0091-spotlight.md`), StatusBar (`.spec/0092-status-bar.md`), ActivityBar (`.spec/0093-activity-bar.md`), NotificationCenter (`.spec/0094-notification-center.md`), PropertiesPanel (`.spec/0095-properties-panel.md`), Minimap (`.spec/0096-minimap.md`), MasterDetail (`.spec/0097-master-detail.md`), ListView (`.spec/0098-list-view.md`), SegmentedControl (`.spec/0099-segmented-control.md`)
+- CommandPalette (`docs/specs/0090-command-palette.md`), Spotlight (`docs/specs/0091-spotlight.md`), StatusBar (`docs/specs/0092-status-bar.md`), ActivityBar (`docs/specs/0093-activity-bar.md`), NotificationCenter (`docs/specs/0094-notification-center.md`), PropertiesPanel (`docs/specs/0095-properties-panel.md`), Minimap (`docs/specs/0096-minimap.md`), MasterDetail (`docs/specs/0097-master-detail.md`), ListView (`docs/specs/0098-list-view.md`), SegmentedControl (`docs/specs/0099-segmented-control.md`)
 
 ### Key Dependencies
 - Phase 5 complete (general maturity of the component library needed)
@@ -495,10 +500,10 @@ All of the following must be true:
 ### Epics
 
 **E1: Visual & Animation Components**
-- Marquee (`.spec/0105-marquee.md`), SpotlightCard (`.spec/0106-spotlight-card.md`), FlipCard (`.spec/0109-flip-card.md`), Morph (`.spec/0110-morph.md`), DiffViewer (`.spec/0111-diff-viewer.md`), Sparkline (`.spec/0108-sparkline.md`), Highlight (`.spec/0114-highlight.md`), ImageComparison (`.spec/0107-image-comparison.md`), AngleSlider (`.spec/0113-angle-slider.md`)
+- Marquee (`docs/specs/0105-marquee.md`), SpotlightCard (`docs/specs/0106-spotlight-card.md`), FlipCard (`docs/specs/0109-flip-card.md`), Morph (`docs/specs/0110-morph.md`), DiffViewer (`docs/specs/0111-diff-viewer.md`), Sparkline (`docs/specs/0108-sparkline.md`), Highlight (`docs/specs/0114-highlight.md`), ImageComparison (`docs/specs/0107-image-comparison.md`), AngleSlider (`docs/specs/0113-angle-slider.md`)
 
 **E2: Interactive & Complex Components**
-- KanbanBoard (`.spec/0101-kanban-board.md`), Timeline (`.spec/0102-timeline.md`), DataGrid (`.spec/0103-data-grid.md`), InfiniteScroll (`.spec/0104-infinite-scroll.md`), Dock (`.spec/0100-dock.md`), WheelPicker (`.spec/0112-wheel-picker.md`), Tour (`.spec/0115-tour.md`)
+- KanbanBoard (`docs/specs/0101-kanban-board.md`), Timeline (`docs/specs/0102-timeline.md`), DataGrid (`docs/specs/0103-data-grid.md`), InfiniteScroll (`docs/specs/0104-infinite-scroll.md`), Dock (`docs/specs/0100-dock.md`), WheelPicker (`docs/specs/0112-wheel-picker.md`), Tour (`docs/specs/0115-tour.md`)
 
 ### Key Dependencies
 - Phase 5 complete (Table patterns for DataGrid, ScrollArea for InfiniteScroll)
@@ -522,10 +527,10 @@ All of the following must be true:
 ### Epics
 
 **E1: Media & Communication**
-- AudioPlayer (`.spec/0123-audio-player.md`), VideoPlayer (`.spec/0124-video-player.md`), ChatBubble (`.spec/0122-chat-bubble.md`), Terminal (`.spec/0127-terminal.md`), CalendarView (`.spec/0126-calendar-view.md`)
+- AudioPlayer (`docs/specs/0123-audio-player.md`), VideoPlayer (`docs/specs/0124-video-player.md`), ChatBubble (`docs/specs/0122-chat-bubble.md`), Terminal (`docs/specs/0127-terminal.md`), CalendarView (`docs/specs/0126-calendar-view.md`)
 
 **E2: Commerce & Data**
-- PriceCard (`.spec/0119-price-card.md`), StatCard (`.spec/0120-stat-card.md`), Ticket (`.spec/0121-ticket.md`), Receipt (`.spec/0128-receipt.md`), Gauge (`.spec/0081-gauge.md`), WeatherCard (`.spec/0130-weather-card.md`), Changelog (`.spec/0129-changelog.md`), Ballot (`.spec/0116-ballot.md`), ReactionBar (`.spec/0117-reaction-bar.md`), Proof (`.spec/0118-proof.md`), CookieConsent (`.spec/0125-cookie-consent.md`), MapMarker (`.spec/0131-map-marker.md`), OTPVerification (`.spec/0132-otp-verification.md`)
+- PriceCard (`docs/specs/0119-price-card.md`), StatCard (`docs/specs/0120-stat-card.md`), Ticket (`docs/specs/0121-ticket.md`), Receipt (`docs/specs/0128-receipt.md`), Gauge (`docs/specs/0081-gauge.md`), WeatherCard (`docs/specs/0130-weather-card.md`), Changelog (`docs/specs/0129-changelog.md`), Ballot (`docs/specs/0116-ballot.md`), ReactionBar (`docs/specs/0117-reaction-bar.md`), Proof (`docs/specs/0118-proof.md`), CookieConsent (`docs/specs/0125-cookie-consent.md`), MapMarker (`docs/specs/0131-map-marker.md`), OTPVerification (`docs/specs/0132-otp-verification.md`)
 
 ### Key Dependencies
 - Phase 5 complete (Progress for AudioPlayer/VideoPlayer, general maturity)

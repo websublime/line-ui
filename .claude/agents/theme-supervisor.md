@@ -145,7 +145,7 @@ PostCSS 8+ (import, nested, mixins, simple-vars, preset-env, cssnano), CSS custo
 
 - **Design system layers:** `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md`
 - **Gap analysis:** `docs/THEME-GAP-ANALYSIS.md`
-- **PRD §9:** `docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md` (token system, aliases, contrast, preset)
+- **PRD §9:** `docs/PRD.md` (token system, aliases, contrast, preset)
 - **Architecture §14–§16:** `docs/ARCHITECTURE.md` (browser resets, native element internals, unsolvable limitations)
 
 ---

@@ -1594,5 +1594,5 @@ across preset versions.
 > Cross-references:
 > - Gap diagnostics: `THEME-GAP-ANALYSIS.md`
 > - Architecture: `docs/ARCHITECTURE.md` (§14–§16 for component CSS resets)
-> - Component specs: `.spec/COMPONENT-SPEC-TEMPLATE.md`
+> - Component specs: `docs/specs/COMPONENT-SPEC-TEMPLATE.md`
 > - Product plan: `PRODUCT-PLAN.md` (P0-E1 through P2)

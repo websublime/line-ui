@@ -17,7 +17,7 @@ State machines. Zero visual opinion. Framework-agnostic.
 <br/>
 
 [![Version](https://img.shields.io/badge/version-0.7.0-c8ff00?style=flat-square&labelColor=1a1a1a)](https://github.com/websublime/vitamin/releases)
-[![Components](https://img.shields.io/badge/components-131-c8ff00?style=flat-square&labelColor=1a1a1a)](./docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md)
+[![Components](https://img.shields.io/badge/components-131-c8ff00?style=flat-square&labelColor=1a1a1a)](./docs/PRD.md)
 [![License](https://img.shields.io/badge/license-MIT-c8ff00?style=flat-square&labelColor=1a1a1a)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/types-included-c8ff00?style=flat-square&labelColor=1a1a1a)](https://www.typescriptlang.org/)
 
@@ -163,7 +163,7 @@ line-button::part(root) {
 | **Innovative** | 15 | KanbanBoard, DataGrid, DiffViewer, WheelPicker, Tour |
 | **Real-World** | 17 | AudioPlayer, ChatBubble, CookieConsent, Terminal |
 
-> Full catalogue with specs: [`docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md`](./docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md)
+> Full catalogue with specs: [`docs/PRD.md`](./docs/PRD.md)
 
 <br/>
 
@@ -250,16 +250,19 @@ packages/
 └── storybook/      ← Interactive component playground
 
 docs/
-├── PRODUCT-REQUIREMENTS-SPECIFICATION.md
-├── ARCHITECTURE.md
-├── PRODUCT-PLAN.md
+├── MANIFESTO.md           ← Vision, principles, governing laws
+├── PRD.md                 ← Product requirements (v0.7.0, APPROVED)
+├── ARCHITECTURE.md        ← Cross-cutting architectural decisions
+├── PRODUCT-PLAN.md        ← Multi-phase roadmap
+├── plans/                 ← Per-phase plans (00-plan-foundation.md, …)
+├── specs/
+│   ├── COMPONENT-SPEC-TEMPLATE.md
+│   ├── {NN}-spec-{name}.md    ← Phase-prefixed specs (00-spec-base.md, …)
+│   └── archive/               ← Historical per-component specs
+├── research/              ← Phase-prefixed research (00-research-*.md)
 ├── COMPETITIVE-COMPONENT-ANALYSIS.md
 ├── DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md
 └── THEME-GAP-ANALYSIS.md
-
-.spec/
-├── COMPONENT-SPEC-TEMPLATE.md
-└── {component}.md           ← Per-component specs (Part A: requirements, Part B: technical)
 ```
 
 <br/>
@@ -279,7 +282,7 @@ docs/
 
 ## Contributing
 
-Components require a spec in `.spec/` before implementation — see [`COMPONENT-SPEC-TEMPLATE.md`](./.spec/COMPONENT-SPEC-TEMPLATE.md).
+Components require a spec in `docs/specs/` before implementation — see [`COMPONENT-SPEC-TEMPLATE.md`](./docs/specs/COMPONENT-SPEC-TEMPLATE.md).
 
 ```bash
 git clone https://github.com/websublime/vitamin.git
