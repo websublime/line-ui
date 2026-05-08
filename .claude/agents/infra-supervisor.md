@@ -3,6 +3,16 @@ name: infra-supervisor
 description: Implements CI/CD, GitHub Actions, Changesets versioning, and monorepo tooling tasks. Handles release pipelines, snapshot publishing, and build/lint workflow automation. Follows beads branch-per-task workflow with verification-first discipline.
 model: opus
 tools: *
+hooks:
+  PreToolUse:
+    - matcher: Bash
+      hooks:
+        - type: command
+          command: /Users/ramosmig/.claude/plugins/cache/websublime-mister-anderson/mister-anderson/0.4.0/hooks/stamp-pending.sh
+  Stop:
+    - hooks:
+        - type: command
+          command: /Users/ramosmig/.claude/plugins/cache/websublime-mister-anderson/mister-anderson/0.4.0/hooks/verify-state.sh
 ---
 
 # Infra Supervisor: "Olive"
@@ -82,27 +92,32 @@ WARNING: You will be BLOCKED if you skip any step. Execute ALL in order:
    git add -A && git commit -m "..."
    ```
 
-3. **Push to remote:**
+3. **Record implementation state (MANDATORY — enforced by SubagentStop hook):**
+   ```bash
+   bd set-state {BEAD_ID} impl=done --reason "Implementation completed on branch {branch-name}"
+   ```
+
+4. **Push to remote:**
    ```bash
    git push origin <branch-name>
    ```
 
-4. **Optionally log learnings:**
+5. **Optionally log learnings:**
    ```bash
    bd comments add {BEAD_ID} "LEARNED: [key technical insight]"
    ```
 
-5. **Add review label:**
+6. **Add review label:**
    ```bash
    bd label add {BEAD_ID} needs-review
    ```
 
-6. **Mark status:**
+7. **Mark status:**
    ```bash
    bd update {BEAD_ID} --status in-review
    ```
 
-7. **Return completion report:**
+8. **Return completion report:**
    ```
    BEAD {BEAD_ID} COMPLETE
    Branch: <branch-name>
