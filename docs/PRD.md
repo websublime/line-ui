@@ -2,8 +2,9 @@
 
 **Date:** 2026-03-12
 **Author:** Miguel Ramos
-**Status:** Approved
+**Status:** APPROVED
 **Version:** 0.7.0
+**Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 

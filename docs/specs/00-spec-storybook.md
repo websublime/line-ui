@@ -3,9 +3,9 @@
 **Status:** APPROVED
 **Author:** Ada (architect)
 **Date:** 2026-03-12
-**Source PRD:** `docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md` (v0.7.0, Approved) -- sections 5.1, 5.2, 5.4
+**Source PRD:** `docs/PRD.md` (v0.7.0, Approved) -- sections 5.1, 5.2, 5.4
 **Source Architecture:** `docs/ARCHITECTURE.md` (sections 4, 5, 6)
-**Source Plan:** `docs/PRODUCT-PLAN.md` (section 2.5, Epic 5)
+**Source Plan:** `docs/plans/00-plan-foundation.md` (section 2.5, Epic 5)
 
 ---
 

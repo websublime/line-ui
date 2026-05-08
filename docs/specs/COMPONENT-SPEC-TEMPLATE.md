@@ -4,7 +4,7 @@
 **Status:** proposed | reviewed | approved | implemented
 **Phase:** {N} — {phase name}
 **Tier:** Pre-built | Custom | Static
-**Spec:** `.spec/XXXX-{component}.md`
+**Spec:** `docs/specs/{NN}-spec-{component}.md`
 
 ---
 

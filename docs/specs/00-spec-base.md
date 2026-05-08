@@ -3,9 +3,9 @@
 **Status:** APPROVED
 **Author:** Ada (architect)
 **Date:** 2026-03-12
-**Source PRD:** `docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md` (v0.7.0, Approved)
+**Source PRD:** `docs/PRD.md` (v0.7.0, Approved)
 **Source Architecture:** `docs/ARCHITECTURE.md` (sections 6, 7, 8)
-**Source Plan:** `docs/PRODUCT-PLAN.md` (section 2.4, Epic 4)
+**Source Plan:** `docs/plans/00-plan-foundation.md` (section 2.4, Epic 4)
 
 ---
 
@@ -1097,7 +1097,7 @@ Each piece must pass its test contracts before it is considered complete.
 
 ## 8. Implementation Tasks
 
-These map directly to `docs/PRODUCT-PLAN.md` section 2.4 (Epic 4) with added granularity.
+These map directly to `docs/plans/00-plan-foundation.md` section 2.4 (Epic 4) with added granularity.
 
 | # | Task ID | Title | Description | Supervisor | Complexity |
 |---|---------|-------|-------------|------------|------------|

@@ -3,9 +3,9 @@
 **Status:** APPROVED
 **Author:** Ada (architect)
 **Date:** 2026-03-12
-**Source PRD:** `docs/PRODUCT-REQUIREMENTS-SPECIFICATION.md` (v0.7.0, Approved) -- sections 6.1, 7.2
+**Source PRD:** `docs/PRD.md` (v0.7.0, Approved) -- sections 6.1, 7.2
 **Source Architecture:** `docs/ARCHITECTURE.md` (section 11)
-**Source Plan:** `docs/PRODUCT-PLAN.md` (section 2.7, Epic 7)
+**Source Plan:** `docs/plans/00-plan-foundation.md` (section 2.7, Epic 7)
 
 ---
 
@@ -819,7 +819,7 @@ Element C connects (after fetch):
 
 ## 12. Implementation Tasks
 
-These map to `docs/PRODUCT-PLAN.md` section 2.7 (Epic 7).
+These map to `docs/plans/00-plan-foundation.md` section 2.7 (Epic 7).
 
 | # | Task ID | Title | Description | Supervisor | Complexity | Dependencies |
 |---|---------|-------|-------------|------------|------------|--------------|
