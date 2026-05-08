@@ -1,10 +1,12 @@
 # line://ui — Architecture
 
 **Date:** 2026-03-12
-**Status:** Living document — updated as architectural decisions evolve
+**Status:** APPROVED
+**Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.7.0 §3 (Component Architecture)
+**Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
-This document captures the **cross-cutting architectural decisions** that apply to all components. Individual component specifications live in `.spec/`. Product requirements live in the PRD.
+This document captures the **cross-cutting architectural decisions** that apply to all components. Individual component specifications live in `docs/specs/`. Product requirements live in [`docs/PRD.md`](./PRD.md).
 
 ---
 
