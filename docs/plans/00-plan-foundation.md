@@ -12,6 +12,7 @@
 - [`docs/specs/00-spec-storybook.md`](../specs/00-spec-storybook.md) — Storybook & Documentation (Epic 5)
 - [`docs/specs/00-spec-icon-registry.md`](../specs/00-spec-icon-registry.md) — Icon Registry (Epic 7)
 - [`docs/specs/00-spec-showcase.md`](../specs/00-spec-showcase.md) — Showcase Application (Epic 9, prerequisite for visual regression)
+- [`docs/specs/00-spec-playground.md`](../specs/00-spec-playground.md) — Multi-Schema Playground (Epic 10, design exploration sandbox)
 
 > **Roadmap:** Phase 0 detail is captured in this document. Phases 1–8 high-level overviews remain in [`docs/PRODUCT-PLAN.md`](../PRODUCT-PLAN.md) and will be split into per-phase plans (`docs/plans/{NN}-plan-*.md`) when each phase is reached via `/specification {NN}`.
 
@@ -101,7 +102,22 @@ This epic must complete before all other Phase 0 work. Everything downstream dep
 | P0-E7-T1 | Design icon registry API | Implement the agnostic icon resolver system in `packages/icons/`. Registry where consumers register icon libraries. Each library is a resolver: given a name, returns SVG. Zero icons bundled. | P0-E3-T2, P0-E4-T1 | Luna | M | ARCH 11, PRD 7.2 (Icon registry task) |
 | P0-E7-T2 | Create Icon Setup guide story | Write the "Getting Started > Icon Setup" Storybook page: how to register icon libraries, custom icons, SVG sources. | P0-E7-T1, P0-E5-T1 | Luna | S | PRD 5.1 (Storybook structure) |
 
-## 9. Dependency Graph
+## 9. Epic 10: Multi-Schema Playground
+
+Experimental sandbox inside `apps/showcase/` that validates multi-schema composition patterns before the homepage and Themes page (E9.12) commit to a visual direction. Six composition blocks, each a separate custom element following the headless pattern: structure + layout only, `::part()` exposed for every styleable zone, generic CSS custom properties internally (NO `--line-*` tokens). The design system is applied from outside by `sc-page-playground` via `::part()` selectors. Specification: [`docs/specs/00-spec-playground.md`](../specs/00-spec-playground.md). Beads epic: `line-ui-m3d`.
+
+| Task ID | Title | Description | Dependencies | Supervisor | Complexity | Reference |
+|---------|-------|-------------|--------------|------------|------------|-----------|
+| P0-E10-T1 | Scaffold playground page and register in app shell | Create `sc-page-playground` custom element with two-column layout (sticky sidebar + content column, mobile bar fallback). Register PanelKey `'playground'` in `sc-app`. Wire `schema` and `light` props through from `sc-nav`. | P0-E9-T2 (sc-app shell) | Luna | M | SPEC-PLAYGROUND §3, §7 |
+| P0-E10-T2 | Login/Sign-up composition block | Implement `sc-login-block` headless element. Demonstrates neutral base + accent-on-submit, error scoping via host-applied parts, ghost SSO button. | P0-E10-T1, P0-E10-T8 | Luna | M | SPEC-PLAYGROUND §15 (sc-login-block) |
+| P0-E10-T3 | E-commerce product card block | Implement `sc-product-card` headless element with image, title, price, rating, size chips, color dots, CTA. Reference implementation for the headless pattern. | P0-E10-T1 | Luna | M | SPEC-PLAYGROUND §15 (sc-product-card), Decision D2 |
+| P0-E10-T4 | Music player / media block | Implement `sc-music-player` headless element. Demonstrates forced dark surface (regardless of light/dark mode), gradient album art, transport controls, progress bar, volume slider, playlist rows. | P0-E10-T1 | Luna | L | SPEC-PLAYGROUND §15 (sc-music-player) |
+| P0-E10-T5 | Dashboard / notifications block | Implement `sc-dashboard-block` headless element. Demonstrates mixed intent colors via L3 aliases (`--line-success`, `--line-warning`, `--line-danger`, `--line-info`) on stat cards and notification list. | P0-E10-T1 | Luna | M | SPEC-PLAYGROUND §15 (sc-dashboard-block) |
+| P0-E10-T6 | Pricing / comparison table block | Implement `sc-pricing-block` headless element with 3 tiers (Free / Pro / Enterprise). Demonstrates complementary schema lookup: accent → cool/warm complement applied to Enterprise tier. CTA hierarchy (ghost / solid / outline). | P0-E10-T1 | Luna | M | SPEC-PLAYGROUND §14 (complement map), §15 (sc-pricing-block) |
+| P0-E10-T7 | Schema mapping configuration and accent reactivity system | Implement `sc-schema-mapper` plus expanded `PlaygroundBlockConfig` interface. Drives per-block `baseSchema`, `accentElements`, `complementSchema`, `responsiveTo`. Propagates nav schema picker changes to accent-responsive elements across blocks without page reload. | P0-E10-T1 | Luna | L | SPEC-PLAYGROUND §14 (accent propagation) |
+| P0-E10-T8 | Refactor product card to headless pattern | Migrate `sc-product-card` from internal `--line-*` tokens to generic CSS custom properties + `::part()` exposure for every styleable zone. Canonical decision case (Decision D2 in spec). | P0-E10-T3 | Luna | M | SPEC-PLAYGROUND Decision D2, headless-pattern memory |
+
+## 10. Dependency Graph
 
 ```
 P0-E1 (Branding Refactor)
@@ -149,10 +165,19 @@ P0-E6 (Testing & CI/CD)                    depends on E3-T5
                                                 T4 ──► T5 (RC pipeline)
 
 P0-E7 (Icon Registry)                      depends on E3-T2, E4-T1
-  T1 (registry API) ─���► T2 (Icon Setup guide) ◄── E5-T1
+  T1 (registry API) ───► T2 (Icon Setup guide) ◄── E5-T1
+
+P0-E10 (Multi-Schema Playground)           depends on E9-T2 (sc-app shell)
+  T1 (scaffold page) ──┬──► T3 (product card) ──► T8 (headless refactor)
+                       │                                                 │
+                       ├──► T2 (login) ◄──────────────────────────────── ┘
+                       ├──► T4 (music player)
+                       ├──► T5 (dashboard)
+                       ├──► T6 (pricing)
+                       └──► T7 (schema mapping system)
 ```
 
-## 10. Critical Path
+## 11. Critical Path
 
 ```
 E1 (Branding) ──► E2 (Build Pipeline)
@@ -160,11 +185,13 @@ E1 (Branding) ──► E2 (Build Pipeline)
               │                 ──► E6 (Testing/CI)
               └── E4 (LineElement) ◄── E1-T6 only (parallel with E2, E3)
                   └── E7 (Icon Registry) ◄── E3-T2 + E4-T1
+
+E9 (Showcase) ──► E10 (Multi-Schema Playground) ◄── E9-T2 (sc-app shell)
 ```
 
-Branding must complete first. E4 (LineElement) depends only on E1-T6 (base class rename), so it starts in parallel with E2 and E3. E5 and E6 depend on E3 (monorepo scaffold). E7 depends on both E3-T2 and E4-T1.
+Branding must complete first. E4 (LineElement) depends only on E1-T6 (base class rename), so it starts in parallel with E2 and E3. E5 and E6 depend on E3 (monorepo scaffold). E7 depends on both E3-T2 and E4-T1. E10 (playground) is a design-exploration sandbox layered on top of E9's app shell — it does not gate Phase 0 completion but its findings feed back into E9.12 (Themes page) and the homepage redesign.
 
-## 11. Done Criteria for Phase 0
+## 12. Done Criteria for Phase 0
 
 All of the following must be true:
 
@@ -197,5 +224,9 @@ All of the following must be true:
 - [ ] Token parity tests confirm each palette token uses `light-dark()` with both mode values in a single declaration (parity is structural with `light-dark()`)
 - [ ] Snapshot tests of generated CSS outputs detect unintended regressions
 - [ ] Playwright visual regression of `apps/showcase/` established as baseline
+- [ ] `sc-page-playground` is registered as PanelKey `'playground'` in `sc-app` and accessible via the nav (E10-T1 done)
+- [ ] At least 5 composition blocks render correctly in both light and dark mode, each as a separate custom element following the headless pattern (`::part()` on every styleable zone, no `--line-*` tokens internally)
+- [ ] Changing the schema picker in the nav updates accent-responsive elements across all blocks without reloading (E10-T7 schema mapping system done)
+- [ ] Playground findings documented as input to E9.12 Themes page and homepage redesign
 
 ---
