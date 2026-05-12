@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+import '../components/sc-login-block.js';
 import '../components/sc-product-card.js';
 
 export type { PlaygroundBlockConfig } from './playground-config.js';
@@ -285,6 +286,104 @@ export class ScPagePlayground extends LitElement {
       background: var(--line-solid-hover);
     }
 
+    /* ── Login / Sign-up block (T2) ── */
+    /*
+     * <sc-login-block class="login-block-slate"> is the consumer-applied
+     * instance. The slate base zones are painted via slate-N palette tokens
+     * (neutral, immune to the nav schema picker). The accent zones
+     * (btn-submit, focus-ring, footer link) consume the inherited
+     * --line-solid-* semantic tokens that cascade from body.line-schema-{accent}
+     * — they change colour whenever the user picks a new accent.
+     */
+
+    /* Constrain the block to a reasonable card width inside the centered wrapper */
+    .login-block-slate {
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* Slate neutral base — card surface, borders, typography, divider, SSO ghost */
+    .login-block-slate::part(card) {
+      background: light-dark(var(--line-slate-2), var(--line-slate-11));
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-7));
+    }
+
+    .login-block-slate::part(heading) {
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    .login-block-slate::part(subtitle) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-2));
+    }
+
+    .login-block-slate::part(label) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-2));
+    }
+
+    .login-block-slate::part(input) {
+      background: light-dark(var(--line-slate-1), var(--line-slate-12));
+      border-color: light-dark(var(--line-slate-7), var(--line-slate-6));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    .login-block-slate::part(divider) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-2));
+    }
+
+    .login-block-slate::part(divider-text) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-3));
+    }
+
+    .login-block-slate::part(btn-sso) {
+      background: transparent;
+      border-color: light-dark(var(--line-slate-7), var(--line-slate-6));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    .login-block-slate::part(btn-sso):hover {
+      background: light-dark(var(--line-slate-3), var(--line-slate-10));
+    }
+
+    .login-block-slate::part(footer-link) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-3));
+    }
+
+    /* Shared accent zones — react to nav schema picker through body.line-schema-{accent} */
+    sc-login-block::part(btn-submit) {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+      border-color: var(--line-solid-background);
+    }
+
+    sc-login-block::part(btn-submit):hover {
+      background: var(--line-solid-hover);
+    }
+
+    sc-login-block::part(input):focus-visible {
+      outline: var(--input-focus-ring-width, 2px) solid var(--line-ui-border-hover);
+      outline-offset: var(--input-focus-ring-offset, 1px);
+    }
+
+    sc-login-block::part(footer-link-anchor) {
+      color: var(--line-solid-background);
+    }
+
+    /*
+     * Red scoped error — applied only to the field carrying [data-error] on
+     * the host. The class-scoped variant is needed because per-instance class
+     * selectors (e.g. .login-block-slate::part(input)) have higher specificity
+     * than the tag-only sc-login-block::part(input-error) rule and would
+     * otherwise win the border-color cascade.
+     */
+    sc-login-block::part(input-error),
+    .login-block-slate::part(input-error) {
+      border-color: light-dark(var(--line-red-7), var(--line-red-6));
+    }
+
+    sc-login-block::part(field-error) {
+      color: light-dark(var(--line-red-11), var(--line-red-3));
+    }
+
     /* ── Mobile: top bar instead of sidebar ── */
     .mobile-bar {
       display: none;
@@ -391,7 +490,15 @@ export class ScPagePlayground extends LitElement {
         <!-- Scrollable content column -->
         <div class="content">
           <div class="block-wrapper">
-            <span class="block-placeholder">Login / Sign-up block (T2)</span>
+            <sc-login-block
+              class="login-block-slate"
+              heading="Sign in"
+              subtitle="Welcome back. Enter your credentials to continue."
+              submit-label="Sign in"
+              sso-label="GitHub"
+              .errorField=${'password' as const}
+              error-message="Incorrect password."
+            ></sc-login-block>
           </div>
           <div class="block-wrapper">
             <div class="product-grid">
