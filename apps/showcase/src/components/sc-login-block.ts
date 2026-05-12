@@ -15,6 +15,14 @@ export interface ScLoginSubmitDetail {
 }
 
 /**
+ * Detail payload emitted by `sc-login-sso`.
+ */
+export interface ScLoginSsoDetail {
+  /** Identifier of the SSO provider — mirrors the `ssoLabel` property */
+  provider: string;
+}
+
+/**
  * Headless login / sign-up composition block.
  *
  * Defines structure and layout only — no design system tokens internally.
@@ -24,6 +32,9 @@ export interface ScLoginSubmitDetail {
  *
  * Mirrors the headless contract established by `sc-product-card`
  * (see docs/specs/00-spec-playground.md §0, §8.3, §16 D1/D4).
+ *
+ * @fires sc-login-submit - User submitted the form (Enter inside an input or primary CTA click). Detail: `{ email, password }`.
+ * @fires sc-login-sso - User clicked the ghost SSO button. Detail: `{ provider }` where `provider` mirrors `ssoLabel`.
  */
 @customElement('sc-login-block')
 export class ScLoginBlock extends LitElement {
@@ -255,7 +266,7 @@ export class ScLoginBlock extends LitElement {
 
   private _onSsoClick = () => {
     this.dispatchEvent(
-      new CustomEvent('sc-login-sso', {
+      new CustomEvent<ScLoginSsoDetail>('sc-login-sso', {
         detail: { provider: this.ssoLabel },
         bubbles: true,
         composed: true

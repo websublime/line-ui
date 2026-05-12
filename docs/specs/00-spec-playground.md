@@ -217,7 +217,7 @@ The **composition blocks** carry their own variants, summarised in §15. Notably
 |-----|------|--------|
 | `<sc-page-playground>` | Page component — sidebar + content + mobile bar | implemented (T1) |
 | `<sc-product-card>` | Headless e-commerce card | implemented (T3/T8) |
-| `<sc-login-block>` | Headless login / sign-up form | planned (T2) |
+| `<sc-login-block>` | Headless login / sign-up form | implemented (T2) |
 | `<sc-music-player>` | Headless media block | planned (T4) |
 | `<sc-dashboard-block>` | Headless dashboard with notifications + stats + toggles | planned (T5) |
 | `<sc-pricing-block>` | Headless 3-tier pricing comparison | planned (T6) |
@@ -304,7 +304,7 @@ app shell via the `schema` property.
 `--dot-border-width`, `--button-padding`, `--button-radius`,
 `--button-font-size`, `--button-font-weight`, `--placeholder-icon-size`.
 
-#### 8.3 `<sc-login-block>` (planned — T2)
+#### 8.3 `<sc-login-block>` (implemented — T2)
 
 **Properties:**
 
@@ -322,6 +322,7 @@ app shell via the `schema` property.
 | Event | Detail | When fired |
 |-------|--------|-----------|
 | `sc-login-submit` | `{ email: string; password: string }` | User pressed Enter inside an input or clicked the primary CTA |
+| `sc-login-sso` | `{ provider: string }` | User clicked the ghost SSO button; `provider` mirrors `ssoLabel` |
 
 **Parts:** `card`, `heading`, `subtitle`, `field`, `field-error`, `label`,
 `input`, `input-error` (additive on the errored input, mirrors the
@@ -813,7 +814,7 @@ accent picker — they resolve from `aliases.css` independent of any schema clas
 | Tag | Status | Variants | Demonstrates | Bead |
 |-----|--------|----------|--------------|------|
 | `sc-product-card` | implemented | slate, mauve | Headless pattern; per-instance schema via class; rating intent alias; cross-schema dots | `line-ui-m3d.3`, `line-ui-m3d.8` |
-| `sc-login-block` | planned | — | Neutral base + accent CTA; native `<form>`; error scoping via `data-error` attribute | `line-ui-m3d.2` |
+| `sc-login-block` | implemented | slate | Neutral base + accent CTA; native `<form>`; error scoping via `data-error` attribute; emits `sc-login-submit` and `sc-login-sso` | `line-ui-m3d.2` |
 | `sc-music-player` | planned | — | Forced dark surface; gradient album art via consumer-supplied background; transport controls | `line-ui-m3d.4` |
 | `sc-dashboard-block` | planned | — | Mixed intent colors (success / warning / danger) coexisting with accent; toggles and stat reactivity via `PlaygroundBlockConfig` | `line-ui-m3d.5` |
 | `sc-pricing-block` | planned | — | Complementary schema lookup; ghost / solid / outline CTA weight hierarchy; "Recommended" badge | `line-ui-m3d.6` |
