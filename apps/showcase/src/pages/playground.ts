@@ -2,6 +2,7 @@ import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
 import '../components/sc-login-block.js';
+import '../components/sc-music-player.js';
 import '../components/sc-product-card.js';
 
 export type { PlaygroundBlockConfig } from './playground-config.js';
@@ -423,6 +424,133 @@ export class ScPagePlayground extends LitElement {
       color: light-dark(var(--line-red-11), var(--line-red-3));
     }
 
+    /* ── Music player block (T4) ── */
+    /*
+     * <sc-music-player class="music-player-dark"> is the consumer-applied
+     * instance. Per spec §16 D5, the player is forced to a dark surface in
+     * BOTH global light and dark modes by setting --surface-color-scheme: dark
+     * on the host. The component declares
+     *   color-scheme: var(--surface-color-scheme, light dark)
+     * inside :host, so flipping that custom property flips the local
+     * color-scheme inside the player's shadow root, which in turn makes the
+     * light-dark() expressions in the rules below resolve to the DARK branch
+     * regardless of <html>'s active color-scheme.
+     *
+     * Neutral surface zones (card, typography, transport buttons, slider
+     * tracks, playlist rows) consume gray-N palette tokens — immune to the
+     * nav schema picker. Accent zones (progress-fill, ctrl-play,
+     * playlist-item-active) consume --line-solid-* / --line-solid-text — they
+     * recolor when the user picks a new accent, matching the §14.2 'player'
+     * block entry.
+     */
+
+    .music-player-dark {
+      width: 100%;
+      max-width: 480px;
+      /* §16 D5 — force a dark surface inside the player subtree. */
+      --surface-color-scheme: dark;
+      /*
+       * Album art gradient is supplied as a full background string by the
+       * consumer. var(--line-solid-background) resolves AT USE TIME inside
+       * the player's shadow root, so the gradient stays accent-reactive
+       * when the nav schema picker changes.
+       */
+      --album-art-gradient: linear-gradient(
+        135deg,
+        var(--line-solid-background),
+        var(--line-gray-11)
+      );
+    }
+
+    /* Card surface, borders */
+    sc-music-player::part(card) {
+      background: light-dark(var(--line-gray-2), var(--line-gray-12));
+      border: 1px solid light-dark(var(--line-gray-4), var(--line-gray-11));
+      color: light-dark(var(--line-gray-12), var(--line-gray-1));
+    }
+
+    /* Typography */
+    sc-music-player::part(track-title) {
+      color: light-dark(var(--line-gray-12), var(--line-gray-1));
+    }
+
+    sc-music-player::part(artist),
+    sc-music-player::part(progress-time) {
+      color: light-dark(var(--line-gray-11), var(--line-gray-3));
+    }
+
+    /* Album art SVG glyph color (inside the gradient) */
+    sc-music-player::part(album-art) {
+      color: light-dark(var(--line-gray-1), var(--line-gray-1));
+    }
+
+    /* Progress / volume tracks (neutral background) */
+    sc-music-player::part(progress-track),
+    sc-music-player::part(volume-track) {
+      background: light-dark(var(--line-gray-4), var(--line-gray-10));
+    }
+
+    /* Volume fill — neutral by default; the spec lists ONLY progress-fill,
+       ctrl-play and playlist-item-active as accent-reactive for the player
+       block, so the volume fill stays neutral high-contrast. */
+    sc-music-player::part(volume-fill) {
+      background: light-dark(var(--line-gray-11), var(--line-gray-3));
+    }
+
+    sc-music-player::part(volume-icon) {
+      color: light-dark(var(--line-gray-11), var(--line-gray-3));
+    }
+
+    /* Transport buttons (non-play) — outlined, hover lifts to accent */
+    sc-music-player::part(ctrl-btn) {
+      background: transparent;
+      border-color: light-dark(var(--line-gray-7), var(--line-gray-9));
+      color: light-dark(var(--line-gray-12), var(--line-gray-1));
+    }
+
+    sc-music-player::part(ctrl-btn):hover {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+      border-color: var(--line-solid-background);
+    }
+
+    /* Playlist rows */
+    sc-music-player::part(playlist-item) {
+      background: light-dark(var(--line-gray-2), var(--line-gray-12));
+      color: light-dark(var(--line-gray-12), var(--line-gray-1));
+      border-block-end: 1px solid light-dark(var(--line-gray-4), var(--line-gray-11));
+    }
+
+    /* Alternating row tint via :nth-child on the part */
+    sc-music-player::part(playlist-item):nth-child(even) {
+      background: light-dark(var(--line-gray-3), var(--line-gray-11));
+    }
+
+    /* ── Accent-reactive zones (§14.2 player entry) ──
+     * progress-fill, ctrl-play, playlist-item-active inherit
+     * --line-solid-background / --line-solid-text from body.line-schema-{accent}
+     * and recolor whenever the nav picker cycles. */
+    sc-music-player::part(progress-fill) {
+      background: var(--line-solid-background);
+    }
+
+    sc-music-player::part(ctrl-play) {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+      border-color: var(--line-solid-background);
+    }
+
+    sc-music-player::part(ctrl-play):hover {
+      background: var(--line-solid-hover);
+      border-color: var(--line-solid-hover);
+    }
+
+    sc-music-player::part(playlist-item-active) {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+      border-inline-start-color: var(--line-solid-background);
+    }
+
     /* ── Mobile: top bar instead of sidebar ── */
     .mobile-bar {
       display: none;
@@ -596,8 +724,34 @@ export class ScPagePlayground extends LitElement {
               ></sc-product-card>
             </div>
           </div>
-          <div class="block-wrapper">
-            <span class="block-placeholder">Music player / media block (T4)</span>
+          <div class="block-group">
+            <p class="block-note">
+              <strong>Music player — forced dark surface + accent overlays.</strong>
+              The card surface, transport controls and playlist rows resolve
+              through the <strong>gray</strong> palette and stay dark in
+              <em>both</em> global light and dark modes — driven by the
+              <code>--surface-color-scheme: dark</code> host custom property
+              (spec §16 D5). The accent-reactive zones — progress fill, play
+              button and active playlist row — inherit
+              <code>--line-solid-*</code> from the schema applied on
+              <code>document.body</code>, so cycling the nav picker recolors
+              them without re-mounting the block.
+            </p>
+            <div class="block-wrapper">
+              <sc-music-player
+                class="music-player-dark"
+                track-title="Midnight Ocean"
+                artist="Aurora Skies"
+                progress="38"
+                volume="65"
+                .playlist=${[
+                  { title: 'Midnight Ocean', artist: 'Aurora Skies', active: true },
+                  { title: 'Glass Horizon', artist: 'Pale Wing' },
+                  { title: 'Soft Static', artist: 'Field Notes' },
+                  { title: 'Night Drive', artist: 'Aurora Skies' }
+                ]}
+              ></sc-music-player>
+            </div>
           </div>
           <div class="block-wrapper">
             <span class="block-placeholder">Dashboard / notifications block (T5)</span>
