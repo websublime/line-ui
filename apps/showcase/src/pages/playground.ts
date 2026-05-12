@@ -189,6 +189,45 @@ export class ScPagePlayground extends LitElement {
       font-style: italic;
     }
 
+    /* ── Per-block explanatory note (renders above the block-wrapper) ── */
+    /*
+     * Note text is intentionally NEUTRAL (slate palette), so the explanation
+     * itself does not change colour when the nav accent picker cycles —
+     * matching the very pattern it describes for sc-login-block.
+     */
+    .block-note {
+      font-size: var(--line-font-size-2, 0.875rem);
+      line-height: var(--line-line-height-3, 1.6);
+      color: light-dark(var(--line-slate-11), var(--line-slate-3));
+      margin: 0;
+      padding: 0 var(--line-size-2, 0.5rem);
+      font-style: italic;
+      max-width: 70ch;
+    }
+
+    .block-note strong {
+      font-style: normal;
+      font-weight: var(--line-font-weight-7, 700);
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    .block-note code {
+      font-family: var(--line-font-mono, ui-monospace, SFMono-Regular, monospace);
+      font-size: 0.9em;
+      font-style: normal;
+      padding: 0 0.25em;
+      border-radius: 3px;
+      background: light-dark(var(--line-slate-4), var(--line-slate-9));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    /* Group note + block-wrapper into a single flow item */
+    .block-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--line-size-3, 1rem);
+    }
+
     /* ── E-commerce product card grid (T3) ── */
     .product-grid {
       display: grid;
@@ -489,16 +528,30 @@ export class ScPagePlayground extends LitElement {
 
         <!-- Scrollable content column -->
         <div class="content">
-          <div class="block-wrapper">
-            <sc-login-block
-              class="login-block-slate"
-              heading="Sign in"
-              subtitle="Welcome back. Enter your credentials to continue."
-              submit-label="Sign in"
-              sso-label="GitHub"
-              .errorField=${'password' as const}
-              error-message="Incorrect password."
-            ></sc-login-block>
+          <div class="block-group">
+            <p class="block-note">
+              <strong>Login / Sign-up — neutral base + accent separation.</strong>
+              The card surface, heading, labels, inputs, SSO button and divider
+              are painted with the <strong>slate</strong> palette so the visual
+              base does <em>not</em> follow the nav accent picker. Only the
+              accent-responsive zones — primary CTA background, input focus ring,
+              and the "Create account" link — inherit
+              <code>--line-solid-*</code> / <code>--line-ui-border-hover</code>
+              from the accent schema applied on <code>document.body</code>.
+              The errored field opts into the <strong>red</strong> palette
+              independently of both.
+            </p>
+            <div class="block-wrapper">
+              <sc-login-block
+                class="login-block-slate"
+                heading="Sign in"
+                subtitle="Welcome back. Enter your credentials to continue."
+                submit-label="Sign in"
+                sso-label="GitHub"
+                .errorField=${'password' as const}
+                error-message="Incorrect password."
+              ></sc-login-block>
+            </div>
           </div>
           <div class="block-wrapper">
             <div class="product-grid">
