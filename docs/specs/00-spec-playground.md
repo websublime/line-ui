@@ -324,7 +324,11 @@ app shell via the `schema` property.
 | `sc-login-submit` | `{ email: string; password: string }` | User pressed Enter inside an input or clicked the primary CTA |
 
 **Parts:** `card`, `heading`, `subtitle`, `field`, `field-error`, `label`,
-`input`, `divider`, `divider-text`, `btn-submit`, `btn-sso`, `footer-link`.
+`input`, `input-error` (additive on the errored input, mirrors the
+whitespace-separated multi-part syntax used by `sc-product-card::part(chip-active)`),
+`divider`, `divider-text`, `btn-submit`, `btn-sso`, `footer-link`,
+`footer-link-anchor` (the `<a>` inside `footer-link`; `::part()` cannot
+descend, so the anchor is a separate part to allow accent coloring).
 
 **Generic custom properties (`:host`):**
 
