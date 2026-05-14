@@ -236,6 +236,19 @@ export class ScLoginBlock extends LitElement {
     }
   `;
 
+  override connectedCallback(): void {
+    super.connectedCallback();
+    // Spec §10 — Escape clears errors "Anywhere in the block". Registering on
+    // the host (rather than the inner <form>) covers focusable elements outside
+    // the form (e.g. the SSO button if reordered, footer link, future slots).
+    this.addEventListener('keydown', this._onKeydown);
+  }
+
+  override disconnectedCallback(): void {
+    this.removeEventListener('keydown', this._onKeydown);
+    super.disconnectedCallback();
+  }
+
   protected override updated(changed: PropertyValues): void {
     if (changed.has('errorField')) {
       // Reflect errorField onto the host as `data-error` so consumers can
@@ -253,6 +266,11 @@ export class ScLoginBlock extends LitElement {
 
   private _onSubmit = (event: Event) => {
     event.preventDefault();
+    // Optional chaining is defensive — @query refs are null until first render.
+    // `_onSubmit` is only callable via the form's submit event (which fires
+    // post-render), but keeping the guard protects against future refactors
+    // that might call this handler from a different path (programmatic submit,
+    // test harness, etc.).
     const email = this._emailInput?.value ?? '';
     const password = this._passwordInput?.value ?? '';
     this.dispatchEvent(
@@ -317,7 +335,7 @@ export class ScLoginBlock extends LitElement {
   override render() {
     return html`
       <div class="card" part="card">
-        <form class="form" @submit=${this._onSubmit} @keydown=${this._onKeydown} novalidate>
+        <form class="form" @submit=${this._onSubmit} novalidate>
           <h2 class="heading" part="heading">${this.heading}</h2>
           ${this.subtitle ? html`<p class="subtitle" part="subtitle">${this.subtitle}</p>` : nothing}
 
@@ -330,6 +348,12 @@ export class ScLoginBlock extends LitElement {
             <span class="divider-text" part="divider-text">or continue with</span>
           </div>
 
+          <!--
+            SSO button MUST keep type="button" — it lives inside <form> and
+            would otherwise trigger submit when Enter is pressed while focused.
+            Do NOT reorder this button outside the form without re-evaluating
+            the Tab order (spec §10) and keyboard semantics.
+          -->
           <button class="btn" part="btn-sso" type="button" @click=${this._onSsoClick}>
             ${this.ssoLabel}
           </button>
