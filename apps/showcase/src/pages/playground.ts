@@ -481,7 +481,7 @@ export class ScPagePlayground extends LitElement {
 
     /* Album art SVG glyph color (inside the gradient) */
     sc-music-player::part(album-art) {
-      color: light-dark(var(--line-gray-1), var(--line-gray-1));
+      color: var(--line-gray-1);
     }
 
     /* Progress / volume tracks (neutral background) */
@@ -744,6 +744,7 @@ export class ScPagePlayground extends LitElement {
                 artist="Aurora Skies"
                 progress="38"
                 volume="65"
+                .duration=${238}
                 .playlist=${[
                   { title: 'Midnight Ocean', artist: 'Aurora Skies', active: true },
                   { title: 'Glass Horizon', artist: 'Pale Wing' },

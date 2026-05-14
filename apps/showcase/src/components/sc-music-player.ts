@@ -64,6 +64,9 @@ export class ScMusicPlayer extends LitElement {
   /** Volume percentage (0–100) */
   @property({ type: Number }) volume = 70;
 
+  /** Track duration in seconds — drives the right-hand value in the progress timecode. */
+  @property({ type: Number }) duration = 238;
+
   /**
    * Toggled by the play/pause control. Reflected to a boolean attribute so
    * consumers can target `sc-music-player[playing]::part(ctrl-play)`.
@@ -319,16 +322,26 @@ export class ScMusicPlayer extends LitElement {
 
   protected override updated(changed: PropertyValues): void {
     if (changed.has('progress')) {
-      this.style.setProperty('--_progress', `${this._clamp(this.progress)}%`);
+      this.style.setProperty('--_progress', `${this._clampedProgress}%`);
     }
     if (changed.has('volume')) {
-      this.style.setProperty('--_volume', `${this._clamp(this.volume)}%`);
+      this.style.setProperty('--_volume', `${this._clampedVolume}%`);
     }
   }
 
   private _clamp(value: number): number {
     if (Number.isNaN(value)) return 0;
     return Math.min(100, Math.max(0, value));
+  }
+
+  /** Single source of truth for the clamped progress percentage (0–100). */
+  private get _clampedProgress(): number {
+    return this._clamp(this.progress);
+  }
+
+  /** Single source of truth for the clamped volume percentage (0–100). */
+  private get _clampedVolume(): number {
+    return this._clamp(this.volume);
   }
 
   private _emitToggle = () => {
@@ -366,16 +379,6 @@ export class ScMusicPlayer extends LitElement {
     );
   }
 
-  private _onPlayKeydown = (event: KeyboardEvent) => {
-    // Native <button> already activates on Space/Enter and fires click — we
-    // override only to ensure the keyboard handler matches the spec wording
-    // explicitly. We let the browser's default click flow handle it instead
-    // of double-firing.
-    if (event.key === ' ' || event.key === 'Enter') {
-      // No preventDefault: native button handles activation.
-    }
-  };
-
   private _onProgressClick = (event: MouseEvent) => {
     const rect = this._progressTrack.getBoundingClientRect();
     if (rect.width === 0) return;
@@ -410,7 +413,8 @@ export class ScMusicPlayer extends LitElement {
     }
   };
 
-  private _formatTime(percent: number, totalSeconds = 238): string {
+  private _formatTime(percent: number): string {
+    const totalSeconds = this.duration;
     const elapsed = Math.round((this._clamp(percent) / 100) * totalSeconds);
     const total = totalSeconds;
     const fmt = (s: number) => {
@@ -493,8 +497,18 @@ export class ScMusicPlayer extends LitElement {
   }
 
   override render() {
-    const progress = this._clamp(this.progress);
-    const volume = this._clamp(this.volume);
+    const progress = this._clampedProgress;
+    const volume = this._clampedVolume;
+    /*
+     * Tab order follows the DOM order: album-art (not focusable) →
+     * track-info (not focusable) → progress → ctrl-prev → ctrl-play →
+     * ctrl-next → volume → playlist. This matches the visual top-to-bottom
+     * reading order of the card; the user scans the artwork, the track
+     * metadata, the timeline, then the controls. Spec §10 does not formalise
+     * a specific Tab order for the player block, so we deliberately keep
+     * DOM order = visual order. Do NOT reshuffle the DOM without revisiting
+     * this comment and the spec.
+     */
     return html`
       <div class="card" part="card" role="region" aria-label="Music player">
         ${this._renderAlbumArt()}
@@ -536,7 +550,6 @@ export class ScMusicPlayer extends LitElement {
             aria-label=${this.playing ? 'Pause' : 'Play'}
             aria-pressed=${this.playing ? 'true' : 'false'}
             @click=${this._emitToggle}
-            @keydown=${this._onPlayKeydown}
           >${this._renderPlayIcon()}</button>
           <button
             class="ctrl-btn"
