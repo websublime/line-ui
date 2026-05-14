@@ -809,7 +809,65 @@ L3 alias tokens (`--line-warning`, `--line-success`, `--line-danger`,
 `--line-info`, `--line-primary`) are **fixed-intent** and do NOT respond to the
 accent picker — they resolve from `aliases.css` independent of any schema class.
 
+#### 14.5 Shadow-DOM scoping constraint (NORMATIVE)
+
+The global `.line-schema-{name}` selectors declared in `@websublime/line-theme`
+are written as `:where(.line-schema-{name}) { … }` rules in the page's light
+DOM. **They do NOT pierce shadow DOM boundaries** — this was confirmed by the
+codebase scan recorded in finding `line-ui-p3v.59` and re-confirmed during the
+`line-ui-m3d.6` investigation. Applying `class="line-schema-{name}"` to an
+element rendered INSIDE a block's shadow root (e.g. on a tier card inside
+`<sc-pricing-block>`) will not activate the schema's variable redefinitions
+inside that subtree.
+
+Therefore, per-card or per-zone schema scoping inside a block's shadow root
+CANNOT use the `.line-schema-{name}` class strategy. Those classes only take
+effect when applied to **light-DOM elements** — typically the block's host
+element itself, or a wrapper around the block in the consumer's light tree.
+
+Two valid mechanisms exist for propagating accent / complement tokens INTO a
+headless block:
+
+1. **CSS custom-property inheritance from a light-DOM ancestor.** The page's
+   active accent is set on `<body>` (e.g. `body.line-schema-violet`). The
+   resulting `--line-solid-background`, `--line-solid-text`, etc. cascade
+   through the shadow DOM boundary via inheritance and resolve at use-time
+   inside every block's shadow root. This is how the page's *active* accent
+   reaches every block today (see §14.1). It works for exactly one schema
+   simultaneously — the one set on `<body>`.
+
+2. **Host custom properties set inline on the block's host element.** When a
+   block needs a SECOND schema in addition to the active accent (e.g. the
+   complementary schema on `sc-pricing-block`'s Enterprise tier), the
+   consumer page sets concrete custom properties directly on the block's host
+   element, derived from the desired palette levels:
+
+   ```html
+   <sc-pricing-block
+     style="
+       --complement-solid: var(--line-amber-9);
+       --complement-text:  var(--line-amber-1);
+       --complement-hover: var(--line-amber-10);
+     "
+   ></sc-pricing-block>
+   ```
+
+   The block's internal CSS references `var(--complement-solid)` etc. and the
+   custom properties inherit into the shadow root. This is the **only**
+   mechanism that can inject a non-active complementary schema into a headless
+   block while respecting the shadow DOM boundary.
+
+   Precedent: `sc-music-player`'s `--album-art-gradient` is supplied this way
+   from `apps/showcase/src/pages/playground.ts` (lines 459–464). The pattern
+   generalises: any token the consumer needs to inject that is not the active
+   accent must be set as a host custom property, never as a `.line-schema-*`
+   class inside the block.
+
 ### 15. Composition Block Inventory
+
+> **Revisions:** 2026-05-14 — `sc-pricing-block` (§15.1) clarified to consume
+> host custom properties for the complementary schema instead of internal
+> `.line-schema-*` classes. See §16 D6.
 
 | Tag | Status | Variants | Demonstrates | Bead |
 |-----|--------|----------|--------------|------|
@@ -817,8 +875,115 @@ accent picker — they resolve from `aliases.css` independent of any schema clas
 | `sc-login-block` | implemented | slate | Neutral base + accent CTA; native `<form>`; error scoping via `data-error` attribute; emits `sc-login-submit` and `sc-login-sso` | `line-ui-m3d.2` |
 | `sc-music-player` | planned | — | Forced dark surface; gradient album art via consumer-supplied background; transport controls | `line-ui-m3d.4` |
 | `sc-dashboard-block` | planned | — | Mixed intent colors (success / warning / danger) coexisting with accent; toggles and stat reactivity via `PlaygroundBlockConfig` | `line-ui-m3d.5` |
-| `sc-pricing-block` | planned | — | Complementary schema lookup; ghost / solid / outline CTA weight hierarchy; "Recommended" badge | `line-ui-m3d.6` |
+| `sc-pricing-block` | planned | — | Complementary schema lookup via host custom properties; ghost / solid / outline CTA weight hierarchy; "Recommended" badge | `line-ui-m3d.6` |
 | `sc-schema-mapper` | planned | — | The T7 reactivity engine — live-toggles accent participation per zone | `line-ui-m3d.7` |
+
+#### 15.1 `sc-pricing-block` — accent / complement application
+
+The pricing block renders three tiers in a fixed order (Free / Pro / Enterprise).
+The Pro card is the featured tier and reflects the active accent. The
+Enterprise card reflects the complementary schema resolved by
+`complementSchema(accent)` (see §14.3). Per §14.5, the complementary schema
+**cannot** be propagated by applying `.line-schema-{complement}` inside the
+block's shadow root — that class only works in the light DOM. Instead, the
+consumer page supplies the complement as **inline host custom properties** on
+the `<sc-pricing-block>` element.
+
+**Block-internal markup (parts-only, no `.line-schema-*` classes inside the
+shadow root):**
+
+```ts
+// apps/showcase/src/components/sc-pricing-block.ts (sketch)
+override render() {
+  return html`
+    <div class="grid" part="grid">
+      ${this.tiers.map((tier, i) => {
+        const isFeatured   = tier.name === 'Pro';
+        const isEnterprise = tier.name === 'Enterprise';
+        const cardParts = [
+          'tier-card',
+          isFeatured   ? 'tier-card-featured'   : '',
+          isEnterprise ? 'tier-card-enterprise' : '',
+        ].filter(Boolean).join(' ');
+        return html`
+          <article class="tier-card" part=${cardParts} role="group">
+            <!-- badge, tier-name, price, features, cta … all part-named -->
+          </article>
+        `;
+      })}
+    </div>
+  `;
+}
+```
+
+The block declares neutral default values for both the accent-derived tokens
+(`--line-solid-*` inherit from `<body>` at use-time) and the complement-derived
+tokens (`--complement-solid`, `--complement-text`, `--complement-hover`,
+`--complement-border`, `--complement-low-contrast`,
+`--complement-high-contrast`) inside its `:host` block. The complement defaults
+can be any neutral fallback the block chooses; they are overridden at runtime
+by the consumer.
+
+**Consumer integration (in `sc-page-playground`):**
+
+```ts
+// apps/showcase/src/pages/playground.ts
+import { complementSchema } from './playground-config.js';
+
+override render() {
+  const complement = complementSchema(this.schema);
+  return html`
+    <!-- … -->
+    <sc-pricing-block
+      .accentSchema=${this.schema}
+      .tiers=${PRICING_TIERS}
+      style=${`
+        --complement-solid: var(--line-${complement}-9);
+        --complement-text:  var(--line-${complement}-1);
+        --complement-hover: var(--line-${complement}-10);
+        --complement-border: var(--line-${complement}-8);
+        --complement-low-contrast:  var(--line-${complement}-11);
+        --complement-high-contrast: var(--line-${complement}-12);
+      `}
+    ></sc-pricing-block>
+  `;
+}
+```
+
+**How each tier resolves its colors:**
+
+| Tier | Source of accent tokens | Mechanism |
+|------|-------------------------|-----------|
+| Free | Inherited neutrals (base schema or no schema) | Default `:host` values; consumer may paint via `::part(tier-card)` |
+| Pro (`tier-card-featured`) | `--line-solid-background`, `--line-solid-text`, `--line-solid-hover` | Inherited from `body.line-schema-{accent}` through the shadow boundary (§14.5 mechanism 1) |
+| Enterprise (`tier-card-enterprise`) | `--complement-solid`, `--complement-text`, `--complement-hover`, `--complement-border`, `--complement-low-contrast`, `--complement-high-contrast` | Host custom properties set inline by the consumer (§14.5 mechanism 2) |
+
+**Feature checks (intent alias):**
+
+The `feature-check` glyph resolves through the L3 intent alias
+`--line-success`, which is fixed-intent and does NOT react to the accent
+picker (see §14.4). The color is applied **from the consumer side** via a
+`::part(feature-check)` selector — the block does not reference `--line-*`
+internally:
+
+```css
+/* Inside sc-page-playground.styles */
+sc-pricing-block::part(feature-check) { color: var(--line-success); }
+sc-pricing-block::part(feature-dash)  { color: var(--line-gray-8); }
+```
+
+**Parts contract:** The 17 parts enumerated in §8.6 are unchanged by this
+amendment — `tier-card-featured` and `tier-card-enterprise` remain additive
+parts on the same element as `tier-card`, mirroring the
+`stat-card stat-card-{intent}` convention already established by
+`sc-dashboard-block` (see `apps/showcase/src/components/sc-dashboard-block.ts`).
+
+**Config module location:** `COMPLEMENT_MAP` and `complementSchema(accent)`
+are declared as standalone exports in
+`apps/showcase/src/pages/playground-config.ts`, alongside the existing
+`PlaygroundBlockConfig` interface. They are NOT gated on T7's expansion of
+`PlaygroundBlockConfig` — the helper exports can be added in T6 and reused by
+T7 when the schema mapper materialises.
 
 ### 16. Decision Log
 
@@ -916,6 +1081,40 @@ a light surface is desired.
 **Supersedes:** The "force `.dark` on the wrapper or `color-scheme: dark` on
 the wrapper element" approach suggested in `line-ui-m3d.4` design notes. The
 spec resolves that open question.
+
+#### D6 — Pricing block uses host custom properties for complementary schema (2026-05-14)
+
+**Decision:** `sc-pricing-block` propagates the complementary schema to its
+Enterprise tier via **host custom properties** (`--complement-solid`,
+`--complement-text`, `--complement-hover`, `--complement-border`) set inline
+on the block's host element by the consumer page. It does NOT apply
+`.line-schema-{complement}` classes to elements inside its own shadow root.
+The Pro (featured) tier continues to inherit `--line-solid-*` from the
+active accent set on `<body>`.
+
+**Why:** Global `.line-schema-*` selectors declared in
+`@websublime/line-theme` are written as `:where(.line-schema-{name}) { … }`
+rules in the page's light DOM. They do not pierce shadow DOM boundaries
+(finding `line-ui-p3v.59`, re-confirmed by the `line-ui-m3d.6`
+investigation). Applying `class="line-schema-{complement}"` to a tier card
+rendered inside `<sc-pricing-block>`'s shadow root would have no effect on
+the variables that card resolves.
+
+Host custom properties are the only mechanism that respects the headless
+contract while still injecting a non-active palette into the block: the
+consumer derives concrete values from the desired palette levels
+(`var(--line-${complement}-9)`, `…-1`, `…-10`, `…-8`) and sets them on
+`:host`. The custom properties inherit into the shadow root and the block's
+internal CSS references them by name. This mirrors the precedent set by
+`sc-music-player`'s `--album-art-gradient` (see
+`apps/showcase/src/pages/playground.ts` lines 459–464).
+
+**Supersedes:** The originally implied "per-card `class="line-schema-${accent}"`
+and `class="line-schema-${complement}"` inside the shadow tree" approach in
+the `line-ui-m3d.6` bead description, which was based on the incorrect
+assumption that global schema classes cross the shadow boundary. The bead
+description has been amended to match this decision (see §15.1 Consumer
+integration).
 
 ---
 
