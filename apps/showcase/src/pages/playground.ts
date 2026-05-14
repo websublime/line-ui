@@ -1,6 +1,7 @@
 import { css, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
 
+import '../components/sc-dashboard-block.js';
 import '../components/sc-login-block.js';
 import '../components/sc-music-player.js';
 import '../components/sc-product-card.js';
@@ -551,6 +552,154 @@ export class ScPagePlayground extends LitElement {
       border-inline-start-color: var(--line-solid-background);
     }
 
+    /* ── Dashboard / notifications block (T5) ── */
+    /*
+     * <sc-dashboard-block class="dashboard-sand"> is the consumer-applied
+     * instance. The outer container is painted with the sand palette so the
+     * shell stays NEUTRAL and does NOT follow the nav accent picker — matching
+     * the per-variant pattern used by the slate / mauve product cards.
+     *
+     * Intent zones (success / warning / danger / info) consume the L3 alias
+     * tokens (--line-success, --line-warning, --line-danger, --line-info and
+     * their -subtle / -text siblings). These aliases resolve from
+     * aliases.css INDEPENDENT of any schema class (spec §14.4), so they
+     * remain fixed-intent across every nav picker change.
+     *
+     * The two accent-reactive zones — stat-card-accent and toggle-on —
+     * inherit --line-solid-* from body.line-schema-{accent}, so cycling
+     * the nav picker recolors them without re-mounting the block (spec
+     * §14.2 'dashboard' entry).
+     */
+
+    .dashboard-sand {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* Sand neutral shell + section titles */
+    .dashboard-sand::part(container) {
+      background: light-dark(var(--line-sand-2), var(--line-sand-11));
+      border: 1px solid light-dark(var(--line-sand-6), var(--line-sand-9));
+      color: light-dark(var(--line-sand-12), var(--line-sand-1));
+    }
+
+    .dashboard-sand::part(section-title) {
+      color: light-dark(var(--line-sand-11), var(--line-sand-3));
+    }
+
+    /* Stat cards / toggle rows: neutral card surface on the sand palette */
+    .dashboard-sand::part(stat-card),
+    .dashboard-sand::part(toggle-row) {
+      background: light-dark(var(--line-sand-1), var(--line-sand-12));
+      border: 1px solid light-dark(var(--line-sand-6), var(--line-sand-9));
+    }
+
+    .dashboard-sand::part(toggle-row) {
+      background: transparent;
+      border: none;
+      border-block-end: 1px solid light-dark(var(--line-sand-6), var(--line-sand-9));
+    }
+
+    .dashboard-sand::part(stat-label),
+    .dashboard-sand::part(toggle-label) {
+      color: light-dark(var(--line-sand-11), var(--line-sand-3));
+    }
+
+    /* Toggle thumb track (off state) — neutral sand surface */
+    .dashboard-sand::part(toggle) {
+      background: light-dark(var(--line-sand-4), var(--line-sand-10));
+      color: light-dark(var(--line-sand-1), var(--line-sand-12));
+      border-color: light-dark(var(--line-sand-6), var(--line-sand-9));
+    }
+
+    /* ── Fixed-intent notifications (success / warning / danger) ── */
+    sc-dashboard-block::part(notif-success) {
+      background: var(--line-success-subtle);
+      border-color: var(--line-success);
+      color: var(--line-success-fg);
+    }
+
+    sc-dashboard-block::part(notif-warning) {
+      background: var(--line-warning-subtle);
+      border-color: var(--line-warning);
+      color: var(--line-warning-fg);
+    }
+
+    sc-dashboard-block::part(notif-danger) {
+      background: var(--line-danger-subtle);
+      border-color: var(--line-danger);
+      color: var(--line-danger-fg);
+    }
+
+    /*
+     * Notif color (set above) is inherited by descendants in the shadow
+     * tree through normal CSS inheritance, so the inline <svg> icon (which
+     * uses stroke=currentColor) and the title / body text all pick up the
+     * intent hue. No extra ::part(notif-icon) rule is needed.
+     */
+    .dashboard-sand::part(notif-title) {
+      font-weight: 700;
+    }
+
+    .dashboard-sand::part(notif-body) {
+      opacity: 0.92;
+    }
+
+    /*
+     * Stat-value color is driven by a private custom property
+     * --_stat-value-color set on the parent stat-card-{intent} part.
+     * CSS custom properties inherit through the shadow DOM via the normal
+     * cascade, so each stat-value resolves the property that was set on its
+     * parent stat-card. This is the same inheritance mechanism that lets
+     * --line-solid-background cross the shadow boundary from <body>
+     * (spec §14.1).
+     *
+     * The fixed-intent values use explicit light-dark(level-11, level-3)
+     * palette tokens rather than the L3 alias (which is level-9 only and
+     * renders too dark on dark surfaces under the inverted Radix scale).
+     * This mirrors the sc-music-player pattern of using explicit per-mode
+     * palette levels for vibrant text on neutral surfaces in both modes.
+     * The accent stat uses --line-solid-background, which is the
+     * picker-reactive equivalent and resolves correctly on dark surfaces.
+     */
+    sc-dashboard-block::part(stat-card-info) {
+      --_stat-value-color: light-dark(var(--line-cyan-11), var(--line-cyan-3));
+    }
+
+    sc-dashboard-block::part(stat-card-success) {
+      --_stat-value-color: light-dark(var(--line-green-11), var(--line-green-3));
+    }
+
+    sc-dashboard-block::part(stat-card-warning) {
+      --_stat-value-color: light-dark(var(--line-amber-11), var(--line-amber-3));
+    }
+
+    sc-dashboard-block::part(stat-card-accent) {
+      --_stat-value-color: var(--line-solid-background);
+    }
+
+    sc-dashboard-block::part(stat-value) {
+      color: var(--_stat-value-color, currentColor);
+    }
+
+    /* Accent-reactive stat card: tint the card border too so the card itself
+       reads as the active accent surface. */
+    .dashboard-sand::part(stat-card-accent) {
+      border-color: var(--line-solid-background);
+      background: light-dark(var(--line-sand-1), var(--line-sand-12));
+    }
+
+    /* ── Accent-reactive toggle (on state) ──
+     * Inherits --line-solid-background / --line-solid-text from
+     * body.line-schema-{accent} and recolors when the nav picker cycles.
+     * Scoped via the .dashboard-sand class so it beats the neutral sand
+     * toggle rule above on specificity. */
+    .dashboard-sand::part(toggle-on) {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+      border-color: var(--line-solid-background);
+    }
+
     /* ── Mobile: top bar instead of sidebar ── */
     .mobile-bar {
       display: none;
@@ -754,8 +903,56 @@ export class ScPagePlayground extends LitElement {
               ></sc-music-player>
             </div>
           </div>
-          <div class="block-wrapper">
-            <span class="block-placeholder">Dashboard / notifications block (T5)</span>
+          <div class="block-group">
+            <p class="block-note">
+              <strong>Dashboard — fixed intent + accent coexistence.</strong>
+              The outer container, section headings and toggle rows are
+              painted with the <strong>sand</strong> palette so the shell
+              stays neutral and does <em>not</em> follow the nav accent
+              picker. The three notifications and the first three stat cards
+              use the L3 intent aliases — <code>--line-success</code>,
+              <code>--line-warning</code>, <code>--line-danger</code>,
+              <code>--line-info</code> — which resolve from
+              <code>aliases.css</code> independently of any schema class and
+              therefore stay fixed across picker changes. Only the fourth
+              stat card and any toggle in its <em>on</em> state inherit
+              <code>--line-solid-*</code> from the accent schema on
+              <code>document.body</code> and recolor whenever the picker
+              cycles.
+            </p>
+            <div class="block-wrapper">
+              <sc-dashboard-block
+                class="dashboard-sand"
+                .notifications=${[
+                  {
+                    kind: 'success' as const,
+                    title: 'Deployment succeeded',
+                    body: 'Production updated to v2.4.1'
+                  },
+                  {
+                    kind: 'warning' as const,
+                    title: 'High memory usage',
+                    body: 'Server is at 87% capacity'
+                  },
+                  {
+                    kind: 'danger' as const,
+                    title: 'Payment failed',
+                    body: 'Card ending 4242 was declined'
+                  }
+                ]}
+                .stats=${[
+                  { value: '12,450', label: 'Active Users', intent: 'info' as const },
+                  { value: '98.9%', label: 'Uptime', intent: 'success' as const },
+                  { value: '24', label: 'Pending', intent: 'warning' as const },
+                  { value: '+3.2%', label: 'Growth', intent: 'accent' as const }
+                ]}
+                .toggles=${[
+                  { label: 'Notifications', on: true },
+                  { label: 'Auto-deploy', on: false },
+                  { label: 'Dark mode sync', on: true }
+                ]}
+              ></sc-dashboard-block>
+            </div>
           </div>
           <div class="block-wrapper">
             <span class="block-placeholder">Pricing / comparison table block (T6)</span>
