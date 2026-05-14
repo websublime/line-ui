@@ -4,7 +4,10 @@ import { customElement, property } from 'lit/decorators.js';
 import '../components/sc-dashboard-block.js';
 import '../components/sc-login-block.js';
 import '../components/sc-music-player.js';
+import '../components/sc-pricing-block.js';
 import '../components/sc-product-card.js';
+
+import { complementSchema } from './playground-config.js';
 
 export type { PlaygroundBlockConfig } from './playground-config.js';
 
@@ -700,6 +703,110 @@ export class ScPagePlayground extends LitElement {
       border-color: var(--line-solid-background);
     }
 
+    /* ── Pricing / comparison block (T6) ── */
+    /*
+     * <sc-pricing-block class="pricing-block"> is the consumer-applied
+     * instance. The block itself defines structure + layout only; ALL
+     * design system tokens are applied externally via ::part() selectors
+     * and via the six --complement-* host custom properties set inline
+     * on the element by render() (spec §14.5 mechanism 2, §15.1).
+     *
+     * - Free tier: neutral defaults (slate palette in both modes).
+     * - Pro tier (tier-card-featured): consumes --line-solid-* inherited
+     *   from body.line-schema-{accent} (spec §14.5 mechanism 1).
+     * - Enterprise tier (tier-card-enterprise): consumes the inline
+     *   --complement-* host custom properties; recolors live whenever
+     *   the picker cycles because render() recomputes them.
+     *
+     * Feature checks use the L3 alias --line-success (fixed-intent,
+     * does NOT react to the picker per spec §14.4). Feature dashes use
+     * --line-low-contrast.
+     */
+
+    .pricing-block {
+      width: 100%;
+      max-width: 960px;
+    }
+
+    /* ── Neutral tier card shell (slate) ── */
+    sc-pricing-block::part(tier-card) {
+      background: light-dark(var(--line-slate-2), var(--line-slate-12));
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-9));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    /* Tier name & period text use low-contrast / high-contrast neutrals */
+    sc-pricing-block::part(tier-name) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-3));
+    }
+
+    sc-pricing-block::part(price-amount) {
+      color: var(--line-high-contrast);
+    }
+
+    sc-pricing-block::part(price-period) {
+      color: var(--line-low-contrast);
+    }
+
+    /* Feature check (L3 intent, fixed) / dash (neutral muted) */
+    sc-pricing-block::part(feature-check) {
+      color: var(--line-success);
+    }
+
+    sc-pricing-block::part(feature-dash) {
+      color: light-dark(var(--line-gray-8), var(--line-gray-8));
+    }
+
+    /* ── Ghost CTA (Free tier) — text + border neutral ── */
+    sc-pricing-block::part(cta-ghost) {
+      background: transparent;
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+      border-color: light-dark(var(--line-slate-7), var(--line-slate-9));
+    }
+
+    sc-pricing-block::part(cta-ghost):hover {
+      background: light-dark(var(--line-slate-3), var(--line-slate-11));
+      border-color: light-dark(var(--line-slate-8), var(--line-slate-8));
+    }
+
+    /* ── Pro tier (accent-reactive via inherited --line-solid-*) ── */
+    sc-pricing-block::part(tier-card-featured) {
+      border-color: var(--line-solid-background);
+    }
+
+    sc-pricing-block::part(badge) {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+    }
+
+    sc-pricing-block::part(cta-solid) {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+      border-color: var(--line-solid-background);
+    }
+
+    sc-pricing-block::part(cta-solid):hover {
+      background: var(--line-solid-hover);
+      border-color: var(--line-solid-hover);
+    }
+
+    /* ── Enterprise tier (complement-reactive via host custom properties) ── */
+    sc-pricing-block::part(tier-card-enterprise) {
+      border-color: var(--complement-border);
+    }
+
+    sc-pricing-block::part(cta-outline) {
+      background: transparent;
+      color: var(--complement-high-contrast);
+      border-color: var(--complement-border);
+    }
+
+    sc-pricing-block::part(cta-outline):hover {
+      background: var(--complement-solid);
+      color: var(--complement-text);
+      border-color: var(--complement-solid);
+    }
+
     /* ── Mobile: top bar instead of sidebar ── */
     .mobile-bar {
       display: none;
@@ -954,8 +1061,75 @@ export class ScPagePlayground extends LitElement {
               ></sc-dashboard-block>
             </div>
           </div>
-          <div class="block-wrapper">
-            <span class="block-placeholder">Pricing / comparison table block (T6)</span>
+          <div class="block-group">
+            <p class="block-note">
+              <strong>Pricing — accent + complementary schema as visual hierarchy.</strong>
+              Three tiers (Free / Pro / Enterprise) demonstrate distinct accent
+              roles. The <strong>Free</strong> card stays neutral
+              (<strong>slate</strong>) so the entry-level option does
+              <em>not</em> compete for attention. The <strong>Pro</strong> card
+              is the featured tier: its border, "Recommended" badge and solid
+              CTA inherit <code>--line-solid-*</code> from the schema applied
+              on <code>document.body</code>, so cycling the nav picker recolors
+              it live. The <strong>Enterprise</strong> card consumes a
+              <em>complementary</em> schema resolved via
+              <code>complementSchema(accent)</code> and passed as inline
+              <code>--complement-*</code> host custom properties on the block
+              — the only mechanism that pierces shadow DOM with a second
+              schema (spec §14.5). Feature checks render via
+              <code>--line-success</code> (L3 alias, fixed-intent), independent
+              of the picker.
+            </p>
+            <div class="block-wrapper">
+              <sc-pricing-block
+                class="pricing-block"
+                .accentSchema=${this.schema}
+                .tiers=${[
+                  {
+                    name: 'Free',
+                    price: '$0',
+                    period: '/ month',
+                    weight: 'ghost' as const,
+                    cta: 'Get started',
+                    features: [
+                      { available: true, text: 'Up to 3 projects' },
+                      { available: true, text: 'Community support' },
+                      { available: false, text: 'Custom domains' },
+                      { available: false, text: 'Priority support' },
+                      { available: false, text: 'SSO / SAML' }
+                    ]
+                  },
+                  {
+                    name: 'Pro',
+                    price: '$24',
+                    period: '/ month',
+                    weight: 'solid' as const,
+                    cta: 'Start free trial',
+                    features: [
+                      { available: true, text: 'Unlimited projects' },
+                      { available: true, text: 'Email support' },
+                      { available: true, text: 'Custom domains' },
+                      { available: true, text: 'Advanced analytics' },
+                      { available: false, text: 'SSO / SAML' }
+                    ]
+                  },
+                  {
+                    name: 'Enterprise',
+                    price: 'Custom',
+                    weight: 'outline' as const,
+                    cta: 'Contact sales',
+                    features: [
+                      { available: true, text: 'Unlimited projects' },
+                      { available: true, text: 'Dedicated support' },
+                      { available: true, text: 'Custom domains' },
+                      { available: true, text: 'Advanced analytics' },
+                      { available: true, text: 'SSO / SAML' }
+                    ]
+                  }
+                ]}
+                style=${`--complement-solid: var(--line-${complementSchema(this.schema)}-9); --complement-text: var(--line-${complementSchema(this.schema)}-1); --complement-hover: var(--line-${complementSchema(this.schema)}-10); --complement-border: var(--line-${complementSchema(this.schema)}-8); --complement-low-contrast: var(--line-${complementSchema(this.schema)}-11); --complement-high-contrast: var(--line-${complementSchema(this.schema)}-12);`}
+              ></sc-pricing-block>
+            </div>
           </div>
         </div>
       </div>
