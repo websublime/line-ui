@@ -1,20 +1,106 @@
 import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { customElement, property, state } from 'lit/decorators.js';
+import { keyed } from 'lit/directives/keyed.js';
 
 import '../components/sc-dashboard-block.js';
 import '../components/sc-login-block.js';
 import '../components/sc-music-player.js';
 import '../components/sc-pricing-block.js';
 import '../components/sc-product-card.js';
+import '../components/sc-schema-mapper.js';
 
-import { complementSchema } from './playground-config.js';
+import type { ScConfigChangeDetail } from '../components/sc-schema-mapper.js';
+
+import { complementSchema, DEFAULT_BLOCK_CONFIGS, type PlaygroundBlockConfig } from './playground-config.js';
 
 export type { PlaygroundBlockConfig } from './playground-config.js';
+
+/**
+ * Per-block accent-zone gating.
+ *
+ * For each disabled zone, the page adds a `zone-off-{selector}` class on
+ * the block host. Higher-specificity `.zone-off-{selector}::part(...)`
+ * rules in the page's static styles repaint that zone with neutral
+ * base-palette tokens, overriding the accent rule above them.
+ *
+ * Mechanism choice (NORMATIVE rationale): per spec §14.5,
+ * `.line-schema-*` classes cannot pierce shadow DOM. We initially
+ * attempted both `:not([data-disabled-zones~='<sel>'])` attribute filters
+ * and `var(--_zone-*, var(--line-solid-*))` host-custom-property
+ * indirection. Both approaches expose a Chromium 146 invalidation bug
+ * where `::part()` rules with host attribute / custom-property filters
+ * do not re-evaluate after first paint when the host attribute changes
+ * (verified manually in the showcase preview). The current approach
+ * uses Lit's `keyed()` directive to force the block element to be
+ * REPLACED (new identity) whenever its class set changes, so the
+ * `zone-off-*` rules are matched on first paint and Chromium correctly
+ * resolves the cascade. Re-mount only fires on toggle (not on schema
+ * change), so schema reactivity remains a pure cascade-of-inherited
+ * tokens via `body.line-schema-{accent}` — the baseline mechanism.
+ *
+ * Logical selectors translated by the consumer:
+ *   - `input-focus` (login) has no real ::part(); the override gates
+ *     the page's `::part(input):focus-visible` outline rule.
+ *   - `add-to-cart` (product) maps to the real part `button`.
+ */
+const classListFor = (config: PlaygroundBlockConfig | undefined): string =>
+  (config?.elements ?? [])
+    .filter((entry) => !entry.accentReactive)
+    .map((entry) => `zone-off-${entry.selector}`)
+    .join(' ');
+
+/**
+ * Compose the static base class and the dynamic `zone-off-*` classes for
+ * a block. The base class typically encodes the block's per-instance
+ * scope (e.g. `login-block-slate`).
+ */
+const composeClass = (base: string, config: PlaygroundBlockConfig | undefined): string => {
+  const off = classListFor(config);
+  return off ? `${base} ${off}` : base;
+};
+
+const findConfig = (configs: PlaygroundBlockConfig[], id: string): PlaygroundBlockConfig | undefined =>
+  configs.find((entry) => entry.id === id);
+
+/**
+ * Per-block `data-disabled-zones` derivation — retained as a debugging
+ * aid alongside the functional `zone-off-*` class list. The attribute is
+ * reflected on each block host so DevTools / agents can trace which
+ * zones are currently disabled.
+ */
+const disabledZonesFor = (config: PlaygroundBlockConfig | undefined): string =>
+  (config?.elements ?? [])
+    .filter((entry) => !entry.accentReactive)
+    .map((entry) => entry.selector)
+    .join(' ');
 
 @customElement('sc-page-playground')
 export class ScPagePlayground extends LitElement {
   @property({ type: Boolean, reflect: true }) light = false;
   @property({ type: String }) schema = 'violet';
+
+  /**
+   * Mirror of `DEFAULT_BLOCK_CONFIGS`, deep-cloned on construction so toggles
+   * do not mutate the exported constant. Page reload re-runs the constructor
+   * and resets state to defaults (acceptance: "_configs is reset to
+   * DEFAULT_BLOCK_CONFIGS on page reload").
+   */
+  @state() private _configs: PlaygroundBlockConfig[] = structuredClone(DEFAULT_BLOCK_CONFIGS);
+
+  /**
+   * Immutable update — replaces the array reference so Lit picks up the
+   * change (mutating in place would not trigger a re-render).
+   */
+  private _onConfigChange = (event: CustomEvent<ScConfigChangeDetail>) => {
+    const { blockId, selector, accentReactive } = event.detail;
+    this._configs = this._configs.map((block) => {
+      if (block.id !== blockId) return block;
+      return {
+        ...block,
+        elements: block.elements.map((entry) => (entry.selector === selector ? { ...entry, accentReactive } : entry))
+      };
+    });
+  };
 
   static override styles = css`
     :host {
@@ -163,6 +249,48 @@ export class ScPagePlayground extends LitElement {
       background: var(--line-ui-active-background, #ccc);
     }
 
+    /* ── Schema mapper (T7 — sc-schema-mapper) ──
+     * Consumer styling for the headless sidebar editor. NO --line-* tokens
+     * are used INSIDE sc-schema-mapper — every visual property is applied
+     * here via ::part() and via host custom properties. The toggle-on part
+     * is intentionally tinted with --line-solid-background so the toggle
+     * itself recolors when the nav schema picker cycles (a meta-demo of
+     * the very system this editor configures).
+     */
+    sc-schema-mapper::part(block) {
+      background: light-dark(var(--line-slate-2), var(--line-slate-12));
+      border: var(--line-border-size-1, 1px) solid
+        light-dark(var(--line-slate-5), var(--line-slate-10));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    sc-schema-mapper::part(block-title) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-3));
+    }
+
+    sc-schema-mapper::part(base-chip) {
+      background: light-dark(var(--line-slate-4), var(--line-slate-10));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    sc-schema-mapper::part(element-label) {
+      color: light-dark(var(--line-slate-11), var(--line-slate-3));
+    }
+
+    /* Toggle (off) — neutral slate surface */
+    sc-schema-mapper::part(element-toggle) {
+      background: light-dark(var(--line-slate-4), var(--line-slate-10));
+      color: light-dark(var(--line-slate-1), var(--line-slate-12));
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-9));
+    }
+
+    /* Toggle (on) — accent-reactive, inherits from body.line-schema-{accent} */
+    sc-schema-mapper::part(element-toggle-on) {
+      background: var(--line-solid-background);
+      color: var(--line-solid-text, #fff);
+      border-color: var(--line-solid-background);
+    }
+
     /* ── Content column ── */
     .content {
       flex: 1;
@@ -303,6 +431,23 @@ export class ScPagePlayground extends LitElement {
     }
 
     /* ── Shared accent styles (both variants) ── */
+    /*
+     * Each accent rule reads var(--line-solid-*) inherited from
+     * body.line-schema-(accent). Disabling a zone is implemented by adding
+     * a higher-specificity .zone-off-(selector) rule on the host (see
+     * "Zone-off overrides" below). Per spec §14.5 NORMATIVE, .line-schema-*
+     * classes do not pierce shadow DOM, so we rely on the consumer-side
+     * class+::part() selector to scope the override.
+     *
+     * The page wraps each block with Lit's keyed() directive so the host
+     * element is replaced (not just re-attributed) whenever its class set
+     * changes. This works around a Chromium 146 invalidation bug where
+     * ::part() rules with host attribute/class filters do not re-evaluate
+     * after first paint when the host attribute changes.
+     *
+     * Note: 'add-to-cart' is the LOGICAL identifier in PlaygroundBlockConfig
+     * that maps to the real part 'button' on sc-product-card.
+     */
     sc-product-card::part(price) {
       color: var(--line-solid-background);
     }
@@ -328,6 +473,29 @@ export class ScPagePlayground extends LitElement {
 
     sc-product-card::part(button):hover {
       background: var(--line-solid-hover);
+    }
+
+    /* Zone-off overrides (product) — higher-specificity rules win over the
+     * accent rules above whenever the host carries the matching class. The
+     * block is keyed() to force re-mount, so the class is present at first
+     * paint and Chromium correctly resolves the cascade. */
+    sc-product-card.zone-off-price::part(price) {
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    sc-product-card.zone-off-chip-active::part(chip-active) {
+      background: light-dark(var(--line-slate-3), var(--line-slate-10));
+      color: light-dark(var(--line-slate-11), var(--line-slate-2));
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-7));
+    }
+
+    sc-product-card.zone-off-add-to-cart::part(button) {
+      background: light-dark(var(--line-slate-3), var(--line-slate-10));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    sc-product-card.zone-off-add-to-cart::part(button):hover {
+      background: light-dark(var(--line-slate-4), var(--line-slate-9));
     }
 
     /* ── Login / Sign-up block (T2) ── */
@@ -392,7 +560,9 @@ export class ScPagePlayground extends LitElement {
       color: light-dark(var(--line-slate-11), var(--line-slate-3));
     }
 
-    /* Shared accent zones — react to nav schema picker through body.line-schema-{accent} */
+    /* Shared accent zones — see top-of-section comment for gating mechanism.
+     * The 'input-focus' selector is a LOGICAL identifier (no real part);
+     * toggling it gates the consumer-side focus-ring rule below. */
     sc-login-block::part(btn-submit) {
       background: var(--line-solid-background);
       color: var(--line-solid-text, #fff);
@@ -410,6 +580,21 @@ export class ScPagePlayground extends LitElement {
 
     sc-login-block::part(footer-link-anchor) {
       color: var(--line-solid-background);
+    }
+
+    /* Zone-off overrides (login) — see top-of-section comment for keyed() rationale. */
+    sc-login-block.zone-off-btn-submit::part(btn-submit) {
+      background: light-dark(var(--line-slate-3), var(--line-slate-10));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-7));
+    }
+
+    sc-login-block.zone-off-btn-submit::part(btn-submit):hover {
+      background: light-dark(var(--line-slate-4), var(--line-slate-9));
+    }
+
+    sc-login-block.zone-off-input-focus::part(input):focus-visible {
+      outline-color: light-dark(var(--line-slate-7), var(--line-slate-6));
     }
 
     /*
@@ -553,6 +738,28 @@ export class ScPagePlayground extends LitElement {
       background: var(--line-solid-background);
       color: var(--line-solid-text, #fff);
       border-inline-start-color: var(--line-solid-background);
+    }
+
+    /* Zone-off overrides (player) — see top-of-section comment for keyed() rationale. */
+    sc-music-player.zone-off-progress-fill::part(progress-fill) {
+      background: light-dark(var(--line-gray-7), var(--line-gray-6));
+    }
+
+    sc-music-player.zone-off-ctrl-play::part(ctrl-play) {
+      background: transparent;
+      color: light-dark(var(--line-gray-12), var(--line-gray-1));
+      border-color: light-dark(var(--line-gray-7), var(--line-gray-9));
+    }
+
+    sc-music-player.zone-off-ctrl-play::part(ctrl-play):hover {
+      background: light-dark(var(--line-gray-3), var(--line-gray-10));
+      border-color: light-dark(var(--line-gray-7), var(--line-gray-9));
+    }
+
+    sc-music-player.zone-off-playlist-item-active::part(playlist-item-active) {
+      background: light-dark(var(--line-gray-3), var(--line-gray-11));
+      color: light-dark(var(--line-gray-12), var(--line-gray-1));
+      border-inline-start-color: light-dark(var(--line-gray-7), var(--line-gray-9));
     }
 
     /* ── Dashboard / notifications block (T5) ── */
@@ -703,6 +910,18 @@ export class ScPagePlayground extends LitElement {
       border-color: var(--line-solid-background);
     }
 
+    /* Zone-off overrides (dashboard) — see top-of-section comment for keyed() rationale. */
+    sc-dashboard-block.zone-off-stat-card-accent::part(stat-card-accent) {
+      --_stat-value-color: light-dark(var(--line-sand-11), var(--line-sand-3));
+      border-color: light-dark(var(--line-sand-6), var(--line-sand-9));
+    }
+
+    sc-dashboard-block.zone-off-toggle-on::part(toggle-on) {
+      background: light-dark(var(--line-sand-4), var(--line-sand-10));
+      color: light-dark(var(--line-sand-1), var(--line-sand-12));
+      border-color: light-dark(var(--line-sand-6), var(--line-sand-9));
+    }
+
     /* ── Pricing / comparison block (T6) ── */
     /*
      * <sc-pricing-block class="pricing-block"> is the consumer-applied
@@ -807,6 +1026,43 @@ export class ScPagePlayground extends LitElement {
       border-color: var(--complement-solid);
     }
 
+    /* Zone-off overrides (pricing) — see top-of-section comment for keyed() rationale. */
+    sc-pricing-block.zone-off-tier-card-featured::part(tier-card-featured) {
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-9));
+    }
+
+    sc-pricing-block.zone-off-tier-card-featured::part(badge) {
+      background: light-dark(var(--line-slate-6), var(--line-slate-9));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+    }
+
+    sc-pricing-block.zone-off-cta-solid::part(cta-solid) {
+      background: light-dark(var(--line-slate-3), var(--line-slate-10));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-7));
+    }
+
+    sc-pricing-block.zone-off-cta-solid::part(cta-solid):hover {
+      background: light-dark(var(--line-slate-4), var(--line-slate-9));
+      border-color: light-dark(var(--line-slate-7), var(--line-slate-7));
+    }
+
+    sc-pricing-block.zone-off-tier-card-enterprise::part(tier-card-enterprise) {
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-9));
+    }
+
+    sc-pricing-block.zone-off-tier-card-enterprise::part(cta-outline) {
+      background: transparent;
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+      border-color: light-dark(var(--line-slate-6), var(--line-slate-9));
+    }
+
+    sc-pricing-block.zone-off-tier-card-enterprise::part(cta-outline):hover {
+      background: light-dark(var(--line-slate-3), var(--line-slate-10));
+      color: light-dark(var(--line-slate-12), var(--line-slate-1));
+      border-color: light-dark(var(--line-slate-7), var(--line-slate-7));
+    }
+
     /* ── Mobile: top bar instead of sidebar ── */
     .mobile-bar {
       display: none;
@@ -867,6 +1123,48 @@ export class ScPagePlayground extends LitElement {
   `;
 
   override render() {
+    /*
+     * Pre-compute per-block configuration, the class lists carrying the
+     * `zone-off-*` markers, and the debugging `data-disabled-zones`
+     * reflection from the current _configs state. Each block is rendered
+     * inside Lit's `keyed()` directive — keyed on its disabled-zone
+     * fingerprint so the host element is REPLACED (new identity) every
+     * time a toggle flips. The replacement makes the `zone-off-*` rule
+     * match on first paint and works around a Chromium 146 ::part()
+     * invalidation bug observed when host attribute filters are used
+     * with :not(). Schema changes do NOT alter the key, so block state
+     * survives picker cycling; the active accent reaches every block via
+     * `body.line-schema-{accent}` and inherited custom properties.
+     */
+    const loginConfig = findConfig(this._configs, 'login');
+    const productConfig = findConfig(this._configs, 'product');
+    const playerConfig = findConfig(this._configs, 'player');
+    const dashboardConfig = findConfig(this._configs, 'dashboard');
+    const pricingConfig = findConfig(this._configs, 'pricing');
+
+    const loginDisabled = disabledZonesFor(loginConfig);
+    const productDisabled = disabledZonesFor(productConfig);
+    const playerDisabled = disabledZonesFor(playerConfig);
+    const dashboardDisabled = disabledZonesFor(dashboardConfig);
+    const pricingDisabled = disabledZonesFor(pricingConfig);
+
+    const loginClass = composeClass('login-block-slate', loginConfig);
+    const productClass = (base: string) => composeClass(base, productConfig);
+    const playerClass = composeClass('music-player-dark', playerConfig);
+    const dashboardClass = composeClass('dashboard-sand', dashboardConfig);
+    const pricingClass = composeClass('pricing-block', pricingConfig);
+
+    // Pricing complement style — recomputed every render so the picker
+    // recolors the Enterprise tier live (spec §15.1).
+    const complement = complementSchema(this.schema);
+    const pricingComplement =
+      `--complement-solid: var(--line-${complement}-9); ` +
+      `--complement-text: var(--line-${complement}-1); ` +
+      `--complement-hover: var(--line-${complement}-10); ` +
+      `--complement-border: var(--line-${complement}-8); ` +
+      `--complement-low-contrast: var(--line-${complement}-11); ` +
+      `--complement-high-contrast: var(--line-${complement}-12);`;
+
     return html`
       <!-- Mobile: collapsed accent bar -->
       <div class="mobile-bar">
@@ -902,11 +1200,10 @@ export class ScPagePlayground extends LitElement {
 
           <div class="sidebar-block-list">
             <div class="sidebar-block-list-title">Composition blocks</div>
-            <div class="sidebar-block-item">Login / Sign-up</div>
-            <div class="sidebar-block-item">E-commerce product card</div>
-            <div class="sidebar-block-item">Music player / media</div>
-            <div class="sidebar-block-item">Dashboard / notifications</div>
-            <div class="sidebar-block-item">Pricing / comparison</div>
+            <sc-schema-mapper
+              .configs=${this._configs}
+              @sc-config-change=${this._onConfigChange}
+            ></sc-schema-mapper>
           </div>
         </aside>
 
@@ -926,58 +1223,76 @@ export class ScPagePlayground extends LitElement {
               independently of both.
             </p>
             <div class="block-wrapper">
-              <sc-login-block
-                class="login-block-slate"
-                heading="Sign in"
-                subtitle="Welcome back. Enter your credentials to continue."
-                submit-label="Sign in"
-                sso-label="GitHub"
-                .errorField=${'password' as const}
-                error-message="Incorrect password."
-              ></sc-login-block>
+              ${keyed(
+                loginDisabled,
+                html`
+                  <sc-login-block
+                    class=${loginClass}
+                    data-disabled-zones=${loginDisabled}
+                    heading="Sign in"
+                    subtitle="Welcome back. Enter your credentials to continue."
+                    submit-label="Sign in"
+                    sso-label="GitHub"
+                    .errorField=${'password' as const}
+                    error-message="Incorrect password."
+                  ></sc-login-block>
+                `
+              )}
             </div>
           </div>
           <div class="block-wrapper">
             <div class="product-grid">
               <!-- Card 1: Slate base -->
-              <sc-product-card
-                class="product-card-slate"
-                heading="Classic Sneaker"
-                description="Timeless design meets modern comfort. Crafted with premium materials for everyday wear."
-                price="$89.00"
-                rating="★★★★☆"
-                rating-label="4 out of 5 stars"
-                image-src="https://picsum.photos/400/300?random=1"
-                image-alt="Classic Sneaker"
-                button-label="Add to Cart"
-                sizes="S,M,L,XL"
-                active-size="1"
-                .colors=${[
-                  { color: 'var(--line-crimson-9)', label: 'Crimson' },
-                  { color: 'var(--line-violet-9)', label: 'Violet' },
-                  { color: 'var(--line-slate-9)', label: 'Slate', selected: true }
-                ]}
-              ></sc-product-card>
+              ${keyed(
+                productDisabled,
+                html`
+                  <sc-product-card
+                    class=${productClass('product-card-slate')}
+                    data-disabled-zones=${productDisabled}
+                    heading="Classic Sneaker"
+                    description="Timeless design meets modern comfort. Crafted with premium materials for everyday wear."
+                    price="$89.00"
+                    rating="★★★★☆"
+                    rating-label="4 out of 5 stars"
+                    image-src="https://picsum.photos/400/300?random=1"
+                    image-alt="Classic Sneaker"
+                    button-label="Add to Cart"
+                    sizes="S,M,L,XL"
+                    active-size="1"
+                    .colors=${[
+                      { color: 'var(--line-crimson-9)', label: 'Crimson' },
+                      { color: 'var(--line-violet-9)', label: 'Violet' },
+                      { color: 'var(--line-slate-9)', label: 'Slate', selected: true }
+                    ]}
+                  ></sc-product-card>
+                `
+              )}
 
               <!-- Card 2: Mauve base -->
-              <sc-product-card
-                class="product-card-mauve"
-                heading="Heritage Backpack"
-                description="Water-resistant canvas with leather accents. Built to carry your essentials in style."
-                price="$129.00"
-                rating="★★★★★"
-                rating-label="5 out of 5 stars"
-                image-src="https://picsum.photos/400/300?random=2"
-                image-alt="Heritage Backpack"
-                button-label="Add to Cart"
-                sizes="S,M,L,XL"
-                active-size="0"
-                .colors=${[
-                  { color: 'var(--line-indigo-9)', label: 'Indigo' },
-                  { color: 'var(--line-teal-9)', label: 'Teal', selected: true },
-                  { color: 'var(--line-crimson-9)', label: 'Crimson' }
-                ]}
-              ></sc-product-card>
+              ${keyed(
+                productDisabled,
+                html`
+                  <sc-product-card
+                    class=${productClass('product-card-mauve')}
+                    data-disabled-zones=${productDisabled}
+                    heading="Heritage Backpack"
+                    description="Water-resistant canvas with leather accents. Built to carry your essentials in style."
+                    price="$129.00"
+                    rating="★★★★★"
+                    rating-label="5 out of 5 stars"
+                    image-src="https://picsum.photos/400/300?random=2"
+                    image-alt="Heritage Backpack"
+                    button-label="Add to Cart"
+                    sizes="S,M,L,XL"
+                    active-size="0"
+                    .colors=${[
+                      { color: 'var(--line-indigo-9)', label: 'Indigo' },
+                      { color: 'var(--line-teal-9)', label: 'Teal', selected: true },
+                      { color: 'var(--line-crimson-9)', label: 'Crimson' }
+                    ]}
+                  ></sc-product-card>
+                `
+              )}
             </div>
           </div>
           <div class="block-group">
@@ -994,20 +1309,26 @@ export class ScPagePlayground extends LitElement {
               them without re-mounting the block.
             </p>
             <div class="block-wrapper">
-              <sc-music-player
-                class="music-player-dark"
-                track-title="Midnight Ocean"
-                artist="Aurora Skies"
-                progress="38"
-                volume="65"
-                .duration=${238}
-                .playlist=${[
-                  { title: 'Midnight Ocean', artist: 'Aurora Skies', active: true },
-                  { title: 'Glass Horizon', artist: 'Pale Wing' },
-                  { title: 'Soft Static', artist: 'Field Notes' },
-                  { title: 'Night Drive', artist: 'Aurora Skies' }
-                ]}
-              ></sc-music-player>
+              ${keyed(
+                playerDisabled,
+                html`
+                  <sc-music-player
+                    class=${playerClass}
+                    data-disabled-zones=${playerDisabled}
+                    track-title="Midnight Ocean"
+                    artist="Aurora Skies"
+                    progress="38"
+                    volume="65"
+                    .duration=${238}
+                    .playlist=${[
+                      { title: 'Midnight Ocean', artist: 'Aurora Skies', active: true },
+                      { title: 'Glass Horizon', artist: 'Pale Wing' },
+                      { title: 'Soft Static', artist: 'Field Notes' },
+                      { title: 'Night Drive', artist: 'Aurora Skies' }
+                    ]}
+                  ></sc-music-player>
+                `
+              )}
             </div>
           </div>
           <div class="block-group">
@@ -1028,37 +1349,43 @@ export class ScPagePlayground extends LitElement {
               cycles.
             </p>
             <div class="block-wrapper">
-              <sc-dashboard-block
-                class="dashboard-sand"
-                .notifications=${[
-                  {
-                    kind: 'success' as const,
-                    title: 'Deployment succeeded',
-                    body: 'Production updated to v2.4.1'
-                  },
-                  {
-                    kind: 'warning' as const,
-                    title: 'High memory usage',
-                    body: 'Server is at 87% capacity'
-                  },
-                  {
-                    kind: 'danger' as const,
-                    title: 'Payment failed',
-                    body: 'Card ending 4242 was declined'
-                  }
-                ]}
-                .stats=${[
-                  { value: '12,450', label: 'Active Users', intent: 'info' as const },
-                  { value: '98.9%', label: 'Uptime', intent: 'success' as const },
-                  { value: '24', label: 'Pending', intent: 'warning' as const },
-                  { value: '+3.2%', label: 'Growth', intent: 'accent' as const }
-                ]}
-                .toggles=${[
-                  { label: 'Notifications', on: true },
-                  { label: 'Auto-deploy', on: false },
-                  { label: 'Dark mode sync', on: true }
-                ]}
-              ></sc-dashboard-block>
+              ${keyed(
+                dashboardDisabled,
+                html`
+                  <sc-dashboard-block
+                    class=${dashboardClass}
+                    data-disabled-zones=${dashboardDisabled}
+                    .notifications=${[
+                      {
+                        kind: 'success' as const,
+                        title: 'Deployment succeeded',
+                        body: 'Production updated to v2.4.1'
+                      },
+                      {
+                        kind: 'warning' as const,
+                        title: 'High memory usage',
+                        body: 'Server is at 87% capacity'
+                      },
+                      {
+                        kind: 'danger' as const,
+                        title: 'Payment failed',
+                        body: 'Card ending 4242 was declined'
+                      }
+                    ]}
+                    .stats=${[
+                      { value: '12,450', label: 'Active Users', intent: 'info' as const },
+                      { value: '98.9%', label: 'Uptime', intent: 'success' as const },
+                      { value: '24', label: 'Pending', intent: 'warning' as const },
+                      { value: '+3.2%', label: 'Growth', intent: 'accent' as const }
+                    ]}
+                    .toggles=${[
+                      { label: 'Notifications', on: true },
+                      { label: 'Auto-deploy', on: false },
+                      { label: 'Dark mode sync', on: true }
+                    ]}
+                  ></sc-dashboard-block>
+                `
+              )}
             </div>
           </div>
           <div class="block-group">
@@ -1081,54 +1408,60 @@ export class ScPagePlayground extends LitElement {
               of the picker.
             </p>
             <div class="block-wrapper">
-              <sc-pricing-block
-                class="pricing-block"
-                .accentSchema=${this.schema}
-                .tiers=${[
-                  {
-                    name: 'Free',
-                    price: '$0',
-                    period: '/ month',
-                    weight: 'ghost' as const,
-                    cta: 'Get started',
-                    features: [
-                      { available: true, text: 'Up to 3 projects' },
-                      { available: true, text: 'Community support' },
-                      { available: false, text: 'Custom domains' },
-                      { available: false, text: 'Priority support' },
-                      { available: false, text: 'SSO / SAML' }
-                    ]
-                  },
-                  {
-                    name: 'Pro',
-                    price: '$24',
-                    period: '/ month',
-                    weight: 'solid' as const,
-                    cta: 'Start free trial',
-                    features: [
-                      { available: true, text: 'Unlimited projects' },
-                      { available: true, text: 'Email support' },
-                      { available: true, text: 'Custom domains' },
-                      { available: true, text: 'Advanced analytics' },
-                      { available: false, text: 'SSO / SAML' }
-                    ]
-                  },
-                  {
-                    name: 'Enterprise',
-                    price: 'Custom',
-                    weight: 'outline' as const,
-                    cta: 'Contact sales',
-                    features: [
-                      { available: true, text: 'Unlimited projects' },
-                      { available: true, text: 'Dedicated support' },
-                      { available: true, text: 'Custom domains' },
-                      { available: true, text: 'Advanced analytics' },
-                      { available: true, text: 'SSO / SAML' }
-                    ]
-                  }
-                ]}
-                style=${`--complement-solid: var(--line-${complementSchema(this.schema)}-9); --complement-text: var(--line-${complementSchema(this.schema)}-1); --complement-hover: var(--line-${complementSchema(this.schema)}-10); --complement-border: var(--line-${complementSchema(this.schema)}-8); --complement-low-contrast: var(--line-${complementSchema(this.schema)}-11); --complement-high-contrast: var(--line-${complementSchema(this.schema)}-12);`}
-              ></sc-pricing-block>
+              ${keyed(
+                pricingDisabled,
+                html`
+                  <sc-pricing-block
+                    class=${pricingClass}
+                    data-disabled-zones=${pricingDisabled}
+                    .accentSchema=${this.schema}
+                    .tiers=${[
+                      {
+                        name: 'Free',
+                        price: '$0',
+                        period: '/ month',
+                        weight: 'ghost' as const,
+                        cta: 'Get started',
+                        features: [
+                          { available: true, text: 'Up to 3 projects' },
+                          { available: true, text: 'Community support' },
+                          { available: false, text: 'Custom domains' },
+                          { available: false, text: 'Priority support' },
+                          { available: false, text: 'SSO / SAML' }
+                        ]
+                      },
+                      {
+                        name: 'Pro',
+                        price: '$24',
+                        period: '/ month',
+                        weight: 'solid' as const,
+                        cta: 'Start free trial',
+                        features: [
+                          { available: true, text: 'Unlimited projects' },
+                          { available: true, text: 'Email support' },
+                          { available: true, text: 'Custom domains' },
+                          { available: true, text: 'Advanced analytics' },
+                          { available: false, text: 'SSO / SAML' }
+                        ]
+                      },
+                      {
+                        name: 'Enterprise',
+                        price: 'Custom',
+                        weight: 'outline' as const,
+                        cta: 'Contact sales',
+                        features: [
+                          { available: true, text: 'Unlimited projects' },
+                          { available: true, text: 'Dedicated support' },
+                          { available: true, text: 'Custom domains' },
+                          { available: true, text: 'Advanced analytics' },
+                          { available: true, text: 'SSO / SAML' }
+                        ]
+                      }
+                    ]}
+                    style=${pricingComplement}
+                  ></sc-pricing-block>
+                `
+              )}
             </div>
           </div>
         </div>
