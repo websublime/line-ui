@@ -17,10 +17,12 @@ export interface ScPricingFeature {
  * One pricing tier consumed by `<sc-pricing-block>`.
  *
  * `weight` selects which CTA part the consumer paints (`cta-ghost` /
- * `cta-solid` / `cta-outline`). The tier ORDER is fixed
- * (Free → Pro → Enterprise) and the tier whose `name === 'Pro'` is
+ * `cta-solid` / `cta-outline`). Tier ORDER is significant and conventional:
+ * index 0 = Free (neutral), index 1 = Pro (featured / accent),
+ * index 2 = Enterprise (complement). The tier whose `name === 'Pro'` is
  * additionally tagged with the `tier-card-featured` part; the tier whose
- * `name === 'Enterprise'` carries the `tier-card-enterprise` part.
+ * `name === 'Enterprise'` carries the `tier-card-enterprise` part — the
+ * consumer must supply `.tiers` in this order and with these names.
  */
 export interface ScPricingTier {
   name: string;

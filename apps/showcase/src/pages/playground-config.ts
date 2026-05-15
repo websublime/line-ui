@@ -20,6 +20,41 @@ export interface PlaygroundBlockConfig {
 }
 
 /**
+ * The 28 palette names supported by `line://ui`. Used as the literal-union
+ * key/value type for `COMPLEMENT_MAP` so palette typos are caught at compile
+ * time (cosmetic review fix for line-ui-m3d.6).
+ */
+export type Palette =
+  | 'amber'
+  | 'blue'
+  | 'bronze'
+  | 'brown'
+  | 'crimson'
+  | 'cyan'
+  | 'gold'
+  | 'grass'
+  | 'gray'
+  | 'green'
+  | 'indigo'
+  | 'lime'
+  | 'mauve'
+  | 'mint'
+  | 'olive'
+  | 'orange'
+  | 'pink'
+  | 'plum'
+  | 'purple'
+  | 'red'
+  | 'sage'
+  | 'sand'
+  | 'sky'
+  | 'slate'
+  | 'teal'
+  | 'tomato'
+  | 'violet'
+  | 'yellow';
+
+/**
  * Static lookup table used by `<sc-pricing-block>` to resolve the
  * complementary schema for the Enterprise tier from the active accent.
  *
@@ -27,7 +62,7 @@ export interface PlaygroundBlockConfig {
  * "composition recipe" referenced by future homepage work
  * (see `docs/specs/00-spec-playground.md` §14.3).
  */
-export const COMPLEMENT_MAP: Record<string, string> = {
+export const COMPLEMENT_MAP: Record<Palette, Palette> = {
   // warm → cool
   amber: 'indigo',
   orange: 'indigo',
@@ -65,7 +100,10 @@ export const COMPLEMENT_MAP: Record<string, string> = {
 /**
  * Resolve the complementary schema for a given accent schema.
  *
- * Falls back to `indigo` for unknown accent inputs so the Enterprise tier
- * always renders a defined accent.
+ * Accepts a loose `string` at the boundary (callers like `playground.ts`
+ * type `schema` as `string`) and narrows internally via the
+ * `COMPLEMENT_MAP` key set. Falls back to `indigo` for unknown accent
+ * inputs so the Enterprise tier always renders a defined accent.
  */
-export const complementSchema = (accent: string): string => COMPLEMENT_MAP[accent] ?? 'indigo';
+export const complementSchema = (accent: string): Palette =>
+  (COMPLEMENT_MAP as Record<string, Palette | undefined>)[accent] ?? 'indigo';
