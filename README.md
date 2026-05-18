@@ -1,39 +1,107 @@
-<p align="center">
-  <img style="display: inline; margin: 0 6px" alt="GitHub issues" src="https://img.shields.io/github/issues/websublime/vitamin?style=flat-square">
-  <img style="display: inline; margin: 0 6px" alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/websublime/vitamin?style=flat-square">
-  <img style="display: inline; margin: 0 6px" alt="GitHub" src="https://img.shields.io/github/license/websublime/vitamin?style=flat-square">
-</p>
+<div align="center">
+
+<br/>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="branding/logo-wordmark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="branding/logo-wordmark-dark.svg">
+  <img alt="line://ui" src="branding/logo-wordmark.svg" width="280">
+</picture>
+
+<br/>
+<br/>
+
+**Headless UI primitives as native Web Components.**<br/>
+State machines. Zero visual opinion. Framework-agnostic.
+
+<br/>
+
+[![Version](https://img.shields.io/badge/version-0.7.0-c8ff00?style=flat-square&labelColor=1a1a1a)](https://github.com/websublime/vitamin/releases)
+[![Components](https://img.shields.io/badge/components-131-c8ff00?style=flat-square&labelColor=1a1a1a)](./docs/PRD.md)
+[![License](https://img.shields.io/badge/license-MIT-c8ff00?style=flat-square&labelColor=1a1a1a)](./LICENSE)
+[![TypeScript](https://img.shields.io/badge/types-included-c8ff00?style=flat-square&labelColor=1a1a1a)](https://www.typescriptlang.org/)
+
+[Documentation](https://line-ui.websublime.com) · [Storybook](https://line-ui.websublime.com/storybook) · [Changelog](./CHANGELOG.md)
+
+<br/>
+
+</div>
+
+---
 
 
-<p align="center">💊 Vitamin - UI library</p>
 
-* 💪 Lit API
-* 🔥 Written in TypeScript
-* 🎨 Postcss (CSS is cool again)
------
+## Architecture
 
-## ⛓ Installation (WIP)
+```
+┌─────────────┐     ┌──────────────────────────────────────┐
+│  Zag.js     │     │  Lit 3+ Shadow DOM                   │
+│  Machine    │────▶│                                      │
+│             │     │  <div part="root">                   │
+│  • State    │     │    <slot name="prefix"></slot>       │
+│  • A11y     │     │    <slot></slot>                     │
+│  • Keyboard │     │    <slot name="suffix"></slot>       │
+│  • Focus    │     │  </div>                              │
+└─────────────┘     └──────────────────────────────────────┘
+                                    │
+                    ┌───────────────┼───────────────┐
+                    ▼               ▼               ▼
+              ::part(root)    --line-*       Consumer CSS
+              Total control   Quick adjust   Full override
+```
 
+Three tiers of components:
 
-## 🧮 Usage
+| Tier | What | Examples |
+|------|------|---------|
+| **Pre-built** | Uses `@zag-js/*` machine | Dialog, Select, Combobox, Tabs |
+| **Custom** | Custom `createMachine()` | Input, Field, TagInput, Sidebar |
+| **Static** | No machine, pure presentation | Badge, Separator, Card, Skeleton |
 
+> Architecture details: [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md)
 
-## ⚒ Develop
+<br/>
 
-Clone project and install with pnpm because we use monorepo style.
+## Tech stack
 
-Run with start
+| | |
+|---|---|
+| **Runtime** | [Bun](https://bun.sh) |
+| **Bundler** | [Vite 7+](https://vitejs.dev) with [Rolldown](https://rolldown.rs) |
+| **Components** | [Lit 3+](https://lit.dev) |
+| **State machines** | [Zag.js](https://zagjs.com) |
+| **Tokens** | Custom foundation tokens (`tokens.css`) + 28-palette colour system |
+| **Lint & format** | [Biome](https://biomejs.dev) |
 
-### Snapshots
+<br/>
 
-To create a snapshot create from your current branch a new branch with prefix changeset-snapshot/[whatever]. After run action
-Snapshot version to increment a snapshot version. This will open a PR to merge on your new branch, merge it to Snapshot Deploy action run it
-and deploy on github nmp. After you can back to your original branch and delete the new one.
+## Contributing
 
-## 🦾 Contributing
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+Components require a spec in `docs/specs/` before implementation — see [`COMPONENT-SPEC-TEMPLATE.md`](./docs/specs/COMPONENT-SPEC-TEMPLATE.md).
 
-Please make sure to update tests as appropriate.
+```bash
+git clone https://github.com/websublime/vitamin.git
+cd vitamin
+bun install
+bun run dev
+```
 
-## 📝 License
-[MIT](https://choosealicense.com/licenses/mit/)
+<br/>
+
+## License
+
+[MIT](./LICENSE) — Made by [@websublime](https://github.com/websublime)
+
+<div align="center">
+<br/>
+<br/>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="branding/symbol-mark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="branding/symbol-mark-dark.svg">
+  <img alt="://" src="branding/symbol-mark.svg" width="32">
+</picture>
+
+<br/>
+<br/>
+</div>

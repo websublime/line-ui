@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 80" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@700&amp;display=swap');
+    </style>
+  </defs>
+  <!-- Background: transparent -->
+  <!-- Wordmark: line://ui -->
+  <text
+    x="20"
+    y="56"
+    font-family="'JetBrains Mono', monospace"
+    font-weight="700"
+    font-size="48"
+    letter-spacing="-1"
+  >
+    <tspan fill="#E8E8E8">line</tspan><tspan fill="#c8ff00">://</tspan><tspan fill="#E8E8E8">ui</tspan>
+  </text>
+</svg>

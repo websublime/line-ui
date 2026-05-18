@@ -4,8 +4,8 @@ author: "xxxxx@github.com"
 
 inputs:
   node-version:
-    description: 'Node version'
-    default: 20.x
+    description: "Node version"
+    default: "22.13"
     type: string
 
 runs:
@@ -14,8 +14,8 @@ runs:
     - uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
-        cache: 'pnpm'
-        cache-dependency-path: 'pnpm-lock.yaml'
+        cache: "pnpm"
+        cache-dependency-path: "pnpm-lock.yaml"
 
     - uses: actions/cache@v4
       name: Setup node cache
