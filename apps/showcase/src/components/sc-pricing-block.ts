@@ -14,15 +14,31 @@ export interface ScPricingFeature {
 }
 
 /**
+ * Semantic role of a pricing tier.
+ *
+ * - `'free'` — neutral baseline (no additive card part beyond `tier-card`).
+ * - `'featured'` — the "Recommended" / accent-reactive tier; carries the
+ *   additive `tier-card-featured` part and a `badge` part.
+ * - `'enterprise'` — the complement-schema tier; carries the additive
+ *   `tier-card-enterprise` part.
+ *
+ * Explicit `role` replaces the prior name-based detection so display strings
+ * (e.g. localisation) do not couple to which card part is painted.
+ */
+export type ScPricingTierRole = 'free' | 'featured' | 'enterprise';
+
+/**
  * One pricing tier consumed by `<sc-pricing-block>`.
  *
  * `weight` selects which CTA part the consumer paints (`cta-ghost` /
- * `cta-solid` / `cta-outline`). Tier ORDER is significant and conventional:
- * index 0 = Free (neutral), index 1 = Pro (featured / accent),
- * index 2 = Enterprise (complement). The tier whose `name === 'Pro'` is
- * additionally tagged with the `tier-card-featured` part; the tier whose
- * `name === 'Enterprise'` carries the `tier-card-enterprise` part — the
- * consumer must supply `.tiers` in this order and with these names.
+ * `cta-solid` / `cta-outline`).
+ *
+ * `role` is the SEMANTIC tier identifier (see {@link ScPricingTierRole}).
+ * It is optional for backwards compatibility — when omitted, the role is
+ * derived from `name` (`'Pro'` → `'featured'`, `'Enterprise'` → `'enterprise'`,
+ * everything else → `'free'`). New call sites should always pass `role`
+ * explicitly so display strings remain free to change without breaking which
+ * additive card part is painted.
  */
 export interface ScPricingTier {
   name: string;
@@ -31,6 +47,12 @@ export interface ScPricingTier {
   features: ScPricingFeature[];
   cta: string;
   weight: 'ghost' | 'solid' | 'outline';
+  /**
+   * Semantic tier role. If omitted, falls back to name-based detection for
+   * backwards compatibility (`'Pro'` → `'featured'`, `'Enterprise'` →
+   * `'enterprise'`, otherwise `'free'`).
+   */
+  role?: ScPricingTierRole;
 }
 
 /**
@@ -328,8 +350,15 @@ export class ScPricingBlock extends LitElement {
   }
 
   private _renderTier(tier: ScPricingTier, index: number) {
-    const isFeatured = tier.name === 'Pro';
-    const isEnterprise = tier.name === 'Enterprise';
+    /*
+     * Prefer the explicit `role` field; fall back to legacy name-based
+     * detection for backwards compatibility with consumers that have not
+     * yet been updated.
+     */
+    const role: ScPricingTierRole =
+      tier.role ?? (tier.name === 'Pro' ? 'featured' : tier.name === 'Enterprise' ? 'enterprise' : 'free');
+    const isFeatured = role === 'featured';
+    const isEnterprise = role === 'enterprise';
     const cardPartTokens = [
       'tier-card',
       isFeatured ? 'tier-card-featured' : '',

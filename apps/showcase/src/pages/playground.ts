@@ -1418,6 +1418,7 @@ export class ScPagePlayground extends LitElement {
                     .tiers=${[
                       {
                         name: 'Free',
+                        role: 'free' as const,
                         price: '$0',
                         period: '/ month',
                         weight: 'ghost' as const,
@@ -1432,6 +1433,7 @@ export class ScPagePlayground extends LitElement {
                       },
                       {
                         name: 'Pro',
+                        role: 'featured' as const,
                         price: '$24',
                         period: '/ month',
                         weight: 'solid' as const,
@@ -1446,6 +1448,7 @@ export class ScPagePlayground extends LitElement {
                       },
                       {
                         name: 'Enterprise',
+                        role: 'enterprise' as const,
                         price: 'Custom',
                         weight: 'outline' as const,
                         cta: 'Contact sales',
