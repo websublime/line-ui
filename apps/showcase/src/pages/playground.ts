@@ -1242,7 +1242,7 @@ export class ScPagePlayground extends LitElement {
           </div>
           <div class="block-wrapper">
             <div class="product-grid">
-              <!-- Card 1: Slate base -->
+              <!-- Card 1: Slate base. keyed() compares its key per template slot, so sibling cards keyed on the same value don't alias. -->
               ${keyed(
                 productDisabled,
                 html`
