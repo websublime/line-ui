@@ -797,13 +797,13 @@ export class ScPagePlayground extends LitElement {
       color: light-dark(var(--line-sand-11), var(--line-sand-3));
     }
 
-    /* Stat cards / toggle rows: neutral card surface on the sand palette */
-    .dashboard-sand::part(stat-card),
-    .dashboard-sand::part(toggle-row) {
+    /* Stat cards: neutral card surface on the sand palette */
+    .dashboard-sand::part(stat-card) {
       background: light-dark(var(--line-sand-1), var(--line-sand-12));
       border: 1px solid light-dark(var(--line-sand-6), var(--line-sand-9));
     }
 
+    /* Toggle rows: transparent surface with a bottom divider on sand */
     .dashboard-sand::part(toggle-row) {
       background: transparent;
       border: none;
@@ -893,10 +893,10 @@ export class ScPagePlayground extends LitElement {
     }
 
     /* Accent-reactive stat card: tint the card border too so the card itself
-       reads as the active accent surface. */
+       reads as the active accent surface. The background is inherited from
+       the base .dashboard-sand::part(stat-card) rule above. */
     .dashboard-sand::part(stat-card-accent) {
       border-color: var(--line-solid-background);
-      background: light-dark(var(--line-sand-1), var(--line-sand-12));
     }
 
     /* ── Accent-reactive toggle (on state) ──

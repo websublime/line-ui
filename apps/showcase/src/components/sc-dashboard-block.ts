@@ -68,7 +68,9 @@ export interface ScDashboardToggleChangeDetail {
  *    §11). Space/Enter flips state (spec §10) and emits `sc-toggle-change`
  *    with `{ index, on }`. The active toggle carries an additive
  *    `toggle-on` / `toggle-off` part so the accent-reactive "on" state can
- *    be painted independently.
+ *    be painted independently. The accessible name is supplied via
+ *    `aria-labelledby` pointing at the visible `toggle-label` span so the
+ *    a11y name stays in sync with the visible text automatically.
  *
  * @fires sc-toggle-change - User flipped a toggle (click or Space/Enter). Detail: `{ index, on }`.
  */
@@ -108,6 +110,17 @@ export class ScDashboardBlock extends LitElement {
       --toggle-width: 40px;
       --toggle-radius: 999px;
       --toggle-thumb-size: 16px;
+      /*
+       * Focus-ring color for the toggle button. Defaults to currentColor
+       * to preserve the prior behaviour; consumers can override via a
+       * ::part(toggle) rule (or by setting this property on the host) to
+       * supply a contrast-safe color when currentColor resolves close to
+       * the surface background (e.g. sand-1 in the off state).
+       *
+       * Per the headless contract (spec section 0), this is a generic CSS
+       * custom property — NO --line-* token is referenced inside the component.
+       */
+      --toggle-focus-ring-color: currentColor;
 
       display: block;
     }
@@ -264,7 +277,7 @@ export class ScDashboardBlock extends LitElement {
     }
 
     .toggle:focus-visible {
-      outline: 2px solid currentColor;
+      outline: 2px solid var(--toggle-focus-ring-color);
       outline-offset: 2px;
     }
 
@@ -397,24 +410,25 @@ export class ScDashboardBlock extends LitElement {
       <section class="section" part="section">
         <h4 class="section-title" part="section-title">Settings</h4>
         <ul class="toggle-list" part="toggle-list">
-          ${this.toggles.map(
-            (entry, index) => html`
+          ${this.toggles.map((entry, index) => {
+            const labelId = `sc-dashboard-toggle-label-${index}`;
+            return html`
               <li class="toggle-row" part="toggle-row">
-                <span class="toggle-label" part="toggle-label">${entry.label}</span>
+                <span class="toggle-label" part="toggle-label" id=${labelId}>${entry.label}</span>
                 <button
                   class="toggle"
                   part="toggle ${entry.on ? 'toggle-on' : 'toggle-off'}"
                   type="button"
                   role="switch"
                   aria-checked=${entry.on ? 'true' : 'false'}
-                  aria-label=${entry.label}
+                  aria-labelledby=${labelId}
                   data-index=${index}
                   @click=${this._onToggleClick}
                   @keydown=${this._onToggleKeydown}
                 ></button>
               </li>
-            `
-          )}
+            `;
+          })}
         </ul>
       </section>
     `;
