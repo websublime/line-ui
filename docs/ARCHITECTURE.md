@@ -3,7 +3,7 @@
 **Date:** 2026-05-19
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
-**Source:** Extracted from PRD v0.8.2 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
+**Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 This document captures the **cross-cutting architectural decisions** that apply to all components. Individual component specifications live in `docs/specs/`. Product requirements live in [`docs/PRD.md`](./PRD.md).
@@ -12,9 +12,9 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
-- **v0.8.0 (2026-05-19)** — Realigned with PRD v0.8.2 and the revised Manifesto.
+- **v0.8.0 (2026-05-19)** — Realigned with PRD v0.8.3 and the revised Manifesto.
   - §4 (CSS Customisation — Dual Layer) rewritten to reflect the layered design system: components now consume **role-namespaced** tokens (`--line-accent-*`, `--line-gray-*`, `--line-success/warning/danger/info-*`) plus the **9 named aliases per role** (`-surface`, `-bg`, `-bg-hover`, `-bg-active`, `-border`, `-solid`, `-solid-hover`, `-text-low`, `-text`) and the sibling **`--line-{role}-contrast`** static token. References to v0.7 single-colour semantic globals (`--line-background`, `--line-solid-background`, `--line-primary-*` as direct hue tokens) removed.
-  - §6 (Base Class — LineElement) — Zag.js lifecycle now explicitly stated to integrate via the `@zag-js/element` adapter (Phase 0 refactor task per PRD §7.2).
+  - §6 (Base Class — LineElement) — Zag.js lifecycle now integrates via the first-party `LineMachineController` (Lit `ReactiveController` exported from `@websublime/line-core/machine`), which wraps `@zag-js/vanilla` primitives. Phase 0 builds this adapter; components never import `@zag-js/vanilla` directly. See PRD v0.8.3 revision note and §2.1.
   - §11 (Icon System) — clarified that `@websublime/line-icons` is **orthogonal to the design system**: it is a separate, optional library. Components consume icons via **slots**; consumers may use `line-icons`, Lucide, Phosphor, Iconoir, or any other library.
   - §12 (Bundle Splitting Rule) — restated under the **umbrella package model**: a single `@websublime/line-components` package with per-component subpath exports, `customElements.define()` as the sole side-effect, declared via the `sideEffects` field. Not per-component packages.
   - Throughout: replaced class-based theming (`.line-schema-X`) with attribute-based theming (`[data-accent]` / `[data-gray]`); replaced the v0.7 28-palette set with Radix Colors 3.x 31 hues; replaced "inverted dark scale" wording with the Radix invariant **semantic-by-step** (step N has the same role in light and dark; pixel values differ).
@@ -227,7 +227,7 @@ LitElement
         ├── Metadata mixin (version, docs, qa)
         ├── Direction mixin (LTR/RTL)
         ├── FormAssociated mixin (opt-in, ElementInternals)
-        └── Zag.js machine connection (lifecycle-managed via @zag-js/element)
+        └── Machine connection via `LineMachineController` (Lit `ReactiveController`, exported from `@websublime/line-core/machine`, wraps `@zag-js/vanilla`)
               │
               ├── Pre-built machine components
               │     ├── LineDialog (uses @zag-js/dialog)
@@ -242,7 +242,14 @@ LitElement
 
 Components declare their tier by what they assign to the `machine` property: a pre-built Zag.js machine, a custom `createMachine()` result, or nothing (static). The base class handles all three cases — connect/disconnect is automatic for machines, zero overhead for static components.
 
-**Zag.js integration is via the `@zag-js/element` adapter.** The adapter is the framework-agnostic binding Zag.js exposes for vanilla custom elements; `LineElement` invokes it inside `connectedCallback` / `disconnectedCallback` so machine subscriptions are torn down deterministically when the element leaves the DOM.
+**Zag.js integration is via the first-party `LineMachineController` adapter** (Lit `ReactiveController` exported from `@websublime/line-core/machine`). The adapter wraps the framework-agnostic `@zag-js/vanilla` package (`VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`) and provides:
+
+- **Lit-aware reactivity.** `host.requestUpdate()` is called on each machine state transition, so Lit re-renders deterministically.
+- **Lifecycle management.** Machine starts in `hostConnected` (subscribes to state); stops in `hostDisconnected` (unsubscribes). No manual `connectedCallback`/`disconnectedCallback` plumbing in component subclasses.
+- **Graceful failure (Manifesto Law 9).** If the machine fails to start, the controller flags fallback mode and the component renders a static state. No uncaught error propagates.
+- **Single import surface.** Re-exports the four public primitives of `@zag-js/vanilla` — `normalizeProps`, `spreadProps`, `mergeProps`, and the `VanillaMachine` type — so component authors import from one place: `@websublime/line-core/machine`. **No component imports `@zag-js/vanilla` directly** — the adapter is the single point of maintenance for Zag API changes. Note: `bindable` is **not** re-exported because `@zag-js/vanilla` does not publicly export it. It is an internal Zag helper accessed inside machine configs via the `context({ bindable })` callback (see §8 example).
+
+There is **no first-party Lit adapter in Zag's monorepo** (`packages/frameworks/` contains only `preact`, `react`, `solid`, `svelte`, `vanilla`, `vue`) — `LineMachineController` is the line://ui adapter, authored in Phase 0 (PRD §7.2).
 
 **Failure mode (Manifesto Principle 9 / Law 9):** if a machine fails to initialise, the component renders in a static fallback state and never throws an uncaught error at the consumer.
 
@@ -286,9 +293,14 @@ All form control components implement `static formAssociated = true` and use `El
 
 Components like Input, Textarea, and Field have rich interaction states: focus/blur, error/invalid, disabled, readonly, empty/filled, loading, required. With a custom Zag.js machine, every interactive component gets: explicit state transitions, computed states (memoized, consistent), controlled/uncontrolled for free via `bindable`, guards preventing invalid transitions, watch for reactive side effects, and inspector integration.
 
+**Lifecycle and integration.** Both pre-built and custom machines are wired into the component via `LineMachineController` (see §6). The component creates the machine config (or imports a pre-built one), instantiates the controller in its constructor (`#ctrl = new LineMachineController(this, machineConfig)`), and the controller handles `subscribe / start / stop / requestUpdate` automatically. Component code never imports `@zag-js/vanilla` directly.
+
 **Custom machine example — Input:**
 
 ```typescript
+import { createMachine } from '@zag-js/core';
+import { LineMachineController, normalizeProps, spreadProps } from '@websublime/line-core/machine';
+
 const machine = createMachine<InputSchema>({
   props({ props }) {
     return { disabled: false, required: false, readOnly: false, ...props }

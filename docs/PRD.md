@@ -3,13 +3,18 @@
 **Date:** 2026-05-19
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.2
+**Version:** 0.8.3
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.3 (2026-05-19) — Research-driven corrections from Stage 2 phase 00 (two rounds).** Four contradictions surfaced by research (round 1: `/Users/ramosmig/Public/WS-Labs/line-ui/docs/research/00-research-design-system-foundation.md`; round 2: `/Users/ramosmig/Public/WS-Labs/line-ui/docs/research/00-research-design-system-foundation-round2.md`) closed in this revision.
+  - **C1 — Zag.js integration corrected.** **`@zag-js/element` does not exist** in Zag's monorepo (`packages/frameworks/` contains only `preact`, `react`, `solid`, `svelte`, `vanilla`, `vue`). The previously-named "official Lit adapter" was a phantom. v0.8.3 corrects the integration to use `@zag-js/vanilla` primitives (`VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`) **wrapped by a first-party adapter** at `@websublime/line-core/machine`: `LineMachineController` is a Lit `ReactiveController` that provides Lit-aware reactivity (`requestUpdate()` on transitions), automatic teardown (`hostDisconnected`), Manifesto Law 9 fallback (failed machine → static render), and a single import surface (re-exports the four primitives above). Components consume only `@websublime/line-core/machine` — direct imports of `@zag-js/vanilla` are forbidden in component code. Updates: §2 Tech Stack (Component Logic row corrected, new Machine Adapter row); §2.1 Stack Rationale (Zag.js + Machine Adapter paragraphs); §6.2 core src tree + exports map (added `./machine` subpath); §7.2 Refactor LineElement task. Aligned ARCHITECTURE §6 / §8 and plan/00 §2.5/§4.4/§5.1.
+  - **C2 — Radix Colors source clarified, all variants ship in Phase 00.** `@radix-ui/colors` ships **TypeScript hex-string objects only** (no CSS files upstream). Per hue it exports 8 scale objects (base + alpha + P3 + P3-alpha, each split into light/dark) plus 4 special scales (`blackA`, `whiteA`, `blackP3A`, `whiteP3A`). The `*Contrast` token is a `@radix-ui/themes` convention (not `@radix-ui/colors`) — we adopt the Radix Themes per-hue table verbatim (six bright-step-9 hues use `#000`, all others `#fff`). **Phase 00 ships all four variant families per hue + the four special scales.** Token naming is unified via `@supports` (Radix Themes pattern): the canonical names (`--line-{hue}-{step}`, `--line-{hue}-a{step}`) stay stable; P3 declarations override the same names inside `@supports (color: color(display-p3 1 1 1))` + `@media (color-gamut: p3)`, so browsers with P3 support auto-upgrade with no consumer opt-in. Updates: §9.1 packages tree comment; §9.2 (upstream package shape + variant scope + contrast convention); §9.7 (concrete per-hue generation output shape + special-scales file).
+  - **C4 — `bindable` removed from `LineMachineController` re-exports.** Round-2 research confirmed `@zag-js/vanilla` exports exactly four public names: `VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`. The `bindable` factory lives at `packages/frameworks/vanilla/src/bindable.ts` upstream but is a **private internal helper** used by `VanillaMachine`; it is not part of the public API. Inside machine configs, `bindable` is still available — Zag provides it through the `context({ bindable })` callback argument at runtime, not via import. The adapter therefore re-exports only the four public primitives, and components access `bindable` exclusively via the `context` callback inside machine configs. Updates: §2 Tech Stack (Component Logic row); §2.1 (Zag.js + Machine Adapter paragraphs); §6.2 (core src tree + machine subpath explanatory paragraph). Aligned ARCHITECTURE §6/§8 (re-export bullet) and plan/00 §5.1/R3.
+  - **C3 — Bundler corrected to Vite 8+ where Rolldown is stable as default.** Smith's research showed Vite 7's Rolldown integration was **explicitly experimental** (opt-in via `package.json` overrides; upstream warned of breaking changes within patch versions). v0.8.3 bumps to **Vite 8+**, where Rolldown 1.0.x is the **default, stable** bundler — promoted from experimental and integrated directly in Vite 8's own dependencies. Previous PRD §2.1 claim "Vite 7 stabilises the Rolldown integration" was factually incorrect for v7 and is rewritten. Library mode for Web Components and CSS handling alongside PostCSS both work out of the box. Updates: §2 Tech Stack (Bundler row); §2.1 Stack Rationale (Vite paragraph rewritten); §6.2 heading; §7.2 task description; §7.2 exit criteria; §9.13 Structural Refactor; §9.14 T11. Plan §1.2, §2.4, §4.1/A3, §5.1/R5, §5.1/R10, §7.5 acceptance, §8 Risks aligned in the same pass.
 - **v0.8.2 (2026-05-19) — Cross-doc gaps closed: `line-core` and `line-icons` exports documented in §6.2.** A linear cross-check against `docs/ARCHITECTURE.md` revealed that `@websublime/line-core/styles` (referenced 6 times across ARCHITECTURE §14.3–§14.7 + §14.2) was undocumented in the PRD's §6.2 build section. §6.2 now includes: the `styles/` directory in the core src tree (containing the 11 shadow-DOM modular reset sheets); a formal exports map for `@websublime/line-core` (with `.`, `./styles`, and `./mixins/*` subpaths); and a skeleton exports map for `@websublime/line-icons` (full surface finalised in Phase 1 when the icon registry is authored). The two-reset distinction (light-DOM consumer reset at `line-tokens/reset` vs shadow-DOM internal resets at `line-core/styles`) is explicitly cross-referenced. No design changes — pure documentation completeness.
 - **v0.8.1 (2026-05-19) — `line-tokens` scope clarified to 18 families (11 primitive + 7 decorative) + reset.** The Phase 0 `line-tokens` package now ships: **11 primitive families** (typography, sizing, shadows, easings, z-index, opacity, motion, radii, border-width, focus-ring, breakpoints) — the essentials any consumer needs — and **7 decorative families** (aspects, animations, gradients, masks, layouts, highlights, svg) — optional and importable individually via subpath. A `./reset` subpath ships zero-opinion browser-defaults neutralisation, applied before any family. Colour-adjacent decorative families (gradients, highlights, svg) are **structural-only** in v0.8 — they reference palette tokens from `line-colors` rather than declaring absolute colour values, preserving Manifesto Law 10 (cross-layer separation). The v0.7 `colors-absolute` family is **removed**; consumers needing black/white absolutes use role-level `--line-{role}-contrast` tokens, palette extremes (`--line-gray-1` / `--line-gray-12`), or hardcoded values. See §9.9 for the full export contract.
 - **v0.8.0 (2026-05-19) — Design system realigned to layered package model (5 packages), attribute-based multi-colour theming, Radix-fiel role separation.** The previously planned monolithic `@websublime/line-theme` is **replaced** by five separate packages: `@websublime/line-tokens`, `@websublime/line-colors`, `@websublime/line-schemas`, `@websublime/line-themes`, and `@websublime/line-utils`. Theme switching moves from class-based single-colour (`.line-schema-X`) to attribute-based independent role selection (`data-accent="X"` and `data-gray="Y"`). Palettes scale to 31 hues (Radix Colors 3.x). Semantic colours (`success`, `warning`, `danger`, `info`) are fixed at the root and no longer swappable per theme. The previous CSS-based `schema` concept is replaced by TS contracts (Zod + types) in `line-schemas`; CSS role mappings live in `line-themes`. Light/dark continues to live inside palettes via `light-dark()`. See §9 for full detail.
@@ -139,10 +144,11 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 | Layer | Choice |
 |-------|--------|
 | Runtime & Package Manager | **Bun** (latest stable) |
-| Bundler | **Vite 7+ with Rolldown** |
+| Bundler | **Vite 8+ (Rolldown stable as default)** |
 | Lint & Format | **Biome** (replaces ESLint + Prettier) |
 | Component Framework | **Lit 3+** (latest stable) |
-| Component Logic | **Zag.js** (latest stable) |
+| Component Logic | **Zag.js** (latest stable) — state-machine engine. Integrated via the framework-agnostic `@zag-js/vanilla` primitives (`VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`). |
+| Machine Adapter | `@websublime/line-core/machine` — Lit `ReactiveController` (`LineMachineController`) wrapping `@zag-js/vanilla`. Provides Lit-aware reactivity (`requestUpdate()` on state change), automatic teardown in `hostDisconnected`, and graceful failure fallback (Manifesto Law 9). Components consume this controller — they never import `@zag-js/vanilla` directly. |
 | Foundation Tokens | `@websublime/line-tokens` — 18 families + browser-defaults reset. **Primitives (11):** typography, sizing, shadows, easings, z-index, opacity, motion, radii, border-width, focus-ring, breakpoints. **Decorative (7):** aspects, animations, gradients, masks, layouts, highlights, svg. All `--line-*` prefixed. |
 | Colour Palettes | `@websublime/line-colors` — Radix Colors 3.x (31 hues × 12 steps), light/dark via CSS `light-dark()`, sourced from `@radix-ui/colors` npm |
 | Schemas (TS) | `@websublime/line-schemas` — TS types + Zod validators (`HUES`, `ACCENT_HUES`, `GRAY_HUES`, `SEMANTIC_MAP`) |
@@ -155,11 +161,13 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 
 **Bun** — Faster runtime, faster installs, native workspace support. Replaces Node.js + pnpm. Vite is kept for builds as its library mode with Rolldown is more mature than Bun's bundler for library output.
 
-**Vite 7+ with Rolldown** — Rolldown (Rust-based) replaces Rollup internally in Vite 7. Same configuration API, significantly faster builds. Vite 7 stabilises the Rolldown integration that was experimental in earlier versions.
+**Vite 8+ (Rolldown stable as default)** — Vite 8 ships **Rolldown** (Rust-based) as the **default, stable** bundler — Rolldown is pinned at `1.0.x` in Vite 8's own dependencies. This replaces the Rollup-as-default model of earlier Vite versions. Pre-v8, Rolldown was opt-in via `package.json` overrides and **explicitly experimental** (the Vite team warned of breaking changes within patch versions of `rolldown-vite`). Vite 8 promoted Rolldown to default and removed the experimental label. Library mode for Web Components and CSS handling alongside PostCSS both work out of the box. Configuration API is the same as Rollup, so migration from Vite 7 (if a fallback to Rollup were ever needed) is a one-line override.
 
 **Biome** — Single tool for lint + format. Rust-based, orders of magnitude faster. Replaces ~10 packages: eslint, prettier, eslint-plugin-import, eslint-plugin-unicorn, eslint-config-prettier, etc.
 
-**Zag.js** — Production-ready state machines for 50+ UI patterns. Framework-agnostic with official Lit adapter (`@zag-js/element`). WAI-ARIA accessibility built-in. Keyboard navigation, focus management, all solved.
+**Zag.js** — Production-ready state machines for 50+ UI patterns. WAI-ARIA accessibility built-in. Keyboard navigation, focus management, all solved. Zag exposes framework-agnostic primitives via the `@zag-js/vanilla` package (`VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`). There is **no first-party Lit adapter** in Zag's monorepo (`packages/frameworks/` contains only `preact`, `react`, `solid`, `svelte`, `vanilla`, `vue`) — we therefore author our own.
+
+**Machine Adapter (`@websublime/line-core/machine`)** — A thin Lit-aware wrapper around `@zag-js/vanilla`, exposed as `LineMachineController` (a `ReactiveController`). It (a) instantiates the Zag machine in `hostConnected` and subscribes to state, calling `host.requestUpdate()` so Lit re-renders on every transition; (b) tears down the subscription in `hostDisconnected` for deterministic cleanup; (c) catches start-up failures and renders a static fallback (Manifesto Law 9) instead of throwing; (d) re-exports the four `@zag-js/vanilla` public primitives — `normalizeProps`, `spreadProps`, `mergeProps`, and the `VanillaMachine` type — so components have a single import surface. Components consume only `@websublime/line-core/machine` — they never import `@zag-js/vanilla` directly. This is a single point of maintenance for any future Zag API change. (Note: `bindable` is **not** publicly exported by `@zag-js/vanilla` — it is an internal Zag pattern available **inside** machine configs via the `context({ bindable })` callback argument, not via import. Components do not need to import it.)
 
 **Foundation Tokens (`line-tokens`)** — Non-colour primitives, split into two tiers (18 families total) plus a baseline reset:
 
@@ -412,7 +420,7 @@ Each component has a product-level description below and a detailed technical sp
 
 ### 5.1 Storybook
 
-**Tool:** Storybook 8+ with `@storybook/web-components-vite`.
+**Tool:** Storybook 10++ with `@storybook/web-components-vite`.
 
 **Per-component documentation:**
 
@@ -591,7 +599,7 @@ apps/                                     ← 2 apps, not published
 
 **Apps (private workspaces):** `apps/site`, `apps/storybook` — built and deployed by CI, never published to npm.
 
-### 6.2 Build — Vite 7+ with Rolldown
+### 6.2 Build — Vite 8+ (Rolldown stable as default)
 
 **Core package (`@websublime/line-core`):**
 
@@ -601,6 +609,7 @@ src/ → Vite library mode → dist/
   ├── line-element.js   ← Base class
   ├── mixins/           ← Individual mixins (inspector, metadata, direction, form-associated)
   ├── utilities/        ← Helpers, decorators
+  ├── machine/          ← Zag.js adapter: `LineMachineController` (Lit ReactiveController wrapping `@zag-js/vanilla`) + re-exports of the four public primitives `normalizeProps`, `spreadProps`, `mergeProps`, `VanillaMachine`. (`bindable` is not exported — it is accessed inside machine configs via the `context({ bindable })` callback.) Components import via `@websublime/line-core/machine`. See ARCHITECTURE §6 / §8.
   ├── styles/           ← Shadow-DOM internal reset sheets (reset.common.css, reset.input.css, reset.button.css, reset.textarea.css, reset.select.css, reset.range.css, reset.progress.css, reset.summary.css, reset.fieldset.css, reset.table.css, reset.scrollbar.css) exposed as singleton `CSSStyleSheet` objects via the `./styles` subpath — see [ARCHITECTURE.md §14.3–§14.7](./ARCHITECTURE.md#14-browser-defaults-neutralisation)
   └── types/            ← .d.ts
 ```
@@ -612,12 +621,15 @@ src/ → Vite library mode → dist/
   "exports": {
     ".":           { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
     "./styles":    { "types": "./dist/styles/index.d.ts", "import": "./dist/styles/index.js" },
+    "./machine":   { "types": "./dist/machine/index.d.ts", "import": "./dist/machine/index.js" },
     "./mixins/*":  { "types": "./dist/mixins/*.d.ts", "import": "./dist/mixins/*.js" }
   }
 }
 ```
 
 The `./styles` subpath is consumed exclusively by components (each component imports only the reset sheets it needs via `static styles`). Consumers do **not** import `@websublime/line-core/styles` directly — these are shadow-DOM internal resets, distinct from the consumer-side light-DOM reset at `@websublime/line-tokens/reset` (see §9.9 and ARCHITECTURE §14.2 for the two-reset distinction).
+
+The `./machine` subpath exports the **`LineMachineController`** (Lit `ReactiveController`) that wraps `@zag-js/vanilla`. Components instantiate this controller in their constructor and the controller drives Lit's reactivity (`requestUpdate()` on each machine state transition) and lifecycle (machine started on `hostConnected`, stopped on `hostDisconnected`). The subpath also re-exports the four public primitives of `@zag-js/vanilla` — `normalizeProps`, `spreadProps`, `mergeProps`, and the `VanillaMachine` type — so component authors have a single import surface (`@websublime/line-core/machine`). The `bindable` factory is **not** re-exported because `@zag-js/vanilla` does not publicly export it — it is provided to machine configs through the `context({ bindable })` callback argument and is used only inside those configs. **No component should import `@zag-js/vanilla` directly** — the adapter is the single point of maintenance for Zag API changes and the home of the Manifesto Law 9 fallback (failed machine → static render, no uncaught error).
 
 **Icons package (`@websublime/line-icons`):**
 
@@ -772,11 +784,11 @@ Workflows:
 | Review & refactor Inspector | Existing component in core. Feature flag via localStorage, outline on hover, version display. Review current implementation, enhance with: docs/storybook link, exposed CSS parts, slot usage, optional metadata panel. Inspired by Bit.dev's original component inspection concept — unique differentiator in the Web Components space | Todo | **P0** |
 | Migrate to Bun | Runtime + workspaces, remove pnpm | Review pending | P0 |
 | Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome | Review pending | P0 |
-| Update all dependencies | Lit 3+, Vite 7+ with Rolldown, PostCSS latest | Review pending | P0 |
-| Refactor LineElement | Base class with Zag.js lifecycle (via the `@zag-js/element` adapter) and mixins (inspector, metadata, direction, form-associated). | Todo | P0 |
+| Update all dependencies | Lit 3+, Vite 8+ (Rolldown stable as default), PostCSS latest | Review pending | P0 |
+| Refactor LineElement | Base class with Zag.js machine lifecycle delegated to the first-party `LineMachineController` adapter (`@websublime/line-core/machine`, wraps `@zag-js/vanilla`) and mixins (inspector, metadata, direction, form-associated). | Todo | P0 |
 | FormAssociated mixin | Implement opt-in `formAssociated` mixin in LineElement using `ElementInternals`. Provides: `setFormValue()`, `reportValidity()`, `checkValidity()`, `:invalid`/`:valid` states | Todo | P0 |
 | Restructure monorepo | 8 published packages + 2 apps. Packages: core, components (umbrella with per-component subpath exports), tokens, colors, schemas, themes, utils, icons (5 of which are the layered design system). Apps (not published): `apps/site`, `apps/storybook`. | Todo | P0 |
-| Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer | Todo | P1 |
+| Setup Storybook 10+ | `@storybook/web-components-vite` + CEM analyzer | Todo | P1 |
 | Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright | Todo | P1 |
 | Setup CI/CD | GitHub Actions: checks, release, snapshot-deploy, snapshot-version | Todo | P1 |
 | Define RC pipeline | Release candidate pipeline for `next` branch | Todo | P1 |
@@ -1129,7 +1141,7 @@ The design system comprises exactly **five separate packages** — `line-tokens`
 ```
 packages/
 ├── @websublime/line-tokens     L0  primitives + decorative (non-colour: 11 primitive + 7 decorative families + reset — see §9.9)
-├── @websublime/line-colors     L1  Radix palette CSS, pure (--line-amber-1..12, etc.)
+├── @websublime/line-colors     L1  Radix palette CSS (base + alpha + P3 wide-gamut per hue + 4 special scales — see §9.2 / §9.7)
 ├── @websublime/line-schemas    L2  TS types + Zod validators (HUES, ACCENT_HUES, GRAY_HUES, SEMANTIC_MAP)
 ├── @websublime/line-themes     L3  CSS role mappings + semantics + aliases + auto-pair defaults
 └── @websublime/line-utils      —   helpers (contrast, mix, etc.)
@@ -1150,6 +1162,10 @@ packages/
 ### 9.2 Colour System — Radix-fiel
 
 The colour system is **faithful to Radix Colors 3.x**, not a custom 28-palette reinterpretation. `@websublime/line-colors` ships pure palette CSS files, one per hue, generated from the `@radix-ui/colors` npm package.
+
+**Upstream package shape.** `@radix-ui/colors` ships **TypeScript hex-string objects only** — there are no `.css` files in the upstream package. Per hue, it exports four variant scales (8 objects total): base (`amber`, `amberDark`), alpha (`amberA`, `amberDarkA`), wide-gamut P3 (`amberP3`, `amberDarkP3`), and wide-gamut P3 alpha (`amberP3A`, `amberDarkP3A`). Plus four special scales: `blackA`, `whiteA`, `blackP3A`, `whiteP3A`. The CSS files, the `light-dark()` wrapping, the wide-gamut `@supports` overrides, and the **`--line-{hue}-contrast` token are all generated by our build pipeline** (see §9.7). `*Contrast` is a convention from `@radix-ui/themes` (not `@radix-ui/colors`); we adopt the Radix Themes per-hue table verbatim — six bright-step-9 hues (`amber`, `yellow`, `lime`, `mint`, `sky`, `cyan`) use `#000`; all other hues use `#fff`.
+
+**Phase 00 ships all four variant families** per hue (base + alpha + P3 + P3-alpha) plus the four special scales. Token naming is unified across variants via `@supports` (Radix Themes pattern): the canonical names (`--line-{hue}-{step}`, `--line-{hue}-a{step}`) stay stable; P3 wide-gamut declarations override the same names inside `@supports (color: color(display-p3 1 1 1))` + `@media (color-gamut: p3)`. Browsers with P3 support automatically render the wider gamut — no consumer opt-in, no separate token names.
 
 **31 hues total:**
 
@@ -1316,11 +1332,41 @@ The aliases apply uniformly to all six roles (accent, gray, success, warning, da
 | Concern | Tool |
 |---------|------|
 | CSS bundling | **PostCSS** (`postcss-import`, `postcss-nested`, `postcss-preset-env`, `cssnano`) |
-| Component bundling | **Vite 7+ with Rolldown** (unchanged from §6.2) |
-| Source-of-truth for hues | TS files in `line-schemas/src/` declare `HUES`, `ACCENT_HUES`, `GRAY_HUES`, `SEMANTIC_MAP` |
-| Source-of-truth for palette values | `@radix-ui/colors` npm package |
-| Palette generation | Build script reads `@radix-ui/colors`, emits `line-colors/src/{hue}.css`. **Generated CSS is committed** so CI does not regenerate every build. Regeneration runs only when bumping `@radix-ui/colors`. |
+| Component bundling | **Vite 8+ (Rolldown stable as default)** (unchanged from §6.2) |
+| Source-of-truth for hues | TS files in `line-schemas/src/` declare `HUES`, `ACCENT_HUES`, `GRAY_HUES`, `SEMANTIC_MAP`, and the per-hue contrast table (Radix Themes verbatim) |
+| Source-of-truth for palette values | `@radix-ui/colors` npm package — **TypeScript hex-string objects** (no CSS upstream) |
+| Palette generation | Build script imports the TS scale objects (`amber`, `amberDark`, `amberA`, `amberDarkA`, `amberP3`, `amberDarkP3`, `amberP3A`, `amberDarkP3A` per hue, plus `blackA` / `whiteA` / `blackP3A` / `whiteP3A`), then emits `line-colors/src/{hue}.css`. **Generated CSS is committed** so CI does not regenerate every build. Regeneration runs only when bumping `@radix-ui/colors` or the contrast table. |
 | Role-mapping generation | Build script reads `line-schemas` enumerations, emits `line-themes/src/accent/{hue}.css` and `line-themes/src/gray/{hue}.css` mechanically. |
+
+**Palette generation — concrete output shape.** Per hue file (`line-colors/src/{hue}.css`), the script emits:
+
+```css
+:where(html) {
+  /* Base + Alpha (sRGB) — one declaration per step, light-dark() over light + dark scales. */
+  --line-{hue}-1:  light-dark({hue}[1],     {hueDark}[1]);
+  --line-{hue}-2:  light-dark({hue}[2],     {hueDark}[2]);
+  /* … through step 12 … */
+  --line-{hue}-a1: light-dark({hueA}[1],    {hueDarkA}[1]);
+  /* … through step 12 … */
+
+  /* Contrast (static single value per hue, Radix Themes table) */
+  --line-{hue}-contrast: #fff;   /* or #000 for amber/yellow/lime/mint/sky/cyan */
+}
+
+/* Wide-gamut P3 override (same names — automatic upgrade when supported) */
+@supports (color: color(display-p3 1 1 1)) {
+  @media (color-gamut: p3) {
+    :where(html) {
+      --line-{hue}-1:  light-dark({hueP3}[1],    {hueDarkP3}[1]);
+      /* … through step 12 … */
+      --line-{hue}-a1: light-dark({hueP3A}[1],   {hueDarkP3A}[1]);
+      /* … through step 12 … */
+    }
+  }
+}
+```
+
+The four special scales (`blackA`, `whiteA`, `blackP3A`, `whiteP3A`) live in `line-colors/src/special.css` with the same `@supports` upgrade pattern, exposed as `--line-black-a{1..12}` and `--line-white-a{1..12}`.
 
 **Why hybrid (npm source + committed generated CSS):** the npm package is the canonical source for palette values, but committing the generated CSS into the repo gives deterministic CI builds, reviewable diffs on palette updates, and zero runtime regeneration cost.
 
