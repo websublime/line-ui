@@ -1,8 +1,8 @@
 # line://ui — Manifesto
 
 **Status:** APPROVED
-**Date:** 2026-05-08
-**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different".
+**Date:** 2026-05-19
+**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming).
 
 This manifesto is the foundation that the PRD, the architecture, and every downstream decision must align with. If a design or task contradicts a Governing Law below, the design is wrong — not the law.
 
@@ -28,7 +28,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 6. **Inspector as dev tooling.** Feature-flagged via `localStorage`. When active, every component exposes its metadata: version, docs link, scope, QA tags. A first-class affordance for QA teams and integrating developers, not an afterthought.
 
-7. **HTMX as a first-class explorer.** The web is bigger than SPAs. Server-rendered, HTMX-driven workflows are an explicit target. The `LineHtmxElement` adapter is exploratory but committed — not an apology.
+7. **HTMX as a first-class explorer.** The web is bigger than SPAs. Server-rendered, HTMX-driven workflows are an explicit target. The `LineHtmxElement` adapter is **exploratory** — Phase 0 validates feasibility (the `hx-*` forwarding, server-driven state, and swap-aware lifecycle); Phase 1 commitment depends on the outcome. Not an apology, an honest sequencing.
 
 ---
 
@@ -36,7 +36,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 1. **Every styleable zone exposes a `::part()`.** A consumer must be able to retheme any visible surface without forking the component. Hidden internal nodes are never decorative.
 
-2. **All public surface is `line-*` prefixed.** Tag names (`<line-button>`), CSS classes (`.line-schema-*`), CSS custom properties (`--line-*`), and base classes (`LineElement`). No exceptions, no shadowing of host names.
+2. **All public surface we author is `line-*` prefixed.** Tag names (`<line-button>`), CSS custom properties (`--line-*`), and base classes (`LineElement`). Standard HTML hooks (`data-*` for theme switching such as `data-accent` and `data-gray`, ARIA, etc.) follow web conventions and are exempt. No exceptions otherwise, no shadowing of host names.
 
 3. **Consequence: WCAG 2.1 AA is non-negotiable for every shipped component.** Zag.js provides the foundation for state-machine components; static and custom-machine components must independently meet the bar (axe-core zero violations per spec).
 
@@ -44,13 +44,15 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 5. **State machines own logic. Lit owns DOM. CSS owns visuals.** No business logic in render, no styles in TypeScript, no DOM mutation outside Lit's reactive cycle.
 
-6. **Bundle isolation: a button must not drag in a dialog.** Each component is independently importable; families share an entrypoint only when their slots make them inseparable.
+6. **Bundle isolation: a button must not drag in a dialog.** Each component is independently importable via subpath exports — `@websublime/line-components/button`, `@websublime/line-components/dialog`, etc. — published under a single umbrella package with one version and one changelog. Component files are side-effecting only by `customElements.define()`, so importing one component never executes another. Families share a subpath only when their slots make them inseparable.
 
 7. **Form participation is opt-in via `FormAssociated` mixin and `ElementInternals`.** No bespoke form integration; native `<form>` semantics is the only contract.
 
 8. **Progressive enhancement is preserved where the underlying native element supports it.** Components that wrap native controls (Input, Textarea, Select) remain functional in light DOM fallback when feasible.
 
 9. **Failures are graceful.** A failed Zag.js machine renders the component in a static fallback state. Components never throw uncaught errors at the consumer.
+
+10. **Design system is layered, not monolithic.** Tokens, colors, schemas, themes, and utils are separate packages with a strict downward dependency. Consumers pick the level of opinion they want — a project can import tokens alone, or palettes alone, or the full theme. Cross-layer leakage (palette values inside themes, semantic CSS inside tokens, runtime code inside CSS-only packages) is wrong.
 
 ---
 

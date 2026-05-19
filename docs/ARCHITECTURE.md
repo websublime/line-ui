@@ -1,12 +1,25 @@
 # line://ui — Architecture
 
-**Date:** 2026-03-12
+**Date:** 2026-05-19
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
-**Source:** Extracted from PRD v0.7.0 §3 (Component Architecture)
+**Source:** Extracted from PRD v0.8.2 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 This document captures the **cross-cutting architectural decisions** that apply to all components. Individual component specifications live in `docs/specs/`. Product requirements live in [`docs/PRD.md`](./PRD.md).
+
+---
+
+## Revision Notes
+
+- **v0.8.0 (2026-05-19)** — Realigned with PRD v0.8.2 and the revised Manifesto.
+  - §4 (CSS Customisation — Dual Layer) rewritten to reflect the layered design system: components now consume **role-namespaced** tokens (`--line-accent-*`, `--line-gray-*`, `--line-success/warning/danger/info-*`) plus the **9 named aliases per role** (`-surface`, `-bg`, `-bg-hover`, `-bg-active`, `-border`, `-solid`, `-solid-hover`, `-text-low`, `-text`) and the sibling **`--line-{role}-contrast`** static token. References to v0.7 single-colour semantic globals (`--line-background`, `--line-solid-background`, `--line-primary-*` as direct hue tokens) removed.
+  - §6 (Base Class — LineElement) — Zag.js lifecycle now explicitly stated to integrate via the `@zag-js/element` adapter (Phase 0 refactor task per PRD §7.2).
+  - §11 (Icon System) — clarified that `@websublime/line-icons` is **orthogonal to the design system**: it is a separate, optional library. Components consume icons via **slots**; consumers may use `line-icons`, Lucide, Phosphor, Iconoir, or any other library.
+  - §12 (Bundle Splitting Rule) — restated under the **umbrella package model**: a single `@websublime/line-components` package with per-component subpath exports, `customElements.define()` as the sole side-effect, declared via the `sideEffects` field. Not per-component packages.
+  - Throughout: replaced class-based theming (`.line-schema-X`) with attribute-based theming (`[data-accent]` / `[data-gray]`); replaced the v0.7 28-palette set with Radix Colors 3.x 31 hues; replaced "inverted dark scale" wording with the Radix invariant **semantic-by-step** (step N has the same role in light and dark; pixel values differ).
+  - Section headings whose anchors are referenced from PRD §3 are **not renamed** (see §2, §3, §4, §5, §7, §8, §9, §12 below).
+- **v0.7.0 (2026-03-12)** — Initial extraction from PRD v0.7.0 §3 (Component Architecture). Superseded in design-system surface area by v0.8.0.
 
 ---
 
@@ -35,7 +48,7 @@ This document captures the **cross-cutting architectural decisions** that apply 
 └──────────────────────────────────────────────┘
 ```
 
-**Flow:** Zag.js manages all logic (state, transitions, a11y, keyboard, focus trapping) → Lit renders shadow DOM with `part` attributes on every relevant element → Consumer styles via `::part()` or applies a theme from the theme package.
+**Flow:** Zag.js manages all logic (state, transitions, a11y, keyboard, focus trapping) → Lit renders shadow DOM with `part` attributes on every relevant element → Consumer styles via `::part()` or by consuming role/alias variables (`--line-accent-*`, `--line-{role}-bg`, …) exposed by the layered design system (`line-tokens` + `line-colors` + `line-themes`, optionally with `line-schemas` / `line-utils`).
 
 ---
 
@@ -107,16 +120,33 @@ A prefix icon is a slot — the component doesn't know or care what it is. A pas
 
 ## 4. CSS Customisation — Dual Layer
 
-**Layer 1: Component tokens (via preset) — Quick adjustments**
+Two surfaces, one strategy. Use **CSS custom properties** for token-level adjustments. Use **`::part()`** for total visual control. Both ship by default on every styleable zone (Manifesto Principle 4).
+
+**Layer 1: Custom properties — Quick adjustments**
+
+Custom properties form three concentric tiers (full cascade documented in PRD §9.11). Components consume from each tier; consumers override at any tier.
+
+| Tier | Origin | Examples |
+|------|--------|----------|
+| **Foundation tokens** | `@websublime/line-tokens` (L0) | `--line-size-3`, `--line-radius-2`, `--line-shadow-3`, `--line-easing-out`, `--line-z-overlay`, `--line-motion-fast` |
+| **Palette tokens** | `@websublime/line-colors` (L1) | `--line-amber-1..12`, `--line-amber-contrast`, `--line-slate-1..12`, … (31 hues × 12 steps; `light-dark()` per step; static single-value `--line-{hue}-contrast`) |
+| **Role tokens (numeric)** | `@websublime/line-themes` (L3) | `--line-accent-1..12`, `--line-gray-1..12`, `--line-success-1..12`, `--line-warning-1..12`, `--line-danger-1..12`, `--line-info-1..12`, plus the sibling `--line-{role}-contrast` (one per role; static single value; not wrapped in `light-dark()`) |
+| **Role aliases (named)** | `@websublime/line-themes` (L3) | `--line-{role}-surface` (step 2), `-bg` (step 3), `-bg-hover` (step 4), `-bg-active` (step 5), `-border` (step 7), `-solid` (step 9), `-solid-hover` (step 10), `-text-low` (step 11), `-text` (step 12) — 9 aliases × 6 roles = 54 alias variables |
+| **Component tokens** | Defined inside `:host` by each component | `--line-button-radius`, `--line-button-bg`, `--line-button-color`, … (always `--line-{component}-{prop}`) |
 
 ```css
-/* Adjust preset tokens on the host element */
+/* Adjust component tokens on the host element */
 line-button {
   --line-button-radius: var(--line-radius-round);
   --line-button-height-md: 3rem;
   --line-button-font-size: var(--line-font-size-3);
+  /* Re-bind the solid surface to a different role: */
+  --line-button-bg: var(--line-danger-solid);
+  --line-button-color: var(--line-danger-contrast);
 }
 ```
+
+**Components consume role/alias tokens, never hue tokens directly.** A `<line-button>` resolves its primary surface as `var(--line-accent-solid)` (or `var(--line-accent-9)` in numeric form) plus `var(--line-accent-contrast)` for the foreground. The hue currently bound to the `accent` role is determined by `data-accent` on an ancestor (default: `indigo`). This is the single rule that makes attribute-based theming work — see [PRD §9.4 (Theme Application)](./PRD.md) for the full design rationale.
 
 **Layer 2: `::part()` — Total control over internal elements**
 
@@ -128,13 +158,33 @@ line-button::part(root) {
 }
 ```
 
-Component tokens are defined by the preset package (`@websublime/line-presets`) on the component host, following the `--line-{component}-{prop}` convention. Consumers override these for quick adjustments. `::part()` provides total control for consumers who want absolute customisation. Complementary, not redundant.
+Component tokens follow the `--line-{component}-{prop}` convention. Consumers override these for quick adjustments. `::part()` provides total control for consumers who want absolute customisation. Complementary, not redundant.
 
-**Token naming conventions:**
-- `--line-*` — Global theme tokens (e.g., `--line-radius-2`, `--line-primary`)
-- `--line-{component}-*` — Component tokens defined by preset (e.g., `--line-button-radius`)
+**Token naming conventions (Manifesto Law 2):**
 
-**Custom property prefix:** `--line-` (consistent with tag prefix).
+| Prefix | Layer | Examples |
+|--------|-------|----------|
+| `--line-{family}-{step}` | Foundation tokens (`line-tokens`) | `--line-radius-2`, `--line-size-3`, `--line-shadow-2` |
+| `--line-{hue}-{step}` | Palette tokens (`line-colors`) | `--line-blue-9`, `--line-slate-12`, `--line-amber-3` |
+| `--line-{hue}-contrast` | Palette contrast tokens (`line-colors`) | `--line-blue-contrast`, `--line-amber-contrast` (static; not `light-dark()`) |
+| `--line-{role}-{step}` | Role tokens (`line-themes`) | `--line-accent-9`, `--line-gray-3`, `--line-danger-2` |
+| `--line-{role}-{alias}` | Role aliases (`line-themes`) | `--line-accent-solid`, `--line-gray-bg-hover`, `--line-danger-text` |
+| `--line-{role}-contrast` | Role contrast token (`line-themes`) | `--line-accent-contrast` (static; resolves through the active hue) |
+| `--line-{component}-{prop}` | Component tokens | `--line-button-radius`, `--line-input-padding-x` |
+
+All public custom properties we author are `--line-*` prefixed. Standard HTML hooks (`data-accent`, `data-gray`, ARIA attributes, etc.) follow web conventions and are exempt (Manifesto Law 2).
+
+**Theme application is attribute-based (no class-based theming).** Themes are not entities — a theme is the `(accent, gray)` pair selected via two independent attributes on any element:
+
+```html
+<html data-accent="indigo">                              <!-- default accent + auto-paired slate -->
+<html data-accent="amber" data-gray="slate">             <!-- explicit accent + explicit gray -->
+<section data-accent="violet">…</section>                <!-- scoped theming nests naturally -->
+```
+
+Because `accent` and `gray` namespaces are independent, multiple colour contexts can coexist on the same page without conflict. Semantic roles (`success`, `warning`, `danger`, `info`) are **fixed at `:root`** and never re-skinned by theme choice — a red error and a green success are usability invariants.
+
+**Light/dark via `light-dark()`** — palette tokens (`line-colors`) are mono-declaration; the active value is chosen by the computed `color-scheme` property. Each step has a **fixed semantic function** identical in light and dark (step 1 is always app background; step 9 is always solid brand; step 12 is always high-contrast text). The pixel values differ between modes; the role of step N never changes (Radix invariant — see PRD §9.2).
 
 ---
 
@@ -168,7 +218,7 @@ Short, semantic names reused across components. A developer who learns the parts
 
 ## 6. Base Class — LineElement
 
-**Note:** The current codebase uses `ComponentElement` with `ComponentMixin`. The refactoring to `LineElement` is a Phase 0 task.
+**Note:** The current codebase uses `ComponentElement` with `ComponentMixin`. The refactoring to `LineElement` is a Phase 0 task (PRD §7.2).
 
 ```
 LitElement
@@ -177,7 +227,7 @@ LitElement
         ├── Metadata mixin (version, docs, qa)
         ├── Direction mixin (LTR/RTL)
         ├── FormAssociated mixin (opt-in, ElementInternals)
-        └── Zag.js machine connection (lifecycle-managed)
+        └── Zag.js machine connection (lifecycle-managed via @zag-js/element)
               │
               ├── Pre-built machine components
               │     ├── LineDialog (uses @zag-js/dialog)
@@ -191,6 +241,12 @@ LitElement
 ```
 
 Components declare their tier by what they assign to the `machine` property: a pre-built Zag.js machine, a custom `createMachine()` result, or nothing (static). The base class handles all three cases — connect/disconnect is automatic for machines, zero overhead for static components.
+
+**Zag.js integration is via the `@zag-js/element` adapter.** The adapter is the framework-agnostic binding Zag.js exposes for vanilla custom elements; `LineElement` invokes it inside `connectedCallback` / `disconnectedCallback` so machine subscriptions are torn down deterministically when the element leaves the DOM.
+
+**Failure mode (Manifesto Principle 9 / Law 9):** if a machine fails to initialise, the component renders in a static fallback state and never throws an uncaught error at the consumer.
+
+**HTMX adapter — exploratory.** `LineHtmxElement` is a planned extension of `LineElement` that adds `hx-*` attribute forwarding, server-driven state updates, and swap-aware lifecycle hooks (PRD Appendix A). Per Manifesto Law 7 it is **exploratory**: Phase 0 validates feasibility, Phase 1 commitment depends on the outcome. No component in this document depends on HTMX being shipped.
 
 ---
 
@@ -289,7 +345,7 @@ The Field is the orchestrator that connects labels, hints, errors, and required 
 
 **Label connection:** Field generates unique ID, sets `aria-labelledby` on child control, forwards clicks on label to `.focus()` on child.
 
-**Required indicator:** `::part(required-indicator)` — consumer/theme styles it.
+**Required indicator:** `::part(indicator)` — consumer/theme styles it. Uses the shared `indicator` part name from §5 (semantic: "state indicator").
 
 **Floating label:** NOT built in. `data-focused` and `data-filled` enable it via pure CSS. Pattern documented in Storybook.
 
@@ -317,7 +373,23 @@ packages/components/src/dialog/
 
 ## 11. Icon System
 
-Abstract wrapper with an agnostic registry:
+Icons are **orthogonal to the design system.** `@websublime/line-icons` is a separate, optional icon library that shares the line://ui brand and naming conventions but is **not** one of the five design-system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`). This mirrors the Radix Themes / `@radix-ui/react-icons` split (PRD §6.1, §9.1).
+
+**Components consume icons via `<slot>`, not by importing an icon library** (Manifesto Law 4: composition over inheritance, slots over props for content). A `<line-button>` does not import `<line-icon>`; it exposes a `prefix` slot that the consumer fills with whatever icon element they prefer — `<line-icon>`, a Lucide SVG, a Phosphor component, an Iconoir tag, a raw inline `<svg>`, or anything else.
+
+```html
+<line-button>
+  <line-icon slot="prefix" name="check"></line-icon>
+  Save
+</line-button>
+
+<line-button>
+  <svg slot="prefix" viewBox="0 0 24 24"><!-- raw SVG --></svg>
+  Save
+</line-button>
+```
+
+**`<line-icon>` (when used) is an abstract wrapper with an agnostic registry:**
 
 ```html
 <line-icon name="check" library="phosphor"></line-icon>
@@ -325,16 +397,29 @@ Abstract wrapper with an agnostic registry:
 <line-icon src="/my-icons/custom.svg"></line-icon>
 ```
 
-- `line-icon` exposes a **registry** where the consumer registers icon libraries
-- Each library is a resolver: given a name, returns the SVG
-- Zero icons bundled in core — the consumer brings their own
-- Ready-to-go themes declare a default library and register the resolver automatically
+- `line-icon` exposes a **registry** where the consumer registers icon libraries.
+- Each library is a resolver: given a name, returns the SVG.
+- Zero icons bundled in `line-icons` core — the consumer brings their own resolver (Lucide, Phosphor, Iconoir, `@radix-ui/react-icons`, custom).
+- Dependency direction is one-way: `line-icons → line-tokens` is permitted (icons reuse icon-size / sizing tokens); the inverse is forbidden.
 
 ---
 
 ## 12. Bundle Splitting Rule
 
 > Sub-components of a family share a single entrypoint. Independently usable components have separate entrypoints. A component belongs to a family when it requires its parent to function. Components connected via `<slot>` are always separate entrypoints — slots imply independence.
+
+**Umbrella package, not per-component packages (Manifesto Law 6).** All components ship inside a single `@websublime/line-components` package with **one version and one changelog**. Each component family or independent component is exposed as a **subpath export** in `package.json` — `@websublime/line-components/button`, `@websublime/line-components/dialog`, etc. There is no central barrel that imports every component; the root `"."` export is intentionally minimal (types and shared utilities only). This is **not** a Lerna-style "one package per component" layout — the umbrella keeps a single source of truth while subpath exports preserve tree-shaking and bundle isolation.
+
+**Side-effect contract.** Each component file calls `customElements.define()` at module top — this is the **only** side-effect. Importing one component never imports or executes another. The umbrella package declares `"sideEffects"` listing exactly the per-component dist files, so bundlers can tree-shake unused subpaths even when consumers use the root specifier.
+
+```js
+// Consumer imports surgically — registers only what is used
+import '@websublime/line-components/button';
+import '@websublime/line-components/field';
+import '@websublime/line-components/input';
+```
+
+A button must not drag in a dialog.
 
 **Families (single entrypoint):**
 
@@ -353,7 +438,7 @@ Abstract wrapper with an agnostic registry:
 
 **Independent entrypoints:** `./button`, `./icon-button`, `./button-group`, `./split-button`, `./input`, `./password-input`, `./search-input`, `./date-input`, `./textarea`, `./field`, `./fieldset`, `./icon`, `./alert`, `./chip`, `./avatar`, `./avatar-group`, `./presence`, `./spinner`, `./editable`, etc.
 
-**The barrel export (`"."`) imports everything** — for consumers who prefer convenience over bundle size.
+**There is no convenience "import everything" barrel.** Consumers explicitly import the subpaths they need. The root `"."` export is intentionally minimal (types and shared utilities only), and `"sideEffects"` lists exactly the per-component dist files. This enforces bundle isolation by construction (Manifesto Law 6) — no consumer can accidentally drag in the full catalogue with a single import.
 
 ---
 
@@ -424,6 +509,15 @@ line://ui must neutralise ALL of these defaults so that every component renders 
 | **Shadow DOM isolation** | Document-level styles (body margins, heading sizes, link colours) do NOT leak into components | Automatic — Shadow DOM provides this |
 | **Internal CSS reset** | Native elements INSIDE shadow DOM (`<input>`, `<button>`, `<textarea>`) still receive browser defaults. Must be neutralised. | Modular reset sheets, each component imports only what it needs |
 | **State reflection** | Native pseudo-classes (`:disabled`, `:required`, `:checked`, `:focus-visible`, etc.) don't work on custom elements. Must be replicated via host attributes and `CustomStateSet`. | Zag.js machine + `LineElement` base class |
+
+**Two distinct reset systems** — these serve **different DOM contexts** and must not be confused:
+
+| System | Lives in | DOM context | When applied | Documented in |
+|---|---|---|---|---|
+| **Shadow-DOM internal resets** | `@websublime/line-core/styles/reset.*.css` (modular, per-element category) | Inside each component's shadow root, on the native elements it renders (`<input>`, `<button>`, etc.) | Automatic via `static styles` on each component | §14.3–§14.7 |
+| **Light-DOM consumer reset** | `@websublime/line-tokens/reset` (single file, opt-in subpath) | Outside components — on slotted content (`<h2 slot="title">`, `<p>`), or anywhere in the consumer's light DOM | Manual — consumer `@import`s it once at the top of their app CSS | §14.10 |
+
+The shadow-DOM resets are **internal infrastructure** — components carry them automatically, and a consumer never imports them. The light-DOM reset is an **optional convenience** for consumers who want a baseline on the surrounding page; consumers using their own reset (`normalize.css`, modern resets) skip it. Both apply zero opinion — they neutralise defaults without introducing colour, spacing, or typography.
 
 ### 14.3 Modular CSS Reset — Zero Overhead Per Component
 
@@ -1001,9 +1095,9 @@ Focus is the most visible cross-browser inconsistency. line://ui standardises it
 **Host element:** The machine determines when focus is visible (keyboard vs pointer). `data-focus-visible` is set on the host ONLY for keyboard focus. The theme or consumer styles it:
 
 ```css
-/* Theme default */
+/* Theme default — consumes a role token (resolves through the active accent hue) */
 line-input[data-focus-visible]::part(root) {
-  outline: 2px solid var(--line-blue-7);
+  outline: 2px solid var(--line-accent-border); /* step 7 of accent */
   outline-offset: 2px;
 }
 
@@ -1024,13 +1118,13 @@ Useful for Input, Textarea, SearchInput — clicking anywhere on the component f
 
 ### 14.10 Consumer-Side Reset for Slotted Content
 
-The theme package exports an optional `reset.css` for consumers who want to neutralise browser defaults on slotted (light-DOM) content. This is NOT applied automatically — consumers opt in by importing it.
+`@websublime/line-tokens` exports an optional `reset.css` for consumers who want to neutralise browser defaults on slotted (light-DOM) content. This is NOT applied automatically — consumers opt in by importing it. The reset lives in `line-tokens` (foundation layer L0) because it is a zero-opinion baseline applied **before** any tokens, palettes, or themes — see PRD §9.9 for the export contract.
 
 **Usage:**
 
 ```css
-@import '@websublime/line-theme/reset';
-/* or: <link rel="stylesheet" href="@websublime/line-theme/dist/reset.min.css"> */
+@import '@websublime/line-tokens/reset';
+/* or: <link rel="stylesheet" href="@websublime/line-tokens/dist/reset.min.css"> */
 ```
 
 All selectors use `:where()` for zero specificity, so consumer styles always win without needing to increase specificity.
@@ -1113,7 +1207,7 @@ The internal native element is always exposed as `::part(input)` so the consumer
 
 ```css
 line-input::part(input) {
-  caret-color: var(--line-primary-9);
+  caret-color: var(--line-accent-solid); /* role token; resolves through active accent hue */
 }
 ```
 

@@ -1,10 +1,19 @@
 # line://ui — Product Requirements Specification
 
-**Date:** 2026-03-12
+**Date:** 2026-05-19
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.7.0
+**Version:** 0.8.2
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
+
+---
+
+## Revision Notes
+
+- **v0.8.2 (2026-05-19) — Cross-doc gaps closed: `line-core` and `line-icons` exports documented in §6.2.** A linear cross-check against `docs/ARCHITECTURE.md` revealed that `@websublime/line-core/styles` (referenced 6 times across ARCHITECTURE §14.3–§14.7 + §14.2) was undocumented in the PRD's §6.2 build section. §6.2 now includes: the `styles/` directory in the core src tree (containing the 11 shadow-DOM modular reset sheets); a formal exports map for `@websublime/line-core` (with `.`, `./styles`, and `./mixins/*` subpaths); and a skeleton exports map for `@websublime/line-icons` (full surface finalised in Phase 1 when the icon registry is authored). The two-reset distinction (light-DOM consumer reset at `line-tokens/reset` vs shadow-DOM internal resets at `line-core/styles`) is explicitly cross-referenced. No design changes — pure documentation completeness.
+- **v0.8.1 (2026-05-19) — `line-tokens` scope clarified to 18 families (11 primitive + 7 decorative) + reset.** The Phase 0 `line-tokens` package now ships: **11 primitive families** (typography, sizing, shadows, easings, z-index, opacity, motion, radii, border-width, focus-ring, breakpoints) — the essentials any consumer needs — and **7 decorative families** (aspects, animations, gradients, masks, layouts, highlights, svg) — optional and importable individually via subpath. A `./reset` subpath ships zero-opinion browser-defaults neutralisation, applied before any family. Colour-adjacent decorative families (gradients, highlights, svg) are **structural-only** in v0.8 — they reference palette tokens from `line-colors` rather than declaring absolute colour values, preserving Manifesto Law 10 (cross-layer separation). The v0.7 `colors-absolute` family is **removed**; consumers needing black/white absolutes use role-level `--line-{role}-contrast` tokens, palette extremes (`--line-gray-1` / `--line-gray-12`), or hardcoded values. See §9.9 for the full export contract.
+- **v0.8.0 (2026-05-19) — Design system realigned to layered package model (5 packages), attribute-based multi-colour theming, Radix-fiel role separation.** The previously planned monolithic `@websublime/line-theme` is **replaced** by five separate packages: `@websublime/line-tokens`, `@websublime/line-colors`, `@websublime/line-schemas`, `@websublime/line-themes`, and `@websublime/line-utils`. Theme switching moves from class-based single-colour (`.line-schema-X`) to attribute-based independent role selection (`data-accent="X"` and `data-gray="Y"`). Palettes scale to 31 hues (Radix Colors 3.x). Semantic colours (`success`, `warning`, `danger`, `info`) are fixed at the root and no longer swappable per theme. The previous CSS-based `schema` concept is replaced by TS contracts (Zod + types) in `line-schemas`; CSS role mappings live in `line-themes`. Light/dark continues to live inside palettes via `light-dark()`. See §9 for full detail.
+- **v0.7.0 (2026-03-12) — Branding refactor + 28-palette theme system + foundation tokens + semantic aliases + contrast tokens** (superseded by v0.8.0 in §9; pre-v0.8.0 history retained for traceability).
 
 ---
 
@@ -31,10 +40,10 @@ line://ui is a headless UI component library built as native Web Components. It 
 | Accessibility | WCAG 2.1 AA via Zag.js | WCAG 2.1 AA (mature) | WCAG 2.1 AA (Adobe standard) | WCAG 2.1 AA+ (core differentiator) | WCAG 2.1 AA (Microsoft standard) |
 | Component Count | 131 (planned) | ~90+ (shipped) | ~40-50 | ~40+ | ~60+ |
 | Ecosystem | Pre-launch | 20k+ weekly downloads | Enterprise (Adobe products) | Enterprise (ING banking) | Enterprise (Microsoft Fluent) |
-| Theming | Headless default; optional 28-palette theme package | 30+ built-in themes | Adobe Spectrum theme | No built-in themes | Fluent Design theme |
+| Theming | Headless default; optional 5-package layered design system (31 Radix hues, attribute-based) | 30+ built-in themes | Adobe Spectrum theme | No built-in themes | Fluent Design theme |
 | SSR/SSG | Investigation planned post-Phase 1 | Partial (Astro, 11ty) | Limited | Limited | Limited |
 
-A detailed competitive component-by-component gap analysis is available in [`COMPETITIVE-COMPONENT-ANALYSIS.md`](./COMPETITIVE-COMPONENT-ANALYSIS.md).
+A detailed competitive component-by-component gap analysis is available in [`COMPETITIVE-COMPONENT-ANALYSIS.md`](./COMPETITIVE-COMPONENT-ANALYSIS.md) (to be created in Phase 0).
 
 #### Framework-Specific Headless Libraries
 
@@ -81,7 +90,7 @@ The headless-first approach is validated across multiple framework ecosystems, b
 ### 1.4 Core Principles
 
 1. **Headless-first** — Components carry zero visual opinion. All styling is the consumer's responsibility via `::part()` and `--line-*` custom properties.
-2. **Theme as accelerator** — The theme package provides ready-to-go themes. Import one and everything works. Never mandatory.
+2. **Layered design system as accelerator** — Tokens, colours, schemas, themes, and utils ship as five separate packages with a strict downward dependency. Consumers pick the level of opinion they want: a project can import tokens alone, palettes alone, or the full design system. Never mandatory. See §9.
 3. **Composition over configuration** — Components connect via `<slot>`, not props. A Field does not import an Input — it accepts any form control via slot. A DatePicker accepts any trigger via slot. Independence is the default.
 4. **HTMX as exploration** — Web Components are browser-native. A `<line-dialog>` works in plain HTML served by any backend. HTMX adds server-driven interactivity. First-class support to be explored and validated.
 5. **Inspector as dev tooling** — Feature flag via localStorage. When active, every component exposes metadata: version, docs link, scope, QA tags. Useful for QA teams and integrating developers.
@@ -118,7 +127,7 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 | SSR/SSG | Out of scope for Phase 0. Investigation planned post-Phase 1 for Astro, Nuxt, Next.js compatibility |
 | CDN usage | CDN distribution via unpkg and jsdelivr from Phase 1 onwards. ESM builds are CDN-compatible by default via the package.json `exports` field |
 | i18n — RTL | Supported natively via `dir` attribute |
-| i18n — Localization | Localization of component labels (e.g., "Close", "Dismiss") is the consumer's responsibility via slots and attributes |
+| i18n — Localisation | Localisation of component labels (e.g., "Close", "Dismiss") is the consumer's responsibility via slots and attributes |
 | Touch & pointer | All interactive components support both pointer and touch events. Zag.js handles this natively for pre-built machines; custom machines must follow the same pattern |
 | Error handling | Components fail gracefully: if a Zag.js machine fails to initialise, the component renders in a static fallback state. No JavaScript errors thrown to the consumer |
 | Progressive enhancement | Components that wrap native elements (Input, Textarea, Select) remain functional without JavaScript via light DOM fallback where feasible |
@@ -134,9 +143,12 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 | Lint & Format | **Biome** (replaces ESLint + Prettier) |
 | Component Framework | **Lit 3+** (latest stable) |
 | Component Logic | **Zag.js** (latest stable) |
-| Foundation Tokens | Explicitly defined in `tokens.css` (sizes, shadows, easings, typography, z-index, opacity, motion, radius, border-width, focus-ring) — all `--line-*` prefixed |
-| Color Tokens | **Custom 12-level semantic system** (28 palettes, light/dark mode) |
-| CSS Processing | **PostCSS** (latest stable, with updated plugins) |
+| Foundation Tokens | `@websublime/line-tokens` — 18 families + browser-defaults reset. **Primitives (11):** typography, sizing, shadows, easings, z-index, opacity, motion, radii, border-width, focus-ring, breakpoints. **Decorative (7):** aspects, animations, gradients, masks, layouts, highlights, svg. All `--line-*` prefixed. |
+| Colour Palettes | `@websublime/line-colors` — Radix Colors 3.x (31 hues × 12 steps), light/dark via CSS `light-dark()`, sourced from `@radix-ui/colors` npm |
+| Schemas (TS) | `@websublime/line-schemas` — TS types + Zod validators (`HUES`, `ACCENT_HUES`, `GRAY_HUES`, `SEMANTIC_MAP`) |
+| Role Mappings | `@websublime/line-themes` — CSS role mappings (`--line-accent-*`, `--line-gray-*`, semantics, aliases, auto-pair defaults) |
+| Design System Utils | `@websublime/line-utils` — helpers (contrast, mix, etc.) |
+| CSS Processing | **PostCSS** (latest stable: `postcss-import`, `postcss-nested`, `postcss-preset-env`, `cssnano`) — handles the design system CSS pipeline. Vite/Rolldown still handles component bundling. |
 | All dependencies | **Latest stable versions** |
 
 ### 2.1 Stack Rationale
@@ -149,9 +161,15 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 
 **Zag.js** — Production-ready state machines for 50+ UI patterns. Framework-agnostic with official Lit adapter (`@zag-js/element`). WAI-ARIA accessibility built-in. Keyboard navigation, focus management, all solved.
 
-**Foundation Tokens** — All foundation tokens are explicitly defined in `tokens/` (a directory of per-family CSS files with a barrel `tokens.css`) under the `--line-*` prefix. Open Props served as a design reference for initial values but is NOT used at runtime or build time. Core families provide ~299 tokens (typography, sizing, borders, shadows, easing, z-index, aspects, durations, opacity, focus-ring, absolute colors). Decorative families (animations, gradients, masks, layouts, highlights, SVG) add ~114 more. All ~413 tokens are owned, versioned, and documented within the theme package.
+**Foundation Tokens (`line-tokens`)** — Non-colour primitives, split into two tiers (18 families total) plus a baseline reset:
 
-**Custom Color System** — 12 semantic levels per palette (background to high-contrast), inspired by Radix Colors. The heart of the theming system with 28 palettes supporting light/dark mode.
+- **Primitive families (11):** typography, sizing, shadows, easings, z-index, opacity, motion, radii, border-width, focus-ring, breakpoints. Essentials any application needs.
+- **Decorative families (7):** aspects (aspect-ratio tokens), animations (pre-built keyframes), gradients (structural — angles/stops/positions, no colour values), masks (CSS mask shapes), layouts (composition utilities), highlights (`::selection` and similar), svg (SVG structural tokens — stroke widths, mitres, etc., no colour values). Optional surface — consumers import only what they need via subpath.
+- **`./reset` subpath:** zero-opinion browser-defaults neutralisation, applied before any family. Consumers may skip if they already use their own reset.
+
+All `--line-*` prefixed. Token names remain singular (`--line-radius-1`, `--line-size-3`); the plural form (`radii`, `sizing`) is the family/export name only. Decorative families that historically reference colour values (e.g., gradients) are **restructured** so their colour terms come from `line-colors` palette tokens, not from absolute values — preserving the Manifesto Law 10 cross-layer separation. The previous `colors-absolute.css` family from v0.7 is **removed** for this reason; consumers needing black/white absolutes use the relevant Radix scale (e.g., `--line-gray-1` / `--line-gray-12`). Open Props served as a design reference for initial values but is NOT used at runtime or build time. Owned, versioned, and shipped as its own leaf package.
+
+**Colour System (`line-colors` + `line-schemas` + `line-themes`)** — Radix-fiel. 31 hues x 12 steps (Radix Colors 3.x). `line-colors` ships pure palette CSS (`--line-amber-1..12`, etc.), sourced from `@radix-ui/colors` npm but committed into the repo so CI does not regenerate every build. `line-schemas` is the TS contract layer (Zod + types) declaring `HUES`, `ACCENT_HUES`, `GRAY_HUES`, and `SEMANTIC_MAP`. `line-themes` ships role-mapping CSS (`--line-accent-*`, `--line-gray-*`, semantic `--line-success/warning/danger/info-*`, named aliases, and the `[data-accent]` / `[data-gray]` selectors). Light/dark lives inside the palette via CSS `light-dark()` — themes are mono-declaration.
 
 ---
 
@@ -163,20 +181,22 @@ Key architectural principles referenced throughout this document:
 
 | Principle | Summary | Reference |
 |-----------|---------|-----------|
-| Composition via slot | Components connect via `<slot>`, not imports. Field does not import Input. Independence is the default. | ARCHITECTURE §2 |
-| Slot vs Internal Part rule | Consumer controls content → slot. Component coordinates state → internal part. | ARCHITECTURE §3 |
-| Dual-layer CSS | `--line-*` custom properties for token adjustments. `::part()` for total visual control. | ARCHITECTURE §4 |
-| Three tiers | Pre-built (Zag.js machine), Custom (`createMachine`), Static (no machine). | ARCHITECTURE §8 |
-| Form association | Opt-in `formAssociated` mixin via `ElementInternals`. Native `<form>` participation. | ARCHITECTURE §7 |
-| Bundle splitting | Families share one entrypoint. Independent components get separate entrypoints. Slot = independence. | ARCHITECTURE §12 |
-| Field as orchestrator | Connects label/hint/error to any control via slot + events. Does not import controls. | ARCHITECTURE §9 |
-| Parts naming | Shared vocabulary across components: `root`, `trigger`, `content`, `overlay`, etc. | ARCHITECTURE §5 |
+| Composition via slot | Components connect via `<slot>`, not imports. Field does not import Input. Independence is the default. | [ARCHITECTURE → Composition Model](./ARCHITECTURE.md#2-composition-model) |
+| Slot vs Internal Part rule | Consumer controls content → slot. Component coordinates state → internal part. | [ARCHITECTURE → Slot vs Internal Part — Decision Rule](./ARCHITECTURE.md#3-slot-vs-internal-part--decision-rule) |
+| Dual-layer CSS | `--line-*` custom properties for token adjustments. `::part()` for total visual control. | [ARCHITECTURE → CSS Customisation — Dual Layer](./ARCHITECTURE.md#4-css-customisation--dual-layer) |
+| Three tiers | Pre-built (Zag.js machine), Custom (`createMachine`), Static (no machine). | [ARCHITECTURE → State Management — Unified via Zag.js](./ARCHITECTURE.md#8-state-management--unified-via-zagjs) |
+| Form association | Opt-in `formAssociated` mixin via `ElementInternals`. Native `<form>` participation. | [ARCHITECTURE → Form Association Strategy](./ARCHITECTURE.md#7-form-association-strategy) |
+| Bundle splitting | Families share one entrypoint. Independent components get separate entrypoints. Slot = independence. | [ARCHITECTURE → Bundle Splitting Rule](./ARCHITECTURE.md#12-bundle-splitting-rule) |
+| Field as orchestrator | Connects label/hint/error to any control via slot + events. Does not import controls. | [ARCHITECTURE → Field Architecture](./ARCHITECTURE.md#9-field-architecture) |
+| Parts naming | Shared vocabulary across components: `root`, `trigger`, `content`, `overlay`, etc. | [ARCHITECTURE → CSS Parts Naming Convention](./ARCHITECTURE.md#5-css-parts-naming-convention) |
 
 ---
 
 ## 4. Component Catalogue
 
-Each component has a product-level description below and a detailed technical specification in `docs/specs/`. Specs follow the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md).
+Each component has a product-level description below and a detailed technical specification in `docs/specs/`. Specs follow the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md) (to be created in Phase 0).
+
+> **Note on spec links:** Spec links below point to files that will be created per phase as each component is approved (see §7 Roadmap and §8 Spec Lifecycle). Until then, the links will 404; specs are authored just-in-time before each phase begins.
 
 ### 4.1 Primitives Base
 
@@ -194,7 +214,7 @@ Each component has a product-level description below and a detailed technical sp
 | Separator | Static | Visual divider between content sections. Horizontal or vertical | [spec](./specs/0011-separator.md) |
 | Visually Hidden | Static | Accessibility utility — hides content visually, available to screen readers | [spec](./specs/0012-visually-hidden.md) |
 | Portal | Static | Renders child content outside its DOM parent | [spec](./specs/0013-portal.md) |
-| Icon | Static | Framework-agnostic icon wrapper with pluggable library registry | [spec](./specs/0014-icon.md) |
+| Icon | Static | Framework-agnostic icon wrapper with pluggable library registry. Icons are delivered via slot; `@websublime/line-icons` is the recommended default but any icon library (Lucide, Phosphor, Iconoir, etc.) is supported | [spec](./specs/0014-icon.md) |
 | Kbd / Shortcut | Static | Keyboard shortcut display with OS-aware rendering (Cmd vs Ctrl) | [spec](./specs/0015-kbd.md) |
 | Skeleton | Static | Placeholder loading indicator with pulse or wave animation | [spec](./specs/0016-skeleton.md) |
 | Presence | Pre-built | Controls mount/unmount animations for enter/exit transitions | [spec](./specs/0017-presence.md) |
@@ -299,7 +319,7 @@ Each component has a product-level description below and a detailed technical sp
 | Content Area | Static | Scrollable main content with max-width | [spec](./specs/0086-content-area.md) |
 | Panel | Custom | Collapsible container with header/body/footer | [spec](./specs/0087-panel.md) |
 | Splitter | Pre-built | Resizable panel divider | [spec](./specs/0088-splitter.md) |
-| Floating Panel | Pre-built | Draggable window with minimize/maximize/snap | [spec](./specs/0089-floating-panel.md) |
+| Floating Panel | Pre-built | Draggable window with minimise/maximise/snap | [spec](./specs/0089-floating-panel.md) |
 
 ### 4.8 Desktop-Inspired
 
@@ -421,11 +441,11 @@ The `@custom-elements-manifest/analyzer` analyses Lit components and generates t
 Storybook
 ├── Getting Started
 │   ├── Installation
-│   ├── Theming (how to apply themes)
+│   ├── Theming (data-accent / data-gray attribute approach)
 │   ├── Customisation (parts & custom properties)
 │   └── Icon Setup (registering icon libraries)
 ├── Foundation
-│   ├── Colours (palettes + visual schemas)
+│   ├── Colours (31 Radix hues + role mappings)
 │   ├── Typography (foundation tokens)
 │   ├── Spacing & Sizing
 │   ├── Shadows & Elevation
@@ -473,16 +493,24 @@ Storybook
 
 #### 5.2.1 Design System Testing
 
-The theme package requires additional testing beyond component-level tests to ensure token integrity, accessibility compliance, and visual correctness across all palettes and modes.
+The design system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`) require additional testing beyond component-level tests to ensure token integrity, accessibility compliance, and visual correctness across all hues and modes.
 
 | Test Category | Tool / Approach | What it validates |
 |---------------|----------------|-------------------|
-| Build-time token validation | PostCSS plugin or build script | Cross-references all `var()` usage in source CSS against declared tokens in `tokens.css`, `colors/*.css`, `schemas/*.css`, and `aliases.css`. Fails the build if any token is referenced but undefined. |
-| Build-time contrast validation | Automated WCAG AA checker | Verifies 4.5:1 minimum contrast for all 28 palettes × semantic pairs (solid-background vs solid-text, background vs high-contrast, etc.) × light/dark mode. Runs against generated CSS values. |
-| Token parity tests | Bun test assertions | Verifies that every palette token uses `light-dark()` with both a light and dark value in a single declaration. With `light-dark()`, parity is structural — each token is one declaration containing both mode values. The contrast token (`--line-{palette}-contrast`) is an exception: it is a single static value, not a `light-dark()` pair. |
-| CSS snapshot tests | Bun test + snapshot | Generates and snapshots the compiled CSS output per palette/theme combination. Detects unintended changes to token values, selector specificity, or output structure. |
-| Visual regression (showcase app) | Playwright screenshots in CI | Captures screenshots of the `apps/showcase/` pages for each palette (28) × mode (light/dark) = 56 screenshots. Diffs against baseline to detect visual regressions. |
+| Build-time token validation | PostCSS plugin or build script | Cross-references all `var()` usage in source CSS against declared tokens in `line-tokens`, `line-colors/src/*.css`, and `line-themes/src/**/*.css`. Fails the build if any token is referenced but undefined. |
+| Build-time contrast validation | Automated WCAG AA checker | Verifies 4.5:1 minimum contrast for the 31 hues x relevant role pairs (solid step 9 vs contrast text, background vs high-contrast text, etc.) x light/dark mode. Runs against generated CSS values. |
+| Schema validation tests | Bun test + Zod | Verifies that `HUES`, `ACCENT_HUES`, `GRAY_HUES`, and `SEMANTIC_MAP` in `line-schemas` parse cleanly and enumerations match the CSS files generated in `line-themes`. The schemas are the source-of-truth; CI fails on drift. |
+| Token parity tests | Bun test assertions | Verifies that every palette token uses `light-dark()` with both a light and dark value in a single declaration. The contrast tokens are single static values, not `light-dark()` pairs. |
+| Auto-pair default tests | Bun test assertions | Verifies that each `[data-accent="X"]:not([data-gray])` selector resolves to the documented auto-pair gray (e.g., `data-accent="indigo"` -> slate; `data-accent="amber"` -> sand). Drift fails CI. |
+| CSS snapshot tests | Bun test + snapshot | Generates and snapshots the compiled CSS output per hue / role combination. Detects unintended changes to token values, selector specificity, or output structure. |
+| Visual regression | Playwright screenshots in CI | Captures screenshots across the `(accent, gray, mode)` combination space. The rendering surface (Storybook stories, a sub-route in one of the apps, or another mechanism) is a spec-level decision; the PRD contract is the coverage definition below, not the surface. Diffs against baseline to detect visual regressions. The exact strategy (full Cartesian, sampling, per-package opt-in, tiered, on-touch) is a Phase 0 spec-level decision, not a PRD-level mandate. |
 | `@property` registration with fallbacks | Development-time detection | Registers key tokens via CSS `@property` with obvious fallback values (e.g., `hotpink`) during development. Any `hotpink` visible in the UI indicates an undefined token, making missing tokens immediately visible without build tooling. |
+
+**Visual regression coverage contract.** The PRD locks in *what* must be covered, not *how*. The full strategy — full Cartesian vs. sampling vs. per-package opt-in vs. tiered vs. on-touch — is defined in the Phase 0 design-system spec.
+
+- Every supported `(accent, gray, mode)` combination must have a regression baseline.
+- No visual bug in **default-paired combinations** (each accent with its Radix auto-pair gray per §9.5, in both light and dark mode) may reach `main`.
+- **Off-pair combinations** (a non-auto-paired gray with a given accent) must be covered, but the frequency and selection mechanism is a spec-level decision.
 
 ### 5.3 Public Site
 
@@ -499,7 +527,7 @@ The theme package requires additional testing beyond component-level tests to en
 | Landing page | Value proposition, hero, features |
 | Docs | Per-component documentation with curated examples |
 | Getting started | Installation, quick start, theming |
-| Theming showcase | Interactive theme browser (`apps/showcase/`) |
+| Theming showcase | Interactive theme browser section on the site |
 | Changelog | Release notes (auto-generated via Changesets) |
 | Storybook link | Link to deployed Storybook |
 
@@ -515,83 +543,125 @@ The theme package requires additional testing beyond component-level tests to en
 
 ### 6.1 Monorepo Structure
 
-#### Current Structure
+The layout is **8 published packages + 2 apps**: 5 design-system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`) and 3 runtime packages (`line-core`, `line-components`, `line-icons`). The `site` and `storybook` workspaces are **apps**, not libraries — they live under `apps/` and are not published to npm.
 
 ```
-packages/
-├── core/           ← Base class, mixins, utilities, helpers
-└── theme/          ← Ready-to-go themes + colour tokens
+packages/                                 ← 8 published packages
+├── core/             ← Base class + Zag adapter + inspector + mixins
+├── icons/            ← Icon registry + resolvers for popular libraries
+├── tokens/           ← L0 — non-colour: 11 primitive families + 7 decorative families + reset (see §9.1 / §9.9)
+├── colors/           ← L1 — Radix palette CSS (--line-amber-1..12, etc.)
+├── schemas/          ← L2 — TS types + Zod validators (HUES, ACCENT_HUES, GRAY_HUES, SEMANTIC_MAP)
+├── themes/           ← L3 — CSS role mappings + semantics + aliases + auto-pair defaults
+├── utils/            ← Design system helpers (contrast, mix, etc.)
+└── components/       ← Umbrella package: all components, subpath-exported
+
+apps/                                     ← 2 apps, not published
+├── site/             ← Astro docs site (Cloudflare Pages)
+└── storybook/        ← Storybook config + stories (GitHub Pages)
 ```
 
-**Published packages (current):**
+**Published packages (target — 8):**
 
-| Package | npm name | Version |
-|---------|----------|---------|
-| core | `@websublime/vitamina-core` | 0.2.0 |
-| theme | `@websublime/vitamina-theme` | 0.6.0 |
+| Package | npm name | Layer | Part of design system? |
+|---------|----------|-------|------------------------|
+| core | `@websublime/line-core` | runtime | No (runtime base) |
+| components | `@websublime/line-components` | runtime | No (consumes the design system) |
+| tokens | `@websublime/line-tokens` | L0 | Yes |
+| colors | `@websublime/line-colors` | L1 | Yes |
+| schemas | `@websublime/line-schemas` | L2 | Yes |
+| themes | `@websublime/line-themes` | L3 | Yes |
+| utils | `@websublime/line-utils` | helper | Yes |
+| icons | `@websublime/line-icons` | runtime | **No — optional icon library, slot-delivered. Mirrors the Radix Themes / `@radix-ui/react-icons` split.** |
 
-#### Target Structure — Phase 0
+**Apps (not published):**
 
-```
-packages/
-├── core/           ← Base class, mixins, utilities, helpers
-├── components/     ← All UI components (line-button, line-dialog, etc.)
-├── theme/          ← Ready-to-go themes + colour tokens
-├── icons/          ← Icon registry + resolvers for popular libraries
-├── site/           ← Astro site (not published to npm)
-└── storybook/      ← Storybook config + stories (not published to npm)
-```
+| App | Location | Purpose | Deploy target |
+|-----|----------|---------|---------------|
+| site | `apps/site/` | Astro docs site, dogfoods line://ui | Cloudflare Pages (`line-ui.websublime.com`) |
+| storybook | `apps/storybook/` | Stories playground, CEM-driven API docs | GitHub Pages |
 
-**Published packages (target):**
+**`line-components` is a single umbrella package, not per-component packages.** All components ship inside one `@websublime/line-components` package with **one version and one changelog**. Each component is independently importable via a **subpath export** (`@websublime/line-components/button`, `@websublime/line-components/dialog`, etc.). Per Manifesto Law 6 (bundle isolation), component files are side-effecting only by `customElements.define()` at module top — importing one component never executes another. A central barrel that imports every component is explicitly forbidden. Families share a subpath only when their slots make them inseparable. This is **not** a Lerna-style "one package per component" layout; the umbrella keeps a single source of truth, while subpath exports preserve tree-shaking and bundle isolation.
 
-| Package | npm name |
-|---------|----------|
-| core | `@websublime/line-core` |
-| components | `@websublime/line-components` |
-| theme | `@websublime/line-theme` |
-| icons | `@websublime/line-icons` |
+**Dependency rules (Manifesto Law 10):** `themes -> colors + schemas`; `utils -> schemas`. `tokens`, `colors`, `schemas` are leaves. No cross-layer leakage (palette values inside themes, semantic CSS inside tokens, runtime code inside CSS-only packages) is allowed.
 
-**Private packages:** `site`, `storybook` (not published).
+**`line-icons` position.** `@websublime/line-icons` is **not** part of the design system. The design system is exactly the five packages `line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`. `line-icons` is a separate, optional icon library that shares the line://ui brand and naming conventions (`line-*` prefix). Components that need icons expose **slots** (per Manifesto Law 4: composition over inheritance, slots over props); consumers may fill those slots with `line-icons` or any other icon library (Lucide, Phosphor, Iconoir, `@radix-ui/react-icons`, etc.). Dependency direction is one-way: `line-icons -> line-tokens` is permitted (icons reuse icon-size / sizing tokens); the inverse is forbidden.
+
+**Workspace tooling:** Bun workspaces (`bun.lock`, `bunfig.toml`, `bun --filter` build script already in place). Versioning via Changesets (published packages only). Package naming `@websublime/line-*`.
+
+**Apps (private workspaces):** `apps/site`, `apps/storybook` — built and deployed by CI, never published to npm.
 
 ### 6.2 Build — Vite 7+ with Rolldown
 
-**Core package:**
+**Core package (`@websublime/line-core`):**
 
 ```
 src/ → Vite library mode → dist/
-  ├── index.js          ← Main barrel
+  ├── index.js          ← Main barrel (LineElement + mixins + utilities)
   ├── line-element.js   ← Base class
   ├── mixins/           ← Individual mixins (inspector, metadata, direction, form-associated)
   ├── utilities/        ← Helpers, decorators
+  ├── styles/           ← Shadow-DOM internal reset sheets (reset.common.css, reset.input.css, reset.button.css, reset.textarea.css, reset.select.css, reset.range.css, reset.progress.css, reset.summary.css, reset.fieldset.css, reset.table.css, reset.scrollbar.css) exposed as singleton `CSSStyleSheet` objects via the `./styles` subpath — see [ARCHITECTURE.md §14.3–§14.7](./ARCHITECTURE.md#14-browser-defaults-neutralisation)
   └── types/            ← .d.ts
 ```
 
-**Components package — Tree-shakeable per-component:**
-
-Each component family or independent component is a separate entrypoint in `package.json` (see §3.13 Bundle Splitting Rule):
+**Core exports map (`@websublime/line-core`):**
 
 ```json
 {
   "exports": {
-    ".": "./dist/index.js",
-    "./button": "./dist/button/index.js",
-    "./icon-button": "./dist/icon-button/index.js",
-    "./button-group": "./dist/button-group/index.js",
-    "./input": "./dist/input/index.js",
-    "./password-input": "./dist/password-input/index.js",
-    "./search-input": "./dist/search-input/index.js",
-    "./date-input": "./dist/date-input/index.js",
-    "./field": "./dist/field/index.js",
-    "./fieldset": "./dist/fieldset/index.js",
-    "./dialog": "./dist/dialog/index.js",
-    "./tabs": "./dist/tabs/index.js",
-    "./alert": "./dist/alert/index.js",
-    "./chip": "./dist/chip/index.js",
-    "./avatar": "./dist/avatar/index.js",
-    "./avatar-group": "./dist/avatar-group/index.js"
+    ".":           { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./styles":    { "types": "./dist/styles/index.d.ts", "import": "./dist/styles/index.js" },
+    "./mixins/*":  { "types": "./dist/mixins/*.d.ts", "import": "./dist/mixins/*.js" }
   }
 }
 ```
+
+The `./styles` subpath is consumed exclusively by components (each component imports only the reset sheets it needs via `static styles`). Consumers do **not** import `@websublime/line-core/styles` directly — these are shadow-DOM internal resets, distinct from the consumer-side light-DOM reset at `@websublime/line-tokens/reset` (see §9.9 and ARCHITECTURE §14.2 for the two-reset distinction).
+
+**Icons package (`@websublime/line-icons`):**
+
+Skeleton exports map (full surface is finalised in Phase 1 when the icon registry is authored — see PRD §7 Phase 0/1 boundaries and ARCHITECTURE §11):
+
+```json
+{
+  "exports": {
+    ".":           { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
+  }
+}
+```
+
+The icons package consumes `@websublime/line-tokens` for icon-size and stroke-width tokens but exposes no CSS itself. Icon resolvers (Lucide, Phosphor, Iconoir, custom) are registered by the consumer at runtime; the registry API will likely add subpaths such as `./registry` and `./resolvers/*` in Phase 1.
+
+**Components umbrella package — subpath exports per component:**
+
+`@websublime/line-components` is a single umbrella package. Each component family or independent component is exposed as a **subpath export** in `package.json` (see [ARCHITECTURE → Bundle Splitting Rule](./ARCHITECTURE.md#12-bundle-splitting-rule)). There is no central barrel that imports every component; the root `"."` export is intentionally minimal (types and shared utilities only).
+
+```json
+{
+  "exports": {
+    "./button":         "./dist/button.js",
+    "./icon-button":    "./dist/icon-button.js",
+    "./button-group":   "./dist/button-group.js",
+    "./input":          "./dist/input.js",
+    "./password-input": "./dist/password-input.js",
+    "./search-input":   "./dist/search-input.js",
+    "./date-input":     "./dist/date-input.js",
+    "./field":          "./dist/field.js",
+    "./fieldset":       "./dist/fieldset.js",
+    "./dialog":         "./dist/dialog.js",
+    "./tabs":           "./dist/tabs.js",
+    "./alert":          "./dist/alert.js",
+    "./chip":           "./dist/chip.js",
+    "./avatar":         "./dist/avatar.js",
+    "./avatar-group":   "./dist/avatar-group.js"
+  }
+}
+```
+
+Each subpath entry may carry type-condition variants (`types`, `import`, `default`) where dual-publishing or `.d.ts` co-location requires it.
+
+**Side-effect contract.** Each component file calls `customElements.define()` at module top — this is the only side-effect. Importing one component never imports another. The umbrella package therefore declares `"sideEffects"` listing exactly the per-component dist files, so bundlers can tree-shake unused subpaths even when consumers use the root specifier.
 
 Consumer imports surgically:
 
@@ -601,19 +671,25 @@ import '@websublime/line-components/field'
 import '@websublime/line-components/input'
 ```
 
-**Theme package:**
+**Design system packages (5 packages, layered):**
 
-Individual CSS files per theme + complete bundle:
+Each package ships its own granular exports. Example (`@websublime/line-themes`):
 
 ```json
 {
+  "name": "@websublime/line-themes",
   "exports": {
-    ".": "./dist/line.css",
-    "./themes/blue": "./dist/themes/blue.css",
-    "./themes/green": "./dist/themes/green.css"
+    ".":                "./dist/index.css",
+    "./accent/*":       "./dist/accent/*.css",
+    "./gray/*":         "./dist/gray/*.css",
+    "./semantics":      "./dist/semantics.css",
+    "./aliases":        "./dist/aliases.css",
+    "./defaults":       "./dist/defaults.css"
   }
 }
 ```
+
+`@websublime/line-colors` and `@websublime/line-tokens` follow the same per-hue / per-family granular pattern. `@websublime/line-schemas` ships TS only (no CSS). `@websublime/line-utils` ships TS helpers. See §9 for the full export contract.
 
 ### 6.3 Types
 
@@ -693,31 +769,40 @@ Workflows:
 
 | Task | Detail | Status | Priority |
 |------|--------|--------|----------|
-| Review & refactor Inspector | Existing component in core. Feature flag via localStorage, outline on hover, version display. Review current implementation, enhance with: docs/storybook link, exposed CSS parts, slot usage, optional metadata panel. Inspired by Bit.dev's original component inspection concept — unique differentiator in the Web Components space | | **P0** |
-| Migrate to Bun | Runtime + workspaces, remove pnpm | Review pending | |
-| Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome | Review pending | |
-| Update all dependencies | Lit 3+, Vite 7+ with Rolldown, PostCSS latest | Review pending | |
-| Refactor LineElement | Base class with Zag.js lifecycle, mixins (inspector, metadata, direction, form-associated). Zag.js integration is a future investigation — the `@zag-js/element` adapter maturity is a technical risk to be validated | | |
-| FormAssociated mixin | Implement opt-in `formAssociated` mixin in LineElement using `ElementInternals`. Provides: `setFormValue()`, `reportValidity()`, `checkValidity()`, `:invalid`/`:valid` states | | |
-| Restructure monorepo | 6 packages: core, components, theme, icons, site, storybook | | |
-| Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer | | |
-| Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright | | |
-| Setup CI/CD | GitHub Actions: checks, release, snapshot-deploy, snapshot-version | | |
-| Define RC pipeline | Release candidate pipeline for `next` branch | | |
-| npm scope | Configure `@websublime/line-*` on npm | | |
-| Theme package v2 | Define foundation tokens explicitly in `tokens.css` + maintain 12-level colour system | | |
-| Icon registry | Agnostic resolver system | | |
-| Base documentation | Getting started, theming guide, customisation guide in Storybook | | |
-| Validate HTMX integration | Spike: validate `LineHtmxElement` adapter with `hx-*` forwarding, server-driven state, swap-aware lifecycle. Determine if exploratory or committed for Phase 1 | | P2 |
+| Review & refactor Inspector | Existing component in core. Feature flag via localStorage, outline on hover, version display. Review current implementation, enhance with: docs/storybook link, exposed CSS parts, slot usage, optional metadata panel. Inspired by Bit.dev's original component inspection concept — unique differentiator in the Web Components space | Todo | **P0** |
+| Migrate to Bun | Runtime + workspaces, remove pnpm | Review pending | P0 |
+| Migrate to Biome | Remove ESLint + Prettier + all plugins, configure Biome | Review pending | P0 |
+| Update all dependencies | Lit 3+, Vite 7+ with Rolldown, PostCSS latest | Review pending | P0 |
+| Refactor LineElement | Base class with Zag.js lifecycle (via the `@zag-js/element` adapter) and mixins (inspector, metadata, direction, form-associated). | Todo | P0 |
+| FormAssociated mixin | Implement opt-in `formAssociated` mixin in LineElement using `ElementInternals`. Provides: `setFormValue()`, `reportValidity()`, `checkValidity()`, `:invalid`/`:valid` states | Todo | P0 |
+| Restructure monorepo | 8 published packages + 2 apps. Packages: core, components (umbrella with per-component subpath exports), tokens, colors, schemas, themes, utils, icons (5 of which are the layered design system). Apps (not published): `apps/site`, `apps/storybook`. | Todo | P0 |
+| Setup Storybook 8 | `@storybook/web-components-vite` + CEM analyzer | Todo | P1 |
+| Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright | Todo | P1 |
+| Setup CI/CD | GitHub Actions: checks, release, snapshot-deploy, snapshot-version | Todo | P1 |
+| Define RC pipeline | Release candidate pipeline for `next` branch | Todo | P1 |
+| npm scope | Configure `@websublime/line-*` on npm | Todo | P0 |
+| Design system v2 (5 packages) | Author the 5-package layered design system from scratch under `packages/`: `line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`. Source palettes from `@radix-ui/colors` (31 hues x 12 steps). Build pipeline (PostCSS) generates `themes/src/accent/*.css` and `themes/src/gray/*.css` mechanically from the TS lists in `line-schemas`. Commit generated CSS into `line-colors/src/`. | Todo | P0 |
+| Icon registry | Agnostic resolver system | Todo | P1 |
+| Base documentation | Getting started, theming guide, customisation guide in Storybook | Todo | P1 |
+| Validate HTMX integration | Spike: validate `LineHtmxElement` adapter with `hx-*` forwarding, server-driven state, swap-aware lifecycle. Determine if exploratory or committed for Phase 1 | Todo | P2 |
 
 **Phase 0 Status:** Tasks marked "Review pending" are functionally complete but require verification of quality and integration before sign-off.
 
 **Exit criteria:**
-- All tasks marked "Done" with review completed
-- Monorepo structure matches target
-- A developer can create, build, test, and document a new component using LineElement
-- FormAssociated mixin operational with native `<form>` elements
-- CI/CD pipeline operational (checks + RC releases on `next`)
+- All tasks marked "Done" with review completed.
+- Monorepo structure matches target (8 published packages + 2 apps).
+- All 5 design-system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`) authored under `packages/` with build pipeline operational (PostCSS for design system; Vite/Rolldown for component bundling).
+- Palettes generated from `@radix-ui/colors` and committed; role mappings and auto-pair defaults functional; CSS snapshot tests pass.
+- Schema-validation tests (Zod) pass; `HUES`, `ACCENT_HUES`, `GRAY_HUES`, `SEMANTIC_MAP` match the generated CSS.
+- Build-time contrast validation passes for all 31 hues x relevant role pairs x light/dark.
+- `LineElement` refactor complete: a developer can create, build, test, and document a new component using the base class and its mixins (inspector, metadata, direction, form-associated).
+- FormAssociated mixin operational with native `<form>` elements (`setFormValue`, `reportValidity`, `checkValidity`, `:invalid`/`:valid` states verified).
+- Inspector refactored and operational (feature flag via `localStorage`, hover outline, version display, metadata exposure).
+- Icon registry operational (agnostic resolver verified with at least one icon library).
+- HTMX integration spike completed; outcome (exploratory vs committed for Phase 1) documented.
+- CI/CD pipeline operational (checks + RC releases on `next`; Storybook + site preview deploys verified).
+- npm scope `@websublime/line-*` configured; packages publishable (verified via snapshot/canary tag).
+- Base documentation published in Storybook (Getting Started, Theming, Customisation).
 
 **Deliverable:** Functional monorepo. Zero UI components, but any developer can create a line://ui component with the base class and have everything working — build, test, docs, release.
 
@@ -748,7 +833,7 @@ Workflows:
 | Aspect Ratio | Static |
 | Spinner | Static |
 
-**20 components.** Validates architecture, parts convention, slot/part decision rule, per-component build pipeline, bundle splitting, and automatic documentation.
+**20 components.** Validates architecture, parts convention, slot/part decision rule, umbrella build pipeline (subpath exports per component), bundle splitting, and automatic documentation.
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -780,7 +865,7 @@ Workflows:
 | Number Input | Pre-built |
 | Editable | Pre-built |
 
-**15 components.** First real Zag.js integration — both pre-built and custom machines. Validates machine + Lit + parts pattern in forms. Validates Field orchestration, formAssociated integration, and the slot/part decision rule for internal elements (toggle, clear, increment).
+**15 components.** First substantial Zag.js integration in forms — both pre-built and custom machines applied at scale. Validates machine + Lit + parts pattern in form contexts. Validates Field orchestration, formAssociated integration, and the slot/part decision rule for internal elements (toggle, clear, increment).
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -945,6 +1030,8 @@ Workflows:
 
 ### 7.10 Phase 8 — Real-World / Domain (v0.9.0)
 
+Phase 8 includes a **Notes** column for clarification — these domain components are less self-evident than the named primitives in earlier phases. Other phases use only Component + Zag.js columns.
+
 | Component | Zag.js | Notes |
 |-----------|--------|-------|
 | Ballot / Poll | Custom | Voting with live animated results |
@@ -1004,7 +1091,7 @@ Phase 8 ─── 18 real-world / domain ────────── v0.9.0
 
 ## 8. Component Specifications
 
-Individual component specifications live in [`docs/specs/`](./specs/). Each spec follows the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md).
+Individual component specifications live in [`docs/specs/`](./specs/). Each spec follows the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md) (to be created in Phase 0).
 
 ### 8.1 Spec Structure
 
@@ -1031,726 +1118,453 @@ New components require a spec in `docs/specs/` before implementation begins. The
 
 ---
 
-## 9. Design Token System
+## 9. Design System — Layered Package Model
 
-> **Branding refactor required:** The existing theme package is published as `@websublime/vitamina-theme` v0.6.0 and uses unprefixed variables (`--blue-9`, `--background`) and unprefixed classes (`.schema-blue`, `.is-blue`). This section documents the **target architecture** using the `line://ui` branding (`--line-*` prefix, `.line-*` classes). The codebase refactor to align with this specification is a Phase 0 task (see [section 9.14](#914-branding-refactor-phase-0)).
+> **Structural refactor required:** The repository workspace is already named `@websublime/line-ui`, but the target package layout (5 design-system packages + 3 runtime packages under `@websublime/line-*`) has not yet been authored under `packages/`. v0.8.0 stands up that layout with attribute-based multi-colour theming and Radix-fiel role separation. The codebase refactor to align with this specification is a Phase 0 task (see §9.13 Structural Refactor).
 
-### 9.1 Colour Palette System (Custom — 12 Semantic Levels)
+### 9.1 Layered Package Model
 
-The colour system is inspired by [Radix Colors](https://www.radix-ui.com/colors) and provides 28 colour-named palettes. Each palette defines 12 levels with hand-crafted HSL values for both light and dark modes.
+The design system comprises exactly **five separate packages** — `line-tokens`, `line-colors`, `line-schemas`, `line-themes`, and `line-utils` — each one a layer of opinion that consumers can pick from. `@websublime/line-icons` is a separate, optional icon library that follows the same naming conventions but is **not** part of the design system; it mirrors the Radix Themes / `@radix-ui/react-icons` split. Cross-layer leakage (palette values inside themes, semantic CSS inside tokens, runtime code inside CSS-only packages) is forbidden by Manifesto Law 10.
 
-**The 28 palettes:**
+```
+packages/
+├── @websublime/line-tokens     L0  primitives + decorative (non-colour: 11 primitive + 7 decorative families + reset — see §9.9)
+├── @websublime/line-colors     L1  Radix palette CSS, pure (--line-amber-1..12, etc.)
+├── @websublime/line-schemas    L2  TS types + Zod validators (HUES, ACCENT_HUES, GRAY_HUES, SEMANTIC_MAP)
+├── @websublime/line-themes     L3  CSS role mappings + semantics + aliases + auto-pair defaults
+└── @websublime/line-utils      —   helpers (contrast, mix, etc.)
+```
 
-| Group | Palettes |
-|-------|----------|
-| Neutrals | gray, mauve, slate, sage, olive, sand |
-| Warm | tomato, red, crimson, pink, plum, purple, violet |
-| Cool | indigo, blue, cyan, teal |
-| Nature | green, grass, lime, mint, sky |
-| Earth | brown, bronze, gold |
-| Alert | yellow, amber, orange |
+**Dependencies:** `themes -> colors + schemas`; `utils -> schemas`. `tokens`, `colors`, `schemas` are leaves. Dependencies are strictly downward; no upward or sideways imports.
 
-All palettes are **colour-named** (not semantic). A semantic alias layer (`--line-primary-*`, `--line-danger-*`, etc.) is defined in [section 9.5](#95-semantic-alias-layer) and implemented in Phase 1.
+**Consumer entry points:**
 
-**12-level structure per palette:**
+| Goal | Minimum import |
+|------|----------------|
+| Tokens only (no colour opinion) | `@websublime/line-tokens` |
+| Tokens + Radix palettes (no role mapping) | `@websublime/line-tokens` + `@websublime/line-colors` |
+| Full design system | `@websublime/line-tokens` + `@websublime/line-colors` + `@websublime/line-themes` |
+| Validate hue/role choices at build time | add `@websublime/line-schemas` |
+| Programmatic colour helpers | add `@websublime/line-utils` |
 
-| Level | Variable | Semantic Use |
-|-------|----------|-------------|
-| 1 | `--line-{color}-1` | App background |
-| 2 | `--line-{color}-2` | Subtle background |
-| 3 | `--line-{color}-3` | UI element background |
-| 4 | `--line-{color}-4` | UI element hover background |
-| 5 | `--line-{color}-5` | UI element active / selected background |
-| 6 | `--line-{color}-6` | Subtle borders and separators |
-| 7 | `--line-{color}-7` | UI element border and focus rings |
-| 8 | `--line-{color}-8` | UI element border hover |
-| 9 | `--line-{color}-9` | Solid backgrounds (primary action colour) |
-| 10 | `--line-{color}-10` | Solid hover backgrounds |
-| 11 | `--line-{color}-11` | Low-contrast text |
-| 12 | `--line-{color}-12` | High-contrast text |
+### 9.2 Colour System — Radix-fiel
 
-**Naming pattern:** `--line-{palette}-{level}`, e.g., `--line-blue-1`, `--line-crimson-9`, `--line-gray-12`.
+The colour system is **faithful to Radix Colors 3.x**, not a custom 28-palette reinterpretation. `@websublime/line-colors` ships pure palette CSS files, one per hue, generated from the `@radix-ui/colors` npm package.
 
-Each palette file (e.g., `src/colors/blue.css`) defines both light and dark mode values in a single declaration block using CSS `light-dark()`:
+**31 hues total:**
+
+| Group | Hues | Count |
+|-------|------|-------|
+| Saturated | tomato, red, ruby, crimson, pink, plum, purple, violet, iris, indigo, blue, cyan, teal, jade, green, grass, bronze, gold, brown, orange, amber, yellow, lime, mint, sky | 25 |
+| Grayscales | gray, mauve, slate, sage, olive, sand | 6 |
+| **Total** | | **31** |
+
+`ACCENT_HUES` (the set of hues usable as accent) = all 31. `GRAY_HUES` (the set of hues usable as neutral / gray role) = only the 6 grayscales.
+
+**12-step structure per hue (Radix-standard):**
+
+| Step | Use |
+|------|-----|
+| 1 | App background |
+| 2 | Subtle background — cards, panels |
+| 3 | UI element background |
+| 4 | UI element background hover |
+| 5 | UI element background active |
+| 6 | Subtle borders / separators |
+| 7 | UI element border / focus ring |
+| 8 | UI element border hover |
+| 9 | Solid backgrounds (primary action) |
+| 10 | Solid hover |
+| 11 | Low-contrast text |
+| 12 | High-contrast text |
+| `contrast` | Foreground colour for text on step-9 solid (separate token) |
+
+The 12 functional roles are Radix-standard; light and dark step values are independently crafted by Radix, not algorithmic inversions.
+
+**Light/dark in the palette via `light-dark()`:**
 
 ```css
-/* src/colors/blue.css */
+/* line-colors/src/blue.css */
 :where(html) {
-  --line-blue-1: light-dark(hsl(206, 100%, 99.2%), hsl(205, 100%, 88.0%));
-  --line-blue-2: light-dark(hsl(210, 100%, 98.0%), hsl(205, 100%, 71.0%));
+  --line-blue-1: light-dark(hsl(206, 100%, 99.2%), hsl(214, 60%, 9%));
+  --line-blue-2: light-dark(hsl(210, 100%, 98.0%), hsl(214, 64%, 11%));
   /* ... through --line-blue-12 */
-  --line-blue-contrast: #000;
+  --line-blue-contrast: #fff;   /* static, single value per hue — NOT light-dark() */
 }
 ```
 
-The `light-dark()` function takes two arguments: the light mode value first, and the dark mode value second. The active value is determined by the computed `color-scheme` property (see [section 9.7](#97-lightdark-mode)). Dark mode values are **not** simply inverted — each level has independently crafted HSL values optimised for dark backgrounds. The semantic meaning is preserved in both modes: level 1 is always "background", level 12 is always "high contrast text".
+The active value is chosen by the browser via the computed `color-scheme` property (see §9.8). Themes are **mono-declaration** — they do not declare separate `{ light, dark }` blocks.
 
-### 9.2 Variable Namespace
+**Contrast tokens are static single values per hue (Radix Themes convention).** The 12 numeric steps are wrapped in `light-dark()` because they have distinct light- and dark-mode pixel values. The `--line-{hue}-contrast` token is **not** mode-aware: it is a single fixed colour per hue chosen so that text on step 9 meets WCAG AA in both modes. Most hues use `#fff` (white text on the saturated step 9); the bright-step-9 hues — `amber`, `yellow`, `lime`, `mint`, `sky`, `cyan` — use `#000` (black text). This mapping is a fixed per-hue table, not derived at runtime.
 
-**Decision: All tokens use the `--line-*` prefix.** No exceptions. This provides zero collision risk, a single naming convention, and consistent branding across the design system.
+The role-level alias inherits from the hue-level token: `--line-accent-contrast` resolves to whatever `--line-{chosen-accent-hue}-contrast` evaluates to (selected via `data-accent`). Likewise for `--line-gray-contrast`, `--line-success-contrast`, etc. None of the contrast tokens — hue-level or role-level — are wrapped in `light-dark()`.
 
-| Token Category | Namespace | Examples | Defined In |
-|----------------|-----------|----------|------------|
-| Palette colours | `--line-{color}-{level}` | `--line-blue-1`, `--line-gray-12`, `--line-crimson-9` | `src/colors/*.css` |
-| Semantic roles | `--line-{role}` | `--line-background`, `--line-solid-hover`, `--line-high-contrast` | `src/schemas/*.css`, `src/semantic.css` |
-| Foundation tokens | `--line-{token}` | `--line-size-3`, `--line-font-size-2`, `--line-shadow-3` | `src/tokens.css` |
-| Semantic aliases | `--line-{alias}[-{intent}]` | `--line-primary`, `--line-primary-hover`, `--line-danger-text` | `src/aliases.css` (Phase 1) |
-| Component tokens | `--line-{component}-{prop}` | `--line-button-radius`, `--line-input-bg` | Component `:host` styles |
-| CSS classes | `.line-{name}` | `.line-schema-blue`, `.line-is-blue`, `.line-is-background` | `src/schemas/*.css`, `src/utils/utilities.css` |
+**Semantic-by-step, not mirror-by-mode.** Each of the 12 steps has a **fixed semantic function** that is identical in light and dark mode. Step 1 is always "app background"; step 9 is always "solid brand"; step 11 is always "low-contrast text"; step 12 is always "high-contrast text". The pixel values differ between modes — a step 1 in light mode is near-white, a step 1 in dark mode is near-black — but the **role of step N never changes**. This is the Radix Colors invariant.
 
-**Foundation token ownership:** All foundation tokens are explicitly defined in `src/tokens.css` with the `--line-*` prefix. Open Props was used as a design reference for initial values (sizes, shadows, typography scales) but is NOT a runtime or build-time dependency. The `postcss-jit-props` plugin and `open-props` package have been removed from the pipeline. Every token is owned, versioned, and documented within the theme package.
+This rules out an "inverted/mirrored" dark mode where step N in dark would map to step (13−N) in light. Such a model breaks all components that rely on a fixed per-step semantic and is **not** Radix-fiel.
 
-### 9.3 Foundation Token System
+### 9.3 Role-Based Theming
 
-Foundation tokens are defined explicitly in `src/tokens.css` with the `--line-*` prefix. No external token library is used at runtime or build time. The `postcss-jit-props` plugin and `open-props` package have been removed from the pipeline. All tokens are owned, versioned, and documented within the theme package.
+Components consume **role variables**, never hue variables directly. There are six roles:
 
-**Design system layer model:**
+| Role | Purpose | User-selectable? |
+|------|---------|------------------|
+| `accent` | Brand / primary action | Yes, via `data-accent` |
+| `gray` | Neutrals (text, surfaces, borders) | Yes, via `data-gray` (or auto-paired from accent) |
+| `success` | Confirmation, positive feedback | No — fixed at root (`green`) |
+| `warning` | Caution | No — fixed at root (`amber`) |
+| `danger` | Errors, destructive actions | No — fixed at root (`red`) |
+| `info` | Informational | No — fixed at root (`blue`) |
 
-| Layer | Name | Source file | Contents |
-|-------|------|------------|----------|
-| L0 | Primitives | `colors/*.css` | Raw palette values: `--line-blue-1..12`, `--line-blue-contrast` |
-| L1 | Foundation tokens | `tokens.css` | Named scales: typography, sizing, shadows, z-index, opacity, motion, radius, border-width, focus-ring, aspect-ratio |
-| L2 | Semantic roles | `semantic.css` + `schemas/*.css` | Context-mapped: `--line-background`, `--line-solid-background`, `--line-solid-text` |
-| L3 | Semantic aliases | `aliases.css` | Intent-mapped: `--line-primary`, `--line-danger`, etc. (6 aliases × 9 tokens = 54 variables) |
-| L4 | Component tokens | `@websublime/line-presets` | Scoped: `--line-button-radius`, `--line-input-height` |
-| L5 | Component styles | `@websublime/line-presets` | Visual opinions via `::part()` selectors |
+**Why semantic roles are fixed:** A red error or green success is a usability invariant. Allowing them to be re-skinned per theme breaks user expectation and accessibility patterns. They live in `:root` and resolve to their mapped hue regardless of `data-accent` / `data-gray` choice.
 
-**Foundation tokens (L1) — complete catalogue:**
+**SEMANTIC_MAP (declared in `line-schemas`, applied in `line-themes/src/semantics.css`):**
 
-| Category | Variables | Count |
-|----------|-----------|-------|
-| Font families | 15 OP stacks (`--line-font-system-ui` through `--line-font-handwritten`) + 3 custom (`--line-font-sans/serif/mono`) | 18 |
-| Font weights | `--line-font-weight-1` through `--line-font-weight-9` | 9 |
-| Font sizes | `--line-font-size-0..9` (static) + `--line-font-size-fluid-0..3` (fluid) | 14 |
-| Line heights | `--line-font-lineheight-0..9` (OP 7 + 3 extensions) | 10 |
-| Letter spacing | `--line-font-letterspacing-0..9` (OP 8 + 2 extensions) | 10 |
-| Sizing (rem) | `--line-size-000..15` | 17 |
-| Sizing (px) | `--line-size-px-000..15` | 17 |
-| Sizing (fluid) | `--line-size-fluid-1..10` | 10 |
-| Sizing (content/header) | `--line-size-content-1..3`, `--line-size-header-1..3` | 6 |
-| Breakpoints | `--line-size-xxs` through `--line-size-xxl` | 7 |
-| Sizing (relative) | `--line-size-relative-000..15` | 17 |
-| Border sizes | `--line-border-size-1..5` | 5 |
-| Border radii | `--line-radius-1..6` + round + 6 drawn + 5 blob + 6 conditional | 24 |
-| Shadows | `--line-shadow-1..6` + inner 0..4 + highlight + color + strength | 14 |
-| Z-index | `--line-layer-1..5` + `--line-layer-important` + `--line-z-dropdown..tooltip` (8 semantic) | 14 |
-| Easing | Full 1:1 OP match: standard, in, out, in-out, elastic, step, spring, bounce, named curves | 81 |
-| Durations | `--line-duration-instant..gentle-2` (OP 7) + `--line-duration-xfast..glacial` (5 semantic) | 12 |
-| Opacity | `--line-opacity-disabled/overlay/placeholder` | 3 |
-| Focus ring | `--line-ring-width/offset/color` | 3 |
-| Aspect ratio | `--line-ratio-square..golden` | 6 |
-| Absolute colours | `--line-white`, `--line-black` + color-scheme | 2 |
-
-**Total: ~413 foundation tokens** (~299 core + ~114 decorative). Full definitions in `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Appendix A. Architecture: `tokens/` directory with per-family CSS files, each independently importable.
-
-**Contrast tokens (L0):** Each of the 28 colour palettes also defines a `--line-{palette}-contrast` token (`#fff` or `#000`) that guarantees WCAG AA 4.5:1 contrast for text on level-9 solid backgrounds. See §9.15 for the full contrast system.
-
-### 9.4 Schema System — Semantic Layer
-
-Schemas map the 12 palette levels to **semantic role variables**. Each palette has a corresponding schema file (`src/schemas/{palette}.css`) scoped to a CSS class.
-
-**The 14 semantic role variables:**
-
-| Semantic Variable | Maps To (Light) | Maps To (Dark) | Purpose |
-|-------------------|-----------------|----------------|---------|
-| `--line-background` | `--line-{color}-1` | `--line-{color}-12` | App background |
-| `--line-subtle-background` | `--line-{color}-2` | `--line-{color}-11` | Subtle background |
-| `--line-ui-background` | `--line-{color}-3` | `--line-{color}-10` | UI element background |
-| `--line-ui-hover-background` | `--line-{color}-4` | `--line-{color}-9` | Hovered UI element |
-| `--line-ui-active-background` | `--line-{color}-5` | `--line-{color}-8` | Active / selected element |
-| `--line-subtle-border` | `--line-{color}-6` | `--line-{color}-7` | Subtle borders |
-| `--line-ui-border` | `--line-{color}-7` | `--line-{color}-6` | UI element borders |
-| `--line-ui-border-hover` | `--line-{color}-8` | `--line-{color}-5` | Hovered borders |
-| `--line-solid-background` | `--line-{color}-9` | `--line-{color}-4` | Solid backgrounds |
-| `--line-solid-hover` | `--line-{color}-10` | `--line-{color}-3` | Hovered solid backgrounds |
-| `--line-low-contrast` | `--line-{color}-11` | `--line-{color}-2` | Low-contrast text |
-| `--line-high-contrast` | `--line-{color}-12` | `--line-{color}-1` | High-contrast text |
-| `--line-light` | `--line-{color}-1` | `--line-{color}-12` | Lightest value in current mode |
-| `--line-dark` | `--line-{color}-12` | `--line-{color}-1` | Darkest value in current mode |
-
-**Activation mechanism — CSS class:**
-
-```css
-/* src/schemas/blue.css */
-:where(.line-schema-blue) {
-  --line-background: light-dark(var(--line-blue-1), var(--line-blue-12));
-  --line-subtle-background: light-dark(var(--line-blue-2), var(--line-blue-11));
-  /* ... all 14 semantic roles via light-dark() */
-  --line-solid-text: var(--line-blue-contrast);
-}
+```ts
+export const SEMANTIC_MAP = {
+  success: 'green',
+  warning: 'amber',
+  danger:  'red',
+  info:    'blue',
+} as const;
 ```
 
-Schema files use `light-dark()` to map semantic roles to palette levels in a single declaration block. The light argument maps levels 1-12 ascending; the dark argument maps levels 12-1 descending, preserving semantic meaning across modes.
+### 9.4 Theme Application — DOM Attributes (No `data-theme`)
 
-The consumer applies a schema by adding a CSS class to any container:
+Themes are **not entities**. A "theme" is the pair `(accent, gray)` chosen via two independent DOM attributes. There is no aggregator `data-theme="X"` attribute.
 
 ```html
-<!-- Full page schema -->
-<body class="line-schema-blue">
+<!-- Default theme (indigo accent, auto-paired slate gray) -->
+<html>
 
-<!-- Scoped schema (different section) -->
-<section class="line-schema-blue">...</section>
-<aside class="line-schema-crimson">...</aside>
+<!-- Explicit accent, auto-paired gray -->
+<html data-accent="amber">         <!-- pairs with sand -->
+
+<!-- Explicit accent + explicit gray -->
+<html data-accent="amber" data-gray="slate">
+
+<!-- Scoped to a section: theming nests naturally -->
+<section data-accent="violet">...</section>
+<aside data-accent="crimson" data-gray="mauve">...</aside>
 ```
 
-This class-based scoping means **multiple schemas can coexist on the same page** — each container gets its own semantic colour context.
+Because `accent` and `gray` are independently namespaced (`--line-accent-*` vs `--line-gray-*`), **multiple colour contexts can coexist on the same page** without conflict.
 
-**Palette-specific utility classes (per schema):**
+### 9.5 Defaults & Auto-Pairing
 
-Each schema file also generates utility classes for direct use. Using blue as an example:
+**Default accent (when no `data-accent` is set):** `indigo`.
+**Default gray:** auto-paired from accent, Radix-style. If the consumer sets `data-accent` without `data-gray`, the gray role binds automatically to the curated neutral pair.
 
-| Class | Light Mode | Dark Mode | Description |
-|-------|------------|-----------|-------------|
-| `.line-is-blue` | `color: --line-blue-1; bg: --line-blue-9` | `color: --line-blue-1; bg: --line-blue-4` | Solid button-like styling with hover |
-| `.line-is-blue-color` | `color: --line-blue-12` | `color: --line-blue-1` | High-contrast text in palette |
-| `.line-is-blue-low-contrast` | `color: --line-blue-11` | `color: --line-blue-2` | Low-contrast text |
-| `.line-is-blue-high-contrast` | `color: --line-blue-12` | `color: --line-blue-1` | High-contrast text |
-| `.line-is-blue-background` | `bg: --line-blue-1` | `bg: --line-blue-12` | App background |
-| `.line-is-blue-subtle-background` | `bg: --line-blue-2` | `bg: --line-blue-11` | Subtle background |
-| `.line-is-blue-ui-background` | `bg: --line-blue-3` (hover: 4) | `bg: --line-blue-10` (hover: 9) | UI element with hover |
-| `.line-is-blue-solid-background` | `bg: --line-blue-9` | `bg: --line-blue-4` | Solid background |
-| `.line-is-blue-border` | `border: --line-blue-7` (hover: 8) | `border: --line-blue-6` (hover: 5) | Border with hover |
+**Auto-pair table:**
 
-All utility classes use `:where()` for zero specificity and `light-dark()` for dark mode values. The active mode is determined by the computed `color-scheme` property (see [section 9.7](#97-lightdark-mode)).
+| Accent | Paired gray |
+|--------|-------------|
+| `gray`, `mauve`, `slate`, `sage`, `olive`, `sand` (grayscales used as accent) | same as accent (self-paired) |
+| `tomato`, `red`, `ruby`, `crimson`, `pink`, `plum`, `purple` | `mauve` |
+| `violet`, `iris`, `indigo`, `blue`, `sky`, `cyan` | `slate` |
+| `teal`, `jade`, `mint`, `green` | `sage` |
+| `grass`, `lime` | `olive` |
+| `bronze`, `gold`, `brown`, `amber`, `yellow`, `orange` | `sand` |
 
-### 9.5 Semantic Alias Layer
+When a grayscale is used as accent, the gray role self-pairs (i.e., the same grayscale appears in both roles). This avoids a hue mismatch and follows Radix Themes convention.
 
-A semantic alias layer maps intent-based names to specific palettes. This layer sits between palette tokens and component tokens, allowing consumers to remap semantic roles without touching component code.
+**Implementation** (in `line-themes/src/defaults.css`): a `[data-accent="X"]:not([data-gray])` selector per accent maps the gray role to the paired hue. An explicit `data-gray="Y"` always wins.
 
-**The 6 semantic aliases (Phase 1):**
+**Auto-pair in nested scopes.** The selector `[data-accent="X"]:not([data-gray])` matches **any** element with `data-accent` and no `data-gray` — including nested elements. Consequently, when a nested element sets only `data-accent`, its gray role becomes the auto-pair for that accent and **overrides** any gray inherited from a parent scope. To preserve a parent's `data-gray` choice in a nested scope, set `data-gray` explicitly on the nested element (e.g., `<section data-accent="violet" data-gray="mauve">`).
 
-| Alias | Default Palette | Purpose |
-|-------|-----------------|---------|
-| `primary` | blue | Brand colour, primary actions |
-| `danger` | red | Errors, destructive actions |
-| `success` | green | Confirmation, positive feedback |
-| `warning` | amber | Caution, attention needed |
-| `info` | cyan | Informational, contextual |
-| `neutral` | gray | Default, content without emphasis |
+### 9.6 Numeric API + Named Aliases
 
-Each alias provides 9 intent tokens (not all 12 palette levels — aliases map to component needs, not raw scale positions):
-
-| Token suffix | Maps to palette level | Used for |
-|-------------|----------------------|----------|
-| (base) | level-9 | Solid background (buttons, badges) |
-| `-hover` | level-10 | Hovered solid background |
-| `-active` | level-11 | Active/pressed solid background |
-| `-text` | contrast token | Text on solid background (WCAG AA) |
-| `-subtle` | level-3 | Subtle/ghost background |
-| `-subtle-hover` | level-4 | Hovered subtle background |
-| `-outline` | level-7 | Border/outline colour |
-| `-outline-hover` | level-8 | Hovered border |
-| `-fg` | level-11 | Foreground text coloured by intent |
-
-**Total: 6 aliases × 9 tokens = 54 variables.**
-
-**Implementation:**
+The canonical role API is **numeric** (1..12), mirroring Radix. Each role also exposes a sibling **contrast** token for accessible text on solid step-9 backgrounds:
 
 ```css
-/* src/aliases.css — theme defines the mapping */
-:where(html) {
-  --line-primary: var(--line-blue-9);
-  --line-primary-hover: var(--line-blue-10);
-  --line-primary-active: var(--line-blue-11);
-  --line-primary-text: var(--line-blue-contrast);
-  --line-primary-subtle: var(--line-blue-3);
-  --line-primary-subtle-hover: var(--line-blue-4);
-  --line-primary-outline: var(--line-blue-7);
-  --line-primary-outline-hover: var(--line-blue-8);
-  --line-primary-fg: var(--line-blue-11);
+--line-accent-1     /* step 1 */
+--line-accent-2
+--line-accent-3
+/* ... */
+--line-accent-12
+--line-accent-contrast   /* sibling token, not a numeric step */
 
-  --line-danger: var(--line-red-9);
-  --line-danger-hover: var(--line-red-10);
-  /* ... same 9-token pattern for all 6 aliases ... */
-}
+--line-gray-1
+/* ... */
+--line-gray-12
+--line-gray-contrast
+
+--line-success-1..12, --line-success-contrast
+--line-warning-1..12, --line-warning-contrast
+--line-danger-1..12,  --line-danger-contrast
+--line-info-1..12,    --line-info-contrast
 ```
 
-**Consumer remapping:**
+On top of the numeric API, `line-themes` exposes **9 named aliases per role** — intent-driven names for the most common steps. Total: 9 aliases × 6 roles = **54 alias CSS vars** in addition to the numeric API. (The `--line-{role}-contrast` token already declared in the canonical numeric section is unchanged — it is the same variable, not duplicated.)
+
+| Alias | Maps to | Intent |
+|-------|---------|--------|
+| `--line-{role}-surface` | step 2 | Subtle background (cards, panels) |
+| `--line-{role}-bg` | step 3 | UI element background |
+| `--line-{role}-bg-hover` | step 4 | UI element hover |
+| `--line-{role}-bg-active` | step 5 | UI element active/pressed |
+| `--line-{role}-border` | step 7 | UI element border / focus ring |
+| `--line-{role}-solid` | step 9 | Primary solid (e.g. solid button bg) |
+| `--line-{role}-solid-hover` | step 10 | Solid hover |
+| `--line-{role}-text-low` | step 11 | Low-contrast text |
+| `--line-{role}-text` | step 12 | High-contrast text |
+
+The aliases apply uniformly to all six roles (accent, gray, success, warning, danger, info). Components are expected to consume aliases where intent is obvious (`--line-accent-solid`, `--line-danger-text`) and numeric tokens where precise step control is needed. Consumers should always pair `--line-{role}-solid` with `--line-{role}-contrast` (declared once in the canonical numeric section above; WCAG-guaranteed foreground; static single value, not wrapped in `light-dark()`) for accessible text on solid backgrounds.
+
+### 9.7 Build Pipeline
+
+| Concern | Tool |
+|---------|------|
+| CSS bundling | **PostCSS** (`postcss-import`, `postcss-nested`, `postcss-preset-env`, `cssnano`) |
+| Component bundling | **Vite 7+ with Rolldown** (unchanged from §6.2) |
+| Source-of-truth for hues | TS files in `line-schemas/src/` declare `HUES`, `ACCENT_HUES`, `GRAY_HUES`, `SEMANTIC_MAP` |
+| Source-of-truth for palette values | `@radix-ui/colors` npm package |
+| Palette generation | Build script reads `@radix-ui/colors`, emits `line-colors/src/{hue}.css`. **Generated CSS is committed** so CI does not regenerate every build. Regeneration runs only when bumping `@radix-ui/colors`. |
+| Role-mapping generation | Build script reads `line-schemas` enumerations, emits `line-themes/src/accent/{hue}.css` and `line-themes/src/gray/{hue}.css` mechanically. |
+
+**Why hybrid (npm source + committed generated CSS):** the npm package is the canonical source for palette values, but committing the generated CSS into the repo gives deterministic CI builds, reviewable diffs on palette updates, and zero runtime regeneration cost.
+
+### 9.8 Light/Dark Mode
+
+A single mechanism: the CSS `light-dark()` function, triggered by the computed `color-scheme` property. This is **unchanged** from v0.7.0 — only the surface area has been re-namespaced under roles.
 
 ```css
-/* Consumer overrides "primary" to use violet instead of blue */
-:root {
-  --line-primary: var(--line-violet-9);
-  --line-primary-hover: var(--line-violet-10);
-  --line-primary-active: var(--line-violet-11);
-  --line-primary-text: var(--line-violet-contrast);
-  --line-primary-subtle: var(--line-violet-3);
-  --line-primary-subtle-hover: var(--line-violet-4);
-  --line-primary-outline: var(--line-violet-7);
-  --line-primary-outline-hover: var(--line-violet-8);
-  --line-primary-fg: var(--line-violet-11);
-}
+/* line-colors/src/blue.css */
+--line-blue-9: light-dark(hsl(206 100% 50%), hsl(209 100% 60%));
 ```
 
-Components and presets use aliases for intent-driven styling (e.g., `--line-danger` for error button background, `--line-danger-text` for text on that background) and palette tokens for decorative or specific colour needs (e.g., `--line-blue-9` for a blue avatar background).
+Consumers toggle mode programmatically by setting `style.colorScheme` on `<html>`, or via `.dark` / `.light` classes on `<html>` (kept as a public API to handle shadow control tokens that cannot be wrapped in `light-dark()`).
 
-### 9.6 Theme Composition
+**Shadow DOM compatibility:** `color-scheme` inherits through Shadow DOM boundaries, so all `light-dark()` tokens inside web components resolve correctly without polyfills.
 
-A theme file imports a colour palette and its corresponding schema:
+### 9.9 Package Exports
 
-```css
-/* src/themes/blue-theme.css — this is the entire file */
-@import '../colors/blue.css';
-@import '../schemas/blue.css';
-```
+**`@websublime/line-tokens`** — 18 non-colour families (11 primitive + 7 decorative) + browser-defaults reset:
 
-**Theme = colour palette + schema.** No utility tokens, no icon registration, no additional configuration.
-
-**Consumer usage:**
-
-```css
-/* Option 1: Full bundle — all 28 themes + utilities + normalize + aliases */
-@import '@websublime/line-theme';
-
-/* Option 2: Single theme only */
-@import '@websublime/line-theme/tokens';
-@import '@websublime/line-theme/normalize';
-@import '@websublime/line-theme/themes/blue';
-@import '@websublime/line-theme/aliases';
-
-/* Option 3: Granular — palette and schema separately */
-@import '@websublime/line-theme/tokens';
-@import '@websublime/line-theme/colors/blue';
-@import '@websublime/line-theme/schemas/blue';
-
-/* Option 4: Tokens only — I have my own colours */
-@import '@websublime/line-theme/tokens';
-
-/* Option 5: Full theme + preset (out-of-the-box component styles) */
-@import '@websublime/line-theme';
-@import '@websublime/line-presets';
-```
-
-**The full bundle (`line.css`) import chain:**
-
-```
-line.css
-├── tokens.css               ← L1: Foundation tokens (typography, sizing, shadows, motion, etc.)
-├── semantic.css              ← L2: Gray-based light-dark() defaults
-├── utils/normalize.css       ← Modern CSS reset (imports media.css internally)
-├── utils/utilities.css       ← Utility classes mapping to semantic tokens
-├── themes/*-theme.css (x28)  ← All 28 palette + schema pairs
-└── aliases.css               ← L3: Semantic aliases (primary, danger, success, etc.)
-```
-
-**What themes do NOT include:**
-
-- No utility token defaults (those live in `tokens.css`, always loaded)
-- No icon library registration (theme is pure CSS, no JS side-effects)
-
-**Custom theme contract (Phase 1 — documentation):**
-
-A consumer creating a custom theme must provide:
-
-1. A colour file with 12 levels (light + dark) following the `--line-{palette}-{level}` convention
-2. A schema file mapping the 12 levels to the 14 semantic role variables
-3. Optionally, override the semantic alias mapping to use their custom palette
-
-A generator CLI (`line theme create --palette brand --base "#4F46E5"`) is a nice-to-have post-1.0.
-
-### 9.7 Light/Dark Mode
-
-A single mechanism controls light/dark mode: the CSS `light-dark()` function, triggered by the `color-scheme` property.
-
-**How it works:**
-
-All colour tokens (palettes, schemas, semantic defaults, utility classes) use `light-dark(lightValue, darkValue)` to declare both mode values in a single CSS declaration. The browser resolves which value to use based on the computed `color-scheme` property on the element (or inherited from an ancestor).
-
-```css
-/* Single declaration — both modes in one line */
---line-blue-1: light-dark(hsl(206, 100%, 99.2%), hsl(205, 100%, 88.0%));
-```
-
-**OS-level preference (automatic):**
-
-The foundation layer (`colors-absolute.css`) sets `color-scheme: light dark` on `:where(html)`, which tells the browser to follow the OS preference. All `light-dark()` tokens resolve automatically — no media queries needed for colour tokens.
-
-**Programmatic toggle (consumer API):**
-
-```js
-// Force dark mode
-document.documentElement.style.colorScheme = 'dark';
-
-// Force light mode
-document.documentElement.style.colorScheme = 'light';
-
-// Return to OS preference
-document.documentElement.style.colorScheme = '';
-```
-
-Setting `style.colorScheme` on `<html>` changes the computed `color-scheme` for the entire document, causing all `light-dark()` tokens to resolve to their dark or light argument immediately. This is the **primary** programmatic API.
-
-**Class-based override (`.dark` / `.light`):**
-
-The `.dark` and `.light` classes on `<html>` are a **supported public API** that sets `color-scheme` via CSS:
-
-```css
-:where(html).dark  { color-scheme: dark; }
-:where(html).light { color-scheme: light; }
-```
-
-These classes exist because shadow tokens (`shadows.css`) use partial HSL control variables that cannot be wrapped in `light-dark()`. Shadow tokens use `@media (prefers-color-scheme)` for OS preference and `:where(html).dark` for programmatic override. Adding the `.dark` class alongside `style.colorScheme` ensures shadow tokens also respond to programmatic mode changes.
-
-**Recommended consumer pattern:**
-
-```js
-function setMode(mode) {
-  const html = document.documentElement;
-  // Primary: triggers all light-dark() tokens
-  html.style.colorScheme = mode;
-  // Secondary: triggers shadow token overrides
-  html.classList.toggle('dark', mode === 'dark');
-  html.classList.toggle('light', mode === 'light');
-}
-```
-
-**Shadow DOM compatibility:** The `color-scheme` property inherits through Shadow DOM boundaries, so all `light-dark()` tokens inside web components resolve correctly without any additional hacks.
-
-**Exception — shadow tokens:**
-
-`shadows.css` defines shadow control variables (`--line-shadow-color`, `--line-shadow-strength`) as partial HSL values (e.g., `50% 50%`) which are not valid CSS `<color>` values. Since `light-dark()` only works with complete colour values, shadow tokens use the legacy dual-mechanism approach:
-
-1. `@media (prefers-color-scheme: dark)` — responds to OS preference
-2. `:where(html).dark` — responds to programmatic `.dark` class toggle
-
-This is the **only** exception in the token system. All colour palettes, schemas, semantic defaults, and utility classes use `light-dark()` exclusively.
-
-### 9.8 PostCSS Pipeline
-
-The build pipeline is defined in `postcss.config.mjs`:
-
-```
-postcss-import → postcss-mixins → postcss-simple-vars
-    → postcss-nested → postcss-preset-env → postcss-custom-media → cssnano
-```
-
-| Plugin | Purpose | Notes |
-|--------|---------|-------|
-| `postcss-import` | Resolves `@import` statements, inlining all CSS into a single file | Runs first — all subsequent plugins see a flat file |
-| `postcss-mixins` | Enables `@define-mixin` / `@mixin` syntax | Used for `font-size` and `font-weight` mixins |
-| `postcss-simple-vars` | Enables `$variable` syntax (Sass-like variables) | Used in mixin parameter interpolation |
-| `postcss-nested` | Enables `&` nesting syntax | Used throughout for nested selectors and dark mode variants |
-| `postcss-preset-env` | Polyfills modern CSS features | Heavily restricted — most features disabled (see below) |
-| `postcss-custom-media` | Resolves `@custom-media` queries into standard `@media` | Processes the breakpoint and preference queries from `media.css` |
-| `cssnano` | Minifies output CSS | Default preset |
-
-**`postcss-preset-env` configuration — most features explicitly disabled:**
-
-```js
+```json
 {
-  autoprefixer: false,
-  stage: 0,
-  features: {
-    'color-functional-notation': false,
-    'custom-media-queries': { preserve: true },
-    'custom-properties': false,        // CSS variables kept as-is (not resolved)
-    'double-position-gradients': false,
-    'focus-visible-pseudo-class': false,
-    'focus-within-pseudo-class': false,
-    'gap-properties': false,
-    'logical-properties-and-values': false,
-    'not-pseudo-class': false,
-    'place-properties': false,
-    'prefers-color-scheme-query': false
+  "exports": {
+    ".":              "./dist/index.css",
+    "./reset":        "./dist/reset.css",
+
+    "./typography":   "./dist/typography.css",
+    "./sizing":       "./dist/sizing.css",
+    "./shadows":      "./dist/shadows.css",
+    "./easings":      "./dist/easings.css",
+    "./z-index":      "./dist/z-index.css",
+    "./opacity":      "./dist/opacity.css",
+    "./motion":       "./dist/motion.css",
+    "./radii":        "./dist/radii.css",
+    "./border-width": "./dist/border-width.css",
+    "./focus-ring":   "./dist/focus-ring.css",
+    "./breakpoints":  "./dist/breakpoints.css",
+
+    "./aspects":      "./dist/aspects.css",
+    "./animations":   "./dist/animations.css",
+    "./gradients":    "./dist/gradients.css",
+    "./masks":        "./dist/masks.css",
+    "./layouts":      "./dist/layouts.css",
+    "./highlights":   "./dist/highlights.css",
+    "./svg":          "./dist/svg.css"
   }
 }
 ```
 
-This configuration ensures CSS custom properties are preserved in the output (not compiled away) and that modern CSS features already supported by target browsers are not unnecessarily polyfilled.
+**Primitive families (11)** are essentials any consumer needs: typography, sizing, shadows, easings, z-index, opacity, motion, radii, border-width, focus-ring, breakpoints.
 
-### 9.9 CSS Utilities
+**Decorative families (7)** are optional and may be imported individually for fine-grained bundle control:
 
-**`semantic.css`** — Foundation layer
+| Family | Purpose |
+|---|---|
+| `aspects` | Aspect-ratio tokens (16/9, 4/3, 1/1, etc.) |
+| `animations` | Pre-built keyframe animations (fade, slide, pulse, etc.) |
+| `gradients` | Structural gradient tokens — angles, stops, positions. Colour stops reference `line-colors` palette tokens; no absolute colours. |
+| `masks` | CSS mask shapes (clip-path, mask-image structural definitions) |
+| `layouts` | Composition utilities (common grid/flex patterns) |
+| `highlights` | `::selection` and similar highlight styles |
+| `svg` | SVG structural tokens (stroke widths, mitres, dash patterns) — no colour values |
 
-- Light/dark mode root semantic tokens via `light-dark()` (gray-based neutral defaults)
-- Mode is triggered by the `color-scheme` property (see [section 9.7](#97-lightdark-mode))
-- All foundation tokens (typography, spacing, shadows — see [section 9.3](#93-foundation-token-system)), defined with `--line-*` prefix
-- Dark mode shadow adjustments use the legacy `@media (prefers-color-scheme)` + `.dark` class mechanism (shadow control variables are partial HSL tokens incompatible with `light-dark()`)
+The `./reset` subpath is the consumer-side reset that neutralises browser defaults — applied **before** any token family. It is foundation-layer (zero-opinion; only resets). Consumers who already use their own reset (e.g., `normalize.css`, modern resets) may skip this subpath. The `.` root export bundles all 18 families + reset.
 
-**`normalize.css`** — Modern CSS reset
+**Note on colour-adjacent families.** `gradients`, `highlights`, and `svg` historically held colour values in v0.7 (`colors-absolute.css` etc.). In v0.8 they are **structural-only** — they reference palette tokens from `line-colors` rather than declaring absolute colour values. This preserves Manifesto Law 10 (cross-layer separation). The v0.7 `colors-absolute` family is **removed** entirely; consumers needing black/white absolutes use `--line-gray-1` / `--line-gray-12` or the relevant Radix scale.
 
-- Imports `media.css` internally
-- `box-sizing: border-box` on all elements
-- Zero-margin reset via `:where(:not(dialog))`
-- Typographic defaults using `--line-font-sans`, `--line-font-lineheight-3`, `--line-font-size-*`
-- Accessible defaults: `touch-action: manipulation`, `-webkit-tap-highlight-color: transparent`, `outline-offset: 5px` on `:focus-visible`
-- Motion-safe transitions gated behind `@media (--motionOK)`
-- Form element resets (font inheritance, padding, border-radius)
-- Table styling with computed inner radius
-- Semantic max-width constraints (`--line-size-content-*`, `--line-size-header-*`)
-- Uses `:where()` throughout for zero specificity — consumer styles always win
+**`@websublime/line-colors`** — Radix palette CSS, one file per hue:
 
-**`utilities.css`** — Semantic utility classes
-
-| Class | Maps To | Notes |
-|-------|---------|-------|
-| `.line-is-background` | `var(--line-background)` | Background colour |
-| `.line-is-subtle-background` | `var(--line-subtle-background)` | Subtle background |
-| `.line-is-ui-background` | `var(--line-ui-background)` | With transition |
-| `.line-is-hover-background` | `var(--line-ui-hover-background)` | Hover state |
-| `.line-is-active-background` | `var(--line-ui-active-background)` | Active state |
-| `.line-is-subtle-border` | `var(--line-subtle-border)` | Border + outline |
-| `.line-is-ui-border` | `var(--line-ui-border)` | With transition |
-| `.line-is-ui-hover` | `var(--line-ui-border-hover)` | Border hover |
-| `.line-is-solid-background` | `var(--line-solid-background)` | With transition |
-| `.line-is-hover-solid` | `var(--line-solid-hover)` | Solid hover |
-| `.line-is-low-contrast` | `var(--line-low-contrast)` | Text colour |
-| `.line-is-high-contrast` | `var(--line-high-contrast)` | Text colour |
-| `.line-is-light` / `.line-is-dark` | `var(--line-light)` / `var(--line-dark)` | Text colour |
-| `.line-is-white` / `.line-is-black` | `var(--line-white)` / `var(--line-black)` | Fixed colours |
-
-
-**`media.css`** — Custom media queries
-
-| Category | Queries |
-|----------|---------|
-| Motion | `--motionOK`, `--motionNotOK` |
-| Transparency | `--opacityOK`, `--opacityNotOK` |
-| Data saver | `--useDataOK`, `--useDataNotOK` |
-| Colour scheme | `--OSdark`, `--OSlight` |
-| Contrast | `--highContrast`, `--lowContrast` |
-| Orientation | `--portrait`, `--landscape` |
-| Display | `--HDcolor` (high dynamic range) |
-| Pointer | `--touch`, `--stylus`, `--pointer`, `--mouse` |
-| Breakpoints | `--xxs-only` through `--xxl-n-above` (7 breakpoints, each with `-only`, `-n-above`, `-n-below` variants, plus `-phone` portrait combos for mobile sizes) |
-
-Breakpoint values: xxs=240px, xs=360px, sm=480px, md=768px, lg=1024px, xl=1440px, xxl=1920px.
-
-**`mixins.css`** — PostCSS mixins
-
-Two utility mixins for shorthand token access:
-
-```css
-@define-mixin font-size $size {
-  font-size: var(--line-font-size-$(size));
-}
-
-@define-mixin font-weight $weight {
-  font-weight: var(--line-font-weight-$(weight));
+```json
+{
+  "exports": {
+    ".":           "./dist/index.css",
+    "./amber":     "./dist/amber.css",
+    "./blue":      "./dist/blue.css",
+    "./indigo":    "./dist/indigo.css",
+    "./slate":     "./dist/slate.css"
+    /* ... 31 hues total ... */
+  }
 }
 ```
 
-Usage: `@mixin font-size 3;` compiles to `font-size: var(--line-font-size-3);`.
+**`@websublime/line-schemas`** — TS only (no CSS export):
 
-### 9.10 Token Flow — Global to Component to Consumer
+```json
+{
+  "exports": {
+    ".": {
+      "types":  "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  }
+}
+```
 
-The design token system follows a three-tier cascade:
+**`@websublime/line-themes`** — role mappings, semantics, aliases, defaults:
+
+```json
+{
+  "exports": {
+    ".":                "./dist/index.css",
+    "./accent/*":       "./dist/accent/*.css",
+    "./gray/*":         "./dist/gray/*.css",
+    "./semantics":      "./dist/semantics.css",
+    "./aliases":        "./dist/aliases.css",
+    "./defaults":       "./dist/defaults.css"
+  }
+}
+```
+
+**`@websublime/line-utils`** — TS helpers:
+
+```json
+{
+  "exports": {
+    ".":          { "types": "./dist/index.d.ts", "import": "./dist/index.js" },
+    "./contrast": { "types": "./dist/contrast.d.ts", "import": "./dist/contrast.js" },
+    "./mix":      { "types": "./dist/mix.d.ts", "import": "./dist/mix.js" }
+  }
+}
+```
+
+**Minimal consumer setup (full design system, single accent + gray):**
+
+```css
+@import '@websublime/line-tokens';
+@import '@websublime/line-colors/indigo';
+@import '@websublime/line-colors/slate';
+@import '@websublime/line-colors/green';   /* success */
+@import '@websublime/line-colors/amber';   /* warning */
+@import '@websublime/line-colors/red';     /* danger */
+@import '@websublime/line-colors/blue';    /* info */
+@import '@websublime/line-themes';         /* role mappings + semantics + aliases + defaults */
+```
+
+> **Note:** Any hue you reference via `data-accent` or `data-gray` must be imported above. The minimal setup imports `indigo` (default accent), `slate` (auto-paired gray), and the four semantic hues. If you set `data-accent="violet"`, add `@import '@websublime/line-colors/violet'` to the imports — otherwise the role variables will resolve to undefined values. For consumers who want every hue available, use the "Quick-start" block below.
+
+```html
+<html data-accent="indigo">
+```
+
+**Quick-start (full bundle, all 31 hues):**
+
+```css
+@import '@websublime/line-tokens';
+@import '@websublime/line-colors';   /* all 31 hues */
+@import '@websublime/line-themes';
+```
+
+### 9.10 PostCSS Configuration
+
+Unchanged in intent from v0.7.0 — same plugins, same preserved CSS custom properties strategy. The pipeline now runs across the five design system packages.
+
+```
+postcss-import → postcss-nested → postcss-preset-env → cssnano
+```
+
+`postcss-preset-env` keeps `custom-properties: false` (CSS variables preserved as-is) and most modern features disabled, because the target browsers (Chrome / Firefox / Safari latest 2) already support them natively.
+
+### 9.11 Token Flow — Global to Component to Consumer
+
+The cascade is **unchanged in shape** from v0.7.0; only the names of the global tokens changed.
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Tier 1: Global Tokens (theme package)                          │
-│                                                                 │
-│  ┌────────────────┐  ┌────────────────┐  ┌─────────────────┐    │
-│  │ Palette        │  │ Foundation     │  │ Semantic (root) │    │
-│  │ --line-blue-9  │  │ --line-size-3  │  │ --line-background│   │
-│  │ --line-gray-12 │  │ --line-shadow-2│  │ --line-solid-hover│  │
-│  │                │  │ --line-font-*  │  │ --line-high-contrast│ │
-│  └──────┬─────────┘  └──────┬─────────┘  └────────┬────────┘   │
-│         │                   │                      │            │
-│         ▼                   ▼                      ▼            │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Schema: .line-schema-blue maps palette → semantic        │ │
-│  └────────────────────────────────────────────────────────────┘ │
-│         │                                                       │
-│         ▼                                                       │
-│  ┌────────────────────────────────────────────────────────────┐ │
-│  │  Aliases: --line-primary-9 → --line-blue-9 (Phase 1)      │ │
-│  └────────────────────────────────────────────────────────────┘ │
+│  Tier 1: Global Tokens                                          │
+│  ┌──────────────┐  ┌──────────────┐  ┌────────────────────┐     │
+│  │ line-tokens  │  │ line-colors  │  │ line-themes        │     │
+│  │ --line-size-3│  │ --line-blue-9│  │ --line-accent-solid│     │
+│  │ --line-radius│  │ --line-amber │  │ --line-danger-text │     │
+│  └──────────────┘  └──────────────┘  └────────────────────┘     │
+│                                              │                  │
+│                          [data-accent / data-gray attributes]   │
+│                                              ▼                  │
+│  ┌────────────────────────────────────────────────────────┐     │
+│  │  Role variables resolve per (accent, gray) pair        │     │
+│  └────────────────────────────────────────────────────────┘     │
 └─────────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  Tier 2: Component Tokens (inside :host)                        │
-│                                                                 │
 │  :host {                                                        │
 │    --line-button-radius: var(--line-radius-2);                  │
-│    --line-button-bg: var(--line-solid-background);              │
-│    --line-button-color: var(--line-high-contrast);              │
+│    --line-button-bg:     var(--line-accent-solid);              │
+│    --line-button-color:  var(--line-accent-contrast);           │
 │  }                                                              │
 └─────────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  Tier 3: Consumer Overrides                                     │
-│                                                                 │
-│  /* Override a component token */                               │
-│  line-button {                                                  │
-│    --line-button-radius: 1rem;                                  │
-│  }                                                              │
-│                                                                 │
-│  /* Or bypass tokens entirely via ::part() */                   │
-│  line-button::part(root) {                                      │
-│    border-radius: 0;                                            │
-│    background: linear-gradient(135deg, pink, purple);           │
-│  }                                                              │
+│  line-button { --line-button-radius: 1rem; }                    │
+│  line-button::part(root) { /* total control */ }                │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Key principle:** Each tier can be overridden by the tier below it. Component tokens reference global tokens as defaults. Consumer overrides win over component defaults. `::part()` overrides win over everything.
+**Key principle (unchanged):** each tier can be overridden by the tier below it. `::part()` overrides win over everything.
 
-**Current state:** Tier 1 is implemented (requires branding refactor). Tier 2 and Tier 3 are architectural patterns to be implemented when components are built in Phase 1. The pattern is validated by Lit's CSS custom property inheritance through shadow DOM.
+### 9.12 CSS Cascade Strategy
 
-### 9.11 CSS Cascade Strategy
+**Unchanged from v0.7.0:** `@layer` is not needed. The `:where()` strategy and Shadow DOM encapsulation together cover all cascade scenarios.
 
-**Decision: `@layer` is not needed.** The `:where()` strategy is sufficient for the theme package, and shadow DOM provides natural encapsulation for component styles.
+- All role declarations in `line-themes` use `:where([data-accent="X"])` / `:where([data-gray="Y"])` — zero specificity.
+- Palette declarations in `line-colors` use `:where(html)` — zero specificity.
+- Token declarations in `line-tokens` use `:where(html)` — zero specificity.
+- Consumer rules always win.
 
-**The `:where()` strategy in practice:**
+### 9.13 Structural Refactor (Phase 0)
 
-- Palette tokens: `:where(html)` — zero specificity
-- Schema tokens: `:where(.line-schema-*)` — zero specificity
-- Utility classes: `:where(.line-is-*)` — zero specificity
-- Normalize reset: `:where(element)` — zero specificity
-- Dark mode: `light-dark()` within `:where()` declarations — zero specificity (no separate dark override selectors needed, except for shadow tokens which use `:where(html).dark`)
+The repository root has already been re-branded to `@websublime/line-ui` (workspace name in `package.json`, repo name `line-ui`, npm scope `@websublime/line-*`). The remaining work is the **structural build-out** of the new package layout — there is no monolithic package currently published from this workspace to dismantle in place, but the 8 target packages (5 design-system + 3 runtime: `line-core`, `line-components`, `line-icons`) must be authored from scratch under `packages/`.
 
-**Why `@layer` is not needed:**
+| What | Target (v0.8.0) |
+|------|-----------------|
+| Design system packages | `@websublime/line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils` (5 packages) |
+| Runtime packages | `@websublime/line-core`, `@websublime/line-components`, `@websublime/line-icons` |
+| Theme switching | DOM attributes `data-accent="blue"` (+ optional `data-gray="slate"`) |
+| Palette variables | `--line-blue-9` (all palette tokens `--line-{hue}-{step}`) |
+| Role variables | `--line-accent-*`, `--line-gray-*`, `--line-success-*`, `--line-warning-*`, `--line-danger-*`, `--line-info-*` (role-namespaced) |
+| Foundation tokens | `--line-{family}-{step}` (e.g. `--line-size-3`, `--line-radius-2`) |
+| Number of hues | 31 (Radix Colors 3.x) |
+| Utility classes | **Deferred to Phase 1 spec.** Specifics (ship, rename, or remove) are decided at spec time. With attribute-based theming the v0.7 utility-first pattern is largely redundant. Explicitly **not** part of the core design system contract. |
+| Base class | `LineElement` |
+| Tag prefix | `line-` |
 
-1. **Theme package:** `:where()` gives all token declarations zero specificity. Any consumer rule wins automatically. No layers needed.
-2. **Component package:** Shadow DOM encapsulates component styles. CSS custom properties inherit through the boundary. Consumer overrides via `::part()` or custom properties operate at the document level, naturally winning over shadow DOM internals.
-3. **No cross-boundary conflicts:** There is no scenario where theme styles, component base styles, and consumer styles compete in the same cascade context. Each has its own scope (document `:where()`, shadow DOM, document selectors).
+This refactor is the initial authoring of the package layout in `packages/`, sourcing palette CSS from `@radix-ui/colors`, generating role mappings mechanically from `line-schemas` enumerations, and standing up the build pipeline (PostCSS + Vite/Rolldown). It is completed early in Phase 0 before any new feature work.
 
-### 9.12 Package Exports and Build Outputs
-
-**Package metadata (target):**
-
-```json
-{
-  "name": "@websublime/line-theme",
-  "version": "0.8.0",
-  "style": "dist/line.min.css",
-  "exports": {
-    ".":           "./dist/line.min.css",
-    "./tokens":    "./dist/tokens.min.css",
-    "./semantic":  "./dist/semantic.min.css",
-    "./normalize": "./dist/normalize.min.css",
-    "./utilities": "./dist/utilities.min.css",
-    "./aliases":   "./dist/aliases.min.css",
-    "./colors/*":  "./dist/colors/*.min.css",
-    "./schemas/*": "./dist/schemas/*.min.css",
-    "./themes/*":  "./dist/themes/*.min.css"
-  }
-}
-```
-
-**Build outputs (all minified via cssnano):**
-
-| Output | Export Specifier | Content | Use Case |
-|--------|-----------------|---------|----------|
-| `dist/line.min.css` | `.` | Full bundle: all layers + all 28 themes | Quick start |
-| `dist/tokens.min.css` | `./tokens` | L1: Foundation tokens (no colours) | Headless setup |
-| `dist/semantic.min.css` | `./semantic` | L2: Gray light-dark() defaults | Foundation + reset |
-| `dist/normalize.min.css` | `./normalize` | CSS reset | Document reset |
-| `dist/utilities.min.css` | `./utilities` | Semantic utility classes | Utility classes |
-| `dist/aliases.min.css` | `./aliases` | L3: 6 aliases × 9 intent tokens | Intent tokens |
-| `dist/colors/{palette}.min.css` | `./colors/*` | Single palette (12 levels + contrast token) | Granular: palette |
-| `dist/schemas/{palette}.min.css` | `./schemas/*` | Single schema (semantic mapping + utility classes) | Granular: schema |
-| `dist/themes/{palette}.min.css` | `./themes/*` | Single theme (colour + schema combined) | Single-palette setup |
-
-Demo swatch files (`custom/*-custom.css`) are **excluded** from all build outputs. They belong in Storybook.
-
-**Minimal consumer setup (single theme):**
-
-```css
-@import '@websublime/line-theme/tokens';
-@import '@websublime/line-theme/normalize';
-@import '@websublime/line-theme/themes/blue';
-@import '@websublime/line-theme/aliases';
-```
-
-### 9.13 Decisions Log
-
-All design token questions have been resolved. This table documents the decisions for traceability.
+### 9.14 Decisions Log
 
 | # | Question | Decision | Phase |
 |---|----------|----------|-------|
-| T1 | Namespace prefix for all tokens | **`--line-*` prefix on everything** — palette, semantic, foundation, component tokens, and CSS classes. Single convention, zero collision risk. | Phase 0 |
-| T2 | CSS `@layer` strategy | **Not needed.** `:where()` handles theme specificity. Shadow DOM handles component encapsulation. No scenario where layers add value. | Closed |
-| T3 | Foundation token ownership | **All foundation tokens defined explicitly** in `tokens/` directory (per-family CSS files + barrel `tokens.css`). No `postcss-jit-props` or `open-props` runtime dependencies. Open Props used as a design reference only. All ~413 tokens (~299 core + ~114 decorative) owned by the theme package. | Phase 0 |
-| T4 | Custom theme contract for consumers | **Document the contract in Phase 1** (colour file + schema file + optional alias override). Generator CLI is nice-to-have post-1.0. | Phase 1 |
-| T5 | Demo swatch files in production bundle | **Remove from all build outputs.** Demo classes (`custom/*.css`) migrate to Storybook. | Phase 0 |
-| T6 | Semantic alias layer | **6 aliases × 9 intent tokens = 54 variables.** Aliases: primary (blue), danger (red), success (green), warning (amber), info (cyan), neutral (gray). Intent tokens per alias: base, hover, active, text, subtle, subtle-hover, outline, outline-hover, fg. Consumer can remap any alias. | Phase 1 |
+| T1 | Namespace prefix for all tokens | `--line-*` prefix on everything (palette, role, semantic, foundation, component, alias). Single convention, zero collision risk. | Phase 0 |
+| T2 | CSS `@layer` strategy | Not needed. `:where()` + Shadow DOM cover all cascade scenarios. | Closed |
+| T3 | Foundation token ownership | `@websublime/line-tokens` owns all non-colour primitives. Open Props used as a design reference only — no runtime dependency. | Phase 0 |
+| T4 | Theme switching mechanism | **DOM attributes (`data-accent`, `data-gray`)**, not CSS classes, not a single `data-theme` aggregator. Accent and gray are independent; semantic colours are fixed. (Option A in the design discussion.) | Phase 0 |
+| T5 | Palette source-of-truth | **`@radix-ui/colors` npm package**, 31 hues x 12 steps. Generated palette CSS is **committed** into `line-colors/src/` so CI does not regenerate. Regenerate only on bumping `@radix-ui/colors`. | Phase 0 |
+| T6 | Schema layer location | Schemas are **TS contracts** (types + Zod validators) in `@websublime/line-schemas`, not CSS files. CSS role mappings live in `@websublime/line-themes`. | Phase 0 |
+| T7 | Numeric vs named API | **Both** — numeric API (`--line-accent-1..12`) is canonical; **9 named aliases per role** (54 total) sit on top for intent-driven consumption. The `--line-{role}-contrast` token is part of the canonical numeric API (see §9.6) and is not counted as an alias. (Option B in the design discussion.) | Phase 0 |
+| T8 | Semantic colour mutability | **Fixed at root.** `success/warning/danger/info` are never re-skinned by theme choice. `SEMANTIC_MAP = { success: green, warning: amber, danger: red, info: blue }` lives in `line-themes/src/semantics.css` and resolves at `:root`. | Phase 0 |
+| T9 | Default accent + gray | Default accent: `indigo`. Default gray: auto-paired from accent via Radix-style pairing table (§9.5). Explicit `data-gray` always wins. | Phase 0 |
+| T10 | Contrast tokens | Each role exposes a `--line-{role}-contrast` token for text on step-9 solid backgrounds (WCAG AA guaranteed). Implemented in `line-colors` per hue (`--line-{hue}-contrast`) and surfaced through role mappings in `line-themes`. | Phase 0 |
+| T11 | CSS pipeline | PostCSS (`postcss-import`, `postcss-nested`, `postcss-preset-env`, `cssnano`). Component bundling continues via Vite/Rolldown. | Phase 0 |
 
-### 9.14 Branding Refactor (Phase 0)
-
-The existing codebase uses legacy naming that must be migrated to `line://ui` branding:
-
-| What | Current (legacy) | Target |
-|------|-------------------|--------|
-| Theme package name | `@websublime/vitamina-theme` | `@websublime/line-theme` |
-| Main CSS bundle | `vita.css` / `vita.min.css` | `line.css` / `line.min.css` |
-| Palette variables | `--blue-9` (unprefixed) | `--line-blue-9` |
-| Semantic variables | `--background` (unprefixed) | `--line-background` |
-| Foundation tokens | `--size-3` (unprefixed) | `--line-size-3` |
-| Schema classes | `.schema-blue` | `.line-schema-blue` |
-| Utility classes | `.is-blue`, `.is-background` | `.line-is-blue`, `.line-is-background` |
-| Core package name | `@websublime/vitamina-core` | `@websublime/line-core` |
-| Base class | `ComponentElement` / `ComponentMixin` | `LineElement` |
-| Tag prefix | `vita-` | `line-` |
-
-This refactor is mechanical and can be automated with find-and-replace across the theme and core packages. It should be completed early in Phase 0 before any new feature work begins.
-
----
-
-
-
-### 9.15 Contrast Token System
-
-Each of the 28 colour palettes declares a `--line-{palette}-contrast` token that guarantees WCAG AA (≥4.5:1) contrast for text on level-9 solid backgrounds.
-
-**The problem:** The 12-step palette scale distributes perceptual lightness across the range but does not guarantee that level-1 or level-12 achieves 4.5:1 against level-9. Testing revealed 19 of 28 palettes fail WCAG AA for normal text when using white (level-1) text on solid (level-9) backgrounds. See `docs/THEME-GAP-ANALYSIS.md` §A for full audit results.
-
-**The solution:** A dedicated contrast token per palette, set to pure `#fff` or `#000`:
-
-```css
-/* colors/blue.css — light mode */
---line-blue-contrast: #000;
-
-/* colors/violet.css — light mode */
---line-violet-contrast: #fff;
-```
-
-**Classification:**
-
-| Contrast value | Palettes |
-|---------------|----------|
-| `#fff` (light mode) | indigo, plum, purple, violet (4 palettes) |
-| `#000` (light mode) | All other 24 palettes |
-| `#fff` (dark mode) | All 28 palettes |
-
-**Semantic integration:** Each schema exposes `--line-solid-text: var(--line-{palette}-contrast)`. The alias layer maps this as `--line-{alias}-text`. Components and presets use `--line-primary-text` (or equivalent) for text on solid backgrounds.
-
-### 9.16 Preset Package
-
-A **preset** is a CSS-only package that provides out-of-the-box visual styles for line://ui components. It targets components from the outside using `::part()` selectors and host element selectors. It imports nothing from `line-core` — no JS, no component registration.
-
-**Package:** `@websublime/line-presets` (single package distributing N presets: default, minimal, etc.)
-
-**Architecture:**
-
-```
-@websublime/line-core              → Headless Web Components (behaviour + accessibility)
-@websublime/line-theme             → L0–L3: design tokens + palettes + schemas + aliases
-@websublime/line-presets           → L4–L5: component tokens + visual styles (multiple presets in one package)
-```
-
-**Component token convention:** Presets define tokens on the component host using the `--line-{component}-{prop}` naming:
-
-```css
-line-button {
-  --line-button-height-sm: 2rem;
-  --line-button-height-md: 2.5rem;
-  --line-button-height-lg: 3rem;
-  --line-button-radius: var(--line-radius-2);
-  --line-button-padding-x: var(--line-size-4);
-}
-```
-
-Consumers override these on the same selector for quick adjustments, or use `::part()` for total control.
-
-**Preset scaffold enters in Phase 1** alongside the first component implementations. Component styles are written as component specs get approved.
-
-**Future presets:** Different presets can offer fundamentally different aesthetics (minimal, soft, brutalist) — all consuming the same theme tokens.
-
-Full implementation details in `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phase 7.
+Full implementation details live in the Phase 0 spec (`docs/specs/00-spec-design-system.md`) (to be created in Phase 0 specification), produced during Stage 2 via `/specification 00`. The spec is the canonical source — there is no parallel implementation guide.
 
 ## 10. Community & Governance
 
@@ -1758,7 +1572,7 @@ Full implementation details in `docs/DESIGN-SYSTEM-IMPLEMENTATION-GUIDE.md` Phas
 - **Pull requests welcome** — must include or reference a component spec.
 - **No Discord or community chat** at this stage.
 - **RFC process:** New components require a spec in `docs/specs/` before implementation begins.
-- **Code of conduct:** To be added.
+- **Code of conduct:** Added before Phase 1 / v0.2.0 (when the first published components attract external contribution risk).
 
 ---
 
@@ -1816,6 +1630,8 @@ Accessible via a visual overlay or programmatic API. Useful for QA teams, design
 
 The `://` mark — abstracted from the URI protocol notation — serves as the icon, favicon, and visual identity. The colon represents two connection nodes; the forward slashes represent the path forward.
 
-### Brand Accent
+### Brand Accent (marketing surface)
 
-Primary accent: `#c8ff00` (electric green). Adapts to `#6d8a00` in light mode contexts.
+The line://ui marketing surface — website, logo, social media — uses an electric green accent: `#c8ff00`, adapting to `#6d8a00` in light contexts.
+
+**This is distinct from the library's default component accent**, which is `indigo` and is selected via the `data-accent` attribute system (see §9.5 Defaults & Auto-Pairing). Consumers of the library are not steered toward electric green — they pick from the 31 Radix hues, with `indigo` as the auto-selected default.
