@@ -6,11 +6,11 @@
     "url": "https://github.com/miguelramos"
   },
   "bugs": {
-    "url": "https://github.com/websublime/vitamin/issues"
+    "url": "https://github.com/websublime/line-ui/issues"
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@github.com:websublime/vitamin.git"
+    "url": "ssh://git@github.com:websublime/line-ui.git"
   },
   "private": true,
   "version": "1.0.0",
