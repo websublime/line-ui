@@ -67,7 +67,7 @@ Three tiers of components:
 | | |
 |---|---|
 | **Runtime** | [Bun](https://bun.sh) |
-| **Bundler** | [Vite 7+](https://vitejs.dev) with [Rolldown](https://rolldown.rs) |
+| **Bundler** | [Vite 8+](https://vitejs.dev) with [Rolldown](https://rolldown.rs) |
 | **Components** | [Lit 3+](https://lit.dev) |
 | **State machines** | [Zag.js](https://zagjs.com) |
 | **Tokens** | Custom foundation tokens (`tokens.css`) + 28-palette colour system |
