@@ -388,7 +388,6 @@ Root `package.json` `build` script remains `"bun --filter '@websublime/*' build"
 | `cssnano` | `^8.0.1` | R6 |
 | `storybook` | `^10.4.0` | R10 round-2 |
 | `@storybook/web-components-vite` | `^10.4.0` | R10 round-2 |
-| `@storybook/addon-essentials` | `^10.4.0` | bundled with Storybook 10 |
 | `@storybook/addon-a11y` | `^10.4.0` | accessibility checks (Phase 00 acceptance) |
 | `@storybook/addon-themes` | `^10.4.0` | toolbar `data-accent` / `data-gray` switcher (Q4 resolution) |
 | `@custom-elements-manifest/analyzer` | `^0.11.0` | R13 |
@@ -405,6 +404,12 @@ Vite 8 ships Rolldown 1.0.1 as a direct dependency — **no override needed for 
 { "overrides": { "vite": "^7.0.0" } }
 ```
 This is **not active configuration**; it is documented in `docs/runbooks/bundler-rollback.md` and exercised only on a confirmed regression.
+
+**A3 — Amendments.**
+
+| ID | Date | Trigger | Change | Reason | Evidence |
+|---|---|---|---|---|---|
+| AM-001 | 2026-05-21 | bead `line-ui-7qm.1.3` pre-implementation investigation | Removed `@storybook/addon-essentials ^10.4.0` row from §6.A.3 dependency table. | Package discontinued at the Storybook 9/10 transition; functionality absorbed into the `storybook` meta-package. No `^10.x` version exists on the npm registry (latest published is `8.6.18`) — installing it would fail `bun install`. | Research-agent verification logged in `bd comments line-ui-7qm.1.3` (SD-4). |
 
 **A4 — npm scope.**
 
