@@ -1,12 +1,17 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.4.6/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.4.15/schema.json",
   "vcs": {
     "enabled": true,
     "clientKind": "git",
     "useIgnoreFile": true
   },
   "assist": {
-    "enabled": true
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
   },
   "formatter": {
     "enabled": true,
@@ -35,7 +40,15 @@
             "syntax": "shorthand"
           }
         },
-        "useTemplate": "error"
+        "useTemplate": "error",
+        "noRestrictedImports": {
+          "level": "error",
+          "options": {
+            "paths": {
+              "@zag-js/vanilla": "only @websublime/line-core may import @zag-js/vanilla; use @websublime/line-core/machine instead"
+            }
+          }
+        }
       },
       "suspicious": {
         "noConsole": {
@@ -54,7 +67,7 @@
   "javascript": {
     "formatter": {
       "quoteStyle": "single",
-      "trailingCommas": "none",
+      "trailingCommas": "all",
       "semicolons": "always"
     }
   },
@@ -75,6 +88,18 @@
     }
   },
   "files": {
-    "includes": ["**/*.ts", "**/*.js", "**/*.mjs", "**/*.json", "**/*.css"]
-  }
+    "includes": ["**", "!dist", "!node_modules", "!**/*.generated.css", "!**/customElements.json", "!.beads"]
+  },
+  "overrides": [
+    {
+      "includes": ["packages/line-core/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noRestrictedImports": "off"
+          }
+        }
+      }
+    }
+  ]
 }
