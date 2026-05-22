@@ -16,7 +16,7 @@ State machines. Zero visual opinion. Framework-agnostic.
 
 <br/>
 
-[![Version](https://img.shields.io/badge/version-0.7.0-c8ff00?style=flat-square&labelColor=1a1a1a)](https://github.com/websublime/vitamin/releases)
+[![Version](https://img.shields.io/badge/version-0.7.0-c8ff00?style=flat-square&labelColor=1a1a1a)](https://github.com/websublime/line-ui/releases)
 [![Components](https://img.shields.io/badge/components-131-c8ff00?style=flat-square&labelColor=1a1a1a)](./docs/PRD.md)
 [![License](https://img.shields.io/badge/license-MIT-c8ff00?style=flat-square&labelColor=1a1a1a)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/types-included-c8ff00?style=flat-square&labelColor=1a1a1a)](https://www.typescriptlang.org/)
@@ -80,8 +80,8 @@ Three tiers of components:
 Components require a spec in `docs/specs/` before implementation — see [`COMPONENT-SPEC-TEMPLATE.md`](./docs/specs/COMPONENT-SPEC-TEMPLATE.md).
 
 ```bash
-git clone https://github.com/websublime/vitamin.git
-cd vitamin
+git clone https://github.com/websublime/line-ui.git
+cd line-ui
 bun install
 bun run dev
 ```
