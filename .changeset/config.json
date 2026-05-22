@@ -3,7 +3,7 @@
   "changelog": [
     "@changesets/changelog-github",
     {
-      "repo": "websublime/vitamin"
+      "repo": "websublime/line-ui"
     }
   ],
   "commit": false,
