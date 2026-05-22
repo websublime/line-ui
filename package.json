@@ -57,6 +57,7 @@
     "@storybook/addon-a11y": "^10.4.0",
     "@storybook/addon-themes": "^10.4.0",
     "@storybook/web-components-vite": "^10.4.0",
+    "@types/node": "^25.4.0",
     "@zag-js/core": "^1.40.0",
     "@zag-js/vanilla": "^1.40.0",
     "astro": "^5.18.1",
