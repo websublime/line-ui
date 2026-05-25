@@ -1,0 +1,52 @@
+{
+  "name": "@websublime/line-colors",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/index.css",
+    "./special": "./dist/special.css",
+    "./amber": "./dist/amber.css",
+    "./blue": "./dist/blue.css",
+    "./bronze": "./dist/bronze.css",
+    "./brown": "./dist/brown.css",
+    "./crimson": "./dist/crimson.css",
+    "./cyan": "./dist/cyan.css",
+    "./gold": "./dist/gold.css",
+    "./grass": "./dist/grass.css",
+    "./gray": "./dist/gray.css",
+    "./green": "./dist/green.css",
+    "./indigo": "./dist/indigo.css",
+    "./iris": "./dist/iris.css",
+    "./jade": "./dist/jade.css",
+    "./lime": "./dist/lime.css",
+    "./mauve": "./dist/mauve.css",
+    "./mint": "./dist/mint.css",
+    "./olive": "./dist/olive.css",
+    "./orange": "./dist/orange.css",
+    "./pink": "./dist/pink.css",
+    "./plum": "./dist/plum.css",
+    "./purple": "./dist/purple.css",
+    "./red": "./dist/red.css",
+    "./ruby": "./dist/ruby.css",
+    "./sage": "./dist/sage.css",
+    "./sand": "./dist/sand.css",
+    "./sky": "./dist/sky.css",
+    "./slate": "./dist/slate.css",
+    "./teal": "./dist/teal.css",
+    "./tomato": "./dist/tomato.css",
+    "./violet": "./dist/violet.css",
+    "./yellow": "./dist/yellow.css"
+  },
+  "scripts": {
+    "build": "...",
+    "dev": "...",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  }
+}

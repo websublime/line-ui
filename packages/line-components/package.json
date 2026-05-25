@@ -1,0 +1,21 @@
+{
+  "name": "@websublime/line-components",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": [],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "...",
+    "dev": "...",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  }
+}

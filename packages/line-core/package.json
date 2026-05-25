@@ -1,0 +1,33 @@
+{
+  "name": "@websublime/line-core",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./machine": {
+      "types": "./dist/machine/index.d.ts",
+      "import": "./dist/machine/index.js"
+    },
+    "./styles": {
+      "types": "./dist/styles/index.d.ts",
+      "import": "./dist/styles/index.js"
+    },
+    "./mixins/*": {
+      "types": "./dist/mixins/*.d.ts",
+      "import": "./dist/mixins/*.js"
+    }
+  },
+  "scripts": {
+    "build": "...",
+    "dev": "...",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  }
+}

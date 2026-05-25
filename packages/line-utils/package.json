@@ -1,0 +1,29 @@
+{
+  "name": "@websublime/line-utils",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./contrast": {
+      "types": "./dist/contrast.d.ts",
+      "import": "./dist/contrast.js"
+    },
+    "./mix": {
+      "types": "./dist/mix.d.ts",
+      "import": "./dist/mix.js"
+    }
+  },
+  "scripts": {
+    "build": "...",
+    "dev": "...",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  }
+}

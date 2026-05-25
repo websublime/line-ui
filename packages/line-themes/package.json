@@ -1,0 +1,25 @@
+{
+  "name": "@websublime/line-themes",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/index.css",
+    "./accent/*": "./dist/accent/*.css",
+    "./gray/*": "./dist/gray/*.css",
+    "./semantics": "./dist/semantics.css",
+    "./aliases": "./dist/aliases.css",
+    "./defaults": "./dist/defaults.css"
+  },
+  "scripts": {
+    "build": "...",
+    "dev": "...",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  }
+}
