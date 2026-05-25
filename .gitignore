@@ -4,6 +4,9 @@ dist
 temp
 coverage
 
+# TypeScript incremental build info (emitted by tsc -b in each package)
+*.tsbuildinfo
+
 # local env files
 .env.local
 .env.*.local
