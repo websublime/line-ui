@@ -6,6 +6,5 @@
     "rootDir": "./src"
   },
   "include": ["src/**/*"],
-  "exclude": ["tests/**", "dist/**"],
-  "references": [{ "path": "../line-tokens" }]
+  "exclude": ["tests/**", "dist/**"]
 }
