@@ -381,6 +381,7 @@ Root `package.json` `build` script remains `"bun --filter '@websublime/*' build"
 | `@zag-js/core` | `^1.40.0` | R3 |
 | `@zag-js/vanilla` | `^1.40.0` | R3 / C4 round-2 |
 | `typescript` | latest 5.x | trivial |
+| `tslib` | latest 2.x | required by §7.1 `importHelpers: true` (AM-002) |
 | `postcss` | `^8.5.14` | R6 round-2 |
 | `postcss-import` | `^16.1.1` | R6 |
 | `postcss-nested` | `^7.0.2` | R6 |
@@ -410,6 +411,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
 | AM-001 | 2026-05-21 | bead `line-ui-7qm.1.3` pre-implementation investigation | Removed `@storybook/addon-essentials ^10.4.0` row from §6.A.3 dependency table. | Package discontinued at the Storybook 9/10 transition; functionality absorbed into the `storybook` meta-package. No `^10.x` version exists on the npm registry (latest published is `8.6.18`) — installing it would fail `bun install`. | Research-agent verification logged in `bd comments line-ui-7qm.1.3` (SD-4). |
+| AM-002 | 2026-05-25 | bead `line-ui-7qm.2.1` pre-implementation investigation | Rewrote §7.1 canonical `tsconfig.base.json` block: added `noImplicitOverride`, `noImplicitReturns`, `noUnusedParameters`, `noUnusedLocals`, `importHelpers`; removed `emitDeclarationOnly` (was blocking `tsc -b` JS emit for `line-schemas` / `line-utils` / `line-icons` per §6.B); kept the existing 4 strictness flags (`noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `declarationMap`, `verbatimModuleSyntax`). Added new §7.1 sub-section "Per-package `tsconfig.json`" with an 8-row table mapping each package's build engine to its required overrides (`composite: true` + `references` for tsc-built packages; `noEmit: true` for Vite-built packages; `include: []` for CSS-only packages). Added `tslib` as a root devDependency requirement to support `importHelpers`. | Existing `tsconfig.base.json` had drifted from the spec in 12 flags (4 missing from base, 7 extra in base, 1 conflicting). Show-stopper `emitDeclarationOnly: true` would silently break the `tsc -b` packages in B4. Reconciliation locks the spec/code contract before the B1 supervisor begins, prevents per-package patchwork, and brings the per-package override matrix into the spec instead of leaving it implicit. | Research-agent investigation logged in `bd comments line-ui-7qm.2.1` (DRIFT-tsconfig section). User-approved decision matrix iterated 2026-05-25. |
 
 **A4 — npm scope.**
 
@@ -1527,8 +1529,12 @@ The decision is genuine — the spec does not pre-commit either outcome.
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "useDefineForClassFields": false,           // required by Lit 3 with decorators
-    "experimentalDecorators": true,             // Lit 3 decorators
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUnusedParameters": true,
+    "noUnusedLocals": true,
+    "useDefineForClassFields": false,   // Lit 3 + decorators
+    "experimentalDecorators": true,     // Lit 3 decorators
     "emitDecoratorMetadata": false,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
@@ -1536,12 +1542,40 @@ The decision is genuine — the spec does not pre-commit either outcome.
     "declarationMap": true,
     "sourceMap": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true
+    "verbatimModuleSyntax": true,
+    "importHelpers": true
   }
 }
 ```
 
+Notes on the base config:
+
+- `importHelpers: true` requires `tslib` to be installed as a root devDependency of the monorepo (added to the §6.A.3 dependency set). All packages inherit the flag and resolve `tslib` through workspace hoisting.
+- `emitDeclarationOnly` is intentionally **absent** from the base. No package in §6.B needs declaration-only emit; the three `tsc -b` packages (`line-schemas`, `line-utils`, `line-icons`) require JS emit alongside `.d.ts`. Setting it in the base would silently break their builds.
+- `esModuleInterop` is intentionally **absent**. `verbatimModuleSyntax: true` enforces explicit `import type` / value-import discipline, which makes interop shimming unnecessary and would otherwise mask invalid import shapes.
+- `noUnusedParameters` and `noUnusedLocals` are kept in the TypeScript base **in addition to** Biome's equivalents. Biome runs in the editor and pre-commit hook; `tsc --noEmit` runs as an independent CI gate. The redundancy is deliberate — it preserves `tsc --noEmit` as a defense-in-depth signal that does not depend on Biome being green.
+
 Per-package `tsconfig.json` `extends` this base and sets `outDir`, `rootDir`, and `include`.
+
+#### Per-package `tsconfig.json`
+
+Every package's `tsconfig.json` extends `../../tsconfig.base.json` and sets the standard `outDir` / `rootDir` / `include` triple. Beyond that, each package layers in the overrides required by its build engine. The matrix below is normative — supervisors implementing §6.B must apply exactly these overrides:
+
+| Package | Build engine | `tsconfig.json` beyond `outDir` / `rootDir` / `include` |
+|---|---|---|
+| `line-tokens` | PostCSS (CSS-only) | `"include": []` — tsconfig exists only for editor tooling |
+| `line-colors` | PostCSS (CSS-only) | `"include": []` |
+| `line-themes` | PostCSS (CSS-only) | `"include": []` |
+| `line-schemas` | `tsc -b` | `"composite": true`, `"exclude": ["tests/**","dist/**"]` |
+| `line-utils` | `tsc -b` | `"composite": true`, `"exclude": ["tests/**","dist/**"]`, `"references": [{ "path": "../line-schemas" }]` |
+| `line-icons` | `tsc -b` | `"composite": true`, `"exclude": ["tests/**","dist/**"]`, `"references": [{ "path": "../line-tokens" }]` |
+| `line-core` | `vite build` (+ `vite-plugin-dts`) | `"noEmit": true`, `"exclude": ["tests/**","dist/**"]` |
+| `line-components` | `vite build` (+ `vite-plugin-dts`) | `"noEmit": true`, `"exclude": ["tests/**","dist/**"]` |
+
+Two invariants govern this matrix:
+
+- **`composite: true` is required** for any package referenced by another via `references`, and for every package built with `tsc -b`. `composite` implies that `include` must be explicit (no implicit `**/*` walk) — each `tsc -b` package therefore sets `include` to its `src/**/*` set.
+- **The base config sets no `exclude`** on purpose. Each package owns its own `exclude` so that test folders and `dist/` outputs are scoped per package, not globally. CSS-only packages opt out entirely via `"include": []`.
 
 ### 7.2 Versioning + changesets
 
