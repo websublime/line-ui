@@ -1,27 +1,25 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./packages",
-    "declaration": true,
-    "emitDeclarationOnly": true,
-    "experimentalDecorators": true,
-    "importHelpers": true,
-    "inlineSources": true,
-    "isolatedModules": true,
-    "lib": ["es2022", "dom", "dom.iterable"],
-    "module": "ESNext",
+    "target": "es2022",
+    "module": "esnext",
     "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
     "noImplicitOverride": true,
     "noImplicitReturns": true,
     "noUnusedParameters": true,
     "noUnusedLocals": true,
-    "rootDir": ".",
+    "useDefineForClassFields": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
-    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
     "sourceMap": true,
-    "target": "es2022",
-    "useDefineForClassFields": false
-  },
-  "references": [],
-  "exclude": ["**/tests/**", "**/dist/**", "**/www/**"]
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "importHelpers": true
+  }
 }

@@ -1,0 +1,41 @@
+{
+  "name": "@websublime/line-tokens",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": "./dist/index.css",
+    "./reset": "./dist/reset.css",
+
+    "./typography": "./dist/typography.css",
+    "./sizing": "./dist/sizing.css",
+    "./shadows": "./dist/shadows.css",
+    "./easings": "./dist/easings.css",
+    "./z-index": "./dist/z-index.css",
+    "./opacity": "./dist/opacity.css",
+    "./motion": "./dist/motion.css",
+    "./radii": "./dist/radii.css",
+    "./border-width": "./dist/border-width.css",
+    "./focus-ring": "./dist/focus-ring.css",
+    "./breakpoints": "./dist/breakpoints.css",
+
+    "./aspects": "./dist/aspects.css",
+    "./animations": "./dist/animations.css",
+    "./gradients": "./dist/gradients.css",
+    "./masks": "./dist/masks.css",
+    "./layouts": "./dist/layouts.css",
+    "./highlights": "./dist/highlights.css",
+    "./svg": "./dist/svg.css"
+  },
+  "scripts": {
+    "build": "echo 'build TBD — implemented in B4 (line-ui-7qm.2.4)'",
+    "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",
+    "clean": "rm -rf dist",
+    "typecheck": "tsc --noEmit"
+  }
+}
