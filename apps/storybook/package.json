@@ -8,5 +8,15 @@
     "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@websublime/line-colors": "workspace:^",
+    "@websublime/line-components": "workspace:^",
+    "@websublime/line-core": "workspace:^",
+    "@websublime/line-icons": "workspace:^",
+    "@websublime/line-schemas": "workspace:^",
+    "@websublime/line-themes": "workspace:^",
+    "@websublime/line-tokens": "workspace:^",
+    "@websublime/line-utils": "workspace:^"
   }
 }

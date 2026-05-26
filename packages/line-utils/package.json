@@ -20,6 +20,9 @@
       "import": "./dist/mix.js"
     }
   },
+  "dependencies": {
+    "@websublime/line-schemas": "workspace:^"
+  },
   "scripts": {
     "build": "echo 'build TBD — implemented in B4 (line-ui-7qm.2.4)'",
     "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",

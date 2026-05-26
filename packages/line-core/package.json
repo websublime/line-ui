@@ -24,6 +24,11 @@
       "import": "./dist/mixins/*.js"
     }
   },
+  "dependencies": {
+    "@zag-js/core": "^1.40.0",
+    "@zag-js/vanilla": "^1.40.0",
+    "lit": "^3.3.3"
+  },
   "scripts": {
     "build": "echo 'build TBD — implemented in B4 (line-ui-7qm.2.4)'",
     "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",
