@@ -42,6 +42,16 @@
     "apps/storybook": {
       "name": "@websublime/line-storybook",
       "version": "0.0.0",
+      "devDependencies": {
+        "@websublime/line-colors": "workspace:^",
+        "@websublime/line-components": "workspace:^",
+        "@websublime/line-core": "workspace:^",
+        "@websublime/line-icons": "workspace:^",
+        "@websublime/line-schemas": "workspace:^",
+        "@websublime/line-themes": "workspace:^",
+        "@websublime/line-tokens": "workspace:^",
+        "@websublime/line-utils": "workspace:^",
+      },
     },
     "packages/line-colors": {
       "name": "@websublime/line-colors",
@@ -50,14 +60,28 @@
     "packages/line-components": {
       "name": "@websublime/line-components",
       "version": "0.0.0",
+      "dependencies": {
+        "@websublime/line-core": "workspace:^",
+        "@websublime/line-themes": "workspace:^",
+        "@websublime/line-tokens": "workspace:^",
+        "@websublime/line-utils": "workspace:^",
+      },
     },
     "packages/line-core": {
       "name": "@websublime/line-core",
       "version": "0.0.0",
+      "dependencies": {
+        "@zag-js/core": "^1.40.0",
+        "@zag-js/vanilla": "^1.40.0",
+        "lit": "^3.3.3",
+      },
     },
     "packages/line-icons": {
       "name": "@websublime/line-icons",
       "version": "0.0.0",
+      "dependencies": {
+        "@websublime/line-tokens": "workspace:^",
+      },
     },
     "packages/line-schemas": {
       "name": "@websublime/line-schemas",
@@ -66,6 +90,10 @@
     "packages/line-themes": {
       "name": "@websublime/line-themes",
       "version": "0.0.0",
+      "dependencies": {
+        "@websublime/line-colors": "workspace:^",
+        "@websublime/line-schemas": "workspace:^",
+      },
     },
     "packages/line-tokens": {
       "name": "@websublime/line-tokens",
@@ -74,6 +102,9 @@
     "packages/line-utils": {
       "name": "@websublime/line-utils",
       "version": "0.0.0",
+      "dependencies": {
+        "@websublime/line-schemas": "workspace:^",
+      },
     },
   },
   "packages": {

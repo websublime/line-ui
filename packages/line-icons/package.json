@@ -12,6 +12,9 @@
       "import": "./dist/index.js"
     }
   },
+  "dependencies": {
+    "@websublime/line-tokens": "workspace:^"
+  },
   "scripts": {
     "build": "echo 'build TBD — implemented in B4 (line-ui-7qm.2.4)'",
     "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",
