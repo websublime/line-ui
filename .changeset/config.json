@@ -11,7 +11,7 @@
   "access": "public",
   "baseBranch": "main",
   "updateInternalDependencies": "patch",
-  "ignore": [],
+  "ignore": ["@websublime/line-storybook", "@websublime/line-site"],
   "useCalculatedVersion": true,
   "snapshot": {
     "useCalculatedVersion": true,
