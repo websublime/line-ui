@@ -13,9 +13,9 @@
     }
   },
   "scripts": {
-    "build": "echo 'build TBD — implemented in B4 (line-ui-7qm.2.4)'",
-    "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",
-    "clean": "rm -rf dist",
+    "build": "tsc -b",
+    "dev": "tsc -b --watch",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit"
   }
 }
