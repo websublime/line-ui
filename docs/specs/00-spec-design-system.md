@@ -419,6 +419,8 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-005 | 2026-05-28 | bead `line-ui-7qm.2.4` pre-implementation investigation | Added two missing build-time dependencies to the §6.A.3 dependency table: `vite-plugin-dts` `^5.0.0` (devDependency) and `postcss-cli` `^11.0.0` (devDependency). Both rows are annotated with the AM-005 marker and a pointer to the spec section that consumes them. | The §6.B B4 build commands and §6.F.2 `vite.config.shared.mjs` block both invoke tooling that was never declared in §6.A.3: `postcss-cli` (the `postcss` binary used by the `line-tokens` / `line-colors` / `line-themes` build commands at lines 471-474) and `vite-plugin-dts` (the `.d.ts` emitter wired into the shared Vite config at §6.F.2 ~line 1242 and listed in the §7.1 per-package tsconfig matrix at lines 1574-1575). Without these declarations B4 cannot execute literally — neither package would be present in the lockfile and `bun run build` would fail at the first PostCSS or Vite invocation. Both packages are build-time only (CSS pipeline + TS declaration emit) and therefore belong in `devDependencies`, not in any published package's `dependencies`. Declared minimums are pinned to the current major lines (`vite-plugin-dts` 5.x, the Vite 8-compatible track; `postcss-cli` 11.x, the PostCSS 8 track). | Drift surfaced by research agent during pre-implementation investigation of `line-ui-7qm.2.4` (Stream B B4). Verified absent from current `bun.lock` / `pnpm-lock.yaml`. Version floors confirmed against npm registry on 2026-05-28: `vite-plugin-dts@5.0.1` and `postcss-cli@11.0.1` are current latest; `vite-plugin-dts` 5.x peer-deps on `vite`, `rollup`, and `@microsoft/api-extractor` are all optional. |
 | AM-006 | 2026-05-28 | bead `line-ui-7qm.2.4` pre-implementation investigation | Added a normative clarification note under §6.B B4 (immediately after the per-package build table) defining the scope of the AC `dist/ matches exports map` at B4 time. | The AC as originally written would be unsatisfiable at B4: packages declare many subpath exports (`line-tokens`: 19 subpaths, `line-colors`: 33, `line-themes`: 5+ — see §4) but their `src/` directories contain only one-line placeholder comments after B1. The per-hue / per-family source files are populated by Stream C (§6.C.2, §6.C.3, §6.C.4), not by B4. B4 is responsible for the build *plumbing*, not for the source inputs that feed it. The exports-map ↔ `dist/` conformity is asserted downstream by C9 snapshot tests and F4 CI. Without this clarification the B4 supervisor would either block on missing source inputs or invent placeholder content outside the Stream C contract. | Drift surfaced by research agent during pre-implementation investigation of `line-ui-7qm.2.4` (Stream B B4). Cross-referenced against the §4 exports tables and the §6.C source layouts. |
 | AM-007 | 2026-05-28 | bead `line-ui-7qm.2.4` pre-implementation investigation | Added a normative clarification note under §6.B B4 (immediately after the AM-006 note) defining the scope of the AC `Vite+Rolldown smoke build CI step passes` at B4 time. | The AC as originally written referenced a CI workflow that does not exist at B4 time. `.github/workflows/checks.yml` is owned by Stream F (F3 / F4, per §6.F.5). B4 is in Stream B and cannot assert a CI step that has not yet been authored. The verifiable B4 surface for this AC is the local-build equivalent: per-package `bun run build` succeeds at repo root, and the `line-components/dist/index.js` zero-export invariant (PRD §6.2, §2 of this spec) is verified by a local probe. The CI assertion itself is correctly the responsibility of Stream F. | Drift surfaced by research agent during pre-implementation investigation of `line-ui-7qm.2.4` (Stream B B4). Verified against §6.F.5 ownership of `checks.yml`. |
+| AM-008 | 2026-05-29 | bead `line-ui-7qm.2.5` pre-implementation investigation | Dropped the `next` branch in favour of main-based RC / snapshot / canary publishing. Rewrote §6.E (~line 1376), §7.2 (~line 1599), and the §9.6 exit criterion (~line 1699) so the Stream F-authored snapshot/canary pipeline is driven by manual dispatch and/or push-to-`main` rather than a `next` branch, and annotated the §6.B B5 `baseBranch: "main"` config field accordingly. | The `next` branch was inherited from the legacy Vite-based setup and is no longer used; the user standardised on `main` for all RC / snapshot / canary publishing. Stream F workflow ownership is unchanged — F3 / F4 (§6.F.5) still author `release.yml` / `snapshot-version.yml` / `snapshot-deploy.yml`; only the branch semantics change. | Investigation logged in `bd comments line-ui-7qm.2.5`. |
+| AM-009 | 2026-05-29 | bead `line-ui-7qm.2.5` pre-implementation investigation | Made `linked: []` explicit in the §6.B B5 config field list; confirmed packages are independently (non-linked) versioned, consistent with §7.2. | §7.2 already stated independent versioning in prose, but the B5 config field list omitted the `linked` field — making it explicit hardens the contract against drift. No behavioural change. | Investigation logged in `bd comments line-ui-7qm.2.5`. |
 
 **A4 — npm scope.**
 
@@ -487,12 +489,15 @@ Allowed edges (downward only):
 **B4 — Scope of `Vite+Rolldown smoke build CI step passes` AC (AM-007).** At B4, CI assertions in `checks.yml` are not yet live — they land in Stream F (F3 / F4 per §6.F.5). B4 satisfies this AC at the *local-build* level: a developer running `bun run build` at repo root succeeds for all 8 packages, and a one-liner zero-export probe on `line-components/dist/index.js` (PRD §6.2; §2 of this spec) passes. The CI step itself is asserted by F3 / F4.
 
 **B5 — Changesets across all 8 packages.** Existing `.changeset/config.json` is updated to:
-- `baseBranch`: `"main"`.
+- `baseBranch`: `"main"` — RC / snapshot / canary publishing happens from `main`; there is no `next` branch (see AM-008).
+- `linked`: `[]` — packages are **independently versioned**, not linked (see AM-009).
 - `access`: `"public"`.
 - `commit`: `false` (CI handles commits).
 - `changelog`: `["@changesets/changelog-github", { "repo": "websublime/line-ui" }]`.
 - `ignore`: `["@websublime/line-storybook", "@websublime/line-site"]` — the two apps are never published.
 - Snapshot/canary scripts unchanged (already in root `package.json`).
+
+**B5 — Verifiable surface at B5 time (AM-008/AM-009).** B5 is in Stream B and only configures `.changeset/config.json` — it does **not** author CI workflows. `release.yml`, `snapshot-version.yml`, and `snapshot-deploy.yml` are authored by Stream F (F3 / F4 per §6.F.5), and the end-to-end snapshot/canary publish from `main` is asserted there. The B5 verifiable surface is therefore: (1) `.changeset/config.json` matches the field list above (`baseBranch: "main"`, `linked: []`, `access: "public"`, `commit: false`, the `changelog`/`ignore` entries); and (2) a **local** `bunx changeset version --snapshot` dry-run succeeds against the configured workspace. The CI / branch-trigger verification is deferred to Stream F — this mirrors the AM-006 / AM-007 precedent (Stream B configures the plumbing; Stream F asserts the CI surface).
 
 ### 6.C Stream C — Design System Authoring
 
@@ -1370,7 +1375,7 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-`.github/workflows/snapshot-version.yml` and `snapshot-deploy.yml` — pre-existing repo scripts (`snapshot:version`, `snapshot:publish`) wired into manual-dispatch / `next`-branch flows. RC pipeline = pushes to `next` → automatic snapshot publish with `--tag canary`.
+`.github/workflows/snapshot-version.yml` and `snapshot-deploy.yml` — pre-existing repo scripts (`snapshot:version`, `snapshot:publish`) wired, in the Stream F-authored workflows (F3 / F4 per §6.F.5), into manual-dispatch and/or push-to-`main` flows. RC pipeline = manual dispatch or push-to-`main` → snapshot publish with `--tag canary`. There is no `next` branch (see AM-008).
 
 `.github/workflows/deploy-site.yml`:
 
@@ -1593,7 +1598,7 @@ Two invariants govern this matrix:
 - Each published package is independently versioned via `@changesets/cli` (the existing config is already operational).
 - Phase 00 ships `0.1.0` of every package (initial publish). Plan §7.1 of PRD anchors `0.1.0` to Phase 00 exit.
 - Pre-1.0 breaking changes are permitted at minor bumps (PRD §7.1).
-- No stable releases during Phase 00 — only RCs via the `next` branch + snapshot/canary tags.
+- No stable releases during Phase 00 — only RCs published from `main` via snapshot/canary tags; there is no `next` branch.
 
 ### 7.3 CEM (Custom Elements Manifest)
 
@@ -1693,7 +1698,7 @@ Phase 00 is **complete** when **all** of the following hold. This mirrors plan �
 
 - [ ] `checks.yml` runs lint + typecheck + build + layer-lint + palette-freshness + contrast + unit + e2e + Storybook build + CEM analyse on every PR.
 - [ ] `release.yml` runs Changesets publish on push to `main`.
-- [ ] `snapshot-version.yml` + `snapshot-deploy.yml` operational for `next` branch.
+- [ ] `snapshot-version.yml` + `snapshot-deploy.yml` operational from `main` (manual dispatch and/or push-to-`main`); no `next` branch.
 - [ ] `deploy-site.yml` deploys `apps/site` to Cloudflare Pages on push to `main`.
 - [ ] Storybook preview deploy verified end-to-end on push to `main` (`deploy-storybook.yml` → Cloudflare Pages `line-ui-storybook` project).
 - [ ] `bunfig.toml` declares `[test] preload = ['./bun-test-preload.ts']` (RK5 mitigation for `@open-wc/testing-helpers` `fixtureCleanup` registration); CI asserts the preload entry is present in `bunfig.toml` (`checks.yml` step that greps or parses the file).
