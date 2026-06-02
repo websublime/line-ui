@@ -1,0 +1,38 @@
+/* @websublime/line-tokens — easings.css
+ *
+ * Primitive family: timing-function (easing) curves.
+ * Values seeded from Open Props as a design reference — NO runtime dependency.
+ * Tokens are SINGULAR: --line-easing-*.
+ */
+:where(html) {
+  --line-easing-linear: cubic-bezier(0, 0, 1, 1);
+
+  /* Standard in/out/in-out */
+  --line-easing-in: cubic-bezier(0.4, 0, 1, 1);
+  --line-easing-out: cubic-bezier(0, 0, 0.2, 1);
+  --line-easing-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Progressive (more dramatic) */
+  --line-easing-in-1: cubic-bezier(0.25, 0, 1, 1);
+  --line-easing-in-2: cubic-bezier(0.5, 0, 1, 1);
+  --line-easing-in-3: cubic-bezier(0.7, 0, 1, 1);
+
+  --line-easing-out-1: cubic-bezier(0, 0, 0.75, 1);
+  --line-easing-out-2: cubic-bezier(0, 0, 0.5, 1);
+  --line-easing-out-3: cubic-bezier(0, 0, 0.3, 1);
+
+  --line-easing-in-out-1: cubic-bezier(0.1, 0, 0.9, 1);
+  --line-easing-in-out-2: cubic-bezier(0.3, 0, 0.7, 1);
+  --line-easing-in-out-3: cubic-bezier(0.5, 0, 0.5, 1);
+
+  /* Elastic / spring overshoot */
+  --line-easing-elastic-1: cubic-bezier(0.5, 0.75, 0.75, 1.25);
+  --line-easing-elastic-2: cubic-bezier(0.5, 1, 0.75, 1.25);
+  --line-easing-elastic-3: cubic-bezier(0.5, 1.25, 0.75, 1.25);
+  --line-easing-elastic-4: cubic-bezier(0.5, 1.5, 0.75, 1.25);
+
+  /* Step easings */
+  --line-easing-step-1: steps(2);
+  --line-easing-step-2: steps(3);
+  --line-easing-step-3: steps(4);
+}

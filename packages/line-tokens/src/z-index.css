@@ -1,0 +1,23 @@
+/* @websublime/line-tokens — z-index.css
+ *
+ * Primitive family: stacking-order scale + named layers.
+ * Tokens are SINGULAR: --line-z-*.
+ */
+:where(html) {
+  --line-z-1: 1;
+  --line-z-2: 2;
+  --line-z-3: 3;
+  --line-z-4: 4;
+  --line-z-5: 5;
+
+  /* Named stacking layers (semantic overlays). */
+  --line-z-deck: 10;
+  --line-z-sticky: 100;
+  --line-z-drawer: 200;
+  --line-z-overlay: 300;
+  --line-z-dialog: 400;
+  --line-z-popover: 500;
+  --line-z-toast: 600;
+  --line-z-tooltip: 700;
+  --line-z-max: 2147483647;
+}

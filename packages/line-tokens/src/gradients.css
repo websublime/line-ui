@@ -1,0 +1,37 @@
+/* @websublime/line-tokens — gradients.css
+ *
+ * Decorative family: STRUCTURAL gradient tokens (Phase 00).
+ *
+ * COLOUR-LITERAL-FREE (enforced by scripts/lint-layers.mjs). This file owns
+ * gradient GEOMETRY — angles, stops, positions. Every colour reference is a
+ * var(--line-{hue}-{step}) token supplied by line-colors (C3). At C2 build
+ * time those are dangling var() refs (resolve at use-site) — that is expected.
+ * Tokens are SINGULAR: --line-gradient-*.
+ */
+:where(html) {
+  /* Directional linear-gradient angles (geometry only). */
+  --line-gradient-angle-to-top: to top;
+  --line-gradient-angle-to-bottom: to bottom;
+  --line-gradient-angle-to-left: to left;
+  --line-gradient-angle-to-right: to right;
+  --line-gradient-angle-diagonal: 45deg;
+  --line-gradient-angle-diagonal-reverse: 135deg;
+
+  /* Composed gradients: colour stops reference line-colors hue tokens.
+     Direction keywords are inlined (structural, not colour) because a var()
+     in the direction slot is rejected by static linters. */
+  --line-gradient-1: linear-gradient(to bottom, var(--line-accent-9), var(--line-accent-11));
+  --line-gradient-2: linear-gradient(45deg, var(--line-accent-7), var(--line-accent-10));
+  --line-gradient-surface: linear-gradient(to bottom, var(--line-gray-2), var(--line-gray-4));
+
+  /* Radial + conic geometry (positions/shapes only). */
+  --line-gradient-radial: radial-gradient(circle at center, var(--line-accent-9), var(--line-accent-12));
+  --line-gradient-conic: conic-gradient(from 0deg at 50% 50%, var(--line-accent-9), var(--line-accent-12));
+
+  /* Stop-position scale (percentages — pure geometry). */
+  --line-gradient-stop-0: 0%;
+  --line-gradient-stop-1: 25%;
+  --line-gradient-stop-2: 50%;
+  --line-gradient-stop-3: 75%;
+  --line-gradient-stop-4: 100%;
+}

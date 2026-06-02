@@ -1,0 +1,20 @@
+/* @websublime/line-tokens — radii.css
+ *
+ * Primitive family: border-radius scale.
+ * Family name is PLURAL (radii); token name is SINGULAR: --line-radius-N.
+ * Values seeded from Open Props as a design reference — NO runtime dependency.
+ */
+:where(html) {
+  --line-radius-1: 2px;
+  --line-radius-2: 5px;
+  --line-radius-3: 1rem;
+  --line-radius-4: 2rem;
+  --line-radius-5: 4rem;
+  --line-radius-6: 8rem;
+  --line-radius-round: 1e5px;
+
+  /* Conditional (interpolated) radii for responsive corners. */
+  --line-radius-conditional-1: clamp(0px, calc(100vw - 100%) * 1e5, 2px);
+  --line-radius-conditional-2: clamp(0px, calc(100vw - 100%) * 1e5, 5px);
+  --line-radius-conditional-3: clamp(0px, calc(100vw - 100%) * 1e5, 1rem);
+}

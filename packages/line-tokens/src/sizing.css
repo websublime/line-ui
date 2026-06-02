@@ -1,0 +1,37 @@
+/* @websublime/line-tokens — sizing.css
+ *
+ * Primitive family: spacing / sizing scale.
+ * Values seeded from Open Props as a design reference — NO runtime dependency.
+ * Tokens are SINGULAR: --line-size-N (NOT --line-sizing-N).
+ */
+:where(html) {
+  --line-size-0: 0;
+  --line-size-1: 0.25rem;
+  --line-size-2: 0.5rem;
+  --line-size-3: 1rem;
+  --line-size-4: 1.25rem;
+  --line-size-5: 1.5rem;
+  --line-size-6: 1.75rem;
+  --line-size-7: 2rem;
+  --line-size-8: 3rem;
+  --line-size-9: 4rem;
+  --line-size-10: 5rem;
+  --line-size-11: 7.5rem;
+  --line-size-12: 10rem;
+  --line-size-13: 15rem;
+  --line-size-14: 20rem;
+  --line-size-15: 30rem;
+
+  /* Fluid relative sizes */
+  --line-size-content-1: 20ch;
+  --line-size-content-2: 45ch;
+  --line-size-content-3: 60ch;
+
+  --line-size-xxs: 12rem;
+  --line-size-xs: 16rem;
+  --line-size-sm: 24rem;
+  --line-size-md: 32rem;
+  --line-size-lg: 48rem;
+  --line-size-xl: 64rem;
+  --line-size-xxl: 80rem;
+}

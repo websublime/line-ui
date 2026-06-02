@@ -1,0 +1,52 @@
+/* @websublime/line-tokens — shadows.css
+ *
+ * Primitive family: elevation shadow scale (box-shadow geometry).
+ * Values seeded from Open Props as a design reference — NO runtime dependency.
+ *
+ * Zero colour opinion (Manifesto Law): shadow colour is NOT a literal. Each
+ * elevation references --line-shadow-color, which itself defers to a neutral
+ * alpha hue token supplied by line-colors (C3). At C2 build time these are
+ * dangling var() refs — they resolve at use-site once line-colors is loaded.
+ * --line-shadow-strength scales the per-step alpha.
+ */
+:where(html) {
+  /* Shadow colour + strength knobs (themeable; resolve via line-colors). */
+  --line-shadow-color: var(--line-gray-a-12);
+  --line-shadow-strength: 1%;
+
+  --line-shadow-1: 0 1px 2px -1px var(--line-shadow-color);
+  --line-shadow-2: 0 3px 5px -2px var(--line-shadow-color), 0 7px 14px -5px var(--line-shadow-color);
+  --line-shadow-3:
+    0 -1px 3px 0 var(--line-shadow-color),
+    0 1px 2px -5px var(--line-shadow-color),
+    0 2px 5px -5px var(--line-shadow-color),
+    0 4px 12px -5px var(--line-shadow-color),
+    0 12px 15px -5px var(--line-shadow-color);
+  --line-shadow-4:
+    0 -2px 5px 0 var(--line-shadow-color),
+    0 1px 1px -2px var(--line-shadow-color),
+    0 2px 2px -2px var(--line-shadow-color),
+    0 5px 5px -2px var(--line-shadow-color),
+    0 9px 9px -2px var(--line-shadow-color),
+    0 16px 16px -2px var(--line-shadow-color);
+  --line-shadow-5:
+    0 -1px 2px 0 var(--line-shadow-color),
+    0 2px 1px -2px var(--line-shadow-color),
+    0 5px 5px -2px var(--line-shadow-color),
+    0 10px 10px -2px var(--line-shadow-color),
+    0 20px 20px -2px var(--line-shadow-color),
+    0 40px 40px -2px var(--line-shadow-color);
+  --line-shadow-6:
+    0 -1px 2px 0 var(--line-shadow-color),
+    0 3px 2px -2px var(--line-shadow-color),
+    0 7px 5px -2px var(--line-shadow-color),
+    0 12px 10px -2px var(--line-shadow-color),
+    0 22px 18px -2px var(--line-shadow-color),
+    0 41px 33px -2px var(--line-shadow-color),
+    0 100px 80px -2px var(--line-shadow-color);
+
+  /* Inner (inset) shadows. */
+  --line-shadow-inner-1: inset 0 0 0 1px var(--line-shadow-color);
+  --line-shadow-inner-2: inset 0 1px 2px 0 var(--line-shadow-color);
+  --line-shadow-inner-3: inset 0 1px 4px 0 var(--line-shadow-color);
+}

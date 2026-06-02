@@ -1,0 +1,19 @@
+/* @websublime/line-tokens — motion.css
+ *
+ * Primitive family: animation/transition DURATION scale.
+ * Tokens are SINGULAR: --line-motion-*.
+ * Durations seeded from Open Props as a design reference — NO runtime dependency.
+ */
+:where(html) {
+  --line-motion-instant: 0s;
+  --line-motion-fast: 0.1s;
+  --line-motion-1: 0.15s;
+  --line-motion-2: 0.2s;
+  --line-motion-3: 0.3s;
+  --line-motion-4: 0.4s;
+  --line-motion-5: 0.5s;
+  --line-motion-slow: 0.75s;
+  --line-motion-6: 1s;
+  --line-motion-7: 2s;
+  --line-motion-8: 3s;
+}

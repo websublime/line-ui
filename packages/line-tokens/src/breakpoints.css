@@ -1,0 +1,18 @@
+/* @websublime/line-tokens — breakpoints.css
+ *
+ * Primitive family: responsive breakpoint scale.
+ * Tokens are SINGULAR: --line-breakpoint-*.
+ *
+ * NOTE: custom properties cannot be used directly inside @media feature
+ * queries, so these tokens are design references for consumers building
+ * container queries / JS-driven media logic. They mirror the canonical
+ * min-width thresholds.
+ */
+:where(html) {
+  --line-breakpoint-xs: 20rem;
+  --line-breakpoint-sm: 30rem;
+  --line-breakpoint-md: 48rem;
+  --line-breakpoint-lg: 64rem;
+  --line-breakpoint-xl: 80rem;
+  --line-breakpoint-xxl: 96rem;
+}

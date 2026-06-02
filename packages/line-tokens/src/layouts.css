@@ -1,0 +1,24 @@
+/* @websublime/line-tokens — layouts.css
+ *
+ * Decorative family: structural layout tokens (grid/flex gaps, common ratios).
+ * Tokens are SINGULAR: --line-layout-*.
+ */
+:where(html) {
+  /* Grid column-count tokens. */
+  --line-layout-columns-2: repeat(2, minmax(0, 1fr));
+  --line-layout-columns-3: repeat(3, minmax(0, 1fr));
+  --line-layout-columns-4: repeat(4, minmax(0, 1fr));
+  --line-layout-columns-6: repeat(6, minmax(0, 1fr));
+  --line-layout-columns-12: repeat(12, minmax(0, 1fr));
+
+  /* Auto-fit / auto-fill responsive track templates. */
+  --line-layout-auto-fit: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  --line-layout-auto-fill: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+
+  /* Gap scale (references the sizing primitive). */
+  --line-layout-gap-1: var(--line-size-1);
+  --line-layout-gap-2: var(--line-size-2);
+  --line-layout-gap-3: var(--line-size-3);
+  --line-layout-gap-4: var(--line-size-5);
+  --line-layout-gap-5: var(--line-size-7);
+}

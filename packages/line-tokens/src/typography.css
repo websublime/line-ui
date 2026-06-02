@@ -1,0 +1,53 @@
+/* @websublime/line-tokens — typography.css
+ *
+ * Primitive family: type scale, font families, weights, line-heights, tracking.
+ * Values seeded from Open Props as a design reference — NO runtime dependency.
+ * All tokens are --line-* prefixed and SINGULAR (--line-font-size-N).
+ * :where(html) wrapper → zero specificity (PRD §9.12).
+ */
+:where(html) {
+  /* Font families */
+  --line-font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji";
+  --line-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
+  --line-font-mono:
+    ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* Font weights */
+  --line-font-weight-1: 100;
+  --line-font-weight-2: 200;
+  --line-font-weight-3: 300;
+  --line-font-weight-4: 400;
+  --line-font-weight-5: 500;
+  --line-font-weight-6: 600;
+  --line-font-weight-7: 700;
+  --line-font-weight-8: 800;
+  --line-font-weight-9: 900;
+
+  /* Font sizes (fluid-friendly rem scale) */
+  --line-font-size-0: 0.75rem;
+  --line-font-size-1: 1rem;
+  --line-font-size-2: 1.1rem;
+  --line-font-size-3: 1.25rem;
+  --line-font-size-4: 1.5rem;
+  --line-font-size-5: 2rem;
+  --line-font-size-6: 2.5rem;
+  --line-font-size-7: 3rem;
+  --line-font-size-8: 3.5rem;
+
+  /* Line heights (leading) */
+  --line-leading-0: 0.95;
+  --line-leading-1: 1.1;
+  --line-leading-2: 1.25;
+  --line-leading-3: 1.375;
+  --line-leading-4: 1.5;
+  --line-leading-5: 1.7;
+
+  /* Letter spacing (tracking) */
+  --line-tracking-0: -0.05em;
+  --line-tracking-1: 0.025em;
+  --line-tracking-2: 0.05em;
+  --line-tracking-3: 0.075em;
+  --line-tracking-4: 0.15em;
+}

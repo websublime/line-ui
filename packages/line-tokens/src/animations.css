@@ -1,0 +1,99 @@
+/* @websublime/line-tokens — animations.css
+ *
+ * Decorative family: reusable @keyframes + composed animation tokens.
+ * Keyframes are STRUCTURAL (transform/opacity only — no colour literals).
+ * Animation shorthand tokens compose duration (motion) + easing tokens.
+ * Tokens are SINGULAR: --line-animation-*.
+ */
+@keyframes line-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes line-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes line-scale-up {
+  from {
+    transform: scale(0.9);
+  }
+}
+
+@keyframes line-scale-down {
+  to {
+    transform: scale(0.9);
+  }
+}
+
+@keyframes line-slide-in-up {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes line-slide-in-down {
+  from {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes line-slide-in-left {
+  from {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes line-slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes line-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@keyframes line-ping {
+  90%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes line-pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes line-bounce {
+  25% {
+    transform: translateY(-20%);
+  }
+  40% {
+    transform: translateY(-3%);
+  }
+}
+
+:where(html) {
+  /* Composed animation tokens (duration + easing reference primitive tokens). */
+  --line-animation-fade-in: line-fade-in var(--line-motion-3) var(--line-easing-out);
+  --line-animation-fade-out: line-fade-out var(--line-motion-3) var(--line-easing-in);
+  --line-animation-scale-up: line-scale-up var(--line-motion-3) var(--line-easing-out);
+  --line-animation-scale-down: line-scale-down var(--line-motion-3) var(--line-easing-in);
+  --line-animation-slide-in-up: line-slide-in-up var(--line-motion-3) var(--line-easing-out);
+  --line-animation-slide-in-down: line-slide-in-down var(--line-motion-3) var(--line-easing-out);
+  --line-animation-slide-in-left: line-slide-in-left var(--line-motion-3) var(--line-easing-out);
+  --line-animation-slide-in-right: line-slide-in-right var(--line-motion-3) var(--line-easing-out);
+  --line-animation-spin: line-spin var(--line-motion-6) var(--line-easing-linear) infinite;
+  --line-animation-ping: line-ping var(--line-motion-6) var(--line-easing-out) infinite;
+  --line-animation-pulse: line-pulse var(--line-motion-7) var(--line-easing-in-out) infinite;
+  --line-animation-bounce: line-bounce var(--line-motion-6) var(--line-easing-out) infinite;
+}

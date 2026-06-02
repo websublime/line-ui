@@ -1,0 +1,125 @@
+/* @websublime/line-tokens — reset.css
+ *
+ * Zero-opinion, light-DOM consumer reset for SLOTTED content (ARCHITECTURE §14.10).
+ * Opt-in only — consumers import via `@websublime/line-tokens/reset`.
+ *
+ * DISTINCT from line-core/styles/* (the shadow-DOM internal reset suite).
+ * This file NEUTRALISES browser defaults on slotted light-DOM content; it
+ * applies NO colour, spacing, or typography opinion of its own.
+ *
+ * Every selector uses :where() for ZERO specificity (PRD §9.12) so consumer
+ * styles always win without an arms race. Seven categories per ARCH §14.10.
+ */
+
+/* ---------------------------------------------------------------------------
+ * 1 — Global slotted content reset.
+ * Any element carrying a `line-*` class neutralises browser defaults on the
+ * common flow/media elements (h1–h6, p, ul, ol, img, svg, …).
+ * ------------------------------------------------------------------------- */
+:where([class^="line-"], [class*=" line-"]) :where(h1, h2, h3, h4, h5, h6),
+:where([class^="line-"], [class*=" line-"]) :where(p),
+:where([class^="line-"], [class*=" line-"]) :where(blockquote),
+:where([class^="line-"], [class*=" line-"]) :where(figure),
+:where([class^="line-"], [class*=" line-"]) :where(dl, dd) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+:where([class^="line-"], [class*=" line-"]) :where(ul, ol) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:where([class^="line-"], [class*=" line-"]) :where(img, svg, video, canvas, picture) {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------------------------------------------------------------------------
+ * 2 — Field component.
+ * line-field labels, hint/error slots — neutralise margin, padding, font.
+ * ------------------------------------------------------------------------- */
+:where(line-field) :where(label),
+:where(line-field) :where([slot="hint"]),
+:where(line-field) :where([slot="error"]) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+ * 3 — Form-adjacent components.
+ * Labels and hint/error/description slots — margin, padding, font inheritance.
+ * ------------------------------------------------------------------------- */
+:where(line-input, line-textarea, line-select, line-number-field, line-combobox, line-pin-input) :where(label),
+:where(line-input, line-textarea, line-select, line-number-field, line-combobox, line-pin-input)
+  :where([slot="hint"], [slot="error"], [slot="description"]) {
+  margin: 0;
+  padding: 0;
+  font: inherit;
+}
+
+/* ---------------------------------------------------------------------------
+ * 4 — Content containers.
+ * Headings, paragraphs, lists inside containers — margin, padding, list-style.
+ * ------------------------------------------------------------------------- */
+:where(line-card, line-dialog, line-alert, line-drawer, line-popover, line-tooltip, line-callout, line-banner)
+  :where(h1, h2, h3, h4, h5, h6, p) {
+  margin: 0;
+  padding: 0;
+}
+
+:where(line-card, line-dialog, line-alert, line-drawer, line-popover, line-tooltip, line-callout, line-banner)
+  :where(ul, ol) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * 5 — Navigation components.
+ * Links and lists — text-decoration, color, margin, padding, list-style.
+ * ------------------------------------------------------------------------- */
+:where(line-tabs, line-breadcrumb, line-menu, line-pagination, line-navigation-menu) :where(a) {
+  color: inherit;
+  text-decoration: none;
+}
+
+:where(line-tabs, line-breadcrumb, line-menu, line-pagination, line-navigation-menu) :where(ul, ol) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* ---------------------------------------------------------------------------
+ * 6 — Slotted button resets.
+ * Bare <button> elements — neutralise appearance, background, border, cursor.
+ * ------------------------------------------------------------------------- */
+:where(line-dialog, line-alert, line-drawer, line-toolbar, line-card) :where(button) {
+  appearance: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------------------------------
+ * 7 — Slotted table resets.
+ * <table>, <th>, <td> — border-collapse, spacing, alignment.
+ * ------------------------------------------------------------------------- */
+:where(line-card, line-dialog, line-drawer) :where(table) {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+:where(line-card, line-dialog, line-drawer) :where(th, td) {
+  padding: 0;
+  text-align: start;
+  vertical-align: top;
+}
