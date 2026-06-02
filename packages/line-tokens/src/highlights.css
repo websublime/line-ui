@@ -1,0 +1,19 @@
+/* @websublime/line-tokens — highlights.css
+ *
+ * Decorative family: STRUCTURAL ::selection / highlight tokens (Phase 00).
+ *
+ * COLOUR-LITERAL-FREE (enforced by scripts/lint-layers.mjs). Colours defer to
+ * --line-highlight-bg / --line-highlight-text, which reference line-colors
+ * hue tokens (C3). Dangling var() at C2 build time — resolves at use-site.
+ * Tokens are SINGULAR: --line-highlight-*.
+ */
+:where(html) {
+  --line-highlight-bg: var(--line-accent-5);
+  --line-highlight-text: var(--line-accent-12);
+}
+
+/* Zero-specificity ::selection styling for slotted/light-DOM content. */
+:where(html) ::selection {
+  background-color: var(--line-highlight-bg);
+  color: var(--line-highlight-text);
+}

@@ -1,0 +1,20 @@
+/* @websublime/line-tokens — opacity.css
+ *
+ * Primitive family: opacity scale (0–100, decimal form).
+ * Tokens are SINGULAR: --line-opacity-N.
+ */
+:where(html) {
+  --line-opacity-0: 0;
+  --line-opacity-1: 0.05;
+  --line-opacity-2: 0.1;
+  --line-opacity-3: 0.2;
+  --line-opacity-4: 0.3;
+  --line-opacity-5: 0.4;
+  --line-opacity-6: 0.5;
+  --line-opacity-7: 0.6;
+  --line-opacity-8: 0.7;
+  --line-opacity-9: 0.8;
+  --line-opacity-10: 0.9;
+  --line-opacity-11: 0.95;
+  --line-opacity-12: 1;
+}

@@ -1,0 +1,19 @@
+/* @websublime/line-tokens — focus-ring.css
+ *
+ * Primitive family: focus-ring geometry tokens (width, offset, style, color).
+ * Tokens are SINGULAR: --line-focus-ring-*.
+ *
+ * Zero colour opinion (Manifesto Law): the ring colour is NOT a literal. It
+ * defers to --line-focus-ring-color, which references the accent role token
+ * supplied by line-colors / line-themes (C3/C4). Dangling var() at C2 build
+ * time — resolves at use-site once the colour layer is loaded.
+ */
+:where(html) {
+  --line-focus-ring-width: 2px;
+  --line-focus-ring-offset: 2px;
+  --line-focus-ring-style: solid;
+  --line-focus-ring-color: var(--line-accent-8);
+
+  /* Composed shorthand for `outline`. */
+  --line-focus-ring: var(--line-focus-ring-width) var(--line-focus-ring-style) var(--line-focus-ring-color);
+}

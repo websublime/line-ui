@@ -1,0 +1,13 @@
+/* @websublime/line-tokens — aspects.css
+ *
+ * Decorative family: aspect-ratio tokens.
+ * Tokens are SINGULAR: --line-aspect-*.
+ */
+:where(html) {
+  --line-aspect-square: 1;
+  --line-aspect-landscape: 4 / 3;
+  --line-aspect-portrait: 3 / 4;
+  --line-aspect-widescreen: 16 / 9;
+  --line-aspect-ultrawide: 18 / 5;
+  --line-aspect-golden: 1.618 / 1;
+}

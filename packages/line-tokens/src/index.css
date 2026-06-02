@@ -1,1 +1,31 @@
-/* @websublime/line-tokens — primitives barrel (placeholder; B4 wires the real PostCSS pipeline). */
+/* @websublime/line-tokens — primitives barrel.
+ *
+ * Composes reset + 18 token families in a FIXED order (spec §4.1 / §6.C.2):
+ *   reset → 11 primitives (alphabetical) → 7 decoratives (alphabetical).
+ * postcss-import inlines these into a single flat dist/index.css at build time.
+ */
+
+/* Reset (light-DOM consumer reset — first, before any tokens). */
+@import "./reset.css";
+
+/* 11 primitive families (alphabetical). */
+@import "./border-width.css";
+@import "./breakpoints.css";
+@import "./easings.css";
+@import "./focus-ring.css";
+@import "./motion.css";
+@import "./opacity.css";
+@import "./radii.css";
+@import "./shadows.css";
+@import "./sizing.css";
+@import "./typography.css";
+@import "./z-index.css";
+
+/* 7 decorative families (alphabetical). */
+@import "./animations.css";
+@import "./aspects.css";
+@import "./gradients.css";
+@import "./highlights.css";
+@import "./layouts.css";
+@import "./masks.css";
+@import "./svg.css";

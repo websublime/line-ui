@@ -1,0 +1,37 @@
+/* @websublime/line-tokens — svg.css
+ *
+ * Decorative family: STRUCTURAL SVG presentation tokens (Phase 00).
+ *
+ * COLOUR-LITERAL-FREE (enforced by scripts/lint-layers.mjs). This file owns
+ * SVG GEOMETRY — stroke widths, line joins, mitre limits, dash arrays. Any
+ * paint (stroke/fill colour) defers to var(--line-{hue}-{step}) from
+ * line-colors (C3). Dangling var() at C2 build time — resolves at use-site.
+ * Tokens are SINGULAR: --line-svg-*.
+ */
+:where(html) {
+  /* Stroke geometry. */
+  --line-svg-stroke-width-1: 1px;
+  --line-svg-stroke-width-2: 1.5px;
+  --line-svg-stroke-width-3: 2px;
+  --line-svg-stroke-width-4: 3px;
+
+  --line-svg-stroke-linecap-butt: butt;
+  --line-svg-stroke-linecap-round: round;
+  --line-svg-stroke-linecap-square: square;
+
+  --line-svg-stroke-linejoin-miter: miter;
+  --line-svg-stroke-linejoin-round: round;
+  --line-svg-stroke-linejoin-bevel: bevel;
+
+  --line-svg-stroke-miterlimit: 4;
+
+  /* Dash patterns (length geometry only). */
+  --line-svg-dash-none: 0;
+  --line-svg-dash-dotted: 1 3;
+  --line-svg-dash-dashed: 6 4;
+  --line-svg-dash-long: 12 6;
+
+  /* Paint defers to line-colors hue tokens (no literals here). */
+  --line-svg-stroke: var(--line-accent-11);
+  --line-svg-fill: var(--line-accent-9);
+}

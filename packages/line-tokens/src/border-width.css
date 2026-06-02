@@ -1,0 +1,13 @@
+/* @websublime/line-tokens — border-width.css
+ *
+ * Primitive family: border-width scale.
+ * Tokens are SINGULAR: --line-border-N.
+ */
+:where(html) {
+  --line-border-0: 0;
+  --line-border-1: 1px;
+  --line-border-2: 2px;
+  --line-border-3: 5px;
+  --line-border-4: 10px;
+  --line-border-5: 25px;
+}

@@ -1,0 +1,21 @@
+/* @websublime/line-tokens — masks.css
+ *
+ * Decorative family: mask / clip-path geometry tokens.
+ * Tokens are SINGULAR: --line-mask-*.
+ * Pure geometry — no colour values.
+ */
+:where(html) {
+  /* Edge-fade mask gradients (alpha geometry only — black/transparent are
+     mask channels, not paint colours, so no hue token applies). */
+  --line-mask-fade-top: linear-gradient(to top, transparent, black 25%);
+  --line-mask-fade-bottom: linear-gradient(to bottom, transparent, black 25%);
+  --line-mask-fade-left: linear-gradient(to left, transparent, black 25%);
+  --line-mask-fade-right: linear-gradient(to right, transparent, black 25%);
+  --line-mask-fade-edges: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+
+  /* clip-path shape tokens. */
+  --line-mask-circle: circle(50%);
+  --line-mask-triangle: polygon(50% 0%, 0% 100%, 100% 100%);
+  --line-mask-hexagon: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  --line-mask-rhombus: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+}
