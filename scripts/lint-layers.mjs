@@ -377,7 +377,7 @@ const COLOUR_PATTERNS = [
   { name: 'color()', re: /\bcolor\s*\(/g },
 ];
 
-// Scan comment-stripped CSS and return the byte offsets of every hex literal
+// Scan comment-stripped CSS and return the string offsets of every hex literal
 // that sits in a *declaration-value* position — i.e. inside a `{ ... }` block,
 // after the property `:` and before the terminating `;`/`}`. This flags hex in
 // shorthand/multi-value declarations (the colour-literal guard's primary target)
