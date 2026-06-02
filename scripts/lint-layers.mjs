@@ -102,12 +102,43 @@ async function readJson(path) {
 }
 
 async function listWorkspaceDirs(globDir) {
-  // Workspace globs in root package.json are `packages/*` + `apps/*`.
-  // Each child is a directory containing a package.json.
+  // `globDir` is a top-level workspace bucket (e.g. 'packages', 'apps') derived
+  // from the root package.json `workspaces` field. Each child is a directory
+  // containing a package.json.
   const root = join(REPO_ROOT, globDir);
   if (!existsSync(root)) return [];
   const entries = await readdir(root, { withFileTypes: true });
   return entries.filter((e) => e.isDirectory()).map((e) => join(root, e.name));
+}
+
+/**
+ * Parse the root package.json `workspaces` field into the set of top-level
+ * bucket directories the script must scan. Keeps the scan scope in sync with
+ * the actual workspace declaration if new buckets are added.
+ *
+ * Supports both the array form (`["packages/*", "apps/*"]`) and the object
+ * form (`{ packages: [...] }`). Only the leading path segment of each glob is
+ * used as a bucket; deeper or non-`*` patterns fall back to their first
+ * segment. Returns a de-duplicated, declaration-ordered list.
+ */
+async function workspaceBuckets() {
+  const rootManifestPath = join(REPO_ROOT, 'package.json');
+  if (!existsSync(rootManifestPath)) return [];
+  const rootManifest = await readJson(rootManifestPath);
+  const ws = rootManifest.workspaces;
+  const patterns = Array.isArray(ws) ? ws : Array.isArray(ws?.packages) ? ws.packages : [];
+
+  const buckets = [];
+  const seen = new Set();
+  for (const pattern of patterns) {
+    if (typeof pattern !== 'string') continue;
+    // First path segment, e.g. 'packages/*' -> 'packages', 'apps/foo' -> 'apps'.
+    const bucket = pattern.split('/')[0].trim();
+    if (!bucket || bucket === '.' || bucket === '*' || seen.has(bucket)) continue;
+    seen.add(bucket);
+    buckets.push(bucket);
+  }
+  return buckets;
 }
 
 async function walkFiles(dir, predicate) {
@@ -334,8 +365,16 @@ async function auditCustomElementTags() {
  * Missing files are non-blocking (Stream C C2 owns them).
  * ------------------------------------------------------------------------*/
 
+// Hex literals are only flagged in property-value contexts — i.e. immediately
+// after a declaration colon (`: #abc`) or inside a function argument list
+// (`url(#abc)`, `var(..., #abc)`, etc., matched via a preceding `(` or `,`).
+// This deliberately excludes CSS selector ID fragments (`#myId { ... }`), which
+// are not colours and would otherwise be false-positives once decorative files
+// (gradients.css, highlights.css, svg.css) land in Stream C C2. The leading
+// `[:(,]` delimiter is captured in a non-flagging prefix; the hex value itself
+// follows after optional whitespace.
 const COLOUR_PATTERNS = [
-  { name: 'hex', re: /#[0-9a-fA-F]{3,8}\b/g },
+  { name: 'hex', re: /[:(,]\s*#[0-9a-fA-F]{3,8}\b/g },
   { name: 'rgb', re: /\brgba?\s*\(/g },
   { name: 'hsl', re: /\bhsla?\s*\(/g },
   { name: 'color()', re: /\bcolor\s*\(/g },
@@ -381,7 +420,11 @@ async function auditColourLiterals() {
  * ------------------------------------------------------------------------*/
 
 async function loadManifests() {
-  const dirs = [...(await listWorkspaceDirs('packages')), ...(await listWorkspaceDirs('apps'))];
+  const buckets = await workspaceBuckets();
+  const dirs = [];
+  for (const bucket of buckets) {
+    dirs.push(...(await listWorkspaceDirs(bucket)));
+  }
   const manifests = [];
   for (const dir of dirs) {
     const manifestPath = join(dir, 'package.json');
