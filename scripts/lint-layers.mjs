@@ -365,20 +365,118 @@ async function auditCustomElementTags() {
  * Missing files are non-blocking (Stream C C2 owns them).
  * ------------------------------------------------------------------------*/
 
-// Hex literals are only flagged in property-value contexts — i.e. immediately
-// after a declaration colon (`: #abc`) or inside a function argument list
-// (`url(#abc)`, `var(..., #abc)`, etc., matched via a preceding `(` or `,`).
-// This deliberately excludes CSS selector ID fragments (`#myId { ... }`), which
-// are not colours and would otherwise be false-positives once decorative files
-// (gradients.css, highlights.css, svg.css) land in Stream C C2. The leading
-// `[:(,]` delimiter is captured in a non-flagging prefix; the hex value itself
-// follows after optional whitespace.
+// rgb()/hsl()/color() are function tokens that cannot appear in a CSS selector,
+// so a plain regex is safe for them. Hex literals are handled separately by
+// findHexLiterals() because a naive `#[0-9a-fA-F]{3,8}` regex would false-flag
+// CSS selector ID fragments (`#myId { ... }`), and a delimiter-whitelisting
+// regex (`[:(,]\s*#hex`) silently misses hex in space-separated multi-value
+// declarations (`border: 1px solid #fff`, `box-shadow: 0 0 4px #000`).
 const COLOUR_PATTERNS = [
-  { name: 'hex', re: /[:(,]\s*#[0-9a-fA-F]{3,8}\b/g },
   { name: 'rgb', re: /\brgba?\s*\(/g },
   { name: 'hsl', re: /\bhsla?\s*\(/g },
   { name: 'color()', re: /\bcolor\s*\(/g },
 ];
+
+// Scan comment-stripped CSS and return the byte offsets of every hex literal
+// that sits in a *declaration-value* position — i.e. inside a `{ ... }` block,
+// after the property `:` and before the terminating `;`/`}`. This flags hex in
+// shorthand/multi-value declarations (the colour-literal guard's primary target)
+// while excluding two legitimate non-colour uses of `#`:
+//   1. Selector ID fragments (`#myId`, `a#x:hover`) — these live at the selector
+//      level (outside any declaration value), so they never enter value context.
+//   2. `url(#ref)` SVG fragment references — skipped explicitly since they are
+//      benign in-value uses of `#` that are not colour literals.
+function findHexLiterals(css) {
+  const hits = [];
+  const n = css.length;
+  const state = { depth: 0, inValue: false };
+  let i = 0;
+  while (i < n) {
+    const ch = css[i];
+    if (ch === '"' || ch === "'") {
+      // Skip string literals wholesale (e.g. content: "#fff").
+      i = skipString(css, i);
+      continue;
+    }
+    if (ch === '#') {
+      const end = hexRunEnd(css, i);
+      if (end > 0 && state.inValue && state.depth > 0 && !insideUrl(css, i)) {
+        hits.push(i);
+      }
+      i = end > 0 ? end : i + 1;
+      continue;
+    }
+    applyStructuralChar(ch, state);
+    i++;
+  }
+  return hits;
+}
+
+// Advance past a quoted string starting at the opening quote `idx`; returns the
+// offset just after the closing quote (handles backslash escapes).
+function skipString(css, idx) {
+  const quote = css[idx];
+  let i = idx + 1;
+  const n = css.length;
+  while (i < n && css[i] !== quote) {
+    if (css[i] === '\\') i++;
+    i++;
+  }
+  return i + 1;
+}
+
+// Mutate the brace-depth / value-position tracker for one structural character.
+function applyStructuralChar(ch, state) {
+  if (ch === '{') {
+    state.depth++;
+    state.inValue = false;
+  } else if (ch === '}') {
+    if (state.depth > 0) state.depth--;
+    state.inValue = false;
+  } else if (ch === ';') {
+    state.inValue = false;
+  } else if (ch === ':' && state.depth > 0) {
+    // Enter value position. Pseudo-class colons (`a:hover`) only matter at the
+    // selector level (depth 0), which we ignore anyway.
+    state.inValue = true;
+  }
+}
+
+// If a `#` at offset `idx` begins a well-formed hex literal (3/4/6/8 hex digits
+// terminated by a non-identifier char), return the offset just past the run;
+// otherwise return -1.
+function hexRunEnd(css, idx) {
+  const n = css.length;
+  let j = idx + 1;
+  while (j < n && /[0-9a-fA-F]/.test(css[j])) j++;
+  const len = j - idx - 1;
+  const wellSized = len === 3 || len === 4 || len === 6 || len === 8;
+  const wordBoundary = !(j < n && /[\w-]/.test(css[j]));
+  return wellSized && wordBoundary ? j : -1;
+}
+
+// Return true if offset `idx` sits inside an unclosed `url(` on the same value,
+// i.e. the nearest preceding unbalanced parenthesis run opens a `url(` token.
+function insideUrl(css, idx) {
+  let depthParen = 0;
+  for (let k = idx - 1; k >= 0; k--) {
+    const c = css[k];
+    if (c === ')') depthParen++;
+    else if (c === '(') {
+      if (depthParen > 0) {
+        depthParen--;
+        continue;
+      }
+      // Unbalanced '(' — check the token immediately before it.
+      const before = css.slice(Math.max(0, k - 4), k);
+      return /\burl$/i.test(before);
+    } else if (c === ';' || c === '{' || c === '}') {
+      // Hit a value/block boundary before any open paren: not inside url().
+      return false;
+    }
+  }
+  return false;
+}
 
 async function auditColourLiterals() {
   const srcDir = join(REPO_ROOT, 'packages', 'line-tokens', 'src');
@@ -393,24 +491,35 @@ async function auditColourLiterals() {
     const raw = await readFile(path, 'utf8');
     const stripped = stripCssComments(raw);
     const rel = relative(REPO_ROOT, path);
+
+    // Collect (offset, kind) hits: hex literals via the context-aware scanner,
+    // function tokens via plain regex. Report in source order for readability.
+    const hits = [];
+    for (const idx of findHexLiterals(stripped)) {
+      hits.push({ idx, name: 'hex' });
+    }
     for (const { name, re } of COLOUR_PATTERNS) {
       for (const match of stripped.matchAll(re)) {
-        const idx = match.index ?? 0;
-        // Compute 1-based line number from the stripped source (post-comment
-        // removal). Offsets can shift versus the raw source but the line
-        // number remains a useful pointer for the developer.
-        const upTo = stripped.slice(0, idx);
-        const line = upTo.split('\n').length;
-        const snippet = stripped
-          .slice(idx, idx + 32)
-          .replace(/\s+/g, ' ')
-          .trim();
-        log.err(
-          'colour',
-          `${rel}:${line}: forbidden colour literal (${name}) — '${snippet}'. ` +
-            `Decorative families must reference 'var(--line-{hue}-{step})' (spec §6.B line 569).`,
-        );
+        hits.push({ idx: match.index ?? 0, name });
       }
+    }
+    hits.sort((a, b) => a.idx - b.idx);
+
+    for (const { idx, name } of hits) {
+      // Compute 1-based line number from the stripped source (post-comment
+      // removal). Offsets can shift versus the raw source but the line
+      // number remains a useful pointer for the developer.
+      const upTo = stripped.slice(0, idx);
+      const line = upTo.split('\n').length;
+      const snippet = stripped
+        .slice(idx, idx + 32)
+        .replace(/\s+/g, ' ')
+        .trim();
+      log.err(
+        'colour',
+        `${rel}:${line}: forbidden colour literal (${name}) — '${snippet}'. ` +
+          `Decorative families must reference 'var(--line-{hue}-{step})' (spec §6.B line 569).`,
+      );
     }
   }
 }
