@@ -51,14 +51,29 @@
 
       --line-slate-a1: light-dark(color(display-p3 0.024 0.024 0.349 / 0.012), color(display-p3 0 0 0 / 0));
       --line-slate-a2: light-dark(color(display-p3 0.024 0.024 0.349 / 0.024), color(display-p3 0.875 0.992 1 / 0.034));
-      --line-slate-a3: light-dark(color(display-p3 0.004 0.004 0.204 / 0.059), color(display-p3 0.882 0.933 0.992 / 0.077));
-      --line-slate-a4: light-dark(color(display-p3 0.012 0.012 0.184 / 0.091), color(display-p3 0.882 0.953 0.996 / 0.111));
-      --line-slate-a5: light-dark(color(display-p3 0.004 0.039 0.2 / 0.122), color(display-p3 0.878 0.929 0.996 / 0.145));
-      --line-slate-a6: light-dark(color(display-p3 0.008 0.008 0.165 / 0.15), color(display-p3 0.882 0.949 0.996 / 0.183));
+      --line-slate-a3: light-dark(
+        color(display-p3 0.004 0.004 0.204 / 0.059),
+        color(display-p3 0.882 0.933 0.992 / 0.077)
+      );
+      --line-slate-a4: light-dark(
+        color(display-p3 0.012 0.012 0.184 / 0.091),
+        color(display-p3 0.882 0.953 0.996 / 0.111)
+      );
+      --line-slate-a5: light-dark(
+        color(display-p3 0.004 0.039 0.2 / 0.122),
+        color(display-p3 0.878 0.929 0.996 / 0.145)
+      );
+      --line-slate-a6: light-dark(
+        color(display-p3 0.008 0.008 0.165 / 0.15),
+        color(display-p3 0.882 0.949 0.996 / 0.183)
+      );
       --line-slate-a7: light-dark(color(display-p3 0.008 0.027 0.184 / 0.197), color(display-p3 0.882 0.929 1 / 0.246));
       --line-slate-a8: light-dark(color(display-p3 0.004 0.031 0.176 / 0.275), color(display-p3 0.871 0.937 1 / 0.361));
       --line-slate-a9: light-dark(color(display-p3 0.004 0.02 0.106 / 0.455), color(display-p3 0.898 0.937 1 / 0.42));
-      --line-slate-a10: light-dark(color(display-p3 0.004 0.027 0.098 / 0.499), color(display-p3 0.918 0.945 1 / 0.475));
+      --line-slate-a10: light-dark(
+        color(display-p3 0.004 0.027 0.098 / 0.499),
+        color(display-p3 0.918 0.945 1 / 0.475)
+      );
       --line-slate-a11: light-dark(color(display-p3 0 0.02 0.063 / 0.62), color(display-p3 0.949 0.969 0.996 / 0.708));
       --line-slate-a12: light-dark(color(display-p3 0 0.012 0.031 / 0.887), color(display-p3 0.988 0.992 1 / 0.937));
     }

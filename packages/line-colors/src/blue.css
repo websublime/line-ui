@@ -50,7 +50,10 @@
       --line-blue-12: light-dark(color(display-p3 0.102 0.193 0.379), color(display-p3 0.788 0.898 0.99));
 
       --line-blue-a1: light-dark(color(display-p3 0.024 0.514 1 / 0.016), color(display-p3 0 0.333 1 / 0.059));
-      --line-blue-a2: light-dark(color(display-p3 0.024 0.514 0.906 / 0.04), color(display-p3 0.114 0.435 0.988 / 0.085));
+      --line-blue-a2: light-dark(
+        color(display-p3 0.024 0.514 0.906 / 0.04),
+        color(display-p3 0.114 0.435 0.988 / 0.085)
+      );
       --line-blue-a3: light-dark(color(display-p3 0.012 0.506 0.914 / 0.087), color(display-p3 0.122 0.463 1 / 0.219));
       --line-blue-a4: light-dark(color(display-p3 0.008 0.545 1 / 0.146), color(display-p3 0 0.467 1 / 0.324));
       --line-blue-a5: light-dark(color(display-p3 0.004 0.502 0.984 / 0.212), color(display-p3 0.098 0.51 1 / 0.4));

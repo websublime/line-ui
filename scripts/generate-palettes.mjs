@@ -26,8 +26,17 @@
  * step KEYS do not repeat that suffix. Base scales are keyed `{H}{n}`; alpha
  * scales are keyed `{H}A{n}` — regardless of the object's own suffix. This
  * script indexes base objects with `{H}{n}` and alpha objects with `{H}A{n}`.
+ *
+ * Biome-conformant output: P3 alpha declarations (long
+ * `light-dark(color(display-p3 …), color(display-p3 …))` lines) overflow Biome's
+ * 120-char CSS lineWidth and must be wrapped. Rather than hand-roll Biome's
+ * wrapping rules, the generator delegates final formatting to `biome format
+ * --write` over the emitted files as its last step. Biome formatting is
+ * deterministic, so re-running the generator reproduces byte-identical files —
+ * the C4 freshness guard (scripts/verify-palettes-fresh.mjs) stays green.
  */
 
+import { spawnSync } from 'node:child_process';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -231,6 +240,29 @@ function renderBarrel() {
   return `${lines.join('\n')}\n`;
 }
 
+/**
+ * Run `biome format --write` over the generated CSS so the committed output
+ * matches Biome's formatter (notably wrapping long P3-alpha light-dark() lines
+ * that exceed the 120-char CSS lineWidth). Biome formatting is deterministic, so
+ * this keeps regeneration byte-stable for the C4 freshness guard. Throws on a
+ * non-zero exit so the generator fails loudly rather than committing unformatted
+ * output.
+ * @param {string} outputDir
+ */
+function formatWithBiome(outputDir) {
+  const biomeBin = resolve(REPO_ROOT, 'node_modules/.bin/biome');
+  const result = spawnSync(biomeBin, ['format', '--write', outputDir], {
+    cwd: REPO_ROOT,
+    encoding: 'utf8',
+  });
+  if (result.error) {
+    throw new Error(`biome format failed to run: ${result.error.message}`);
+  }
+  if (result.status !== 0) {
+    throw new Error(`biome format exited with code ${result.status}: ${result.stderr || result.stdout}`);
+  }
+}
+
 async function main() {
   const outputDir = parseOutputDir(process.argv.slice(2));
   await mkdir(outputDir, { recursive: true });
@@ -242,6 +274,8 @@ async function main() {
   }
   await writeFile(resolve(outputDir, 'special.css'), renderSpecial(), 'utf8');
   await writeFile(resolve(outputDir, 'index.css'), renderBarrel(), 'utf8');
+
+  formatWithBiome(outputDir);
 
   process.stdout.write(`generate-palettes: wrote ${count} hue files + special.css + index.css to ${outputDir}\n`);
 }

@@ -49,8 +49,14 @@
       --line-red-11: light-dark(color(display-p3 0.744 0.234 0.222), color(display-p3 1 0.57 0.55));
       --line-red-12: light-dark(color(display-p3 0.36 0.115 0.143), color(display-p3 0.971 0.826 0.852));
 
-      --line-red-a1: light-dark(color(display-p3 0.675 0.024 0.024 / 0.012), color(display-p3 0.984 0.071 0.071 / 0.03));
-      --line-red-a2: light-dark(color(display-p3 0.863 0.024 0.024 / 0.028), color(display-p3 0.996 0.282 0.282 / 0.055));
+      --line-red-a1: light-dark(
+        color(display-p3 0.675 0.024 0.024 / 0.012),
+        color(display-p3 0.984 0.071 0.071 / 0.03)
+      );
+      --line-red-a2: light-dark(
+        color(display-p3 0.863 0.024 0.024 / 0.028),
+        color(display-p3 0.996 0.282 0.282 / 0.055)
+      );
       --line-red-a3: light-dark(color(display-p3 0.792 0.008 0.008 / 0.075), color(display-p3 1 0.169 0.271 / 0.156));
       --line-red-a4: light-dark(color(display-p3 1 0.008 0.008 / 0.134), color(display-p3 1 0.118 0.267 / 0.236));
       --line-red-a5: light-dark(color(display-p3 0.918 0.008 0.008 / 0.189), color(display-p3 1 0.212 0.314 / 0.303));

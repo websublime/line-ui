@@ -49,14 +49,35 @@
       --line-purple-11: light-dark(color(display-p3 0.473 0.281 0.687), color(display-p3 0.8 0.62 1));
       --line-purple-12: light-dark(color(display-p3 0.234 0.132 0.363), color(display-p3 0.913 0.854 0.971));
 
-      --line-purple-a1: light-dark(color(display-p3 0.675 0.024 0.675 / 0.012), color(display-p3 0.686 0.071 0.996 / 0.038));
-      --line-purple-a2: light-dark(color(display-p3 0.443 0.024 0.722 / 0.028), color(display-p3 0.722 0.286 0.996 / 0.072));
-      --line-purple-a3: light-dark(color(display-p3 0.506 0.008 0.835 / 0.071), color(display-p3 0.718 0.349 0.996 / 0.169));
-      --line-purple-a4: light-dark(color(display-p3 0.451 0.004 0.831 / 0.114), color(display-p3 0.702 0.353 1 / 0.248));
-      --line-purple-a5: light-dark(color(display-p3 0.431 0.004 0.788 / 0.165), color(display-p3 0.718 0.404 1 / 0.303));
-      --line-purple-a6: light-dark(color(display-p3 0.384 0.004 0.745 / 0.228), color(display-p3 0.733 0.455 1 / 0.366));
+      --line-purple-a1: light-dark(
+        color(display-p3 0.675 0.024 0.675 / 0.012),
+        color(display-p3 0.686 0.071 0.996 / 0.038)
+      );
+      --line-purple-a2: light-dark(
+        color(display-p3 0.443 0.024 0.722 / 0.028),
+        color(display-p3 0.722 0.286 0.996 / 0.072)
+      );
+      --line-purple-a3: light-dark(
+        color(display-p3 0.506 0.008 0.835 / 0.071),
+        color(display-p3 0.718 0.349 0.996 / 0.169)
+      );
+      --line-purple-a4: light-dark(
+        color(display-p3 0.451 0.004 0.831 / 0.114),
+        color(display-p3 0.702 0.353 1 / 0.248)
+      );
+      --line-purple-a5: light-dark(
+        color(display-p3 0.431 0.004 0.788 / 0.165),
+        color(display-p3 0.718 0.404 1 / 0.303)
+      );
+      --line-purple-a6: light-dark(
+        color(display-p3 0.384 0.004 0.745 / 0.228),
+        color(display-p3 0.733 0.455 1 / 0.366)
+      );
       --line-purple-a7: light-dark(color(display-p3 0.357 0.004 0.71 / 0.31), color(display-p3 0.753 0.506 1 / 0.458));
-      --line-purple-a8: light-dark(color(display-p3 0.322 0.004 0.702 / 0.416), color(display-p3 0.749 0.522 1 / 0.622));
+      --line-purple-a8: light-dark(
+        color(display-p3 0.322 0.004 0.702 / 0.416),
+        color(display-p3 0.749 0.522 1 / 0.622)
+      );
       --line-purple-a9: light-dark(color(display-p3 0.298 0 0.639 / 0.683), color(display-p3 0.686 0.408 1 / 0.736));
       --line-purple-a10: light-dark(color(display-p3 0.271 0 0.58 / 0.71), color(display-p3 0.71 0.459 1 / 0.778));
       --line-purple-a11: light-dark(color(display-p3 0.473 0.281 0.687), color(display-p3 0.8 0.62 1));

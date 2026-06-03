@@ -50,9 +50,15 @@
       --line-teal-12: light-dark(color(display-p3 0.11 0.235 0.219), color(display-p3 0.734 0.934 0.87));
 
       --line-teal-a1: light-dark(color(display-p3 0.024 0.757 0.514 / 0.016), color(display-p3 0 0.992 0.761 / 0.017));
-      --line-teal-a2: light-dark(color(display-p3 0.02 0.647 0.467 / 0.044), color(display-p3 0.235 0.988 0.902 / 0.047));
+      --line-teal-a2: light-dark(
+        color(display-p3 0.02 0.647 0.467 / 0.044),
+        color(display-p3 0.235 0.988 0.902 / 0.047)
+      );
       --line-teal-a3: light-dark(color(display-p3 0.004 0.741 0.557 / 0.106), color(display-p3 0.235 1 0.898 / 0.118));
-      --line-teal-a4: light-dark(color(display-p3 0.004 0.702 0.537 / 0.169), color(display-p3 0.18 0.996 0.929 / 0.173));
+      --line-teal-a4: light-dark(
+        color(display-p3 0.004 0.702 0.537 / 0.169),
+        color(display-p3 0.18 0.996 0.929 / 0.173)
+      );
       --line-teal-a5: light-dark(color(display-p3 0.004 0.643 0.494 / 0.24), color(display-p3 0.31 1 0.933 / 0.227));
       --line-teal-a6: light-dark(color(display-p3 0.004 0.569 0.447 / 0.318), color(display-p3 0.396 1 0.933 / 0.286));
       --line-teal-a7: light-dark(color(display-p3 0.004 0.518 0.424 / 0.42), color(display-p3 0.443 1 0.925 / 0.366));

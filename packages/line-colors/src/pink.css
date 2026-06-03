@@ -49,7 +49,10 @@
       --line-pink-11: light-dark(color(display-p3 0.698 0.219 0.528), color(display-p3 1 0.535 0.78));
       --line-pink-12: light-dark(color(display-p3 0.363 0.101 0.279), color(display-p3 0.964 0.826 0.912));
 
-      --line-pink-a1: light-dark(color(display-p3 0.675 0.024 0.675 / 0.012), color(display-p3 0.984 0.071 0.855 / 0.03));
+      --line-pink-a1: light-dark(
+        color(display-p3 0.675 0.024 0.675 / 0.012),
+        color(display-p3 0.984 0.071 0.855 / 0.03)
+      );
       --line-pink-a2: light-dark(color(display-p3 0.757 0.02 0.51 / 0.032), color(display-p3 1 0.2 0.8 / 0.059));
       --line-pink-a3: light-dark(color(display-p3 0.765 0.008 0.529 / 0.083), color(display-p3 1 0.294 0.886 / 0.139));
       --line-pink-a4: light-dark(color(display-p3 0.737 0.008 0.506 / 0.134), color(display-p3 1 0.192 0.82 / 0.219));

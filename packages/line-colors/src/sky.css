@@ -50,8 +50,14 @@
       --line-sky-12: light-dark(color(display-p3 0.145 0.241 0.329), color(display-p3 0.799 0.947 0.993));
 
       --line-sky-a1: light-dark(color(display-p3 0.02 0.804 1 / 0.02), color(display-p3 0 0.282 0.996 / 0.055));
-      --line-sky-a2: light-dark(color(display-p3 0.024 0.592 0.757 / 0.048), color(display-p3 0.157 0.467 0.992 / 0.089));
-      --line-sky-a3: light-dark(color(display-p3 0.004 0.655 0.886 / 0.102), color(display-p3 0.192 0.522 0.996 / 0.19));
+      --line-sky-a2: light-dark(
+        color(display-p3 0.024 0.592 0.757 / 0.048),
+        color(display-p3 0.157 0.467 0.992 / 0.089)
+      );
+      --line-sky-a3: light-dark(
+        color(display-p3 0.004 0.655 0.886 / 0.102),
+        color(display-p3 0.192 0.522 0.996 / 0.19)
+      );
       --line-sky-a4: light-dark(color(display-p3 0.004 0.604 0.851 / 0.157), color(display-p3 0.212 0.584 1 / 0.274));
       --line-sky-a5: light-dark(color(display-p3 0.004 0.565 0.792 / 0.224), color(display-p3 0.259 0.631 1 / 0.349));
       --line-sky-a6: light-dark(color(display-p3 0.004 0.502 0.737 / 0.299), color(display-p3 0.302 0.655 1 / 0.433));

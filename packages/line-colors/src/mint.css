@@ -51,13 +51,22 @@
 
       --line-mint-a1: light-dark(color(display-p3 0.02 0.804 0.608 / 0.02), color(display-p3 0 0.992 0.992 / 0.017));
       --line-mint-a2: light-dark(color(display-p3 0.02 0.647 0.467 / 0.044), color(display-p3 0.071 0.98 0.98 / 0.043));
-      --line-mint-a3: light-dark(color(display-p3 0.004 0.761 0.553 / 0.114), color(display-p3 0.176 0.996 0.996 / 0.11));
-      --line-mint-a4: light-dark(color(display-p3 0.004 0.741 0.545 / 0.181), color(display-p3 0.071 0.996 0.973 / 0.169));
+      --line-mint-a3: light-dark(
+        color(display-p3 0.004 0.761 0.553 / 0.114),
+        color(display-p3 0.176 0.996 0.996 / 0.11)
+      );
+      --line-mint-a4: light-dark(
+        color(display-p3 0.004 0.741 0.545 / 0.181),
+        color(display-p3 0.071 0.996 0.973 / 0.169)
+      );
       --line-mint-a5: light-dark(color(display-p3 0.004 0.678 0.51 / 0.255), color(display-p3 0.243 1 0.949 / 0.223));
       --line-mint-a6: light-dark(color(display-p3 0.004 0.616 0.463 / 0.334), color(display-p3 0.369 1 0.933 / 0.286));
       --line-mint-a7: light-dark(color(display-p3 0.004 0.549 0.412 / 0.432), color(display-p3 0.459 1 0.914 / 0.362));
       --line-mint-a8: light-dark(color(display-p3 0 0.529 0.392 / 0.581), color(display-p3 0.49 1 0.89 / 0.454));
-      --line-mint-a9: light-dark(color(display-p3 0.004 0.765 0.569 / 0.381), color(display-p3 0.678 0.996 0.914 / 0.904));
+      --line-mint-a9: light-dark(
+        color(display-p3 0.004 0.765 0.569 / 0.381),
+        color(display-p3 0.678 0.996 0.914 / 0.904)
+      );
       --line-mint-a10: light-dark(color(display-p3 0.004 0.69 0.51 / 0.416), color(display-p3 0.761 1 0.941 / 0.95));
       --line-mint-a11: light-dark(color(display-p3 0.203 0.463 0.397), color(display-p3 0.482 0.825 0.733));
       --line-mint-a12: light-dark(color(display-p3 0.136 0.259 0.236), color(display-p3 0.807 0.955 0.887));

@@ -50,9 +50,18 @@
       --line-sand-12: light-dark(color(display-p3 0.129 0.126 0.111), color(display-p3 0.933 0.933 0.926));
 
       --line-sand-a1: light-dark(color(display-p3 0.349 0.349 0.024 / 0.012), color(display-p3 0 0 0 / 0));
-      --line-sand-a2: light-dark(color(display-p3 0.161 0.161 0.024 / 0.028), color(display-p3 0.992 0.992 0.988 / 0.034));
-      --line-sand-a3: light-dark(color(display-p3 0.067 0.067 0.008 / 0.063), color(display-p3 0.996 0.996 0.992 / 0.072));
-      --line-sand-a4: light-dark(color(display-p3 0.129 0.129 0.012 / 0.099), color(display-p3 0.992 0.992 0.953 / 0.106));
+      --line-sand-a2: light-dark(
+        color(display-p3 0.161 0.161 0.024 / 0.028),
+        color(display-p3 0.992 0.992 0.988 / 0.034)
+      );
+      --line-sand-a3: light-dark(
+        color(display-p3 0.067 0.067 0.008 / 0.063),
+        color(display-p3 0.996 0.996 0.992 / 0.072)
+      );
+      --line-sand-a4: light-dark(
+        color(display-p3 0.129 0.129 0.012 / 0.099),
+        color(display-p3 0.992 0.992 0.953 / 0.106)
+      );
       --line-sand-a5: light-dark(color(display-p3 0.098 0.067 0.008 / 0.126), color(display-p3 1 1 0.965 / 0.135));
       --line-sand-a6: light-dark(color(display-p3 0.102 0.075 0.004 / 0.161), color(display-p3 1 0.976 0.929 / 0.177));
       --line-sand-a7: light-dark(color(display-p3 0.098 0.098 0.004 / 0.208), color(display-p3 1 0.984 0.929 / 0.236));

@@ -49,12 +49,27 @@
       --line-tomato-11: light-dark(color(display-p3 0.755 0.259 0.152), color(display-p3 1 0.585 0.455));
       --line-tomato-12: light-dark(color(display-p3 0.335 0.165 0.132), color(display-p3 0.959 0.833 0.802));
 
-      --line-tomato-a1: light-dark(color(display-p3 0.675 0.024 0.024 / 0.012), color(display-p3 0.973 0.071 0.071 / 0.026));
-      --line-tomato-a2: light-dark(color(display-p3 0.757 0.145 0.02 / 0.032), color(display-p3 0.992 0.376 0.224 / 0.051));
-      --line-tomato-a3: light-dark(color(display-p3 0.831 0.184 0.012 / 0.091), color(display-p3 0.996 0.282 0.176 / 0.148));
-      --line-tomato-a4: light-dark(color(display-p3 0.976 0.192 0.004 / 0.165), color(display-p3 1 0.204 0.118 / 0.232));
+      --line-tomato-a1: light-dark(
+        color(display-p3 0.675 0.024 0.024 / 0.012),
+        color(display-p3 0.973 0.071 0.071 / 0.026)
+      );
+      --line-tomato-a2: light-dark(
+        color(display-p3 0.757 0.145 0.02 / 0.032),
+        color(display-p3 0.992 0.376 0.224 / 0.051)
+      );
+      --line-tomato-a3: light-dark(
+        color(display-p3 0.831 0.184 0.012 / 0.091),
+        color(display-p3 0.996 0.282 0.176 / 0.148)
+      );
+      --line-tomato-a4: light-dark(
+        color(display-p3 0.976 0.192 0.004 / 0.165),
+        color(display-p3 1 0.204 0.118 / 0.232)
+      );
       --line-tomato-a5: light-dark(color(display-p3 0.918 0.192 0.004 / 0.232), color(display-p3 1 0.286 0.192 / 0.29));
-      --line-tomato-a6: light-dark(color(display-p3 0.847 0.173 0.004 / 0.302), color(display-p3 1 0.392 0.278 / 0.353));
+      --line-tomato-a6: light-dark(
+        color(display-p3 0.847 0.173 0.004 / 0.302),
+        color(display-p3 1 0.392 0.278 / 0.353)
+      );
       --line-tomato-a7: light-dark(color(display-p3 0.788 0.165 0.004 / 0.389), color(display-p3 1 0.459 0.349 / 0.45));
       --line-tomato-a8: light-dark(color(display-p3 0.749 0.153 0.004 / 0.499), color(display-p3 1 0.49 0.369 / 0.601));
       --line-tomato-a9: light-dark(color(display-p3 0.78 0.149 0 / 0.769), color(display-p3 1 0.408 0.267 / 0.82));

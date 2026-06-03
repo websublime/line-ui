@@ -51,10 +51,22 @@
 
       --line-mauve-a1: light-dark(color(display-p3 0.349 0.024 0.349 / 0.012), color(display-p3 0 0 0 / 0));
       --line-mauve-a2: light-dark(color(display-p3 0.184 0.024 0.349 / 0.024), color(display-p3 0.996 0.992 1 / 0.034));
-      --line-mauve-a3: light-dark(color(display-p3 0.129 0.008 0.255 / 0.063), color(display-p3 0.937 0.933 0.992 / 0.077));
-      --line-mauve-a4: light-dark(color(display-p3 0.094 0.012 0.216 / 0.095), color(display-p3 0.957 0.918 0.996 / 0.111));
-      --line-mauve-a5: light-dark(color(display-p3 0.098 0.008 0.224 / 0.126), color(display-p3 0.937 0.906 0.996 / 0.145));
-      --line-mauve-a6: light-dark(color(display-p3 0.055 0.004 0.18 / 0.153), color(display-p3 0.953 0.925 0.996 / 0.183));
+      --line-mauve-a3: light-dark(
+        color(display-p3 0.129 0.008 0.255 / 0.063),
+        color(display-p3 0.937 0.933 0.992 / 0.077)
+      );
+      --line-mauve-a4: light-dark(
+        color(display-p3 0.094 0.012 0.216 / 0.095),
+        color(display-p3 0.957 0.918 0.996 / 0.111)
+      );
+      --line-mauve-a5: light-dark(
+        color(display-p3 0.098 0.008 0.224 / 0.126),
+        color(display-p3 0.937 0.906 0.996 / 0.145)
+      );
+      --line-mauve-a6: light-dark(
+        color(display-p3 0.055 0.004 0.18 / 0.153),
+        color(display-p3 0.953 0.925 0.996 / 0.183)
+      );
       --line-mauve-a7: light-dark(color(display-p3 0.067 0.008 0.184 / 0.197), color(display-p3 0.945 0.929 1 / 0.246));
       --line-mauve-a8: light-dark(color(display-p3 0.02 0.004 0.176 / 0.271), color(display-p3 0.937 0.918 1 / 0.361));
       --line-mauve-a9: light-dark(color(display-p3 0.02 0.004 0.106 / 0.451), color(display-p3 0.933 0.918 1 / 0.424));

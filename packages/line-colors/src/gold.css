@@ -49,8 +49,14 @@
       --line-gold-11: light-dark(color(display-p3 0.433 0.386 0.305), color(display-p3 0.784 0.728 0.635));
       --line-gold-12: light-dark(color(display-p3 0.227 0.209 0.173), color(display-p3 0.906 0.887 0.855));
 
-      --line-gold-a1: light-dark(color(display-p3 0.349 0.349 0.024 / 0.012), color(display-p3 0.855 0.855 0.071 / 0.005));
-      --line-gold-a2: light-dark(color(display-p3 0.592 0.514 0.024 / 0.048), color(display-p3 0.98 0.89 0.616 / 0.043));
+      --line-gold-a1: light-dark(
+        color(display-p3 0.349 0.349 0.024 / 0.012),
+        color(display-p3 0.855 0.855 0.071 / 0.005)
+      );
+      --line-gold-a2: light-dark(
+        color(display-p3 0.592 0.514 0.024 / 0.048),
+        color(display-p3 0.98 0.89 0.616 / 0.043)
+      );
       --line-gold-a3: light-dark(color(display-p3 0.4 0.357 0.012 / 0.091), color(display-p3 1 0.949 0.753 / 0.08));
       --line-gold-a4: light-dark(color(display-p3 0.357 0.298 0.008 / 0.134), color(display-p3 1 0.933 0.8 / 0.118));
       --line-gold-a5: light-dark(color(display-p3 0.345 0.282 0.004 / 0.185), color(display-p3 1 0.949 0.804 / 0.16));

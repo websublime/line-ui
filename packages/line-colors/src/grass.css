@@ -50,9 +50,18 @@
       --line-grass-12: light-dark(color(display-p3 0.151 0.233 0.153), color(display-p3 0.797 0.936 0.776));
 
       --line-grass-a1: light-dark(color(display-p3 0.024 0.757 0.024 / 0.016), color(display-p3 0 0.992 0.071 / 0.017));
-      --line-grass-a2: light-dark(color(display-p3 0.024 0.565 0.024 / 0.036), color(display-p3 0.482 0.996 0.584 / 0.038));
-      --line-grass-a3: light-dark(color(display-p3 0.059 0.576 0.008 / 0.083), color(display-p3 0.549 0.992 0.588 / 0.106));
-      --line-grass-a4: light-dark(color(display-p3 0.035 0.565 0.008 / 0.134), color(display-p3 0.51 0.996 0.557 / 0.169));
+      --line-grass-a2: light-dark(
+        color(display-p3 0.024 0.565 0.024 / 0.036),
+        color(display-p3 0.482 0.996 0.584 / 0.038)
+      );
+      --line-grass-a3: light-dark(
+        color(display-p3 0.059 0.576 0.008 / 0.083),
+        color(display-p3 0.549 0.992 0.588 / 0.106)
+      );
+      --line-grass-a4: light-dark(
+        color(display-p3 0.035 0.565 0.008 / 0.134),
+        color(display-p3 0.51 0.996 0.557 / 0.169)
+      );
       --line-grass-a5: light-dark(color(display-p3 0.047 0.545 0.008 / 0.197), color(display-p3 0.553 1 0.588 / 0.227));
       --line-grass-a6: light-dark(color(display-p3 0.031 0.502 0.004 / 0.275), color(display-p3 0.584 1 0.608 / 0.29));
       --line-grass-a7: light-dark(color(display-p3 0.012 0.482 0.004 / 0.377), color(display-p3 0.604 1 0.616 / 0.358));

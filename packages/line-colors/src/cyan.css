@@ -51,7 +51,10 @@
 
       --line-cyan-a1: light-dark(color(display-p3 0.02 0.608 0.804 / 0.02), color(display-p3 0 0.647 0.992 / 0.034));
       --line-cyan-a2: light-dark(color(display-p3 0.02 0.557 0.647 / 0.044), color(display-p3 0.133 0.733 1 / 0.059));
-      --line-cyan-a3: light-dark(color(display-p3 0.004 0.694 0.796 / 0.114), color(display-p3 0.122 0.741 0.996 / 0.152));
+      --line-cyan-a3: light-dark(
+        color(display-p3 0.004 0.694 0.796 / 0.114),
+        color(display-p3 0.122 0.741 0.996 / 0.152)
+      );
       --line-cyan-a4: light-dark(color(display-p3 0.004 0.678 0.784 / 0.181), color(display-p3 0.051 0.725 1 / 0.227));
       --line-cyan-a5: light-dark(color(display-p3 0.004 0.624 0.733 / 0.248), color(display-p3 0.149 0.757 1 / 0.29));
       --line-cyan-a6: light-dark(color(display-p3 0.004 0.584 0.706 / 0.33), color(display-p3 0.267 0.792 1 / 0.358));

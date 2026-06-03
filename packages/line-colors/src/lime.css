@@ -50,7 +50,10 @@
       --line-lime-12: light-dark(color(display-p3 0.222 0.25 0.128), color(display-p3 0.905 0.966 0.753));
 
       --line-lime-a1: light-dark(color(display-p3 0.412 0.608 0.02 / 0.02), color(display-p3 0.067 0.941 0 / 0.009));
-      --line-lime-a2: light-dark(color(display-p3 0.514 0.592 0.024 / 0.048), color(display-p3 0.584 0.996 0.071 / 0.038));
+      --line-lime-a2: light-dark(
+        color(display-p3 0.514 0.592 0.024 / 0.048),
+        color(display-p3 0.584 0.996 0.071 / 0.038)
+      );
       --line-lime-a3: light-dark(color(display-p3 0.584 0.765 0.008 / 0.15), color(display-p3 0.69 1 0.38 / 0.101));
       --line-lime-a4: light-dark(color(display-p3 0.561 0.757 0.004 / 0.24), color(display-p3 0.729 1 0.435 / 0.16));
       --line-lime-a5: light-dark(color(display-p3 0.514 0.698 0.004 / 0.322), color(display-p3 0.745 1 0.471 / 0.215));

@@ -49,9 +49,18 @@
       --line-ruby-11: light-dark(color(display-p3 0.728 0.211 0.311), color(display-p3 1 0.57 0.59));
       --line-ruby-12: light-dark(color(display-p3 0.36 0.115 0.171), color(display-p3 0.968 0.83 0.88));
 
-      --line-ruby-a1: light-dark(color(display-p3 0.675 0.024 0.349 / 0.012), color(display-p3 0.984 0.071 0.329 / 0.03));
-      --line-ruby-a2: light-dark(color(display-p3 0.863 0.024 0.024 / 0.028), color(display-p3 0.992 0.376 0.529 / 0.051));
-      --line-ruby-a3: light-dark(color(display-p3 0.804 0.008 0.11 / 0.079), color(display-p3 0.996 0.196 0.404 / 0.152));
+      --line-ruby-a1: light-dark(
+        color(display-p3 0.675 0.024 0.349 / 0.012),
+        color(display-p3 0.984 0.071 0.329 / 0.03)
+      );
+      --line-ruby-a2: light-dark(
+        color(display-p3 0.863 0.024 0.024 / 0.028),
+        color(display-p3 0.992 0.376 0.529 / 0.051)
+      );
+      --line-ruby-a3: light-dark(
+        color(display-p3 0.804 0.008 0.11 / 0.079),
+        color(display-p3 0.996 0.196 0.404 / 0.152)
+      );
       --line-ruby-a4: light-dark(color(display-p3 0.91 0.008 0.125 / 0.13), color(display-p3 1 0.173 0.416 / 0.227));
       --line-ruby-a5: light-dark(color(display-p3 0.831 0.004 0.133 / 0.185), color(display-p3 1 0.259 0.459 / 0.29));
       --line-ruby-a6: light-dark(color(display-p3 0.745 0.004 0.118 / 0.244), color(display-p3 1 0.341 0.506 / 0.358));

@@ -51,7 +51,10 @@
 
       --line-plum-a1: light-dark(color(display-p3 0.675 0.024 1 / 0.012), color(display-p3 0.973 0.071 0.973 / 0.026));
       --line-plum-a2: light-dark(color(display-p3 0.58 0.024 0.58 / 0.028), color(display-p3 0.933 0.267 1 / 0.059));
-      --line-plum-a3: light-dark(color(display-p3 0.655 0.008 0.753 / 0.079), color(display-p3 0.918 0.333 0.996 / 0.148));
+      --line-plum-a3: light-dark(
+        color(display-p3 0.655 0.008 0.753 / 0.079),
+        color(display-p3 0.918 0.333 0.996 / 0.148)
+      );
       --line-plum-a4: light-dark(color(display-p3 0.627 0.008 0.722 / 0.126), color(display-p3 0.91 0.318 1 / 0.219));
       --line-plum-a5: light-dark(color(display-p3 0.58 0.004 0.69 / 0.177), color(display-p3 0.914 0.388 1 / 0.269));
       --line-plum-a6: light-dark(color(display-p3 0.537 0.004 0.655 / 0.236), color(display-p3 0.906 0.463 1 / 0.328));
