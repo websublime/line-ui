@@ -65,7 +65,6 @@ const REGEN_CMD = 'bun run scripts/generate-palettes.mjs --output packages/line-
 function runGenerator(outputDir) {
   const result = spawnSync('bun', ['run', GENERATOR, '--output', outputDir], {
     cwd: REPO_ROOT,
-    encoding: 'utf8',
     stdio: ['ignore', 'inherit', 'inherit'],
   });
   if (result.error) {
