@@ -84,6 +84,9 @@ const SOLID_STEP = 9;
  * @type {ReadonlyArray<{ hue: string; mode: 'light' | 'dark'; ratio: number }>}
  */
 const ALLOWLIST = [
+  // One logical entry (orange) x 2 modes: the spec's "exactly one entry"
+  // counts the logical exception, not the physical rows. Light and dark are
+  // listed separately because each mode is validated against its own scale.
   { hue: 'orange', mode: 'light', ratio: 2.97 },
   { hue: 'orange', mode: 'dark', ratio: 2.97 },
 ];
