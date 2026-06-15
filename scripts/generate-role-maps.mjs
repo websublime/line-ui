@@ -26,7 +26,7 @@
  *
  * Selector contract (spec §6.C.4, PRD §9.14 T4, §9.7): role-mapping CSS uses
  * ONLY [data-accent="{H}"] and [data-gray="{G}"] selectors, wrapped in :where()
- * for zero specificity. There is NO [data-theme] selector anywhere in the
+ * for zero specificity. There is NO theme-aggregator selector anywhere in the
  * line-themes output.
  *
  * Biome-conformant output: the generator delegates final formatting to `biome
