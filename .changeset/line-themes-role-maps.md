@@ -1,0 +1,5 @@
+---
+"@websublime/line-themes": patch
+---
+
+Populate `line-themes` `src/` with the role-mapping, semantic, alias, and default layers (spec §6.C.4). Add `scripts/generate-role-maps.mjs` (imports only `HUES`/`GRAY_HUES` from `line-schemas`, formats its output with `biome format --write` for byte-stable regeneration), which emits 31 `accent/{hue}.css` and 6 `gray/{gray}.css` files, each scoped to `:where([data-accent="…"])` / `:where([data-gray="…"])` and remapping `--line-{role}-1..12`, `-a1..a12`, and `-contrast` onto the hue's own `--line-{hue}-*` palette tokens. Hand-author `semantics.css` (success→green, warning→amber, danger→red, info→blue), `aliases.css` (exactly 54 alias variables — 9 named slots × 6 roles; `-contrast` stays in the numeric API, not an alias), `defaults.css` (indigo default accent + 31 auto-pair `:not([data-gray])` blocks per `AUTO_PAIR_TABLE` + slate default gray), and the `index.css` barrel in spec order (semantics → defaults → 31 accent → 6 gray → aliases). The role-mapping CSS uses `[data-accent]` and `[data-gray]` attribute selectors only — no aggregator selector anywhere (PRD §9.14 T4).

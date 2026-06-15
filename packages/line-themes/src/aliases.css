@@ -1,0 +1,70 @@
+/* Semantic aliases — 9 named slots × 6 roles = 54 alias variables (spec §6.C.4).
+ * --line-{role}-contrast is part of the numeric API (semantics/accent/gray
+ * files), NOT an alias, and is intentionally absent here. */
+:where(html) {
+  /* accent aliases */
+  --line-accent-surface: var(--line-accent-2);
+  --line-accent-bg: var(--line-accent-3);
+  --line-accent-bg-hover: var(--line-accent-4);
+  --line-accent-bg-active: var(--line-accent-5);
+  --line-accent-border: var(--line-accent-7);
+  --line-accent-solid: var(--line-accent-9);
+  --line-accent-solid-hover: var(--line-accent-10);
+  --line-accent-text-low: var(--line-accent-11);
+  --line-accent-text: var(--line-accent-12);
+
+  /* gray aliases */
+  --line-gray-surface: var(--line-gray-2);
+  --line-gray-bg: var(--line-gray-3);
+  --line-gray-bg-hover: var(--line-gray-4);
+  --line-gray-bg-active: var(--line-gray-5);
+  --line-gray-border: var(--line-gray-7);
+  --line-gray-solid: var(--line-gray-9);
+  --line-gray-solid-hover: var(--line-gray-10);
+  --line-gray-text-low: var(--line-gray-11);
+  --line-gray-text: var(--line-gray-12);
+
+  /* success aliases */
+  --line-success-surface: var(--line-success-2);
+  --line-success-bg: var(--line-success-3);
+  --line-success-bg-hover: var(--line-success-4);
+  --line-success-bg-active: var(--line-success-5);
+  --line-success-border: var(--line-success-7);
+  --line-success-solid: var(--line-success-9);
+  --line-success-solid-hover: var(--line-success-10);
+  --line-success-text-low: var(--line-success-11);
+  --line-success-text: var(--line-success-12);
+
+  /* warning aliases */
+  --line-warning-surface: var(--line-warning-2);
+  --line-warning-bg: var(--line-warning-3);
+  --line-warning-bg-hover: var(--line-warning-4);
+  --line-warning-bg-active: var(--line-warning-5);
+  --line-warning-border: var(--line-warning-7);
+  --line-warning-solid: var(--line-warning-9);
+  --line-warning-solid-hover: var(--line-warning-10);
+  --line-warning-text-low: var(--line-warning-11);
+  --line-warning-text: var(--line-warning-12);
+
+  /* danger aliases */
+  --line-danger-surface: var(--line-danger-2);
+  --line-danger-bg: var(--line-danger-3);
+  --line-danger-bg-hover: var(--line-danger-4);
+  --line-danger-bg-active: var(--line-danger-5);
+  --line-danger-border: var(--line-danger-7);
+  --line-danger-solid: var(--line-danger-9);
+  --line-danger-solid-hover: var(--line-danger-10);
+  --line-danger-text-low: var(--line-danger-11);
+  --line-danger-text: var(--line-danger-12);
+
+  /* info aliases */
+  --line-info-surface: var(--line-info-2);
+  --line-info-bg: var(--line-info-3);
+  --line-info-bg-hover: var(--line-info-4);
+  --line-info-bg-active: var(--line-info-5);
+  --line-info-border: var(--line-info-7);
+  --line-info-solid: var(--line-info-9);
+  --line-info-solid-hover: var(--line-info-10);
+  --line-info-text-low: var(--line-info-11);
+  --line-info-text: var(--line-info-12);
+}
