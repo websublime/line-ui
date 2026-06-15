@@ -38,13 +38,17 @@
  * read, both keyed `{H}9` (the object name carries the Dark variant, the step
  * key does not — AM-011).
  *
- * WCAG MATH IS INLINED (SPEC_DRIFT-4): the shared contrast helper named by
- * §6.C.5 (line-utils/contrast.ts) is owned by C7 (line-ui-7qm.3.7), which is not
- * yet built (line-utils is `export {}`). C5 has no dependency on C7, so this
- * validator implements its own WCAG 2.1 relative-luminance + ratio inline — the
- * same self-contained convention as generate-palettes.mjs / verify-palettes-
- * fresh.mjs, neither of which imports from line-utils. C7 later extracts the
- * shared helper.
+ * WCAG MATH IS SHARED (C7, line-ui-7qm.3.7): the WCAG 2.1 relative-luminance,
+ * contrast-ratio, hex parsing, and the THRESHOLD / SOLID_STEP constants now live
+ * in the shared helper named by §6.C.5 (packages/line-utils/src/contrast.ts).
+ * This validator imports them from that source module — the single source of
+ * truth — rather than inlining its own copy. The helpers are imported via their
+ * `.ts` SOURCE path (not the `@websublime/line-utils` package specifier),
+ * matching the line-schemas source imports below: there is no line-utils symlink
+ * in root node_modules, and this validator runs inside line-colors' build
+ * (a leaf package with no dependency on line-utils), so line-utils/dist is not
+ * guaranteed to exist at validate time. Importing the source removes that
+ * build-order hazard while preserving the no-inline-copy intent.
  *
  * CI WIRING — out of scope here (spec §6.C.3 line 674, AM-014): .github/
  * workflows/checks.yml is owned by Stream F → F4 (line-ui-7qm.6.4,
@@ -58,18 +62,7 @@
 import * as radixColors from '@radix-ui/colors';
 import { PER_HUE_CONTRAST } from '../packages/line-schemas/src/contrast-table.ts';
 import { HUES } from '../packages/line-schemas/src/hues.ts';
-
-/**
- * WCAG AA large-text / non-text-UI contrast floor (AM-014, spec §6.C.3 line 668).
- */
-const THRESHOLD = 3;
-
-/**
- * Step 9 is the solid brand anchor a contrast token is paired against
- * (PRD §9.6). Hard-coded rather than imported from line-schemas STEPS because
- * the contrast token is, by construction, the on-color for step 9 specifically.
- */
-const SOLID_STEP = 9;
+import { contrastRatio, SOLID_STEP, THRESHOLD } from '../packages/line-utils/src/contrast.ts';
 
 /**
  * Documented upstream allowlist (AM-014, spec §6.C.3 line 669). EXACTLY one
@@ -124,73 +117,6 @@ function step(obj, objName, key) {
     throw new Error(`@radix-ui/colors ${objName}.${key} is undefined`);
   }
   return value;
-}
-
-/**
- * Parse a CSS hex color (`#rgb`, `#rrggbb`, with or without leading `#`) into
- * 0-255 channels. Throws on any unparseable input so a malformed token surfaces
- * loudly rather than computing a bogus ratio. Covers both the 6-digit Radix
- * step-9 hexes and the 3-digit contrast tokens (`#000` / `#fff`).
- * @param {string} hex
- * @returns {{ r: number; g: number; b: number }}
- */
-function hexToRgb(hex) {
-  const h = hex.trim().replace(/^#/, '');
-  let full;
-  if (h.length === 3) {
-    full = h
-      .split('')
-      .map((c) => c + c)
-      .join('');
-  } else if (h.length === 6) {
-    full = h;
-  } else {
-    throw new Error(`unparseable hex color "${hex}" (expected #rgb or #rrggbb)`);
-  }
-  if (!/^[0-9a-fA-F]{6}$/.test(full)) {
-    throw new Error(`unparseable hex color "${hex}" (non-hex digits)`);
-  }
-  return {
-    r: Number.parseInt(full.slice(0, 2), 16),
-    g: Number.parseInt(full.slice(2, 4), 16),
-    b: Number.parseInt(full.slice(4, 6), 16),
-  };
-}
-
-/**
- * Linearize one sRGB channel (0-255) per the WCAG 2.1 definition.
- * @param {number} channel8
- * @returns {number}
- */
-function srgbToLinear(channel8) {
-  const c = channel8 / 255;
-  return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-}
-
-/**
- * WCAG 2.1 relative luminance of an sRGB hex color.
- * https://www.w3.org/TR/WCAG21/#dfn-relative-luminance
- * @param {string} hex
- * @returns {number}
- */
-function relativeLuminance(hex) {
-  const { r, g, b } = hexToRgb(hex);
-  return 0.2126 * srgbToLinear(r) + 0.7152 * srgbToLinear(g) + 0.0722 * srgbToLinear(b);
-}
-
-/**
- * WCAG 2.1 contrast ratio between two sRGB hex colors, in [1, 21].
- * https://www.w3.org/TR/WCAG21/#dfn-contrast-ratio
- * @param {string} hexA
- * @param {string} hexB
- * @returns {number}
- */
-function contrastRatio(hexA, hexB) {
-  const la = relativeLuminance(hexA);
-  const lb = relativeLuminance(hexB);
-  const lighter = Math.max(la, lb);
-  const darker = Math.min(la, lb);
-  return (lighter + 0.05) / (darker + 0.05);
 }
 
 /**
