@@ -1,0 +1,110 @@
+/* Semantic roles — fixed at root, not swappable per theme (spec §6.C.4). */
+:where(html) {
+  /* success → green */
+  --line-success-1: var(--line-green-1);
+  --line-success-2: var(--line-green-2);
+  --line-success-3: var(--line-green-3);
+  --line-success-4: var(--line-green-4);
+  --line-success-5: var(--line-green-5);
+  --line-success-6: var(--line-green-6);
+  --line-success-7: var(--line-green-7);
+  --line-success-8: var(--line-green-8);
+  --line-success-9: var(--line-green-9);
+  --line-success-10: var(--line-green-10);
+  --line-success-11: var(--line-green-11);
+  --line-success-12: var(--line-green-12);
+  --line-success-a1: var(--line-green-a1);
+  --line-success-a2: var(--line-green-a2);
+  --line-success-a3: var(--line-green-a3);
+  --line-success-a4: var(--line-green-a4);
+  --line-success-a5: var(--line-green-a5);
+  --line-success-a6: var(--line-green-a6);
+  --line-success-a7: var(--line-green-a7);
+  --line-success-a8: var(--line-green-a8);
+  --line-success-a9: var(--line-green-a9);
+  --line-success-a10: var(--line-green-a10);
+  --line-success-a11: var(--line-green-a11);
+  --line-success-a12: var(--line-green-a12);
+  --line-success-contrast: var(--line-green-contrast);
+
+  /* warning → amber */
+  --line-warning-1: var(--line-amber-1);
+  --line-warning-2: var(--line-amber-2);
+  --line-warning-3: var(--line-amber-3);
+  --line-warning-4: var(--line-amber-4);
+  --line-warning-5: var(--line-amber-5);
+  --line-warning-6: var(--line-amber-6);
+  --line-warning-7: var(--line-amber-7);
+  --line-warning-8: var(--line-amber-8);
+  --line-warning-9: var(--line-amber-9);
+  --line-warning-10: var(--line-amber-10);
+  --line-warning-11: var(--line-amber-11);
+  --line-warning-12: var(--line-amber-12);
+  --line-warning-a1: var(--line-amber-a1);
+  --line-warning-a2: var(--line-amber-a2);
+  --line-warning-a3: var(--line-amber-a3);
+  --line-warning-a4: var(--line-amber-a4);
+  --line-warning-a5: var(--line-amber-a5);
+  --line-warning-a6: var(--line-amber-a6);
+  --line-warning-a7: var(--line-amber-a7);
+  --line-warning-a8: var(--line-amber-a8);
+  --line-warning-a9: var(--line-amber-a9);
+  --line-warning-a10: var(--line-amber-a10);
+  --line-warning-a11: var(--line-amber-a11);
+  --line-warning-a12: var(--line-amber-a12);
+  --line-warning-contrast: var(--line-amber-contrast);
+
+  /* danger → red */
+  --line-danger-1: var(--line-red-1);
+  --line-danger-2: var(--line-red-2);
+  --line-danger-3: var(--line-red-3);
+  --line-danger-4: var(--line-red-4);
+  --line-danger-5: var(--line-red-5);
+  --line-danger-6: var(--line-red-6);
+  --line-danger-7: var(--line-red-7);
+  --line-danger-8: var(--line-red-8);
+  --line-danger-9: var(--line-red-9);
+  --line-danger-10: var(--line-red-10);
+  --line-danger-11: var(--line-red-11);
+  --line-danger-12: var(--line-red-12);
+  --line-danger-a1: var(--line-red-a1);
+  --line-danger-a2: var(--line-red-a2);
+  --line-danger-a3: var(--line-red-a3);
+  --line-danger-a4: var(--line-red-a4);
+  --line-danger-a5: var(--line-red-a5);
+  --line-danger-a6: var(--line-red-a6);
+  --line-danger-a7: var(--line-red-a7);
+  --line-danger-a8: var(--line-red-a8);
+  --line-danger-a9: var(--line-red-a9);
+  --line-danger-a10: var(--line-red-a10);
+  --line-danger-a11: var(--line-red-a11);
+  --line-danger-a12: var(--line-red-a12);
+  --line-danger-contrast: var(--line-red-contrast);
+
+  /* info → blue */
+  --line-info-1: var(--line-blue-1);
+  --line-info-2: var(--line-blue-2);
+  --line-info-3: var(--line-blue-3);
+  --line-info-4: var(--line-blue-4);
+  --line-info-5: var(--line-blue-5);
+  --line-info-6: var(--line-blue-6);
+  --line-info-7: var(--line-blue-7);
+  --line-info-8: var(--line-blue-8);
+  --line-info-9: var(--line-blue-9);
+  --line-info-10: var(--line-blue-10);
+  --line-info-11: var(--line-blue-11);
+  --line-info-12: var(--line-blue-12);
+  --line-info-a1: var(--line-blue-a1);
+  --line-info-a2: var(--line-blue-a2);
+  --line-info-a3: var(--line-blue-a3);
+  --line-info-a4: var(--line-blue-a4);
+  --line-info-a5: var(--line-blue-a5);
+  --line-info-a6: var(--line-blue-a6);
+  --line-info-a7: var(--line-blue-a7);
+  --line-info-a8: var(--line-blue-a8);
+  --line-info-a9: var(--line-blue-a9);
+  --line-info-a10: var(--line-blue-a10);
+  --line-info-a11: var(--line-blue-a11);
+  --line-info-a12: var(--line-blue-a12);
+  --line-info-contrast: var(--line-blue-contrast);
+}
