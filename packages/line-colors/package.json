@@ -44,7 +44,7 @@
     "./yellow": "./dist/yellow.css"
   },
   "scripts": {
-    "build": "postcss src/index.css -o dist/index.css && postcss 'src/*.css' -d dist",
+    "build": "bun run ../../scripts/validate-contrast.mjs && postcss src/index.css -o dist/index.css && postcss 'src/*.css' -d dist",
     "dev": "postcss src/index.css -o dist/index.css --watch & postcss 'src/*.css' -d dist --watch",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"

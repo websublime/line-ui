@@ -1,0 +1,5 @@
+---
+"@websublime/line-colors": patch
+---
+
+Add `scripts/validate-contrast.mjs`, a build-time WCAG contrast validator for the `line-colors` palette, and wire it into `line-colors`' `build` script. For each of the 31 hues × {light, dark} it computes the WCAG 2.1 contrast ratio between that hue's base step-9 solid (from `@radix-ui/colors`) and its `PER_HUE_CONTRAST` on-color token, failing the build (naming hue, mode, and ratio) on any pair below the 3:1 WCAG AA large-text / non-text-UI floor. It carries exactly one documented upstream allowlist entry — `orange` in both modes (`#f76b15` vs white = 2.97:1, an upstream Radix Colors characteristic) — which is reported as a warning rather than failing, and which fails if its measured ratio regresses below the recorded value. WCAG math is inlined (no `line-utils` dependency); base scales only (P3 is a gamut upgrade, not a luminance change). Wiring this validator into `checks.yml` is owned by Stream F (F4); the §6.F.5 pipeline already lists the run-line.
