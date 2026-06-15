@@ -125,9 +125,8 @@ function diffSummary(committed, fresh, name) {
     };
   }
 
-  const plural = diffLines === 1 ? '' : 's';
   const ctx = [
-    `  --- committed ${name}:${firstDiff + 1} (${diffLines} differing line${plural} in this file)`,
+    `  --- committed ${name}:${firstDiff + 1} (${diffLines} differing line${diffLines === 1 ? '' : 's'} in this file)`,
     `  - ${a[firstDiff] ?? '(missing line)'}`,
     '  +++ freshly generated',
     `  + ${b[firstDiff] ?? '(missing line)'}`,
