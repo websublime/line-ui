@@ -90,29 +90,48 @@ async function listCssFiles(dir) {
 }
 
 /**
- * Render a compact unified-style diff (first divergent region) between two file
- * contents, to point the contributor at WHERE the drift is. Kept dependency-free.
+ * Compare two file contents line-by-line and report (a) the first divergent
+ * region — to point the contributor at WHERE the drift starts — plus (b) the
+ * total number of differing lines in this file, so a multi-line drift within a
+ * single hue (e.g. a @radix-ui/colors bump touching many steps) is quantified
+ * rather than implied by a single sample line. Kept dependency-free.
+ *
+ * This is diagnostics only: callers already decide pass/fail on raw byte
+ * inequality (`committed !== fresh`); this function never gates that.
  * @param {string} committed
  * @param {string} fresh
  * @param {string} name
- * @returns {string}
+ * @returns {{ text: string; diffLines: number }}
  */
-function firstDiffRegion(committed, fresh, name) {
+function diffSummary(committed, fresh, name) {
   const a = committed.split('\n');
   const b = fresh.split('\n');
   const max = Math.max(a.length, b.length);
+
+  let firstDiff = -1;
+  let diffLines = 0;
   for (let i = 0; i < max; i++) {
     if (a[i] !== b[i]) {
-      const ctx = [];
-      ctx.push(`  --- committed ${name}:${i + 1}`);
-      ctx.push(`  - ${a[i] ?? '(missing line)'}`);
-      ctx.push('  +++ freshly generated');
-      ctx.push(`  + ${b[i] ?? '(missing line)'}`);
-      return ctx.join('\n');
+      if (firstDiff === -1) firstDiff = i;
+      diffLines++;
     }
   }
-  // Contents differ only by trailing-newline / length with no line-level mismatch.
-  return `  (content length differs: committed ${committed.length}B vs fresh ${fresh.length}B)`;
+
+  if (firstDiff === -1) {
+    // Contents differ only by trailing-newline / length with no line-level mismatch.
+    return {
+      text: `  (content length differs: committed ${committed.length}B vs fresh ${fresh.length}B)`,
+      diffLines: 0,
+    };
+  }
+
+  const ctx = [
+    `  --- committed ${name}:${firstDiff + 1} (${diffLines} differing line${diffLines === 1 ? '' : 's'} in this file)`,
+    `  - ${a[firstDiff] ?? '(missing line)'}`,
+    '  +++ freshly generated',
+    `  + ${b[firstDiff] ?? '(missing line)'}`,
+  ];
+  return { text: ctx.join('\n'), diffLines };
 }
 
 /**
@@ -120,12 +139,14 @@ function firstDiffRegion(committed, fresh, name) {
  * return the list of freshness violations (empty when fresh). Checks file-set
  * equality in both directions, then byte-for-byte content of files on both sides.
  * @param {string} tmpDir
- * @returns {Promise<{ errors: string[]; committedCount: number }>}
+ * @returns {Promise<{ errors: string[]; committedCount: number; driftFiles: number; driftLines: number }>}
  */
 async function collectDrift(tmpDir) {
   const committedFiles = await listCssFiles(COMMITTED_DIR);
   const freshFiles = await listCssFiles(tmpDir);
   const errors = [];
+  let driftFiles = 0;
+  let driftLines = 0;
 
   // 1. File-SET equality, both directions.
   for (const name of committedFiles) {
@@ -151,11 +172,14 @@ async function collectDrift(tmpDir) {
       readFile(join(tmpDir, name), 'utf8'),
     ]);
     if (committed !== fresh) {
-      errors.push(`drift: '${name}' differs from a fresh generation.\n${firstDiffRegion(committed, fresh, name)}`);
+      driftFiles++;
+      const { text, diffLines } = diffSummary(committed, fresh, name);
+      driftLines += diffLines;
+      errors.push(`drift: '${name}' differs from a fresh generation.\n${text}`);
     }
   }
 
-  return { errors, committedCount: committedFiles.size };
+  return { errors, committedCount: committedFiles.size, driftFiles, driftLines };
 }
 
 /**
@@ -186,7 +210,7 @@ async function main() {
   const tmpDir = await mkdtemp(join(tmpdir(), 'line-palettes-fresh-'));
   try {
     runGenerator(tmpDir);
-    const { errors, committedCount } = await collectDrift(tmpDir);
+    const { errors, committedCount, driftFiles, driftLines } = await collectDrift(tmpDir);
 
     if (errors.length === 0) {
       console.info(
@@ -195,7 +219,18 @@ async function main() {
       return;
     }
 
-    process.stderr.write(`\nverify-palettes-fresh: FAIL — ${errors.length} freshness violation(s):\n`);
+    // Tally line: content-drift counts (files + lines) plus any file-set
+    // violations (stale/missing), so a multi-hue bump is quantified up front
+    // rather than read one error at a time.
+    const setViolations = errors.length - driftFiles;
+    const tally = [
+      `${driftFiles} drifting file${driftFiles === 1 ? '' : 's'} (${driftLines} differing line${driftLines === 1 ? '' : 's'})`,
+      setViolations > 0 ? `${setViolations} file-set violation${setViolations === 1 ? '' : 's'}` : null,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    process.stderr.write(`\nverify-palettes-fresh: FAIL — ${errors.length} freshness violation(s) [${tally}]:\n`);
     for (const err of errors) {
       process.stderr.write(`  - ${err}\n`);
     }
