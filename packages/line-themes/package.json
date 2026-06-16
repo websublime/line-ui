@@ -21,8 +21,8 @@
     "@websublime/line-schemas": "workspace:^"
   },
   "scripts": {
-    "build": "postcss src/index.css -o dist/index.css && postcss 'src/*.css' -d dist",
-    "dev": "postcss src/index.css -o dist/index.css --watch & postcss 'src/*.css' -d dist --watch",
+    "build": "postcss src/index.css -o dist/index.css && postcss 'src/*.css' -d dist && postcss 'src/accent/*.css' -d dist/accent && postcss 'src/gray/*.css' -d dist/gray",
+    "dev": "trap 'kill 0' INT TERM; postcss src/index.css -o dist/index.css --watch & postcss 'src/*.css' -d dist --watch & postcss 'src/accent/*.css' -d dist/accent --watch & postcss 'src/gray/*.css' -d dist/gray --watch & wait",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   }
