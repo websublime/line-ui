@@ -52,12 +52,13 @@ function resolveSpace(options?: MixOptions): ColorSpace {
 /**
  * Clamp a percentage value into the CSS-valid `[0, 100]` range. Out-of-range
  * inputs would otherwise emit invalid `color-mix()` text (e.g. a negative or
- * over-100 percentage), which the browser silently rejects. Clamping a numeric
- * percentage is input validation, not color evaluation, so it stays within the
- * "pure string builder, no eval" contract.
+ * over-100 percentage), which the browser silently rejects. `NaN` coerces to
+ * `0` (the lower clamp bound) so non-finite callers never emit invalid `NaN%`
+ * CSS. Clamping a numeric percentage is input validation, not color evaluation,
+ * so it stays within the "pure string builder, no eval" contract.
  */
 function clampPercent(value: number): number {
-  return Math.min(100, Math.max(0, value));
+  return Number.isNaN(value) ? 0 : Math.min(100, Math.max(0, value));
 }
 
 /**
