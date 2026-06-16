@@ -50,11 +50,26 @@ function resolveSpace(options?: MixOptions): ColorSpace {
 }
 
 /**
+ * Clamp a percentage value into the CSS-valid `[0, 100]` range. Out-of-range
+ * inputs would otherwise emit invalid `color-mix()` text (e.g. a negative or
+ * over-100 percentage), which the browser silently rejects. Clamping a numeric
+ * percentage is input validation, not color evaluation, so it stays within the
+ * "pure string builder, no eval" contract.
+ */
+function clampPercent(value: number): number {
+  return Math.min(100, Math.max(0, value));
+}
+
+/**
  * Build a CSS `color-mix()` of two colors.
  *
  * When `weight` is provided it is attached to `colorA` as a percentage; the
  * second percentage is omitted, letting CSS infer it (`100% - weight`). When
  * `weight` is omitted both colors are mixed at their default (equal) ratio.
+ *
+ * @param weight - Optional percentage weight applied to `colorA`, clamped to
+ *   `[0, 100]`. When omitted, no percentage is emitted (CSS infers an equal
+ *   mix); `undefined` is preserved and is not clamped.
  *
  * @example
  * mix('red', 'blue')        // 'color-mix(in srgb, red, blue)'
@@ -64,7 +79,7 @@ function resolveSpace(options?: MixOptions): ColorSpace {
  */
 export function mix(colorA: string, colorB: string, weight?: number, options?: MixOptions): string {
   const space = resolveSpace(options);
-  const first = weight === undefined ? colorA : `${colorA} ${weight}%`;
+  const first = weight === undefined ? colorA : `${colorA} ${clampPercent(weight)}%`;
   return `color-mix(in ${space}, ${first}, ${colorB})`;
 }
 
@@ -76,12 +91,14 @@ export function mix(colorA: string, colorB: string, weight?: number, options?: M
  * `transparent` at `100 - alphaPercent` with the color, so the color's own
  * weight is the remaining `alphaPercent`.
  *
+ * @param alphaPercent - Desired opacity percentage, clamped to `[0, 100]`.
+ *
  * @example
  * withAlpha('var(--c)', 40)  // 'color-mix(in srgb, transparent 60%, var(--c))'
  */
 export function withAlpha(color: string, alphaPercent: number, options?: MixOptions): string {
   const space = resolveSpace(options);
-  const transparentWeight = 100 - alphaPercent;
+  const transparentWeight = 100 - clampPercent(alphaPercent);
   return `color-mix(in ${space}, transparent ${transparentWeight}%, ${color})`;
 }
 
@@ -90,12 +107,14 @@ export function withAlpha(color: string, alphaPercent: number, options?: MixOpti
  *
  * `amount` (0-100) is the percentage of `white` blended in.
  *
+ * @param amount - Percentage of `white` to blend in, clamped to `[0, 100]`.
+ *
  * @example
  * tint('var(--c)', 20)  // 'color-mix(in srgb, white 20%, var(--c))'
  */
 export function tint(color: string, amount: number, options?: MixOptions): string {
   const space = resolveSpace(options);
-  return `color-mix(in ${space}, white ${amount}%, ${color})`;
+  return `color-mix(in ${space}, white ${clampPercent(amount)}%, ${color})`;
 }
 
 /**
@@ -103,10 +122,12 @@ export function tint(color: string, amount: number, options?: MixOptions): strin
  *
  * `amount` (0-100) is the percentage of `black` blended in.
  *
+ * @param amount - Percentage of `black` to blend in, clamped to `[0, 100]`.
+ *
  * @example
  * shade('var(--c)', 20)  // 'color-mix(in srgb, black 20%, var(--c))'
  */
 export function shade(color: string, amount: number, options?: MixOptions): string {
   const space = resolveSpace(options);
-  return `color-mix(in ${space}, black ${amount}%, ${color})`;
+  return `color-mix(in ${space}, black ${clampPercent(amount)}%, ${color})`;
 }
