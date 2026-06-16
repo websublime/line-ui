@@ -9,11 +9,11 @@ hooks:
     - matcher: Bash
       hooks:
         - type: command
-          command: /Users/ramosmig/.claude/plugins/cache/websublime-mister-anderson/mister-anderson/0.5.0/hooks/stamp-pending.sh
+          command: /Users/ramosmig/.claude/plugins/cache/websublime-mister-anderson/mister-anderson/0.6.0/hooks/stamp-pending.sh
   Stop:
     - hooks:
         - type: command
-          command: /Users/ramosmig/.claude/plugins/cache/websublime-mister-anderson/mister-anderson/0.5.0/hooks/verify-state.sh
+          command: /Users/ramosmig/.claude/plugins/cache/websublime-mister-anderson/mister-anderson/0.6.0/hooks/verify-state.sh
 ---
 
 # Supervisor: "Olive"
