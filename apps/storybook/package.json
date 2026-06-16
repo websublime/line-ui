@@ -7,7 +7,7 @@
     "build": "storybook build",
     "dev": "storybook dev -p 6006",
     "analyze": "cd ../.. && custom-elements-manifest analyze && mv apps/storybook/custom-elements.json apps/storybook/customElements.json",
-    "clean": "rm -rf dist storybook-static customElements.json",
+    "clean": "rm -rf dist storybook-static customElements.json custom-elements.json",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
