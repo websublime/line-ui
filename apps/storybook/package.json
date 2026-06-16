@@ -4,9 +4,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "echo 'build TBD — implemented in B4 (line-ui-7qm.2.4)'",
-    "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",
-    "clean": "rm -rf dist",
+    "build": "storybook build",
+    "dev": "storybook dev -p 6006",
+    "analyze": "cd ../.. && custom-elements-manifest analyze && mv apps/storybook/custom-elements.json apps/storybook/customElements.json",
+    "clean": "rm -rf dist storybook-static customElements.json custom-elements.json",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

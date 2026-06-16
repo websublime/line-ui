@@ -2,9 +2,8 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "outDir": "./dist"
   },
-  "include": ["src/**/*"],
-  "exclude": ["tests/**", "dist/**"]
+  "include": ["src/**/*", ".storybook/**/*"],
+  "exclude": ["tests/**", "dist/**", "storybook-static/**"]
 }
