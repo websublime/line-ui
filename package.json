@@ -51,6 +51,7 @@
     "@changesets/cli": "^2.31.0",
     "@changesets/get-github-info": "^0.8.0",
     "@custom-elements-manifest/analyzer": "^0.11.0",
+    "@happy-dom/global-registrator": "^20.10.5",
     "@open-wc/testing-helpers": "^3.0.1",
     "@phosphor-icons/core": "^2.1.1",
     "@radix-ui/colors": "^3.0.0",
