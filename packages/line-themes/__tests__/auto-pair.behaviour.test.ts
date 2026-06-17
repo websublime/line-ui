@@ -85,11 +85,17 @@ describe('auto-pair cascade (string assertion against src/defaults.css, AM-015)'
   });
 
   // ── Case 3: explicit accent + gray → auto-pair SUPPRESSED ────────────────
-  describe('case 3 — explicit accent + gray (auto-pair suppressed)', () => {
-    test('every auto-pair block is guarded by :not([data-gray])', () => {
+  // Suppression is verified INDIRECTLY: rather than rendering an explicit
+  // accent+gray combination and asserting auto-pair did not fire, we assert
+  // that every auto-pair selector carries the :not([data-gray]) guard. The
+  // guard is the CSS mechanism that suppresses auto-pair, so its presence on
+  // every rule proves suppression holds for any explicit [data-gray].
+  describe('case 3 — explicit accent + gray (auto-pair suppressed, verified indirectly via the :not([data-gray]) guard)', () => {
+    test('every auto-pair selector carries the :not([data-gray]) guard (suppression verified indirectly)', () => {
       // The :not([data-gray]) guard is what suppresses auto-pair when the
-      // consumer sets an explicit [data-gray]. Assert no auto-pair rule maps
-      // --line-gray-* without that guard.
+      // consumer sets an explicit [data-gray]. We do not assert the suppressed
+      // outcome directly; instead we assert no auto-pair rule maps
+      // --line-gray-* without that guard, which indirectly guarantees it.
       const autoPairRules = css.match(/:where\(\[data-accent="[a-z]+"\][^)]*\)/g) ?? [];
       expect(autoPairRules.length).toBeGreaterThan(0);
       for (const rule of autoPairRules) {
