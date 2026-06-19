@@ -27,7 +27,7 @@
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { fixture, html } from '@open-wc/testing-helpers';
 import { LitElement } from 'lit';
-import { InspectorMixin } from '../src/mixins/inspector.js';
+import { getInspectorOutlineSheet, InspectorMixin } from '../src/mixins/inspector.js';
 
 const FLAG_KEY = 'line-ui:inspector';
 
@@ -60,6 +60,12 @@ function panel(el: Element): HTMLDialogElement | null {
   return (root?.querySelector('dialog') as HTMLDialogElement | null) ?? null;
 }
 
+/** The host's shadow-root `adoptedStyleSheets` (the array the mixin appends to). */
+function adopted(el: Element): readonly CSSStyleSheet[] {
+  const root = ((el as LitElement).renderRoot ?? (el as HTMLElement).shadowRoot) as ShadowRoot | null;
+  return root?.adoptedStyleSheets ?? [];
+}
+
 beforeEach(() => {
   localStorage.clear();
 });
@@ -89,6 +95,17 @@ describe('InspectorMixin — flag unset (production no-op)', () => {
     pressKey(el, 'l', { ctrlKey: true, shiftKey: true });
     expect(panel(el)).toBeNull();
   });
+
+  test('does not adopt the hover-outline sheet when the flag is absent', async () => {
+    const sheet = getInspectorOutlineSheet();
+    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    if (sheet) {
+      expect(adopted(el).includes(sheet)).toBe(false);
+    } else {
+      // No constructable stylesheets in this runtime — nothing could be adopted.
+      expect(adopted(el).length).toBe(0);
+    }
+  });
 });
 
 describe('InspectorMixin — flag set to "on" (activation)', () => {
@@ -99,6 +116,35 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
   test('marks the host with data-line-inspect (outline + part/slot exposure hook)', async () => {
     const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
     expect(el.hasAttribute('data-line-inspect')).toBe(true);
+  });
+
+  test('adopts the dev-only hover-outline sheet into the shadow root (§6.D.2)', async () => {
+    const sheet = getInspectorOutlineSheet();
+    expect(sheet).not.toBeNull();
+    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    // The exact singleton instance is appended (identity assertion).
+    expect(adopted(el).includes(sheet as CSSStyleSheet)).toBe(true);
+  });
+
+  test('the adopted sheet carries the :host(:hover[data-line-inspect]) outline rule', async () => {
+    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const sheet = adopted(el).find((s) => s === getInspectorOutlineSheet());
+    expect(sheet).toBeDefined();
+    const ruleText = Array.from((sheet as CSSStyleSheet).cssRules, (r) => r.cssText).join('\n');
+    expect(ruleText).toContain(':host(:hover[data-line-inspect])');
+    expect(ruleText).toContain('outline');
+  });
+
+  test("appends the sheet without clobbering a component's own adopted styles", async () => {
+    // ARCHITECTURE §14.6: the mixin must preserve any sheet the component adopted.
+    const own = new CSSStyleSheet();
+    own.replaceSync(':host { display: block; }');
+    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const root = ((el as LitElement).renderRoot ?? (el as HTMLElement).shadowRoot) as ShadowRoot;
+    root.adoptedStyleSheets = [...root.adoptedStyleSheets, own];
+    // Re-activation path appends, never replaces — the component sheet survives.
+    expect(root.adoptedStyleSheets.includes(own)).toBe(true);
+    expect(root.adoptedStyleSheets.includes(getInspectorOutlineSheet() as CSSStyleSheet)).toBe(true);
   });
 
   test('surfaces the static version as data-line-version', async () => {
@@ -155,5 +201,19 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
     // Listener gone: a hotkey after disconnect must not recreate a panel.
     pressKey(el, 'l', { ctrlKey: true, shiftKey: true });
     expect(panel(el)?.open ?? false).toBe(false);
+  });
+
+  test('disconnect removes the hover-outline sheet (active path leaks nothing)', async () => {
+    const sheet = getInspectorOutlineSheet();
+    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    if (sheet) {
+      expect(adopted(el).includes(sheet)).toBe(true);
+    }
+    el.remove();
+    if (sheet) {
+      expect(adopted(el).includes(sheet)).toBe(false);
+    } else {
+      expect(adopted(el).length).toBe(0);
+    }
   });
 });

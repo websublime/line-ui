@@ -14,6 +14,56 @@ const INSPECTOR_FLAG_KEY = 'line-ui:inspector';
 const INSPECTOR_FLAG_ON = 'on';
 
 /**
+ * The single dev-inspector hover-outline rule (spec §6.D.2).
+ *
+ * Drawn only while the inspector flag is `'on'` and the host is hovered — the
+ * `data-line-inspect` marker (set in {@link InspectorElement.#activateInspector})
+ * is the activation hook. A conventional dev-inspector outline: a 2px accent
+ * outline with a small offset, self-contained in one rule so it adopts/removes
+ * atomically.
+ */
+const INSPECTOR_OUTLINE_CSS = ':host(:hover[data-line-inspect]) { outline: 2px solid #4c8eff; outline-offset: 2px; }';
+
+/**
+ * Module-level singleton `CSSStyleSheet` carrying the hover-outline rule.
+ *
+ * Constructed once, lazily (and only when the inspector activates — never on the
+ * production no-op path, so there is zero overhead when the flag is unset). The
+ * same sheet instance is adopted by / removed from every active host's
+ * `adoptedStyleSheets`, which is why it can be compared by identity in tests.
+ *
+ * Returns `null` when the runtime cannot construct a `CSSStyleSheet` (e.g. a DOM
+ * shim without constructable stylesheets); activation then simply skips the
+ * outline and the rest of the inspector still wires up.
+ */
+let inspectorOutlineSheet: CSSStyleSheet | null | undefined;
+
+/**
+ * Returns the singleton hover-outline `CSSStyleSheet`, constructing it lazily on
+ * first call (returns `null` when constructable stylesheets are unavailable).
+ *
+ * Exported for the unit tier so a test can assert the active host's
+ * `adoptedStyleSheets` contains exactly this instance — the deterministic signal
+ * for the hover-outline contract (happy-dom cannot resolve the outline via
+ * `getComputedStyle`; AM-015 / AM-020). Not part of the public package barrel.
+ *
+ * @internal
+ */
+export function getInspectorOutlineSheet(): CSSStyleSheet | null {
+  if (inspectorOutlineSheet !== undefined) {
+    return inspectorOutlineSheet;
+  }
+  try {
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(INSPECTOR_OUTLINE_CSS);
+    inspectorOutlineSheet = sheet;
+  } catch {
+    inspectorOutlineSheet = null;
+  }
+  return inspectorOutlineSheet;
+}
+
+/**
  * Reads the inspector activation flag from `localStorage`.
  *
  * Returns `true` only when `localStorage['line-ui:inspector'] === 'on'`
@@ -42,8 +92,11 @@ function isInspectorEnabled(): boolean {
  *
  * When the flag is **set to `'on'`**, on connect the mixin:
  * - sets `data-line-inspect` on the host — the activation marker that also
- *   drives the pure-CSS hover outline (`:host(:hover[data-line-inspect])`) and
+ *   drives the dev-only hover outline (`:host(:hover[data-line-inspect])`) and
  *   signals that parts/slots are exposed for inspection;
+ * - adopts a dev-only singleton `CSSStyleSheet` carrying that hover-outline rule
+ *   into the shadow root's `adoptedStyleSheets` (APPENDED, never replacing the
+ *   array — a component's own styles are preserved; ARCHITECTURE §14.6);
  * - surfaces the component version as `data-line-version` (read defensively
  *   from the host's static `version`, default `'0.0.0'` per §6.D.1);
  * - surfaces metadata members **defensively** — the docs URL as
@@ -53,9 +106,9 @@ function isInspectorEnabled(): boolean {
  *   macOS — §10/Q5) that toggles a `<dialog>` metadata panel in the shadow
  *   root, listing the version and any present metadata fields.
  *
- * On disconnect the listener and dialog are torn down so the active path leaks
- * nothing. The file path, export name, and generic signature are stable so
- * `vite-plugin-dts` emits a deterministic `.d.ts` (D1 constraint).
+ * On disconnect the listener, dialog, and outline sheet are torn down so the
+ * active path leaks nothing. The file path, export name, and generic signature
+ * are stable so `vite-plugin-dts` emits a deterministic `.d.ts` (D1 constraint).
  *
  * @see docs/specs/00-spec-design-system.md §6.D.2
  */
@@ -92,11 +145,19 @@ export function InspectorMixin<T extends Constructor<LitElement>>(Base: T): T & 
       super.disconnectedCallback();
     }
 
-    /** Wire activation marker, host metadata attributes, and the hotkey. */
+    /**
+     * Wire activation marker, host metadata attributes, the hotkey, and the
+     * dev-only hover-outline stylesheet.
+     */
     #activateInspector(): void {
       // Activation marker — also the hook for the `:host(:hover[...])` outline
       // and the signal that parts/slots are exposed for inspection.
       this.setAttribute('data-line-inspect', '');
+
+      // Adopt the dev-only hover-outline sheet (spec §6.D.2). APPEND — never
+      // replace — so a component's own `adoptedStyleSheets` are preserved
+      // (ARCHITECTURE §14.6: the base/mixin must not clobber component styles).
+      this.#adoptInspectorOutline();
 
       // Version: always available (LineElement.version static, §6.D.1).
       const version = this.#inspectorVersion();
@@ -114,14 +175,57 @@ export function InspectorMixin<T extends Constructor<LitElement>>(Base: T): T & 
       this.addEventListener('keydown', this.#onInspectorKeydown);
     }
 
-    /** Remove the hotkey, tear down the dialog, and drop host attributes. */
+    /**
+     * Remove the hotkey, tear down the dialog, drop host attributes, and remove
+     * the dev-only hover-outline sheet so the active path leaks nothing.
+     */
     #deactivateInspector(): void {
       this.removeEventListener('keydown', this.#onInspectorKeydown);
       this.#inspectorDialog?.remove();
       this.#inspectorDialog = null;
+      this.#releaseInspectorOutline();
       this.removeAttribute('data-line-inspect');
       this.removeAttribute('data-line-version');
       this.removeAttribute('data-line-docs');
+    }
+
+    /** The shadow root that carries `adoptedStyleSheets`, or `null`. */
+    #inspectorRoot(): ShadowRoot | null {
+      const root = (this.renderRoot ?? this.shadowRoot) as ShadowRoot | null;
+      return root && 'adoptedStyleSheets' in root ? root : null;
+    }
+
+    /**
+     * Append the singleton hover-outline sheet to the shadow root's
+     * `adoptedStyleSheets` (idempotent — never duplicated, never replaces the
+     * array). No-op when the sheet or root is unavailable.
+     */
+    #adoptInspectorOutline(): void {
+      const sheet = getInspectorOutlineSheet();
+      const root = this.#inspectorRoot();
+      if (!(sheet && root)) {
+        return;
+      }
+      if (root.adoptedStyleSheets.includes(sheet)) {
+        return;
+      }
+      root.adoptedStyleSheets = [...root.adoptedStyleSheets, sheet];
+    }
+
+    /**
+     * Remove the singleton hover-outline sheet from the shadow root's
+     * `adoptedStyleSheets`, preserving every other adopted sheet.
+     */
+    #releaseInspectorOutline(): void {
+      const sheet = inspectorOutlineSheet;
+      const root = this.#inspectorRoot();
+      if (!(sheet && root)) {
+        return;
+      }
+      if (!root.adoptedStyleSheets.includes(sheet)) {
+        return;
+      }
+      root.adoptedStyleSheets = root.adoptedStyleSheets.filter((s) => s !== sheet);
     }
 
     /** Read the host's static `version`, defaulting to `''` when absent. */
