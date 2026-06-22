@@ -9,17 +9,43 @@ import type { LitElement } from 'lit';
 type Constructor<T = {}> = new (...args: any[]) => T;
 
 /**
- * Metadata mixin (D3 — element metadata and lifecycle hooks).
+ * Metadata mixin (D3 — static element metadata members).
  *
- * D1 ships an identity (pass-through) stub so `LineElement` can compose the
- * full mixin chain, type-check, build, and export now. D3 (line-ui-7qm.4.3)
- * replaces the BODY of {@link MetadataElement} with the real metadata members
- * (`docs`, `qa`, `scope`, …). The file path, export name, and signature must
- * remain stable.
+ * Declares the four static metadata members every line://ui component carries
+ * (spec §6.D.3):
+ *
+ * - `version` — the component's semver string (mirrors / defaults the value the
+ *   Inspector mixin surfaces as `data-line-version`).
+ * - `docs` — a URL string pointing at the component's documentation.
+ * - `qa` — an array of QA tags (`string[]`).
+ * - `scope` — a string naming the component's scope.
+ *
+ * Components override the members declaratively, e.g. `static version = '0.1.0'`.
+ *
+ * SURFACING the members as host attributes (`data-line-version`,
+ * `data-line-docs`, …) is the Inspector mixin's (D2) responsibility — it reads
+ * these static members defensively off `this.constructor`. This mixin owns the
+ * DECLARATION only; it does not touch the DOM.
+ *
+ * The file path, export name, and generic signature remain stable from the D1
+ * stub (`.d.ts`-determinism invariant; the `LineElement` composition chain in
+ * `line-element.ts` depends on them).
  *
  * @see docs/specs/00-spec-design-system.md §6.D.3
  */
 export function MetadataMixin<T extends Constructor<LitElement>>(Base: T): T & Constructor<LitElement> {
-  class MetadataElement extends Base {}
+  class MetadataElement extends Base {
+    /** Component semver string. Surfaced by the Inspector as `data-line-version`. */
+    static version = '0.0.0';
+
+    /** Documentation URL. Surfaced by the Inspector as `data-line-docs` when set. */
+    static docs = '';
+
+    /** QA tags for the component. */
+    static qa: string[] = [];
+
+    /** Component scope identifier. */
+    static scope = '';
+  }
   return MetadataElement;
 }
