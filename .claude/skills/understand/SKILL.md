@@ -14,9 +14,10 @@ Turn a first input into a request whose intent, class, and ceremony Miguel has s
 ## Steps
 1. Read the prompt for intent, scope, and the deliverable. Read the docs and code the request touches, in
    hierarchy order (`docs/PROCESS.md` §1): MANIFESTO law, PRD section, ARCHITECTURE section, plan, spec.
-2. Open the code graph (`codebase-memory` in `.mcp.json`). Call `index_status`; use the graph when it is
-   ready for the current sha, otherwise name what answered instead. Record the result as
-   `graph: used | stale@<short-sha> | unavailable(<reason>)`.
+2. Open the code graph (`codebase-memory` in `.mcp.json`). Call `index_status` with the required `project`
+   argument set to the repository root path (the absolute path of the main checkout, e.g. the `cwd`); an
+   empty call fails validation. Use the graph when it is ready for the current sha, otherwise name what
+   answered instead. Record the result as `graph: used | stale@<short-sha> | unavailable(<reason>)`.
 3. Locate the work. Search the phase ledger `docs/plans/NN-tasks-<slug>.md` for a matching row and the spec
    section it points to. A row exists → the request is a `task`, and the spec section is the contract. No
    row → append one now with status `todo`, the next number in the stream it touches (stream `Z` for

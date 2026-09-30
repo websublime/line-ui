@@ -95,8 +95,9 @@ the heavier one, and a class only ever moves up mid-task.
   Two agents never write the same branch. Agents write files and return short summaries; finding lists stay
   bounded (~12).
 - **Understand opens at the code graph.** The graph is the `codebase-memory` MCP server in `.mcp.json`;
-  `index_status` reports readiness plus the sha it was built at, `index_repository` rebuilds it for the main
-  checkout — never for a throwaway worktree. The understand write-back carries one field,
+  `index_status` takes one required argument, `project` = the repository root path, and reports readiness
+  plus the sha it was built at; `index_repository` rebuilds it for the main checkout — never for a throwaway
+  worktree. The understand write-back carries one field,
   `graph: used | stale@<short-sha> | unavailable(<reason>)`; a non-`used` value names what answered instead.
 
 ## 5. Gates
