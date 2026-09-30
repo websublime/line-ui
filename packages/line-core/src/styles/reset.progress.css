@@ -1,0 +1,42 @@
+progress,
+meter {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  border: 0;
+  background: transparent;
+  width: 100%;
+}
+
+/* Progress — WebKit */
+progress::-webkit-progress-bar {
+  background: transparent;
+}
+progress::-webkit-progress-value {
+  background: transparent;
+}
+
+/* Progress — Gecko */
+progress::-moz-progress-bar {
+  background: transparent;
+}
+
+/* Meter — WebKit */
+meter::-webkit-meter-bar {
+  background: transparent;
+  border: 0;
+}
+meter::-webkit-meter-optimum-value {
+  background: transparent;
+}
+meter::-webkit-meter-suboptimum-value {
+  background: transparent;
+}
+meter::-webkit-meter-even-less-good-value {
+  background: transparent;
+}
+
+/* Meter — Gecko */
+meter::-moz-meter-bar {
+  background: transparent;
+}

@@ -1,0 +1,12 @@
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+}
+
+th,
+td {
+  padding: 0;
+  text-align: inherit;
+  font-weight: inherit;
+}
