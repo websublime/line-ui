@@ -1,0 +1,10 @@
+# Project-scoped omp settings for line-ui (merged over ~/.omp/agent/config.yml).
+# The main session keeps the model the developer selects; the gate and research
+# subagents always run on Opus. Repo agents under .claude/agents/ carry their own
+# `model:` in frontmatter for Claude Code.
+task:
+  agentModelOverrides:
+    reviewer: "~anthropic/claude-opus-latest:high"
+    security-reviewer: "~anthropic/claude-opus-latest:high"
+    scout: "~anthropic/claude-opus-latest:high"
+    sonic: "~anthropic/claude-opus-latest:high"

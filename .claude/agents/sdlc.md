@@ -1,7 +1,6 @@
 ---
 name: sdlc
 description: Lifecycle orchestrator for line-ui. Runs the understand skill on any first input, then drives decide → spec/plan → review → implement → verify → track at the ceremony docs/PROCESS.md §2 assigns, delegating to the supervisors and the gates. Waits for Miguel by returning to the caller with its state; never auto-proceeds past a gate.
-model: opus
 effort: high
 tools: *
 ---

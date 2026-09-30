@@ -82,6 +82,10 @@ the heavier one, and a class only ever moves up mid-task.
   track step. **Harness agents:** `scout` for read-only research, `reviewer` and `security-reviewer` for the
   gates. When a harness agent is not mounted, a fresh general subagent runs the same §5 checklist and the PR
   body names which agent ran.
+- **Models.** The main session runs on whatever model the developer selects. The supervisors run on Opus
+  (frontmatter `model:`); `git-workflow-manager` on Sonnet; `sdlc` inherits the session model. The harness
+  agents `reviewer`, `security-reviewer`, `scout`, `sonic` run on Opus through the repo-scoped
+  `.omp/config.yml` (`task.agentModelOverrides`); that file never sets a global model.
 - **`sdlc` waits by returning.** A subagent has no channel to Miguel. "Wait for Miguel" means return to the
   caller with the phase reached, the class, and the proposal or question; the caller relays, then re-dispatches
   `sdlc` with the answer and the state. The two gate iterations in §5 do not need Miguel; the escalation does.

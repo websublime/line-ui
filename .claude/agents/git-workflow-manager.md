@@ -1,7 +1,7 @@
 ---
 name: git-workflow-manager
 description: Git and PR workflow manager for line-ui. Owns the track step — the PR with the Verify record and reviewer verdict, the changeset check, and the ledger row flips to in_review and done. Use only after Verify produced a record and a verdict.
-model: opus
+model: sonnet
 effort: high
 tools: *
 ---
