@@ -76,9 +76,9 @@ number in the stream + 1.
 | F1 | F | Storybook 10 + web-components-vite + CEM analyser (shared Vite 8 build landed in B4 #181) | infra-supervisor | B4 | done | — | #194 | AM-016, AM-017 |
 | F2 | F | Bun test harness with happy-dom + `@open-wc/testing-helpers` preload | infra-supervisor | B4 | done | — | #195 | AM-018, AM-019 |
 | F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2 | todo | — | — | — |
-| F4 | F | `checks.yml` with the CI assertions reallocated from C4 / C5 / F2 (spec §6.F.5, AM-013, AM-014, AM-018) | infra-supervisor | F1, F2 | todo | — | — | — |
+| F4 | F | `checks.yml` with the CI assertions reallocated from C4 / C5 / F2 (spec §6.F.5, AM-013, AM-014, AM-018) | infra-supervisor | F1, F2, F6 | todo | — | — | — |
 | F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | todo | — | — | — |
-| F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | todo | — | — | — |
+| F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | in_progress | `feat/00-f6-playwright-config` | — | — |
 | F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4 | todo | — | — | — |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
