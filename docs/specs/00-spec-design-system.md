@@ -441,6 +441,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-022 | 2026-09-30 | ledger `00-Z1` review (task numbering reconciliation) | Aligned the Stream C task labels in the §6.C headings and body with the numbering the implementation, the PRs, and this table's own AM-013/AM-014 notes already use: §6.C.3 heading `(C3, C4)` now reads `(C3 palette generation, C4 palette freshness guard)`; the `Contrast validation (C10)` label in §6.C.3 now reads `Contrast validation (C5)`; §6.C.4 heading `(C5, C6)` now reads `(C6)`. No requirement changed. | The plan §4.3 numbering (C4 = contrast token table, C5 = role-map generation, C10 = contrast validation) was superseded during decomposition: the contrast token table shipped inside C3 (#186), role-map generation and semantics/aliases/defaults shipped together as C6 (#190), the freshness guard became C4 (#187) and the contrast validator C5 (#188). The headings kept the plan numbering while the AM-013/AM-014 scope notes used the shipped numbering, so a reader cross-referencing the ledger `docs/plans/00-tasks-design-system.md` landed on the wrong task. | PR titles #186–#190; ledger Stream C rows; AM-013 and AM-014 rows above. |
 | AM-023 | 2026-09-30 | ledger `00-F6` pre-implementation investigation | Three factual corrections to §6.F.4, no requirement or design change. (1) The `playwright.config.ts` block imports `defineConfig` / `devices` from `'playwright/test'` instead of `'@playwright/test'`. (2) Added a sentence under the config block declaring the root `package.json` script `"e2e": "playwright test --pass-with-no-tests"`, which the §6.F.5 `checks.yml` step `bun run e2e` invokes but no section defined. (3) The same sentence notes that `--pass-with-no-tests` keeps the step green until D5 / D8 / G6 land their `*.e2e.ts` files. | (1) §6.A.3 declares only `playwright ^1.60.0`; `@playwright/test` is not installed and must not be added, and `playwright/test` is the identical runner entry shipped inside the `playwright` package (`node_modules/playwright/test.mjs`). (2) `bun run e2e` would fail with a missing-script error in CI without the declaration. (3) `playwright test` exits 1 with `Error: No tests found` when no file matches `**/*.e2e.ts`; the first E2E files arrive with D5 / D8 / G6, so the F6 config alone would turn `checks.yml` red. | Verified against `playwright@1.60.0`: `playwright test` without matching files exits 1 (`Error: No tests found`); `playwright test --pass-with-no-tests` exits 0. Investigation recorded in the `00-F6` branch commit bodies. |
 | AM-024 | 2026-09-30 | ledger `00-F4` pre-implementation investigation | Three factual corrections to §7.1 and §6.F.5, no requirement or design change. (1) §7.1 per-package matrix rows `line-tokens`, `line-colors`, `line-themes`: `"include": []` → `"files": []`. (2) §6.F.5 `checks.yml` block: `bun --filter '@websublime/line-storybook' run analyze` → `bun --filter '@websublime/line-storybook' analyze`. (3) §6.F.5 `checks.yml` block: added a zero-export smoke step for `line-components/dist/index.js` right after the `bun --filter '@websublime/*' build` step. | (1) The uniform `typecheck` script (`tsc --noEmit`, §6.B) that §6.F.5 runs errors with `TS18003: No inputs were found … 'include' paths were '[]'` on a tsconfig with `"include": []`; `"files": []` is TypeScript's documented empty-project form and exits 0. (2) With bun 1.3.14, `bun --filter <pkg> run <script>` reports `error: No packages matched the filter` (exit 1); the filter form without `run` is the one that runs the script. (3) §9.1 (line "re-loading the built module and verifying its export count is zero"), RK11 and the §6.B AM-007 note ("The CI step itself is asserted by F3 / F4") all require CI to assert the Phase 00 zero-export invariant, but the `checks.yml` block had no such step. | Verified on `main` @ `0eb2c18`: `bun --filter '@websublime/*' typecheck` → exit 2 (three CSS-only packages fail TS18003); with `"files": []` in the three tsconfigs → exit 0. `bun --filter '@websublime/line-storybook' run analyze` → exit 1 (`No packages matched the filter`); `bun --filter '@websublime/line-storybook' analyze` → exit 0. `bun -e "import('./packages/line-components/dist/index.js').then(m => console.log(Object.keys(m).length))"` → `0`. Investigation recorded in the `00-F4` branch commit bodies. |
+| AM-025 | 2026-09-30 | ledger `00-F4` Verify gate (reviewer + security-reviewer findings) | Three corrections to §6.F.5 and §7.1, no requirement or design change. (1) §6.F.5 `checks.yml` block: moved `bun --filter '@websublime/*' typecheck` to directly after `bun --filter '@websublime/*' build` (before the zero-export smoke step). (2) §7.1 second invariant bullet: `"include": []` → `"files": []` (completes AM-024). (3) §6.F.5 `checks.yml` block hardening: top-level `permissions: { contents: read }`, top-level `concurrency: { group: checks-${{ github.ref }}, cancel-in-progress: true }`, job `timeout-minutes: 30`, checkout `with: { persist-credentials: false }`, preload-presence grep anchored and dot-escaped (`grep -qE '^preload = \["\./bun-test-preload\.ts"\]$' bunfig.toml`). | (1) `apps/storybook/.storybook/preview.ts` imports `@websublime/line-schemas`, whose `exports` map resolves types to `./dist/index.d.ts`; `dist/` is gitignored and only the build emits it, so on a clean checkout `@websublime/line-storybook typecheck` fails with TS2307 before any build has run — the block as ordered was unsatisfiable. (2) AM-024 changed the §7.1 matrix rows to `"files": []` but left the prose bullet at `"include": []`, making §7.1 self-contradictory. (3) Security defaults with no design choice: read-only token (least privilege), no persisted git credentials (nothing after checkout needs git auth), bounded job runtime, superseded PR runs cancelled, and a grep that cannot be satisfied by a commented-out or substring match. SHA-pinning of actions is deferred (Miguel's decision). | Reproduced on `ci/00-f4-checks-workflow` @ `b72ba69` via `rm -rf /tmp/f4-clean && mkdir /tmp/f4-clean && git archive HEAD \| tar -x -C /tmp/f4-clean && cd /tmp/f4-clean && bun install --frozen-lockfile && bun --filter '@websublime/*' typecheck` → exit 2 (`error TS2307: Cannot find module '@websublime/line-schemas'` from `.storybook/preview.ts:3`); then `bun --filter '@websublime/*' build && bun --filter '@websublime/*' typecheck` → exit 0. Negative control for the grep: with the `bunfig.toml` preload line commented out, the anchored grep exits 1. Full clean-export step-order run recorded in the `00-F4` Verify record. |
 
 **A4 — npm scope.**
 
@@ -1366,22 +1367,28 @@ Playwright runs:
 ```yaml
 name: checks
 on: [pull_request]
+permissions: { contents: read }               # AM-025: least-privilege token
+concurrency:                                   # AM-025: cancel superseded runs of the same ref
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 30                        # AM-025
     steps:
       - uses: actions/checkout@v4
+        with: { persist-credentials: false }   # AM-025: nothing downstream needs git auth
       - uses: oven-sh/setup-bun@v2
         with: { bun-version-file: .bun-version }
       - run: bun install --frozen-lockfile
       - run: bun run lint                        # biome check
-      - run: bun --filter '@websublime/*' typecheck
       - run: bun --filter '@websublime/*' build
+      - run: bun --filter '@websublime/*' typecheck  # AM-025: after build — needs line-schemas dist/*.d.ts
       - run: bun -e "const m = await import('./packages/line-components/dist/index.js'); const n = Object.keys(m).length; if (n !== 0) { console.error('line-components must export nothing in Phase 00, got', n); process.exit(1); }"  # zero-export smoke (§9.1, RK11, AM-007)
       - run: bun run scripts/lint-layers.mjs      # downward-only enforcement
       - run: bun run scripts/verify-palettes-fresh.mjs
       - run: bun run scripts/validate-contrast.mjs
-      - run: grep -q 'preload = \["./bun-test-preload.ts"\]' bunfig.toml  # F2 preload-presence assertion (AM-018)
+      - run: grep -qE '^preload = \["\./bun-test-preload\.ts"\]$' bunfig.toml  # F2 preload-presence assertion (AM-018; anchored/escaped AM-025)
       - run: bun test                             # unit tier
       - run: bunx playwright install --with-deps chromium firefox webkit
       - run: bun run e2e                          # browser tier
@@ -1629,7 +1636,7 @@ Every package's `tsconfig.json` extends `../../tsconfig.base.json` and sets the 
 Two invariants govern this matrix:
 
 - **`composite: true` is required** for any package referenced by another via `references`, and for every package built with `tsc -b`. `composite` implies that `include` must be explicit (no implicit `**/*` walk) — each `tsc -b` package therefore sets `include` to its `src/**/*` set.
-- **The base config sets no `exclude`** on purpose. Each package owns its own `exclude` so that test folders and `dist/` outputs are scoped per package, not globally. CSS-only packages opt out entirely via `"include": []`.
+- **The base config sets no `exclude`** on purpose. Each package owns its own `exclude` so that test folders and `dist/` outputs are scoped per package, not globally. CSS-only packages opt out entirely via `"files": []` (AM-024).
 
 ### 7.2 Versioning + changesets
 
