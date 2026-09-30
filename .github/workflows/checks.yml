@@ -1,0 +1,45 @@
+name: checks
+on: [pull_request]
+permissions: { contents: read }
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with: { persist-credentials: false }
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with: { bun-version-file: .bun-version }
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+      - name: Lint (biome check)
+        run: bun run lint
+      - name: Build packages
+        run: bun --filter '@websublime/*' build
+      - name: Typecheck
+        run: bun --filter '@websublime/*' typecheck
+      - name: Zero-export smoke (§9.1, RK11, AM-007)
+        run: bun -e "const m = await import('./packages/line-components/dist/index.js'); const n = Object.keys(m).length; if (n !== 0) { console.error('line-components must export nothing in Phase 00, got', n); process.exit(1); }"
+      - name: Layer lint (downward-only enforcement)
+        run: bun run scripts/lint-layers.mjs
+      - name: Palette freshness
+        run: bun run scripts/verify-palettes-fresh.mjs
+      - name: Contrast validation
+        run: bun run scripts/validate-contrast.mjs
+      - name: F2 preload-presence assertion (AM-018)
+        run: grep -qE '^preload = \["\./bun-test-preload\.ts"\]$' bunfig.toml
+      - name: Unit tier
+        run: bun test
+      - name: Install Playwright browsers
+        run: bunx playwright install --with-deps chromium firefox webkit
+      - name: Browser tier
+        run: bun run e2e
+      - name: Storybook build
+        run: bun --filter '@websublime/line-storybook' build
+      - name: Storybook analyze (CEM)
+        run: bun --filter '@websublime/line-storybook' analyze
