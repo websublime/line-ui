@@ -57,7 +57,7 @@ number in the stream + 1.
 | D3 | D | Metadata mixin static members | webcomponents-supervisor | D1 | done | — | #199 | — |
 | D4 | D | Direction mixin (LTR/RTL via `dir`) | webcomponents-supervisor | D1 | todo | — | — | — |
 | D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F6 | todo | — | — | — |
-| D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | todo | — | — | — |
+| D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | in_progress | feat/00-d6-machine-controller | — | — |
 | D7 | D | Shadow-DOM modular reset sheets (`line-core/styles`) | webcomponents-supervisor | D1 | todo | — | — | — |
 | D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | todo | — | — | — |
 | D9 | D | Fix `lint-layers` prefix-audit failure: `line-core/__tests__/{metadata,inspector}.test.ts` register test hosts without the `line-*` prefix (Manifesto Law 2) | webcomponents-supervisor | D2, D3 | done | — | #202 | — |
