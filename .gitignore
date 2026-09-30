@@ -12,6 +12,10 @@ custom-elements.json
 # TypeScript incremental build info (emitted by tsc -b in each package)
 *.tsbuildinfo
 
+# Playwright artifacts (traces, HTML report)
+test-results/
+playwright-report/
+
 # local env files
 .env.local
 .env.*.local

@@ -22,6 +22,7 @@
     "format": "biome format --write .",
     "build": "bun --filter '@websublime/*' build",
     "test": "bun --filter '@websublime/line-schemas' --filter '@websublime/line-tokens' --filter '@websublime/line-colors' --filter '@websublime/line-themes' build && bun test packages/line-themes/__tests__/",
+    "e2e": "playwright test --pass-with-no-tests",
     "version": "changeset version",
     "release": "changeset publish",
     "status": "changeset status --since=main",
