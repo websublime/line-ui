@@ -57,7 +57,7 @@ number in the stream + 1.
 | D3 | D | Metadata mixin static members | webcomponents-supervisor | D1 | done | — | #199 | — |
 | D4 | D | Direction mixin (LTR/RTL via `dir`) | webcomponents-supervisor | D1 | todo | — | — | — |
 | D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F6 | todo | — | — | — |
-| D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | in_review | feat/00-d6-machine-controller | #205 | — |
+| D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | done | feat/00-d6-machine-controller | #205 | — |
 | D7 | D | Shadow-DOM modular reset sheets (`line-core/styles`) | webcomponents-supervisor | D1 | todo | — | — | — |
 | D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | todo | — | — | — |
 | D9 | D | Fix `lint-layers` prefix-audit failure: `line-core/__tests__/{metadata,inspector}.test.ts` register test hosts without the `line-*` prefix (Manifesto Law 2) | webcomponents-supervisor | D2, D3 | done | — | #202 | — |
@@ -105,5 +105,5 @@ number in the stream + 1.
 |---|---|---|---|---|---|---|---|---|
 | Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | done | — | #200 | AM-022 |
 | Z2 | Z | Route the Opus harness agents (`reviewer`, `security-reviewer`, `scout`, `sonic`) through the native Anthropic provider instead of OpenRouter (`.omp/config.yml`) | main session | — | done | — | #203 | — |
-| Z3 | Z | Document the required `project` argument (repository root path) of the code-graph `index_status` call in the `understand` skill and PROCESS §4 | main session | — | in_review | docs/00-z3-index-status-arg | #206 | — |
-| Z4 | Z | Exclude the gitignored legacy `temp/` tree from `bun test` discovery (`bunfig.toml` `[test] pathIgnorePatterns`) | infra-supervisor | — | in_progress | chore/00-z4-bun-test-ignore-temp | — | — |
+| Z3 | Z | Document the required `project` argument (repository root path) of the code-graph `index_status` call in the `understand` skill and PROCESS §4 | main session | — | done | docs/00-z3-index-status-arg | #206 | — |
+| Z4 | Z | Exclude the gitignored legacy `temp/` tree from `bun test` discovery (`bunfig.toml` `[test] pathIgnorePatterns`) | infra-supervisor | — | in_review | chore/00-z4-bun-test-ignore-temp | #208 | AM-028 |
