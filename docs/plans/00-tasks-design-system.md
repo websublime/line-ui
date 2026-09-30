@@ -105,3 +105,4 @@ number in the stream + 1.
 |---|---|---|---|---|---|---|---|---|
 | Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | done | — | #200 | AM-022 |
 | Z2 | Z | Route the Opus harness agents (`reviewer`, `security-reviewer`, `scout`, `sonic`) through the native Anthropic provider instead of OpenRouter (`.omp/config.yml`) | main session | — | done | — | #203 | — |
+| Z3 | Z | Document the required `project` argument (repository root path) of the code-graph `index_status` call in the `understand` skill and PROCESS §4 | main session | — | in_progress | docs/00-z3-index-status-arg | — | — |
