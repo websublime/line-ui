@@ -45,9 +45,9 @@ class MetadataInspectHost extends InspectorMixin(LitElement) {
   static docs = 'https://example.test/docs';
 }
 
-customElements.define('inspect-host-bare', BareInspectHost);
-customElements.define('inspect-host-versioned', VersionedInspectHost);
-customElements.define('inspect-host-metadata', MetadataInspectHost);
+customElements.define('line-test-inspect-bare', BareInspectHost);
+customElements.define('line-test-inspect-versioned', VersionedInspectHost);
+customElements.define('line-test-inspect-metadata', MetadataInspectHost);
 
 /** Dispatches a keydown on the host with the given modifiers. */
 function pressKey(el: Element, key: string, mods: { ctrlKey?: boolean; metaKey?: boolean; shiftKey?: boolean }): void {
@@ -76,7 +76,7 @@ afterEach(() => {
 
 describe('InspectorMixin — flag unset (production no-op)', () => {
   test('adds no inspector host attributes when the flag is absent', async () => {
-    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const el = await fixture(html`<line-test-inspect-bare></line-test-inspect-bare>`);
     expect(el.hasAttribute('data-line-inspect')).toBe(false);
     expect(el.hasAttribute('data-line-version')).toBe(false);
     expect(el.hasAttribute('data-line-docs')).toBe(false);
@@ -85,20 +85,20 @@ describe('InspectorMixin — flag unset (production no-op)', () => {
   test('does not activate for a non-"on" truthy value', async () => {
     // Spec §6.D.2 / AM-021: ONLY the exact value 'on' activates.
     localStorage.setItem(FLAG_KEY, 'true');
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     expect(el.hasAttribute('data-line-inspect')).toBe(false);
     expect(el.hasAttribute('data-line-version')).toBe(false);
   });
 
   test('hotkey does nothing when the flag is unset', async () => {
-    const el = await fixture(html`<inspect-host-metadata></inspect-host-metadata>`);
+    const el = await fixture(html`<line-test-inspect-metadata></line-test-inspect-metadata>`);
     pressKey(el, 'l', { ctrlKey: true, shiftKey: true });
     expect(panel(el)).toBeNull();
   });
 
   test('does not adopt the hover-outline sheet when the flag is absent', async () => {
     const sheet = getInspectorOutlineSheet();
-    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const el = await fixture(html`<line-test-inspect-bare></line-test-inspect-bare>`);
     if (sheet) {
       expect(adopted(el).includes(sheet)).toBe(false);
     } else {
@@ -114,20 +114,20 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
   });
 
   test('marks the host with data-line-inspect (outline + part/slot exposure hook)', async () => {
-    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const el = await fixture(html`<line-test-inspect-bare></line-test-inspect-bare>`);
     expect(el.hasAttribute('data-line-inspect')).toBe(true);
   });
 
   test('adopts the dev-only hover-outline sheet into the shadow root (§6.D.2)', async () => {
     const sheet = getInspectorOutlineSheet();
     expect(sheet).not.toBeNull();
-    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const el = await fixture(html`<line-test-inspect-bare></line-test-inspect-bare>`);
     // The exact singleton instance is appended (identity assertion).
     expect(adopted(el).includes(sheet as CSSStyleSheet)).toBe(true);
   });
 
   test('the adopted sheet carries the :host(:hover[data-line-inspect]) outline rule', async () => {
-    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const el = await fixture(html`<line-test-inspect-bare></line-test-inspect-bare>`);
     const sheet = adopted(el).find((s) => s === getInspectorOutlineSheet());
     expect(sheet).toBeDefined();
     const ruleText = Array.from((sheet as CSSStyleSheet).cssRules, (r) => r.cssText).join('\n');
@@ -139,7 +139,7 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
     // ARCHITECTURE §14.6: the mixin must preserve any sheet the component adopted.
     const own = new CSSStyleSheet();
     own.replaceSync(':host { display: block; }');
-    const el = await fixture(html`<inspect-host-bare></inspect-host-bare>`);
+    const el = await fixture(html`<line-test-inspect-bare></line-test-inspect-bare>`);
     const root = ((el as LitElement).renderRoot ?? (el as HTMLElement).shadowRoot) as ShadowRoot;
     root.adoptedStyleSheets = [...root.adoptedStyleSheets, own];
     // Re-activation path appends, never replaces — the component sheet survives.
@@ -148,23 +148,23 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
   });
 
   test('surfaces the static version as data-line-version', async () => {
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     expect(el.getAttribute('data-line-version')).toBe('1.2.3');
   });
 
   test('omits data-line-docs when metadata provides no docs (defensive read)', async () => {
     // D3 (Metadata mixin) is still a stub — docs must not be invented.
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     expect(el.hasAttribute('data-line-docs')).toBe(false);
   });
 
   test('surfaces docs as data-line-docs when metadata provides one', async () => {
-    const el = await fixture(html`<inspect-host-metadata></inspect-host-metadata>`);
+    const el = await fixture(html`<line-test-inspect-metadata></line-test-inspect-metadata>`);
     expect(el.getAttribute('data-line-docs')).toBe('https://example.test/docs');
   });
 
   test('Ctrl+Shift+L opens a <dialog> metadata panel listing the version', async () => {
-    const el = await fixture(html`<inspect-host-metadata></inspect-host-metadata>`);
+    const el = await fixture(html`<line-test-inspect-metadata></line-test-inspect-metadata>`);
     pressKey(el, 'L', { ctrlKey: true, shiftKey: true });
     const dialog = panel(el);
     expect(dialog).not.toBeNull();
@@ -173,13 +173,13 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
   });
 
   test('Cmd+Shift+L (metaKey) also opens the panel (macOS bind)', async () => {
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     pressKey(el, 'l', { metaKey: true, shiftKey: true });
     expect(panel(el)?.open).toBe(true);
   });
 
   test('the hotkey toggles the panel closed on second press', async () => {
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     pressKey(el, 'l', { ctrlKey: true, shiftKey: true });
     expect(panel(el)?.open).toBe(true);
     pressKey(el, 'l', { ctrlKey: true, shiftKey: true });
@@ -187,13 +187,13 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
   });
 
   test('an unrelated hotkey (no shift) does not open the panel', async () => {
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     pressKey(el, 'l', { ctrlKey: true, shiftKey: false });
     expect(panel(el)).toBeNull();
   });
 
   test('disconnect removes the marker and tears the listener down (no leak)', async () => {
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     expect(el.hasAttribute('data-line-inspect')).toBe(true);
     el.remove();
     expect(el.hasAttribute('data-line-inspect')).toBe(false);
@@ -205,7 +205,7 @@ describe('InspectorMixin — flag set to "on" (activation)', () => {
 
   test('disconnect removes the hover-outline sheet (active path leaks nothing)', async () => {
     const sheet = getInspectorOutlineSheet();
-    const el = await fixture(html`<inspect-host-versioned></inspect-host-versioned>`);
+    const el = await fixture(html`<line-test-inspect-versioned></line-test-inspect-versioned>`);
     if (sheet) {
       expect(adopted(el).includes(sheet)).toBe(true);
     }

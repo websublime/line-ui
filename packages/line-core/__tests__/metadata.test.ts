@@ -36,8 +36,8 @@ class FullMetadataHost extends MetadataMixin(LitElement) {
   static override scope = 'forms';
 }
 
-customElements.define('metadata-host-bare', BareMetadataHost);
-customElements.define('metadata-host-full', FullMetadataHost);
+customElements.define('line-test-metadata-bare', BareMetadataHost);
+customElements.define('line-test-metadata-full', FullMetadataHost);
 
 /** Read a static member off the host's constructor, the way the Inspector does. */
 function ctor<T>(el: Element, key: string): T {
@@ -46,7 +46,7 @@ function ctor<T>(el: Element, key: string): T {
 
 describe('MetadataMixin', () => {
   test('provides metadata defaults on a bare host', async () => {
-    const el = await fixture(html`<metadata-host-bare></metadata-host-bare>`);
+    const el = await fixture(html`<line-test-metadata-bare></line-test-metadata-bare>`);
     expect(ctor<string>(el, 'version')).toBe('0.0.0');
     expect(ctor<string>(el, 'docs')).toBe('');
     expect(ctor<string[]>(el, 'qa')).toEqual([]);
@@ -54,7 +54,7 @@ describe('MetadataMixin', () => {
   });
 
   test('honours component overrides for every member', async () => {
-    const el = await fixture(html`<metadata-host-full></metadata-host-full>`);
+    const el = await fixture(html`<line-test-metadata-full></line-test-metadata-full>`);
     expect(ctor<string>(el, 'version')).toBe('1.2.3');
     expect(ctor<string>(el, 'docs')).toBe('https://example.test/docs');
     expect(ctor<string[]>(el, 'qa')).toEqual(['stable', 'a11y']);
