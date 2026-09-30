@@ -43,6 +43,22 @@ const brokenMachine = createMachine<ToggleSchema>({
   states: { off: {}, on: {} },
 });
 
+/** Constructs fine; `start()` throws from the initial state's entry action. */
+const brokenStartMachine = createMachine<ToggleSchema>({
+  initialState: () => 'off',
+  states: {
+    off: { entry: ['explode'], on: { TOGGLE: { target: 'on' } } },
+    on: { on: { TOGGLE: { target: 'off' } } },
+  },
+  implementations: {
+    actions: {
+      explode: () => {
+        throw new Error('entry boom');
+      },
+    },
+  },
+});
+
 /** Base host; subclasses pick the controller options they mount with. */
 class MachineHost extends LineElement {
   readonly ctrl = new LineMachineController<ToggleSchema>(this, this.options());
@@ -73,6 +89,11 @@ class BrokenHost extends MachineHost {
     return { machine: brokenMachine };
   }
 }
+class BrokenStartHost extends MachineHost {
+  protected override options(): LineMachineControllerOptions<ToggleSchema> {
+    return { machine: brokenStartMachine };
+  }
+}
 class StrictHost extends MachineHost {
   protected override options(): LineMachineControllerOptions<ToggleSchema> {
     return { machine: brokenMachine, staticFallbackOnFailure: false };
@@ -81,6 +102,7 @@ class StrictHost extends MachineHost {
 
 customElements.define('line-test-machine', MachineHost);
 customElements.define('line-test-machine-broken', BrokenHost);
+customElements.define('line-test-machine-broken-start', BrokenStartHost);
 customElements.define('line-test-machine-strict', StrictHost);
 
 const text = (el: Element) => el.shadowRoot?.querySelector('p')?.textContent;
@@ -116,6 +138,28 @@ describe('LineMachineController', () => {
       expect(el.ctrl.service).toBeUndefined();
       expect(() => el.ctrl.send({ type: 'TOGGLE' })).not.toThrow();
       expect(el.ctrl.fallback).toBe(true);
+    } finally {
+      error.mockRestore();
+    }
+  });
+
+  test('Law 9: a machine that throws in start() falls back and send stays inert', async () => {
+    const error = spyOn(console, 'error').mockImplementation(() => {});
+    try {
+      const el = await fixture<MachineHost>(html`<line-test-machine-broken-start></line-test-machine-broken-start>`);
+      expect(el.ctrl.fallback).toBe(true);
+      expect(error).toHaveBeenCalledTimes(1);
+      expect(text(el)).toBe('static');
+
+      // The VanillaMachine was constructed and marked Started before entry threw,
+      // so only the `#fallback` guard keeps this send from transitioning.
+      const before = el.renders;
+      expect(() => el.ctrl.send({ type: 'TOGGLE' })).not.toThrow();
+      await Promise.resolve(); // where VanillaMachine.send would have dispatched
+      await el.updateComplete;
+      expect(el.ctrl.state?.get()).toBe('off');
+      expect(el.renders).toBe(before);
+      expect(text(el)).toBe('static');
     } finally {
       error.mockRestore();
     }
