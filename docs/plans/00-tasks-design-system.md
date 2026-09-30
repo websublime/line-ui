@@ -79,7 +79,7 @@ number in the stream + 1.
 | F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2 | todo | — | — | — |
 | F4 | F | `checks.yml` with the CI assertions reallocated from C4 / C5 / F2 (spec §6.F.5, AM-013, AM-014, AM-018) | infra-supervisor | F1, F2, F6 | todo | — | — | — |
 | F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | todo | — | — | — |
-| F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | in_progress | `feat/00-f6-playwright-config` | — | — |
+| F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | in_review | `feat/00-f6-playwright-config` | #201 | AM-023 |
 | F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4 | todo | — | — | — |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
@@ -103,4 +103,4 @@ number in the stream + 1.
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | in_review | `docs/00-z1-lifecycle-process` | #200 | AM-022 |
+| Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | done | — | #200 | AM-022 |
