@@ -44,7 +44,8 @@ after Verify. The rules live in `docs/PROCESS.md` §4–§6 and win over this fi
 - Log decisions and deviations in the commit body and carry them to the completion report.
 - Deviate from the dispatch only on clear evidence it is wrong; explain what you found and propose the
   alternative before continuing.
-- Add a changeset entry (`bun run changeset`) when PROCESS §6 requires one.
+- Before completion, run `bun run changeset` for the published packages you changed (or `bun run empty` when
+  none), per PROCESS §6.
 
 ### On completion
 

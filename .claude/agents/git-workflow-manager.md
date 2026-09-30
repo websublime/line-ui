@@ -26,8 +26,9 @@ on the sentence "verify passed".
 2. Review the branch's diff against `main` before acting: every commit is `<type>(<scope>): <description>`
    per PROCESS §6, one concern each, body naming the row id.
 3. Never use `--no-verify`. Never commit to `main`. Never force-push a shared branch.
-4. A commit that changes what a published package ships needs a changeset entry (PROCESS §6). A missing entry
-   returns `BLOCKED`.
+4. Every branch carries a changeset file under `.changeset/` (PROCESS §6): a real one for published-package
+   changes, an empty one otherwise. Confirm with `bun run status` that the bumped packages match the diff. A
+   missing or mismatched changeset returns `BLOCKED`.
 5. A spec amendment commit must precede the code that depends on it; if the order is wrong, return `BLOCKED`.
 
 ## How you work

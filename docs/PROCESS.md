@@ -145,9 +145,12 @@ Gates are proportional to the class. A phase is not locked until its gate passes
   `agents`, `skills`, `docs`, `ci`, `hooks`, `repo`. The body names the row id (`00-D4`). A spec amendment
   commit precedes the code that depends on it. The implementer pushes the branch when its run ends, so nothing
   is stranded locally; it never opens the PR.
-- **Changeset.** Every commit that changes what a published package ships — `src`, build or exports config,
-  dependencies — carries a changeset entry (`bun run changeset`). Tests and READMEs need none. This is the only
-  statement of the rule; other files point here.
+- **Changeset before the PR, every branch.** The implementer's last step before handing off is
+  `bun run changeset`: pick every published package the branch changed (`src`, build or exports config,
+  dependencies) and the semver bump — `patch` for fixes, `minor` for new capability, `major` for a breaking
+  contract — and write a one-line consumer-facing summary. A branch that changed no published package runs
+  `bun run empty` instead, so every PR carries a file under `.changeset/`. `bun run status` shows what the
+  branch will bump. No changeset file, no PR. This is the only statement of the rule; other files point here.
 - **The PR opens only with a Verify record and a reviewer verdict in hand.** One PR per row, title
   `<NN>-<ID> — <task title>`, body with Understand (class, write-back), Decisions, Deviations and AM rows,
   Verify (the record, the reviewer verdict, which agents ran), Ledger (row change). `git-workflow-manager`
