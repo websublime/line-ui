@@ -62,13 +62,13 @@ input[type="file"]::file-selector-button {
 
 /* Autofill detection via animation trick */
 @keyframes line-autofill-start {
-  /* biome-ignore lint/suspicious/noEmptyBlock: ARCHITECTURE §14.4 — empty keyframe is the autofill-detection animation trick */
   from {
+    --line-autofill: 1;
   }
 }
 @keyframes line-autofill-cancel {
-  /* biome-ignore lint/suspicious/noEmptyBlock: ARCHITECTURE §14.4 — empty keyframe is the autofill-detection animation trick */
   from {
+    --line-autofill: 1;
   }
 }
 

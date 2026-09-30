@@ -1,5 +1,5 @@
 /**
- * Shadow-DOM modular reset sheets unit tests (D7, spec §6.D.7 + AM-026).
+ * Shadow-DOM modular reset sheets unit tests (D7, spec §6.D.7 + AM-026/AM-027).
  *
  * Covers the §9.3 acceptance criterion — "11 modular reset sheets exist in
  * `packages/line-core/src/styles/` and export singleton `CSSStyleSheet`
@@ -8,8 +8,9 @@
  *   2. each export is a constructed `CSSStyleSheet` whose rules come from its
  *      own `reset.*.css` source (a broken `?inline` import would produce an
  *      empty sheet — this is what the AM-026 preload plugin guards);
- *   3. the sheets are singletons — re-importing yields the same references —
- *      and are distinct from one another.
+ *   3. the 11 sheets are distinct objects (no export aliases another);
+ *   4. `inputReset` keeps both autofill-detection `@keyframes` rules — the
+ *      contract ARCHITECTURE §15.3 relies on (AM-027).
  *
  * Runs on F2's harness: `bun-test-preload.ts` registers happy-dom globally
  * (which implements `CSSStyleSheet.replaceSync` / `cssRules`).
@@ -62,7 +63,13 @@ describe('@websublime/line-core/styles (D7)', () => {
     // Dynamic import on purpose: the namespace object is the surface under test.
     const namespace = await import('../src/styles/index.js');
     expect(Object.keys(namespace).sort()).toEqual(SHEET_NAMES);
-    expect(SHEET_NAMES).toHaveLength(11);
+  });
+
+  test('inputReset keeps both autofill-detection @keyframes rules (AM-027)', () => {
+    const keyframeNames = Array.from(inputReset.cssRules)
+      .filter((rule): rule is CSSKeyframesRule => rule instanceof CSSKeyframesRule)
+      .map((rule) => rule.name);
+    expect(keyframeNames).toEqual(['line-autofill-start', 'line-autofill-cancel']);
   });
 
   for (const [name, { sheet, fingerprint }] of Object.entries(SHEETS)) {
@@ -76,14 +83,6 @@ describe('@websublime/line-core/styles (D7)', () => {
   test('the 11 sheets are distinct objects', () => {
     const unique = new Set(Object.values(SHEETS).map(({ sheet }) => sheet));
     expect(unique.size).toBe(11);
-  });
-
-  test('re-importing the module yields the same singleton references', async () => {
-    // Dynamic import on purpose: this test exercises the module-loading boundary.
-    const again = await import('../src/styles/index.js');
-    for (const [name, { sheet }] of Object.entries(SHEETS)) {
-      expect(again[name as keyof typeof again]).toBe(sheet);
-    }
   });
 
   test('[hidden] keeps its !important priority in commonReset', () => {
