@@ -19,24 +19,23 @@ tools: *
 
 ## Workflow
 
-You implement one ledger row per dispatch, on its branch, against its spec section. The orchestrator ran
-`understand` and the design review before you start; `git-workflow-manager` opens the PR after Verify. Read
-`docs/PROCESS.md` §4–§6 for the rules that bind every implementer.
+You implement one ledger row per dispatch, on the branch the orchestrator created, against its spec section.
+The orchestrator ran `understand` and the Review gate before you start; `git-workflow-manager` opens the PR
+after Verify. The rules live in `docs/PROCESS.md` §4–§6 and win over this file.
 
 ### On task start
 
-1. Parse the dispatch: ledger id (`00-F3`), ledger file (`docs/plans/00-tasks-design-system.md`), spec section
-   (`docs/specs/00-spec-design-system.md §6.F.5`), branch name, acceptance criteria, base branch (`main`
-   unless stated).
-2. Check state with `git branch --show-current` and `git status`. Refuse to start on `main` or on a dirty tree
-   you did not create.
-3. Create the branch from the base, `git checkout -b <type>/<NN>-<task>-<slug>`, unless the orchestrator
-   already did.
-4. Read, in this order, the spec section, the plan row, the PRD and ARCHITECTURE sections the spec cites, and
+1. Parse the dispatch: row id (`00-F4`), ledger file (`docs/plans/00-tasks-design-system.md`), spec section
+   (`docs/specs/00-spec-design-system.md §6.F.5`), branch, class, acceptance criteria.
+2. Check out the branch and confirm with `git branch --show-current` and `git status` that you are on it
+   and the tree is clean. The branch exists already and its first commit flipped the ledger row to
+   `in_progress`; if it does not exist, return `BLOCKED` instead of creating it.
+3. Read, in this order, the spec section, the plan row, the PRD and ARCHITECTURE sections the spec cites, and
    the config the change touches.
-5. Verify the spec against reality before writing config. A contradiction is an amendment (`AM-nnn` row in the
-   spec's amendment table) and lands in its own `docs(spec): AM-nnn — …` commit **before** the implementation
-   commit. Never depart from the spec silently.
+4. Verify the spec section against reality before writing config. A factual contradiction (upstream action,
+   path, version) becomes an `AM-nnn` row in the spec's amendment table, in its own `docs(spec): AM-nnn — …`
+   commit **before** the implementation commit. A contradiction that changes a design choice is a
+   `decision`; return `BLOCKED` with the evidence and do not implement around it.
 
 ### During implementation
 
@@ -45,20 +44,22 @@ You implement one ledger row per dispatch, on its branch, against its spec secti
 - Log decisions and deviations in the commit body and carry them to the completion report.
 - Deviate from the dispatch only on clear evidence it is wrong; explain what you found and propose the
   alternative before continuing.
-- Add a changeset entry for every published package whose build or exports you change.
+- Add a changeset entry (`bun run changeset`) when PROCESS §6 requires one.
 
 ### On completion
 
-1. Run `bun run lint` and `bun run build`; run `bun test` when the change touches the test harness. Validate
-   workflow YAML with `actionlint` when available.
+1. Run `bun run lint` and `bun run build`; run `bun test packages/<name>` for every package whose tests or
+   harness the change touches; run `actionlint` on workflow YAML when available. These commands and their
+   results are the Verify record.
 2. Commit everything relevant. Never `git add -A`; stage the files you changed.
-3. Do not push, open a PR, or update the ledger row. Those belong to the track step.
+3. Push the branch (`git push -u origin <branch>`) so nothing is stranded. Do not open a PR and do not touch
+   the ledger row; those belong to the track step.
 4. Return the completion report below.
 
 ### Banned
 
-- Working on `main`.
-- Implementing without a ledger id and a spec section.
+- Working on `main` or creating branches.
+- Implementing without a row id and a spec section.
 - Changing config away from the spec without an `AM-nnn` row.
 - Opening or merging PRs.
 - Hardcoding secrets or tokens anywhere; publish credentials come from `${{ secrets.* }}` or the local `.npmrc`.
@@ -78,7 +79,7 @@ Bun 1.3+ workspaces, GitHub Actions, Changesets (canary via `snapshot:publish`, 
 
 ```
 line-ui/
-├── .github/actions/  # composite actions (npmrc today; build/node per spec §6.F.5 when F3 lands)
+├── .github/actions/  # npmrc composite action; workflows land under .github/workflows/ per spec §6.F.5
 ├── .githooks/        # pre-commit (biome check --staged)
 ├── .changeset/       # Changesets config (config.json) + pending entries
 ├── apps/site/        # Astro scaffold + Cloudflare Pages deploy
@@ -111,7 +112,7 @@ line-ui/
 ## Standards
 
 - Workflow YAML passes `actionlint` when available; every step has an explicit `name:`
-- Reusable logic lives in `.github/actions/*` composite actions
+- Workflows follow the spec §6.F.5 YAML blocks as written (inline `oven-sh/setup-bun` + `bun install` steps); new composite actions need an `AM-nnn` row first
 - Changesets follow `.changeset/config.json`; canary publishes with `--tag canary`, stable via
   `changeset publish`; private apps stay in the ignore list
 - Hooks are non-interactive and use `-f` flags on file operations (`AGENTS.md`)
@@ -131,6 +132,6 @@ Files: [names only]
 Spec amendments: [AM-nnn — one line each, or "none"]
 Decisions: [one line each, or "none"]
 Deviations: [one line each, or "none — implemented as spec"]
-Verify: lint <pass/fail> · build <pass/fail> · tests <pass/fail or n/a> · actionlint <pass/fail or n/a>
+Verify record: [each command run, verbatim, with its result — lint · build · bun test packages/<name> when touched · actionlint]
 Summary: [1 sentence in plain language — what was built and why]
 ```

@@ -2,9 +2,12 @@
 
 **Plan:** [`00-plan-design-system.md`](./00-plan-design-system.md) · **Spec:** [`../specs/00-spec-design-system.md`](../specs/00-spec-design-system.md) · **Rules:** `docs/PROCESS.md` §6
 
-This file is the live state of Phase 00. It is descriptive, never normative — scope and acceptance criteria live
-in the plan and the spec. One row per task; the row changes in the same PR as the work. Task ids follow the
-spec's stream numbering (former bead ids `line-ui-7qm.<stream>.<n>` map to `<Stream><n>`).
+This file is the live state of Phase 00. It describes state; scope and acceptance criteria live in the plan
+and the spec. One row per unit of work; the row changes in the same PR as the work. Ids are `<Stream><n>`
+here and `00-<Stream><n>` everywhere else. Numbering follows the former bead ids `line-ui-7qm.<stream>.<n>`,
+which the spec's amendment table also uses; where a spec heading numbers a task differently (§6.C.4 says
+"C5, C6" for role maps), the row's Task column and PR are authoritative. Gaps (C12) stay; new rows take the
+highest number in the stream + 1.
 
 **Status:** `todo` · `in_progress` · `in_review` · `done` · `blocked`. **Ready** = `todo` with every Deps entry `done`.
 
@@ -39,14 +42,12 @@ spec's stream numbering (former bead ids `line-ui-7qm.<stream>.<n>` map to `<Str
 | C5 | C | WCAG contrast validator (`validate-contrast.mjs`) | webcomponents-supervisor | C3 | done | — | #188 | AM-014 |
 | C6 | C | `line-themes` role maps, semantics, aliases, defaults | webcomponents-supervisor | C1, C3 | done | — | #190 | — |
 | C7 | C | `line-utils` contrast + mix helpers | webcomponents-supervisor | C1 | done | — | #191 | — |
-| C8 | C | PostCSS pipeline (spec §6.C.6) | webcomponents-supervisor | B4 | todo | — | — | — |
+| C8 | C | PostCSS pipeline (spec §6.C.6) — absorbed by B4 | webcomponents-supervisor | B4 | done | — | #181 | — |
 | C9 | C | CSS snapshot + schema validation test suite | webcomponents-supervisor | C6, F2 | done | — | #196 | AM-015, AM-020 |
 | C10 | C | Stream C review cleanups (batch 1) | webcomponents-supervisor | C6 | done | — | #189 | — |
 | C11 | C | Stream C review cleanups (batch 2) | webcomponents-supervisor | C6 | done | — | #189 | — |
 | C13 | C | Clamp `line-utils` color-mix percentage args to [0,100] | webcomponents-supervisor | C7 | done | — | #192 | — |
 | C14 | C | Emit per-file `dist/accent/*.css` and `dist/gray/*.css` in `line-themes` build | webcomponents-supervisor | C6 | done | — | #193 | — |
-
-C8 note: `postcss.config.mjs` exists at the repo root; confirm it matches spec §6.C.6 before closing the row.
 
 ## Stream D — Base Class & Runtime Core (`webcomponents-supervisor`)
 
@@ -56,7 +57,7 @@ C8 note: `postcss.config.mjs` exists at the repo root; confirm it matches spec �
 | D2 | D | Inspector mixin (dev-mode element inspection) | webcomponents-supervisor | D1 | done | — | #198 | AM-021 |
 | D3 | D | Metadata mixin static members | webcomponents-supervisor | D1 | done | — | #199 | — |
 | D4 | D | Direction mixin (LTR/RTL via `dir`) | webcomponents-supervisor | D1 | todo | — | — | — |
-| D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F2 | todo | — | — | — |
+| D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F6 | todo | — | — | — |
 | D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | todo | — | — | — |
 | D7 | D | Shadow-DOM modular reset sheets (`line-core/styles`) | webcomponents-supervisor | D1 | todo | — | — | — |
 | D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | todo | — | — | — |
@@ -73,11 +74,13 @@ C8 note: `postcss.config.mjs` exists at the repo root; confirm it matches spec �
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| F1 | F | Storybook 10 + web-components-vite + CEM analyser; shared Vite 8 build | infra-supervisor | B4 | done | — | #194 | AM-016, AM-017 |
-| F2 | F | Bun test harness with happy-dom + `@open-wc/testing-helpers` preload; Playwright config | infra-supervisor | B4 | done | — | #195 | AM-018, AM-019 |
-| F3 | F | GitHub Actions `checks.yml` + `release.yml` | infra-supervisor | F1, F2 | todo | — | — | — |
-| F4 | F | Snapshot/canary publish workflow + CI assertions reallocated from C4/F2 | infra-supervisor | F3 | todo | — | — | — |
-| F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy | infra-supervisor | B1 | todo | — | — | — |
+| F1 | F | Storybook 10 + web-components-vite + CEM analyser (shared Vite 8 build landed in B4 #181) | infra-supervisor | B4 | done | — | #194 | AM-016, AM-017 |
+| F2 | F | Bun test harness with happy-dom + `@open-wc/testing-helpers` preload | infra-supervisor | B4 | done | — | #195 | AM-018, AM-019 |
+| F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2 | todo | — | — | — |
+| F4 | F | `checks.yml` with the CI assertions reallocated from C4 / C5 / F2 (spec §6.F.5, AM-013, AM-014, AM-018) | infra-supervisor | F1, F2 | todo | — | — | — |
+| F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | todo | — | — | — |
+| F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | todo | — | — | — |
+| F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4 | todo | — | — | — |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
 
@@ -88,6 +91,7 @@ C8 note: `postcss.config.mjs` exists at the repo root; confirm it matches spec �
 | G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | todo | — | — | — |
 | G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | — | todo | — | — | — |
 | G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | todo | — | — | — |
+| G6 | G | Design-system stories `palettes.stories.ts` + `roles.stories.ts` rendering all 31 hues (spec §6.F.1, §9.7) | webcomponents-supervisor | C6, F1 | todo | — | — | — |
 
 ## Stream H — HTMX Spike (`webcomponents-supervisor`)
 

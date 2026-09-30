@@ -1,9 +1,9 @@
 # <scope-slug> — context
 
 ## Source
-- Ledger row: `<NN>-<TASK>` (`docs/plans/NN-tasks-<slug>.md`) or none (off-plan)
-- Spec section: `docs/specs/NN-spec-<slug>.md §x.y` or none
-- Request: the developer's prompt, refined
+- Ledger row: `<NN>-<ID>` (`docs/plans/NN-tasks-<slug>.md`), stream and Deps
+- Spec section: `docs/specs/NN-spec-<slug>.md §x.y`, or "none — off-plan"
+- Request: Miguel's prompt, refined
 - Graph: `used | stale@<short-sha> | unavailable(<reason>)`
 
 ## Class and ceremony
@@ -12,11 +12,11 @@
 
 ## Understanding
 - Outcome: what the change delivers and for whom
-- Stated: what the developer or the spec said
-- Assumed: what we inferred and the developer has not confirmed
+- Stated: what Miguel or the spec said
+- Assumed: what we inferred and Miguel has not confirmed
 
 ## Acceptance criteria
-- From the spec's acceptance criteria when a row exists, otherwise agreed with the developer
+- From the spec's acceptance criteria when a row exists, otherwise agreed with Miguel
 
 ## Affected packages and apps
 - `@websublime/line-*` packages and `apps/*` touched, with the layer rule (downward only) checked

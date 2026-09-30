@@ -28,5 +28,5 @@ Other commands that may prompt: `scp` and `ssh` take `-o BatchMode=yes`; `brew` 
 
 ## Session Completion
 
-Work is complete when the branch is pushed, the PR is open, and the ledger row is current. Never leave work
-stranded locally; if the push fails, resolve and retry.
+`docs/PROCESS.md` §6 defines session end. Never leave work stranded locally; if the push fails, resolve and
+retry.
