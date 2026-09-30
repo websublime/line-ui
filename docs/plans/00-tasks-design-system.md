@@ -4,10 +4,9 @@
 
 This file is the live state of Phase 00. It describes state; scope and acceptance criteria live in the plan
 and the spec. One row per unit of work; the row changes in the same PR as the work. Ids are `<Stream><n>`
-here and `00-<Stream><n>` everywhere else. Numbering follows the former bead ids `line-ui-7qm.<stream>.<n>`,
-which the spec's amendment table also uses; where a spec heading numbers a task differently (§6.C.4 says
-"C5, C6" for role maps), the row's Task column and PR are authoritative. Gaps (C12) stay; new rows take the
-highest number in the stream + 1.
+here and `00-<Stream><n>` everywhere else. Stream C numbering follows the shipped tasks (spec §6.C headings
+aligned by AM-022; plan §4.3 keeps its original draft numbering). Gaps (C12) stay; new rows take the highest
+number in the stream + 1.
 
 **Status:** `todo` · `in_progress` · `in_review` · `done` · `blocked`. **Ready** = `todo` with every Deps entry `done`.
 
@@ -103,4 +102,4 @@ highest number in the stream + 1.
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | in_review | `docs/00-z1-lifecycle-process` | #200 | — |
+| Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | in_review | `docs/00-z1-lifecycle-process` | #200 | AM-022 |
