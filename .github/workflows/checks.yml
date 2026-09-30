@@ -1,11 +1,17 @@
 name: checks
 on: [pull_request]
+permissions: { contents: read }
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   ci:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with: { persist-credentials: false }
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with: { bun-version-file: .bun-version }
@@ -13,10 +19,10 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Lint (biome check)
         run: bun run lint
-      - name: Typecheck
-        run: bun --filter '@websublime/*' typecheck
       - name: Build packages
         run: bun --filter '@websublime/*' build
+      - name: Typecheck
+        run: bun --filter '@websublime/*' typecheck
       - name: Zero-export smoke (§9.1, RK11, AM-007)
         run: bun -e "const m = await import('./packages/line-components/dist/index.js'); const n = Object.keys(m).length; if (n !== 0) { console.error('line-components must export nothing in Phase 00, got', n); process.exit(1); }"
       - name: Layer lint (downward-only enforcement)
@@ -26,7 +32,7 @@ jobs:
       - name: Contrast validation
         run: bun run scripts/validate-contrast.mjs
       - name: F2 preload-presence assertion (AM-018)
-        run: grep -q 'preload = \["./bun-test-preload.ts"\]' bunfig.toml
+        run: grep -qE '^preload = \["\./bun-test-preload\.ts"\]$' bunfig.toml
       - name: Unit tier
         run: bun test
       - name: Install Playwright browsers
