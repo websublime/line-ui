@@ -3,3 +3,4 @@ registry = "https://registry.npmjs.org/"
 
 [test]
 preload = ["./bun-test-preload.ts"]
+pathIgnorePatterns = ["temp/**"]
