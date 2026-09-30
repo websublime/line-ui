@@ -99,4 +99,4 @@ C8 note: `postcss.config.mjs` exists at the repo root; confirm it matches spec �
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, this ledger) | main session | — | in_progress | — | — | — |
+| Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | in_review | `docs/00-z1-lifecycle-process` | #200 | — |
