@@ -3,15 +3,15 @@
  *
  * Platform smoke on the F2 harness (happy-dom + `@open-wc/testing-helpers`):
  * the component mounts, the machine drives the rendered state, a click sends
- * `TOGGLE` and the transition reaches the DOM, and the D7 reset sheet reached
- * the shadow root through the `?inline` preload plugin (AM-026).
+ * `TOGGLE` and the transition reaches the DOM, and the D7 reset sheets are
+ * adopted by the shadow root.
  *
  * @module __tests__/integration/hello-world/line-hello-world.test
  */
 
 import { describe, expect, test } from 'bun:test';
 import { fixture, html, waitUntil } from '@open-wc/testing-helpers';
-import { commonReset } from '../../../src/styles/index.js';
+import { buttonReset, commonReset } from '../../../src/styles/index.js';
 import { LineHelloWorld } from './line-hello-world.js';
 
 const root = (el: LineHelloWorld) => el.shadowRoot?.querySelector('[part="root"]');
@@ -31,8 +31,9 @@ describe('<line-hello-world> (D8)', () => {
     expect(trigger(el)?.textContent?.trim()).toBe('active');
   });
 
-  test('adopts commonReset in its shadow root', async () => {
+  test('adopts the common and button reset sheets in its shadow root', async () => {
     const el = await fixture<LineHelloWorld>(html`<line-hello-world></line-hello-world>`);
     expect(el.shadowRoot?.adoptedStyleSheets).toContain(commonReset);
+    expect(el.shadowRoot?.adoptedStyleSheets).toContain(buttonReset);
   });
 });

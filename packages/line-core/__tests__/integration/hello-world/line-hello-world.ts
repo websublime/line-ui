@@ -4,12 +4,12 @@
  * Private, never published: it lives under `__tests__/` so `vite build` (which
  * only bundles `src/`) never emits it. It exercises every Phase 00 platform
  * piece end-to-end: `LineElement` (D1), `LineMachineController` over a Zag
- * machine (D6), and a modular reset sheet imported through `?inline` (D7) —
- * under bun's `css-inline` preload plugin and under Vite alike.
+ * machine (D6), and the common and button reset sheets imported through
+ * `?inline` (D7) — under bun's `css-inline` preload plugin and under Vite alike.
  *
  * Anatomy: `::part(root)` wrapper carrying `data-state`, `::part(trigger)`
  * button that sends `TOGGLE`. Zero visual opinion — the only styling is the
- * reset sheet. Law 9: a machine that fails to start renders a static trigger.
+ * reset sheets. Law 9: a machine that fails to start renders a static trigger.
  *
  * @module __tests__/integration/hello-world/line-hello-world
  */
@@ -18,7 +18,7 @@ import { createMachine } from '@zag-js/core';
 import { html } from 'lit';
 import { LineElement } from '../../../src/line-element.js';
 import { LineMachineController } from '../../../src/machine/index.js';
-import { commonReset } from '../../../src/styles/index.js';
+import { buttonReset, commonReset } from '../../../src/styles/index.js';
 
 interface HelloWorldSchema {
   state: 'idle' | 'active';
@@ -34,7 +34,7 @@ const helloWorldMachine = createMachine<HelloWorldSchema>({
 });
 
 export class LineHelloWorld extends LineElement {
-  static override styles = [commonReset];
+  static override styles = [commonReset, buttonReset];
 
   readonly ctrl = new LineMachineController<HelloWorldSchema>(this, { machine: helloWorldMachine });
 
