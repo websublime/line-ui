@@ -1,0 +1,21 @@
+textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  resize: none;
+  width: 100%;
+}
+
+textarea::placeholder {
+  color: inherit;
+  opacity: 0.5;
+}

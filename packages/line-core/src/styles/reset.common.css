@@ -1,0 +1,38 @@
+/* Box model */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Focus — removed from all internal elements.
+ * Machine drives data-focus-visible on host.
+ * Consumer/theme styles focus via ::part() or --line-focus-ring-* */
+*:focus {
+  outline: none;
+}
+
+/* Selection — inherit, don't impose */
+::selection {
+  background: var(--line-selection-bg, Highlight);
+  color: var(--line-selection-color, HighlightText);
+}
+
+/* Images/SVGs — block display, constrained */
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Anchor reset */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Hidden attribute must always win */
+[hidden] {
+  /* biome-ignore lint/complexity/noImportantStyles: ARCHITECTURE §14.4 — the hidden attribute must always win */
+  display: none !important;
+}
