@@ -20,7 +20,7 @@ jobs:
       - name: Lint (biome check)
         run: bun run lint
       - name: Build packages
-        run: bun --filter '@websublime/*' build
+        run: bun run build
       - name: Typecheck
         run: bun --filter '@websublime/*' typecheck
       - name: Zero-export smoke (§9.1, RK11, AM-007)

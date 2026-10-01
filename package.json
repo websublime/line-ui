@@ -20,7 +20,7 @@
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
     "format": "biome format --write .",
-    "build": "bun --filter '@websublime/*' build",
+    "build": "bun --filter './packages/*' build && bun --filter './apps/*' build",
     "test": "bun --filter '@websublime/line-schemas' --filter '@websublime/line-tokens' --filter '@websublime/line-colors' --filter '@websublime/line-themes' build && bun test packages/line-themes/__tests__/",
     "e2e": "playwright test --pass-with-no-tests",
     "version": "changeset version",
