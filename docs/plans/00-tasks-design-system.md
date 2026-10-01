@@ -58,8 +58,8 @@ number in the stream + 1.
 | D4 | D | Direction mixin (LTR/RTL via `dir`) | webcomponents-supervisor | D1 | todo | — | — | — |
 | D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F6 | todo | — | — | — |
 | D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | done | feat/00-d6-machine-controller | #205 | — |
-| D7 | D | Shadow-DOM modular reset sheets (`line-core/styles`) | webcomponents-supervisor | D1 | in_review | feat/00-d7-reset-sheets | #207 | AM-026, AM-027 |
-| D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | in_progress | feat/00-d8-hello-world | — | — |
+| D7 | D | Shadow-DOM modular reset sheets (`line-core/styles`) | webcomponents-supervisor | D1 | done | feat/00-d7-reset-sheets | #207 | AM-026, AM-027 |
+| D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | in_review | feat/00-d8-hello-world | #210 | AM-030 |
 | D9 | D | Fix `lint-layers` prefix-audit failure: `line-core/__tests__/{metadata,inspector}.test.ts` register test hosts without the `line-*` prefix (Manifesto Law 2) | webcomponents-supervisor | D2, D3 | done | — | #202 | — |
 
 ## Stream E — Icon Registry (`webcomponents-supervisor`)
@@ -81,7 +81,7 @@ number in the stream + 1.
 | F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | todo | — | — | — |
 | F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | done | — | #201 | AM-023 |
 | F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4 | todo | — | — | — |
-| F8 | F | Fix CI "Build packages" race: Bun `--filter` ignores `devDependencies` ordering, so `line-storybook` builds before `line-schemas` emits `dist/`; root `build` becomes two-phase (`./packages/*` then `./apps/*`) and `checks.yml` calls it | infra-supervisor | B2, F4 | in_review | fix/00-f8-two-phase-build | #209 | AM-029 |
+| F8 | F | Fix CI "Build packages" race: Bun `--filter` ignores `devDependencies` ordering, so `line-storybook` builds before `line-schemas` emits `dist/`; root `build` becomes two-phase (`./packages/*` then `./apps/*`) and `checks.yml` calls it | infra-supervisor | B2, F4 | done | fix/00-f8-two-phase-build | #209 | AM-029 |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
 
@@ -107,4 +107,4 @@ number in the stream + 1.
 | Z1 | Z | Replace beads/Jira process docs with the line-ui lifecycle (PROCESS, CLAUDE, understand skill, sdlc, git-workflow-manager, supervisors, hooks, this ledger) | main session | — | done | — | #200 | AM-022 |
 | Z2 | Z | Route the Opus harness agents (`reviewer`, `security-reviewer`, `scout`, `sonic`) through the native Anthropic provider instead of OpenRouter (`.omp/config.yml`) | main session | — | done | — | #203 | — |
 | Z3 | Z | Document the required `project` argument (repository root path) of the code-graph `index_status` call in the `understand` skill and PROCESS §4 | main session | — | done | docs/00-z3-index-status-arg | #206 | — |
-| Z4 | Z | Exclude the gitignored legacy `temp/` tree from `bun test` discovery (`bunfig.toml` `[test] pathIgnorePatterns`) | infra-supervisor | — | in_review | chore/00-z4-bun-test-ignore-temp | #208 | AM-028 |
+| Z4 | Z | Exclude the gitignored legacy `temp/` tree from `bun test` discovery (`bunfig.toml` `[test] pathIgnorePatterns`) | infra-supervisor | — | done | chore/00-z4-bun-test-ignore-temp | #208 | AM-028 |
