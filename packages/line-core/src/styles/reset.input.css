@@ -1,0 +1,89 @@
+input {
+  appearance: none;
+  -webkit-appearance: none;
+  font: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+  word-spacing: inherit;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  -webkit-border-radius: 0;
+  padding: 0;
+  margin: 0;
+  outline: none;
+  width: 100%;
+}
+
+/* Number spinner arrows */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Search cancel button */
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/* Date/time picker indicators */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator,
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
+/* Password reveal icon (Edge/Chrome) */
+input[type="password"]::-ms-reveal,
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  display: none;
+}
+
+/* File input button */
+input[type="file"]::file-selector-button {
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* Placeholder */
+::placeholder {
+  color: inherit;
+  opacity: 0.5;
+}
+
+/* Autofill detection via animation trick */
+@keyframes line-autofill-start {
+  from {
+    --line-autofill: 1;
+  }
+}
+@keyframes line-autofill-cancel {
+  from {
+    --line-autofill: 1;
+  }
+}
+
+input:-webkit-autofill {
+  animation-name: line-autofill-start;
+}
+input:not(:-webkit-autofill) {
+  animation-name: line-autofill-cancel;
+}
+
+/* Autofill background neutralisation */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: inherit;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+}

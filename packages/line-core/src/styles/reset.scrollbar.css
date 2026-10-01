@@ -1,0 +1,20 @@
+/* Standard properties (Firefox + Chrome 121+) */
+:host {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+/* WebKit (Chrome < 121, Safari) */
+::-webkit-scrollbar {
+  width: var(--line-scrollbar-size, 8px);
+  height: var(--line-scrollbar-size, 8px);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: var(--line-scrollbar-radius, 4px);
+}

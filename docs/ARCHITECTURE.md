@@ -664,8 +664,8 @@ input[type="file"]::file-selector-button {
 }
 
 /* Autofill detection via animation trick */
-@keyframes line-autofill-start { from {} }
-@keyframes line-autofill-cancel { from {} }
+@keyframes line-autofill-start { from { --line-autofill: 1; } }
+@keyframes line-autofill-cancel { from { --line-autofill: 1; } }
 
 input:-webkit-autofill {
   animation-name: line-autofill-start;
@@ -1229,8 +1229,8 @@ Browser autofill forces a background colour (typically light yellow) that cannot
 
 ```css
 /* Already in reset.input.css */
-@keyframes line-autofill-start { from {} }
-@keyframes line-autofill-cancel { from {} }
+@keyframes line-autofill-start { from { --line-autofill: 1; } }
+@keyframes line-autofill-cancel { from { --line-autofill: 1; } }
 input:-webkit-autofill { animation-name: line-autofill-start; }
 input:not(:-webkit-autofill) { animation-name: line-autofill-cancel; }
 ```
