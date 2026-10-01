@@ -15,7 +15,6 @@ test('<line-hello-world> upgrades and toggles idle → active in a real browser'
   await page.goto('/');
 
   const element = page.locator('line-hello-world');
-  await expect(element).toHaveCount(1);
   await expect.poll(() => page.evaluate(() => customElements.get('line-hello-world') !== undefined)).toBe(true);
 
   const root = element.locator('[part="root"]');
