@@ -2,6 +2,10 @@
   "name": "@websublime/line-components",
   "version": "0.0.0",
   "type": "module",
+  "files": [
+    "dist",
+    "src"
+  ],
   "sideEffects": [],
   "publishConfig": {
     "access": "public"
