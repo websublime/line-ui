@@ -66,9 +66,9 @@ number in the stream + 1.
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | todo | — | — | — |
+| E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | in_progress | feat/00-e1-icon-registry | — | — |
 | E2 | E | Skeleton exports map | webcomponents-supervisor | E1 | todo | — | — | — |
-| E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | todo | — | — | — |
+| E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | in_progress | feat/00-e1-icon-registry | — | — |
 
 ## Stream F — Build, Test, Release Infrastructure (`infra-supervisor`)
 
