@@ -56,9 +56,12 @@ export interface FormAssociatedMembers {
  * constructor, and forwards the form API (`setFormValue`, `setValidity`,
  * `reportValidity`, `checkValidity`, `form`, `validity`, `validationMessage`,
  * `willValidate`) to them. `name` reads the host attribute and `type` is the
- * local name. `reflectState(name, active)` toggles both the host
- * `data-<name>` attribute and the `<name>` custom state, so CSS can target
- * either `[data-<name>]` or `:state(<name>)`.
+ * local name. `reflectState(name, active)` toggles a host `data-*` attribute
+ * through `dataset` and the `name` custom state. `name` must be a single-word
+ * or camelCase key: `dataset` maps camelCase to a kebab-case attribute
+ * (`userInvalid` → `data-user-invalid`) and throws a `SyntaxError` on a
+ * kebab-case key, while the custom state keeps `name` verbatim
+ * (`:state(userInvalid)`).
  *
  * Opt-in per component: `class LineInput extends FormAssociated(LineElement) {}`.
  * Sub-classes implement the form lifecycle callbacks they need.
@@ -119,7 +122,10 @@ export function FormAssociated<T extends Constructor<LineElement>>(
       return this.#internals.willValidate;
     }
 
-    /** Reflects `name` as the host `data-<name>` attribute and the `<name>` custom state. */
+    /**
+     * Toggles `this.dataset[name]` (camelCase `name` → kebab-case `data-*`
+     * attribute; a kebab-case `name` throws) and the custom state `name`, verbatim.
+     */
     protected override reflectState(name: string, active: boolean): void {
       if (active) {
         this.dataset[name] = '';
