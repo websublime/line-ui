@@ -23,6 +23,8 @@ jobs:
         run: bun run build
       - name: Typecheck
         run: bun --filter '@websublime/*' typecheck
+      - name: Pack verification (AM-036)
+        run: bun run scripts/verify-pack.mjs
       - name: Zero-export smoke (§9.1, RK11, AM-007)
         run: bun -e "const m = await import('./packages/line-components/dist/index.js'); const n = Object.keys(m).length; if (n !== 0) { console.error('line-components must export nothing in Phase 00, got', n); process.exit(1); }"
       - name: Layer lint (downward-only enforcement)
