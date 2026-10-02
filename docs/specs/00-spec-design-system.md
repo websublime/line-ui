@@ -459,6 +459,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-032 | 2026-10-02 | ledger `00-D5` pre-implementation investigation | Two factual corrections, no requirement or design change. (1) §6.D.5 code block: `FormAssociated` gets an explicit return type. An exported interface `FormAssociatedMembers` declares the public surface (`setFormValue`, `setValidity`, `reportValidity`, `checkValidity`, readonly `form`, `name`, `type`, `validity`, `validationMessage`, `willValidate`, optional `formAssociatedCallback` / `formDisabledCallback` / `formResetCallback` / `formStateRestoreCallback`), and the signature becomes `FormAssociated<T extends Constructor<LineElement>>(Base: T): T & Constructor<FormAssociatedMembers> & { readonly formAssociated: true }`, mirroring `DirectionMixin` (AM-031). The class is declared, then returned; `LineElement` is a type-only import. Every member, the constructor, `#internals`, and `reflectState` are unchanged. (2) §6.D.5 browser tier: the fixture page is `/form-associated/` under `packages/line-core/__tests__/integration/form-associated/`, served by the existing §6.F.4 `webServer`; the §6.F.4 `webServer.command` comment listing fixture pages gains `/form-associated/`. | (1) The sketch's inferred return type is an anonymous class, and declaration emit cannot name the protected members it inherits, so `vite-plugin-dts` cannot emit `dist/mixins/form-associated.d.ts`. (2) The spec named the stub `<line-form-test>` but not where its page lives; AM-031 already set one subdirectory per fixture page under the shared server root. The unit tier needs its mock because happy-dom 20.10.5 has no `attachInternals`, so `packages/line-core/__tests__/mocks/element-internals.ts` installs a fake `HTMLElement.prototype.attachInternals`. | (1) `bunx tsc -p packages/line-core --noEmit false --declaration --emitDeclarationOnly` on the verbatim sketch fails with TS4094 "Property 'reflectState' of exported anonymous class type may not be private or protected", also for Lit's protected `render`, `update`, `willUpdate`, `createRenderRoot`, `firstUpdated`, …; with the explicit signature the emit succeeds. (2) AM-031 §6.F.4 config comment `(/hello-world/, /direction/)`. happy-dom: no `attachInternals` match anywhere under `happy-dom@20.10.5/lib` (including `lib/nodes/html-element/HTMLElement.js`). |
 | AM-033 | 2026-10-02 | ledger `00-E1` pre-implementation investigation (decision — Miguel chose optional peer dependencies over hard dependencies and over undeclared imports) | (1) The §6.E.2 Phosphor resolver block gets a factual correction because `@phosphor-icons/core@2.1.1` names every non-regular file `<name>-<weight>.svg` (for example `assets/bold/acorn-bold.svg`), and only `regular` uses the bare name. The resolver now computes `file` as `name` for `regular` and `` `${name}-${weight}` `` otherwise, then imports `` `@phosphor-icons/core/assets/${weight}/${file}.svg?raw` ``. The weight type, weight precedence and return statement are unchanged. §6.E.3 now requires the Phosphor resolver test to cover all six weights and notes the `<name>-<weight>.svg` suffix. (2) The §4.8 `package.json` block gains `peerDependencies` for `lucide-static` `^1.16.0` and `@phosphor-icons/core` `^2.1.1`, and `peerDependenciesMeta` marks both optional. The §4.8 prose says a consumer installs only the library whose resolver it uses and the root `devDependencies` keep both for the tests. The §6.A.3 dependency table Source cells for `lucide-static` and `@phosphor-icons/core` add "optional peer of `line-icons` (AM-033)". | ARCHITECTURE §11 says the consumer brings their own resolver and `line-icons` bundles zero icons. Hard `dependencies` would install about 96 MB (lucide-static 59 MB, @phosphor-icons/core 37 MB) for every consumer. Undeclared imports are refused by strict package managers and give the consumer no version range. The old Phosphor path failed at runtime for every non-regular weight. | Throwaway `bun test` on Bun 1.3.14 showed `assets/bold/acorn.svg?raw` fails with `Cannot find module`, while `assets/<w>/acorn[-<w>].svg?raw` resolves for all six weights. `ls node_modules/@phosphor-icons/core/assets/<w>/` lists `acorn-thin.svg`, `acorn-light.svg`, `acorn.svg`, `acorn-bold.svg`, `acorn-fill.svg` and `acorn-duotone.svg`. `du -shL node_modules/lucide-static/ node_modules/@phosphor-icons/core/` reports 59M and 37M. Miguel recorded the peer-dependency decision on 2026-10-02 in `docs/context/00-e1.md` (Decisions). |
 | AM-034 | 2026-10-02 | ledger `00-E1` implement (implementer deviation report) | One factual correction, no requirement or design change: the §6.E.2 Phosphor resolver block imports only the type it uses, so its import line becomes `import type { IconResolver } from '../index.js';`. | The block imported `IconResolverOptions` without using it, so it failed the repo's own strict checks. `tsc --noEmit -p packages/line-icons` reports TS6196 ('IconResolverOptions' is declared but never used) because `tsconfig.base.json` sets `noUnusedLocals: true`, and Biome reports `lint/correctness/noUnusedImports`, which `biome.json` sets to error. Implementation commit `094f6b9` already carries the corrected import. |
+| AM-035 | 2026-10-02 | ledger `00-E1` Verify gate (security-reviewer F1; decision — Miguel chose validating names and weights now over handing the risk to the Phase 1 `<line-icon>` spec) | Four changes, no change to the registry contract. (1) §6.E.2: both resolvers call `assertIconName(name)` before `import()`; it throws `[line-icons] Invalid icon name "<name>".` for any name outside `/^[a-z0-9]+(?:-[a-z0-9]+)*$/`. The function lives in the new internal module `src/resolvers/icon-name.ts`, which `src/index.ts` does not re-export, and the spec shows that module. (2) §6.E.2: the Phosphor resolver holds the six weights in a `Set` and throws `[line-icons] Unknown Phosphor weight "<weight>".` for any resolved weight outside it, so the check covers both `options.weight` and the factory default. Both resolvers stay async, so every rejection arrives as a rejected promise. (3) §6.E.1 and §6.E.2: the block comments become short present-state sentences per STYLE.md, and the code comments equal them. (4) §6.E.3: the Lucide and Phosphor test bullets add the rejection cases for invalid names and, for Phosphor, invalid weights. | An unchecked `name` reaches `import()` and walks out of the icon directory under Bun or Node, so a caller-supplied name can load and execute any module the package can resolve. | Orchestrator probe on `dist` under Bun 1.3.14: `createLucideResolver()('../sprite')` returned lucide-static `sprite.svg`; `('../../@phosphor-icons/core/assets/regular/house')` returned a Phosphor SVG; `('../../../package.json?')` returned the line-icons `package.json` as a parsed object; `('../dist/esm/lucide-static.mjs?')` imported and executed that module (default `undefined`). All 1960 Lucide icon names and all 1512 Phosphor icon names match the pattern, so no real icon is rejected. The decision is recorded in `docs/context/00-e1.md` (Decisions). |
 
 **A4 — npm scope.**
 
@@ -1209,7 +1210,7 @@ This is the canonical "the platform works" smoke test. It does not ship in any p
 export type IconResolver = (name: string, options?: IconResolverOptions) => Promise<string | SVGElement>;
 
 export interface IconResolverOptions {
-  /** Library-specific options, e.g. Phosphor weight. Untyped at the registry level. */
+  /** Library-specific options such as the Phosphor weight. The registry does not type them. */
   [key: string]: unknown;
 }
 
@@ -1220,7 +1221,9 @@ export class IconRegistry {
     this.#resolvers.set(library, resolver);
   }
 
-  has(library: string): boolean { return this.#resolvers.has(library); }
+  has(library: string): boolean {
+    return this.#resolvers.has(library);
+  }
 
   async resolve(library: string, name: string, options?: IconResolverOptions): Promise<string | SVGElement> {
     const resolver = this.#resolvers.get(library);
@@ -1229,23 +1232,37 @@ export class IconRegistry {
   }
 }
 
-export const iconRegistry = new IconRegistry();   // shared singleton convenience
+// A shared registry instance for apps that need only one.
+export const iconRegistry = new IconRegistry();
 
-// Reference resolver factories — validate the contract against two real libraries
-export { createLucideResolver }   from './resolvers/lucide.js';
+// The reference resolver factories validate the contract against two real libraries.
+export { createLucideResolver } from './resolvers/lucide.js';
 export { createPhosphorResolver } from './resolvers/phosphor.js';
 ```
 
 #### 6.E.2 Reference resolvers (E1 — Lucide + Phosphor)
 
+`packages/line-icons/src/resolvers/icon-name.ts` (internal; not re-exported from `src/index.ts`):
+
+```ts
+// Icon names are lowercase kebab-case, so a name cannot leave the icon directory.
+const ICON_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
+export function assertIconName(name: string): void {
+  if (!ICON_NAME.test(name)) throw new Error(`[line-icons] Invalid icon name "${name}".`);
+}
+```
+
 `packages/line-icons/src/resolvers/lucide.ts`:
 
 ```ts
-// Lucide: one SVG per icon, ESM tree-shakeable
+// Lucide ships one SVG file per icon.
 import type { IconResolver } from '../index.js';
+import { assertIconName } from './icon-name.js';
 
 export function createLucideResolver(): IconResolver {
   return async (name) => {
+    assertIconName(name);
     const mod = await import(/* @vite-ignore */ `lucide-static/icons/${name}.svg?raw`);
     return mod.default as string;
   };
@@ -1255,15 +1272,21 @@ export function createLucideResolver(): IconResolver {
 `packages/line-icons/src/resolvers/phosphor.ts`:
 
 ```ts
-// Phosphor: one SVG per (weight, icon) file
+// Phosphor ships one SVG file per weight and icon.
 import type { IconResolver } from '../index.js';
+import { assertIconName } from './icon-name.js';
 
 type PhosphorWeight = 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';
 
+const WEIGHTS = new Set<PhosphorWeight>(['thin', 'light', 'regular', 'bold', 'fill', 'duotone']);
+
 export function createPhosphorResolver(defaults: { weight?: PhosphorWeight } = {}): IconResolver {
   return async (name, options) => {
+    assertIconName(name);
     const weight = (options?.weight as PhosphorWeight) ?? defaults.weight ?? 'regular';
-    const file = weight === 'regular' ? name : `${name}-${weight}`;  // non-regular files carry a weight suffix (AM-033)
+    if (!WEIGHTS.has(weight)) throw new Error(`[line-icons] Unknown Phosphor weight "${weight}".`);
+    // Only regular files use the bare name; the other weights add a weight suffix.
+    const file = weight === 'regular' ? name : `${name}-${weight}`;
     const mod = await import(/* @vite-ignore */ `@phosphor-icons/core/assets/${weight}/${file}.svg?raw`);
     return mod.default as string;
   };
@@ -1272,13 +1295,15 @@ export function createPhosphorResolver(defaults: { weight?: PhosphorWeight } = {
 
 The two resolvers have **different shapes** (Lucide: single argument; Phosphor: takes a `weight`). The registry contract intentionally accepts an opaque `options` bag so the resolver chooses what to consume. This pressure-tests the contract: research R16 / B19 mandates two-library validation precisely to prove the registry is genuinely agnostic.
 
+Both resolvers validate their inputs before `import()` (AM-035). A `name` outside `/^[a-z0-9]+(?:-[a-z0-9]+)*$/` rejects with `[line-icons] Invalid icon name "<name>".`, and the Phosphor resolver rejects a resolved weight outside the six with `[line-icons] Unknown Phosphor weight "<weight>".`. The check on the resolved weight covers both `options.weight` and the factory default. The resolvers are async, so every rejection arrives as a rejected promise, never a synchronous throw.
+
 #### 6.E.3 Validation tests
 
 `packages/line-icons/__tests__/`:
 
 - `registry.test.ts` — Bun test: registers both resolvers, resolves three icons from each, asserts the resolver was called with the correct arguments and the SVG string was returned.
-- `resolvers.lucide.test.ts` — exercises the Lucide resolver against the installed `lucide-static` package (no network).
-- `resolvers.phosphor.test.ts` — same for `@phosphor-icons/core`, including weight selection across all six weights (non-regular files are named `<name>-<weight>.svg`, AM-033).
+- `resolvers.lucide.test.ts` — exercises the Lucide resolver against the installed `lucide-static` package (no network), including rejection of invalid icon names with the exact `[line-icons] Invalid icon name` error (AM-035).
+- `resolvers.phosphor.test.ts` — same for `@phosphor-icons/core`, including weight selection across all six weights (non-regular files are named `<name>-<weight>.svg`, AM-033) and rejection of invalid icon names and invalid weights, from both `options.weight` and the factory default, with the exact `[line-icons]` errors (AM-035).
 
 The Phase 00 deliverable is the **contract**, not a full icon component. `<line-icon>` ships in Phase 1.
 
