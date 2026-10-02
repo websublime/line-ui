@@ -82,7 +82,7 @@ number in the stream + 1.
 | F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | done | — | #201 | AM-023 |
 | F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4 | todo | — | — | — |
 | F8 | F | Fix CI "Build packages" race: Bun `--filter` ignores `devDependencies` ordering, so `line-storybook` builds before `line-schemas` emits `dist/`; root `build` becomes two-phase (`./packages/*` then `./apps/*`) and `checks.yml` calls it | infra-supervisor | B2, F4 | done | fix/00-f8-two-phase-build | #209 | AM-029 |
-| F9 | F | Fix published tarballs: `changeset publish` runs `npm publish`, which drops `dist/` from all 8 packages (root `.gitignore` lists `dist`; no package declares `files`) and ships `workspace:^` ranges unrewritten (`line-icons`, `line-utils`, `line-themes`, `line-components`) | infra-supervisor | B1, B5 | todo | — | — | — |
+| F9 | F | Fix published tarballs: `changeset publish` runs `npm publish`, which drops `dist/` from all 8 packages (root `.gitignore` lists `dist`; no package declares `files`) and ships `workspace:^` ranges unrewritten (`line-icons`, `line-utils`, `line-themes`, `line-components`) | infra-supervisor | B1, B5 | in_progress | fix/00-f9-publish-tarballs | — | — |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
 
