@@ -66,9 +66,9 @@ number in the stream + 1.
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | in_review | feat/00-e1-icon-registry | #213 | AM-033, AM-034, AM-035 |
-| E2 | E | Skeleton exports map | webcomponents-supervisor | E1 | todo | — | — | — |
-| E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | in_review | feat/00-e1-icon-registry | #213 | AM-033, AM-035 |
+| E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | done | feat/00-e1-icon-registry | #213 | AM-033, AM-034, AM-035 |
+| E2 | E | Skeleton exports map (spec §4.8) — absorbed by B1 (#178) and E1 (#213) | webcomponents-supervisor | E1 | in_review | docs/00-e2-exports-map-absorbed | #214 | — |
+| E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | done | feat/00-e1-icon-registry | #213 | AM-033, AM-035 |
 
 ## Stream F — Build, Test, Release Infrastructure (`infra-supervisor`)
 
@@ -76,12 +76,13 @@ number in the stream + 1.
 |---|---|---|---|---|---|---|---|---|
 | F1 | F | Storybook 10 + web-components-vite + CEM analyser (shared Vite 8 build landed in B4 #181) | infra-supervisor | B4 | done | — | #194 | AM-016, AM-017 |
 | F2 | F | Bun test harness with happy-dom + `@open-wc/testing-helpers` preload | infra-supervisor | B4 | done | — | #195 | AM-018, AM-019 |
-| F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2 | todo | — | — | — |
+| F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2, F9 | todo | — | — | — |
 | F4 | F | `checks.yml` with the CI assertions reallocated from C4 / C5 / F2 (spec §6.F.5, AM-013, AM-014, AM-018) | infra-supervisor | F1, F2, F6 | done | — | #204 | AM-024, AM-025 |
 | F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | todo | — | — | — |
 | F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | done | — | #201 | AM-023 |
 | F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4 | todo | — | — | — |
 | F8 | F | Fix CI "Build packages" race: Bun `--filter` ignores `devDependencies` ordering, so `line-storybook` builds before `line-schemas` emits `dist/`; root `build` becomes two-phase (`./packages/*` then `./apps/*`) and `checks.yml` calls it | infra-supervisor | B2, F4 | done | fix/00-f8-two-phase-build | #209 | AM-029 |
+| F9 | F | Fix published tarballs: `changeset publish` runs `npm publish`, which drops `dist/` from all 8 packages (root `.gitignore` lists `dist`; no package declares `files`) and ships `workspace:^` ranges unrewritten (`line-icons`, `line-utils`, `line-themes`, `line-components`) | infra-supervisor | B1, B5 | todo | — | — | — |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
 
