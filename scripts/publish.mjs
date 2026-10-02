@@ -85,17 +85,25 @@ function run(cmd, { inherit = false } = {}) {
   };
 }
 
-/** true = already published, false = new version (E404); throws otherwise. */
+const parseJson = (text) => {
+  try {
+    return JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+};
+
+/** true = this exact version is published, false = new version (E404); throws otherwise. */
 function isPublished(pkg) {
   const spec = `${pkg.name}@${pkg.version}`;
   const res = run(['npm', 'view', spec, 'version', '--json']);
-  if (res.exitCode === 0) return true;
-  let code;
-  try {
-    code = JSON.parse(res.stdout).error?.code;
-  } catch {
-    code = undefined;
+  const json = parseJson(res.stdout);
+  if (res.exitCode === 0) {
+    const found = Array.isArray(json) ? json.includes(pkg.version) : json === pkg.version;
+    if (found) return true;
+    throw new Error(`npm view ${spec} exited 0 without reporting version ${pkg.version}`);
   }
+  const code = json?.error?.code;
   if (code === 'E404') return false;
   throw new Error(`npm view ${spec} failed (exit ${res.exitCode}${code ? `, ${code}` : ''})`);
 }
@@ -137,7 +145,8 @@ async function main() {
     }
 
     if (opts.gitTag) {
-      const res = run(['bunx', 'changeset', 'tag'], { inherit: true });
+      // Root `changeset` script → local @changesets/cli bin; fails rather than downloading if missing.
+      const res = run(['bun', 'run', 'changeset', 'tag'], { inherit: true });
       if (res.exitCode !== 0) throw new Error('changeset tag failed');
     }
   } finally {
