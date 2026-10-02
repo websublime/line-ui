@@ -21,6 +21,8 @@ bun add @websublime/line-icons @phosphor-icons/core   # Phosphor
 - `createLucideResolver()`: resolves Lucide icons from `lucide-static`
 - `createPhosphorResolver({ weight? })`: resolves Phosphor icons from `@phosphor-icons/core`; weight is `thin`, `light`, `regular` (default), `bold`, `fill` or `duotone`
 
+The reference resolvers accept only lowercase kebab-case icon names (and, for Phosphor, the six weights above) and reject anything else with a `[line-icons]` error.
+
 ## Usage
 
 ```ts
