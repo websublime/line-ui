@@ -39,7 +39,7 @@
     "web-components",
     "headless"
   ],
-  "license": "ISC",
+  "license": "MIT",
   "workspaces": [
     "packages/*",
     "apps/*"
