@@ -449,6 +449,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-029 | 2026-09-30 | ledger `00-F8` (CI runs 36746592928 / 36748071527 red on "Build packages") | Two corrections, no design change. (1) §5: the root `package.json` `build` script becomes `"bun --filter './packages/*' build && bun --filter './apps/*' build"` (two-phase: every package, then every app). (2) §6.F.5 `checks.yml` and `release.yml` blocks: the build step becomes `bun run build`, so CI and the release pipeline run the same two-phase script as local. §6.A.1 "Workspace scripts" sentence now carves out `build`. | `bun --filter` (bun 1.3.14) orders workspace scripts by the `dependencies` edges only; a `devDependencies` edge gives no ordering. `apps/storybook/package.json` lists the eight `@websublime/*` packages under `devDependencies`, which §3 ("storybook → all published packages (dev-only)") and `scripts/lint-layers.mjs` require, so `bun --filter '@websublime/*' build` can start the storybook build before `line-schemas` has emitted `dist/` and Rolldown fails to resolve `@websublime/line-schemas` from `.storybook/preview.ts`. Splitting the build into a packages phase and an apps phase gives the ordering without moving the app edges to `dependencies`. | CI run 36746592928 (`feat/00-d7-reset-sheets`) and 36748071527 (`chore/00-z4-bun-test-ignore-temp`): `@websublime/line-storybook build` starts at 16:47:18.7 and dies with `Rolldown failed to resolve import "@websublime/line-schemas" from "./.storybook/preview.ts"`; `@websublime/line-schemas build` exits at 16:47:19.5. Three throwaway workspaces with a slow-building dependency: a `devDependencies` edge raced (consumer started before the dependency finished), a `dependencies` edge waited. Local clean two-phase build recorded in the `00-F8` Verify record. |
 | AM-030 | 2026-10-01 | ledger `00-D8` pre-implementation investigation (decision — Miguel chose the Vite dev server via Playwright `webServer` over an in-test bundle and over `vite build` + `vite preview`) | Two additions, no requirement change. (1) §6.F.4 `playwright.config.ts` block gains a `webServer` entry (`command: 'vite packages/line-core/__tests__/integration/hello-world --host 127.0.0.1 --port 4319 --strictPort'`, `url: 'http://127.0.0.1:4319'`, `reuseExistingServer: !process.env.CI`) and `use.baseURL` is set to that URL. (2) §6.D.8 file tree gains `index.html` (the Vite fixture page the e2e loads) with a sentence explaining the serving mechanism. | The spec was silent on how `line-hello-world.e2e.ts` loads a TypeScript component in a real browser; `playwright.config.ts` had no `webServer` and no `*.e2e.ts` existed yet. The Vite dev server is the standard mechanism, resolves workspace TS and `?inline` imports without a build step, and the same `webServer` block accepts an array when the Storybook smoke tier (§6.F.4, G6) lands; 4319 is a non-default port so a local `vite preview` on 4173 is never reused through `reuseExistingServer`. | `playwright.config.ts` (13 lines, no `webServer`); `glob **/*.e2e.ts` → none. Probe on this machine: Vite 8.0.14 without `--host` binds `localhost` as `::1` only (`curl http://127.0.0.1:4173/` → connection refused, probe run before the port moved to 4319), so the command pins `--host 127.0.0.1` to match `url`. |
 | AM-031 | 2026-10-01 | ledger `00-D4` pre-implementation investigation (decision — Miguel chose the native-first direction design over reflecting the document dir onto the host) | Two changes. (1) §6.D.4 rewritten: `DirectionMixin` adds a read-only `direction: 'ltr' \| 'rtl'` (a getter over private state, `attribute: false`, no public setter) read from `this.matches(':dir(rtl)')`, never writes the host `dir` attribute and leaves the native `HTMLElement.dir` untouched; its return type widens to `T & Constructor<LitElement & { readonly direction: 'ltr' \| 'rtl' }>`, replacing the D1 stub's `T & Constructor<LitElement>` (parameter and export name unchanged); one shared module-level `MutationObserver` on `document` (`subtree: true`, `attributeFilter: ['dir']`) recomputes every connected host and calls `requestUpdate('direction', oldValue)` only on change; `dir="auto"` resolves through the engine's `:dir()`; component CSS targets RTL with `:host(:dir(rtl))`; known limits (no observation inside shadow trees, `dir="auto"` text changes) and unit/browser test stratification stated. (2) §6.F.4 `playwright.config.ts` block: the `webServer.command` root becomes `packages/line-core/__tests__/integration` (one Vite server, one subdirectory per fixture page: `/hello-world/`, `/direction/`) and `webServer.url` becomes `http://127.0.0.1:4319/hello-world/` because the root has no `index.html` (`use.baseURL` unchanged); §6.D.8 serving sentence and the §6.F.4 "Playwright runs" list follow. Decisions: native-first source and `:host(:dir(rtl))` hook (rejected: reflecting the document `dir` onto the host, observing `documentElement` only); new property `direction` (rejected: overriding `dir`); `dir="auto"` resolves through `:dir()` (rejected: treating `auto` as `ltr`). | Reflecting the document `dir` onto the host attribute overrides native ancestor inheritance (a host inside an RTL region of an LTR document is forced LTR) and contradicts PRD §Non-functional "i18n — RTL: Supported natively via `dir` attribute"; `documentElement`-only observation misses nested regions; redeclaring `dir` shadows the platform `HTMLElement.dir` accessor. | Playwright probe (Chromium 148, Firefox 150, WebKit 26.4): a host with `dir="ltr"` inside `<div dir="rtl">` computes `direction: ltr`; `:host(:dir(rtl))` matches inside an RTL ancestor and updates live on ancestor flip with no JS. happy-dom 20.10.5: `matches(':dir(rtl)')` is always `false` and computed `direction` always `ltr`, so real resolution is verifiable only in the browser tier. `@zag-js/types` declares `dir?: "ltr" \| "rtl"`. `docs/context/00-d4.md`. |
+| AM-032 | 2026-10-02 | ledger `00-D5` pre-implementation investigation | Two factual corrections, no requirement or design change. (1) §6.D.5 code block: `FormAssociated` gets an explicit return type. An exported interface `FormAssociatedMembers` declares the public surface (`setFormValue`, `setValidity`, `reportValidity`, `checkValidity`, readonly `form`, `name`, `type`, `validity`, `validationMessage`, `willValidate`, optional `formAssociatedCallback` / `formDisabledCallback` / `formResetCallback` / `formStateRestoreCallback`), and the signature becomes `FormAssociated<T extends Constructor<LineElement>>(Base: T): T & Constructor<FormAssociatedMembers> & { readonly formAssociated: true }`, mirroring `DirectionMixin` (AM-031). The class is declared, then returned; `LineElement` is a type-only import. Every member, the constructor, `#internals`, and `reflectState` are unchanged. (2) §6.D.5 browser tier: the fixture page is `/form-associated/` under `packages/line-core/__tests__/integration/form-associated/`, served by the existing §6.F.4 `webServer`; the §6.F.4 `webServer.command` comment listing fixture pages gains `/form-associated/`. | (1) The sketch's inferred return type is an anonymous class, and declaration emit cannot name the protected members it inherits, so `vite-plugin-dts` cannot emit `dist/mixins/form-associated.d.ts`. (2) The spec named the stub `<line-form-test>` but not where its page lives; AM-031 already set one subdirectory per fixture page under the shared server root. The unit tier needs its mock because happy-dom 20.10.5 has no `attachInternals`, so `packages/line-core/__tests__/mocks/element-internals.ts` installs a fake `HTMLElement.prototype.attachInternals`. | (1) `bunx tsc -p packages/line-core --noEmit false --declaration --emitDeclarationOnly` on the verbatim sketch fails with TS4094 "Property 'reflectState' of exported anonymous class type may not be private or protected", also for Lit's protected `render`, `update`, `willUpdate`, `createRenderRoot`, `firstUpdated`, …; with the explicit signature the emit succeeds. (2) AM-031 §6.F.4 config comment `(/hello-world/, /direction/)`. happy-dom: no `attachInternals` match anywhere under `happy-dom@20.10.5/lib` (including `lib/nodes/html-element/HTMLElement.js`). |
 
 **A4 — npm scope.**
 
@@ -950,10 +951,32 @@ export class LineElement extends DirectionMixin(MetadataMixin(InspectorMixin(Lit
 `packages/line-core/src/mixins/form-associated.ts`:
 
 ```ts
+import type { LineElement } from '../line-element.js';
+
 type Constructor<T = {}> = new (...args: any[]) => T;
 
-export function FormAssociated<T extends Constructor<LineElement>>(Base: T) {
-  return class FormAssociatedElement extends Base {
+// Public surface, named so declaration emit can type the mixin result (AM-032).
+export interface FormAssociatedMembers {
+  setFormValue(value: File | string | FormData | null, state?: File | string | FormData | null): void;
+  setValidity(flags: ValidityStateFlags, message?: string, anchor?: HTMLElement): void;
+  reportValidity(): boolean;
+  checkValidity(): boolean;
+  readonly form: HTMLFormElement | null;
+  readonly name: string | null;
+  readonly type: string;
+  readonly validity: ValidityState;
+  readonly validationMessage: string;
+  readonly willValidate: boolean;
+  formAssociatedCallback?(form: HTMLFormElement | null): void;
+  formDisabledCallback?(disabled: boolean): void;
+  formResetCallback?(): void;
+  formStateRestoreCallback?(state: File | string | FormData | null, reason: 'autocomplete' | 'restore'): void;
+}
+
+export function FormAssociated<T extends Constructor<LineElement>>(
+  Base: T,
+): T & Constructor<FormAssociatedMembers> & { readonly formAssociated: true } {
+  class FormAssociatedElement extends Base {
     static formAssociated = true as const;
 
     #internals: ElementInternals;
@@ -998,7 +1021,8 @@ export function FormAssociated<T extends Constructor<LineElement>>(Base: T) {
     formDisabledCallback?(disabled: boolean): void;
     formResetCallback?(): void;
     formStateRestoreCallback?(state: File | string | FormData | null, reason: 'autocomplete' | 'restore'): void;
-  };
+  }
+  return FormAssociatedElement;
 }
 ```
 
@@ -1008,6 +1032,8 @@ export function FormAssociated<T extends Constructor<LineElement>>(Base: T) {
 |---|---|---|---|
 | Unit | `bun test` + happy-dom + **mocked `attachInternals`** | Node-side | The mixin calls `setFormValue` / `setValidity` / `reportValidity` with the right arguments. The mock is a small helper in `packages/line-core/__tests__/mocks/element-internals.ts` (≤ 40 LOC). |
 | Browser | Playwright | Real Chromium/Firefox/WebKit | End-to-end: a test page mounts a stub `<line-form-test>` inside `<form>`, submits, asserts the request body (or `FormData` instance), exercises reset, exercises HTML5 validation reporting. |
+
+The browser tier's fixture page is `/form-associated/` (`packages/line-core/__tests__/integration/form-associated/`), served by the §6.F.4 `webServer` (AM-032).
 
 Both tiers are mandatory acceptance criteria for Phase 00. Happy-dom and jsdom cannot exercise the real `ElementInternals` semantics (research C3 / R8 / B20–B22, issues still open).
 
@@ -1376,7 +1402,7 @@ export default defineConfig({
   testMatch: '**/*.e2e.ts',
   use: { baseURL: 'http://127.0.0.1:4319', trace: 'on-first-retry' },
   webServer: {
-    command: 'vite packages/line-core/__tests__/integration --host 127.0.0.1 --port 4319 --strictPort',  // AM-031: one subdirectory per fixture page (/hello-world/, /direction/)
+    command: 'vite packages/line-core/__tests__/integration --host 127.0.0.1 --port 4319 --strictPort',  // AM-031: one subdirectory per fixture page (/hello-world/, /direction/, /form-associated/ — AM-032)
     url: 'http://127.0.0.1:4319/hello-world/',  // AM-031: no root index.html; readiness probes a fixture page
     reuseExistingServer: !process.env.CI,
   },
