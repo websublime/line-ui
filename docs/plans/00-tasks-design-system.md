@@ -67,7 +67,7 @@ number in the stream + 1.
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
 | E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | done | feat/00-e1-icon-registry | #213 | AM-033, AM-034, AM-035 |
-| E2 | E | Skeleton exports map (spec §4.8) — absorbed by B1 (#178) and E1 (#213) | webcomponents-supervisor | E1 | in_review | docs/00-e2-exports-map-absorbed | #214 | — |
+| E2 | E | Skeleton exports map (spec §4.8) — absorbed by B1 (#178) and E1 (#213) | webcomponents-supervisor | E1 | done | docs/00-e2-exports-map-absorbed | #214 | — |
 | E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | done | feat/00-e1-icon-registry | #213 | AM-033, AM-035 |
 
 ## Stream F — Build, Test, Release Infrastructure (`infra-supervisor`)
@@ -82,7 +82,7 @@ number in the stream + 1.
 | F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | done | — | #201 | AM-023 |
 | F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4 | todo | — | — | — |
 | F8 | F | Fix CI "Build packages" race: Bun `--filter` ignores `devDependencies` ordering, so `line-storybook` builds before `line-schemas` emits `dist/`; root `build` becomes two-phase (`./packages/*` then `./apps/*`) and `checks.yml` calls it | infra-supervisor | B2, F4 | done | fix/00-f8-two-phase-build | #209 | AM-029 |
-| F9 | F | Fix published tarballs: `changeset publish` runs `npm publish`, which drops `dist/` from all 8 packages (root `.gitignore` lists `dist`; no package declares `files`) and ships `workspace:^` ranges unrewritten (`line-icons`, `line-utils`, `line-themes`, `line-components`) | infra-supervisor | B1, B5 | in_progress | fix/00-f9-publish-tarballs | — | — |
+| F9 | F | Fix published tarballs: `changeset publish` runs `npm publish`, which drops `dist/` from all 8 packages (root `.gitignore` lists `dist`; no package declares `files`) and ships `workspace:^` ranges unrewritten (`line-icons`, `line-utils`, `line-themes`, `line-components`) | infra-supervisor | B1, B5 | in_review | fix/00-f9-publish-tarballs | #215 | AM-036, AM-037 |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
 
