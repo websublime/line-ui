@@ -4,6 +4,7 @@ import { createRequire } from 'node:module';
 import { dirname, join } from 'node:path';
 import { createPhosphorResolver } from '../src/index.js';
 
+const invalidNames = ['../sprite', '../../../package.json?', 'house/../x', 'House', 'house.svg', 'house#', ''];
 const weights = ['thin', 'light', 'regular', 'bold', 'fill', 'duotone'] as const;
 const assets = join(dirname(createRequire(import.meta.url).resolve('@phosphor-icons/core/package.json')), 'assets');
 
@@ -34,5 +35,21 @@ describe('createPhosphorResolver', () => {
 
   test('rejects an unknown icon name', async () => {
     await expect(createPhosphorResolver()('definitely-not-an-icon')).rejects.toThrow();
+  });
+
+  test.each(invalidNames)('rejects the invalid name %p before import()', async (name) => {
+    await expect(createPhosphorResolver()(name)).rejects.toThrow(`[line-icons] Invalid icon name "${name}".`);
+  });
+
+  test.each(['heavy', '../../x'])('rejects the invalid options.weight %p', async (weight) => {
+    await expect(createPhosphorResolver()('house', { weight })).rejects.toThrow(
+      `[line-icons] Unknown Phosphor weight "${weight}".`,
+    );
+  });
+
+  test('rejects an invalid factory default weight', async () => {
+    await expect(createPhosphorResolver({ weight: 'heavy' as never })('house')).rejects.toThrow(
+      '[line-icons] Unknown Phosphor weight "heavy".',
+    );
   });
 });
