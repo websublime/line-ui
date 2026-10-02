@@ -11,7 +11,7 @@
  * rewritten from packages/*\/package.json versions) with `bun pm pack` and checks:
  *   (a) every exports target / main / module / types exists in the tarball
  *   (b) every tarball path is on the allowlist (package.json, README*, LICENSE*, LICENCE*, `files` entries)
- *   (c) no tarball path hits the denylist (__tests__/, *.test.*, *.spec.*, tsconfig*.json, vite.config.*, *.tsbuildinfo)
+ *   (c) no tarball path hits the denylist (__tests__/, *.test.*, *.spec.*, tsconfig*.json, vite.config.*, *.tsbuildinfo, .-prefixed segments, *.pem, *.key)
  *   (d) no workspace:/catalog: range in the packed manifest's four dependency fields
  *   (e) every internal @websublime/* range is satisfied by that package's current version
  *
@@ -149,6 +149,9 @@ const DENY = [
   /(^|\/)tsconfig[^/]*\.json$/,
   /(^|\/)vite\.config\.[^/]*$/,
   /\.tsbuildinfo$/,
+  /(^|\/)\./,
+  /\.pem$/,
+  /\.key$/,
 ];
 
 const norm = (p) => p.replace(/^\.\//, '');
