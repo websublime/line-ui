@@ -114,8 +114,8 @@ line-ui/
 
 - Workflow YAML passes `actionlint` when available; every step has an explicit `name:`
 - Workflows follow the spec §6.F.5 YAML blocks as written (inline `oven-sh/setup-bun` + `bun install` steps); new composite actions need an `AM-nnn` row first
-- Changesets follow `.changeset/config.json`; canary publishes with `--tag canary`, stable via
-  `changeset publish`; private apps stay in the ignore list
+- Changesets follow `.changeset/config.json`; stable and canary publishes run `scripts/publish.mjs`
+  (Bun packs, npm uploads, `changeset tag` tags; canary adds `--tag canary --no-git-tag`, AM-036); private apps stay in the ignore list
 - Hooks are non-interactive and use `-f` flags on file operations (`AGENTS.md`)
 - Secrets only as `${{ secrets.* }}`; never printed, never committed
 - Bun for every script; no pnpm or npm lockfiles in the tree
