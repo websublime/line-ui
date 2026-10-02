@@ -85,6 +85,14 @@
       "dependencies": {
         "@websublime/line-tokens": "workspace:^",
       },
+      "peerDependencies": {
+        "@phosphor-icons/core": "^2.1.1",
+        "lucide-static": "^1.16.0",
+      },
+      "optionalPeers": [
+        "@phosphor-icons/core",
+        "lucide-static",
+      ],
     },
     "packages/line-schemas": {
       "name": "@websublime/line-schemas",
