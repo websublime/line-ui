@@ -24,11 +24,11 @@
     "test": "bun --filter '@websublime/line-schemas' --filter '@websublime/line-tokens' --filter '@websublime/line-colors' --filter '@websublime/line-themes' build && bun test packages/line-themes/__tests__/",
     "e2e": "playwright test --pass-with-no-tests",
     "version": "changeset version",
-    "release": "changeset publish",
+    "release": "bun run scripts/publish.mjs",
     "status": "changeset status --since=main",
     "empty": "changeset --empty",
     "snapshot:version": "changeset version --snapshot",
-    "snapshot:publish": "changeset publish --snapshot --tag canary",
+    "snapshot:publish": "bun run scripts/publish.mjs --tag canary --no-git-tag",
     "prepare": "git config core.hooksPath .githooks"
   },
   "keywords": [
