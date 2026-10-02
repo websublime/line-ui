@@ -67,7 +67,7 @@ number in the stream + 1.
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
 | E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | in_review | feat/00-e1-icon-registry | #213 | AM-033, AM-034, AM-035 |
-| E2 | E | Skeleton exports map | webcomponents-supervisor | E1 | in_progress | docs/00-e2-exports-map-absorbed | — | — |
+| E2 | E | Skeleton exports map (spec §4.8) — absorbed by B1 (#178) and E1 (#213) | webcomponents-supervisor | E1 | in_progress | docs/00-e2-exports-map-absorbed | — | — |
 | E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | in_review | feat/00-e1-icon-registry | #213 | AM-033, AM-035 |
 
 ## Stream F — Build, Test, Release Infrastructure (`infra-supervisor`)
