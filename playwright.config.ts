@@ -5,8 +5,8 @@ export default defineConfig({
   testMatch: '**/*.e2e.ts',
   use: { baseURL: 'http://127.0.0.1:4319', trace: 'on-first-retry' },
   webServer: {
-    command: 'vite packages/line-core/__tests__/integration/hello-world --host 127.0.0.1 --port 4319 --strictPort',
-    url: 'http://127.0.0.1:4319',
+    command: 'vite packages/line-core/__tests__/integration --host 127.0.0.1 --port 4319 --strictPort',
+    url: 'http://127.0.0.1:4319/hello-world/',
     reuseExistingServer: !process.env.CI,
   },
   projects: [

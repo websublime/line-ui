@@ -55,11 +55,11 @@ number in the stream + 1.
 | D1 | D | `LineElement` base class in `line-core` | webcomponents-supervisor | B4 | done | — | #197 | — |
 | D2 | D | Inspector mixin (dev-mode element inspection) | webcomponents-supervisor | D1 | done | — | #198 | AM-021 |
 | D3 | D | Metadata mixin static members | webcomponents-supervisor | D1 | done | — | #199 | — |
-| D4 | D | Direction mixin (LTR/RTL via `dir`) | webcomponents-supervisor | D1 | todo | — | — | — |
+| D4 | D | Direction mixin (LTR/RTL via `dir`) | webcomponents-supervisor | D1 | in_review | feat/00-d4-direction-mixin | #211 | AM-031 |
 | D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F6 | todo | — | — | — |
 | D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | done | feat/00-d6-machine-controller | #205 | — |
 | D7 | D | Shadow-DOM modular reset sheets (`line-core/styles`) | webcomponents-supervisor | D1 | done | feat/00-d7-reset-sheets | #207 | AM-026, AM-027 |
-| D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | in_review | feat/00-d8-hello-world | #210 | AM-030 |
+| D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | done | feat/00-d8-hello-world | #210 | AM-030 |
 | D9 | D | Fix `lint-layers` prefix-audit failure: `line-core/__tests__/{metadata,inspector}.test.ts` register test hosts without the `line-*` prefix (Manifesto Law 2) | webcomponents-supervisor | D2, D3 | done | — | #202 | — |
 
 ## Stream E — Icon Registry (`webcomponents-supervisor`)
