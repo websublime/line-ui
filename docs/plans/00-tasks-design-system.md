@@ -56,7 +56,7 @@ number in the stream + 1.
 | D2 | D | Inspector mixin (dev-mode element inspection) | webcomponents-supervisor | D1 | done | — | #198 | AM-021 |
 | D3 | D | Metadata mixin static members | webcomponents-supervisor | D1 | done | — | #199 | — |
 | D4 | D | Direction mixin (LTR/RTL via `dir`) | webcomponents-supervisor | D1 | done | feat/00-d4-direction-mixin | #211 | AM-031 |
-| D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F6 | in_review | feat/00-d5-form-associated-mixin | #212 | AM-032 |
+| D5 | D | FormAssociated mixin (`ElementInternals`, unit + Playwright tiers) | webcomponents-supervisor | D1, F6 | done | feat/00-d5-form-associated-mixin | #212 | AM-032 |
 | D6 | D | `LineMachineController` adapter at `line-core/machine` | webcomponents-supervisor | D1 | done | feat/00-d6-machine-controller | #205 | — |
 | D7 | D | Shadow-DOM modular reset sheets (`line-core/styles`) | webcomponents-supervisor | D1 | done | feat/00-d7-reset-sheets | #207 | AM-026, AM-027 |
 | D8 | D | Hello-world integration test component (spec §6.D.8) | webcomponents-supervisor | D6, D7 | done | feat/00-d8-hello-world | #210 | AM-030 |
@@ -66,9 +66,9 @@ number in the stream + 1.
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | in_progress | feat/00-e1-icon-registry | — | — |
+| E1 | E | `line-icons` resolver contract + Lucide and Phosphor reference resolvers | webcomponents-supervisor | D1 | in_review | feat/00-e1-icon-registry | #213 | AM-033, AM-034, AM-035 |
 | E2 | E | Skeleton exports map | webcomponents-supervisor | E1 | todo | — | — | — |
-| E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | in_progress | feat/00-e1-icon-registry | — | — |
+| E3 | E | Registry validation tests (spec §6.E.3) | webcomponents-supervisor | E1, F2 | in_review | feat/00-e1-icon-registry | #213 | AM-033, AM-035 |
 
 ## Stream F — Build, Test, Release Infrastructure (`infra-supervisor`)
 
