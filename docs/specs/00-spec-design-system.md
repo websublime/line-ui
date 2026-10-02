@@ -103,6 +103,7 @@ The complete `exports` contract is fixed by PRD §6.2 + §9.9. Reproduced here f
 {
   "name": "@websublime/line-tokens",
   "type": "module",
+  "files": ["dist"],                            // AM-036
   "sideEffects": ["*.css"],
   "exports": {
     ".":              "./dist/index.css",
@@ -141,6 +142,7 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
 {
   "name": "@websublime/line-colors",
   "type": "module",
+  "files": ["dist"],                            // AM-036
   "sideEffects": ["*.css"],
   "exports": {
     ".":          "./dist/index.css",
@@ -189,6 +191,7 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
 {
   "name": "@websublime/line-schemas",
   "type": "module",
+  "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
   "sideEffects": false,
   "exports": {
     ".": {
@@ -209,6 +212,7 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
 {
   "name": "@websublime/line-themes",
   "type": "module",
+  "files": ["dist"],                            // AM-036
   "sideEffects": ["*.css"],
   "exports": {
     ".":           "./dist/index.css",
@@ -229,6 +233,7 @@ The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all 
 {
   "name": "@websublime/line-utils",
   "type": "module",
+  "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
   "sideEffects": false,
   "exports": {
     ".":          { "types": "./dist/index.d.ts",    "import": "./dist/index.js" },
@@ -244,6 +249,7 @@ The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all 
 {
   "name": "@websublime/line-core",
   "type": "module",
+  "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
   "sideEffects": false,
   "exports": {
     ".":          { "types": "./dist/index.d.ts",           "import": "./dist/index.js" },
@@ -260,6 +266,7 @@ The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all 
 {
   "name": "@websublime/line-components",
   "type": "module",
+  "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
   "sideEffects": [],
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
@@ -275,6 +282,7 @@ Empty in Phase 00. `dist/index.js` exports nothing functional — only re-export
 {
   "name": "@websublime/line-icons",
   "type": "module",
+  "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
   "sideEffects": false,
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
@@ -460,12 +468,14 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-033 | 2026-10-02 | ledger `00-E1` pre-implementation investigation (decision — Miguel chose optional peer dependencies over hard dependencies and over undeclared imports) | (1) The §6.E.2 Phosphor resolver block gets a factual correction because `@phosphor-icons/core@2.1.1` names every non-regular file `<name>-<weight>.svg` (for example `assets/bold/acorn-bold.svg`), and only `regular` uses the bare name. The resolver now computes `file` as `name` for `regular` and `` `${name}-${weight}` `` otherwise, then imports `` `@phosphor-icons/core/assets/${weight}/${file}.svg?raw` ``. The weight type, weight precedence and return statement are unchanged. §6.E.3 now requires the Phosphor resolver test to cover all six weights and notes the `<name>-<weight>.svg` suffix. (2) The §4.8 `package.json` block gains `peerDependencies` for `lucide-static` `^1.16.0` and `@phosphor-icons/core` `^2.1.1`, and `peerDependenciesMeta` marks both optional. The §4.8 prose says a consumer installs only the library whose resolver it uses and the root `devDependencies` keep both for the tests. The §6.A.3 dependency table Source cells for `lucide-static` and `@phosphor-icons/core` add "optional peer of `line-icons` (AM-033)". | ARCHITECTURE §11 says the consumer brings their own resolver and `line-icons` bundles zero icons. Hard `dependencies` would install about 96 MB (lucide-static 59 MB, @phosphor-icons/core 37 MB) for every consumer. Undeclared imports are refused by strict package managers and give the consumer no version range. The old Phosphor path failed at runtime for every non-regular weight. | Throwaway `bun test` on Bun 1.3.14 showed `assets/bold/acorn.svg?raw` fails with `Cannot find module`, while `assets/<w>/acorn[-<w>].svg?raw` resolves for all six weights. `ls node_modules/@phosphor-icons/core/assets/<w>/` lists `acorn-thin.svg`, `acorn-light.svg`, `acorn.svg`, `acorn-bold.svg`, `acorn-fill.svg` and `acorn-duotone.svg`. `du -shL node_modules/lucide-static/ node_modules/@phosphor-icons/core/` reports 59M and 37M. Miguel recorded the peer-dependency decision on 2026-10-02 in `docs/context/00-e1.md` (Decisions). |
 | AM-034 | 2026-10-02 | ledger `00-E1` implement (implementer deviation report) | One factual correction, no requirement or design change: the §6.E.2 Phosphor resolver block imports only the type it uses, so its import line becomes `import type { IconResolver } from '../index.js';`. | The block imported `IconResolverOptions` without using it, so it failed the repo's own strict checks. `tsc --noEmit -p packages/line-icons` reports TS6196 ('IconResolverOptions' is declared but never used) because `tsconfig.base.json` sets `noUnusedLocals: true`, and Biome reports `lint/correctness/noUnusedImports`, which `biome.json` sets to error. Implementation commit `094f6b9` already carries the corrected import. |
 | AM-035 | 2026-10-02 | ledger `00-E1` Verify gate (security-reviewer F1; decision — Miguel chose validating names and weights now over handing the risk to the Phase 1 `<line-icon>` spec) | Four changes, no change to the registry contract. (1) §6.E.2: both resolvers call `assertIconName(name)` before `import()`; it throws `[line-icons] Invalid icon name "<name>".` for any name outside `/^[a-z0-9]+(?:-[a-z0-9]+)*$/`. The guard also rejects any `name` that is not a string, so the check and `import()` never coerce the same value twice. The function lives in the new internal module `src/resolvers/icon-name.ts`, which `src/index.ts` does not re-export, and the spec shows that module. (2) §6.E.2: the Phosphor resolver holds the six weights in a `Set` and throws `[line-icons] Unknown Phosphor weight "<weight>".` for any resolved weight outside it, so the check covers both `options.weight` and the factory default. Both resolvers stay async, so every rejection arrives as a rejected promise. (3) §6.E.1 and §6.E.2: the block comments become short present-state sentences per STYLE.md, and the code comments equal them. (4) §6.E.3: the Lucide and Phosphor test bullets add the rejection cases for invalid names and, for Phosphor, invalid weights. | An unchecked `name` reaches `import()` and walks out of the icon directory under Bun or Node, so a caller-supplied name can load and execute any module the package can resolve. | Orchestrator probe on `dist` under Bun 1.3.14: `createLucideResolver()('../sprite')` returned lucide-static `sprite.svg`; `('../../@phosphor-icons/core/assets/regular/house')` returned a Phosphor SVG; `('../../../package.json?')` returned the line-icons `package.json` as a parsed object; `('../dist/esm/lucide-static.mjs?')` imported and executed that module (default `undefined`). All 1960 Lucide icon names and all 1512 Phosphor icon names match the pattern, so no real icon is rejected. The security re-review (F1-R1) found that `RegExp.test` and the template literal each call `ToString(name)`, so an object whose stateful `toString` returns `house` to the check and `../sprite` to `import()` bypassed the pattern alone. The decision is recorded in `docs/context/00-e1.md` (Decisions). |
+| AM-036 | 2026-10-02 | ledger `00-F9` pre-implementation investigation and review gate iteration 1 (decision — Miguel chose Bun packing of a staged copy with npm uploading over `bun publish` and over keeping `changeset publish` behind an in-place `workspace:` rewrite; chose rewriting `workspace:` ranges in the staged manifest over syncing `bun.lock` after versioning and over upgrading Bun to 1.4.2 inside a fix row; and chose `["dist", "src"]` for the TS-built packages over `["dist"]` everywhere) | Five changes; versions, `exports`, and the dependency graph are unchanged. (1) §4.1–§4.8: every published `package.json` declares `files`. The 5 TS-built packages (`line-schemas`, `line-utils`, `line-icons`, `line-core`, `line-components`) use `["dist", "src"]`, and the CSS packages (`line-tokens`, `line-colors`, `line-themes`) use `["dist"]`. (2) §6.F.5 adds the publisher `scripts/publish.mjs`. It discovers non-private packages outside the Changesets `ignore` list and orders them dependencies first (a cycle fails, ties sort by name). It checks each `name@version` with `npm view --json` and skips published ones. It copies each package (without `node_modules`) to a temp staging directory, rewrites every `workspace:` range in the staged manifest from the versions in `packages/*/package.json`, and runs `bun pm pack --quiet` there. It runs the pack checks on the tarball, uploads it with `npm publish <tarball> --access public --tag <tag>`, and finally runs `changeset tag` unless `--no-git-tag` is passed. Its `--dry-run` mode packs and checks every publishable package and uploads nothing. Tracked files are never mutated. Root scripts become `"release": "bun run scripts/publish.mjs"` and `"snapshot:publish": "bun run scripts/publish.mjs --tag canary --no-git-tag"`. (3) §6.F.5 adds the guard `scripts/verify-pack.mjs`. It packs every publishable package offline through the same staging function and checks `exports` targets, an allowlist and a denylist of tarball paths, leftover `workspace:`/`catalog:` ranges, and internal ranges against the versions in `packages/*/package.json`. `checks.yml` runs it as `Pack verification (AM-036)` right after the typecheck step. `CHANGELOG.md` is intentionally not shipped. (4) §6.A A4 and the §6.F.5 snapshot paragraph now say `snapshot:publish` runs that script with `--tag canary` and no git tags. (5) §7.2 states the release split. `release.yml` is unchanged (`changesets/action@v1`, `publish: bun run release`). | `changeset publish` uploads with `npm publish` under Bun, and `npm publish` drops `dist/` and ships `workspace:^` unrewritten, so every published tarball would be uninstallable. Upgrading Changesets does not fix this because 3.0.3 still falls back to npm for Bun. `bun pm pack` honours `files`, but on Bun 1.3.14 it fills `workspace:` ranges from the versions recorded in `bun.lock`, and `changeset version` never updates `bun.lock`, so a plain pack after versioning ships stale ranges. The staged rewrite reads the versions Changesets just wrote. Syncing `bun.lock` was rejected because it means text surgery on the lockfile format plus a `version:` hook in `release.yml`. Upgrading to Bun 1.4.2 was rejected because it is out of scope for a fix row and still ships stale ranges if the pack runs before `bun install`. An in-place `workspace:` rewrite before `changeset publish` was rejected because it mutates tracked manifests and copies pnpm's rewrite rules. Without `files`, `bun pm pack` ships `src/`, `__tests__/`, and `tsconfig.json`. `["dist"]` everywhere was rejected because the shipped `.d.ts.map`/`.js.map` point at `../src`. npm stays the uploader because it can switch from token auth to OIDC trusted publishing with provenance later, and `bun publish` has no OIDC (oven-sh/bun#22423 open). Bun leaves `CHANGELOG.md` out when `files` is set, and release notes live in the repository, the GitHub releases, and the site (PRD §6.4). `snapshot:publish` (`changeset publish --snapshot --tag canary`) fails flag validation in 2.31.0, so A4's "already wired" was wrong. The source of the wrong premise is research R14 (round 1 l.175, round 2 l.117-118), which called Changesets package-manager-agnostic for publishing. | `getPublishTool` picks npm for anything but pnpm (`node_modules/@changesets/cli/dist/changesets-cli.cjs.js:743-749`); 3.0.3 falls back to npm for Bun (`dist/getPublishPlan.mjs:569-591`). `npm pack --dry-run` in all 8 packages lists zero `dist/` files and includes `src/`, `__tests__/`, `tsconfig.json`, `vite.config.mjs`. `npm pack` of `line-utils` keeps `"@websublime/line-schemas": "workspace:^"`. `bun pm pack` includes `dist/` (33/3/32/16/28/41/20/12 files for colors, components, core, icons, schemas, themes, tokens, utils). Probe on Bun 1.3.14: workspace `a` bumped from `0.0.0` to `0.1.0`, `b` still packs `"a": "^0.0.0"` after `bun install`, and `bun install --frozen-lockfile` exits 0 (oven-sh/bun#18906, fixed by #41302 after 1.4.0). Probe on Bun 1.4.2: `bun install` refreshes the lockfile, but a pack before it still ships the stale range. Every `exports` target of the 8 packages lives under `./dist/`. `npm view @websublime/line-<name>` returns E404 for all 8. `validateCommandFlags` rejects `--snapshot` for `publish` (cli lines 1400-1406). `changesets/action@v1` is a floating branch, currently v1.9.0, and matches `New tag:` lines from the publish script's stdout (`src/run.ts:101`); `changeset tag` prints them (cli lines 1296-1318). Bun 1.3.14, npm 10.9.9, `@changesets/cli` 2.31.0. Full record in `docs/context/00-f9.md`. |
+| AM-037 | 2026-10-02 | ledger `00-F9` Verify gate (security-reviewer F9-SEC-01, F9-SEC-03) | Two factual corrections, no requirement or design change. (1) §6.F.5 Publish path step 6: the repo `.npmrc` pins both `registry` and `@websublime:registry` to `https://registry.npmjs.org/`. (2) §6.F.5 guard check (c): the denylist adds any path segment that starts with `.`, `*.pem`, and `*.key`. | npm resolves `@websublime/*` through the `@websublime:registry` key, which beats `registry`. A user `~/.npmrc` that sets `@websublime:registry=https://npm.pkg.github.com` would send `npm view` and `npm publish` to GitHub Packages, and project config beats user config only for the same key. The denylist also let dotfiles such as `.env` and key files ship if they sat under a `files` entry. | `.github/actions/npmrc/action.yml:20` writes `@websublime:registry=https://npm.pkg.github.com`. With that line in a user `~/.npmrc`, `npm config get @websublime:registry` from the repo root returns `https://registry.npmjs.org/` once the repo `.npmrc` sets the key. A `checkDenylist` probe flags `src/.env`, `dist/.secret/x.js`, `dist/a.pem`, and `src/b.key`, and passes `dist/index.js`. |
 
 **A4 — npm scope.**
 
 - Confirm npm organisation `@websublime` exists and the publishing token has access. (Repo metadata already declares `@websublime/line-*` names.)
 - Each published package declares `"publishConfig": { "access": "public" }`.
-- Snapshot/canary publishing verified by `bun run snapshot:publish` (already wired) once Stream F lands. Phase 00 publishes at least one snapshot to validate the pipeline end-to-end.
+- Snapshot/canary publishing verified by `bun run snapshot:publish` once Stream F lands. The script runs the §6.F.5 publisher `scripts/publish.mjs` with `--tag canary` and `--no-git-tag`, so it uploads canary tarballs and creates no git tags (AM-036). Phase 00 publishes at least one snapshot to validate the pipeline end-to-end.
 
 ### 6.B Stream B — Monorepo Restructure
 
@@ -1484,6 +1494,8 @@ jobs:
       - run: bun run lint                        # biome check
       - run: bun run build                       # AM-029: two-phase (packages, then apps) — Bun --filter ignores devDependencies ordering
       - run: bun --filter '@websublime/*' typecheck  # AM-025: after build — needs line-schemas dist/*.d.ts
+      - name: Pack verification (AM-036)
+        run: bun run scripts/verify-pack.mjs    # after build — packs every publishable package offline and checks the tarballs
       - run: bun -e "const m = await import('./packages/line-components/dist/index.js'); const n = Object.keys(m).length; if (n !== 0) { console.error('line-components must export nothing in Phase 00, got', n); process.exit(1); }"  # zero-export smoke (§9.1, RK11, AM-007)
       - run: bun run scripts/lint-layers.mjs      # downward-only enforcement
       - run: bun run scripts/verify-palettes-fresh.mjs
@@ -1520,7 +1532,40 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```
 
-`.github/workflows/snapshot-version.yml` and `snapshot-deploy.yml` — pre-existing repo scripts (`snapshot:version`, `snapshot:publish`) wired, in the Stream F-authored workflows (F3 / F4 per §6.F.5), into manual-dispatch and/or push-to-`main` flows. RC pipeline = manual dispatch or push-to-`main` → snapshot publish with `--tag canary`. There is no `next` branch (see AM-008).
+`.github/workflows/snapshot-version.yml` and `snapshot-deploy.yml` wire the repo scripts `snapshot:version` and `snapshot:publish` into manual-dispatch and/or push-to-`main` flows. These workflows are authored in Stream F (F3 / F4 per §6.F.5). `snapshot:version` is unchanged. `snapshot:publish` runs the publisher below with `--tag canary --no-git-tag` (AM-036). The RC pipeline is manual dispatch or push-to-`main`, then a snapshot publish under the `canary` dist-tag. There is no `next` branch (see AM-008).
+
+**Publish path (AM-036).** Changesets versions and tags, Bun packs a staged copy of each package, and npm uploads. `changeset publish` is not used, because under Bun it uploads with `npm publish`, which drops `dist/` and ships `workspace:` ranges unrewritten. The root `package.json` declares two scripts:
+
+```jsonc
+{
+  "scripts": {
+    "release":          "bun run scripts/publish.mjs",
+    "snapshot:publish": "bun run scripts/publish.mjs --tag canary --no-git-tag"
+  }
+}
+```
+
+The publisher `scripts/publish.mjs` is a Bun-run ESM script like the other `scripts/*.mjs`. It does the following, in order:
+
+1. It discovers the publishable packages. These are the `packages/*/package.json` manifests, minus those with `"private": true`, minus the names in the `ignore` list of `.changeset/config.json`. It reuses the discovery function that `scripts/verify-pack.mjs` exports.
+2. It orders them so dependencies come before dependents. The order is a topological sort over the internal `@websublime/*` names in each manifest's `dependencies` and `peerDependencies`. Packages with no ordering constraint between them sort by package name. A dependency cycle fails the run.
+3. For each package it runs `npm view <name>@<version> version --json`. Exit 0 with a version means the version is published, so it logs a line saying so and skips the upload. A non-zero exit whose JSON has `.error.code === "E404"` means the version is new, so it publishes; this covers both "package not found" and "no match for version". Any other result fails the run.
+4. It packs the package through the shared staging function that `scripts/verify-pack.mjs` exports. The function copies the package directory, without `node_modules`, to a temp staging directory. In the staged `package.json` it rewrites every `workspace:` range in `dependencies`, `peerDependencies`, `optionalDependencies`, and `devDependencies`, using the target package's `version` from `packages/*/package.json`. `workspace:^` becomes `^<v>`, `workspace:~` becomes `~<v>`, `workspace:*` becomes `<v>`, and `workspace:<range>` becomes `<range>`. A target that is not a workspace package fails the run. Then it runs `bun pm pack --quiet --destination <tmpdir>` in the staging directory. That command prints a blank line and then the absolute tarball path, so the script takes the last non-empty stdout line as the path. Tracked files are never mutated. The staging exists because Bun 1.3.14 fills `workspace:` ranges from the versions in `bun.lock`, and `changeset version` does not update `bun.lock` (oven-sh/bun#18906).
+5. It runs the guard's tarball checks (a)–(e) below on that tarball, using the functions `scripts/verify-pack.mjs` exports. A failed check stops the run before that package uploads.
+6. It uploads with `npm publish <tarball> --access public --tag <tag>`. The tag comes from `--tag <name>` and defaults to `latest`. Steps 3 and 6 run with the repository root as the working directory, so the repo `.npmrc` applies. It pins both `registry` and `@websublime:registry` to `https://registry.npmjs.org/`, because npm resolves the scope key before `registry` and project config beats user config for the same key (AM-037). Only `bun pm pack` runs in the staging directory.
+7. After every upload succeeds, it runs `changeset tag` unless `--no-git-tag` is passed. It passes `changeset tag` stdout through unchanged, because `changesets/action@v1` detects published packages from the `New tag: <name>@<version>` lines. The `@v1` ref is a floating branch, currently v1.9.0, with the regex at `src/run.ts:101`.
+
+The publisher fails fast. The first error stops the run with a non-zero exit. A re-run is idempotent because step 3 skips versions already in the registry. With `--dry-run` it runs steps 1–5 for every publishable package, including those `npm view` reports as published, and marks each one `publish` or `skip` in the printed plan (package, version, tag, tarball path). The read-only `npm view` still runs, but `npm publish` and `changeset tag` never do. The publisher never prints secrets. npm reads `NPM_TOKEN` through the auth line that `changesets/action@v1` writes into the user `~/.npmrc` in its publish branch, and the snapshot workflows (00-F3) must write that line themselves. npm can switch to OIDC trusted publishing with provenance later. `bun publish` has no OIDC (oven-sh/bun#22423), so npm uploads.
+
+The guard `scripts/verify-pack.mjs` runs after `bun run build`, because it needs the built `dist/`. It uses no network. It discovers the publishable packages the same way and packs each one through the same staging function as publisher step 4, so CI checks the exact artifact the publisher uploads. It reads each tarball with `new Bun.Archive(bytes).files()`, whose keys are `package/<path>`, and checks:
+
+- (a) Every `exports` target exists in the tarball. The check recurses into condition objects, and a `*` pattern must match at least one file. Any `main`, `module`, or `types` field must also exist.
+- (b) Every tarball path is on the allowlist. The allowlist holds `package.json`, `README*`, `LICENSE*`, `LICENCE*` (Bun adds the British spelling too), and paths under the `files` entries. `CHANGELOG.md` is intentionally not shipped. Bun leaves it out when `files` is set, and release notes live in the repository, the GitHub releases, and the site (PRD §6.4).
+- (c) No tarball path hits the denylist, including paths under the `files` entries. The denylist is any `__tests__/` segment, `*.test.*`, `*.spec.*`, `tsconfig*.json`, `vite.config.*`, `*.tsbuildinfo`, any path segment that starts with `.`, `*.pem`, and `*.key` (AM-037).
+- (d) The packed manifest has no `workspace:` or `catalog:` range in `dependencies`, `peerDependencies`, `optionalDependencies`, or `devDependencies`.
+- (e) Every internal `@websublime/*` range in the packed manifest is satisfied by that package's current version, read from `packages/*/package.json` (never from `bun.lock` or the packed output).
+
+It exits non-zero and lists every failure, not just the first. It exports its discovery, pack, and check functions for `publish.mjs` to import, and its CLI entry runs only under `import.meta.main`.
 
 `.github/workflows/deploy-site.yml`:
 
@@ -1743,6 +1788,7 @@ Two invariants govern this matrix:
 - Each published package is independently versioned via `@changesets/cli` (the existing config is already operational).
 - Phase 00 ships `0.1.0` of every package (initial publish). Plan §7.1 of PRD anchors `0.1.0` to Phase 00 exit.
 - Pre-1.0 breaking changes are permitted at minor bumps (PRD §7.1).
+- Releases split three ways (AM-036). Changesets versions packages and creates git tags (`changeset version`, `changeset tag`), Bun packs a staged copy of each package whose `workspace:` ranges the publisher has already rewritten (`bun pm pack`), and npm uploads the tarballs (`npm publish <tarball>`). The §6.F.5 publisher `scripts/publish.mjs` drives the last two steps.
 - No stable releases during Phase 00 — only RCs published from `main` via snapshot/canary tags; there is no `next` branch.
 
 ### 7.3 CEM (Custom Elements Manifest)
