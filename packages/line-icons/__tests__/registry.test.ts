@@ -16,8 +16,7 @@ describe('IconRegistry', () => {
     ];
     for (const [name, options] of lucideCalls) {
       const svg = await registry.resolve('lucide', name, options);
-      expect(svg).toBeString();
-      expect(svg as string).toContain('<svg');
+      expect(svg).toBe(await createLucideResolver()(name));
     }
     expect(lucide.mock.calls).toEqual(lucideCalls);
 
@@ -28,8 +27,7 @@ describe('IconRegistry', () => {
     ];
     for (const [name, options] of phosphorCalls) {
       const svg = await registry.resolve('phosphor', name, options);
-      expect(svg).toBeString();
-      expect(svg as string).toContain('<svg');
+      expect(svg).toBe(await createPhosphorResolver()(name, options));
     }
     expect(phosphor.mock.calls).toEqual(phosphorCalls);
   });

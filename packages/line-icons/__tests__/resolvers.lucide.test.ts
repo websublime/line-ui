@@ -27,4 +27,10 @@ describe('createLucideResolver', () => {
   test.each(invalidNames)('rejects the invalid name %p before import()', async (name) => {
     await expect(resolve(name)).rejects.toThrow(`[line-icons] Invalid icon name "${name}".`);
   });
+
+  test('rejects a name whose toString changes between calls', async () => {
+    let n = 0;
+    const shifty = { toString: () => (n++ ? '../sprite' : 'house') };
+    await expect(resolve(shifty as never)).rejects.toThrow('[line-icons] Invalid icon name "house".');
+  });
 });
