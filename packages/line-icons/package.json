@@ -2,6 +2,7 @@
   "name": "@websublime/line-icons",
   "version": "0.0.0",
   "type": "module",
+  "license": "MIT",
   "files": [
     "dist",
     "src"
