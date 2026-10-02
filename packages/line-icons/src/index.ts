@@ -1,7 +1,7 @@
 export type IconResolver = (name: string, options?: IconResolverOptions) => Promise<string | SVGElement>;
 
 export interface IconResolverOptions {
-  /** Library-specific options, e.g. Phosphor weight. Untyped at the registry level. */
+  /** Library-specific options such as the Phosphor weight. The registry does not type them. */
   [key: string]: unknown;
 }
 
@@ -23,9 +23,9 @@ export class IconRegistry {
   }
 }
 
-// Shared singleton convenience
+// A shared registry instance for apps that need only one.
 export const iconRegistry = new IconRegistry();
 
-// Reference resolver factories validate the contract against two real libraries
+// The reference resolver factories validate the contract against two real libraries.
 export { createLucideResolver } from './resolvers/lucide.js';
 export { createPhosphorResolver } from './resolvers/phosphor.js';
