@@ -13,14 +13,16 @@
 >   iframe (MCP Apps).
 > - The declarative tier is the headless thesis applied to agents. A2UI says the agent describes *what* and the
 >   renderer decides *how*. Its v0.9 renamed the "Standard" catalog to "Basic" because teams already own a
->   design system, and v1.0 removes agent theming. line://ui fits this tier without bending a Manifesto law.
+>   design system, and v1.0 removes agent theming. line://ui fits this tier. Nine of the ten Manifesto laws hold
+>   without amendment, Law 8 (progressive enhancement) holds only partially, and Principle 5 needs explicit
+>   wording (§3.2).
 > - No web-components design system ships a runtime generative-UI catalog today. A headless catalog generated
 >   from Zod descriptors and checked against the CEM would be the first.
-> - Proposed architecture: components stay protocol-unaware. One opt-in package, `@websublime/line-genui`, holds
+> - The proposal keeps components protocol-unaware. One opt-in package, `@websublime/line-genui`, holds
 >   a protocol-neutral catalog, an A2UI catalog emitter, and a light-DOM `<line-a2ui-surface>` renderer built on
 >   `@a2ui/web_core`. A CSS-only MCP Apps theming bridge lands in `line-themes`. Transports (AG-UI, A2A, MCP)
 >   stay with the app.
-> - The time-critical part has no runtime. Phase 1 component specs should adopt an "agent-ready" contract (§4.3)
+> - The agent-ready contract (§4.3) is time-critical but needs no runtime. Phase 1 component specs should adopt it
 >   before they are written, because retrofitting 131 components later costs far more.
 > - A2UI is still an "early stage public preview". v0.9.1 is the production release, the v1.0 release candidate
 >   took a breaking change on 2026-10-02, and upstream targets stability for Q4 2026. Target v0.9.1 behind a
@@ -57,8 +59,8 @@ appears only in §4.9, because it is nearly free.
 |---|---|---|---|---|
 | **A2UI** | Google (CLA required), Apache-2.0 | v0.9.1 production; v1.0 RC (`@path`/`@call` break landed 2026-10-02); "early stage public preview"; stability targeted Q4 2026 | JSONL `createSurface`, `updateComponents`, `updateDataModel`, `deleteSurface`; `action` and `error` back; MIME `application/a2ui+json` | High. Client-owned catalog, host-owned styling, official Lit renderer |
 | **`@a2ui/web_core`**, **`@a2ui/lit`** | Google, Apache-2.0 | 0.12.0 (2026-09-28); breaking changes ship in minor versions | Framework-agnostic message processor, data model, binder, Zod catalog types; Lit universal components | High. Same `lit ^3.3.3` and `zod ^3.25.76` as line://ui (verified with `npm view`) |
-| **AG-UI** | CopilotKit-led, MIT | 1.0 (2026-09-17); `@ag-ui/client` 1.0.2 | SSE event stream, `RunAgentInput`; A2UI rides `ACTIVITY_SNAPSHOT{activityType:"a2ui-surface"}` | Transport. App concern; the client is framework-agnostic (rxjs only) |
-| **MCP Apps** (SEP-1865) | MCP project, MIT SDK | Stable spec 2026-01-26; `@modelcontextprotocol/ext-apps` 2.0.3; hosts include Claude, ChatGPT, VS Code, M365 Copilot, Cursor, Goose | `ui://` resource, `text/html;profile=mcp-app`, sandboxed iframe, postMessage JSON-RPC; ~70 standard host CSS variables | Medium. line://ui as building blocks inside a View; theming bridge |
+| **AG-UI** | CopilotKit-led, MIT | 1.0 (2026-09-17); `@ag-ui/client` 1.0.2 | SSE event stream, `RunAgentInput`; A2UI rides `ACTIVITY_SNAPSHOT{activityType:"a2ui-surface"}` | Transport. App concern; the client has no framework dependency |
+| **MCP Apps** (SEP-1865) | MCP project, MIT SDK | Stable spec 2026-01-26; `@modelcontextprotocol/ext-apps` 2.0.3; hosts include Claude, ChatGPT, VS Code, M365 Copilot, Cursor, Goose | `ui://` resource, `text/html;profile=mcp-app`, sandboxed iframe, postMessage JSON-RPC; 76 standard host CSS variables | Medium. line://ui as building blocks inside a View; theming bridge |
 | **WebMCP** | W3C WebML CG, Chromium | CG draft 2026-09-29; Chrome origin trial M149–M156 (extension to M162 filed); no Firefox or Safari signal | `document.modelContext.registerTool`; declarative `<form toolname>` | Watch. Form-associated custom element support is a Chromium prototype; spec issue #94 open |
 | json-render | Vercel Labs, Apache-2.0 | 0.21.0 | Flat spec + JSONL of RFC 6902 patches; Zod catalogs | Low. No WC renderer (proposal #289) |
 | OpenUI / OpenUI Cloud (ex-C1) | Thesys, MIT / commercial | `@openuidev/lang-core` 0.3.1 | Line DSL; experimental A2UI v1.0 profile | Low. React-first runtimes |
@@ -90,7 +92,7 @@ appears only in §4.9, because it is nearly free.
 - Slots map onto A2UI's flat adjacency list. A default slot becomes `child` or `children`, and a named slot
   becomes a `ComponentId` prop. A2UI's `Modal.trigger` and `Modal.content` already use this shape.
 - Custom elements upgrade when their definition arrives, so a renderer can create `<line-button>` first and
-  `import()` its subpath on demand. Law 6 survives.
+  `import()` its subpath on demand. Law 6 can hold this way; the spike measures it (§6).
 
 ### 3.2 Law-by-law check
 
@@ -99,9 +101,9 @@ appears only in §4.9, because it is nearly free.
 | Law 1, `::part()` on every zone | Document `::part()` rules cannot reach elements inside another shadow root, so the surface must render in light DOM | Yes, with a light-DOM surface |
 | Law 2, `line-*` prefix | `<line-a2ui-surface>`, `line-genui`, `--line-*` only. Catalog names (`Button`) are protocol identifiers, not tags or CSS | Yes |
 | Law 3, WCAG 2.1 AA | Agent-built trees can omit labels; the renderer validates required names and owns live-region and focus policy | Yes, if the renderer enforces it |
-| Law 4, no component imports | The renderer lives outside `line-components` and composes by tag name and slots | Yes |
+| Law 4, no component imports | The surface is an orchestrator. It creates elements by tag and wires them through slots, and it imports component modules only to register them, never to compose a class | Yes |
 | Law 5, machines / Lit / CSS | The renderer sets properties; components gain no protocol logic | Yes |
-| Law 6, bundle isolation | Lazy `import()` per catalog entry; nothing defines tags eagerly | Yes |
+| Law 6, bundle isolation | Lazy `import()` per catalog entry; nothing defines tags eagerly. The catalog's schema weight still grows with the number of descriptors | Yes, pending the spike's bundle analysis (§6) |
 | Law 7, opt-in forms | A2UI forms live in the surface data model, not in `<form>`; `FormAssociated` stays orthogonal | Yes |
 | Law 8, progressive enhancement | Generated UI needs JavaScript; server-side A2UI → HTML is the progressive path (§4.9) | Partially |
 | Law 9, never throw | `web_core` throws on tag collisions, a missing `api`, and bad `openUrl` schemes; the surface catches and degrades | Yes, with guards |
@@ -175,7 +177,8 @@ and Storybook MCP consumers.
 ### 4.4 Catalog pipeline
 
 - One descriptor per component under `line-genui/src/catalog/` is the source of truth. It uses the
-  `@a2ui/web_core` Zod types (`DynamicString`, `ComponentId`, `ChildList`, `Action`, `Checkable`).
+  `@a2ui/web_core/v0_9` Zod schemas for the A2UI common types (`DynamicStringSchema`, `DynamicNumberSchema` and
+  their siblings for `ComponentId`, `ChildList`, `Action`, `Checkable`).
 - A descriptor holds:
   - the catalog name, the tag, and `load()`, which imports the component subpath;
   - the prop schema and the slot map;
@@ -199,7 +202,7 @@ and Storybook MCP consumers.
     `https://<line-domain>/a2ui/v0.9/catalog/line/1`, changes on every incompatible edit (A2UI rule).
   - The `basic` compatibility catalog registers line components under the A2UI basic catalog id, so agents that
     know only the basic catalog render with line://ui (§4.6).
-- line://ui and `web_core` both pin `zod ^3.25.76`, so the descriptors share types with `web_core` directly.
+- line://ui and `web_core` both declare `zod ^3.25.76`, so the descriptors share types with `web_core` directly.
 
 ### 4.5 Renderer: `<line-a2ui-surface>`
 
@@ -219,7 +222,7 @@ The surface handles a message batch in six steps.
 | Topic | Proposal | Reason |
 |---|---|---|
 | Render root | Light DOM | Document `::part()` rules cannot reach elements inside another shadow root. A2UI's own basic catalog moved to light DOM in 0.11 |
-| Projection | Spike both (a) light-DOM adapter elements rendered through `web_core` `renderA2uiNode`, and (b) direct projection on `web_core` models and binder | (a) reuses upstream rendering and may run inside other A2UI web renderers; (b) avoids one wrapper element per node and keeps slot semantics exact |
+| Projection | Spike both (a) light-DOM adapter elements rendered through `web_core` `renderA2uiNode`, and (b) direct projection on `web_core` models and binder | (a) reuses upstream rendering and may run inside other A2UI web renderers, but only where the host renders in light DOM, because upstream `<a2ui-surface>` keeps a shadow root that blocks document `::part()` rules; (b) avoids one wrapper element per node and keeps slot semantics exact |
 | Loading | `load()` per descriptor; no eager `define()` | Law 6 |
 | Versions | Accept v0.9 and v0.9.1 now; add v1.0 when upstream renderers ship it | The v1.0 RC still breaks |
 | Theme | Ignore `theme.primaryColor` by default; an opt-in hook can map it to `data-accent` | The host owns styling, and v1.0 drops `theme` |
@@ -291,9 +294,14 @@ spec text, so recipes pin versions.
   default CSP allows inline script and style. line://ui works there unchanged, either inlined into the document
   (for example with `vite-plugin-singlefile`) or loaded from a CDN listed in `resourceDomains`.
 - **Theming bridge.** `@websublime/line-themes/hosts/mcp-apps.css` maps the host's standard variables onto line
-  aliases, each with the line value as fallback. The app applies `hostContext.styles.variables` and
-  `hostContext.theme` with the ext-apps SDK (`applyHostStyleVariables`, `applyDocumentTheme`). The SDK also sets
-  `color-scheme`, which `light-dark()` needs.
+  theme aliases and token primitives. The app applies `hostContext.styles.variables` and `hostContext.theme` with
+  the ext-apps SDK (`applyHostStyleVariables`, `applyDocumentTheme`). The SDK also sets `color-scheme`, which
+  `light-dark()` needs.
+- **Fallbacks differ by layer.** A theme alias falls back to its line step, for example
+  `--line-gray-surface: var(--color-background-primary, var(--line-gray-2))`. A token primitive cannot fall back
+  to itself, because a self-reference is a cycle and resolves to invalid. The spec chooses between copying the
+  `line-tokens` literals into the bridge (a drift source across layers) and a second host sheet in `line-tokens`
+  for the primitive rows.
 - **A2UI inside an MCP App.** The A2UI guide "A2UI in MCP Apps" runs a renderer inside the View, so `line-genui`
   covers that case with no extra code.
 - **Host side, deferred.** A `<line-mcp-app-frame>` around ext-apps `AppBridge` would be the only native
@@ -349,7 +357,7 @@ of those.
 | `docs/PRD.md` | Revision-log entry; §1.4 principle; §6.1 package count 8 → 9; §7 roadmap rows for the spike and the ship step; appendix "Generative UI (exploratory)"; §8.1 spec template gains an agent contract section |
 | `docs/ARCHITECTURE.md` | A section on agent-driven UI (layers, light-DOM surface, catalog pipeline); a §12 note on lazy registries |
 | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` (pending) | Rules C1–C8 |
-| `scripts/lint-layers.mjs` | `line-genui` edge set |
+| `scripts/lint-layers.mjs` and the spec edge table it copies (`docs/specs/00-spec-design-system.md` §6.B, or the opening phase's spec) | `line-genui` edge set |
 | `custom-elements-manifest.config.mjs` | Optional analyzer plugin for `formAssociated`, `version`, `scope` |
 
 ## 6. Phasing proposal
@@ -388,7 +396,7 @@ The spike answers these questions at its exit.
 
 ## 8. Open forks
 
-These need Miguel. The recommended option is listed first.
+The six forks below need Miguel's decision. The recommended option is listed first.
 
 1. **Direction.** (a) Run the spike first and decide at its exit, as with HTMX. (b) Adopt agent-driven UI as an
    exploratory principle now (PRD revision, Manifesto wording) and then spike. (c) Defer until A2UI v1.0 is final.
