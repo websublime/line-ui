@@ -76,7 +76,7 @@ number in the stream + 1.
 |---|---|---|---|---|---|---|---|---|
 | F1 | F | Storybook 10 + web-components-vite + CEM analyser (shared Vite 8 build landed in B4 #181) | infra-supervisor | B4 | done | — | #194 | AM-016, AM-017 |
 | F2 | F | Bun test harness with happy-dom + `@open-wc/testing-helpers` preload | infra-supervisor | B4 | done | — | #195 | AM-018, AM-019 |
-| F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2, F9 | in_review | ci/00-f3-release-workflows | #217 | AM-038, AM-039, AM-040 |
+| F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2, F9 | done | ci/00-f3-release-workflows | #217 | AM-038, AM-039, AM-040 |
 | F4 | F | `checks.yml` with the CI assertions reallocated from C4 / C5 / F2 (spec §6.F.5, AM-013, AM-014, AM-018) | infra-supervisor | F1, F2, F6 | done | — | #204 | AM-024, AM-025 |
 | F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | todo | — | — | — |
 | F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | done | — | #201 | AM-023 |
@@ -111,4 +111,4 @@ number in the stream + 1.
 | Z3 | Z | Document the required `project` argument (repository root path) of the code-graph `index_status` call in the `understand` skill and PROCESS §4 | main session | — | done | docs/00-z3-index-status-arg | #206 | — |
 | Z4 | Z | Exclude the gitignored legacy `temp/` tree from `bun test` discovery (`bunfig.toml` `[test] pathIgnorePatterns`) | infra-supervisor | — | done | chore/00-z4-bun-test-ignore-temp | #208 | AM-028 |
 | Z5 | Z | Declare `"license": "MIT"` in the root and the 8 published packages, update the MIT copyright holder in `LICENSE`, and ship a `LICENSE` in each package (root `package.json` said ISC while `LICENSE` was MIT, `Vitamin UI` 2020) | infra-supervisor | F9 | done | chore/00-z5-mit-license | #216 | — |
-| Z6 | Z | Phase 00 ships `0.1.0` of every package (spec §7.2): the Version PR (#218) bumps `line-themes` and `line-components` only to `0.0.1` because their pending changesets are all `patch` — reclassify the C6 role-maps changeset as `minor` (new capability, PROCESS §6) and add a `minor` changeset for the `line-components` umbrella | infra-supervisor | C6, B1 | in_progress | fix/00-z6-phase-00-minor-versions | — | — |
+| Z6 | Z | Phase 00 ships `0.1.0` of every package (spec §7.2): the Version PR (#218) bumps `line-themes` and `line-components` only to `0.0.1` because their pending changesets are all `patch` — reclassify the C6 role-maps changeset as `minor` (new capability, PROCESS §6) and add a `minor` changeset for the `line-components` umbrella | infra-supervisor | C6, B1 | in_review | fix/00-z6-phase-00-minor-versions | #219 | — |
