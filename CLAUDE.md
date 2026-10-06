@@ -40,7 +40,7 @@ line-ui/
 ├── scripts/         # generate-palettes, generate-role-maps, validate-contrast, verify-palettes-fresh, lint-layers
 ├── docs/            # MANIFESTO, PRD, ARCHITECTURE, PROCESS, STYLE, plans/ (plan + ledger), research/, specs/
 ├── .claude/         # agents/ (sdlc, git-workflow-manager, supervisors), skills/ (understand)
-├── .changeset/ · .githooks/ (pre-commit: biome) · .github/actions/ (npmrc) · .mcp.json (codebase-memory)
+├── .changeset/ · .githooks/ (pre-commit: biome) · .github/workflows/ · .mcp.json (codebase-memory)
 └── biome.json · tsconfig.base.json · postcss.config.mjs · vite.config.shared.mjs · bun-test-preload.ts · bunfig.toml
 ```
 
