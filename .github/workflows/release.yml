@@ -13,14 +13,14 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30                        # AM-038
     environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v7              # AM-038: node24 runtime; credentials kept: changesets/action pushes the Version PR branch and tags
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Checkout                         # AM-038: node24 runtime; credentials kept: changesets/action pushes the Version PR branch and tags
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Bun
-        uses: oven-sh/setup-bun@v2
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with: { bun-version-file: .bun-version }
       - name: Set up Node 24                   # AM-038: Node 24 LTS bundles npm >= 11.5.1; no registry-url (it hides ~/.npmrc)
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
         with: { node-version: '24', package-manager-cache: false }
       - name: Assert npm >= 11.5.1 and Node >= 22.14.0 (trusted publishing)
         run: |
@@ -37,9 +37,9 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile
       - name: Build
-        run: bun run build                     # AM-029: two-phase (packages, then apps) — Bun --filter ignores devDependencies ordering
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
       - name: Version PR or publish
-        uses: changesets/action@v1
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           publish: bun run release
         env:
