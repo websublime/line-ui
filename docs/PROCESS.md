@@ -151,7 +151,9 @@ Gates are proportional to the class. A phase is not locked until its gate passes
   dependencies) and the semver bump — `patch` for fixes, `minor` for new capability, `major` for a breaking
   contract — and write a one-line consumer-facing summary. A branch that changed no published package runs
   `bun run empty` instead, so every PR carries a file under `.changeset/`. `bun run status` shows what the
-  branch will bump. No changeset file, no PR. This is the only statement of the rule; other files point here.
+  branch will bump. No changeset file, no PR. Once a phase's minor release has shipped, further changesets in that phase use
+  `patch`, even for new capability, so the next minor stays the next phase's version (PRD §7.1, §6.5). This is
+  the only statement of the rule; other files point here.
 - **The PR opens only with a Verify record and a reviewer verdict in hand.** One PR per row, title
   `<NN>-<ID> — <task title>`, body with Understand (class, write-back), Decisions, Deviations and AM rows,
   Verify (the record, the reviewer verdict, which agents ran), Ledger (row change). `git-workflow-manager`
