@@ -6,6 +6,11 @@
   "files": [
     "dist"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-colors"
+  },
   "sideEffects": [
     "*.css"
   ],
