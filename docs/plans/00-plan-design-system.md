@@ -4,7 +4,7 @@
 **Author:** Ada (architect)
 **Date:** 2026-05-19
 **Phase Version Target:** `line://ui` v0.1.0 (also called "Phase 0" in the PRD)
-**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.4)
+**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.5)
 **Source Architecture:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (aligned with PRD v0.8.3)
 
 > **What this document is.** A planning document. It defines scope, high-level task breakdown, dependencies, and acceptance criteria for the Phase 00 release.
@@ -111,7 +111,7 @@ The following are explicitly **not** part of Phase 00:
 - **Utility classes** (e.g., the v0.7 utility-first set). Explicitly **not** in Phase 00 scope and explicitly **not** part of the core design system contract. Per PRD §9.13, the decision (ship, rename, or remove) is deferred to Phase 1 spec; with attribute-based theming the v0.7 utility-first pattern is largely redundant. They re-enter discussion only at Phase 1 spec time.
 - **Icon library content.** Only the registry contract + 1 reference library wiring; full icon surface lands in Phase 1.
 - **`line-form` / cross-field validation orchestration** (post-1.0 nice-to-have).
-- **Stable releases.** Phase 00 ships only RCs (PRD §6 note: "No stable releases during Phase 0, only RCs").
+- **Stable releases beyond `0.1.x`.** Phase 00 ships the first stable release, `0.1.0`, through the Version PR merge (PRD §6.5, v0.8.5); later Phase 00 changes to a published package ship as `0.1.x` patches, and `0.2.0` is Phase 1. RCs are canary snapshots.
 
 ---
 
@@ -337,7 +337,7 @@ Phase 00 is **complete** when **all** of the following hold (mirrors PRD §7.2 E
 ### 7.9 Process
 
 - [ ] All PRD §7.2 tasks marked "Review pending" verified for quality and integration.
-- [ ] No stable releases; only RCs (per PRD §6 note).
+- [ ] All 8 packages published at `0.1.0` under `latest` by `release.yml` through trusted publishing with provenance; later Phase 00 releases are `0.1.x` patches; RCs are canary snapshots (PRD §6.5).
 - [ ] Phase 00 retrospective documented (open items, lessons learned, hand-off to Phase 1).
 
 ---
