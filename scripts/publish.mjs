@@ -1,22 +1,26 @@
 #!/usr/bin/env bun
 
 /**
- * scripts/publish.mjs — Publisher: Changesets versions and tags, Bun packs, npm uploads (AM-036, ledger 00-F9).
+ * scripts/publish.mjs — Publisher: Changesets versions and tags, Bun packs, npm uploads (AM-036, ledger 00-F9;
+ * planning pass and snapshot guard AM-039, ledger 00-F3).
  *
- * Spec: docs/specs/00-spec-design-system.md §6.F.5 "Publish path (AM-036)".
+ * Spec: docs/specs/00-spec-design-system.md §6.F.5 "Publish path (AM-036)", "Snapshot guard (AM-039)".
  *
  *   bun run scripts/publish.mjs [--tag <name>] [--no-git-tag] [--dry-run]
  *
  * 1. discover publishable packages (shared with scripts/verify-pack.mjs)
  * 2. topological order over internal dependencies + peerDependencies; ties by name; cycle fails
- * 3. `npm view <name>@<version> version --json`: exit 0 = published (skip), E404 = new, else fail
+ * 3. `npm view <name>@<version> version --json`: exit 0 = published (skip), E404 = new, else fail;
+ *    runs for every package before step 4 runs for any
+ *    snapshot guard (`--tag canary` only): every `publish` row must be `<x.y.z>-<HEAD sha>-SNAPSHOT`,
+ *    else the run fails listing every offender, before anything is packed or uploaded
  * 4. stage + `bun pm pack` (shared staging function)
  * 5. pack checks (a)–(e); a failure stops the run before that package uploads
  * 6. `npm publish <tarball> --access public --tag <tag>` (default tag `latest`)
  * 7. `changeset tag` (stdout passed through) unless --no-git-tag
  *
- * Fails fast. `--dry-run` runs steps 1–5 for every package and prints the plan; it never
- * runs `npm publish` or `changeset tag`. Never prints secrets or the environment.
+ * Fails fast. `--dry-run` runs steps 1–5 (and the snapshot guard) for every package and prints the plan;
+ * it never runs `npm publish` or `changeset tag`. Never prints secrets or the environment.
  */
 
 import {
@@ -29,6 +33,8 @@ import {
 } from './verify-pack.mjs';
 
 const INTERNAL_SCOPE = '@websublime/';
+const CANARY_TAG = 'canary';
+const SNAPSHOT_VERSION = /^(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)\.(?:0|[1-9]\d*)-([0-9a-f]{40})-SNAPSHOT$/;
 
 function parseArgs(argv) {
   const opts = { tag: 'latest', gitTag: true, dryRun: false };
@@ -108,6 +114,26 @@ function isPublished(pkg) {
   throw new Error(`npm view ${spec} failed (exit ${res.exitCode}${code ? `, ${code}` : ''})`);
 }
 
+/** The 40-character `git rev-parse HEAD` of the repository root; throws otherwise. */
+function headSha() {
+  const res = run(['git', 'rev-parse', 'HEAD']);
+  const sha = res.stdout.trim();
+  if (res.exitCode !== 0 || !/^[0-9a-f]{40}$/.test(sha)) {
+    throw new Error(`git rev-parse HEAD failed (exit ${res.exitCode})`);
+  }
+  return sha;
+}
+
+/**
+ * Snapshot guard (AM-039). Returns the `publish` rows whose version is not
+ * `<major>.<minor>.<patch>-<sha>-SNAPSHOT` for exactly `sha`; `skip` rows upload nothing and are never checked.
+ * @param {Array<{ name: string, version: string, action: 'publish' | 'skip' }>} rows
+ * @param {string} sha 40-character HEAD sha
+ */
+export function snapshotOffenders(rows, sha) {
+  return rows.filter((row) => row.action === 'publish' && SNAPSHOT_VERSION.exec(row.version)?.[1] !== sha);
+}
+
 /** Steps 4–6 for one package. Returns its plan row. */
 async function packCheckUpload(pkg, published, opts, versions, cleanups) {
   const { tarball, cleanup } = stageAndPack(pkg);
@@ -131,11 +157,28 @@ async function main() {
   const plan = [];
   const cleanups = [];
   try {
-    for (const pkg of pkgs) {
+    // Step 3 for every package before step 4 for any (AM-039): the guard sees the whole plan first.
+    const rows = pkgs.map((pkg) => {
       const published = isPublished(pkg);
       if (published) console.info(`${pkg.name}@${pkg.version} is already published; skipping upload`);
+      return { pkg, name: pkg.name, version: pkg.version, action: published ? 'skip' : 'publish' };
+    });
+
+    if (opts.tag === CANARY_TAG) {
+      const sha = headSha();
+      const offenders = snapshotOffenders(rows, sha);
+      if (offenders.length) {
+        throw new Error(
+          `snapshot guard: --tag ${CANARY_TAG} publishes only <x.y.z>-${sha}-SNAPSHOT versions (run snapshot:version at HEAD); offending:\n` +
+            offenders.map((o) => `  - ${o.name}@${o.version}`).join('\n'),
+        );
+      }
+    }
+
+    for (const row of rows) {
+      const published = row.action === 'skip';
       if (published && !opts.dryRun) continue;
-      plan.push(await packCheckUpload(pkg, published, opts, versions, cleanups));
+      plan.push(await packCheckUpload(row.pkg, published, opts, versions, cleanups));
     }
 
     if (opts.dryRun) {
