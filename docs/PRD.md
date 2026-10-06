@@ -1,15 +1,16 @@
 # line://ui — Product Requirements Specification
 
-**Date:** 2026-05-19
+**Date:** 2026-10-06
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.3
+**Version:** 0.8.4
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.4 (2026-10-06) — RCs are canary snapshots published from `main`; spec AM-008 ratified.** There is no `next` branch. Release candidates are canary snapshots published from `main` by manual dispatch under the `canary` dist-tag. A stable release is the merge of the Changesets Version PR on `main`; during Phase 0 that PR stays unmerged, and merging it at Phase 0 exit ships 0.1.0. Why: spec AM-008 (2026-05-29) dropped the `next` branch and moved RC / snapshot / canary publishing to `main`, but the PRD was never revised, so §6.5 and §7.2 still put RCs on `next` and contradicted the approved spec (ledger row `00-F3`, decision by Miguel on 2026-10-06; record in `docs/context/00-f3.md`). Updates: §6.5 workflow list (`snapshot-deploy.yml` comment) and Release Candidate Strategy; §7.2 task row "Define RC pipeline"; §7.2 exit criteria (CI/CD bullet). Plan §2.4 (CI/CD bullet), §4.6/F4, and §7.6 aligned in the same commit; the plan and spec headers now cite PRD v0.8.4. The spec already matched (AM-008).
 - **v0.8.3 (2026-05-19) — Research-driven corrections from Stage 2 phase 00 (two rounds).** Four contradictions surfaced by research (round 1: `/Users/ramosmig/Public/WS-Labs/line-ui/docs/research/00-research-design-system-foundation.md`; round 2: `/Users/ramosmig/Public/WS-Labs/line-ui/docs/research/00-research-design-system-foundation-round2.md`) closed in this revision.
   - **C1 — Zag.js integration corrected.** **`@zag-js/element` does not exist** in Zag's monorepo (`packages/frameworks/` contains only `preact`, `react`, `solid`, `svelte`, `vanilla`, `vue`). The previously-named "official Lit adapter" was a phantom. v0.8.3 corrects the integration to use `@zag-js/vanilla` primitives (`VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`) **wrapped by a first-party adapter** at `@websublime/line-core/machine`: `LineMachineController` is a Lit `ReactiveController` that provides Lit-aware reactivity (`requestUpdate()` on transitions), automatic teardown (`hostDisconnected`), Manifesto Law 9 fallback (failed machine → static render), and a single import surface (re-exports the four primitives above). Components consume only `@websublime/line-core/machine` — direct imports of `@zag-js/vanilla` are forbidden in component code. Updates: §2 Tech Stack (Component Logic row corrected, new Machine Adapter row); §2.1 Stack Rationale (Zag.js + Machine Adapter paragraphs); §6.2 core src tree + exports map (added `./machine` subpath); §7.2 Refactor LineElement task. Aligned ARCHITECTURE §6 / §8 and plan/00 §2.5/§4.4/§5.1.
   - **C2 — Radix Colors source clarified, all variants ship in Phase 00.** `@radix-ui/colors` ships **TypeScript hex-string objects only** (no CSS files upstream). Per hue it exports 8 scale objects (base + alpha + P3 + P3-alpha, each split into light/dark) plus 4 special scales (`blackA`, `whiteA`, `blackP3A`, `whiteP3A`). The `*Contrast` token is a `@radix-ui/themes` convention (not `@radix-ui/colors`) — we adopt the Radix Themes per-hue table verbatim (six bright-step-9 hues use `#000`, all others `#fff`). **Phase 00 ships all four variant families per hue + the four special scales.** Token naming is unified via `@supports` (Radix Themes pattern): the canonical names (`--line-{hue}-{step}`, `--line-{hue}-a{step}`) stay stable; P3 declarations override the same names inside `@supports (color: color(display-p3 1 1 1))` + `@media (color-gamut: p3)`, so browsers with P3 support auto-upgrade with no consumer opt-in. Updates: §9.1 packages tree comment; §9.2 (upstream package shape + variant scope + contrast convention); §9.7 (concrete per-hue generation output shape + special-scales file).
@@ -739,7 +740,7 @@ PR merged → main
 Workflows:
 ├── checks.yml              ← PRs: build + test + lint
 ├── release.yml             ← main: Changesets publish + deploy
-├── snapshot-deploy.yml     ← Snapshot deployment
+├── snapshot-deploy.yml     ← Canary (RC) publish from main, manual dispatch
 └── snapshot-version.yml    ← Snapshot versioning
 ```
 
@@ -755,10 +756,10 @@ Workflows:
 
 #### Release Candidate Strategy
 
-- Feature branches merge into `next`
-- Merge to `next` triggers automatic release candidate (RC) builds
-- No stable releases during Phase 0, only RCs
-- Stable releases begin from Phase 1 onwards via merge to `main`
+- Release candidates (RCs) are canary snapshots published from `main` by manual dispatch, under the `canary` dist-tag
+- A stable release is the merge of the Changesets Version PR on `main`
+- No stable releases during Phase 0, only RCs: the Version PR stays unmerged
+- Merging the Version PR at Phase 0 exit ships 0.1.0; stable releases continue from Phase 1 onwards the same way
 
 ---
 
@@ -791,7 +792,7 @@ Workflows:
 | Setup Storybook 10+ | `@storybook/web-components-vite` + CEM analyzer | Todo | P1 |
 | Setup testing | Bun test + `@open-wc/testing-helpers` + Playwright | Todo | P1 |
 | Setup CI/CD | GitHub Actions: checks, release, snapshot-deploy, snapshot-version | Todo | P1 |
-| Define RC pipeline | Release candidate pipeline for `next` branch | Todo | P1 |
+| Define RC pipeline | Release candidates as canary snapshots published from `main` by manual dispatch (`canary` dist-tag) | Todo | P1 |
 | npm scope | Configure `@websublime/line-*` on npm | Todo | P0 |
 | Design system v2 (5 packages) | Author the 5-package layered design system from scratch under `packages/`: `line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`. Source palettes from `@radix-ui/colors` (31 hues x 12 steps). Build pipeline (PostCSS) generates `themes/src/accent/*.css` and `themes/src/gray/*.css` mechanically from the TS lists in `line-schemas`. Commit generated CSS into `line-colors/src/`. | Todo | P0 |
 | Icon registry | Agnostic resolver system | Todo | P1 |
@@ -812,7 +813,7 @@ Workflows:
 - Inspector refactored and operational (feature flag via `localStorage`, hover outline, version display, metadata exposure).
 - Icon registry operational (agnostic resolver verified with at least one icon library).
 - HTMX integration spike completed; outcome (exploratory vs committed for Phase 1) documented.
-- CI/CD pipeline operational (checks + RC releases on `next`; Storybook + site preview deploys verified).
+- CI/CD pipeline operational (checks + RC releases as canary snapshots from `main`; Storybook + site preview deploys verified).
 - npm scope `@websublime/line-*` configured; packages publishable (verified via snapshot/canary tag).
 - Base documentation published in Storybook (Getting Started, Theming, Customisation).
 
