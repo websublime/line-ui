@@ -1,0 +1,47 @@
+name: snapshot-version
+on: workflow_dispatch
+permissions:                                   # AM-039: read-only; no npm credential, no id-token
+  contents: read                               # checkout; @changesets/changelog-github reads commits
+  pull-requests: read                          # @changesets/changelog-github reads the associated pull requests
+concurrency:
+  group: snapshot-version-${{ github.ref }}
+  cancel-in-progress: true                     # a dry run is safe to cancel
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Checkout                         # node24 runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { fetch-depth: 0, persist-credentials: false }  # history for the changelog lookups; nothing is pushed
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version }
+      - name: Set up Node 24                   # AM-039: same toolchain as snapshot-deploy.yml; no registry-url
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Assert npm >= 11.5.1 and Node >= 22.14.0 (same toolchain as snapshot-deploy)
+        run: |
+          bun -e "
+            const v = (cmd) => Bun.spawnSync(cmd).stdout.toString().trim().replace(/^v/, '');
+            const npm = v(['npm', '--version']);
+            const node = v(['node', '--version']);
+            console.log('npm ' + npm + ', node ' + node);
+            if (Bun.semver.order(npm, '11.5.1') < 0 || Bun.semver.order(node, '22.14.0') < 0) {
+              console.error('snapshot-deploy publishes with npm >= 11.5.1 on Node >= 22.14.0; this dry run uses the same toolchain');
+              process.exit(1);
+            }
+          "
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Compute snapshot versions
+        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # @changesets/changelog-github calls the GitHub GraphQL API
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the dry run and its pack checks need only packages/*/dist
+      - name: Print the canary plan
+        shell: bash                            # -eo pipefail: a failing dry run fails the step despite tee
+        run: |
+          bun run snapshot:publish --dry-run | tee "$RUNNER_TEMP/plan.txt"
+          { echo '### Canary plan (dry run)'; echo '```'; cat "$RUNNER_TEMP/plan.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"

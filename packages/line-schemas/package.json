@@ -7,6 +7,11 @@
     "dist",
     "src"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-schemas"
+  },
   "sideEffects": false,
   "publishConfig": {
     "access": "public"

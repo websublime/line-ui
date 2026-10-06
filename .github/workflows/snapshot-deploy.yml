@@ -1,0 +1,61 @@
+name: snapshot-deploy
+on: workflow_dispatch                          # AM-039: manual only; AM-038: npm rejects trusted-publishing tokens from pull_request_target / issue_comment
+permissions:                                   # AM-039
+  contents: read                               # checkout; @changesets/changelog-github reads commits
+  pull-requests: read                          # @changesets/changelog-github reads the associated pull requests
+  id-token: write                              # AM-038: npm trusted publishing (OIDC) and provenance
+concurrency:                                   # AM-039: one canary publish at a time; a running publish is never cancelled
+  group: snapshot-deploy
+  cancel-in-progress: false
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Require main                     # AM-039: a dispatch from another ref fails instead of showing a skipped run
+        run: |
+          if [ "$REF" != "refs/heads/main" ]; then
+            echo "::error::canaries publish only from main (dispatched on $REF)"
+            exit 1
+          fi
+        env:
+          REF: ${{ github.ref }}               # via env, never interpolated into the script
+      - name: Checkout                         # node24 runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { fetch-depth: 0, persist-credentials: false }  # ephemeral: no commit, tag, or push
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version }
+      - name: Set up Node 24                   # AM-038: Node 24 LTS bundles npm >= 11.5.1; no registry-url (it hides ~/.npmrc)
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Assert npm >= 11.5.1 and Node >= 22.14.0 (trusted publishing)
+        run: |
+          bun -e "
+            const v = (cmd) => Bun.spawnSync(cmd).stdout.toString().trim().replace(/^v/, '');
+            const npm = v(['npm', '--version']);
+            const node = v(['node', '--version']);
+            console.log('npm ' + npm + ', node ' + node);
+            if (Bun.semver.order(npm, '11.5.1') < 0 || Bun.semver.order(node, '22.14.0') < 0) {
+              console.error('trusted publishing needs npm >= 11.5.1 and Node >= 22.14.0');
+              process.exit(1);
+            }
+          "
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Compute snapshot versions
+        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # @changesets/changelog-github calls the GitHub GraphQL API
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
+      - name: Write the npm token fallback (bootstrap only)
+        run: |                                 # AM-038: same rule as changesets/action — no line when the secret is unset
+          if [ -n "$NPM_TOKEN" ]; then
+            printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" >> "$HOME/.npmrc"
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # AM-038: `npm` environment secret, bootstrap only
+      - name: Publish the canary
+        run: bun run snapshot:publish          # publisher --tag canary --no-git-tag; the snapshot guard runs before the first upload

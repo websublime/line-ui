@@ -1,0 +1,47 @@
+name: release
+on:
+  push: { branches: [main] }                   # AM-038: npm rejects trusted-publishing tokens from pull_request_target / issue_comment
+permissions:                                   # AM-038: only what changesets/action and the publisher need
+  contents: write                              # push the Version PR branch and tags, create GitHub releases
+  pull-requests: write                         # open / update the Version PR
+  id-token: write                              # npm trusted publishing (OIDC) and provenance
+concurrency:                                   # AM-038: one release run at a time; a running publish is never cancelled
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30                        # AM-038
+    environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Checkout                         # AM-038: node24 runtime; credentials kept: changesets/action pushes the Version PR branch and tags
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version }
+      - name: Set up Node 24                   # AM-038: Node 24 LTS bundles npm >= 11.5.1; no registry-url (it hides ~/.npmrc)
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Assert npm >= 11.5.1 and Node >= 22.14.0 (trusted publishing)
+        run: |
+          bun -e "
+            const v = (cmd) => Bun.spawnSync(cmd).stdout.toString().trim().replace(/^v/, '');
+            const npm = v(['npm', '--version']);
+            const node = v(['node', '--version']);
+            console.log('npm ' + npm + ', node ' + node);
+            if (Bun.semver.order(npm, '11.5.1') < 0 || Bun.semver.order(node, '22.14.0') < 0) {
+              console.error('trusted publishing needs npm >= 11.5.1 and Node >= 22.14.0');
+              process.exit(1);
+            }
+          "
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
+      - name: Version PR or publish
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        with:
+          publish: bun run release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # AM-038: `npm` environment secret, bootstrap only; unset → "" → the action writes no auth line

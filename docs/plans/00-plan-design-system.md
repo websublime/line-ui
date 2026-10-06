@@ -4,7 +4,7 @@
 **Author:** Ada (architect)
 **Date:** 2026-05-19
 **Phase Version Target:** `line://ui` v0.1.0 (also called "Phase 0" in the PRD)
-**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.3)
+**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.4)
 **Source Architecture:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (aligned with PRD v0.8.3)
 
 > **What this document is.** A planning document. It defines scope, high-level task breakdown, dependencies, and acceptance criteria for the Phase 00 release.
@@ -60,7 +60,7 @@ Phase 00 ships **zero UI components**. Its sole deliverable is a fully operation
 - **Bundler:** Vite 8+ (Rolldown stable as default) for components. PostCSS pipeline (`postcss-import`, `postcss-nested`, `postcss-preset-env`, `cssnano`) for design-system CSS.
 - **Update all dependencies** to latest stable: Lit 3+, Zag.js latest, `@radix-ui/colors` latest 3.x.
 - **Testing:** Bun test + `@open-wc/testing-helpers` + Playwright.
-- **CI/CD:** GitHub Actions — checks (lint, typecheck, test, build), release pipeline, snapshot/canary versions, RC pipeline for `next` branch.
+- **CI/CD:** GitHub Actions — checks (lint, typecheck, test, build), release pipeline, snapshot/canary versions, RC pipeline (RCs are canary snapshots published from `main` by manual dispatch).
 - **npm scope:** Configure `@websublime/line-*` on npm; verify publishability via snapshot/canary tag.
 - **Changesets:** Already configured at the repo root; verified working across all 8 published packages.
 
@@ -187,7 +187,7 @@ Rationale: streams closer to the component runtime, design tokens, and developer
 | F1 | Storybook 10+ setup | `@storybook/web-components-vite` + CEM analyser in `apps/storybook`. |
 | F2 | Testing stack | Bun test + `@open-wc/testing-helpers` + Playwright. Verified across one design-system test and one runtime test. |
 | F3 | CI/CD pipeline | GitHub Actions: checks, release, snapshot-deploy, snapshot-version. |
-| F4 | RC pipeline | Release-candidate pipeline for `next` branch. |
+| F4 | RC pipeline | Release-candidate pipeline: canary snapshots published from `main` by manual dispatch under the `canary` dist-tag. |
 | F5 | `apps/site` scaffold | Astro 5+ scaffold under `apps/site/`; Cloudflare Pages deploy config (`wrangler.toml` or equivalent); placeholder landing page (`line://ui` wordmark + "coming soon"); CI deploy verified end-to-end. Full landing page content is Phase 1 parallel work — out of Phase 00 scope. |
 
 ### 4.7 Stream G — Documentation (depends on C, D, F)
@@ -319,7 +319,7 @@ Phase 00 is **complete** when **all** of the following hold (mirrors PRD §7.2 E
 ### 7.6 CI/CD
 
 - [ ] GitHub Actions: checks (lint, typecheck, test, build), release, snapshot-deploy, snapshot-version operational.
-- [ ] RC pipeline for `next` branch operational; verified end-to-end with at least one RC release.
+- [ ] RC pipeline operational (canary snapshots published from `main`); verified end-to-end with at least one RC release.
 - [ ] Storybook + `apps/site` preview deploys verified.
 
 ### 7.7 Documentation

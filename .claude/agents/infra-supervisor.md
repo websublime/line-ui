@@ -80,7 +80,7 @@ Bun 1.3+ workspaces, GitHub Actions, Changesets (canary via `snapshot:publish`, 
 
 ```
 line-ui/
-├── .github/actions/  # npmrc composite action; workflows land under .github/workflows/ per spec §6.F.5
+├── .github/workflows/ # checks, release, snapshot-version, snapshot-deploy (spec §6.F.5)
 ├── .githooks/        # pre-commit (biome check --staged)
 ├── .changeset/       # Changesets config (config.json) + pending entries
 ├── apps/site/        # Astro scaffold + Cloudflare Pages deploy
@@ -94,8 +94,8 @@ line-ui/
 
 **You handle:**
 - Bun workspace topology, root scripts, per-package `package.json` build wiring and `exports` maps
-- GitHub Actions workflows under `.github/workflows/` (`checks.yml`, `release.yml`, snapshot/canary) and
-  composite actions under `.github/actions/`
+- GitHub Actions workflows under `.github/workflows/` (`checks.yml`, `release.yml`, snapshot/canary); the repo has
+  no composite actions, and a new one needs an `AM-nnn` row first
 - Git hooks under `.githooks/`
 - Changesets config and the release pipeline (canary + stable)
 - `.npmrc`, `bunfig.toml`, registry and npm scope configuration

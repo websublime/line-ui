@@ -4,7 +4,7 @@
 **Author:** Ada (architect)
 **Date:** 2026-05-19
 **Phase target:** `line://ui` v0.1.0
-**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.3, APPROVED)
+**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.4, APPROVED)
 **Source Plan:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/plans/00-plan-design-system.md`](../plans/00-plan-design-system.md) (APPROVED)
 **Source Architecture:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/ARCHITECTURE.md`](../ARCHITECTURE.md)
 **Source Research:**
@@ -104,6 +104,11 @@ The complete `exports` contract is fixed by PRD §6.2 + §9.9. Reproduced here f
   "name": "@websublime/line-tokens",
   "type": "module",
   "files": ["dist"],                            // AM-036
+  "repository": {                               // AM-038: trusted publishing + provenance match this url
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-tokens"
+  },
   "sideEffects": ["*.css"],
   "exports": {
     ".":              "./dist/index.css",
@@ -143,6 +148,11 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
   "name": "@websublime/line-colors",
   "type": "module",
   "files": ["dist"],                            // AM-036
+  "repository": {                               // AM-038
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-colors"
+  },
   "sideEffects": ["*.css"],
   "exports": {
     ".":          "./dist/index.css",
@@ -192,6 +202,11 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
   "name": "@websublime/line-schemas",
   "type": "module",
   "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
+  "repository": {                               // AM-038
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-schemas"
+  },
   "sideEffects": false,
   "exports": {
     ".": {
@@ -213,6 +228,11 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
   "name": "@websublime/line-themes",
   "type": "module",
   "files": ["dist"],                            // AM-036
+  "repository": {                               // AM-038
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-themes"
+  },
   "sideEffects": ["*.css"],
   "exports": {
     ".":           "./dist/index.css",
@@ -234,6 +254,11 @@ The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all 
   "name": "@websublime/line-utils",
   "type": "module",
   "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
+  "repository": {                               // AM-038
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-utils"
+  },
   "sideEffects": false,
   "exports": {
     ".":          { "types": "./dist/index.d.ts",    "import": "./dist/index.js" },
@@ -250,6 +275,11 @@ The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all 
   "name": "@websublime/line-core",
   "type": "module",
   "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
+  "repository": {                               // AM-038
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-core"
+  },
   "sideEffects": false,
   "exports": {
     ".":          { "types": "./dist/index.d.ts",           "import": "./dist/index.js" },
@@ -267,6 +297,11 @@ The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all 
   "name": "@websublime/line-components",
   "type": "module",
   "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
+  "repository": {                               // AM-038
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-components"
+  },
   "sideEffects": [],
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
@@ -283,6 +318,11 @@ Empty in Phase 00. `dist/index.js` exports nothing functional — only re-export
   "name": "@websublime/line-icons",
   "type": "module",
   "files": ["dist", "src"],                     // AM-036: maps in dist/ point at ../src
+  "repository": {                               // AM-038
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-icons"
+  },
   "sideEffects": false,
   "exports": {
     ".": { "types": "./dist/index.d.ts", "import": "./dist/index.js" }
@@ -470,12 +510,15 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-035 | 2026-10-02 | ledger `00-E1` Verify gate (security-reviewer F1; decision — Miguel chose validating names and weights now over handing the risk to the Phase 1 `<line-icon>` spec) | Four changes, no change to the registry contract. (1) §6.E.2: both resolvers call `assertIconName(name)` before `import()`; it throws `[line-icons] Invalid icon name "<name>".` for any name outside `/^[a-z0-9]+(?:-[a-z0-9]+)*$/`. The guard also rejects any `name` that is not a string, so the check and `import()` never coerce the same value twice. The function lives in the new internal module `src/resolvers/icon-name.ts`, which `src/index.ts` does not re-export, and the spec shows that module. (2) §6.E.2: the Phosphor resolver holds the six weights in a `Set` and throws `[line-icons] Unknown Phosphor weight "<weight>".` for any resolved weight outside it, so the check covers both `options.weight` and the factory default. Both resolvers stay async, so every rejection arrives as a rejected promise. (3) §6.E.1 and §6.E.2: the block comments become short present-state sentences per STYLE.md, and the code comments equal them. (4) §6.E.3: the Lucide and Phosphor test bullets add the rejection cases for invalid names and, for Phosphor, invalid weights. | An unchecked `name` reaches `import()` and walks out of the icon directory under Bun or Node, so a caller-supplied name can load and execute any module the package can resolve. | Orchestrator probe on `dist` under Bun 1.3.14: `createLucideResolver()('../sprite')` returned lucide-static `sprite.svg`; `('../../@phosphor-icons/core/assets/regular/house')` returned a Phosphor SVG; `('../../../package.json?')` returned the line-icons `package.json` as a parsed object; `('../dist/esm/lucide-static.mjs?')` imported and executed that module (default `undefined`). All 1960 Lucide icon names and all 1512 Phosphor icon names match the pattern, so no real icon is rejected. The security re-review (F1-R1) found that `RegExp.test` and the template literal each call `ToString(name)`, so an object whose stateful `toString` returns `house` to the check and `../sprite` to `import()` bypassed the pattern alone. The decision is recorded in `docs/context/00-e1.md` (Decisions). |
 | AM-036 | 2026-10-02 | ledger `00-F9` pre-implementation investigation and review gate iteration 1 (decision — Miguel chose Bun packing of a staged copy with npm uploading over `bun publish` and over keeping `changeset publish` behind an in-place `workspace:` rewrite; chose rewriting `workspace:` ranges in the staged manifest over syncing `bun.lock` after versioning and over upgrading Bun to 1.4.2 inside a fix row; and chose `["dist", "src"]` for the TS-built packages over `["dist"]` everywhere) | Five changes; versions, `exports`, and the dependency graph are unchanged. (1) §4.1–§4.8: every published `package.json` declares `files`. The 5 TS-built packages (`line-schemas`, `line-utils`, `line-icons`, `line-core`, `line-components`) use `["dist", "src"]`, and the CSS packages (`line-tokens`, `line-colors`, `line-themes`) use `["dist"]`. (2) §6.F.5 adds the publisher `scripts/publish.mjs`. It discovers non-private packages outside the Changesets `ignore` list and orders them dependencies first (a cycle fails, ties sort by name). It checks each `name@version` with `npm view --json` and skips published ones. It copies each package (without `node_modules`) to a temp staging directory, rewrites every `workspace:` range in the staged manifest from the versions in `packages/*/package.json`, and runs `bun pm pack --quiet` there. It runs the pack checks on the tarball, uploads it with `npm publish <tarball> --access public --tag <tag>`, and finally runs `changeset tag` unless `--no-git-tag` is passed. Its `--dry-run` mode packs and checks every publishable package and uploads nothing. Tracked files are never mutated. Root scripts become `"release": "bun run scripts/publish.mjs"` and `"snapshot:publish": "bun run scripts/publish.mjs --tag canary --no-git-tag"`. (3) §6.F.5 adds the guard `scripts/verify-pack.mjs`. It packs every publishable package offline through the same staging function and checks `exports` targets, an allowlist and a denylist of tarball paths, leftover `workspace:`/`catalog:` ranges, and internal ranges against the versions in `packages/*/package.json`. `checks.yml` runs it as `Pack verification (AM-036)` right after the typecheck step. `CHANGELOG.md` is intentionally not shipped. (4) §6.A A4 and the §6.F.5 snapshot paragraph now say `snapshot:publish` runs that script with `--tag canary` and no git tags. (5) §7.2 states the release split. `release.yml` is unchanged (`changesets/action@v1`, `publish: bun run release`). | `changeset publish` uploads with `npm publish` under Bun, and `npm publish` drops `dist/` and ships `workspace:^` unrewritten, so every published tarball would be uninstallable. Upgrading Changesets does not fix this because 3.0.3 still falls back to npm for Bun. `bun pm pack` honours `files`, but on Bun 1.3.14 it fills `workspace:` ranges from the versions recorded in `bun.lock`, and `changeset version` never updates `bun.lock`, so a plain pack after versioning ships stale ranges. The staged rewrite reads the versions Changesets just wrote. Syncing `bun.lock` was rejected because it means text surgery on the lockfile format plus a `version:` hook in `release.yml`. Upgrading to Bun 1.4.2 was rejected because it is out of scope for a fix row and still ships stale ranges if the pack runs before `bun install`. An in-place `workspace:` rewrite before `changeset publish` was rejected because it mutates tracked manifests and copies pnpm's rewrite rules. Without `files`, `bun pm pack` ships `src/`, `__tests__/`, and `tsconfig.json`. `["dist"]` everywhere was rejected because the shipped `.d.ts.map`/`.js.map` point at `../src`. npm stays the uploader because it can switch from token auth to OIDC trusted publishing with provenance later, and `bun publish` has no OIDC (oven-sh/bun#22423 open). Bun leaves `CHANGELOG.md` out when `files` is set, and release notes live in the repository, the GitHub releases, and the site (PRD §6.4). `snapshot:publish` (`changeset publish --snapshot --tag canary`) fails flag validation in 2.31.0, so A4's "already wired" was wrong. The source of the wrong premise is research R14 (round 1 l.175, round 2 l.117-118), which called Changesets package-manager-agnostic for publishing. | `getPublishTool` picks npm for anything but pnpm (`node_modules/@changesets/cli/dist/changesets-cli.cjs.js:743-749`); 3.0.3 falls back to npm for Bun (`dist/getPublishPlan.mjs:569-591`). `npm pack --dry-run` in all 8 packages lists zero `dist/` files and includes `src/`, `__tests__/`, `tsconfig.json`, `vite.config.mjs`. `npm pack` of `line-utils` keeps `"@websublime/line-schemas": "workspace:^"`. `bun pm pack` includes `dist/` (33/3/32/16/28/41/20/12 files for colors, components, core, icons, schemas, themes, tokens, utils). Probe on Bun 1.3.14: workspace `a` bumped from `0.0.0` to `0.1.0`, `b` still packs `"a": "^0.0.0"` after `bun install`, and `bun install --frozen-lockfile` exits 0 (oven-sh/bun#18906, fixed by #41302 after 1.4.0). Probe on Bun 1.4.2: `bun install` refreshes the lockfile, but a pack before it still ships the stale range. Every `exports` target of the 8 packages lives under `./dist/`. `npm view @websublime/line-<name>` returns E404 for all 8. `validateCommandFlags` rejects `--snapshot` for `publish` (cli lines 1400-1406). `changesets/action@v1` is a floating branch, currently v1.9.0, and matches `New tag:` lines from the publish script's stdout (`src/run.ts:101`); `changeset tag` prints them (cli lines 1296-1318). Bun 1.3.14, npm 10.9.9, `@changesets/cli` 2.31.0. Full record in `docs/context/00-f9.md`. |
 | AM-037 | 2026-10-02 | ledger `00-F9` Verify gate (security-reviewer F9-SEC-01, F9-SEC-03) | Two factual corrections, no requirement or design change. (1) §6.F.5 Publish path step 6: the repo `.npmrc` pins both `registry` and `@websublime:registry` to `https://registry.npmjs.org/`. (2) §6.F.5 guard check (c): the denylist adds any path segment that starts with `.`, `*.pem`, and `*.key`. | npm resolves `@websublime/*` through the `@websublime:registry` key, which beats `registry`. A user `~/.npmrc` that sets `@websublime:registry=https://npm.pkg.github.com` would send `npm view` and `npm publish` to GitHub Packages, and project config beats user config only for the same key. The denylist also let dotfiles such as `.env` and key files ship if they sat under a `files` entry. | `.github/actions/npmrc/action.yml:20` writes `@websublime:registry=https://npm.pkg.github.com`. With that line in a user `~/.npmrc`, `npm config get @websublime:registry` from the repo root returns `https://registry.npmjs.org/` once the repo `.npmrc` sets the key. A `checkDenylist` probe flags `src/.env`, `dist/.secret/x.js`, `dist/a.pem`, and `src/b.key`, and passes `dist/index.js`. |
+| AM-038 | 2026-10-06 | ledger `00-F3` pre-implementation investigation (decision — Miguel chose npm trusted publishing bootstrapped by a short-lived token over a granular token only and over staged publishing) | Six changes; versions, `exports`, `files`, and the dependency graph are unchanged. (1) §4.1–§4.8: every published `package.json` declares `"repository": { "type": "git", "url": "git+https://github.com/websublime/line-ui.git", "directory": "packages/line-<name>" }`. (2) §6.F.5 `release.yml` block: workflow-level `permissions` (`contents: write`, `pull-requests: write`, `id-token: write`), `concurrency: { group: release-${{ github.ref }}, cancel-in-progress: false }`, job `timeout-minutes: 30` and `environment: npm`, a `name:` on every step, `actions/checkout@v7`, `actions/setup-node@v6` with `node-version: '24'`, `package-manager-cache: false` and no `registry-url`, and a step that fails unless npm ≥ 11.5.1 and Node ≥ 22.14.0. Checkout keeps its credentials. `changesets/action@v1` with `publish: bun run release` is unchanged, and `NPM_TOKEN` stays in its env as the optional fallback. (3) §6.F.5 Publish path: an **Auth** paragraph replaces "npm reads `NPM_TOKEN` through the auth line … OIDC later": OIDC first (tarball publishes included), the token only as the bootstrap fallback written when non-empty, no `registry-url`, provenance from trusted publishing, publish triggers limited to `push` and `workflow_dispatch`, and the `npm` environment (deployment branch policy `main` only, Environment name on every trusted-publisher connection, `NPM_TOKEN` as an environment secret) as the branch gate. Both publishing jobs (`release.yml`, `snapshot-deploy.yml`) declare `environment: npm`. (4) §6.A A4: the bootstrap token needs publish access; the first canary uses it and a later one uses OIDC. (5) §7.2: a bullet for the auth model and the bootstrap order that verifies §9.5 and §9.6 after the merge. Step (0) deletes the repository-level `NPM_TOKEN` and creates or configures the `npm` environment with its `main`-only policy, because the merge's own `release.yml` run may already have auto-created it unprotected. That run only manages the Version PR, and the environment holds no secret yet. The `snapshot-deploy.yml` trusted publishers are validated by an OIDC canary within 48 hours, and the `release.yml` ones are created within the 48 hours before the Version PR merge. (6) §7.2: a bullet for the Version PR. Its `checks.yml` run waits for approval (or a close and reopen) before the Phase 00 exit merge, and `release.yml` does nothing while every pending changeset is empty. | npm revoked every classic token on 2025-12-09, so the repository-level `NPM_TOKEN` secret (created 2021-04-01, before granular tokens existed) is assumed dead. Granular write tokens last at most 90 days, and direct publishing with a granular token is removed in January 2027, so the token flow the spec described has an end date. Trusted publishing keeps no standing secret and adds provenance, but it is configured per package on npmjs.com, and all 8 packages return E404, so a short-lived token publishes the first canary and then goes. A trusted publisher expires 48 hours after creation unless a publish validates it; a `release.yml` publisher created at bootstrap would expire long before the Phase 00 exit merge, so it is created just before that merge. Rejected: a granular token only (90-day rotation, direct publishing removed January 2027); staged publishing (each version waits for a maintainer 2FA approval, heavy for canaries). The trusted publisher matches only the owner, repository, workflow filename, and optional environment, and GitHub runs the workflow file from the dispatched or pushed ref, so without an environment a non-`main` ref could publish (a dispatch of `snapshot-deploy.yml`, or a pushed `release.yml` with an edited trigger). The `npm` environment's branch policy closes that, and keeping the bootstrap token in the same environment gates it the same way. The policy is an explicit bootstrap step because a referenced environment that does not exist is auto-created without protection rules. `registry-url` is avoided because it moves npm's user config away from the `~/.npmrc` that `changesets/action` writes and, in setup-node v6, exports a placeholder token. Checkout keeps credentials because the action pushes the Version PR branch and the release tags with `git push`. `actions/checkout@v7` because runners no longer ship Node 20 and `checkout@v4` declares `node20`. The Version PR's checks need a human because PRs opened or updated with `GITHUB_TOKEN` get approval-required runs; no PAT or GitHub App is introduced. | npm docs: https://docs.npmjs.com/trusted-publishers (last edited 2026-09-30: npm CLI ≥ 11.5.1 and Node ≥ 22.14.0; `id-token: write`; per-package configuration with owner, repository, workflow filename and "Environment name (optional)"; `repository.url` must exactly match the GitHub repository; connections created after 2026-09-03 allow `npm stage publish` and `npm publish` must be ticked; `workflow_dispatch` runs are validated against the calling workflow's filename; automatic provenance for public packages from public repositories) and https://docs.npmjs.com/about-access-tokens (last edited 2026-09-10: only granular tokens since November 2025; direct publishing with granular tokens removed in January 2027). GitHub changelogs: https://github.blog/changelog/2025-12-09-npm-classic-tokens-revoked-session-based-auth-and-cli-token-management-now-available (classic tokens permanently revoked; write tokens limited to 90 days), https://github.blog/changelog/2026-10-02-unvalidated-npm-trusted-publishing-configurations-now-expire (48-hour expiry until the first successful publish; trusted-publishing tokens from `issue_comment` and `pull_request_target` rejected), https://github.blog/changelog/2026-06-11-bot-created-pull-requests-can-run-workflows-if-approved (PRs from `github-actions[bot]` run workflows once a user with write access approves) and https://github.blog/changelog/2026-09-23-node-20-is-no-longer-available-in-github-actions. GitHub docs: "Deployments and environments" (environment secrets are available only to jobs that reference the environment; **Selected branches and tags** matches the run's `GITHUB_REF`), "Managing environments for deployment" (running a workflow that references a missing environment creates it with no protection rules or secrets), "OpenID Connect reference" (`environment` claim; subject `repo:ORG/REPO:environment:NAME`), "Triggering a workflow" (a PR created or updated with `GITHUB_TOKEN` creates `pull_request` runs in an approval-required state; other `GITHUB_TOKEN` events create none), and "Using secrets" (an unset secret expands to an empty string). npm CLI v11.19.0 (bundled with Node 24.21.0): `lib/commands/publish.js` reads the manifest of any spec (l.96–97, tarballs through `pacote.manifest` l.292) and calls `oidc()` for it (l.147); `lib/utils/oidc.js` returns without changing the config when the exchange fails (l.120–132), sets the exchanged token over the configured one (l.140–141), and enables provenance only after a successful exchange for a public repository and package (l.144–167); `workspaces/libnpmpublish/lib/publish.js` signs a subject with the tarball sha512 (l.137–145). Node dist index: 24.11.0+ (LTS) bundle npm ≥ 11.6.1, 22.x bundle npm 10.9.x. `changesets/action` `v1` branch = `a45c4d5` (v1.9.0, 2026-06-03): `src/index.ts:78-109` writes `//registry.npmjs.org/:_authToken=${NPM_TOKEN}` to `$HOME/.npmrc` only `if (process.env.NPM_TOKEN)` and only on the publish branch, l.110-116 log OIDC use otherwise, l.154-156 return with "All changesets are empty; not creating PR" when every changeset is empty; `src/git.ts:12,91` push with `git push`, the Version PR branch with `--force`. `actions/setup-node` v6 (`2499707`, `runs.using: node24`) `src/authutil.ts:44-52` writes `$RUNNER_TEMP/.npmrc` and exports `NPM_CONFIG_USERCONFIG` and a placeholder `NODE_AUTH_TOKEN`, only when `registry-url` is set (`src/main.ts:64-67`). `actions/checkout` `action.yml`: `v4` declares `node20`, `v5`/`v6`/`v7` (`3d3c42e`, latest v7.0.1) declare `node24`. Registry acceptance of the URL form: `vite@8.3.3` (trusted publisher `github`, SLSA v1 provenance) declares `git+https://github.com/vitejs/vite.git` with `directory: packages/vite`, and `vite@8.3.0-beta.1` (2026-09-07, before the opt-in dist-tag permission of 2026-09-30) went out under `beta` the same way, so a non-`latest` `--tag` needs no extra permission; npm/cli#8036 shows the comparison is case-sensitive (`websublime/line-ui` is the exact repository name). `bun pm pack` (Bun 1.3.14) keeps `repository` in the packed `package.json` (probe). GitHub API: secret `NPM_TOKEN` created 2021-04-01; `websublime/line-ui` is public. None of the 8 package manifests declares `repository`. Not verified: a live OIDC publish from this repository, which is bootstrap step (5). Record in `docs/context/00-f3.md`. |
+| AM-039 | 2026-10-06 | ledger `00-F3` pre-implementation investigation (decision — Miguel chose two manual-dispatch workflows, a dry-run snapshot-version and an ephemeral snapshot-deploy, over a canary on every push to main and over the legacy PR-driven two-step flow) | Four changes; versions, `exports`, and the publisher's upload, tag, and dry-run contract are otherwise unchanged. (1) §6.F.5: the snapshot paragraph ("manual-dispatch and/or push-to-`main` flows") becomes two YAML blocks plus one paragraph. `snapshot-version.yml`: `workflow_dispatch` only; `permissions: { contents: read, pull-requests: read }`; `actions/checkout@v7` with `fetch-depth: 0` and `persist-credentials: false`; the AM-038 Node 24 setup and npm/Node assertion, so the plan uses the deploy toolchain; install, `bun run snapshot:version` with `GITHUB_TOKEN`, build, then `bun run snapshot:publish --dry-run` under `shell: bash` (pipefail) with the plan copied to the job summary; no upload, commit, tag, push, npm credential, or `id-token`. `snapshot-deploy.yml`: `workflow_dispatch` only; `permissions: { contents: read, pull-requests: read, id-token: write }`; `concurrency: { group: snapshot-deploy, cancel-in-progress: false }`; job `environment: npm` (AM-038); a first step that fails with "canaries publish only from main" unless `github.ref` (read through `env`) is `refs/heads/main`; `actions/checkout@v7`; the AM-038 Node 24 setup and npm/Node assertion; install, `snapshot:version`, build, the token fallback line written only when `NPM_TOKEN` is non-empty, then `bun run snapshot:publish` in the same job; no commit, tag, or push. (2) §6.F.5 Publish path step 3: the registry check runs for every package before any pack or upload. (3) §6.F.5 Publish path: new **Snapshot guard** — with `--tag canary`, every package planned as `publish` must carry `<major>.<minor>.<patch>-<git rev-parse HEAD>-SNAPSHOT`, else the run fails before the first pack or upload and lists every offender (`--dry-run` included); the check is an exported pure function. (4) §9.6: the snapshot criterion reads manual dispatch, dry run, and `main`-only canary instead of "manual dispatch and/or push-to-`main`". | The spec left the triggers and the split of the two snapshot workflows open. A canary on every push to `main` was rejected because it publishes a version per merge whether or not anyone needs it. The legacy two-step flow was rejected because it commits snapshot versions through a PR into `changeset-snapshot/**` and publishes from `pull_request_target`, which widens the attack surface and is an event npm rejects for trusted publishing (AM-038). The publisher uploads every publishable package whose version is not in the registry, and `changeset version --snapshot` keeps the current version of a package with no pending changeset and no dependency bump (release type `none`), so before the first stable release an unpublished `0.0.0` would go out under `canary` and a dependent's snapshot would depend on it. The guard has to see the whole plan, so step 3 runs for all packages first; failing the run matches the publisher's fail-fast rule. `snapshot:version` fails without a GitHub token, so both workflows pass `GITHUB_TOKEN` with only the read scopes its query is expected to touch. Versioning runs before the build so built output sees the snapshot versions. The `main` check is a failing step rather than a job-level `if:` so a dispatch from another ref shows a red run instead of a skipped one, and it backs up the `npm` environment policy (AM-038) if that policy is missing. The ref goes through `env` so no expression is interpolated into the script. `checkout@v7` because runners no longer ship Node 20 and `checkout@v4` declares `node20`. | `docs/context/00-f3.md` probes (Bun 1.3.14, `@changesets/cli` 2.31.0): `bun run snapshot:version` without `GITHUB_TOKEN`/`GH_TOKEN` fails inside `@changesets/changelog-github`; with a token it writes `<version>-<40-char sha>-SNAPSHOT`; after `bun run build`, `bun run snapshot:publish --dry-run` plans 8 × `publish`, `tag=canary`, order colors, core, schemas, themes, tokens, icons, utils, components. `@changesets/get-github-info` 0.8.0 (`dist/changesets-get-github-info.cjs.js`): token from `process.env.GITHUB_TOKEN` (l.87), throws without it (l.153-154), GraphQL query reads `repository.object(expression: <sha>)` with `associatedPullRequests` and `pullRequest(number)` (l.95-135). `@changesets/cli` 2.31.0 `dist/changesets-cli.cjs.js:1369` fills `{commit}` from `getCurrentCommitId`, which runs `git rev-parse HEAD` (`@changesets/git` 3.0.4, l.257-264); `@changesets/assemble-release-plan` 6.0.10 `getSnapshotVersion` returns `release.oldVersion` for type `none` and `<calculated>-<suffix>` otherwise (l.469-485); `@changesets/git` deepens shallow clones with `git fetch --deepen` (l.161-165). `.changeset/config.json`: `changelog` = `@changesets/changelog-github`, `snapshot.prereleaseTemplate` = `{commit}-SNAPSHOT`, `snapshot.useCalculatedVersion: true`. GitHub workflow syntax docs: an unspecified shell runs `bash -e {0}`, `shell: bash` runs `bash --noprofile --norc -eo pipefail {0}`; concurrency group names must be unique across workflows. GitHub "Deployments and environments" docs: a deployment branch rule is matched against the run's `GITHUB_REF`. `actions/checkout` `action.yml`: `v4` declares `node20`, `v7` (`3d3c42e`, latest v7.0.1) declares `node24`; https://github.blog/changelog/2026-09-23-node-20-is-no-longer-available-in-github-actions. PRD §6.4 (snapshot releases for canary testing) and §6.5 (`snapshot-deploy.yml`, `snapshot-version.yml`). Legacy workflows (`git show 939cad2^:.github/workflows/snapshot-version.yml` / `snapshot-deploy.yml`): pnpm, `snapshot-version` on `workflow_dispatch` running `pnpm snapshot:version` through `changesets/action`, `snapshot-deploy` on `pull_request_target` for `changeset-snapshot/**` running `pnpm snapshot:publish`. `actionlint` 1.7.12 with shellcheck reports no findings on the three §6.F.5 blocks extracted to a scratch repository. Not verified: that `contents: read` + `pull-requests: read` is the minimum the GraphQL query accepts; the first `snapshot-version.yml` run after the merge exercises it. |
+| AM-040 | 2026-10-06 | ledger `00-F3` Verify gate (security-reviewer F3-SEC-01, -02, -04, -05, -06) | Four hardening changes. No requirement changes, and Miguel's AM-038 / AM-039 decisions stand. (1) §6.F.5 `release.yml`, `snapshot-version.yml`, `snapshot-deploy.yml`: every `uses:` pins a full 40-character commit SHA with a trailing `# vX.Y.Z` comment: `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1`, `oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0`, `actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0`, and `changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0`. The comments that sat on those `uses:` lines move to the step's `name:` line, and each `steps:` line notes the SHA pins. Publish path step 7 names the pinned commit instead of "a floating branch". `checks.yml` is unchanged. (2) The same three blocks build only the packages (`bun --filter './packages/*' build`); `checks.yml` keeps the two-phase `bun run build` (AM-029). (3) §6.F.5 Publish path gains a **Stable guard**, the mirror of the snapshot guard. With any tag other than `canary`, a package planned as `publish` whose version has a prerelease part fails the run before the first pack or upload, and the error lists every offender (`--dry-run` included). The check is an exported pure function with unit tests. (4) §7.2 bootstrap. Step (0) is done before the PR that adds the workflows merges, with exactly one deployment rule (Ref type Branch, name `main`, no wildcard, no tag rule). Step (1) spells out the token: Packages and scopes = Read and write (publish and stage) limited to `@websublime`, Organizations = No access, expiry 1 day (at most 7), Bypass 2FA. The token is revoked and the environment secret deleted right after the first canary (new step 3), before the trusted publishers are added (now step 4). A new step (6) sets "Require two-factor authentication and disallow tokens" on each package once the OIDC canary has validated the connections. | (1) The publishing jobs hold `id-token: write` and the `npm` environment, and `release.yml` also holds `contents: write`. A moved tag, or a push to the `changesets/action` `v1` branch, would run at once with that authority (F3-SEC-01). A commit SHA cannot move, so every bump becomes a deliberate edit. (2) The publisher and its pack checks read only `packages/*/dist`. Building the apps brought the Storybook and Astro dependency trees into jobs that can mint OIDC tokens and gave the publisher nothing (F3-SEC-04). (3) The canary guard worked in one direction only. Snapshot versions that reach `main`, for example a committed `snapshot:version` output, would ship under `latest` from `release.yml`, and npm's prerelease check does not fire because the publisher always passes `--tag` (F3-SEC-05). (4) An `npm` environment that the merge's own `release.yml` run creates starts with no protection rule. The bootstrap token is needed only for steps 1–2. Once trusted publishing works, any token with write access to `@websublime` can still publish until the packages disallow tokens (F3-SEC-02, F3-SEC-06). Dist-tag restrictions on trusted publishers are not specified, because their behaviour is unverified. | `gh api`, 2026-10-06. `actions/checkout`: tags `v7` and `v7.0.1` → commit `3d3c42e5aac5ba805825da76410c181273ba90b1`. `oven-sh/setup-bun`: `v2` and `v2.2.0` → `0c5077e51419868618aeaa5fe8019c62421857d6`. `actions/setup-node`: `v6` and `v6.5.0` → `249970729cb0ef3589644e2896645e5dc5ba9c38`. `changesets/action`: the annotated tag `v1.9.0` (`3841a0683d3cfa6dae0f9bb335290003010fe3f0`) dereferences to commit `a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d`, which is the head of branch `v1` (`compare/v1.9.0...v1` = `identical`). v1.9.0 is the highest `v1.*` tag, and that commit's `src/run.ts:101` holds the `New tag:` regex. npm/cli `lib/commands/publish.js:134-136` throws "You must specify a tag using --tag when publishing a prerelease version." only when the tag is the config default. https://docs.npmjs.com/trusted-publishers, "Recommended: Restrict token access when using trusted publishers": Settings → Publishing access → "Require two-factor authentication and disallow tokens"; the setting "only affects traditional token authentication. Your trusted publishers will continue to work normally". https://docs.npmjs.com/creating-and-viewing-access-tokens: the Packages and scopes permission "Read and write (publish and stage)", an Organizations section, the "Bypass two-factor authentication" checkbox, and a custom expiry that "must be at least 1 day in the future". A probe in a throwaway worktree of `436c707` (Bun 1.3.14) ran `bun --filter './packages/*' build`, which built no app `dist/`. After it, `scripts/verify-pack.mjs` reported 8 packages and 0 failures, and `bun run release --dry-run` planned 8 × `publish`. |
 
 **A4 — npm scope.**
 
-- Confirm npm organisation `@websublime` exists and the publishing token has access. (Repo metadata already declares `@websublime/line-*` names.)
+- Confirm npm organisation `@websublime` exists and the short-lived bootstrap token (§7.2, AM-038) has publish access to it. (Repo metadata already declares `@websublime/line-*` names.)
 - Each published package declares `"publishConfig": { "access": "public" }`.
-- Snapshot/canary publishing verified by `bun run snapshot:publish` once Stream F lands. The script runs the §6.F.5 publisher `scripts/publish.mjs` with `--tag canary` and `--no-git-tag`, so it uploads canary tarballs and creates no git tags (AM-036). Phase 00 publishes at least one snapshot to validate the pipeline end-to-end.
+- Snapshot/canary publishing verified by `bun run snapshot:publish` once Stream F lands. The script runs the §6.F.5 publisher `scripts/publish.mjs` with `--tag canary` and `--no-git-tag`, so it uploads canary tarballs and creates no git tags (AM-036). Phase 00 publishes at least one snapshot to validate the pipeline end-to-end: the first canary authenticates with the bootstrap token and a later one through npm trusted publishing (OIDC), in the §7.2 bootstrap order (AM-038).
 
 ### 6.B Stream B — Monorepo Restructure
 
@@ -1513,26 +1556,172 @@ jobs:
 ```yaml
 name: release
 on:
-  push: { branches: [main] }
+  push: { branches: [main] }                   # AM-038: npm rejects trusted-publishing tokens from pull_request_target / issue_comment
+permissions:                                   # AM-038: only what changesets/action and the publisher need
+  contents: write                              # push the Version PR branch and tags, create GitHub releases
+  pull-requests: write                         # open / update the Version PR
+  id-token: write                              # npm trusted publishing (OIDC) and provenance
+concurrency:                                   # AM-038: one release run at a time; a running publish is never cancelled
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 jobs:
   publish:
     runs-on: ubuntu-latest
-    permissions: { contents: write, pull-requests: write, id-token: write }
-    steps:
-      - uses: actions/checkout@v4
-      - uses: oven-sh/setup-bun@v2
+    timeout-minutes: 30                        # AM-038
+    environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Checkout                         # AM-038: node24 runtime; credentials kept: changesets/action pushes the Version PR branch and tags
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with: { bun-version-file: .bun-version }
-      - run: bun install --frozen-lockfile
-      - run: bun run build                       # AM-029: two-phase (packages, then apps) — Bun --filter ignores devDependencies ordering
-      - uses: changesets/action@v1
+      - name: Set up Node 24                   # AM-038: Node 24 LTS bundles npm >= 11.5.1; no registry-url (it hides ~/.npmrc)
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Assert npm >= 11.5.1 and Node >= 22.14.0 (trusted publishing)
+        run: |
+          bun -e "
+            const v = (cmd) => Bun.spawnSync(cmd).stdout.toString().trim().replace(/^v/, '');
+            const npm = v(['npm', '--version']);
+            const node = v(['node', '--version']);
+            console.log('npm ' + npm + ', node ' + node);
+            if (Bun.semver.order(npm, '11.5.1') < 0 || Bun.semver.order(node, '22.14.0') < 0) {
+              console.error('trusted publishing needs npm >= 11.5.1 and Node >= 22.14.0');
+              process.exit(1);
+            }
+          "
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
+      - name: Version PR or publish
+        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
           publish: bun run release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # AM-038: `npm` environment secret, bootstrap only; unset → "" → the action writes no auth line
 ```
 
-`.github/workflows/snapshot-version.yml` and `snapshot-deploy.yml` wire the repo scripts `snapshot:version` and `snapshot:publish` into manual-dispatch and/or push-to-`main` flows. These workflows are authored in Stream F (F3 / F4 per §6.F.5). `snapshot:version` is unchanged. `snapshot:publish` runs the publisher below with `--tag canary --no-git-tag` (AM-036). The RC pipeline is manual dispatch or push-to-`main`, then a snapshot publish under the `canary` dist-tag. There is no `next` branch (see AM-008).
+`.github/workflows/snapshot-version.yml` — manual dispatch; a dry run that prints the canary plan (AM-039):
+
+```yaml
+name: snapshot-version
+on: workflow_dispatch
+permissions:                                   # AM-039: read-only; no npm credential, no id-token
+  contents: read                               # checkout; @changesets/changelog-github reads commits
+  pull-requests: read                          # @changesets/changelog-github reads the associated pull requests
+concurrency:
+  group: snapshot-version-${{ github.ref }}
+  cancel-in-progress: true                     # a dry run is safe to cancel
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Checkout                         # node24 runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { fetch-depth: 0, persist-credentials: false }  # history for the changelog lookups; nothing is pushed
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version }
+      - name: Set up Node 24                   # AM-039: same toolchain as snapshot-deploy.yml; no registry-url
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Assert npm >= 11.5.1 and Node >= 22.14.0 (same toolchain as snapshot-deploy)
+        run: |
+          bun -e "
+            const v = (cmd) => Bun.spawnSync(cmd).stdout.toString().trim().replace(/^v/, '');
+            const npm = v(['npm', '--version']);
+            const node = v(['node', '--version']);
+            console.log('npm ' + npm + ', node ' + node);
+            if (Bun.semver.order(npm, '11.5.1') < 0 || Bun.semver.order(node, '22.14.0') < 0) {
+              console.error('snapshot-deploy publishes with npm >= 11.5.1 on Node >= 22.14.0; this dry run uses the same toolchain');
+              process.exit(1);
+            }
+          "
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Compute snapshot versions
+        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # @changesets/changelog-github calls the GitHub GraphQL API
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the dry run and its pack checks need only packages/*/dist
+      - name: Print the canary plan
+        shell: bash                            # -eo pipefail: a failing dry run fails the step despite tee
+        run: |
+          bun run snapshot:publish --dry-run | tee "$RUNNER_TEMP/plan.txt"
+          { echo '### Canary plan (dry run)'; echo '```'; cat "$RUNNER_TEMP/plan.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+```
+
+`.github/workflows/snapshot-deploy.yml` — manual dispatch; versions and publishes a canary from `main` in one ephemeral job (AM-039):
+
+```yaml
+name: snapshot-deploy
+on: workflow_dispatch                          # AM-039: manual only; AM-038: npm rejects trusted-publishing tokens from pull_request_target / issue_comment
+permissions:                                   # AM-039
+  contents: read                               # checkout; @changesets/changelog-github reads commits
+  pull-requests: read                          # @changesets/changelog-github reads the associated pull requests
+  id-token: write                              # AM-038: npm trusted publishing (OIDC) and provenance
+concurrency:                                   # AM-039: one canary publish at a time; a running publish is never cancelled
+  group: snapshot-deploy
+  cancel-in-progress: false
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Require main                     # AM-039: a dispatch from another ref fails instead of showing a skipped run
+        run: |
+          if [ "$REF" != "refs/heads/main" ]; then
+            echo "::error::canaries publish only from main (dispatched on $REF)"
+            exit 1
+          fi
+        env:
+          REF: ${{ github.ref }}               # via env, never interpolated into the script
+      - name: Checkout                         # node24 runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { fetch-depth: 0, persist-credentials: false }  # ephemeral: no commit, tag, or push
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version }
+      - name: Set up Node 24                   # AM-038: Node 24 LTS bundles npm >= 11.5.1; no registry-url (it hides ~/.npmrc)
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Assert npm >= 11.5.1 and Node >= 22.14.0 (trusted publishing)
+        run: |
+          bun -e "
+            const v = (cmd) => Bun.spawnSync(cmd).stdout.toString().trim().replace(/^v/, '');
+            const npm = v(['npm', '--version']);
+            const node = v(['node', '--version']);
+            console.log('npm ' + npm + ', node ' + node);
+            if (Bun.semver.order(npm, '11.5.1') < 0 || Bun.semver.order(node, '22.14.0') < 0) {
+              console.error('trusted publishing needs npm >= 11.5.1 and Node >= 22.14.0');
+              process.exit(1);
+            }
+          "
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Compute snapshot versions
+        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # @changesets/changelog-github calls the GitHub GraphQL API
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
+      - name: Write the npm token fallback (bootstrap only)
+        run: |                                 # AM-038: same rule as changesets/action — no line when the secret is unset
+          if [ -n "$NPM_TOKEN" ]; then
+            printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" >> "$HOME/.npmrc"
+          fi
+        env:
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # AM-038: `npm` environment secret, bootstrap only
+      - name: Publish the canary
+        run: bun run snapshot:publish          # publisher --tag canary --no-git-tag; the snapshot guard runs before the first upload
+```
+
+Both snapshot workflows run `snapshot:version` (`changeset version --snapshot`, unchanged) before the build. It writes `<version>-<40-char sha>-SNAPSHOT` into the manifests of the packages with pending changesets and of their dependents (`snapshot.prereleaseTemplate` = `{commit}-SNAPSHOT`, `useCalculatedVersion: true`, `{commit}` = `git rev-parse HEAD`), for example `0.1.0-<sha>-SNAPSHOT`. It needs `GITHUB_TOKEN`: `@changesets/changelog-github` (`.changeset/config.json`) reads each changeset's commit and its pull requests through the GitHub GraphQL API and throws when no token is set. The workflows grant `contents: read` and `pull-requests: read` for that query; the first `snapshot-version.yml` run after the merge confirms that these two scopes suffice. `fetch-depth: 0` gives Changesets the history it walks to find the commit that added each changeset (on a shallow clone it deepens with `git fetch --deepen`). The snapshot versions live only in the job's working tree: neither workflow commits, tags, or pushes, and both check out with `persist-credentials: false`. Both set up the same Node 24 toolchain (`actions/setup-node@v6`, no `registry-url`, the npm/Node assertion), so the dry-run plan comes from the npm that the deploy uses. `snapshot-version.yml` holds no npm credential and uploads nothing; the dry-run plan (package, version, tag, `publish`/`skip`) goes to the log and the job summary, and the snapshot guard below fails it the same way it would fail a deploy. `snapshot-deploy.yml` versions and publishes in one job. `snapshot:publish` runs the publisher with `--tag canary --no-git-tag` (AM-036), so it creates no git tags, and it authenticates as the Auth paragraph below describes (AM-038); the token fallback is written after install and build, right before the publish step. Two checks keep it on `main`. The `npm` environment's branch policy (AM-038) rejects the job on any other ref, and the job's first step fails with "canaries publish only from main" when `github.ref` is not `refs/heads/main`. That step reads the ref through `env`, and it still fails the run if the environment policy is missing. Its concurrency group carries no ref and never cancels a running job, so two canary runs never publish at once. This is the RC pipeline: an RC is a canary snapshot published from `main` by manual dispatch under the `canary` dist-tag. There is no `next` branch (see AM-008).
 
 **Publish path (AM-036).** Changesets versions and tags, Bun packs a staged copy of each package, and npm uploads. `changeset publish` is not used, because under Bun it uploads with `npm publish`, which drops `dist/` and ships `workspace:` ranges unrewritten. The root `package.json` declares two scripts:
 
@@ -1549,13 +1738,19 @@ The publisher `scripts/publish.mjs` is a Bun-run ESM script like the other `scri
 
 1. It discovers the publishable packages. These are the `packages/*/package.json` manifests, minus those with `"private": true`, minus the names in the `ignore` list of `.changeset/config.json`. It reuses the discovery function that `scripts/verify-pack.mjs` exports.
 2. It orders them so dependencies come before dependents. The order is a topological sort over the internal `@websublime/*` names in each manifest's `dependencies` and `peerDependencies`. Packages with no ordering constraint between them sort by package name. A dependency cycle fails the run.
-3. For each package it runs `npm view <name>@<version> version --json`. Exit 0 with a version means the version is published, so it logs a line saying so and skips the upload. A non-zero exit whose JSON has `.error.code === "E404"` means the version is new, so it publishes; this covers both "package not found" and "no match for version". Any other result fails the run.
+3. For each package it runs `npm view <name>@<version> version --json`. Exit 0 with a version means the version is published, so it logs a line saying so and skips the upload. A non-zero exit whose JSON has `.error.code === "E404"` means the version is new, so it publishes; this covers both "package not found" and "no match for version". Any other result fails the run. This step runs for every package before step 4 runs for any (AM-039), so the snapshot guard below sees the whole plan before the first upload.
 4. It packs the package through the shared staging function that `scripts/verify-pack.mjs` exports. The function copies the package directory, without `node_modules`, to a temp staging directory. In the staged `package.json` it rewrites every `workspace:` range in `dependencies`, `peerDependencies`, `optionalDependencies`, and `devDependencies`, using the target package's `version` from `packages/*/package.json`. `workspace:^` becomes `^<v>`, `workspace:~` becomes `~<v>`, `workspace:*` becomes `<v>`, and `workspace:<range>` becomes `<range>`. A target that is not a workspace package fails the run. Then it runs `bun pm pack --quiet --destination <tmpdir>` in the staging directory. That command prints a blank line and then the absolute tarball path, so the script takes the last non-empty stdout line as the path. Tracked files are never mutated. The staging exists because Bun 1.3.14 fills `workspace:` ranges from the versions in `bun.lock`, and `changeset version` does not update `bun.lock` (oven-sh/bun#18906).
 5. It runs the guard's tarball checks (a)–(e) below on that tarball, using the functions `scripts/verify-pack.mjs` exports. A failed check stops the run before that package uploads.
 6. It uploads with `npm publish <tarball> --access public --tag <tag>`. The tag comes from `--tag <name>` and defaults to `latest`. Steps 3 and 6 run with the repository root as the working directory, so the repo `.npmrc` applies. It pins both `registry` and `@websublime:registry` to `https://registry.npmjs.org/`, because npm resolves the scope key before `registry` and project config beats user config for the same key (AM-037). Only `bun pm pack` runs in the staging directory.
-7. After every upload succeeds, it runs `changeset tag` unless `--no-git-tag` is passed. It passes `changeset tag` stdout through unchanged, because `changesets/action@v1` detects published packages from the `New tag: <name>@<version>` lines. The `@v1` ref is a floating branch, currently v1.9.0, with the regex at `src/run.ts:101`.
+7. After every upload succeeds, it runs `changeset tag` unless `--no-git-tag` is passed. It passes `changeset tag` stdout through unchanged, because `changesets/action@v1` detects published packages from the `New tag: <name>@<version>` lines. `release.yml` pins the action to commit `a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d` (v1.9.0, the head of the `v1` branch when pinned, AM-040), whose regex is at `src/run.ts:101`.
 
-The publisher fails fast. The first error stops the run with a non-zero exit. A re-run is idempotent because step 3 skips versions already in the registry. With `--dry-run` it runs steps 1–5 for every publishable package, including those `npm view` reports as published, and marks each one `publish` or `skip` in the printed plan (package, version, tag, tarball path). The read-only `npm view` still runs, but `npm publish` and `changeset tag` never do. The publisher never prints secrets. npm reads `NPM_TOKEN` through the auth line that `changesets/action@v1` writes into the user `~/.npmrc` in its publish branch, and the snapshot workflows (00-F3) must write that line themselves. npm can switch to OIDC trusted publishing with provenance later. `bun publish` has no OIDC (oven-sh/bun#22423), so npm uploads.
+**Snapshot guard (AM-039).** With `--tag canary` (the `snapshot:publish` script), after step 3 and before step 4 runs for the first package, every package that step 3 marked `publish` must have a version of the form `<major>.<minor>.<patch>-<sha>-SNAPSHOT`, where `<sha>` is the 40-character output of `git rev-parse HEAD` run in the repository root. That is the version `snapshot:version` writes at the same commit. Any other version fails the run with a non-zero exit and lists every offending `name@version`, before anything is packed or uploaded; `--dry-run` applies the same check. Packages marked `skip` are not checked, because they upload nothing. The guard exists because the publisher uploads every publishable package whose version is not in the registry, and `changeset version --snapshot` leaves a package with no pending changeset and no dependency bump at its current version. Before the first stable release that version is an unpublished `0.0.0`, which would go out under `canary`, and a dependent's snapshot would then depend on it. The check is a pure function exported from `scripts/publish.mjs` that takes the planned rows (name, version, `publish`/`skip`) and the HEAD sha and returns the offenders, so a unit test covers it without the registry or git.
+
+**Stable guard (AM-040).** With any tag other than `canary` (the `release` script uses the default `latest`), after step 3 and before step 4 runs for the first package, every package that step 3 marked `publish` must have a version without a prerelease part: no `-` after `<major>.<minor>.<patch>`, ignoring build metadata after `+`. Any other version, `-<sha>-SNAPSHOT` and `-rc.1` alike, fails the run with a non-zero exit and lists every offending `name@version`, before anything is packed or uploaded; `--dry-run` applies the same check. Packages marked `skip` are not checked. The guard mirrors the snapshot guard. Snapshot versions that reach `main`, for example a committed `snapshot:version` output (which also consumes the changeset files), would otherwise go out under `latest` from `release.yml`. npm's own refusal to publish a prerelease without `--tag` never fires, because the publisher always passes `--tag`. The check is a pure function exported from `scripts/publish.mjs` next to the snapshot guard's; it takes the planned rows and returns the offenders, and a unit test covers it.
+
+The publisher fails fast. The first error stops the run with a non-zero exit. A re-run is idempotent because step 3 skips versions already in the registry. With `--dry-run` it runs steps 1–5 for every publishable package, including those `npm view` reports as published, and marks each one `publish` or `skip` in the printed plan (package, version, tag, tarball path). The read-only `npm view` still runs, but `npm publish` and `changeset tag` never do. The publisher never prints secrets.
+
+**Auth (AM-038).** npm authenticates each upload through npm trusted publishing (OIDC) first, and falls back to a token only during the §7.2 bootstrap. In a GitHub Actions job with `id-token: write`, npm ≥ 11.5.1 on Node ≥ 22.14 fetches an OIDC ID token for the audience `npm:registry.npmjs.org`, exchanges it at the registry for a short-lived token scoped to the package, and publishes with it. This covers `npm publish <tarball>`: npm reads the package name from the tarball's manifest and runs the exchange for every spec type, not only for directories. When the exchange fails (no trusted publisher matches the package, the workflow filename, and the environment), npm keeps the token its config already has. That token is optional. `changesets/action@v1` appends `//registry.npmjs.org/:_authToken=<NPM_TOKEN>` to the user `~/.npmrc` before it runs the publish script, but only when `NPM_TOKEN` is non-empty, and `snapshot-deploy.yml` writes the same line under the same condition. An unset secret expands to an empty string, so without the secret no auth line is written and OIDC alone authenticates; with it, a successful exchange still replaces the token for that publish. No workflow passes `registry-url` to `actions/setup-node`, because that input writes `$RUNNER_TEMP/.npmrc` with `_authToken=${NODE_AUTH_TOKEN}`, exports `NPM_CONFIG_USERCONFIG` pointing at it (npm then stops reading `~/.npmrc`), and in v6 exports the placeholder `NODE_AUTH_TOKEN=XXXXX-XXXXX-XXXXX-XXXXX`. Provenance comes with trusted publishing: after a successful exchange npm turns `provenance` on when the repository and the package are public, and libnpmpublish signs the sha512 of the uploaded tarball, so tarball publishes carry provenance too. The registry accepts it only when the published `repository.url` matches the source repository, hence the `repository` field in §4.1–§4.8. Token-authenticated publishes (the bootstrap canary) carry no provenance, because the publisher does not pass `--provenance`. npm rejects trusted-publishing tokens minted for `pull_request_target` and `issue_comment` events, so the publishing workflows trigger only on `push` (`release.yml`) and `workflow_dispatch` (`snapshot-deploy.yml`). A trusted publisher is matched on the filename of the workflow that started the run, `workflow_dispatch` runs included. That filename does not pin the branch: GitHub runs the copy of the workflow file on the dispatched or pushed ref, so a branch could dispatch `snapshot-deploy.yml`, or push a `release.yml` whose trigger it edited, and still match. Both publishing jobs therefore declare `environment: npm`. The GitHub Environment `npm` has a deployment branch policy that allows only `main`, every trusted-publisher connection sets Environment name `npm` (the ID token carries the `environment` claim), and the bootstrap `NPM_TOKEN` is a secret of that environment, which only jobs that reference it and pass its policy can read. `bun publish` has no OIDC (oven-sh/bun#22423), so npm uploads.
 
 The guard `scripts/verify-pack.mjs` runs after `bun run build`, because it needs the built `dist/`. It uses no network. It discovers the publishable packages the same way and packs each one through the same staging function as publisher step 4, so CI checks the exact artifact the publisher uploads. It reads each tarball with `new Bun.Archive(bytes).files()`, whose keys are `package/<path>`, and checks:
 
@@ -1789,6 +1984,8 @@ Two invariants govern this matrix:
 - Phase 00 ships `0.1.0` of every package (initial publish). Plan §7.1 of PRD anchors `0.1.0` to Phase 00 exit.
 - Pre-1.0 breaking changes are permitted at minor bumps (PRD §7.1).
 - Releases split three ways (AM-036). Changesets versions packages and creates git tags (`changeset version`, `changeset tag`), Bun packs a staged copy of each package whose `workspace:` ranges the publisher has already rewritten (`bun pm pack`), and npm uploads the tarballs (`npm publish <tarball>`). The §6.F.5 publisher `scripts/publish.mjs` drives the last two steps.
+- Publishing authenticates through npm trusted publishing (OIDC), with provenance (§6.F.5 Auth, AM-038). A short-lived granular `NPM_TOKEN` exists only to publish the first canary, because trusted publishers are configured per package on npmjs.com and none of the 8 packages exists yet. A trusted publisher that no successful publish has validated expires 48 hours after creation. This bootstrap order verifies §9.5 and §9.6 (hardened by AM-040). (0) Before the PR that adds the publishing workflows merges, Miguel deletes the repository-level `NPM_TOKEN` secret (created 2021-04-01, so assumed to be a classic token revoked on 2025-12-09). He creates or configures the GitHub Environment `npm` with deployment branches set to **Selected branches and tags** and exactly one rule: Ref type **Branch**, name `main`, no wildcard, and no tag rule. This step is explicit, and comes before the merge, because GitHub auto-creates an environment a workflow references with no protection rules, and the merge itself triggers `release.yml`. Done first, step (0) leaves no window in which an unprotected `npm` environment exists. (1) After the merge, Miguel stores a granular token as the `NPM_TOKEN` secret of the `npm` environment. The token has **Packages and scopes** = **Read and write (publish and stage)** limited to the `@websublime` scope, **Organizations** = No access, an expiry of 1 day (at most 7), and Bypass 2FA (the run is non-interactive). (2) A `snapshot-deploy.yml` run on `main` publishes the first canary of all 8 packages with that token. (3) Right after step (2) succeeds, the `npm` environment's `NPM_TOKEN` secret is deleted and the token revoked on npmjs.com; step (4) happens in the npm UI and needs no token. (4) On each package Miguel adds a GitHub Actions trusted publisher for `websublime` / `line-ui` / `snapshot-deploy.yml` with Environment name `npm` and `npm publish` allowed (connections created after 2026-09-03 allow only `npm stage publish` by default). (5) Within 48 hours of step (4), a `snapshot-deploy.yml` run from a new `main` commit publishes a canary through OIDC with provenance, which validates those connections. (6) Once step (5) succeeds, Miguel sets Settings → Publishing access → **Require two-factor authentication and disallow tokens** on each of the 8 packages. That blocks token publishes, and trusted publishing keeps working (https://docs.npmjs.com/trusted-publishers, "Restrict token access"). If a token is ever needed again, the setting is lifted for that publish and restored after it. The `release.yml` trusted publishers (same fields, workflow `release.yml`, Environment name `npm`, `npm publish` allowed) are created on each package within the 48 hours before the Version PR is merged, and recreated if they expired, so the first stable publish validates them.
+- `changesets/action@v1` opens and updates the Version PR with `GITHUB_TOKEN`. The `checks.yml` runs that this triggers wait in an approval-required state, so before Miguel merges the Version PR at Phase 00 exit he approves the pending `checks.yml` run on the PR's current head (**Approve workflows to run** in the merge box), or closes and reopens the PR. The action force-pushes the PR branch on every push to `main`, so each update needs a new approval. While every pending changeset is empty (`bun run empty`), the action logs "All changesets are empty" and neither opens the Version PR nor publishes, so `release.yml` does nothing until a non-empty changeset lands.
 - No stable releases during Phase 00 — only RCs published from `main` via snapshot/canary tags; there is no `next` branch.
 
 ### 7.3 CEM (Custom Elements Manifest)
@@ -1889,7 +2086,7 @@ Phase 00 is **complete** when **all** of the following hold. This mirrors plan �
 
 - [ ] `checks.yml` runs lint + typecheck + build + layer-lint + palette-freshness + contrast + unit + e2e + Storybook build + CEM analyse on every PR.
 - [ ] `release.yml` runs Changesets publish on push to `main`.
-- [ ] `snapshot-version.yml` + `snapshot-deploy.yml` operational from `main` (manual dispatch and/or push-to-`main`); no `next` branch.
+- [ ] `snapshot-version.yml` (manual dispatch, dry run) + `snapshot-deploy.yml` (manual dispatch, publishes a canary only from `main`) operational; no `next` branch.
 - [ ] `deploy-site.yml` deploys `apps/site` to Cloudflare Pages on push to `main`.
 - [ ] Storybook preview deploy verified end-to-end on push to `main` (`deploy-storybook.yml` → Cloudflare Pages `line-ui-storybook` project).
 - [ ] `bunfig.toml` declares `[test] preload = ['./bun-test-preload.ts']` (RK5 mitigation for `@open-wc/testing-helpers` `fixtureCleanup` registration). [F2]
