@@ -1,6 +1,6 @@
 {
   "name": "@websublime/line-tokens",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -20,7 +20,6 @@
   "exports": {
     ".": "./dist/index.css",
     "./reset": "./dist/reset.css",
-
     "./typography": "./dist/typography.css",
     "./sizing": "./dist/sizing.css",
     "./shadows": "./dist/shadows.css",
@@ -32,7 +31,6 @@
     "./border-width": "./dist/border-width.css",
     "./focus-ring": "./dist/focus-ring.css",
     "./breakpoints": "./dist/breakpoints.css",
-
     "./aspects": "./dist/aspects.css",
     "./animations": "./dist/animations.css",
     "./gradients": "./dist/gradients.css",
