@@ -1449,11 +1449,13 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
   - the prop schema and the slot map;
   - the binding map (prop → property or attribute, the value prop, the commit event);
   - the action map (prop → DOM event);
-  - the accessibility requirements and the agent-facing description.
+  - the accessibility requirements and the agent-facing description;
+  - the `agentExposed` flag, which defaults to `true`.
 - Descriptors are written in Zod and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings).
 - The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no form-association or ARIA metadata.
 - A drift test fails when a descriptor names an attribute, property, slot or event that `customElements.json` lacks.
-- A coverage test fails when a `@websublime/line-components` module in the CEM has no descriptor. `<line-a2ui-surface>` is outside its scope. Components that agents should not compose sit on an explicit not-agent-exposed list with a reason each; Portal, Presence and Visually Hidden are the candidates, and the Phase 1 spec fixes the list.
+- A coverage test fails when a `@websublime/line-components` component in the CEM has no descriptor. `<line-a2ui-surface>` lives in `line-genui`, so the test does not cover it.
+- Every component keeps a descriptor. A component that makes no sense to an agent carries `agentExposed: false` with a reason, and the emitters leave flagged descriptors out of the catalogs and the frontend-tool schemas.
 - The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). An A2UI v1.0 emitter follows when v1.0 is final.
 - line://ui ships two catalogs, versioned independently.
   - The `line` catalog carries the full vocabulary under its own versioned `catalogId`. Any incompatible change gets a new id. `@websublime/line-genui/catalog.json` holds its emitted JSON.
@@ -1545,4 +1547,5 @@ Recipes pin the middleware version.
 
 - Should `line-core` expose the `FormAssociated` internals through one accessor, so components can set `ElementInternals` ARIA? Today `#internals` is private, and a second `attachInternals()` call throws.
 - Should a session advertise the basic catalog id by default before basic coverage is complete, or only when the consumer opts in?
-- Which components belong on the not-agent-exposed list (§17.3)?
+- Which components carry `agentExposed: false`? Portal, Presence and Visually Hidden are the candidates.
+- Which MCP Apps standard host colour, font and border-radius variables form the reference list that `mcp-apps.css` must map (§17.6)?
