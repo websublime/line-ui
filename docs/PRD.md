@@ -1149,7 +1149,7 @@ Each spec has two clearly separated sections:
 
 - **Part B — Technical Specification:** Anatomy, API (props, events, slots, parts, CSS custom properties), machine states, keyboard navigation, accessibility, agent contract, bundle/entrypoint details, and markup examples. Written for developers implementing or consuming the component.
 
-Every component spec includes an **Agent contract** section. It shows how the component meets rules C1–C8 (ARCHITECTURE §17.2) and fills the descriptor fields (ARCHITECTURE §17.3): catalog name, tag, prop schema, slot map, binding map, action map, accessibility requirements, and the agent-facing description.
+Every component spec includes an **Agent contract** section. It shows how the component meets rules C1–C8 (ARCHITECTURE §17.2) and fills the descriptor fields (ARCHITECTURE §17.3): catalog name, tag, prop schema, slot map, binding map, action map, accessibility requirements, the agent-facing description, and the `agentExposed` flag, with a reason when it is `false`.
 
 ### 8.2 Spec Lifecycle
 
