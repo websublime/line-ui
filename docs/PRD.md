@@ -843,6 +843,8 @@ Workflows:
 6. CEM drift test and descriptor coverage test.
 7. MCP Apps theming bridge, `@websublime/line-themes/hosts/mcp-apps.css`. The Phase 1 spec settles the fallback strategy for `line-tokens` primitives.
 8. Transport recipes in Storybook (AG-UI, A2A, MCP, SSE).
+9. Add the layer edges `line-genui -> line-core`, `line-components`, `line-icons` to the Phase 1 spec edge table and to `ALLOWED_EDGES` in `scripts/lint-layers.mjs`. Both `dependencies` and `peerDependencies` count as edges.
+10. `infra-supervisor` bootstraps the npm trusted publisher for `@websublime/line-genui` in the spec AM-038 order before its first release.
 
 Button, Icon, Stack and Separator validate the stream. From then on, every component ships its descriptor in the same PR.
 
@@ -878,8 +880,14 @@ Button, Icon, Stack and Separator validate the stream. From then on, every compo
 - CEM manifest generated and verified
 - Changeset entry for every component
 - Bundle splitting verified — families and independents work as documented
-- Every Phase 1 component has an agent descriptor, and the CEM drift and coverage tests pass
-- The `line` and `basic` catalogs are emitted and validate against the A2UI v0.9.1 schemas
+- Every Phase 1 component in `@websublime/line-components` has an agent descriptor or sits on the not-agent-exposed list with a reason, and the CEM drift and coverage tests pass
+- `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 catalog meta-schema
+- The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
+- The frontend-tool schemas validate as JSON Schema, use no `$ref` or `oneOf` beyond the A2UI common types, and keep every description at or under 1024 characters
+- `@websublime/line-themes/hosts/mcp-apps.css` maps each standard MCP host variable it lists and passes `lint-layers`
+- Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
+- `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
+- The npm trusted publisher for `@websublime/line-genui` exists before its first release
 - `<line-a2ui-surface>` renders every Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
 - Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
 
@@ -1162,7 +1170,7 @@ New components require a spec in `docs/specs/` before implementation begins. The
 
 ## 9. Design System — Layered Package Model
 
-> **Structural refactor required:** The repository workspace is already named `@websublime/line-ui`, but the target package layout (5 design-system packages + 3 runtime packages under `@websublime/line-*`) has not yet been authored under `packages/`. v0.8.0 stands up that layout with attribute-based multi-colour theming and Radix-fiel role separation. The codebase refactor to align with this specification is a Phase 0 task (see §9.13 Structural Refactor).
+> **Structural refactor required:** The repository workspace is already named `@websublime/line-ui`, but the Phase 0 package layout (5 design-system packages + 3 runtime packages under `@websublime/line-*`) has not yet been authored under `packages/`. `line-genui` joins as a fourth runtime package in Phase 1 (§6.1). v0.8.0 stands up that layout with attribute-based multi-colour theming and Radix-fiel role separation. The codebase refactor to align with this specification is a Phase 0 task (see §9.13 Structural Refactor).
 
 ### 9.1 Layered Package Model
 
@@ -1730,15 +1738,15 @@ Agent-driven UI lets an AI agent compose an interface from line://ui components 
 
 | Surface | Content | Status |
 |---------|---------|--------|
-| `@websublime/line-genui/catalog` | Descriptors, `line` and `basic` catalogs, emitters; touches no DOM | Normal policy (§7.1) |
-| `@websublime/line-genui/catalog.json` | Emitted A2UI catalog for agents and prompts | Normal policy (§7.1) |
+| `@websublime/line-genui/catalog` | Descriptors, the `line` catalog, the `basic` catalog implementations, emitters; touches no DOM | Normal policy (§7.1) |
+| `@websublime/line-genui/catalog.json` | Emitted JSON of the `line` catalog for agents and prompts; the `basic` catalog keeps A2UI's own schema and id | Normal policy (§7.1) |
 | `@websublime/line-genui/a2ui` | Session and `<line-a2ui-surface>` | Preview |
 | `@websublime/line-themes/hosts/mcp-apps.css` | CSS-only MCP Apps theming bridge | Normal policy (§7.1) |
 
 ### Preview policy
 
-- The `./a2ui` surface may change in any minor release.
-- It sits outside the §7.1 breaking-changes policy until it targets a final A2UI v1.0.
+- `@websublime/line-genui/a2ui` may change in any minor release.
+- `@websublime/line-genui/a2ui` sits outside the §7.1 breaking-changes policy until the package targets a final A2UI v1.0.
 - The descriptor API and the catalogs follow the normal policy.
 
 ### Deferred and rejected

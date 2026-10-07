@@ -15,6 +15,7 @@ This document captures the **cross-cutting architectural decisions** that apply 
 - **v0.8.1 (2026-10-07)** — Aligned with PRD v0.8.6 (ledger row `00-Z11`, decision by Miguel on 2026-10-07).
   - §17 (Agent-Driven UI) added. It covers the layers, the agent contract (rules C1–C8) that every component spec states, descriptors and catalogs, the light-DOM `<line-a2ui-surface>` renderer, transports, the MCP Apps theming bridge, the preview policy, and the deferred items. Evidence lives in `docs/research/00-research-generative-ui.md`.
   - §12 (Bundle Splitting Rule) gains a note that `line-genui` loads component subpaths lazily.
+  - §9 (Field Architecture) gains the `line-input` live-edit event that §17.2 rule C3 defines.
 - **v0.8.0 (2026-05-19)** — Realigned with PRD v0.8.3 and the revised Manifesto.
   - §4 (CSS Customisation — Dual Layer) rewritten to reflect the layered design system: components now consume **role-namespaced** tokens (`--line-accent-*`, `--line-gray-*`, `--line-success/warning/danger/info-*`) plus the **9 named aliases per role** (`-surface`, `-bg`, `-bg-hover`, `-bg-active`, `-border`, `-solid`, `-solid-hover`, `-text-low`, `-text`) and the sibling **`--line-{role}-contrast`** static token. References to v0.7 single-colour semantic globals (`--line-background`, `--line-solid-background`, `--line-primary-*` as direct hue tokens) removed.
   - §6 (Base Class — LineElement) — Zag.js lifecycle now integrates via the first-party `LineMachineController` (Lit `ReactiveController` exported from `@websublime/line-core/machine`), which wraps `@zag-js/vanilla` primitives. Phase 0 builds this adapter; components never import `@zag-js/vanilla` directly. See PRD v0.8.3 revision note and §2.1.
@@ -368,6 +369,8 @@ The Field is the orchestrator that connects labels, hints, errors, and required 
 1. Emits `line-focus`, `line-blur`, `line-change`, `line-invalid` events
 2. Has `formAssociated: true`
 3. Accepts `.focus()` programmatically
+
+**Live edits:** value-bearing controls also emit `line-input` with `detail.value` on every live edit (§17.2, rule C3). Field state detection does not depend on it.
 
 ---
 
@@ -1429,11 +1432,11 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
 
 | # | Rule |
 |---|------|
-| C1 | Every public input is a JSON-serialisable attribute or property (string, number, boolean, string enum, string array). |
+| C1 | Every public input is a JSON-serialisable attribute or property (string, number, boolean, string enum, string array, number array). An input that JSON cannot carry either gets a JSON-serialisable alternative or stays out of the descriptor's prop schema, and the spec's Agent contract section records the reason. |
 | C2 | Slots are documented with `@slot` and classified as single (`ComponentId`) or multiple (`ChildList`). |
-| C3 | Events are documented with `@fires` and a typed `detail`. Value-bearing components share one convention: `input` for live edits, `change` for commits, and the value in `detail.value`. |
-| C4 | Value-bearing components expose `value` as a property and accept external validity. An attribute or property sets the `ElementInternals` custom validity and fills the error zone. |
-| C5 | The host can set the accessible name, which the component forwards to its inner focusable element or to `ElementInternals` ARIA. |
+| C3 | Events are documented with `@fires` and a typed `detail`, and every event name carries the `line-` prefix (Law 2, §9). A value-bearing component is one whose descriptor binding map names a value prop. It emits `line-change` with `detail.value` on commit and `line-input` with `detail.value` on live edits. No component dispatches an unprefixed `input` or `change` event. |
+| C4 | Form-associated components (§7) expose `value` as a property and accept external validity. An attribute or property sets custom validity through the `FormAssociated` mixin's `setValidity` and reflects the invalid state (`data-invalid` and `:state(invalid)`, §14.8). The visible message stays in `<line-field>`'s `error` slot, which the renderer fills. |
+| C5 | The host accepts `aria-label` and `aria-description`, or a documented label property. The component applies the accessible name to the element that carries the role, which is either the host itself or the inner focusable element (§14.9 `delegatesFocus`). |
 | C6 | Semantic variants, when a component has them, are reflected attributes with closed enums that carry no styles. |
 | C7 | CEM JSDoc is complete, with `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated`. |
 | C8 | Rendering with missing or partial props degrades to an empty or neutral state. |
@@ -1450,12 +1453,34 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
 - Descriptors are written in Zod and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings).
 - The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no form-association or ARIA metadata.
 - A drift test fails when a descriptor names an attribute, property, slot or event that `customElements.json` lacks.
-- A coverage test fails when a component in the CEM has no descriptor.
-- The emitters produce the A2UI v0.9.1 catalog JSON and the frontend-tool schemas (`{name, description, parameters}`). An A2UI v1.0 emitter follows when v1.0 is final.
-- The pipeline emits two catalogs, versioned independently.
-  - The `line` catalog carries the full vocabulary under its own versioned `catalogId`. Any incompatible change gets a new id.
-  - The `basic` catalog registers line components under the A2UI basic catalog id, so agents that know only the basic catalog render with line://ui.
+- A coverage test fails when a `@websublime/line-components` module in the CEM has no descriptor. `<line-a2ui-surface>` is outside its scope. Components that agents should not compose sit on an explicit not-agent-exposed list with a reason each; Portal, Presence and Visually Hidden are the candidates, and the Phase 1 spec fixes the list.
+- The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). An A2UI v1.0 emitter follows when v1.0 is final.
+- line://ui ships two catalogs, versioned independently.
+  - The `line` catalog carries the full vocabulary under its own versioned `catalogId`. Any incompatible change gets a new id. `@websublime/line-genui/catalog.json` holds its emitted JSON.
+  - The `basic` catalog registers line components under the A2UI basic catalog id, so agents that know only the basic catalog render with line://ui. Its JSON Schema is A2UI's own, so line://ui registers implementations under the upstream id and does not re-emit it.
 - Schemas stay flat for provider limits. They use no `$ref` or `oneOf` beyond the A2UI common types, and every description stays at or under 1024 characters.
+
+Coverage of the `basic` catalog grows by phase. An unmapped basic type renders an inert placeholder and raises `line-a2ui-error`.
+
+| A2UI basic component | line://ui target | Phase |
+|----------------------|------------------|-------|
+| Text | Native `<p>`, `<h1>`–`<h5>`, `<small>` by `variant` | 1 |
+| Image | Native `<img>` behind the URL policy; `variant: "avatar"` → Avatar | 1 |
+| Icon | `<line-icon>`, with the A2UI icon names mapped to a `line-icons` resolver | 1 |
+| Video, AudioPlayer | Native `<video>` and `<audio controls>` | 1 |
+| Row, Column, List | `<line-stack>` | 1 |
+| Divider | `<line-separator>` | 1 |
+| Button | `<line-button>` | 1 |
+| TextField | `<line-input>`, `<line-textarea>`, `<line-password-input>`, `<line-number-input>`, wrapped in `<line-field>` for the label | 2 |
+| CheckBox | `<line-checkbox>` | 2 |
+| ChoicePicker | `<line-radio-group>`, a checkbox group, `<line-select>` or `<line-toggle-group>` | 2 |
+| Slider | `<line-slider>` | 2 |
+| DateTimeInput | `<line-date-input>` | 2 |
+| Tabs | `<line-tabs>` | 3 |
+| Modal | `<line-dialog>` | 3 |
+| ChoicePicker, DateTimeInput refinements | Combobox, Date Picker, Time Picker | 4 |
+| Card | `<line-card>` | 5 |
+| Video, AudioPlayer refinements | Video Player, Audio Player | 8 |
 
 ### 17.4 Renderer
 
@@ -1484,16 +1509,18 @@ The app owns the transport. line://ui documents each one as a Storybook recipe a
 
 | Transport | Inbound | Outbound |
 |-----------|---------|----------|
-| AG-UI 1.0 | `ACTIVITY_SNAPSHOT` with `activityType: "a2ui-surface"` and `content.a2ui_operations` | `forwardedProps.a2uiAction` on the next run |
+| AG-UI 1.0, `@ag-ui/a2ui-middleware` convention | `ACTIVITY_SNAPSHOT` with `activityType: "a2ui-surface"` and `content.a2ui_operations` | `forwardedProps.a2uiAction` on the next run |
 | A2A | DataPart with `mimeType: application/a2ui+json` holding an array of messages | DataPart with `[action]`; capabilities in message metadata |
 | MCP | Tool result `EmbeddedResource` with `application/a2ui+json` | `tools/call` of `a2ui_action` or `a2ui_error` |
 | SSE, WebSocket, fetch | JSONL | POST |
+
+Recipes pin the middleware version.
 
 ### 17.6 MCP Apps
 
 - line://ui works unchanged inside an MCP Apps View, which is one HTML document in a sandboxed iframe.
 - `@websublime/line-themes/hosts/mcp-apps.css` is a CSS-only bridge. It maps the standard MCP host variables onto line theme aliases, so `line-themes` gains no runtime (Law 10).
-- The app applies `hostContext.theme`, which sets `color-scheme` for `light-dark()`.
+- The app applies `hostContext.styles.variables` and `hostContext.theme` with the ext-apps SDK (`applyHostStyleVariables`, `applyDocumentTheme`). The theme call sets `color-scheme` for `light-dark()`.
 - The Phase 1 spec decides how the bridge handles `line-tokens` primitives, because a primitive cannot fall back to itself.
 
 ### 17.7 Stability
@@ -1513,3 +1540,9 @@ The app owns the transport. line://ui documents each one as a Storybook recipe a
 | json-render and OpenUI renderers | Out of scope | Upstream ships a web-components renderer |
 | Headless chat primitives | Separate catalogue question | A product decision |
 | Dev-time AI (Storybook 11 MCP, llms.txt from the CEM) | Schedule with Storybook 11 | Storybook 11 stable |
+
+### 17.9 Open questions for the Phase 1 spec
+
+- Should `line-core` expose the `FormAssociated` internals through one accessor, so components can set `ElementInternals` ARIA? Today `#internals` is private, and a second `attachInternals()` call throws.
+- Should a session advertise the basic catalog id by default before basic coverage is complete, or only when the consumer opts in?
+- Which components belong on the not-agent-exposed list (§17.3)?
