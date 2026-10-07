@@ -3,13 +3,14 @@
 **Date:** 2026-10-07
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.6
+**Version:** 0.8.7
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.7 (2026-10-07) — Storybook is hosted on Cloudflare Pages, with a preview per pull request.** Storybook deploys to the Cloudflare Pages project `line-ui-storybook` instead of GitHub Pages. Every push to `main` deploys production, and every pull request opened from a branch of this repository gets its own preview deploy at a `pr-<number>` URL in a separate Cloudflare account, so pull-request code never reaches the production token. Pull requests from forks get no preview, because GitHub gives them no secrets. Why: the spec already deployed Storybook to Cloudflare Pages, like `apps/site`, while §5.4 still named GitHub Pages; Miguel chose Cloudflare Pages, kept per-PR previews over production-only deploys, and chose a separate preview account over per-run approvals and over a single account (ledger row `00-Z9`, decision by Miguel on 2026-10-07; record in `docs/context/00-z9.md`). Updates: §5.4, §6.1 (apps tree and apps table). Spec §6.F.5 and §9.6 (AM-044) and ledger rows `F5` and `F7` aligned in the same commit; the spec header now cites PRD v0.8.7.
 - **v0.8.6 (2026-10-07) — line://ui supports agent-driven UI from its first component.** Every component gets a protocol-neutral agent descriptor (Zod, checked against the Custom Elements Manifest), and a new opt-in runtime package, `@websublime/line-genui`, renders line://ui components from A2UI v0.9.1 messages. The target layout grows to 9 published packages; Phase 0 still ships the first 8. The agent-driven UI foundation is the first stream of Phase 1, validated with Button, Icon, Stack and Separator, and every later component ships its descriptor in the same PR. A component that makes no sense to an agent keeps its descriptor flagged `agentExposed: false` with a reason, and the emitted catalogs and tool schemas leave it out (Decision 7). The agent contract (rules C1–C8) enters Phase 0 only through the component spec template (row `G4`). The descriptor API and both catalogs (`line` and A2UI `basic`) follow the normal policy (§7.1); the A2UI renderer (`@websublime/line-genui/a2ui`) is a preview until A2UI v1.0 is final. Why: Miguel wants the support in place when component creation starts, and A2UI is the only standard where the client owns the vocabulary and the styling (ledger row `00-Z11`, decision by Miguel on 2026-10-07; record in `docs/context/00-z11.md`). Evidence: research note `docs/research/00-research-generative-ui.md` (row `00-Z10`, PR #223). Miguel chose A2UI first on neutral descriptors over neutral descriptors only and json-render, descriptors in `line-genui` over colocated `*.agent.ts` files, both catalogs over `line` only, and the name `line-genui` over `line-agent` and `line-a2ui`. Updates: §1.4 (principle 6), §2 and §2.1, §6.1, §7.3, §7.12, §8.1, §9 intro (Phase 0 layout pointer), Appendix D (new). MANIFESTO Principle 8 and Out of Scope, ARCHITECTURE §12 and §17 (v0.8.1), spec §6.G (AM-043), ledger row `G4`, `docs/PROCESS.md` §6 commit scopes, `CLAUDE.md` and the `webcomponents-supervisor` agent aligned in the same commit; the plan and spec headers now cite PRD v0.8.6.
 - **v0.8.5 (2026-10-06) — The first stable release, 0.1.0, ships during Phase 0.** The first stable release, `0.1.0` of all 8 packages, ships during Phase 0 (by 2026-10-08) through the merge of the Changesets Version PR on `main`. Canary snapshots stay the RC channel. After it, remaining Phase 0 work that changes a published package ships as `0.1.x` patches, so `0.2.0` stays Phase 1's version (§7.1); the bump rule lives in `docs/PROCESS.md` §6. Why: the `release.yml` npm trusted-publisher connections expire 48 hours after creation unless a successful publish validates them; Miguel chose to validate them with the first stable release instead of letting them expire and recreating them at Phase 0 exit (ledger row `00-Z7`, decision by Miguel on 2026-10-06; record in `docs/context/00-z7.md`). Partially supersedes v0.8.4 (F-1): the Version PR no longer stays unmerged until Phase 0 exit; the no-`next`-branch and canary-RC parts stand. Updates: §6.5 Release Candidate Strategy; `docs/PROCESS.md` §6 changeset bullet. Plan §3 (Out of scope) and §7.9, and spec §2, §7.2, §9.9 (AM-041) aligned in the same commit; the plan and spec headers now cite PRD v0.8.5.
 - **v0.8.4 (2026-10-06) — RCs are canary snapshots published from `main`; spec AM-008 ratified.** There is no `next` branch. Release candidates are canary snapshots published from `main` by manual dispatch under the `canary` dist-tag. A stable release is the merge of the Changesets Version PR on `main`; during Phase 0 that PR stays unmerged, and merging it at Phase 0 exit ships 0.1.0. Why: spec AM-008 (2026-05-29) dropped the `next` branch and moved RC / snapshot / canary publishing to `main`, but the PRD was never revised, so §6.5 and §7.2 still put RCs on `next` and contradicted the approved spec (ledger row `00-F3`, decision by Miguel on 2026-10-06; record in `docs/context/00-f3.md`). "By manual dispatch" comes from Miguel's decision F-3 on the same row, recorded as spec AM-039, which replaced the spec's "manual dispatch and/or push-to-`main`". Updates: §6.5 workflow list (`snapshot-deploy.yml` comment) and Release Candidate Strategy; §7.2 task row "Define RC pipeline"; §7.2 exit criteria (CI/CD bullet). Plan §2.4 (CI/CD bullet), §4.6/F4, and §7.6 aligned in the same commit; the plan and spec headers now cite PRD v0.8.4.
@@ -548,9 +549,9 @@ The design system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-
 
 ### 5.4 Storybook Deployment
 
-- **GitHub Pages** for production deployment.
-- Automatic deployment per PR (preview link).
-- Production deployment on merge to main.
+- **Cloudflare Pages** hosts Storybook in the project `line-ui-storybook`.
+- Every push to `main` deploys production.
+- Every pull request from a branch of this repository gets a preview deploy at its own `pr-<number>` URL, in a Pages project in a separate Cloudflare account. Pull requests from forks get no preview.
 
 ---
 
@@ -574,7 +575,7 @@ packages/                                 ← 9 published packages (8 in Phase 0
 
 apps/                                     ← 2 apps, not published
 ├── site/             ← Astro docs site (Cloudflare Pages)
-└── storybook/        ← Storybook config + stories (GitHub Pages)
+└── storybook/        ← Storybook config + stories (Cloudflare Pages)
 ```
 
 **Published packages (target — 9):**
@@ -596,7 +597,7 @@ apps/                                     ← 2 apps, not published
 | App | Location | Purpose | Deploy target |
 |-----|----------|---------|---------------|
 | site | `apps/site/` | Astro docs site, dogfoods line://ui | Cloudflare Pages (`line-ui.websublime.com`) |
-| storybook | `apps/storybook/` | Stories playground, CEM-driven API docs | GitHub Pages |
+| storybook | `apps/storybook/` | Stories playground, CEM-driven API docs | Cloudflare Pages (`line-ui-storybook`) |
 
 **`line-components` is a single umbrella package, not per-component packages.** All components ship inside one `@websublime/line-components` package with **one version and one changelog**. Each component is independently importable via a **subpath export** (`@websublime/line-components/button`, `@websublime/line-components/dialog`, etc.). Per Manifesto Law 6 (bundle isolation), component files are side-effecting only by `customElements.define()` at module top — importing one component never executes another. A central barrel that imports every component is explicitly forbidden. Families share a subpath only when their slots make them inseparable. This is **not** a Lerna-style "one package per component" layout; the umbrella keeps a single source of truth, while subpath exports preserve tree-shaking and bundle isolation.
 
