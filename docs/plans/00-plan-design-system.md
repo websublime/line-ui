@@ -4,7 +4,7 @@
 **Author:** Ada (architect)
 **Date:** 2026-05-19
 **Phase Version Target:** `line://ui` v0.1.0 (also called "Phase 0" in the PRD)
-**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.5)
+**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.6)
 **Source Architecture:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (aligned with PRD v0.8.3)
 
 > **What this document is.** A planning document. It defines scope, high-level task breakdown, dependencies, and acceptance criteria for the Phase 00 release.

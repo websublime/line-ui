@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-05-19
+**Date:** 2026-10-07
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -12,6 +12,9 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.1 (2026-10-07)** — Aligned with PRD v0.8.6 (ledger row `00-Z11`, decision by Miguel on 2026-10-07).
+  - §17 (Agent-Driven UI) added. It covers the layers, the agent contract (rules C1–C8) that every component spec states, descriptors and catalogs, the light-DOM `<line-a2ui-surface>` renderer, transports, the MCP Apps theming bridge, the preview policy, and the deferred items. Evidence lives in `docs/research/00-research-generative-ui.md`.
+  - §12 (Bundle Splitting Rule) gains a note that `line-genui` loads component subpaths lazily.
 - **v0.8.0 (2026-05-19)** — Realigned with PRD v0.8.3 and the revised Manifesto.
   - §4 (CSS Customisation — Dual Layer) rewritten to reflect the layered design system: components now consume **role-namespaced** tokens (`--line-accent-*`, `--line-gray-*`, `--line-success/warning/danger/info-*`) plus the **9 named aliases per role** (`-surface`, `-bg`, `-bg-hover`, `-bg-active`, `-border`, `-solid`, `-solid-hover`, `-text-low`, `-text`) and the sibling **`--line-{role}-contrast`** static token. References to v0.7 single-colour semantic globals (`--line-background`, `--line-solid-background`, `--line-primary-*` as direct hue tokens) removed.
   - §6 (Base Class — LineElement) — Zag.js lifecycle now integrates via the first-party `LineMachineController` (Lit `ReactiveController` exported from `@websublime/line-core/machine`), which wraps `@zag-js/vanilla` primitives. Phase 0 builds this adapter; components never import `@zag-js/vanilla` directly. See PRD v0.8.3 revision note and §2.1.
@@ -451,6 +454,8 @@ A button must not drag in a dialog.
 **Independent entrypoints:** `./button`, `./icon-button`, `./button-group`, `./split-button`, `./input`, `./password-input`, `./search-input`, `./date-input`, `./textarea`, `./field`, `./fieldset`, `./icon`, `./alert`, `./chip`, `./avatar`, `./avatar-group`, `./presence`, `./spinner`, `./editable`, etc.
 
 **There is no convenience "import everything" barrel.** Consumers explicitly import the subpaths they need. The root `"."` export is intentionally minimal (types and shared utilities only), and `"sideEffects"` lists exactly the per-component dist files. This enforces bundle isolation by construction (Manifesto Law 6) — no consumer can accidentally drag in the full catalogue with a single import.
+
+**`line-genui` keeps the rule.** `@websublime/line-genui` loads component subpaths lazily from its catalog, through one `import()` per descriptor on the first sight of a type, and never defines component tags eagerly (§17.4).
 
 ---
 
@@ -1384,3 +1389,127 @@ This is the fundamental reason line://ui exists. If browsers let you fully style
 | Textarea resize handle | **Reset** — `resize: none`, custom auto-resize or re-enable via prop | Native textarea |
 
 **Pattern summary:** The dominant strategy is **avoidance** — don't use the native element that causes the problem. Render custom UI powered by Zag.js machines. Use `ElementInternals` for form integration. The native element only appears when there is literally no alternative (file dialog, password manager detection, text input for IME/autofill).
+
+---
+
+## 17. Agent-Driven UI
+
+An AI agent can compose an interface from line://ui components at runtime. The opt-in package `@websublime/line-genui` (from Phase 1) holds the component descriptors, the catalogs and the A2UI renderer. Components stay protocol-unaware, and no A2UI, AG-UI or MCP import enters `line-components` or `line-core`. Evidence and sources live in `docs/research/00-research-generative-ui.md`; the product view lives in PRD Appendix D.
+
+### 17.1 Layers
+
+```
+ agent (LLM + framework)                    host app (consumer)
+ ───────────────────────                    ──────────────────────────────────────────────
+ A2UI JSONL ──▶ transport, app-owned ──▶    glue: feed messages in, send actions out
+                (AG-UI / A2A / MCP / SSE)          │                         ▲
+                                                   ▼                         │ line-a2ui-action
+                                        ┌────────────────────────────────────────────┐
+ @websublime/line-genui                 │ <line-a2ui-surface>        (light DOM)      │
+                                        │  @a2ui/web_core: data model, bindings,      │
+                                        │  checks, functions, version adapters        │
+                                        │  projection: catalog name → line-* tag,     │
+                                        │  lazy import(), slots, a11y, URL policy     │
+                                        └──────────────────────┬─────────────────────┘
+                                        catalog/: Zod descriptors → A2UI catalog JSON,
+                                                  frontend-tool JSON Schema
+                                                               │ creates elements by tag
+ @websublime/line-components            <line-button> <line-input> <line-stack> …   (unchanged)
+ @websublime/line-themes                hosts/mcp-apps.css          (CSS-only, MCP Apps views)
+ consumer CSS                           ::part(...)   --line-*   data-accent / data-gray
+```
+
+- The app owns the transport and the glue.
+- `line-genui` depends on `line-core`; `line-components` and `line-icons` are peer dependencies, loaded lazily. No package depends on `line-genui`.
+- Consumer `::part()` and `--line-*` rules style agent-built UI exactly as they style hand-written UI.
+
+### 17.2 Agent contract
+
+Every component spec states these rules in its Agent contract section (PRD §8.1). They are normative from Phase 1 on.
+
+| # | Rule |
+|---|------|
+| C1 | Every public input is a JSON-serialisable attribute or property (string, number, boolean, string enum, string array). |
+| C2 | Slots are documented with `@slot` and classified as single (`ComponentId`) or multiple (`ChildList`). |
+| C3 | Events are documented with `@fires` and a typed `detail`. Value-bearing components share one convention: `input` for live edits, `change` for commits, and the value in `detail.value`. |
+| C4 | Value-bearing components expose `value` as a property and accept external validity. An attribute or property sets the `ElementInternals` custom validity and fills the error zone. |
+| C5 | The host can set the accessible name, which the component forwards to its inner focusable element or to `ElementInternals` ARIA. |
+| C6 | Semantic variants, when a component has them, are reflected attributes with closed enums that carry no styles. |
+| C7 | CEM JSDoc is complete, with `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated`. |
+| C8 | Rendering with missing or partial props degrades to an empty or neutral state. |
+
+### 17.3 Descriptors and catalogs
+
+- Each component has one protocol-neutral descriptor in `line-genui/src/catalog/`. `line-components` gains no Zod or A2UI dependency.
+- A descriptor holds these fields:
+  - the catalog name, the tag, and `load()`, which imports the component subpath;
+  - the prop schema and the slot map;
+  - the binding map (prop → property or attribute, the value prop, the commit event);
+  - the action map (prop → DOM event);
+  - the accessibility requirements and the agent-facing description.
+- Descriptors are written in Zod and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings).
+- The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no form-association or ARIA metadata.
+- A drift test fails when a descriptor names an attribute, property, slot or event that `customElements.json` lacks.
+- A coverage test fails when a component in the CEM has no descriptor.
+- The emitters produce the A2UI v0.9.1 catalog JSON and the frontend-tool schemas (`{name, description, parameters}`). An A2UI v1.0 emitter follows when v1.0 is final.
+- The pipeline emits two catalogs, versioned independently.
+  - The `line` catalog carries the full vocabulary under its own versioned `catalogId`. Any incompatible change gets a new id.
+  - The `basic` catalog registers line components under the A2UI basic catalog id, so agents that know only the basic catalog render with line://ui.
+- Schemas stay flat for provider limits. They use no `$ref` or `oneOf` beyond the A2UI common types, and every description stays at or under 1024 characters.
+
+### 17.4 Renderer
+
+`<line-a2ui-surface>` in `@websublime/line-genui/a2ui` renders A2UI messages with line components. `@a2ui/web_core` keeps the surface model, the data model, bindings, functions and checks; the surface owns the DOM projection.
+
+| Topic | Rule | Reason |
+|-------|------|--------|
+| Render root | Light DOM | Document `::part()` rules cannot reach elements inside another shadow root (Law 1) |
+| Loading | Lazy `import()` through each descriptor's `load()`; no eager `define()` | Custom elements upgrade when their module arrives (Law 6) |
+| Composition | The surface creates elements by tag and wires children through slots | Orchestrator pattern (Law 4) |
+| Events | `line-a2ui-action` carries the resolved A2UI `action` message; `line-a2ui-error` carries an A2UI `error` message | The app sends both through its transport |
+| Errors | The surface catches every `web_core` throw and puts an inert placeholder in place of the failed node | Law 9 |
+| Theme | Agent theme hints are ignored by default | The host owns styling |
+| Text | Plain text by default; Markdown only through an opt-in sanitising renderer | Agent strings are untrusted |
+| URLs | A URL policy hook with the default allowlist `https:`, `http:`, `mailto:`, `tel:`; `requiresUserActivation` is honoured | Upstream does not check media URLs |
+| Limits | Configurable maximum node count, depth and data-model size | Hostile or runaway agents |
+| Accessibility | One live region per surface; `aria-busy` during batches; no focus moves on agent-initiated updates; focus kept across re-renders through stable ids; required names validated | Law 3 |
+
+The first task of the Phase 1 stream decides the projection technique. The candidates are light-DOM adapter elements rendered through `web_core` `renderA2uiNode` and direct projection on the `web_core` models and binder.
+
+Importing `@websublime/line-genui/catalog` defines no element. Importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`.
+
+### 17.5 Transports
+
+The app owns the transport. line://ui documents each one as a Storybook recipe and ships no transport code.
+
+| Transport | Inbound | Outbound |
+|-----------|---------|----------|
+| AG-UI 1.0 | `ACTIVITY_SNAPSHOT` with `activityType: "a2ui-surface"` and `content.a2ui_operations` | `forwardedProps.a2uiAction` on the next run |
+| A2A | DataPart with `mimeType: application/a2ui+json` holding an array of messages | DataPart with `[action]`; capabilities in message metadata |
+| MCP | Tool result `EmbeddedResource` with `application/a2ui+json` | `tools/call` of `a2ui_action` or `a2ui_error` |
+| SSE, WebSocket, fetch | JSONL | POST |
+
+### 17.6 MCP Apps
+
+- line://ui works unchanged inside an MCP Apps View, which is one HTML document in a sandboxed iframe.
+- `@websublime/line-themes/hosts/mcp-apps.css` is a CSS-only bridge. It maps the standard MCP host variables onto line theme aliases, so `line-themes` gains no runtime (Law 10).
+- The app applies `hostContext.theme`, which sets `color-scheme` for `light-dark()`.
+- The Phase 1 spec decides how the bridge handles `line-tokens` primitives, because a primitive cannot fall back to itself.
+
+### 17.7 Stability
+
+- The agent contract (§17.2), the descriptor API and both catalogs follow the PRD §7.1 breaking-changes policy.
+- The A2UI renderer (`@websublime/line-genui/a2ui`) ships as a preview. It may change in any minor release and sits outside the PRD §7.1 policy until it targets a final A2UI v1.0.
+- `line-genui` pins `@a2ui/web_core` exactly, because upstream ships breaking changes in minor versions.
+
+### 17.8 Deferred and rejected
+
+| Item | Decision | Trigger to revisit |
+|------|----------|--------------------|
+| WebMCP for form-associated elements | Defer | WebMCP spec issue #94 resolved and a second engine signals support |
+| MCP Apps host element (`<line-mcp-app-frame>`) | Defer | line://ui targets chat hosts; needs a sandbox-proxy origin and a security review |
+| Server-side A2UI → `<line-*>` HTML | Defer | Outcome of the HTMX spike (H1) |
+| Model-authored `<line-*>` markup | Reject | The Sanitizer API reaches Baseline and an allowlist story exists |
+| json-render and OpenUI renderers | Out of scope | Upstream ships a web-components renderer |
+| Headless chat primitives | Separate catalogue question | A product decision |
+| Dev-time AI (Storybook 11 MCP, llms.txt from the CEM) | Schedule with Storybook 11 | Storybook 11 stable |

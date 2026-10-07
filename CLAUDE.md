@@ -35,7 +35,8 @@ Foundation documents live in `docs/`. Read the section a task needs; only the sh
 line-ui/
 ├── packages/        # @websublime/line-* — tokens, colors, schemas, themes, utils (design system, done);
 │                    # core (LineElement + Inspector/Metadata mixins; machine adapter and resets pending);
-│                    # icons (registry pending); components (empty until Phase 1)
+│                    # icons (registry pending); components (empty until Phase 1);
+│                    # genui (agent-driven UI catalog + A2UI renderer, from Phase 1)
 ├── apps/            # storybook (Storybook 10 + MDX); site (Astro scaffold pending)
 ├── scripts/         # generate-palettes, generate-role-maps, validate-contrast, verify-palettes-fresh, lint-layers
 ├── docs/            # MANIFESTO, PRD, ARCHITECTURE, PROCESS, STYLE, plans/ (plan + ledger), research/, specs/

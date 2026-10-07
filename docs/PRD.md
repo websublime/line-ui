@@ -1,15 +1,16 @@
 # line://ui — Product Requirements Specification
 
-**Date:** 2026-10-06
+**Date:** 2026-10-07
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.5
+**Version:** 0.8.6
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.6 (2026-10-07) — line://ui supports agent-driven UI from its first component.** Every component gets a protocol-neutral agent descriptor (Zod, checked against the Custom Elements Manifest), and a new opt-in runtime package, `@websublime/line-genui`, renders line://ui components from A2UI v0.9.1 messages. The target layout grows to 9 published packages; Phase 0 still ships the first 8. The agent-driven UI foundation is the first stream of Phase 1, validated with Button, Icon, Stack and Separator, and every later component ships its descriptor in the same PR. The agent contract (rules C1–C8) enters Phase 0 only through the component spec template (row `G4`). The descriptor API and both catalogs (`line` and A2UI `basic`) follow the normal policy (§7.1); the A2UI renderer (`@websublime/line-genui/a2ui`) is a preview until A2UI v1.0 is final. Why: Miguel wants the support in place when component creation starts, and A2UI is the only standard where the client owns the vocabulary and the styling (ledger row `00-Z11`, decision by Miguel on 2026-10-07; record in `docs/context/00-z11.md`). Evidence: research note `docs/research/00-research-generative-ui.md` (row `00-Z10`, PR #223). Miguel chose A2UI first on neutral descriptors over neutral descriptors only and json-render, descriptors in `line-genui` over colocated `*.agent.ts` files, both catalogs over `line` only, and the name `line-genui` over `line-agent` and `line-a2ui`. Updates: §1.4 (principle 6), §2 and §2.1, §6.1, §7.3, §7.12, §8.1, Appendix D (new). MANIFESTO Principle 8 and Out of Scope, ARCHITECTURE §12 and §17 (v0.8.1), spec §6.G (AM-043), ledger row `G4`, `docs/PROCESS.md` §6 commit scopes, `CLAUDE.md` and the `webcomponents-supervisor` agent aligned in the same commit; the plan and spec headers now cite PRD v0.8.6.
 - **v0.8.5 (2026-10-06) — The first stable release, 0.1.0, ships during Phase 0.** The first stable release, `0.1.0` of all 8 packages, ships during Phase 0 (by 2026-10-08) through the merge of the Changesets Version PR on `main`. Canary snapshots stay the RC channel. After it, remaining Phase 0 work that changes a published package ships as `0.1.x` patches, so `0.2.0` stays Phase 1's version (§7.1); the bump rule lives in `docs/PROCESS.md` §6. Why: the `release.yml` npm trusted-publisher connections expire 48 hours after creation unless a successful publish validates them; Miguel chose to validate them with the first stable release instead of letting them expire and recreating them at Phase 0 exit (ledger row `00-Z7`, decision by Miguel on 2026-10-06; record in `docs/context/00-z7.md`). Partially supersedes v0.8.4 (F-1): the Version PR no longer stays unmerged until Phase 0 exit; the no-`next`-branch and canary-RC parts stand. Updates: §6.5 Release Candidate Strategy; `docs/PROCESS.md` §6 changeset bullet. Plan §3 (Out of scope) and §7.9, and spec §2, §7.2, §9.9 (AM-041) aligned in the same commit; the plan and spec headers now cite PRD v0.8.5.
 - **v0.8.4 (2026-10-06) — RCs are canary snapshots published from `main`; spec AM-008 ratified.** There is no `next` branch. Release candidates are canary snapshots published from `main` by manual dispatch under the `canary` dist-tag. A stable release is the merge of the Changesets Version PR on `main`; during Phase 0 that PR stays unmerged, and merging it at Phase 0 exit ships 0.1.0. Why: spec AM-008 (2026-05-29) dropped the `next` branch and moved RC / snapshot / canary publishing to `main`, but the PRD was never revised, so §6.5 and §7.2 still put RCs on `next` and contradicted the approved spec (ledger row `00-F3`, decision by Miguel on 2026-10-06; record in `docs/context/00-f3.md`). "By manual dispatch" comes from Miguel's decision F-3 on the same row, recorded as spec AM-039, which replaced the spec's "manual dispatch and/or push-to-`main`". Updates: §6.5 workflow list (`snapshot-deploy.yml` comment) and Release Candidate Strategy; §7.2 task row "Define RC pipeline"; §7.2 exit criteria (CI/CD bullet). Plan §2.4 (CI/CD bullet), §4.6/F4, and §7.6 aligned in the same commit; the plan and spec headers now cite PRD v0.8.4.
 - **v0.8.3 (2026-05-19) — Research-driven corrections from Stage 2 phase 00 (two rounds).** Four contradictions surfaced by research (round 1: `/Users/ramosmig/Public/WS-Labs/line-ui/docs/research/00-research-design-system-foundation.md`; round 2: `/Users/ramosmig/Public/WS-Labs/line-ui/docs/research/00-research-design-system-foundation-round2.md`) closed in this revision.
@@ -101,6 +102,7 @@ The headless-first approach is validated across multiple framework ecosystems, b
 3. **Composition over configuration** — Components connect via `<slot>`, not props. A Field does not import an Input — it accepts any form control via slot. A DatePicker accepts any trigger via slot. Independence is the default.
 4. **HTMX as exploration** — Web Components are browser-native. A `<line-dialog>` works in plain HTML served by any backend. HTMX adds server-driven interactivity. First-class support to be explored and validated.
 5. **Inspector as dev tooling** — Feature flag via localStorage. When active, every component exposes metadata: version, docs link, scope, QA tags. Useful for QA teams and integrating developers.
+6. **Agent-ready by construction** — Every component is describable to an AI agent through a protocol-neutral catalog of Zod descriptors checked against the Custom Elements Manifest. Agents render line://ui components through the opt-in `@websublime/line-genui` package, which speaks A2UI today. Components never import a protocol, and the host keeps every styling decision. The A2UI renderer is a preview until A2UI v1.0 is final. See Appendix D.
 
 ### 1.5 Target Users
 
@@ -157,6 +159,7 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 | Role Mappings | `@websublime/line-themes` — CSS role mappings (`--line-accent-*`, `--line-gray-*`, semantics, aliases, auto-pair defaults) |
 | Design System Utils | `@websublime/line-utils` — helpers (contrast, mix, etc.) |
 | CSS Processing | **PostCSS** (latest stable: `postcss-import`, `postcss-nested`, `postcss-preset-env`, `cssnano`) — handles the design system CSS pipeline. Vite/Rolldown still handles component bundling. |
+| Agent-Driven UI | `@websublime/line-genui` (opt-in, from Phase 1) — A2UI v0.9.1 through `@a2ui/web_core` (exact pin); protocol-neutral Zod descriptors emit the A2UI catalogs and frontend-tool JSON Schema. See Appendix D. |
 | All dependencies | **Latest stable versions** |
 
 ### 2.1 Stack Rationale
@@ -180,6 +183,8 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 All `--line-*` prefixed. Token names remain singular (`--line-radius-1`, `--line-size-3`); the plural form (`radii`, `sizing`) is the family/export name only. Decorative families that historically reference colour values (e.g., gradients) are **restructured** so their colour terms come from `line-colors` palette tokens, not from absolute values — preserving the Manifesto Law 10 cross-layer separation. The previous `colors-absolute.css` family from v0.7 is **removed** for this reason; consumers needing black/white absolutes use the relevant Radix scale (e.g., `--line-gray-1` / `--line-gray-12`). Open Props served as a design reference for initial values but is NOT used at runtime or build time. Owned, versioned, and shipped as its own leaf package.
 
 **Colour System (`line-colors` + `line-schemas` + `line-themes`)** — Radix-fiel. 31 hues x 12 steps (Radix Colors 3.x). `line-colors` ships pure palette CSS (`--line-amber-1..12`, etc.), sourced from `@radix-ui/colors` npm but committed into the repo so CI does not regenerate every build. `line-schemas` is the TS contract layer (Zod + types) declaring `HUES`, `ACCENT_HUES`, `GRAY_HUES`, and `SEMANTIC_MAP`. `line-themes` ships role-mapping CSS (`--line-accent-*`, `--line-gray-*`, semantic `--line-success/warning/danger/info-*`, named aliases, and the `[data-accent]` / `[data-gray]` selectors). Light/dark lives inside the palette via CSS `light-dark()` — themes are mono-declaration.
+
+**Agent-Driven UI (`line-genui`)** — A2UI is the only agent-UI standard where the client owns the component vocabulary and the styling, which matches a headless library. `@a2ui/web_core` is the official framework-agnostic core; it shares `lit ^3.3.3` and `zod ^3.25.76` with line://ui. A2UI calls itself a public preview, and `web_core` ships breaking changes in minor versions, so `line-genui` pins it exactly and its A2UI renderer is a preview until A2UI v1.0 is final (ARCHITECTURE §17.7).
 
 ---
 
@@ -553,10 +558,10 @@ The design system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-
 
 ### 6.1 Monorepo Structure
 
-The layout is **8 published packages + 2 apps**: 5 design-system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`) and 3 runtime packages (`line-core`, `line-components`, `line-icons`). The `site` and `storybook` workspaces are **apps**, not libraries — they live under `apps/` and are not published to npm.
+The target layout is **9 published packages + 2 apps**: 5 design-system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`) and 4 runtime packages (`line-core`, `line-components`, `line-icons`, and `line-genui` from Phase 1). Phase 0 ships the first 8; `line-genui` joins in Phase 1 (§7.3). The `site` and `storybook` workspaces are **apps**, not libraries — they live under `apps/` and are not published to npm.
 
 ```
-packages/                                 ← 8 published packages
+packages/                                 ← 9 published packages (8 in Phase 0)
 ├── core/             ← Base class + Zag adapter + inspector + mixins
 ├── icons/            ← Icon registry + resolvers for popular libraries
 ├── tokens/           ← L0 — non-colour: 11 primitive families + 7 decorative families + reset (see §9.1 / §9.9)
@@ -564,14 +569,15 @@ packages/                                 ← 8 published packages
 ├── schemas/          ← L2 — TS types + Zod validators (HUES, ACCENT_HUES, GRAY_HUES, SEMANTIC_MAP)
 ├── themes/           ← L3 — CSS role mappings + semantics + aliases + auto-pair defaults
 ├── utils/            ← Design system helpers (contrast, mix, etc.)
-└── components/       ← Umbrella package: all components, subpath-exported
+├── components/       ← Umbrella package: all components, subpath-exported
+└── genui/            ← Agent-driven UI: component descriptors, catalogs, A2UI renderer (from Phase 1)
 
 apps/                                     ← 2 apps, not published
 ├── site/             ← Astro docs site (Cloudflare Pages)
 └── storybook/        ← Storybook config + stories (GitHub Pages)
 ```
 
-**Published packages (target — 8):**
+**Published packages (target — 9):**
 
 | Package | npm name | Layer | Part of design system? |
 |---------|----------|-------|------------------------|
@@ -583,6 +589,7 @@ apps/                                     ← 2 apps, not published
 | themes | `@websublime/line-themes` | L3 | Yes |
 | utils | `@websublime/line-utils` | helper | Yes |
 | icons | `@websublime/line-icons` | runtime | **No — optional icon library, slot-delivered. Mirrors the Radix Themes / `@radix-ui/react-icons` split.** |
+| genui | `@websublime/line-genui` | runtime | **No — optional agent-driven UI package, from Phase 1 (Appendix D).** |
 
 **Apps (not published):**
 
@@ -594,6 +601,8 @@ apps/                                     ← 2 apps, not published
 **`line-components` is a single umbrella package, not per-component packages.** All components ship inside one `@websublime/line-components` package with **one version and one changelog**. Each component is independently importable via a **subpath export** (`@websublime/line-components/button`, `@websublime/line-components/dialog`, etc.). Per Manifesto Law 6 (bundle isolation), component files are side-effecting only by `customElements.define()` at module top — importing one component never executes another. A central barrel that imports every component is explicitly forbidden. Families share a subpath only when their slots make them inseparable. This is **not** a Lerna-style "one package per component" layout; the umbrella keeps a single source of truth, while subpath exports preserve tree-shaking and bundle isolation.
 
 **Dependency rules (Manifesto Law 10):** `themes -> colors + schemas`; `utils -> schemas`. `tokens`, `colors`, `schemas` are leaves. No cross-layer leakage (palette values inside themes, semantic CSS inside tokens, runtime code inside CSS-only packages) is allowed.
+
+**Runtime layer edges for `line-genui`:** `line-genui -> line-core`, with `line-components` and `line-icons` as peer dependencies loaded lazily. No package depends on `line-genui`.
 
 **`line-icons` position.** `@websublime/line-icons` is **not** part of the design system. The design system is exactly the five packages `line-tokens`, `line-colors`, `line-schemas`, `line-themes`, `line-utils`. `line-icons` is a separate, optional icon library that shares the line://ui brand and naming conventions (`line-*` prefix). Components that need icons expose **slots** (per Manifesto Law 4: composition over inheritance, slots over props); consumers may fill those slots with `line-icons` or any other icon library (Lucide, Phosphor, Iconoir, `@radix-ui/react-icons`, etc.). Dependency direction is one-way: `line-icons -> line-tokens` is permitted (icons reuse icon-size / sizing tokens); the inverse is forbidden.
 
@@ -824,6 +833,19 @@ Workflows:
 
 ### 7.3 Phase 1 — Core Primitives (v0.2.0)
 
+**Agent-driven UI foundation (first stream).** This stream opens Phase 1 and ships `@websublime/line-genui` (ARCHITECTURE §17, Appendix D):
+
+1. Choose the projection technique. The candidates are light-DOM adapter elements rendered through `@a2ui/web_core` `renderA2uiNode` and direct projection on the `web_core` models and binder. This task runs first, and its outcome binds the renderer.
+2. Descriptor API (protocol-neutral Zod descriptors in `line-genui/src/catalog/`).
+3. `line` and `basic` catalog emitters for A2UI v0.9.1.
+4. Frontend-tool JSON Schema emitter (`{name, description, parameters}`).
+5. `<line-a2ui-surface>`: light DOM, built on `@a2ui/web_core`, preview status.
+6. CEM drift test and descriptor coverage test.
+7. MCP Apps theming bridge, `@websublime/line-themes/hosts/mcp-apps.css`. The Phase 1 spec settles the fallback strategy for `line-tokens` primitives.
+8. Transport recipes in Storybook (AG-UI, A2A, MCP, SSE).
+
+Button, Icon, Stack and Separator validate the stream. From then on, every component ships its descriptor in the same PR.
+
 | Component | Zag.js |
 |-----------|--------|
 | Button | Custom |
@@ -847,7 +869,7 @@ Workflows:
 | Aspect Ratio | Static |
 | Spinner | Static |
 
-**20 components.** Validates architecture, parts convention, slot/part decision rule, umbrella build pipeline (subpath exports per component), bundle splitting, and automatic documentation.
+**20 components and `line-genui`.** Validates architecture, parts convention, slot/part decision rule, umbrella build pipeline (subpath exports per component), bundle splitting, automatic documentation, and agent-driven rendering through A2UI.
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -856,6 +878,10 @@ Workflows:
 - CEM manifest generated and verified
 - Changeset entry for every component
 - Bundle splitting verified — families and independents work as documented
+- Every Phase 1 component has an agent descriptor, and the CEM drift and coverage tests pass
+- The `line` and `basic` catalogs are emitted and validate against the A2UI v0.9.1 schemas
+- `<line-a2ui-surface>` renders every Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
+- Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
 
 **Parallel:** Landing page for site.
 
@@ -1089,7 +1115,7 @@ Phase 8 includes a **Notes** column for clarification — these domain component
 
 ```
 Phase 0 ─── Foundation & Tooling ──────────── v0.1.0
-Phase 1 ─── 20 core primitives ────────────── v0.2.0
+Phase 1 ─── 20 core primitives + line-genui ─ v0.2.0
 Phase 2 ─── 15 essential forms ────────────── v0.3.0
 Phase 3 ─── 16 overlays & navigation ──────── v0.4.0
 Phase 4 ─── 13 advanced forms ─────────────── v0.5.0
@@ -1113,7 +1139,9 @@ Each spec has two clearly separated sections:
 
 - **Part A — Requirements:** Description, use cases, anti-patterns, user expectations, connections to other components, variants. Written for PMs, designers, and developers evaluating the library.
 
-- **Part B — Technical Specification:** Anatomy, API (props, events, slots, parts, CSS custom properties), machine states, keyboard navigation, accessibility, bundle/entrypoint details, and markup examples. Written for developers implementing or consuming the component.
+- **Part B — Technical Specification:** Anatomy, API (props, events, slots, parts, CSS custom properties), machine states, keyboard navigation, accessibility, agent contract, bundle/entrypoint details, and markup examples. Written for developers implementing or consuming the component.
+
+Every component spec includes an **Agent contract** section. It shows how the component meets rules C1–C8 (ARCHITECTURE §17.2) and fills the descriptor fields (ARCHITECTURE §17.3): catalog name, tag, prop schema, slot map, binding map, action map, accessibility requirements, and the agent-facing description.
 
 ### 8.2 Spec Lifecycle
 
@@ -1683,3 +1711,39 @@ The `://` mark — abstracted from the URI protocol notation — serves as the i
 The line://ui marketing surface — website, logo, social media — uses an electric green accent: `#c8ff00`, adapting to `#6d8a00` in light contexts.
 
 **This is distinct from the library's default component accent**, which is `indigo` and is selected via the `data-accent` attribute system (see §9.5 Defaults & Auto-Pairing). Consumers of the library are not steered toward electric green — they pick from the 31 Radix hues, with `indigo` as the auto-selected default.
+
+---
+
+## Appendix D: Agent-Driven UI (Generative UI)
+
+Agent-driven UI lets an AI agent compose an interface from line://ui components at runtime. The design lives in ARCHITECTURE §17; the evidence lives in `docs/research/00-research-generative-ui.md`.
+
+### Tiers
+
+| Tier | Who authors the UI | line://ui support |
+|------|--------------------|-------------------|
+| Controlled | The app developer; the agent picks a component and fills its props through a tool call | Frontend-tool JSON Schema (`{name, description, parameters}`) emitted from the descriptors |
+| Declarative | The agent composes a tree from a client-owned catalog | A2UI v0.9.1 through `<line-a2ui-surface>` and the `line` and `basic` catalogs |
+| Open-ended | A server ships a full HTML app in a sandboxed iframe | line://ui works inside MCP Apps Views; `line-themes/hosts/mcp-apps.css` maps the host's variables |
+
+### Packages and subpaths
+
+| Surface | Content | Status |
+|---------|---------|--------|
+| `@websublime/line-genui/catalog` | Descriptors, `line` and `basic` catalogs, emitters; touches no DOM | Normal policy (§7.1) |
+| `@websublime/line-genui/catalog.json` | Emitted A2UI catalog for agents and prompts | Normal policy (§7.1) |
+| `@websublime/line-genui/a2ui` | Session and `<line-a2ui-surface>` | Preview |
+| `@websublime/line-themes/hosts/mcp-apps.css` | CSS-only MCP Apps theming bridge | Normal policy (§7.1) |
+
+### Preview policy
+
+- The `./a2ui` surface may change in any minor release.
+- It sits outside the §7.1 breaking-changes policy until it targets a final A2UI v1.0.
+- The descriptor API and the catalogs follow the normal policy.
+
+### Deferred and rejected
+
+- WebMCP for form-associated elements is deferred.
+- An MCP Apps host element is deferred.
+- Server-side A2UI → `<line-*>` HTML is deferred until the HTMX spike (H1) reports.
+- Model-authored `<line-*>` markup is rejected for now.
