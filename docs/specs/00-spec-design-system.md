@@ -516,7 +516,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-041 | 2026-10-06 | ledger `00-Z7` (decision — Miguel chose a stable 0.1.0 during Phase 00, before 2026-10-08, over letting the release.yml trusted publishers expire and recreating them at Phase 00 exit) | Six changes; versions, workflows, and the bootstrap order are otherwise unchanged. (1) §2 Non-Goals: "Stable npm releases. Phase 00 is RCs only." becomes stable releases beyond `0.1.x`. (2) §7.2 first-publish bullet: `0.1.0` ships during Phase 00, before 2026-10-08, through the Version PR merge instead of being anchored to Phase 00 exit, and later Phase 00 bumps follow the changeset rule in `docs/PROCESS.md` §6 (once a phase's minor has shipped, changesets use `patch`) so `0.2.0` stays Phase 1. (3) §7.2 Version PR bullet: drops "at Phase 00 exit" from the merge timing and gains a release runbook: (a) wait for the `release.yml` run after any push to `main` to force-push `changeset-release/main`; (b) confirm the head was force-pushed after the latest `main` commit, then approve the pending `checks.yml` run and merge (step (a) is the only guard against a stale merge that publishes nothing); (c) post-merge checks (the `release.yml` run, `latest` = `0.1.0` on all 8, `_npmUser` `GitHub Actions` with SLSA provenance, 8 tags and 8 GitHub releases); (d) recovery (**Re-run failed jobs**; missing GitHub releases created by hand). (4) §7.2: "No stable releases during Phase 00 — only RCs" becomes RCs as canary snapshots from `main`, no `next` branch, and the first stable release as the Version PR merge during Phase 00. (5) §9.9: "No stable releases — RCs only" becomes all 8 packages first published at `0.1.0` under `latest` by `release.yml` through trusted publishing with provenance, later bumps per `docs/PROCESS.md` §6, RCs as canary snapshots. (6) §2 Non-Goals and §7.2 point to `docs/PROCESS.md` §6 for the post-`0.1.0` bump instead of restating it. The §7.2 bootstrap text (the `release.yml` trusted publishers created within the 48 hours before the Version PR merge) stands. | A trusted publisher that no successful publish validates expires 48 hours after creation. Holding the Version PR until Phase 00 exit meant letting the `release.yml` connections expire and recreating them then; Miguel chose to validate them now with the first stable release. Releasing later Phase 00 work as `0.1.x` patches keeps `0.2.0` as Phase 1's minor (PRD §7.1); the rule is stated once, in `docs/PROCESS.md` §6. The runbook makes the merge and the trusted-publisher validation checkable: a force-push invalidates an earlier `checks.yml` approval, and the action pushes tags and creates releases per package, so a partial failure can leave tags without releases. Partially supersedes PRD v0.8.4 (F-1); the no-`next`-branch and canary-RC parts stand. | https://github.blog/changelog/2026-10-02-unvalidated-npm-trusted-publishing-configurations-now-expire (48-hour expiry until the first successful publish). `snapshot-deploy.yml` run 37474782644: OIDC publish of all 8 packages with SLSA v1 provenance, validating the `snapshot-deploy.yml` connections. Version PR #218 bumps all 8 packages to `0.1.0` (ledger `00-Z6`, #219). PRD v0.8.5. `changesets/action` `a45c4d5` `src/run.ts:123-125` (per-package tag push and GitHub release). Record in `docs/context/00-z7.md`. |
 | AM-042 | 2026-10-06 | ledger `00-F10` (factual corrections after the first canary, the OIDC canary, and the 0.1.0 release) | Factual additions and corrections; no requirement, workflow, or bootstrap-order change. (1) §6.F.5 snapshot paragraph: "the first `snapshot-version.yml` run after the merge confirms that these two scopes suffice" becomes the observed fact that `contents: read` and `pull-requests: read` suffice; the RC sentence adds the observed behaviour that when a package had no `latest`, npm set `latest` to the version published with `--tag canary`. (2) §6.F.5 Publish path: npm processes publishes asynchronously; a version the CI log reports as published becomes visible about 0.5–6 minutes later, its tarball can trail its manifest by about 5 more minutes, installs fail with E404 in that window, a re-run before the manifests are visible would plan `publish` again and is expected to be rejected for the existing version (not observed), so wait for `npm view` first, and anything that installs waits until `curl -sI` on the version's `dist.tarball` returns `HTTP/2 200`. (3) §7.2 bootstrap bullet: the opening is put in the past tense (the token existed only for the first canary, before any package existed; no `NPM_TOKEN` remains); observed: the first publish set `latest` to the bootstrap canary on all 8 until `0.1.0`; npm created `0.0.0-stage` placeholder versions on 5 packages, which no dist-tag points at; the bootstrap is complete (steps (0)–(6) done on 2026-10-06, the `release.yml` connections validated by the `0.1.0` publish). (4) §7.2 runbook step (c): wait until every `0.1.0` tarball resolves (the exact `curl -sI` check) before installing or judging a check failed. (5) §7.2 RC bullet: records the `0.1.0` release outcome. (6) §7.2 first-publish bullet: "(initial publish)" becomes "(first stable release)"; §9.9: "All 8 packages first published at `0.1.0` under `latest`" becomes "First stable release `0.1.0` of all 8 packages published under `latest`", because `0.1.0` was not the first version of any package (the e94e2a8 canary, and on 5 packages `0.0.0-stage`, came first). | The bootstrap and runbook were written before any package existed, so they said nothing about `latest` on a first publish, treated a version as installable once the CI step logged it, and left the read scopes to be confirmed. The first publishes showed otherwise, and an operator running runbook step (c) right after the merge would have seen E404 on a correctly published package. The `latest` behaviour and the `0.0.0-stage` versions are recorded as observed behaviour; their cause is internal to npm, and the `latest` behaviour contradicts npm's dist-tag docs ("Publishing a package sets the latest tag to the published version unless the --tag option is used"), so the rule is keyed on what was seen (no `latest` yet), not on "first version": on the 5 packages with `0.0.0-stage`, that placeholder is the first version, yet `latest` went to the canary. Factual corrections, so no decision (`docs/PROCESS.md` §3). | All observed 2026-10-06. `snapshot-deploy.yml` run 37456833604 (`e94e2a8`, token): every package uploaded with `npm publish <tgz> --tag canary` (log "Publishing to https://registry.npmjs.org/ with tag canary"), yet `dist-tags.latest` was that `0.1.0-e94e2a8…-SNAPSHOT` (`0.0.1-…` for `line-themes`, `line-components`) on all 8. `snapshot-deploy.yml` run 37474782644 (`1b3a3c2`, OIDC): `canary` moved, `latest` did not; `snapshot:version` ran with `contents: read` + `pull-requests: read` and `@changesets/changelog-github` succeeded. `release.yml` run 37483208484 (`10efd04`, #218 merged 14:56:42Z) set `latest` = `0.1.0` on all 8. `0.0.0-stage` on `line-colors`, `line-schemas`, `line-themes`, `line-utils`, `line-icons`: description "Temporary package placeholder for staged publishing", `_npmUser` miguelramos, created within 2 s of each package's first CI publish (`line-colors` 11:30:45.968Z), exactly the 5 whose first publish printed "Your package is being processed and may take a few minutes to become available"; later publishes created none. Every OIDC publish (runs 37474782644, 37483208484) printed that message; versions became visible about 0.5–6 min after their CI step (`line-themes` token canary registered 34 s after its step; run 37483208484 logged `+ @websublime/line-colors@0.1.0` at 14:57:22Z and `+ …line-tokens@0.1.0` at 14:57:42Z, registry times 15:03:09.949Z and 15:03:29.713Z, about 5m47s; `0.1.0`: 0/8 visible at 14:58:41Z, 8/8 at 15:03:56Z). `line-schemas@0.1.0` manifest time 15:01:16.603Z, but https://registry.npmjs.org/@websublime/line-schemas/-/line-schemas-0.1.0.tgz returned 404 (also with a cache-busting query) until 15:06:32Z. Bootstrap steps: (0) the `npm` environment's deployment branch policy is the single branch rule `main` and (1)/(3) no `NPM_TOKEN` remains in the repository or the `npm` environment (`gh secret list`, `gh secret list --env npm`, `gh api repos/websublime/line-ui/environments/npm/deployment-branch-policies`, checked 2026-10-06); (2) run 37456833604; (4)/(5) run 37474782644; (6) "Require two-factor authentication and disallow tokens" on all 8, confirmed by Miguel and recorded in `docs/context/00-z7.md`. Outcome: 8 × `0.1.0` under `latest`, `_npmUser` GitHub Actions, SLSA v1 provenance, 8 tags `@websublime/line-*@0.1.0`, 8 GitHub releases (Latest = `@websublime/line-colors@0.1.0`); a fresh install resolves all 8 at `0.1.0` and `npm audit signatures` reports verified attestations. Note on AM-041's premise: the `release.yml` trusted-publisher connections did not exist when `00-Z7` was decided (npmjs.com settings at ~14:40Z showed only the `snapshot-deploy.yml` connection on `line-colors`); Miguel created them on all 8 packages just before merging #218 at 14:56:42Z, and the `0.1.0` publish validated them at once. The `snapshot-deploy.yml` connections had been validated by run 37474782644. The AM-041 row and PRD v0.8.5 stand as records. |
 | AM-043 | 2026-10-07 | ledger `00-Z11` (decision — Miguel chose agent-driven UI support from the first component, with a firm agent contract and catalog and a preview A2UI renderer, over shipping everything stable now and over an exploratory track like HTMX; chose the foundation as the first Phase 1 stream with only the agent contract entering Phase 00 through the G4 template, over a new Phase 00 stream and over shipping after Phase 2) | One change to the §6.G `COMPONENT-SPEC-TEMPLATE.md` bullet. Its required sections gain "Agent contract" between A11y and Tests. The section states how the component meets rules C1–C8 (ARCHITECTURE §17.2) and fills the descriptor fields (ARCHITECTURE §17.3), including the `agentExposed` flag with a reason when it is `false` (Decision 7). Phase 00 still ships 8 packages; no package, version, or workflow changes. | PRD v0.8.6 makes every component agent-ready, and `@websublime/line-genui` (Phase 1) reads one descriptor per component. The first Phase 1 specs come from this template, so the contract must be in the template before they are written. | PRD v0.8.6 revision entry; ARCHITECTURE §17; `docs/research/00-research-generative-ui.md` §4.3 and §6 (row `00-Z10`, PR #223); record in `docs/context/00-z11.md`. |
-| AM-044 | 2026-10-07 | ledger `00-Z9` (decision — Miguel chose Cloudflare Pages over GitHub Pages and per-PR previews over production-only deploys) | Two changes; the host, the project, and the build are unchanged. (1) §6.F.5 `deploy-storybook.yml` block: `push` to `main` and `pull_request` both trigger it, with the existing paths filter (`apps/storybook/**`, `packages/**`); `pull_request_target` is never used. Workflow-level `permissions: { contents: read }`. `concurrency: { group: deploy-storybook-${{ github.ref }}, cancel-in-progress: true }`. The job runs on push and on pull requests whose head repository is this repository, so pull requests from forks are skipped; it has `timeout-minutes: 15`. Every `uses:` pins a full 40-character commit SHA with a trailing `# vX.Y.Z` comment, the AM-040 pattern and SHAs: `actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1` with `persist-credentials: false`, and `oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0` with `bun-version-file: .bun-version`. The deploy step runs `bunx wrangler@4.148.0 pages deploy apps/storybook/storybook-static --project-name=line-ui-storybook --branch="$DEPLOY_BRANCH"`; `DEPLOY_BRANCH` is an `env:` value (`github.head_ref` on pull requests, `main` on push), so no `${{ }}` expression reaches the shell. It replaces `cloudflare/wrangler-action@v3`: that action runs its `command` input without a shell, so a per-PR branch could only reach it through a `${{ }}` expression. The deployment URL comes from the wrangler output file (`WRANGLER_OUTPUT_FILE_PATH`, entry `pages-deploy`) and goes to `$GITHUB_STEP_SUMMARY` through an env variable. A paragraph under the block explains production versus preview, the fork skip, and why `pull_request_target` is absent. (2) §9.6: the Storybook exit criterion requires a production deploy verified on push to `main` and a preview deploy verified on a same-repo pull request. | PRD §5.4 named GitHub Pages and promised per-PR previews, while §6.F.5 already deployed to Cloudflare Pages on push to `main` only. Miguel settled the host on Cloudflare Pages and kept the previews; PRD v0.8.7 records the decision. The workflow handles Cloudflare secrets on pull requests, so the block carries the AM-040 hardening from the start. | `docs/context/00-z9.md` (decisions 1–2, Miguel, 2026-10-07); PRD v0.8.7 §5.4 and §6.1; the §6.F.5 block before this change (`on: push` to `main` only); `cloudflare/wrangler-action` v3.15.0 `dist/index.mjs` (`exec.exec` of the `command` input, no shell); `wrangler` 4.148.0 on npm (2026-10-07). |
+| AM-044 | 2026-10-07 | ledger `00-Z9` (decision — Miguel chose Cloudflare Pages over GitHub Pages, per-PR previews over production-only deploys, and a separate Cloudflare account for previews over per-run approvals and over a single account) | Four changes; the production project `line-ui-storybook` and the Storybook build output are unchanged. (1) §6.F.5 `deploy-storybook.yml` block. `push` to `main` and `pull_request` into `main` trigger it, and both paths filters list `apps/storybook/**`, `packages/**`, `.github/workflows/deploy-storybook.yml`, `bun.lock` and `.bun-version`; the workflow uses neither `pull_request_target` nor `workflow_dispatch`. Workflow-level `permissions: {}` and `concurrency: { group: deploy-storybook-${{ github.ref }}, cancel-in-progress: true }`. A `build` job holds no secrets and runs on push and on pull requests whose head repository is this repository, so forks are skipped. It has `permissions: { contents: read }`, builds `./packages/*` before Storybook (AM-029), and uploads `apps/storybook/storybook-static` as an artifact (`if-no-files-found: error`, `retention-days: 1`). A `deploy` job needs `build`, has `permissions: { contents: read }`, and selects the environment `storybook-production` on push and `storybook-preview` on pull requests. It sparse-checks out only the root `package.json`, `bun.lock`, `.bun-version` and the workspace manifests of the base commit, runs `bun install --frozen-lockfile --ignore-scripts`, downloads the artifact, and deploys with the locked wrangler (`bun x --no-install wrangler pages deploy "$STATIC_DIR" --project-name="$PAGES_PROJECT" --branch="$DEPLOY_BRANCH"`). The token, account ID and project name come from the environment's secrets and variable, and `DEPLOY_BRANCH` is `pr-<number>` on pull requests and `main` on push; every value reaches the shell through `env:`, never through `${{ }}`. The summary step prints the `alias` (or `url`) of the `pages-deploy-detailed` output entry to `$GITHUB_STEP_SUMMARY` through env variables, and F7 confirms those field names against the locked wrangler. Every `uses:` pins a full 40-character commit SHA with a trailing `# vX.Y.Z` comment. It reuses the AM-040 SHAs for `actions/checkout` (`3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1`) and `oven-sh/setup-bun` (`0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0`), and pins `actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2` and `actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2`. It replaces `cloudflare/wrangler-action@v3`, because that action runs its `command` input without a shell, so a per-PR branch could only reach it through a `${{ }}` expression. (2) §6.F.5 prose under the block. It explains the build/deploy split, production versus preview accounts, the fork and dependency-bot skips and the absent `pull_request_target`, and adds the Storybook bootstrap (both projects with production branch `main`, one Pages-Edit token per account with an expiry and a rotation date, the two GitHub environments with their secrets and variable, `wrangler` as an exact devDependency of `apps/storybook`) and the residual risk of the preview token. (3) §6.F.5 note under `deploy-site.yml`. Row F5 pins its actions to SHAs (AM-040 pattern) and uses its own Cloudflare token, not the Storybook ones. (4) §9.6. The Storybook exit criterion requires a production deploy verified on push to `main` (`storybook-production` → `line-ui-storybook`) and a preview verified on a same-repo pull request (`storybook-preview` → the `pr-<number>` alias in the preview account), with the bootstrap as its prerequisite. | PRD §5.4 named GitHub Pages and promised per-PR previews, while §6.F.5 already deployed to Cloudflare Pages on push to `main` only. Miguel settled the host on Cloudflare Pages and kept the previews; PRD v0.8.7 records the decision. Review gate iteration 1 found that a single-job workflow exposes the deploy token to pull-request code; Miguel isolated previews in a separate account, and the split jobs keep pull-request code away from every token. | `docs/context/00-z9.md` (decisions 1–3 and the review-gate defaults, Miguel, 2026-10-07); PRD v0.8.7 §5.4 and §6.1; the §6.F.5 block before this change (`on: push` to `main` only); `cloudflare/wrangler-action` v3.15.0 `dist/index.mjs` (`exec.exec` of the `command` input, no shell); `gh api repos/actions/{upload,download}-artifact/git/ref/tags/…` (2026-10-07). |
 
 **A4 — npm scope.**
 
@@ -1786,26 +1786,29 @@ jobs:
           command: pages deploy apps/site/dist --project-name=line-ui
 ```
 
+Row F5 pins every `uses:` in `deploy-site.yml` to a full commit SHA (AM-040 pattern), and the workflow uses its own Cloudflare token, never the Storybook ones (AM-044).
+
 `.github/workflows/deploy-storybook.yml`:
 
 ```yaml
 name: deploy-storybook
-on:                                            # AM-044: never pull_request_target; fork PRs receive no secrets and are skipped below
+on:                                            # AM-044: never pull_request_target, never workflow_dispatch
   push:
     branches: [main]
-    paths: ['apps/storybook/**', 'packages/**']
+    paths: ['apps/storybook/**', 'packages/**', '.github/workflows/deploy-storybook.yml', 'bun.lock', '.bun-version']
   pull_request:
-    paths: ['apps/storybook/**', 'packages/**']
-permissions:                                   # AM-044: read-only token; the preview URL goes to the job summary, not a PR comment
-  contents: read
-concurrency:                                   # AM-044: a newer push to the same ref cancels the older deploy
+    branches: [main]                           # AM-044: base filter; previews deploy under pr-<number>, never under main
+    paths: ['apps/storybook/**', 'packages/**', '.github/workflows/deploy-storybook.yml', 'bun.lock', '.bun-version']
+permissions: {}                                # AM-044: each job declares its own
+concurrency:                                   # AM-044: a newer push to the same ref cancels the older run
   group: deploy-storybook-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  deploy:
+  build:                                       # AM-044: runs PR code, holds no secrets
     if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions: { contents: read }
     steps:                                     # AM-044: every action is pinned to a full commit SHA (AM-040 pattern)
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -1815,31 +1818,81 @@ jobs:
         with: { bun-version-file: .bun-version }
       - name: Install
         run: bun install --frozen-lockfile
-      - name: Build Storybook
-        run: bun --filter '@websublime/line-storybook' build
-      - name: Deploy to Cloudflare Pages      # AM-044: production on push to main, a branch preview on pull requests
+      - name: Build packages, then Storybook  # AM-029: packages first, or Storybook builds before their dist/ exists
+        run: bun --filter './packages/*' build && bun --filter '@websublime/line-storybook' build
+      - name: Upload storybook-static
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: storybook-static
+          path: apps/storybook/storybook-static
+          if-no-files-found: error
+          retention-days: 1
+  deploy:                                      # AM-044: never checks out or runs PR code
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: { contents: read }            # the sparse checkout of the base commit
+    environment: ${{ github.event_name == 'push' && 'storybook-production' || 'storybook-preview' }}
+    steps:
+      - name: Checkout the base commit's manifests only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /package.json
+            /bun.lock
+            /.bun-version
+            /packages/*/package.json
+            /apps/*/package.json
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version }
+      - name: Install the locked wrangler      # AM-044: no lifecycle scripts run
+        run: bun install --frozen-lockfile --ignore-scripts
+      - name: Download storybook-static
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: storybook-static
+          path: ${{ runner.temp }}/storybook-static
+      - name: Deploy to Cloudflare Pages      # AM-044: production on push to main, pr-<number> previews in the preview account
+        working-directory: apps/storybook
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          DEPLOY_BRANCH: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+          PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          DEPLOY_BRANCH: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+          STATIC_DIR: ${{ runner.temp }}/storybook-static
           WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
         run: >-
-          bunx wrangler@4.148.0 pages deploy apps/storybook/storybook-static
-          --project-name=line-ui-storybook --branch="$DEPLOY_BRANCH"
+          bun x --no-install wrangler pages deploy "$STATIC_DIR"
+          --project-name="$PAGES_PROJECT" --branch="$DEPLOY_BRANCH"
       - name: Write the deployment URL to the job summary
         env:
           WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
         run: |
           DEPLOYMENT_URL="$(bun -e "
             const lines = (await Bun.file(process.env.WRANGLER_OUTPUT_FILE_PATH).text()).trim().split('\n');
-            const entry = lines.map((line) => JSON.parse(line)).find((e) => e.type === 'pages-deploy');
-            if (!entry?.url) { console.error('no pages-deploy entry in the wrangler output file'); process.exit(1); }
-            console.log(entry.url);
+            const entry = lines.map((line) => JSON.parse(line)).find((e) => e.type === 'pages-deploy-detailed');
+            const url = entry?.alias ?? entry?.url;
+            if (!url) { console.error('no pages-deploy-detailed entry in the wrangler output file'); process.exit(1); }
+            console.log(url);
           ")"
           echo "Storybook deployed to $DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
 ```
 
-A push to `main` deploys the production branch of the Cloudflare Pages project `line-ui-storybook`. A pull request deploys a preview under its head branch name, and Cloudflare serves it at that branch's own alias URL, which the job summary shows. Pull requests from forks skip the job, because GitHub gives them no secrets. The workflow never uses `pull_request_target`, which would hand the Cloudflare secrets to code from a fork.
+The `build` job runs the pull request's code and holds no secrets. The `deploy` job runs only tooling from the base commit, installed from `bun.lock` with lifecycle scripts disabled, plus the built artifact. `bun x --no-install` fails instead of fetching wrangler from the network. A push to `main` deploys through the environment `storybook-production`, whose deployment branch policy allows `main` only, to the branch `main` of the project `line-ui-storybook` in the main Cloudflare account. A same-repo pull request into `main` deploys through the environment `storybook-preview` to a Pages project in a separate Cloudflare account, under the branch `pr-<number>`. Cloudflare serves that preview at its alias URL, and the job summary shows it. F7 confirms the `pages-deploy-detailed` field names against the locked wrangler version. Pull requests from forks skip both jobs, because GitHub gives them no secrets. Pull requests from dependency bots stay out of scope until a bot is configured, because they receive no Actions secrets either. The workflow never uses `pull_request_target`.
+
+**Bootstrap** (prerequisite of the §9.6 Storybook check):
+
+1. In the main Cloudflare account, create the project with `wrangler pages project create line-ui-storybook --production-branch=main`.
+2. In the separate preview account, create the preview project the same way. Its name is chosen at bootstrap and stored as the `storybook-preview` environment variable `CLOUDFLARE_PAGES_PROJECT`.
+3. Create one API token per account with only Account › Cloudflare Pages › Edit on that account, an expiry, and a rotation date. Neither token is shared with `deploy-site.yml`.
+4. Create the GitHub environments `storybook-production` (deployment branch policy `main` only) and `storybook-preview`. Each holds `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` as environment secrets and `CLOUDFLARE_PAGES_PROJECT` as an environment variable (`line-ui-storybook` in `storybook-production`). No repository-level Cloudflare secret serves Storybook.
+5. Add `wrangler` as an exact devDependency of `apps/storybook`, a private app that Changesets ignores.
+
+One residual risk remains. A collaborator who edits the workflow in a pull request can still read the preview token, and that token reaches only the separate preview account. The production token stays out of reach of pull requests, because the `storybook-production` branch policy allows `main` only.
 
 Storybook 10's static build output is `storybook-static/` by default (unchanged convention since Storybook 6.x). The `apps/storybook/package.json` `build` script invokes the standard `storybook build` CLI — see §6.F.1 for Storybook configuration.
 
@@ -2127,7 +2180,7 @@ Phase 00 is **complete** when **all** of the following hold. This mirrors plan �
 - [ ] `release.yml` runs Changesets publish on push to `main`.
 - [ ] `snapshot-version.yml` (manual dispatch, dry run) + `snapshot-deploy.yml` (manual dispatch, publishes a canary only from `main`) operational; no `next` branch.
 - [ ] `deploy-site.yml` deploys `apps/site` to Cloudflare Pages on push to `main`.
-- [ ] Storybook production deploy verified on push to `main`, and a preview deploy verified on a same-repo pull request (`deploy-storybook.yml` → Cloudflare Pages `line-ui-storybook` project).
+- [ ] Storybook production deploy verified on push to `main` (`deploy-storybook.yml` → environment `storybook-production` → Cloudflare Pages project `line-ui-storybook`), and a preview verified on a same-repo pull request (environment `storybook-preview` → the `pr-<number>` alias in the preview account). The §6.F.5 Storybook bootstrap is its prerequisite.
 - [ ] `bunfig.toml` declares `[test] preload = ['./bun-test-preload.ts']` (RK5 mitigation for `@open-wc/testing-helpers` `fixtureCleanup` registration). [F2]
 - [ ] CI asserts the preload entry is present in `bunfig.toml` (`checks.yml` step that greps or parses the file). [F4 — `checks.yml` is authored by Stream F → F4 per §6.F.5; see AM-018]
 - [ ] At least one RC publish verified end-to-end.
