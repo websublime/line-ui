@@ -142,7 +142,7 @@ Gates are proportional to the class. A phase is not locked until its gate passes
 - **Commits** are Conventional Commits, `<type>(<scope>): <description>`, atomic, one concern each, made **on
   the branch as the work progresses** — tests pass at every commit and history is never reconstructed
   afterwards. `<scope>` is the package short name (`core`, `components`, `tokens`, `colors`, `schemas`,
-  `themes`, `utils`, `icons`, `storybook`, `site`) or one of `spec`, `plan`, `prd`, `ledger`, `process`,
+  `themes`, `utils`, `icons`, `genui`, `storybook`, `site`) or one of `spec`, `plan`, `prd`, `ledger`, `process`,
   `agents`, `skills`, `docs`, `ci`, `hooks`, `repo`. The body names the row id (`00-D4`). A spec amendment
   commit precedes the code that depends on it. The implementer pushes the branch when its run ends, so nothing
   is stranded locally; it never opens the PR.

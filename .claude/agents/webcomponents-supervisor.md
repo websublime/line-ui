@@ -78,7 +78,7 @@ Biome, `bun test` on happy-dom, Playwright, Storybook 10, Changesets
 
 ```
 line-ui/
-├── packages/         # @websublime/line-* (tokens, colors, schemas, themes, utils, core, icons, components)
+├── packages/         # @websublime/line-* (tokens, colors, schemas, themes, utils, core, icons, components; genui from Phase 1)
 ├── apps/storybook/   # Storybook 10 + MDX docs
 ├── scripts/          # generate-palettes, generate-role-maps, validate-contrast, verify-palettes-fresh, lint-layers
 ├── docs/             # MANIFESTO, PRD, ARCHITECTURE, PROCESS, plans/, research/, specs/
@@ -95,6 +95,8 @@ line-ui/
   generator scripts
 - `line-core`: `LineElement`, mixins, `LineMachineController`, shadow-DOM reset sheets
 - `line-icons` registry contract and reference resolvers
+- `line-genui` (from Phase 1): catalog descriptors, the `line` and `basic` A2UI catalogs, and the A2UI renderer
+  `<line-a2ui-surface>`
 - Lit 3+ component implementation: Shadow DOM anatomy, `::part()` attributes, slot definitions
 - Zag.js machine integration through `LineMachineController` (state, a11y, keyboard, focus management)
 - TypeScript type definitions, strict mode compliance, declaration output

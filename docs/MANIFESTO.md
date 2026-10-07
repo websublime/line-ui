@@ -2,7 +2,7 @@
 
 **Status:** APPROVED
 **Date:** 2026-05-19
-**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming).
+**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming). Revised 2026-10-07 with PRD v0.8.6 to add Principle 8 (agent-ready components and agent-driven UI).
 
 This manifesto is the foundation that the PRD, the architecture, and every downstream decision must align with. If a design or task contradicts a Governing Law below, the design is wrong — not the law.
 
@@ -29,6 +29,8 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 6. **Inspector as dev tooling.** Feature-flagged via `localStorage`. When active, every component exposes its metadata: version, docs link, scope, QA tags. A first-class affordance for QA teams and integrating developers, not an afterthought.
 
 7. **HTMX as a first-class explorer.** The web is bigger than SPAs. Server-rendered, HTMX-driven workflows are an explicit target. The `LineHtmxElement` adapter is **exploratory** — Phase 0 validates feasibility (the `hx-*` forwarding, server-driven state, and swap-aware lifecycle); Phase 1 commitment depends on the outcome. Not an apology, an honest sequencing.
+
+8. **Agent-ready by construction.** Every component is describable to an AI agent. A protocol-neutral catalog of Zod descriptors, checked against the Custom Elements Manifest, states each component's props, slots, events, value binding and accessible name. Agents render line://ui components through the opt-in `@websublime/line-genui` package, which speaks A2UI today. Components never import a protocol, and the host keeps every styling decision. The A2UI renderer stays a preview until A2UI v1.0 is final.
 
 ---
 
@@ -58,7 +60,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 ## Out of Scope
 
-- **Framework-specific bindings or adapters.** No React wrappers, no Vue plugins, no Svelte stores. Web Components is the contract; framework integration belongs to the consumer.
+- **Framework-specific bindings or adapters.** No React wrappers, no Vue plugins, no Svelte stores. Web Components is the contract; framework integration belongs to the consumer. Protocol renderers such as the A2UI renderer are not framework adapters. They ship as opt-in packages outside `line-components` and render the same custom elements.
 - **Opinionated default styling in the core package.** Visual themes ship as a separate, optional package. The core renders unstyled by design.
 - **SSR/SSG as a v1 hard requirement.** Investigation for Astro / Nuxt / Next.js compatibility is planned post-Phase 1; it is not a launch blocker.
 - **Localisation of component-level strings.** Labels like "Close", "Dismiss", "Loading" are the consumer's responsibility via slots and attributes. No bundled i18n.
