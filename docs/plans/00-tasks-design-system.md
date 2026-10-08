@@ -78,7 +78,7 @@ number in the stream + 1.
 | F2 | F | Bun test harness with happy-dom + `@open-wc/testing-helpers` preload | infra-supervisor | B4 | done | — | #195 | AM-018, AM-019 |
 | F3 | F | `release.yml` + snapshot-version / snapshot-deploy workflows (spec §6.F.5, AM-008) | infra-supervisor | F1, F2, F9 | done | ci/00-f3-release-workflows | #217 | AM-038, AM-039, AM-040 |
 | F4 | F | `checks.yml` with the CI assertions reallocated from C4 / C5 / F2 (spec §6.F.5, AM-013, AM-014, AM-018) | infra-supervisor | F1, F2, F6 | done | — | #204 | AM-024, AM-025 |
-| F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | in_review | feat/00-f5-site-scaffold | #229 | AM-044, AM-045, AM-046 |
+| F5 | F | `apps/site` Astro scaffold + Cloudflare Pages deploy (`deploy-site`) | infra-supervisor | B1 | done | feat/00-f5-site-scaffold | #229 | AM-044, AM-045, AM-046 |
 | F6 | F | Playwright config + real-browser tier (spec §6.F.4) | infra-supervisor | F2 | done | — | #201 | AM-023 |
 | F7 | F | `deploy-storybook.yml` preview deploy (spec §6.F.5, §9.6) | infra-supervisor | F1, F4, Z9 | done | ci/00-f7-deploy-storybook | #228 | AM-044, AM-045 |
 | F8 | F | Fix CI "Build packages" race: Bun `--filter` ignores `devDependencies` ordering, so `line-storybook` builds before `line-schemas` emits `dist/`; root `build` becomes two-phase (`./packages/*` then `./apps/*`) and `checks.yml` calls it | infra-supervisor | B2, F4 | done | fix/00-f8-two-phase-build | #209 | AM-029 |
@@ -92,7 +92,7 @@ number in the stream + 1.
 | G1 | G | Getting Started (`apps/storybook/stories/getting-started.mdx`) | webcomponents-supervisor | C6, F1 | todo | — | — | — |
 | G2 | G | Theming guide (`theming.mdx`) | webcomponents-supervisor | C6, F1 | todo | — | — | — |
 | G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | todo | — | — | — |
-| G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | Z11 | in_progress | docs/00-g4-component-spec-template | — | AM-043, AM-047 |
+| G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | Z11 | in_review | docs/00-g4-component-spec-template | #231 | AM-043, AM-047 |
 | G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | todo | — | — | — |
 | G6 | G | Design-system stories `palettes.stories.ts` + `roles.stories.ts` rendering all 31 hues (spec §6.F.1, §9.7) | webcomponents-supervisor | C6, F1 | todo | — | — | — |
 
