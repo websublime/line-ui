@@ -1,0 +1,91 @@
+name: deploy-storybook
+on:                                            # AM-044: never pull_request_target, never workflow_dispatch
+  push:
+    branches: [main]
+    paths: ['apps/storybook/**', 'packages/**', '.github/workflows/deploy-storybook.yml', 'bun.lock', '.bun-version']
+  pull_request:
+    branches: [main]                           # AM-044: base filter; previews deploy under pr-<number>, never under main
+    paths: ['apps/storybook/**', 'packages/**', '.github/workflows/deploy-storybook.yml', 'bun.lock', '.bun-version']
+permissions: {}                                # AM-044: each job declares its own
+concurrency:                                   # AM-044: a newer push to the same ref cancels the older run
+  group: deploy-storybook-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  build:                                       # AM-044: runs PR code, holds no secrets
+    if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: { contents: read }
+    steps:                                     # AM-044: every action is pinned to a full commit SHA (AM-040 pattern)
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version }
+      - name: Install
+        run: bun install --frozen-lockfile
+      - name: Build packages, then Storybook  # AM-029: packages first, or Storybook builds before their dist/ exists
+        run: bun --filter './packages/*' build && bun --filter '@websublime/line-storybook' build
+      - name: Upload storybook-static
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: storybook-static
+          path: apps/storybook/storybook-static
+          if-no-files-found: error
+          retention-days: 1
+  deploy:                                      # AM-044: never checks out or runs PR code
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions: { contents: read }            # the sparse checkout of the base commit
+    environment: ${{ github.event_name == 'push' && 'storybook-production' || 'storybook-preview' }}
+    steps:
+      - name: Checkout the base commit's manifests only
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.base.sha || github.sha }}
+          persist-credentials: false
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /package.json
+            /bun.lock
+            /.bun-version
+            /packages/*/package.json
+            /apps/*/package.json
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version, no-cache: true }
+      - name: Install the locked wrangler      # AM-044: no lifecycle scripts run
+        run: bun install --frozen-lockfile --ignore-scripts
+      - name: Download storybook-static
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: storybook-static
+          path: ${{ runner.temp }}/storybook-static
+      - name: Deploy to Cloudflare Pages      # AM-044: production on push to main, pr-<number> previews in the preview account
+        working-directory: apps/storybook
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PAGES_PROJECT: ${{ vars.CLOUDFLARE_PAGES_PROJECT }}
+          DEPLOY_BRANCH: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+          STATIC_DIR: ${{ runner.temp }}/storybook-static
+          COMMIT_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
+        run: >-
+          bun x --no-install wrangler pages deploy "$STATIC_DIR"
+          --project-name="$PAGES_PROJECT" --branch="$DEPLOY_BRANCH"
+          --commit-hash="$COMMIT_SHA" --commit-dirty=false
+      - name: Write the deployment URL to the job summary
+        env:
+          WRANGLER_OUTPUT_FILE_PATH: ${{ runner.temp }}/wrangler-output.ndjson
+        run: |
+          DEPLOYMENT_URL="$(bun -e "
+            const lines = (await Bun.file(process.env.WRANGLER_OUTPUT_FILE_PATH).text()).trim().split('\n');
+            const entry = lines.map((line) => JSON.parse(line)).find((e) => e.type === 'pages-deploy-detailed');
+            const url = entry?.alias ?? entry?.url;
+            if (!url) { console.error('no pages-deploy-detailed entry in the wrangler output file'); process.exit(1); }
+            console.log(url);
+          ")"
+          echo "Storybook deployed to $DEPLOYMENT_URL" >> "$GITHUB_STEP_SUMMARY"
