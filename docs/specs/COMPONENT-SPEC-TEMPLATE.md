@@ -44,11 +44,11 @@
 
 ### Connections
 
-> Components connect through slots and events and never import each other (MANIFESTO Law 4, ARCHITECTURE §2).
+> Components connect through slots, events and the orchestrator pattern, and a component never imports another component to compose its children (MANIFESTO Law 4, ARCHITECTURE §2).
 
 | Component | Relation | Connects through |
 |-----------|----------|------------------|
-| `<line-other>` | <parent, child, sibling or orchestrator> | <slot name or event> |
+| `<line-other>` | <parent, child, sibling or orchestrator> | <slot name, event or orchestrator> |
 
 ### Variants
 
@@ -192,7 +192,7 @@
 | Subpath | `@websublime/line-components/<subpath>` |
 | Kind | `<family \| independent>` |
 | Registers | `<line-name>`, <family members> |
-| Reset modules | `<commonReset>`, <others> |
+| Reset modules | `commonReset`, <others> |
 
 ### Markup examples
 
