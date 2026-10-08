@@ -4,9 +4,16 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "echo 'build TBD — implemented in B4 (line-ui-7qm.2.4)'",
-    "dev": "echo 'dev TBD — implemented in B4 (line-ui-7qm.2.4)'",
-    "clean": "rm -rf dist",
+    "build": "astro build",
+    "dev": "astro dev",
+    "preview": "astro preview",
+    "clean": "rm -rf dist .astro",
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "astro": "^7.3.7"
+  },
+  "devDependencies": {
+    "wrangler": "4.148.0"
   }
 }
