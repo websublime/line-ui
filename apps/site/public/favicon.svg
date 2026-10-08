@@ -1,5 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- :// symbol mark -->
+  <!-- :// symbol mark: dark-background colours by default, light-background colours on light tabs -->
+  <style>
+    @media (prefers-color-scheme: light) {
+      circle { fill: #6d8a00; }
+      line { stroke: #1A1A1A; }
+    }
+  </style>
   <!-- Colon: two dots = connection nodes -->
   <circle cx="14" cy="20" r="5" fill="#c8ff00"/>
   <circle cx="14" cy="44" r="5" fill="#c8ff00"/>
