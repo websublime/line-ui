@@ -25,20 +25,20 @@ Foundation documents live in `docs/`. Read the section a task needs; only the sh
 - **Libraries:** Lit 3+, Zag.js (`@zag-js/core`, `@zag-js/vanilla`), Zod, `@radix-ui/colors`
 - **Build:** Vite 8 (Rolldown) for runtime packages, `tsc -b` for TS-only packages, PostCSS pipeline for CSS packages
 - **Quality:** Biome (lint + format), `scripts/lint-layers.mjs` (cross-layer dependency guard), `.githooks/` (pre-commit runs `biome check --staged`)
-- **Tests:** `bun test` on happy-dom (`bun-test-preload.ts`), `@open-wc/testing-helpers`; Playwright real-browser tier pending (ledger F6)
-- **Docs:** Storybook 10 (`apps/storybook`, web-components-vite + CEM analyser); Astro site pending (ledger F5)
-- **Release:** Changesets (canary via `snapshot:publish`, stable via `release`); GitHub Actions workflows pending (ledger F3, F4)
+- **Tests:** `bun test` on happy-dom (`bun-test-preload.ts`), `@open-wc/testing-helpers`; Playwright real-browser tier (`playwright.config.ts`, `bun run e2e`)
+- **Docs:** Storybook 10 (`apps/storybook`, web-components-vite + CEM analyser); Astro 7 site (`apps/site`); both deploy to Cloudflare Pages
+- **Release:** Changesets (canary via `snapshot:publish`, stable via `release`); GitHub Actions `checks.yml`, `release.yml`, `snapshot-version.yml`, `snapshot-deploy.yml`, `deploy-storybook.yml`, `deploy-site.yml`
 
 ## Repository Structure
 
 ```
 line-ui/
 ├── packages/        # @websublime/line-* — tokens, colors, schemas, themes, utils (design system, done);
-│                    # core (LineElement + Inspector/Metadata mixins; machine adapter and resets pending);
-│                    # icons (registry pending); components (empty until Phase 1);
+│                    # core (LineElement, Inspector/Metadata/Direction/FormAssociated mixins, machine adapter, reset sheets);
+│                    # icons (resolver contract + Lucide/Phosphor resolvers); components (empty until Phase 1);
 │                    # genui (agent-driven UI catalog + A2UI renderer, from Phase 1)
-├── apps/            # storybook (Storybook 10 + MDX); site (Astro scaffold pending)
-├── scripts/         # generate-palettes, generate-role-maps, validate-contrast, verify-palettes-fresh, lint-layers
+├── apps/            # storybook (Storybook 10 + MDX); site (Astro 7)
+├── scripts/         # generate-palettes, generate-role-maps, validate-contrast, verify-palettes-fresh, lint-layers, publish, verify-pack
 ├── docs/            # MANIFESTO, PRD, ARCHITECTURE, PROCESS, STYLE, plans/ (plan + ledger), research/, specs/
 ├── .claude/         # agents/ (sdlc, git-workflow-manager, supervisors), skills/ (understand)
 ├── .changeset/ · .githooks/ (pre-commit: biome) · .github/workflows/ · .mcp.json (codebase-memory)
