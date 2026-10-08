@@ -1,0 +1,15 @@
+# Throwaway probe for spec §6.F.5 bootstrap step 5 (AM-044). Never merged.
+name: env-policy-probe
+on: { pull_request: { branches: [main] } }
+permissions: {}
+jobs:
+  storybook-production:
+    runs-on: ubuntu-latest
+    environment: storybook-production
+    steps:
+      - run: echo "must not run"
+  site-production:
+    runs-on: ubuntu-latest
+    environment: site-production
+    steps:
+      - run: echo "must not run"
