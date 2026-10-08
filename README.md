@@ -21,7 +21,7 @@ State machines. Zero visual opinion. Framework-agnostic.
 [![License](https://img.shields.io/badge/license-MIT-c8ff00?style=flat-square&labelColor=1a1a1a)](./LICENSE)
 [![TypeScript](https://img.shields.io/badge/types-included-c8ff00?style=flat-square&labelColor=1a1a1a)](https://www.typescriptlang.org/)
 
-[Documentation](https://line-ui.websublime.com) · [Storybook](https://line-ui.websublime.com/storybook) · [Changelog](./CHANGELOG.md)
+[Documentation](https://line-ui.websublime.com) · [Storybook](https://line-ui-storybook.websublime.com) · [Changelog](./CHANGELOG.md)
 
 <br/>
 
