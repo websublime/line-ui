@@ -18,6 +18,7 @@
     "@websublime/line-schemas": "workspace:^",
     "@websublime/line-themes": "workspace:^",
     "@websublime/line-tokens": "workspace:^",
-    "@websublime/line-utils": "workspace:^"
+    "@websublime/line-utils": "workspace:^",
+    "wrangler": "4.148.0"
   }
 }
