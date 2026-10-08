@@ -104,7 +104,7 @@
 
 ### Props
 
-> Every public input is a JSON-serialisable attribute or property (C1), and a form-associated component exposes `value` as a property (C4).
+> Make each public input a JSON-serialisable attribute or property, and record any input JSON cannot carry under Agent contract (C1); a form-associated component exposes `value` as a property (C4).
 
 | Property | Attribute | Type | Default | Reflects | Description |
 |----------|-----------|------|---------|----------|-------------|
@@ -212,7 +212,7 @@
 |------|--------|--------|
 | Unit | `bun test` on happy-dom | <props, events, state reflection, C8 degradation> |
 | Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | <keyboard, focus, form participation, native behaviour> |
-| A11y | axe-core | Zero violations in every state (MANIFESTO Law 3) |
+| A11y | axe-core | Zero violations (MANIFESTO Law 3) in <the states checked> |
 
 ---
 
