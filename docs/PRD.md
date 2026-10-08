@@ -3,13 +3,14 @@
 **Date:** 2026-10-08
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.8
+**Version:** 0.8.9
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.9 (2026-10-08) — Web Awesome and Fluent UI Web Components replace Shoelace and FAST as competitors.** The §1.3 comparison table compares line://ui against Web Awesome and Fluent UI Web Components in the columns that named Shoelace and FAST, and every cell of those two columns was rewritten from upstream sources checked on 2026-10-08. The differentiators, where competitors are stronger and competitive risks name Web Awesome, and the Microsoft entry names Fluent UI Web Components. The link to `COMPETITIVE-COMPONENT-ANALYSIS.md` drops "(to be created in Phase 0)". Why: Shoelace is sunset and names Web Awesome as its successor (last release 2.20.1 on 2025-03-11), and FAST removed its component library (`@microsoft/fast-foundation`, last release 2.50.0 on 2024-10-23), so Microsoft's FAST-based components ship as `@fluentui/web-components`. Miguel chose the two successors over keeping Shoelace and FAST with a status note and over dropping both without a replacement (ledger row `00-G5`, decision by Miguel on 2026-10-08; record in `docs/context/00-g5.md`). Updates: §1.3. Spec §6.G.4 (AM-048) and ledger row `G5` aligned in the same commit; the spec header now cites PRD v0.8.9.
 - **v0.8.8 (2026-10-08) — The site and Storybook are served on `websublime.com` subdomains, and the Cloudflare tokens have no expiry.** Storybook production is served at `https://line-ui-storybook.websublime.com`. The site URL stays `line-ui.websublime.com`, as §5.3 already states. Pull-request previews stay on `*.pages.dev` URLs in the separate preview account. The three Cloudflare API tokens that the deploy workflows use have no expiry and are rotated only on suspicion of a leak. Why: Miguel chose custom domains over `*.pages.dev` URLs only, because `websublime.com` is a zone in the main Cloudflare account, and he kept the tokens without expiry after the trade-off was shown (ledger row `00-Z12`, decision by Miguel on 2026-10-08; record in `docs/context/00-z12.md`). Updates: §5.4. Spec §6.F.5, §6.F.6, §9.6, §10 D7 and §11 Q1 (AM-045), ledger rows `F5` and `F7`, and the README Storybook link aligned on the same branch; the spec header now cites PRD v0.8.8.
 - **v0.8.7 (2026-10-07) — Storybook is hosted on Cloudflare Pages, with a preview per pull request.** Storybook deploys to the Cloudflare Pages project `line-ui-storybook` instead of GitHub Pages. Every push to `main` deploys production, and every pull request opened from a branch of this repository gets its own preview deploy at a `pr-<number>` URL in a separate Cloudflare account, so pull-request code never reaches the production token. Pull requests from forks get no preview, because GitHub gives them no secrets. Why: the spec already deployed Storybook to Cloudflare Pages, like `apps/site`, while §5.4 still named GitHub Pages; Miguel chose Cloudflare Pages, kept per-PR previews over production-only deploys, and chose a separate preview account over per-run approvals and over a single account (ledger row `00-Z9`, decision by Miguel on 2026-10-07; record in `docs/context/00-z9.md`). Updates: §5.4, §6.1 (apps tree and apps table). Spec §6.F.5 and §9.6 (AM-044) and ledger rows `F5` and `F7` aligned in the same commit; the spec header now cites PRD v0.8.7.
 - **v0.8.6 (2026-10-07) — line://ui supports agent-driven UI from its first component.** Every component gets a protocol-neutral agent descriptor (Zod, checked against the Custom Elements Manifest), and a new opt-in runtime package, `@websublime/line-genui`, renders line://ui components from A2UI v0.9.1 messages. The target layout grows to 9 published packages; Phase 0 still ships the first 8. The agent-driven UI foundation is the first stream of Phase 1, validated with Button, Icon, Stack and Separator, and every later component ships its descriptor in the same PR. A component that makes no sense to an agent keeps its descriptor flagged `agentExposed: false` with a reason, and the emitted catalogs and tool schemas leave it out (Decision 7). The agent contract (rules C1–C8) enters Phase 0 only through the component spec template (row `G4`). The descriptor API and both catalogs (`line` and A2UI `basic`) follow the normal policy (§7.1); the A2UI renderer (`@websublime/line-genui/a2ui`) is a preview until A2UI v1.0 is final. Why: Miguel wants the support in place when component creation starts, and A2UI is the only standard where the client owns the vocabulary and the styling (ledger row `00-Z11`, decision by Miguel on 2026-10-07; record in `docs/context/00-z11.md`). Evidence: research note `docs/research/00-research-generative-ui.md` (row `00-Z10`, PR #223). Miguel chose A2UI first on neutral descriptors over neutral descriptors only and json-render, descriptors in `line-genui` over colocated `*.agent.ts` files, both catalogs over `line` only, and the name `line-genui` over `line-agent` and `line-a2ui`. Updates: §1.4 (principle 6), §2 and §2.1, §6.1, §7.3, §7.12, §8.1, §9 intro (Phase 0 layout pointer), Appendix D (new). MANIFESTO Principle 8 and Out of Scope, ARCHITECTURE §12 and §17 (v0.8.1), spec §6.G (AM-043), ledger row `G4`, `docs/PROCESS.md` §6 commit scopes, `CLAUDE.md` and the `webcomponents-supervisor` agent aligned in the same commit; the plan and spec headers now cite PRD v0.8.6.
@@ -41,19 +42,19 @@ line://ui is a headless UI component library built as native Web Components. It 
 
 #### Web Component Libraries Comparison
 
-| Dimension | line://ui | Shoelace | Spectrum | Lion | FAST |
-|-----------|-----------|----------|----------|------|------|
-| Framework | Web Components (Lit 3+) | Web Components (Lit 3) | Web Components (LitElement) | Web Components (vanilla) | Web Components (FASTElement) |
-| Approach | Headless-first + optional themes | Opinionated/styled | Opinionated (Adobe design) | Headless-first | Design system framework |
-| State Management | Zag.js state machines | Custom + Popper.js | Custom internal | Custom vanilla JS | FASTElement reactivity |
-| Customisation | `::part()` + CSS custom properties (dual-layer) | `::part()` + CSS custom properties | CSS variables; partial `::part()` | `::part()` + CSS custom properties | CSS variables; minimal `::part()` |
-| Accessibility | WCAG 2.1 AA via Zag.js | WCAG 2.1 AA (mature) | WCAG 2.1 AA (Adobe standard) | WCAG 2.1 AA+ (core differentiator) | WCAG 2.1 AA (Microsoft standard) |
-| Component Count | 131 (planned) | ~90+ (shipped) | ~40-50 | ~40+ | ~60+ |
-| Ecosystem | Pre-launch | 20k+ weekly downloads | Enterprise (Adobe products) | Enterprise (ING banking) | Enterprise (Microsoft Fluent) |
-| Theming | Headless default; optional 5-package layered design system (31 Radix hues, attribute-based) | 30+ built-in themes | Adobe Spectrum theme | No built-in themes | Fluent Design theme |
-| SSR/SSG | Investigation planned post-Phase 1 | Partial (Astro, 11ty) | Limited | Limited | Limited |
+| Dimension | line://ui | Web Awesome | Spectrum | Lion | Fluent UI Web Components |
+|-----------|-----------|-------------|----------|------|--------------------------|
+| Framework | Web Components (Lit 3+) | Web Components (Lit 3) | Web Components (LitElement) | Web Components (vanilla) | Web Components (FAST Element 3) |
+| Approach | Headless-first + optional themes | Opinionated/styled (theme stylesheet required) | Opinionated (Adobe design) | Headless-first | Opinionated (Fluent design) |
+| State Management | Zag.js state machines | Custom + Floating UI | Custom internal | Custom vanilla JS | FAST Element reactivity + `ElementInternals` states |
+| Customisation | `::part()` + CSS custom properties (dual-layer) | `::part()` + CSS custom properties + `:state()` | CSS variables; partial `::part()` | `::part()` + CSS custom properties | Design tokens (CSS variables); `::part()` on 20 of 42 elements |
+| Accessibility | WCAG 2.1 AA via Zag.js | Accessibility commitment; no WCAG level claimed | WCAG 2.1 AA (Adobe standard) | WCAG 2.1 AA+ (core differentiator) | WCAG 2.1 AA (Fluent 2 claim) |
+| Component Count | 131 (planned) | 90 (73 free, 17 Pro) | ~40-50 | ~40+ | 42 elements |
+| Ecosystem | Pre-launch | 470k+ weekly downloads; Font Awesome team, paid Pro tier | Enterprise (Adobe products) | Enterprise (ING banking) | 67k+ weekly downloads; Microsoft-maintained |
+| Theming | Headless default; optional 5-package layered design system (31 Radix hues, attribute-based) | 3 free + 8 Pro themes, light/dark | Adobe Spectrum theme | No built-in themes | Fluent light/dark themes via `setTheme` |
+| SSR/SSG | Investigation planned post-Phase 1 | Experimental (Lit SSR) | Limited | Limited | Declarative Shadow DOM templates + FAST hydration |
 
-A detailed competitive component-by-component gap analysis is available in [`COMPETITIVE-COMPONENT-ANALYSIS.md`](./COMPETITIVE-COMPONENT-ANALYSIS.md) (to be created in Phase 0).
+A detailed competitive component-by-component gap analysis is available in [`COMPETITIVE-COMPONENT-ANALYSIS.md`](./COMPETITIVE-COMPONENT-ANALYSIS.md).
 
 #### Framework-Specific Headless Libraries
 
@@ -81,20 +82,20 @@ The headless-first approach is validated across multiple framework ecosystems, b
 #### line://ui's Genuine Differentiators
 
 - **State machines (Zag.js)** — Production-ready, framework-agnostic logic layer with built-in accessibility. No competitor in the Web Components space uses this approach.
-- **Headless-first + optional themes** — Unlike Shoelace or Spectrum which ship opinionated styles, line://ui defaults to zero visual opinion. Themes are an accelerator, never a requirement.
+- **Headless-first + optional themes** — Unlike Web Awesome or Spectrum which ship opinionated styles, line://ui defaults to zero visual opinion. Themes are an accelerator, never a requirement.
 - **Dual-layer CSS customisation** — Both `::part()` for total control and CSS custom properties for quick adjustments. Most competitors offer one or the other, not both as a deliberate strategy.
 - **Inspector tooling** — Built-in developer tooling for QA and onboarding, unique in the Web Components ecosystem.
 - **HTMX integration (exploratory)** — First-class support for server-rendered HTML workflows, targeting a growing segment underserved by existing component libraries.
 
 #### Where Competitors Are Stronger
 
-- **Shoelace** — Maturity and ecosystem. 20k+ weekly downloads, battle-tested in production, comprehensive documentation.
-- **Spectrum / FAST** — Enterprise adoption. Backed by Adobe and Microsoft respectively, with dedicated teams and proven at scale.
+- **Web Awesome** — Maturity and ecosystem. Successor to Shoelace from the Font Awesome team, 470k+ weekly downloads, 90 documented components, and a paid Pro tier that funds development.
+- **Spectrum / Fluent UI Web Components** — Enterprise adoption. Backed by Adobe and Microsoft respectively, with dedicated teams and proven at scale.
 - **Lion** — Accessibility DNA. Built by ING's accessibility-first engineering team, with the deepest WCAG compliance in the space.
 
 #### Competitive Risks
 
-- **Shoelace's maturity is an adoption barrier.** Mitigation: focus early phases on core components with superior developer experience (state machines, dual-layer customisation, inspector tooling).
+- **Web Awesome's maturity, carried over from Shoelace, is an adoption barrier.** Mitigation: focus early phases on core components with superior developer experience (state machines, dual-layer customisation, inspector tooling).
 - **Enterprise vendors have brand lock-in.** Mitigation: target teams who explicitly want framework-agnostic and customisation-first, rather than competing for enterprise design system budgets.
 
 ### 1.4 Core Principles
