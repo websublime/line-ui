@@ -63,7 +63,6 @@
     "@types/node": "^25.4.0",
     "@zag-js/core": "^1.40.0",
     "@zag-js/vanilla": "^1.40.0",
-    "astro": "^5.18.1",
     "cssnano": "^8.0.1",
     "lit": "^3.3.3",
     "lucide-static": "^1.16.0",
