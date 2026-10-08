@@ -211,7 +211,7 @@ Key architectural principles referenced throughout this document:
 
 ## 4. Component Catalogue
 
-Each component has a product-level description below and a detailed technical specification in `docs/specs/`. Specs follow the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md) (to be created in Phase 0).
+Each component has a product-level description below and a detailed technical specification in `docs/specs/`. Specs follow the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md).
 
 > **Note on spec links:** Spec links below point to files that will be created per phase as each component is approved (see §7 Roadmap and §8 Spec Lifecycle). Until then, the links will 404; specs are authored just-in-time before each phase begins.
 
@@ -1142,7 +1142,7 @@ Phase 8 ─── 18 real-world / domain ────────── v0.9.0
 
 ## 8. Component Specifications
 
-Individual component specifications live in [`docs/specs/`](./specs/). Each spec follows the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md) (to be created in Phase 0).
+Individual component specifications live in [`docs/specs/`](./specs/). Each spec follows the template defined in [`COMPONENT-SPEC-TEMPLATE.md`](./specs/COMPONENT-SPEC-TEMPLATE.md).
 
 ### 8.1 Spec Structure
 
