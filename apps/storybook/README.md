@@ -17,8 +17,11 @@ first.
 
 ## Theming toolbar
 
-`.storybook/preview.ts` wires `@storybook/addon-themes` to set `data-accent` (default `iris`) and `data-gray`
-(default `gray`) on the preview `<html>`.
+`.storybook/preview.ts` declares two toolbar menus, **Accent** and **Gray**, built from `ACCENT_HUES` and
+`GRAY_HUES`. They set `data-accent` and `data-gray` on the preview `<html>`. The first item of each menu,
+`default` and `auto`, removes its attribute, so the default accent and the auto-paired gray show.
+
+The Radix gray hue is named `neutral` (`--line-neutral-*`); `--line-gray-*` is the gray role.
 
 ## Design-system stories
 
