@@ -4,6 +4,6 @@
     "noEmit": true,
     "outDir": "./dist"
   },
-  "include": ["src/**/*", ".storybook/**/*"],
+  "include": ["src/**/*", ".storybook/**/*", "stories/**/*"],
   "exclude": ["tests/**", "dist/**", "storybook-static/**"]
 }
