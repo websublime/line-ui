@@ -1,3 +1,8 @@
+// Palettes and role maps load globally, so every story and the theming
+// toolbar see the --line-* custom properties.
+import '@websublime/line-colors';
+import '@websublime/line-themes';
+
 import { withThemeByDataAttribute } from '@storybook/addon-themes';
 import type { Preview } from '@storybook/web-components-vite';
 import { ACCENT_HUES, GRAY_HUES } from '@websublime/line-schemas';
