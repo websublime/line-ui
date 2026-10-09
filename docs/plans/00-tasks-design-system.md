@@ -96,7 +96,7 @@ number in the stream + 1.
 | G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | todo | — | — | — |
 | G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | Z11 | done | docs/00-g4-component-spec-template | #231 | AM-043, AM-047 |
 | G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | done | docs/00-g5-competitive-component-analysis | #232 | AM-048 |
-| G6 | G | Design-system stories `palettes.stories.ts` + `roles.stories.ts` rendering all 31 hues (spec §6.F.1, §9.7) | webcomponents-supervisor | C6, F1, C15 | in_progress | docs/00-g6-design-system-stories | — | — |
+| G6 | G | Design-system stories `palettes.stories.ts` + `roles.stories.ts` rendering all 31 hues (spec §6.F.1, §9.7) | webcomponents-supervisor | C6, F1, C15, C16, F12 | blocked | docs/00-g6-design-system-stories | — | AM-050 |
 
 ## Stream H — HTMX Spike (`webcomponents-supervisor`)
 
