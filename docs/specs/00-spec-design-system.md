@@ -4,7 +4,7 @@
 **Author:** Ada (architect)
 **Date:** 2026-05-19
 **Phase target:** `line://ui` v0.1.0
-**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.9, APPROVED)
+**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.10, APPROVED)
 **Source Plan:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/plans/00-plan-design-system.md`](../plans/00-plan-design-system.md) (APPROVED)
 **Source Architecture:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/ARCHITECTURE.md`](../ARCHITECTURE.md)
 **Source Research:**
