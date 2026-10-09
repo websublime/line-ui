@@ -1,28 +1,51 @@
-import { withThemeByDataAttribute } from '@storybook/addon-themes';
-import type { Preview } from '@storybook/web-components-vite';
+import type { Decorator, Preview } from '@storybook/web-components-vite';
 import { ACCENT_HUES, GRAY_HUES } from '@websublime/line-schemas';
 
-// Global theming decorators (spec § 6.F.1, PRD §9.5).
+// Theme toolbar (spec § 6.F.1, PRD §9.5).
 //
-// Two independent toolbar switchers toggle [data-accent] and [data-gray] on the
-// preview root, so authors can verify any of the 31 accents × 6 grays without
-// writing per-combination stories. Theme names map 1:1 to attribute values.
-const toThemeMap = (hues: readonly string[]): Record<string, string> =>
-  Object.fromEntries(hues.map((hue) => [hue, hue]));
+// Two independent menus set [data-accent] and [data-gray] on <html>. Items come
+// from the line-schemas hue lists. The first item of each menu removes its
+// attribute, so the PRD §9.5 defaults and gray auto-pairing show.
+const DEFAULT_ACCENT = 'default';
+const AUTO_GRAY = 'auto';
+
+const toItems = (first: string, hues: readonly string[]) => [first, ...hues].map((value) => ({ value, title: value }));
+
+const setAttribute = (name: string, value: unknown, unset: string): void => {
+  const root = document.documentElement;
+  if (typeof value === 'string' && value !== unset) root.setAttribute(name, value);
+  else root.removeAttribute(name);
+};
+
+const withThemeAttributes: Decorator = (story, context) => {
+  setAttribute('data-accent', context.globals.accent, DEFAULT_ACCENT);
+  setAttribute('data-gray', context.globals.gray, AUTO_GRAY);
+  return story();
+};
 
 const preview: Preview = {
-  decorators: [
-    withThemeByDataAttribute({
-      attributeName: 'data-accent',
-      themes: toThemeMap(ACCENT_HUES),
-      defaultTheme: 'iris',
-    }),
-    withThemeByDataAttribute({
-      attributeName: 'data-gray',
-      themes: toThemeMap(GRAY_HUES),
-      defaultTheme: 'gray',
-    }),
-  ],
+  globalTypes: {
+    accent: {
+      description: 'Accent hue ([data-accent])',
+      toolbar: {
+        title: 'Accent',
+        icon: 'paintbrush',
+        items: toItems(DEFAULT_ACCENT, ACCENT_HUES),
+        dynamicTitle: true,
+      },
+    },
+    gray: {
+      description: 'Gray hue ([data-gray])',
+      toolbar: {
+        title: 'Gray',
+        icon: 'contrast',
+        items: toItems(AUTO_GRAY, GRAY_HUES),
+        dynamicTitle: true,
+      },
+    },
+  },
+  initialGlobals: { accent: DEFAULT_ACCENT, gray: AUTO_GRAY },
+  decorators: [withThemeAttributes],
   parameters: {
     controls: {
       matchers: {
