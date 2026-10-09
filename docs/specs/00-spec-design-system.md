@@ -166,7 +166,6 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
     "./cyan":     "./dist/cyan.css",
     "./gold":     "./dist/gold.css",
     "./grass":    "./dist/grass.css",
-    "./gray":     "./dist/gray.css",
     "./green":    "./dist/green.css",
     "./indigo":   "./dist/indigo.css",
     "./iris":     "./dist/iris.css",
@@ -174,6 +173,7 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
     "./lime":     "./dist/lime.css",
     "./mauve":    "./dist/mauve.css",
     "./mint":     "./dist/mint.css",
+    "./neutral":  "./dist/neutral.css",
     "./olive":    "./dist/olive.css",
     "./orange":   "./dist/orange.css",
     "./pink":     "./dist/pink.css",
@@ -193,7 +193,7 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
 }
 ```
 
-`./special` exposes the four special scales (`blackA`, `whiteA`, `blackP3A`, `whiteP3A` → `--line-black-a{1..12}`, `--line-white-a{1..12}`). The `.` barrel `@import`s all 31 hues + `special.css`.
+The Radix `gray` hue ships as `./neutral` (`--line-neutral-*`), because a hue may not share a name with the gray role (AM-052). `./special` exposes the four special scales (`blackA`, `whiteA`, `blackP3A`, `whiteP3A` → `--line-black-a{1..12}`, `--line-white-a{1..12}`). The `.` barrel `@import`s all 31 hues + `special.css`.
 
 ### 4.3 `@websublime/line-schemas`
 
@@ -245,7 +245,7 @@ The `.` barrel CSS uses `@import` to compose all 18 families + reset in fixed or
 }
 ```
 
-The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all `accent/*.css` → all `gray/*.css` → `aliases.css`.
+The hue files under `accent/*` and `gray/*` use the emitted hue names, so the Radix `gray` hue ships as `accent/neutral.css` and `gray/neutral.css` (AM-052). The `.` barrel `@import`s, in order: `semantics.css` → `defaults.css` → all `accent/*.css` → all `gray/*.css` → `aliases.css`.
 
 ### 4.5 `@websublime/line-utils`
 
@@ -522,6 +522,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-047 | 2026-10-08 | ledger `00-G4` (factual correction found in understand; Miguel approved 2026-10-08) | One change to the §6.G.4 `COMPONENT-SPEC-TEMPLATE.md` bullet. Its section list follows the PRD §8.1 split into Part A — Requirements and Part B — Technical Specification. Part A adds use cases, anti-patterns and user expectations to Overview, plus Connections and Variants. Part B adds CSS custom properties, Keyboard, Bundle / entrypoint and Markup examples. The template header carries the PRD §8.2 status (`proposed`, `reviewed`, `approved`, `implemented`) together with phase, tier, tag and entrypoint. The Agent contract descriptor fields add the `load()` subpath. Tests and Open Questions stay. Phase 00 still ships 8 packages; no package, version, or workflow changes. | PRD §8.1 sits above the spec (`docs/PROCESS.md` §1, MANIFESTO > PRD > ARCHITECTURE > plan > spec), and a template built from the spec's section list alone would fail it. The old list left out the Part A / Part B structure, nine PRD §8.1 items and the PRD §8.2 status, and its descriptor fields left out `load()`, which ARCHITECTURE §17.3 lists. No design choice changes, so the correction is factual (`docs/PROCESS.md` §3). | PRD §8.1 (Part A: description, use cases, anti-patterns, user expectations, connections to other components, variants; Part B: anatomy, props, events, slots, parts, CSS custom properties, machine states, keyboard navigation, accessibility, agent contract, bundle/entrypoint details, markup examples). PRD §8.2 (status lifecycle `proposed → reviewed → approved → implemented`). ARCHITECTURE §17.3 (descriptor fields: the catalog name, the tag, and `load()`, which imports the component subpath; prop schema; slot map; binding map; action map; accessibility requirements; agent-facing description; `agentExposed`). |
 | AM-048 | 2026-10-08 | ledger `00-G5` (decision — Miguel chose Web Awesome and Fluent UI Web Components over keeping Shoelace and FAST with a status note and over dropping both without a replacement) | One change to the §6.G.4 `COMPETITIVE-COMPONENT-ANALYSIS.md` bullet. Its competitor list reads Web Awesome / Spectrum / Lion / Fluent UI Web Components / Radix / Bits / Ark, with Web Awesome in Shoelace's place and Fluent UI Web Components in FAST's place. The skeleton shape (one table per component family, the table headers plus one filled worked-example row, per-component fills at each Phase 1+ spec) is unchanged. Phase 00 still ships 8 packages; no package, version, or workflow changes. | Shoelace has no active development, and its maintainers continue the library as Web Awesome. FAST stopped shipping components and keeps only the tools to build them, so Microsoft's FAST-based components ship as Fluent UI Web Components. A comparison against two libraries that no longer develop components would mislead every Phase 1+ spec that fills a row. PRD v0.8.9 records the decision. | `shoelace-style/shoelace` README: "Shoelace is sunset", no active development, successor Web Awesome at `shoelace-style/webawesome`; `@shoelace-style/shoelace` last release 2.20.1 on 2025-03-11. RFC microsoft/fast#6951 "Removal of `@microsoft/fast-foundation`", closed as completed on 2024-06-26; `@microsoft/fast-foundation` last release 2.50.0 on 2024-10-23. The successors on npm, checked 2026-10-08, are `@awesome.me/webawesome` 3.14.0 (published 2026-09-24, repository `shoelace-style/webawesome`) and `@fluentui/web-components` 3.1.3 (published 2026-08-25, peer dependency `@microsoft/fast-element` ^3.0.0). Record in `docs/context/00-g5.md`. |
 | AM-049 | 2026-10-09 | ledger `00-C15` (bug found in the 00-G6 understand; Miguel chose to fix it before 00-G6) | Two changes. (a) The §6.C.4 `aliases.css` block selector becomes `:where(html, [data-accent], [data-gray])`, and the block gains one sentence saying each theming scope re-resolves the aliases against its own role steps. The 54 declarations are unchanged. (b) The §6.F.4 "Playwright runs:" list gains the `line-themes` alias-scope check. Factual correction against PRD §9.4; no design change. | A custom property's `var()` is substituted on the element that declares it, and descendants inherit the substituted value. With the aliases declared only at `:where(html)`, a nested theming scope inherits the root's alias values, which contradicts PRD §9.4 (scopes nest) and §9.6 (components consume the aliases). `:where()` keeps the selector at zero specificity (PRD §9.12). | Chromium, built dist CSS, `<html data-accent="indigo" data-gray="slate">` with a nested `<section data-accent="violet">`: the section computes `--line-accent-9` = `light-dark(#6e56cf,#6e56cf)` (violet) but `--line-accent-solid` = `light-dark(#3e63dd,#3e63dd)` (indigo). Gray aliases behave the same under a nested auto-pair (`data-accent="tomato"`) and a nested `data-gray`. |
+| AM-052 | 2026-10-09 | ledger `00-C16` (decision — Miguel chose to rename the hue over renaming the role, and the name neutral over ash) | The Radix `gray` hue ships as `neutral` (PRD v0.8.10). Hue tokens and role tokens share the `--line-{name}-{step}` pattern, so the hue `gray` collided with the gray role, and the role map for the hue declared `--line-gray-N: var(--line-gray-N)`, a self-reference cycle. §4.2 exports `./neutral` instead of `./gray`. §4.4 notes the `accent/neutral` and `gray/neutral` files. §6.C.1 lists `neutral` in `HUES` and `GRAY_HUES` and states the hue-role naming invariant. §6.C.3 reads the Radix `gray*` objects and emits them as `neutral` through an explicit source-to-emitted name map. §6.C.4 sets `neutral: 'neutral'` in `AUTO_PAIR_TABLE` and imports `./gray/neutral.css`. §6.C.7 and §9.2 add a real-browser test that every hue and role resolves to its own palette. The gray role keeps `--line-gray-*` and `data-gray`. No alias keeps the old hue tokens. |
 
 **A4 — npm scope.**
 
@@ -622,15 +623,15 @@ API surface (sketch):
 ```ts
 // hues.ts
 export const HUES = [
-  'amber','blue','bronze','brown','crimson','cyan','gold','grass','gray','green',
-  'indigo','iris','jade','lime','mauve','mint','olive','orange','pink','plum',
+  'amber','blue','bronze','brown','crimson','cyan','gold','grass','green','indigo',
+  'iris','jade','lime','mauve','mint','neutral','olive','orange','pink','plum',
   'purple','red','ruby','sage','sand','sky','slate','teal','tomato','violet','yellow'
 ] as const;
 export type Hue = typeof HUES[number];
 export const HueSchema = z.enum(HUES);
 
 export const ACCENT_HUES = HUES;                     // all 31
-export const GRAY_HUES   = ['gray','mauve','slate','sage','olive','sand'] as const;
+export const GRAY_HUES   = ['neutral','mauve','slate','sage','olive','sand'] as const;
 export type GrayHue = typeof GRAY_HUES[number];
 export const GrayHueSchema = z.enum(GRAY_HUES);
 
@@ -646,6 +647,8 @@ export const SEMANTIC_MAP = {
 export const BLACK_CONTRAST_HUES = ['amber','yellow','lime','mint','sky','cyan'] as const;
 export const PER_HUE_CONTRAST: Record<Hue, '#000'|'#fff'> = HUES.reduce(...);
 ```
+
+**Hue and role names never overlap (AM-052).** Hue tokens (`--line-{hue}-{step}`) and role tokens (`--line-{role}-{step}`) share one pattern, so no entry of `HUES` may equal an entry of `ROLES`. The Radix `gray` hue is therefore listed as `neutral`. `PER_HUE_CONTRAST.neutral` is `'#fff'`.
 
 This module is the **source of truth** for downstream code generation (palettes, role mappings, contrast validation). No CSS is produced here.
 
@@ -698,6 +701,8 @@ generate-palettes.mjs --output packages/line-colors/src/
   - Dark:  `${H}Dark`, `${H}DarkA`, `${H}DarkP3`, `${H}DarkP3A` (same shape).
 - From `line-schemas/contrast-table`: `PER_HUE_CONTRAST[H]` → `'#000' | '#fff'`.
 - Hue name string `H`.
+
+**Source-to-emitted name map (AM-052).** The generator holds an explicit map from emitted hue name to Radix source name, `{ neutral: 'gray' }`. For `H = neutral` it reads the Radix objects `gray`, `grayA`, `grayP3`, `grayP3A`, `grayDark`, `grayDarkA`, `grayDarkP3` and `grayDarkP3A` with the step keys `gray{n}` and `grayA{n}`. It emits them as `neutral.css` with `--line-neutral-*` tokens. Every other hue maps to itself. No `gray.css` is emitted.
 
 **Output per hue:** `packages/line-colors/src/{H}.css`. Concrete shape (per PRD §9.7):
 
@@ -781,7 +786,7 @@ generate-role-maps.mjs --output packages/line-themes/src/
   ```ts
   const AUTO_PAIR_TABLE: Record<Hue, GrayHue> = {
     // grayscales self-pair
-    gray: 'gray', mauve: 'mauve', slate: 'slate', sage: 'sage', olive: 'olive', sand: 'sand',
+    neutral: 'neutral', mauve: 'mauve', slate: 'slate', sage: 'sage', olive: 'olive', sand: 'sand',
     // saturated → curated pair
     tomato: 'mauve', red: 'mauve', ruby: 'mauve', crimson: 'mauve',
     pink: 'mauve', plum: 'mauve', purple: 'mauve',
@@ -889,7 +894,7 @@ generate-role-maps.mjs --output packages/line-themes/src/
 /* All accent files */
 @import './accent/amber.css'; /* … 31 imports */
 /* All gray files */
-@import './gray/gray.css';    /* … 6 imports */
+@import './gray/neutral.css'; /* … 6 imports */
 @import './aliases.css';
 ```
 
@@ -950,6 +955,7 @@ Tests live in `packages/line-themes/__tests__/`:
 | `palette.snapshot.test.ts` | For each hue: `dist/{hue}.css` matches a committed snapshot in `__snapshots__/`. |
 | `role-mapping.snapshot.test.ts` | For each hue × accent role: `dist/accent/{hue}.css` matches a snapshot. Same for gray. |
 | `auto-pair.behaviour.test.ts` | Asserts the auto-pair cascade by **string-matching the committed `src/defaults.css`** role-map rules (AM-015 — `getComputedStyle()` cannot resolve the `var()`/`light-dark()` chain under happy-dom). Verifies the same four cases: default (no attrs), explicit accent only (auto-pair), explicit accent + gray, and nested scope override (`:where([data-accent="X"]:not([data-gray]))`, e.g. violet → slate). |
+| `hue-role-names.e2e.ts` | Real browser (Chromium), driven by the `line-schemas` lists (AM-052). For every `GRAY_HUES` entry under `data-gray`, each gray role step equals that hue's palette step. For every `HUES` entry under `data-accent`, each accent role step equals that hue's palette step. With `line-themes` loaded, each hue's `--line-{hue}-1` keeps its own palette value. |
 | `schema.test.ts` | Zod validators reject invalid hue/role inputs; valid inputs match the generated CSS file existence. |
 
 **C9 — auto-pair verification method (AM-015).** The `auto-pair.behaviour.test.ts` row asserts behaviour by string-matching the committed `src/defaults.css` cascade rather than reading `getComputedStyle()`, because happy-dom (and jsdom) do not resolve the `var()`/`light-dark()` chain. C9 runs on F2's happy-dom harness (§6.F.3) and must NOT provision its own DOM library. The string-assertion method was confirmed by a spike (executed 2026-06-17, AM-020): happy-dom **can** resolve a trivial hex-terminated `var()` chain via `getComputedStyle()`, but it does **not** compute the production chain, whose terminal value is `light-dark(#hex,#hex)` (returned as the literal `light-dark(...)` text, and `""` for any property consuming it) — so a computed-style read is unworkable for the real role variables and the committed-CSS string assertion is required.
@@ -2187,6 +2193,7 @@ Phase 00 is **complete** when **all** of the following hold. This mirrors plan �
 - [ ] `scripts/validate-contrast.mjs` passes (31 hues × {light, dark} step-9 vs contrast token ≥ 3:1, with the single documented `orange` allowlist exception at 2.97:1 per AM-014).
 - [ ] `scripts/verify-palettes-fresh.mjs` passes (no drift between generator and committed CSS).
 - [ ] `aliases.css` declares exactly **54 alias variables** (9 named aliases × 6 roles), verified by a count assertion in a snapshot or unit test (PRD §9.14 T7).
+- [ ] No hue shares a name with a role. The Radix `gray` hue ships as `neutral` (`--line-neutral-*`, `accent/neutral.css`, `gray/neutral.css`), and `hue-role-names.e2e.ts` passes in Chromium (AM-052).
 - [ ] Snapshot tests confirm role-mapping CSS uses `[data-accent='{hue}']` and `[data-gray='{hue}']` selectors only — no `[data-theme]` selector is emitted anywhere in `line-themes` output (PRD §9.14 T4).
 
 ### 9.3 Runtime Core
