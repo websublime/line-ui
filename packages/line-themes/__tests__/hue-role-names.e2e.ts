@@ -7,7 +7,9 @@
  *   (a) for every `GRAY_HUES` entry `g`, the gray role under `[data-gray=g]`
  *       equals the reference `--line-{g}-N`;
  *   (b) for every `HUES` entry `h`, the accent role under `[data-accent=h]`
- *       equals the reference `--line-{h}-N`;
+ *       equals the reference `--line-{h}-N`, and for every `GRAY_HUES` entry
+ *       used as accent without `data-gray`, the gray role self-pairs to that
+ *       hue (PRD §9.5 auto-pair table, the `defaults.css` blocks);
  *   (c) at a themed root, every `--line-{h}-1` equals its reference.
  * Reference values come from a page that loads only `line-colors`. A `var()`
  * is substituted where its property is declared, so this needs a real cascade
@@ -87,6 +89,16 @@ test('the accent role under data-accent equals each hue palette', async ({ page 
     for (const step of STEPS) {
       expect(values[step], `--line-accent-${step} under data-accent="${h}"`).not.toBe('');
       expect(values[step], `--line-accent-${step} under data-accent="${h}"`).toBe(reference[h]?.[step] as string);
+    }
+  }
+});
+
+test('a gray hue used as accent auto-pairs the gray role to itself', async ({ page }) => {
+  for (const g of GRAY_HUES) {
+    const values = await read(page, `accent-${g}`, 'gray');
+    for (const step of STEPS) {
+      expect(values[step], `--line-gray-${step} under data-accent="${g}"`).not.toBe('');
+      expect(values[step], `--line-gray-${step} under data-accent="${g}"`).toBe(reference[g]?.[step] as string);
     }
   }
 });
