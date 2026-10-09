@@ -58,7 +58,6 @@
     "@phosphor-icons/core": "^2.1.1",
     "@radix-ui/colors": "^3.0.0",
     "@storybook/addon-a11y": "^10.4.0",
-    "@storybook/addon-themes": "^10.4.0",
     "@storybook/web-components-vite": "^10.4.0",
     "@types/node": "^25.4.0",
     "@zag-js/core": "^1.40.0",
