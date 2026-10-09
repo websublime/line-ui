@@ -47,7 +47,7 @@ number in the stream + 1.
 | C11 | C | Stream C review cleanups (batch 2) | webcomponents-supervisor | C6 | done | — | #189 | — |
 | C13 | C | Clamp `line-utils` color-mix percentage args to [0,100] | webcomponents-supervisor | C7 | done | — | #192 | — |
 | C14 | C | Emit per-file `dist/accent/*.css` and `dist/gray/*.css` in `line-themes` build | webcomponents-supervisor | C6 | done | — | #193 | — |
-| C15 | C | Fix `aliases.css`: the 54 named aliases resolve only at `:where(html)`, so a nested `[data-accent]` / `[data-gray]` scope keeps the root's alias values against PRD §9.4 scoping; declare them in every theming scope (spec §6.C.4) | webcomponents-supervisor | C6 | in_progress | fix/00-c15-aliases-nested-scopes | — | — |
+| C15 | C | Fix `aliases.css`: the 54 named aliases resolve only at `:where(html)`, so a nested `[data-accent]` / `[data-gray]` scope keeps the root's alias values against PRD §9.4 scoping; declare them in every theming scope (spec §6.C.4) | webcomponents-supervisor | C6 | in_review | fix/00-c15-aliases-nested-scopes | #233 | — |
 
 ## Stream D — Base Class & Runtime Core (`webcomponents-supervisor`)
 
@@ -95,7 +95,7 @@ number in the stream + 1.
 | G2 | G | Theming guide (`theming.mdx`) | webcomponents-supervisor | C6, F1 | todo | — | — | — |
 | G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | todo | — | — | — |
 | G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | Z11 | done | docs/00-g4-component-spec-template | #231 | AM-043, AM-047 |
-| G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | in_review | docs/00-g5-competitive-component-analysis | #232 | AM-048 |
+| G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | done | docs/00-g5-competitive-component-analysis | #232 | AM-048 |
 | G6 | G | Design-system stories `palettes.stories.ts` + `roles.stories.ts` rendering all 31 hues (spec §6.F.1, §9.7) | webcomponents-supervisor | C6, F1, C15 | todo | — | — | — |
 
 ## Stream H — HTMX Spike (`webcomponents-supervisor`)
