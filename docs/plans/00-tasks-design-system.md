@@ -48,6 +48,7 @@ number in the stream + 1.
 | C13 | C | Clamp `line-utils` color-mix percentage args to [0,100] | webcomponents-supervisor | C7 | done | — | #192 | — |
 | C14 | C | Emit per-file `dist/accent/*.css` and `dist/gray/*.css` in `line-themes` build | webcomponents-supervisor | C6 | done | — | #193 | — |
 | C15 | C | Fix `aliases.css`: the 54 named aliases resolve only at `:where(html)`, so a nested `[data-accent]` / `[data-gray]` scope keeps the root's alias values against PRD §9.4 scoping; declare them in every theming scope (spec §6.C.4) | webcomponents-supervisor | C6 | done | fix/00-c15-aliases-nested-scopes | #233 | AM-049 |
+| C16 | C | Rename the Radix `gray` hue to `neutral`: the gray hue and the gray role both emit `--line-gray-*`, so `data-gray="gray"` / `data-accent="gray"` form a self-reference cycle and the gray palette never shows with `line-themes` loaded (PRD §9.2, §9.6) | webcomponents-supervisor | C6 | in_review | fix/00-c16-gray-hue-to-neutral | #236 | AM-052 |
 
 ## Stream D — Base Class & Runtime Core (`webcomponents-supervisor`)
 

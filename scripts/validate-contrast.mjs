@@ -36,7 +36,8 @@
  * change, and radixColors[`${H}P3`] returns `color(display-p3 …)` strings rather
  * than hex. Only radixColors[H] (light) and radixColors[`${H}Dark`] (dark) are
  * read, both keyed `{H}9` (the object name carries the Dark variant, the step
- * key does not — AM-011).
+ * key does not — AM-011). `{H}` is the Radix SOURCE name from
+ * scripts/radix-sources.mjs, so the hue `neutral` reads `gray` (AM-052).
  *
  * WCAG MATH IS SHARED (C7, line-ui-7qm.3.7): the WCAG 2.1 relative-luminance,
  * contrast-ratio, hex parsing, and the THRESHOLD / SOLID_STEP constants now live
@@ -63,6 +64,7 @@ import * as radixColors from '@radix-ui/colors';
 import { PER_HUE_CONTRAST } from '../packages/line-schemas/src/contrast-table.ts';
 import { HUES } from '../packages/line-schemas/src/hues.ts';
 import { contrastRatio, SOLID_STEP, THRESHOLD } from '../packages/line-utils/src/contrast.ts';
+import { radixSource } from './radix-sources.mjs';
 
 /**
  * Documented upstream allowlist (AM-014, spec §6.C.3 line 669). EXACTLY one
@@ -199,9 +201,10 @@ function collectResults() {
 
   for (const hue of HUES) {
     const token = PER_HUE_CONTRAST[hue];
+    const src = radixSource(hue);
     const pairs = /** @type {const} */ ([
-      ['light', step(scale(hue), hue, `${hue}${SOLID_STEP}`)],
-      ['dark', step(scale(`${hue}Dark`), `${hue}Dark`, `${hue}${SOLID_STEP}`)],
+      ['light', step(scale(src), src, `${src}${SOLID_STEP}`)],
+      ['dark', step(scale(`${src}Dark`), `${src}Dark`, `${src}${SOLID_STEP}`)],
     ]);
 
     for (const [mode, step9] of pairs) {

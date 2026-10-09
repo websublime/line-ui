@@ -26,6 +26,9 @@
  * step KEYS do not repeat that suffix. Base scales are keyed `{H}{n}`; alpha
  * scales are keyed `{H}A{n}` — regardless of the object's own suffix. This
  * script indexes base objects with `{H}{n}` and alpha objects with `{H}A{n}`.
+ * `{H}` is the Radix SOURCE name from scripts/radix-sources.mjs, so the hue
+ * `neutral` reads `gray`, `grayDarkP3A` and the other gray objects, keyed
+ * `gray{n}` / `grayA{n}`, and emits `--line-neutral-*` (AM-052).
  *
  * Biome-conformant output: P3 alpha declarations (long
  * `light-dark(color(display-p3 …), color(display-p3 …))` lines) overflow Biome's
@@ -44,6 +47,7 @@ import { fileURLToPath } from 'node:url';
 import * as radixColors from '@radix-ui/colors';
 import { PER_HUE_CONTRAST } from '../packages/line-schemas/src/contrast-table.ts';
 import { HUES } from '../packages/line-schemas/src/hues.ts';
+import { radixSource } from './radix-sources.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(__dirname, '..');
@@ -112,19 +116,20 @@ function step(obj, objName, key) {
  * @returns {string}
  */
 function renderHue(hue) {
+  const src = radixSource(hue);
   // sRGB scales.
-  const base = scale(hue); // {H}{n}
-  const baseDark = scale(`${hue}Dark`); // {H}{n}
-  const alpha = scale(`${hue}A`); // {H}A{n}
-  const alphaDark = scale(`${hue}DarkA`); // {H}A{n}
+  const base = scale(src); // {H}{n}
+  const baseDark = scale(`${src}Dark`); // {H}{n}
+  const alpha = scale(`${src}A`); // {H}A{n}
+  const alphaDark = scale(`${src}DarkA`); // {H}A{n}
   // Wide-gamut P3 scales.
-  const baseP3 = scale(`${hue}P3`); // {H}{n}
-  const baseDarkP3 = scale(`${hue}DarkP3`); // {H}{n}
-  const alphaP3 = scale(`${hue}P3A`); // {H}A{n}
-  const alphaDarkP3 = scale(`${hue}DarkP3A`); // {H}A{n}
+  const baseP3 = scale(`${src}P3`); // {H}{n}
+  const baseDarkP3 = scale(`${src}DarkP3`); // {H}{n}
+  const alphaP3 = scale(`${src}P3A`); // {H}A{n}
+  const alphaDarkP3 = scale(`${src}DarkP3A`); // {H}A{n}
 
-  const baseKey = (n) => `${hue}${n}`;
-  const alphaKey = (n) => `${hue}A${n}`;
+  const baseKey = (n) => `${src}${n}`;
+  const alphaKey = (n) => `${src}A${n}`;
 
   const lines = [];
   lines.push(GENERATED_HEADER);
@@ -133,7 +138,7 @@ function renderHue(hue) {
   lines.push('  /* Base steps (sRGB) — light-dark() over light + dark base scales */');
   for (const n of STEPS) {
     const k = baseKey(n);
-    lines.push(`  --line-${hue}-${n}: light-dark(${step(base, hue, k)}, ${step(baseDark, `${hue}Dark`, k)});`);
+    lines.push(`  --line-${hue}-${n}: light-dark(${step(base, src, k)}, ${step(baseDark, `${src}Dark`, k)});`);
   }
 
   lines.push('');
@@ -141,7 +146,7 @@ function renderHue(hue) {
   for (const n of STEPS) {
     const k = alphaKey(n);
     lines.push(
-      `  --line-${hue}-a${n}: light-dark(${step(alpha, `${hue}A`, k)}, ${step(alphaDark, `${hue}DarkA`, k)});`,
+      `  --line-${hue}-a${n}: light-dark(${step(alpha, `${src}A`, k)}, ${step(alphaDark, `${src}DarkA`, k)});`,
     );
   }
 
@@ -158,14 +163,14 @@ function renderHue(hue) {
   for (const n of STEPS) {
     const k = baseKey(n);
     lines.push(
-      `      --line-${hue}-${n}: light-dark(${step(baseP3, `${hue}P3`, k)}, ${step(baseDarkP3, `${hue}DarkP3`, k)});`,
+      `      --line-${hue}-${n}: light-dark(${step(baseP3, `${src}P3`, k)}, ${step(baseDarkP3, `${src}DarkP3`, k)});`,
     );
   }
   lines.push('');
   for (const n of STEPS) {
     const k = alphaKey(n);
     lines.push(
-      `      --line-${hue}-a${n}: light-dark(${step(alphaP3, `${hue}P3A`, k)}, ${step(alphaDarkP3, `${hue}DarkP3A`, k)});`,
+      `      --line-${hue}-a${n}: light-dark(${step(alphaP3, `${src}P3A`, k)}, ${step(alphaDarkP3, `${src}DarkP3A`, k)});`,
     );
   }
   lines.push('    }');

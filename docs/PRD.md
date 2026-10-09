@@ -1,15 +1,16 @@
 # line://ui — Product Requirements Specification
 
-**Date:** 2026-10-08
+**Date:** 2026-10-09
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.9
+**Version:** 0.8.10
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.10 (2026-10-09) — The Radix `gray` hue ships as `neutral`.** The hue that `@radix-ui/colors` names `gray` ships as `neutral`. Its palette tokens are `--line-neutral-*`, its exports are `@websublime/line-colors/neutral`, `@websublime/line-themes/accent/neutral` and `@websublime/line-themes/gray/neutral`, and the attribute values are `data-accent="neutral"` and `data-gray="neutral"`. The gray role keeps its name. Its tokens stay `--line-gray-*`, and its attribute stays `data-gray`. Why: hue tokens (`--line-{hue}-{step}`) and role tokens (`--line-{role}-{step}`) share one pattern, so the hue `gray` and the role `gray` wrote the same `--line-gray-*` names. The role mapping for the hue declared `--line-gray-1: var(--line-gray-1)`, a self-reference cycle. In Chromium on the built `0.1.0` CSS, `data-gray="gray"` and `data-accent="gray"` made `--line-gray-1` invalid and its backgrounds transparent. Without attributes, `--line-gray-1` held the slate value, not the gray hue. Miguel chose to rename the hue rather than the role, and chose the name `neutral` over `ash` (ledger 00-C16). No alias keeps the old hue tokens, since an alias would recreate the collision. Sections touched: §2.1 (`line-tokens` note on palette extremes), §9.2 (hue table, `GRAY_HUES`, the hue-role naming invariant), §9.3 (role table wording), §9.5 (auto-pair table), §9.9 (note on colour-adjacent families), §9.14 (T12). Spec AM-052 aligns the Phase 0 spec.
 - **v0.8.9 (2026-10-08) — Web Awesome and Fluent UI Web Components replace Shoelace and FAST as competitors.** The §1.3 comparison table compares line://ui against Web Awesome and Fluent UI Web Components in the columns that named Shoelace and FAST, and every cell of those two columns was rewritten from upstream sources checked on 2026-10-08. The §1.3 subsections Differentiators, Where Competitors Are Stronger and Competitive Risks name Web Awesome where they named Shoelace, and Where Competitors Are Stronger names Fluent UI Web Components where it named FAST. The sentence that links `COMPETITIVE-COMPONENT-ANALYSIS.md` now describes the file as the per-family comparison that each component spec fills, and drops "(to be created in Phase 0)". Why: Shoelace is sunset and names Web Awesome as its successor (last release 2.20.1 on 2025-03-11), and FAST removed its component library (`@microsoft/fast-foundation`, last release 2.50.0 on 2024-10-23), so Microsoft's FAST-based components ship as `@fluentui/web-components`. Miguel chose the two successors over keeping Shoelace and FAST with a status note and over dropping both without a replacement (ledger row `00-G5`, decision by Miguel on 2026-10-08; record in `docs/context/00-g5.md`). Updates: §1.3. Spec §6.G.4 (AM-048) and ledger row `G5` aligned in the same commit; the spec header now cites PRD v0.8.9.
 - **v0.8.8 (2026-10-08) — The site and Storybook are served on `websublime.com` subdomains, and the Cloudflare tokens have no expiry.** Storybook production is served at `https://line-ui-storybook.websublime.com`. The site URL stays `line-ui.websublime.com`, as §5.3 already states. Pull-request previews stay on `*.pages.dev` URLs in the separate preview account. The three Cloudflare API tokens that the deploy workflows use have no expiry and are rotated only on suspicion of a leak. Why: Miguel chose custom domains over `*.pages.dev` URLs only, because `websublime.com` is a zone in the main Cloudflare account, and he kept the tokens without expiry after the trade-off was shown (ledger row `00-Z12`, decision by Miguel on 2026-10-08; record in `docs/context/00-z12.md`). Updates: §5.4. Spec §6.F.5, §6.F.6, §9.6, §10 D7 and §11 Q1 (AM-045), ledger rows `F5` and `F7`, and the README Storybook link aligned on the same branch; the spec header now cites PRD v0.8.8.
 - **v0.8.7 (2026-10-07) — Storybook is hosted on Cloudflare Pages, with a preview per pull request.** Storybook deploys to the Cloudflare Pages project `line-ui-storybook` instead of GitHub Pages. Every push to `main` deploys production, and every pull request opened from a branch of this repository gets its own preview deploy at a `pr-<number>` URL in a separate Cloudflare account, so pull-request code never reaches the production token. Pull requests from forks get no preview, because GitHub gives them no secrets. Why: the spec already deployed Storybook to Cloudflare Pages, like `apps/site`, while §5.4 still named GitHub Pages; Miguel chose Cloudflare Pages, kept per-PR previews over production-only deploys, and chose a separate preview account over per-run approvals and over a single account (ledger row `00-Z9`, decision by Miguel on 2026-10-07; record in `docs/context/00-z9.md`). Updates: §5.4, §6.1 (apps tree and apps table). Spec §6.F.5 and §9.6 (AM-044) and ledger rows `F5` and `F7` aligned in the same commit; the spec header now cites PRD v0.8.7.
@@ -183,7 +184,7 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 - **Decorative families (7):** aspects (aspect-ratio tokens), animations (pre-built keyframes), gradients (structural — angles/stops/positions, no colour values), masks (CSS mask shapes), layouts (composition utilities), highlights (`::selection` and similar), svg (SVG structural tokens — stroke widths, mitres, etc., no colour values). Optional surface — consumers import only what they need via subpath.
 - **`./reset` subpath:** zero-opinion browser-defaults neutralisation, applied before any family. Consumers may skip if they already use their own reset.
 
-All `--line-*` prefixed. Token names remain singular (`--line-radius-1`, `--line-size-3`); the plural form (`radii`, `sizing`) is the family/export name only. Decorative families that historically reference colour values (e.g., gradients) are **restructured** so their colour terms come from `line-colors` palette tokens, not from absolute values — preserving the Manifesto Law 10 cross-layer separation. The previous `colors-absolute.css` family from v0.7 is **removed** for this reason; consumers needing black/white absolutes use the relevant Radix scale (e.g., `--line-gray-1` / `--line-gray-12`). Open Props served as a design reference for initial values but is NOT used at runtime or build time. Owned, versioned, and shipped as its own leaf package.
+All `--line-*` prefixed. Token names remain singular (`--line-radius-1`, `--line-size-3`); the plural form (`radii`, `sizing`) is the family/export name only. Decorative families that historically reference colour values (e.g., gradients) are **restructured** so their colour terms come from `line-colors` palette tokens, not from absolute values — preserving the Manifesto Law 10 cross-layer separation. The previous `colors-absolute.css` family from v0.7 is **removed** for this reason; consumers needing black/white absolutes use the relevant Radix scale (e.g., `--line-neutral-1` / `--line-neutral-12`). Open Props served as a design reference for initial values but is NOT used at runtime or build time. Owned, versioned, and shipped as its own leaf package.
 
 **Colour System (`line-colors` + `line-schemas` + `line-themes`)** — Radix-fiel. 31 hues x 12 steps (Radix Colors 3.x). `line-colors` ships pure palette CSS (`--line-amber-1..12`, etc.), sourced from `@radix-ui/colors` npm but committed into the repo so CI does not regenerate every build. `line-schemas` is the TS contract layer (Zod + types) declaring `HUES`, `ACCENT_HUES`, `GRAY_HUES`, and `SEMANTIC_MAP`. `line-themes` ships role-mapping CSS (`--line-accent-*`, `--line-gray-*`, semantic `--line-success/warning/danger/info-*`, named aliases, and the `[data-accent]` / `[data-gray]` selectors). Light/dark lives inside the palette via CSS `light-dark()` — themes are mono-declaration.
 
@@ -1214,10 +1215,12 @@ The colour system is **faithful to Radix Colors 3.x**, not a custom 28-palette r
 | Group | Hues | Count |
 |-------|------|-------|
 | Saturated | tomato, red, ruby, crimson, pink, plum, purple, violet, iris, indigo, blue, cyan, teal, jade, green, grass, bronze, gold, brown, orange, amber, yellow, lime, mint, sky | 25 |
-| Grayscales | gray, mauve, slate, sage, olive, sand | 6 |
+| Grayscales | neutral, mauve, slate, sage, olive, sand | 6 |
 | **Total** | | **31** |
 
-`ACCENT_HUES` (the set of hues usable as accent) = all 31. `GRAY_HUES` (the set of hues usable as neutral / gray role) = only the 6 grayscales.
+`ACCENT_HUES` (the set of hues usable as accent) = all 31. `GRAY_HUES` (the set of hues usable as the gray role) = only the 6 grayscales.
+
+**Hue and role names never overlap.** Hue tokens (`--line-{hue}-{step}`) and role tokens (`--line-{role}-{step}`) share one name pattern, so no hue may share a name with a role. Radix names one grayscale `gray`, the same name as the gray role. That hue therefore ships as `neutral`. The build reads the Radix `gray` objects and emits `--line-neutral-*`, the export `@websublime/line-colors/neutral`, and the role mappings `@websublime/line-themes/accent/neutral` and `@websublime/line-themes/gray/neutral` (v0.8.10).
 
 **12-step structure per hue (Radix-standard):**
 
@@ -1268,7 +1271,7 @@ Components consume **role variables**, never hue variables directly. There are s
 | Role | Purpose | User-selectable? |
 |------|---------|------------------|
 | `accent` | Brand / primary action | Yes, via `data-accent` |
-| `gray` | Neutrals (text, surfaces, borders) | Yes, via `data-gray` (or auto-paired from accent) |
+| `gray` | Grays for text, surfaces and borders | Yes, via `data-gray` (or auto-paired from accent) |
 | `success` | Confirmation, positive feedback | No — fixed at root (`green`) |
 | `warning` | Caution | No — fixed at root (`amber`) |
 | `danger` | Errors, destructive actions | No — fixed at root (`red`) |
@@ -1311,13 +1314,13 @@ Because `accent` and `gray` are independently namespaced (`--line-accent-*` vs `
 ### 9.5 Defaults & Auto-Pairing
 
 **Default accent (when no `data-accent` is set):** `indigo`.
-**Default gray:** auto-paired from accent, Radix-style. If the consumer sets `data-accent` without `data-gray`, the gray role binds automatically to the curated neutral pair.
+**Default gray:** auto-paired from accent, Radix-style. If the consumer sets `data-accent` without `data-gray`, the gray role binds automatically to the curated gray pair.
 
 **Auto-pair table:**
 
 | Accent | Paired gray |
 |--------|-------------|
-| `gray`, `mauve`, `slate`, `sage`, `olive`, `sand` (grayscales used as accent) | same as accent (self-paired) |
+| `neutral`, `mauve`, `slate`, `sage`, `olive`, `sand` (grayscales used as accent) | same as accent (self-paired) |
 | `tomato`, `red`, `ruby`, `crimson`, `pink`, `plum`, `purple` | `mauve` |
 | `violet`, `iris`, `indigo`, `blue`, `sky`, `cyan` | `slate` |
 | `teal`, `jade`, `mint`, `green` | `sage` |
@@ -1474,7 +1477,7 @@ Consumers toggle mode programmatically by setting `style.colorScheme` on `<html>
 
 The `./reset` subpath is the consumer-side reset that neutralises browser defaults — applied **before** any token family. It is foundation-layer (zero-opinion; only resets). Consumers who already use their own reset (e.g., `normalize.css`, modern resets) may skip this subpath. The `.` root export bundles all 18 families + reset.
 
-**Note on colour-adjacent families.** `gradients`, `highlights`, and `svg` historically held colour values in v0.7 (`colors-absolute.css` etc.). In v0.8 they are **structural-only** — they reference palette tokens from `line-colors` rather than declaring absolute colour values. This preserves Manifesto Law 10 (cross-layer separation). The v0.7 `colors-absolute` family is **removed** entirely; consumers needing black/white absolutes use `--line-gray-1` / `--line-gray-12` or the relevant Radix scale.
+**Note on colour-adjacent families.** `gradients`, `highlights`, and `svg` historically held colour values in v0.7 (`colors-absolute.css` etc.). In v0.8 they are **structural-only** — they reference palette tokens from `line-colors` rather than declaring absolute colour values. This preserves Manifesto Law 10 (cross-layer separation). The v0.7 `colors-absolute` family is **removed** entirely; consumers needing black/white absolutes use `--line-neutral-1` / `--line-neutral-12` or the relevant Radix scale.
 
 **`@websublime/line-colors`** — Radix palette CSS, one file per hue:
 
@@ -1651,6 +1654,7 @@ This refactor is the initial authoring of the package layout in `packages/`, sou
 | T9 | Default accent + gray | Default accent: `indigo`. Default gray: auto-paired from accent via Radix-style pairing table (§9.5). Explicit `data-gray` always wins. | Phase 0 |
 | T10 | Contrast tokens | Each role exposes a `--line-{role}-contrast` token for text on step-9 solid backgrounds (WCAG AA guaranteed). Implemented in `line-colors` per hue (`--line-{hue}-contrast`) and surfaced through role mappings in `line-themes`. | Phase 0 |
 | T11 | CSS pipeline | PostCSS (`postcss-import`, `postcss-nested`, `postcss-preset-env`, `cssnano`). Component bundling continues via Vite/Rolldown. | Phase 0 |
+| T12 | Name of the Radix `gray` hue | The hue ships as **`neutral`** (`--line-neutral-*`, `data-accent="neutral"`, `data-gray="neutral"`). The gray role keeps `--line-gray-*` and `data-gray`. No hue may share a name with a role, because both token families use `--line-{name}-{step}` (v0.8.10). | Phase 0 |
 
 Full implementation details live in the Phase 0 spec (`docs/specs/00-spec-design-system.md`) (to be created in Phase 0 specification), produced during Stage 2 via `/specification 00`. The spec is the canonical source — there is no parallel implementation guide.
 

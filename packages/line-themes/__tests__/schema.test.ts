@@ -6,6 +6,10 @@
  *   (b) Generated CSS dist files exist for every schema member (parity):
  *       31 accent role maps ↔ ACCENT_HUES, 6 gray role maps ↔ GRAY_HUES,
  *       31 palette files ↔ HUES.
+ *   (b') The committed role-map sources match the schema lists EXACTLY: the
+ *       file set of `src/accent/` equals HUES and `src/gray/` equals GRAY_HUES,
+ *       so a stale extra file fails (AM-052). This reads `src/`, not `dist/`,
+ *       because the build never cleans `dist/`.
  *   (c) `aliases.css` declares EXACTLY 54 `--line-*` variables
  *       (ALIASES[9] × ROLES[6] = 54).
  *
@@ -18,7 +22,7 @@
  */
 
 import { describe, expect, test } from 'bun:test';
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import {
   ACCENT_HUES,
@@ -34,6 +38,7 @@ import {
 
 const THEMES_DIST = resolve(import.meta.dirname, '../dist');
 const COLORS_DIST = resolve(import.meta.dirname, '../../line-colors/dist');
+const THEMES_SRC = resolve(import.meta.dirname, '../src');
 
 describe('schema validators', () => {
   test('HueSchema accepts valid hues and rejects invalid', () => {
@@ -98,6 +103,18 @@ describe('schema ↔ dist file parity', () => {
       expect(existsSync(path), `missing gray role-map dist: ${path}`).toBe(true);
     }
   });
+});
+
+describe('schema ↔ src file set (exact)', () => {
+  for (const [dir, hues] of [
+    ['accent', HUES],
+    ['gray', GRAY_HUES],
+  ] as const) {
+    test(`src/${dir}/ holds exactly one role map per schema hue`, () => {
+      const files = readdirSync(resolve(THEMES_SRC, dir)).sort();
+      expect(files).toEqual(hues.map((hue) => `${hue}.css`).sort());
+    });
+  }
 });
 
 describe('aliases.css variable count', () => {

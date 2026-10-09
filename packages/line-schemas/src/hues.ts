@@ -9,6 +9,9 @@ import { z } from 'zod';
  * Note: the 31-hue tuple is a **superset** that includes the 6 gray-family
  * hues. `ACCENT_HUES` therefore equals `HUES` (all 31) by design — the grays
  * are NOT subtracted.
+ *
+ * No hue may share a name with a role (hue and role tokens share the
+ * `--line-{name}-{step}` pattern), so the Radix `gray` hue is `neutral`.
  */
 export const HUES = [
   'amber',
@@ -19,7 +22,6 @@ export const HUES = [
   'cyan',
   'gold',
   'grass',
-  'gray',
   'green',
   'indigo',
   'iris',
@@ -27,6 +29,7 @@ export const HUES = [
   'lime',
   'mauve',
   'mint',
+  'neutral',
   'olive',
   'orange',
   'pink',
@@ -61,7 +64,7 @@ export const AccentHueSchema = HueSchema;
 /**
  * The 6 gray-family hues, a strict subset of {@link HUES}.
  */
-export const GRAY_HUES = ['gray', 'mauve', 'slate', 'sage', 'olive', 'sand'] as const;
+export const GRAY_HUES = ['neutral', 'mauve', 'slate', 'sage', 'olive', 'sand'] as const;
 
 export type GrayHue = (typeof GRAY_HUES)[number];
 
