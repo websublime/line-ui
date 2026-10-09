@@ -94,7 +94,7 @@ number in the stream + 1.
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
 | G1 | G | Getting Started (`apps/storybook/stories/getting-started.mdx`) | webcomponents-supervisor | C6, F1 | in_review | docs/00-g1-getting-started | #238 | AM-053 |
-| G2 | G | Theming guide (`theming.mdx`) | webcomponents-supervisor | C6, F1 | todo | — | — | — |
+| G2 | G | Theming guide (`theming.mdx`) | webcomponents-supervisor | C6, F1 | in_progress | docs/00-g2-theming-guide | — | — |
 | G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | todo | — | — | — |
 | G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | Z11 | done | docs/00-g4-component-spec-template | #231 | AM-043, AM-047 |
 | G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | done | docs/00-g5-competitive-component-analysis | #232 | AM-048 |
