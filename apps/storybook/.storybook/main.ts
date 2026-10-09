@@ -2,9 +2,9 @@ import type { StorybookConfig } from '@storybook/web-components-vite';
 
 // Storybook 10 + @storybook/web-components-vite builder (spec § 6.F.1).
 //
-// addons: @storybook/addon-docs compiles the MDX guides and renders autodocs
-// pages. @storybook/addon-essentials is absent because it stopped at
-// Storybook 8 and no ^10.x is published.
+// @storybook/addon-docs compiles the MDX guides and renders autodocs pages.
+// @storybook/addon-essentials is absent because it stopped at Storybook 8 and
+// no ^10.x is published.
 const config: StorybookConfig = {
   framework: { name: '@storybook/web-components-vite', options: {} },
   stories: ['../stories/**/*.@(mdx|stories.@(ts|js))'],
