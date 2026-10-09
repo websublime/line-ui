@@ -1218,7 +1218,7 @@ The colour system is **faithful to Radix Colors 3.x**, not a custom 28-palette r
 | Grayscales | neutral, mauve, slate, sage, olive, sand | 6 |
 | **Total** | | **31** |
 
-`ACCENT_HUES` (the set of hues usable as accent) = all 31. `GRAY_HUES` (the set of hues usable as neutral / gray role) = only the 6 grayscales.
+`ACCENT_HUES` (the set of hues usable as accent) = all 31. `GRAY_HUES` (the set of hues usable as the gray role) = only the 6 grayscales.
 
 **Hue and role names never overlap.** Hue tokens (`--line-{hue}-{step}`) and role tokens (`--line-{role}-{step}`) share one name pattern, so no hue may share a name with a role. Radix names one grayscale `gray`, the same name as the gray role. That hue therefore ships as `neutral`. The build reads the Radix `gray` objects and emits `--line-neutral-*`, the export `@websublime/line-colors/neutral`, and the role mappings `@websublime/line-themes/accent/neutral` and `@websublime/line-themes/gray/neutral` (v0.8.10).
 
@@ -1271,7 +1271,7 @@ Components consume **role variables**, never hue variables directly. There are s
 | Role | Purpose | User-selectable? |
 |------|---------|------------------|
 | `accent` | Brand / primary action | Yes, via `data-accent` |
-| `gray` | Neutrals (text, surfaces, borders) | Yes, via `data-gray` (or auto-paired from accent) |
+| `gray` | Grays for text, surfaces and borders | Yes, via `data-gray` (or auto-paired from accent) |
 | `success` | Confirmation, positive feedback | No — fixed at root (`green`) |
 | `warning` | Caution | No — fixed at root (`amber`) |
 | `danger` | Errors, destructive actions | No — fixed at root (`red`) |
@@ -1314,7 +1314,7 @@ Because `accent` and `gray` are independently namespaced (`--line-accent-*` vs `
 ### 9.5 Defaults & Auto-Pairing
 
 **Default accent (when no `data-accent` is set):** `indigo`.
-**Default gray:** auto-paired from accent, Radix-style. If the consumer sets `data-accent` without `data-gray`, the gray role binds automatically to the curated neutral pair.
+**Default gray:** auto-paired from accent, Radix-style. If the consumer sets `data-accent` without `data-gray`, the gray role binds automatically to the curated gray pair.
 
 **Auto-pair table:**
 
