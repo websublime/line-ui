@@ -26,9 +26,9 @@
  * step KEYS do not repeat that suffix. Base scales are keyed `{H}{n}`; alpha
  * scales are keyed `{H}A{n}` — regardless of the object's own suffix. This
  * script indexes base objects with `{H}{n}` and alpha objects with `{H}A{n}`.
- * `{H}` is the Radix SOURCE name from scripts/radix-sources.mjs (AM-052): the
- * hue `neutral` reads `gray`, `grayDarkP3A`, … keyed `gray{n}` / `grayA{n}`,
- * and emits `--line-neutral-*`.
+ * `{H}` is the Radix SOURCE name from scripts/radix-sources.mjs, so the hue
+ * `neutral` reads `gray`, `grayDarkP3A` and the other gray objects, keyed
+ * `gray{n}` / `grayA{n}`, and emits `--line-neutral-*` (AM-052).
  *
  * Biome-conformant output: P3 alpha declarations (long
  * `light-dark(color(display-p3 …), color(display-p3 …))` lines) overflow Biome's
