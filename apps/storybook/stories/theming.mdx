@@ -84,9 +84,15 @@ Every palette step is one `light-dark(light, dark)` declaration.
 --line-slate-9: light-dark(#8b8d98, #696e77);
 ```
 
-The browser picks a branch from the computed `color-scheme` of the element. `color-scheme` inherits, and it inherits into shadow roots, so a component resolves the same branch as the page around it.
+The browser picks a branch from the colour scheme of the element, and the `color-scheme` property sets that scheme. `color-scheme` inherits, and it inherits into shadow roots, so a component resolves the same branch as the page around it.
 
-With no `color-scheme` set, the computed value is `normal` and `light-dark()` returns the light value. To follow the operating system, declare both schemes on the root.
+`light-dark()` returns the light value only when the page has neither a `color-scheme` declaration nor a `<meta name="color-scheme">` tag. To follow the operating system, add the meta tag to the document head. The tag applies before any CSS loads.
+
+```html
+<meta name="color-scheme" content="light dark">
+```
+
+You can also declare both schemes on the root in CSS.
 
 ```css
 :root {
