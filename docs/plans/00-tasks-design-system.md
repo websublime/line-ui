@@ -49,6 +49,7 @@ number in the stream + 1.
 | C14 | C | Emit per-file `dist/accent/*.css` and `dist/gray/*.css` in `line-themes` build | webcomponents-supervisor | C6 | done | — | #193 | — |
 | C15 | C | Fix `aliases.css`: the 54 named aliases resolve only at `:where(html)`, so a nested `[data-accent]` / `[data-gray]` scope keeps the root's alias values against PRD §9.4 scoping; declare them in every theming scope (spec §6.C.4) | webcomponents-supervisor | C6 | done | fix/00-c15-aliases-nested-scopes | #233 | AM-049 |
 | C16 | C | Rename the Radix `gray` hue to `neutral`: the gray hue and the gray role both emit `--line-gray-*`, so `data-gray="gray"` / `data-accent="gray"` form a self-reference cycle and the gray palette never shows with `line-themes` loaded (PRD §9.2, §9.6) | webcomponents-supervisor | C6 | done | fix/00-c16-gray-hue-to-neutral | #236 | AM-052 |
+| C17 | C | Fix `line-tokens` `shadows.css`: `--line-shadow-color` references `--line-gray-a-12`, which no package declares (the gray role declares `--line-gray-a12`), so `--line-shadow-color` and every `--line-shadow-*` token that uses it compute invalid and draw no shadow | webcomponents-supervisor | C2 | todo | — | — | — |
 
 ## Stream D — Base Class & Runtime Core (`webcomponents-supervisor`)
 
@@ -93,8 +94,8 @@ number in the stream + 1.
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| G1 | G | Getting Started (`apps/storybook/stories/getting-started.mdx`) | webcomponents-supervisor | C6, F1 | in_review | docs/00-g1-getting-started | #238 | AM-053 |
-| G2 | G | Theming guide (`theming.mdx`) | webcomponents-supervisor | C6, F1 | todo | — | — | — |
+| G1 | G | Getting Started (`apps/storybook/stories/getting-started.mdx`) | webcomponents-supervisor | C6, F1 | done | docs/00-g1-getting-started | #238 | AM-053 |
+| G2 | G | Theming guide (`theming.mdx`) | webcomponents-supervisor | C6, F1 | in_review | docs/00-g2-theming-guide | #239 | — |
 | G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | todo | — | — | — |
 | G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | Z11 | done | docs/00-g4-component-spec-template | #231 | AM-043, AM-047 |
 | G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | done | docs/00-g5-competitive-component-analysis | #232 | AM-048 |
@@ -123,3 +124,4 @@ number in the stream + 1.
 | Z11 | Z | Decide agent-driven UI support from the first component: Manifesto Principle 8 (agent-ready by construction), PRD v0.8.6 (`@websublime/line-genui` as the 9th package, Phase 1 opens with an agent-driven UI foundation stream, A2UI v0.9.1 renderer in preview), ARCHITECTURE section, and the agent contract in the component spec template (spec AM-043, row G4) | main session | Z10 | done | docs/00-z11-agent-driven-ui-decision | #224 | AM-043 |
 | Z12 | Z | Record the Cloudflare bootstrap decisions before F5 and F7: custom domains `line-ui.websublime.com` (site) and `line-ui-storybook.websublime.com` (Storybook) with previews on `*.pages.dev`, tokens without expiry (rotation on suspicion), the site in the same bootstrap, and the bootstrap facts (PRD v0.8.8, spec AM-045) | main session | Z9 | done | docs/00-z12-custom-domains-token-expiry | #227 | AM-045 |
 | Z13 | Z | Bring `CLAUDE.md` in line with the repository: drop the "pending" claims for merged work (Playwright tier F6, workflows F3/F4, Astro site F5, machine adapter D6, reset sheets D7, icon resolvers E1) and list the F9 scripts `publish` and `verify-pack` | main session | — | done | docs/00-z13-claude-md-state | #230 | — |
+| Z14 | Z | Decide the `.dark` / `.light` classes on `<html>`: PRD §9.8 keeps them as a public API next to `color-scheme`, but no package under `packages/*/src` declares them; either implement them or remove them from the PRD and align ARCHITECTURE, plan and spec | main session | — | todo | — | — | — |

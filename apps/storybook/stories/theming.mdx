@@ -1,0 +1,161 @@
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
+import * as ThemingStories from './theming.stories';
+
+<Meta title="Theming" />
+
+# Theming
+
+line://ui picks colours through roles such as accent and gray, and you bind each role to a hue with an HTML attribute. This guide covers the theming attributes, the 31 hues, gray auto-pairing, light and dark mode, the fixed semantic roles and the named aliases.
+
+## Attribute-based theming
+
+Two attributes theme an element and everything inside it. `data-accent` picks the accent hue and `data-gray` picks the gray hue. A theme is the pair (accent, gray), and there is no `data-theme` attribute.
+
+```html
+<!-- Default theme (indigo accent, slate gray) -->
+<html>
+
+<!-- Explicit accent, auto-paired gray (sand) -->
+<html data-accent="amber">
+
+<!-- Explicit accent and explicit gray -->
+<html data-accent="amber" data-gray="slate">
+
+<!-- Theming nests inside a section -->
+<section data-accent="violet">...</section>
+<aside data-accent="crimson" data-gray="mauve">...</aside>
+```
+
+Both attributes work on any element, not only on `<html>`. The accent role lives in `--line-accent-*` and the gray role lives in `--line-gray-*`. The two namespaces are separate, so several colour contexts can share one page and scopes can nest. An element that sets only `data-gray` keeps the accent it inherits.
+
+With no attributes, the accent is `indigo` and the gray is `slate`.
+
+A nested element that sets only `data-accent` gets the auto-paired gray of that accent, which the Auto-pairing section lists. That gray overrides the gray the element would inherit from its parent. To keep a gray in a nested scope, set `data-gray` on the nested element as well.
+
+```html
+<html data-accent="amber" data-gray="slate">
+  <!-- The gray role is mauve here, the auto-pair of crimson -->
+  <section data-accent="crimson">...</section>
+
+  <!-- The gray role stays slate, because the section sets data-gray -->
+  <section data-accent="crimson" data-gray="slate">...</section>
+</html>
+```
+
+The named aliases, such as `--line-accent-solid`, re-resolve in every theming scope. A nested scope therefore gets aliases that point at its own hues.
+
+Every hue you name in `data-accent` or `data-gray` must be imported, as [Getting Started](?path=/docs/getting-started--docs) shows. A hue you did not import leaves the role variables undefined.
+
+## Hue catalogue
+
+line://ui ships 31 hues, and each hue has 12 base steps, `--line-{hue}-1` to `--line-{hue}-12`. The grid renders one row per hue from `HUES` and one column per step from `STEPS`, in the colour mode of this page.
+
+<Canvas of={ThemingStories.HueCatalogue} />
+
+The [Palettes story](?path=/story/design-system-palettes--all-hues) adds the alpha steps and the contrast token of every hue, and it shows light and dark side by side.
+
+## Auto-pairing
+
+An element that sets `data-accent` without `data-gray` binds its gray role to a curated gray for that accent. `line-themes` declares one rule per accent hue, and each rule uses the selector `[data-accent="X"]:not([data-gray])`. An explicit `data-gray` always wins, because the selector does not match an element that has `data-gray`.
+
+| Accent | Paired gray |
+|--------|-------------|
+| `neutral`, `mauve`, `slate`, `sage`, `olive`, `sand` (grays used as accent) | same as accent (self-paired) |
+| `tomato`, `red`, `ruby`, `crimson`, `pink`, `plum`, `purple` | `mauve` |
+| `violet`, `iris`, `indigo`, `blue`, `sky`, `cyan` | `slate` |
+| `teal`, `jade`, `mint`, `green` | `sage` |
+| `grass`, `lime` | `olive` |
+| `bronze`, `gold`, `brown`, `amber`, `yellow`, `orange` | `sand` |
+
+A gray used as accent pairs with itself, so the same gray shows in both roles.
+
+The demo renders one scope element. The element always sets `data-accent`, and it sets `data-gray` only when the gray control is not `auto`.
+
+<Canvas of={ThemingStories.AutoPair} />
+
+<Controls of={ThemingStories.AutoPair} />
+
+## Light and dark
+
+Every palette step is one `light-dark(light, dark)` declaration.
+
+```css
+/* @websublime/line-colors/slate */
+--line-slate-9: light-dark(#8b8d98, #696e77);
+```
+
+The browser picks a branch from the colour scheme of the element, and the `color-scheme` property sets that scheme. `color-scheme` inherits, and it inherits into shadow roots, so a component resolves the same branch as the page around it.
+
+When the page has neither a `color-scheme` declaration nor a `<meta name="color-scheme">` tag, `light-dark()` always returns the light value. To follow the operating system, add the meta tag to the document head. The tag applies before any CSS loads.
+
+```html
+<meta name="color-scheme" content="light dark">
+```
+
+You can also declare both schemes on the root in CSS.
+
+```css
+:root {
+  color-scheme: light dark;
+}
+```
+
+To force a mode from script, set `colorScheme` on the root element.
+
+```js
+document.documentElement.style.colorScheme = 'dark';
+```
+
+The `--line-{role}-contrast` tokens do not use `light-dark()`. Each one holds a single static colour, `#fff` or `#000`, chosen per hue.
+
+The demo sets `color-scheme` on its own container, so only the demo changes mode and this page stays as it is. With `light dark`, the demo follows your operating system. Some hues, such as indigo, keep the same step 9 in both modes, so the gray row shows the switch most clearly.
+
+<Canvas of={ThemingStories.LightDark} />
+
+<Controls of={ThemingStories.LightDark} />
+
+## Semantic roles
+
+Four roles carry a fixed meaning. `SEMANTIC_MAP` in `@websublime/line-schemas` binds each one to a hue.
+
+| Role | Hue |
+|------|-----|
+| `success` | `green` |
+| `warning` | `amber` |
+| `danger` | `red` |
+| `info` | `blue` |
+
+`line-themes` declares these roles at `:where(html)`, and `data-accent` and `data-gray` never change them. A red error and a green success must mean the same thing in every theme, so the semantic roles stay fixed.
+
+The demo sets `data-accent="crimson"` on its scope. The accent sample turns crimson, and the four semantic samples keep their hues.
+
+<Canvas of={ThemingStories.SemanticRoles} />
+
+## Named aliases
+
+The numeric API, `--line-{role}-1` to `--line-{role}-12`, is canonical. `line-themes` also names nine common steps per role. Nine aliases across six roles give 54 variables.
+
+| Alias | Maps to | Intent |
+|-------|---------|--------|
+| `--line-{role}-surface` | step 2 | Subtle background (cards, panels) |
+| `--line-{role}-bg` | step 3 | UI element background |
+| `--line-{role}-bg-hover` | step 4 | UI element hover |
+| `--line-{role}-bg-active` | step 5 | UI element active/pressed |
+| `--line-{role}-border` | step 7 | UI element border / focus ring |
+| `--line-{role}-solid` | step 9 | Primary solid (e.g. solid button bg) |
+| `--line-{role}-solid-hover` | step 10 | Solid hover |
+| `--line-{role}-text-low` | step 11 | Low-contrast text |
+| `--line-{role}-text` | step 12 | High-contrast text |
+
+`--line-{role}-contrast` belongs to the numeric API, not to the aliases. Pair `--line-{role}-solid` with `--line-{role}-contrast` for text on a solid fill.
+
+```css
+.button {
+  background-color: var(--line-accent-solid);
+  color: var(--line-accent-contrast);
+}
+```
+
+The matrix renders `ALIASES` across `ROLES` with the theme of this page. Its accent and gray rows follow the Accent and Gray menus in the toolbar.
+
+<Canvas of={ThemingStories.AliasMatrix} />
