@@ -1,0 +1,53 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Getting Started" />
+
+# Getting Started
+
+The line://ui design system has five packages, and its CSS ships in three of them. `line-tokens` holds the global tokens, `line-colors` holds one palette file per hue, and `line-themes` maps those palettes onto roles such as accent and gray. This guide installs those three.
+
+## Install
+
+```sh
+bun add @websublime/line-tokens @websublime/line-colors @websublime/line-themes
+```
+
+CDN delivery (unpkg, jsDelivr) is not supported until Phase 1.
+
+## Setup
+
+Import the packages once in your global stylesheet. This minimal setup loads one accent hue, one gray hue and the four semantic hues.
+
+```css
+@import '@websublime/line-tokens';
+@import '@websublime/line-colors/indigo';
+@import '@websublime/line-colors/slate';
+@import '@websublime/line-colors/green';   /* success */
+@import '@websublime/line-colors/amber';   /* warning */
+@import '@websublime/line-colors/red';     /* danger */
+@import '@websublime/line-colors/blue';    /* info */
+@import '@websublime/line-themes';         /* role mappings + semantics + aliases + defaults */
+```
+
+Every hue you reference through `data-accent` or `data-gray` must be imported above. The minimal setup imports `indigo` (the default accent), `slate` (its auto-paired gray) and the four semantic hues. If you set `data-accent="violet"`, add `@import '@websublime/line-colors/violet'`, or the role variables resolve to undefined values.
+
+Then set the accent on the root element.
+
+```html
+<html data-accent="indigo">
+```
+
+## Hello world
+
+<div data-accent="indigo" style={{ background: 'var(--line-accent-solid)', color: 'var(--line-accent-contrast)' }}>Hello, line://ui</div>
+
+```html
+<div data-accent="indigo" style="background: var(--line-accent-solid); color: var(--line-accent-contrast)">Hello, line://ui</div>
+```
+
+The `data-accent` attribute picks the accent hue for the element and everything inside it. Change the value to another hue you have imported, such as `violet`, and the same role variables re-theme the element.
+
+## What's next
+
+- The Theming guide covers `data-accent` and `data-gray` scoping, the hue catalogue, gray auto-pairing, light and dark modes, the semantic roles and the named aliases.
+- The Customisation guide covers the `::part()` contract, the three tiers of custom properties, component token naming and the cascade strategy.
