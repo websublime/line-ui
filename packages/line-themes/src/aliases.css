@@ -1,7 +1,9 @@
 /* Semantic aliases — 9 named slots × 6 roles = 54 alias variables (spec §6.C.4).
+ * Every theming scope ([data-accent], [data-gray], and html) declares them, so
+ * each scope resolves the aliases against its own role steps (PRD §9.4).
  * --line-{role}-contrast is part of the numeric API (semantics/accent/gray
  * files), NOT an alias, and is intentionally absent here. */
-:where(html) {
+:where(html, [data-accent], [data-gray]) {
   /* accent aliases */
   --line-accent-surface: var(--line-accent-2);
   --line-accent-bg: var(--line-accent-3);
