@@ -19,7 +19,12 @@ const config: StorybookConfig = {
   // from DocsOptions, so no docs config entry is required here.
   viteFinal: async (cfg) => {
     // CEM consumed automatically when customElements.json is present at the project root.
-    return cfg;
+    //
+    // The design-system CSS arrives already built for the project's browser
+    // targets. cssTarget 'esnext' stops the build minifier from lowering it
+    // again, which would rewrite light-dark() into a fallback that needs a
+    // compiled color-scheme rule to resolve.
+    return { ...cfg, build: { ...cfg.build, cssTarget: 'esnext' } };
   },
 };
 
