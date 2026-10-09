@@ -1,5 +1,11 @@
 # @websublime/line-colors
 
+## 0.1.1
+
+### Patch Changes
+
+- [#236](https://github.com/websublime/line-ui/pull/236) [`e1f1f39`](https://github.com/websublime/line-ui/commit/e1f1f39d67b892e154c61f3d241e2e6cf2eb095d) Thanks [@miguelramos](https://github.com/miguelramos)! - The Radix `gray` hue is renamed `neutral`: tokens `--line-neutral-*`, export `@websublime/line-colors/neutral`, `@websublime/line-themes` subpaths `accent/neutral` and `gray/neutral`, attribute value `data-accent="neutral"` / `data-gray="neutral"`, and `neutral` in `HUES` and `GRAY_HUES`. The old hue names collided with the gray role. The gray role (`--line-gray-*`, its aliases, `data-gray`) is unchanged.
+
 ## 0.1.0
 
 ### Minor Changes
