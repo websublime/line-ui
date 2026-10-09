@@ -23,6 +23,13 @@ first.
 
 The Radix gray hue is named `neutral` (`--line-neutral-*`); `--line-gray-*` is the gray role.
 
+## Guides
+
+- **Getting Started** installs the three CSS packages and shows a hello world themed with `data-accent`.
+- **Theming** covers `data-accent` and `data-gray` scoping, the hue catalogue, gray auto-pairing, light and dark
+  mode, the semantic roles and the named aliases. Its demo stories live in `stories/theming.stories.ts` under the
+  `!dev` tag, so the sidebar lists only the guide.
+
 ## Design-system stories
 
 - **Design System/Palettes** shows every hue in light and dark side by side: the 12 base steps
