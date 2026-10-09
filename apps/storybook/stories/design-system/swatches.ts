@@ -73,7 +73,9 @@ export const swatchStyles = html`<style>
   .ds-contrast {
     padding: 8px 12px;
     border-radius: 4px;
-    font-weight: 600;
+    /* WCAG large text (14pt bold), so axe applies the 3:1 floor the palette is validated to. */
+    font-size: 19px;
+    font-weight: 700;
   }
 </style>`;
 
