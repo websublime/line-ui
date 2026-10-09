@@ -17,7 +17,6 @@
 @import "./accent/cyan.css";
 @import "./accent/gold.css";
 @import "./accent/grass.css";
-@import "./accent/gray.css";
 @import "./accent/green.css";
 @import "./accent/indigo.css";
 @import "./accent/iris.css";
@@ -25,6 +24,7 @@
 @import "./accent/lime.css";
 @import "./accent/mauve.css";
 @import "./accent/mint.css";
+@import "./accent/neutral.css";
 @import "./accent/olive.css";
 @import "./accent/orange.css";
 @import "./accent/pink.css";
@@ -42,7 +42,7 @@
 @import "./accent/yellow.css";
 
 /* All gray role maps (GRAY_HUES order). */
-@import "./gray/gray.css";
+@import "./gray/neutral.css";
 @import "./gray/mauve.css";
 @import "./gray/slate.css";
 @import "./gray/sage.css";

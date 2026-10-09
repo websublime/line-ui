@@ -47,7 +47,8 @@ number in the stream + 1.
 | C11 | C | Stream C review cleanups (batch 2) | webcomponents-supervisor | C6 | done | — | #189 | — |
 | C13 | C | Clamp `line-utils` color-mix percentage args to [0,100] | webcomponents-supervisor | C7 | done | — | #192 | — |
 | C14 | C | Emit per-file `dist/accent/*.css` and `dist/gray/*.css` in `line-themes` build | webcomponents-supervisor | C6 | done | — | #193 | — |
-| C15 | C | Fix `aliases.css`: the 54 named aliases resolve only at `:where(html)`, so a nested `[data-accent]` / `[data-gray]` scope keeps the root's alias values against PRD §9.4 scoping; declare them in every theming scope (spec §6.C.4) | webcomponents-supervisor | C6 | in_review | fix/00-c15-aliases-nested-scopes | #233 | AM-049 |
+| C15 | C | Fix `aliases.css`: the 54 named aliases resolve only at `:where(html)`, so a nested `[data-accent]` / `[data-gray]` scope keeps the root's alias values against PRD §9.4 scoping; declare them in every theming scope (spec §6.C.4) | webcomponents-supervisor | C6 | done | fix/00-c15-aliases-nested-scopes | #233 | AM-049 |
+| C16 | C | Rename the Radix `gray` hue to `neutral`: the gray hue and the gray role both emit `--line-gray-*`, so `data-gray="gray"` / `data-accent="gray"` form a self-reference cycle and the gray palette never shows with `line-themes` loaded (PRD §9.2, §9.6) | webcomponents-supervisor | C6 | in_review | fix/00-c16-gray-hue-to-neutral | #236 | AM-052 |
 
 ## Stream D — Base Class & Runtime Core (`webcomponents-supervisor`)
 
@@ -86,6 +87,7 @@ number in the stream + 1.
 | F9 | F | Fix published tarballs: `changeset publish` runs `npm publish`, which drops `dist/` from all 8 packages (root `.gitignore` lists `dist`; no package declares `files`) and ships `workspace:^` ranges unrewritten (`line-icons`, `line-utils`, `line-themes`, `line-components`) | infra-supervisor | B1, B5 | done | fix/00-f9-publish-tarballs | #215 | AM-036, AM-037 |
 | F10 | F | Document in spec §7.2 / §6.F.5 what the first publishes showed: observed: when a package had no `latest`, npm set `latest` to the version published with `--tag canary`, so the first canary was also `latest` until `0.1.0`; npm left `0.0.0-stage` placeholder versions on 5 packages during that first publish; npm processes publishes asynchronously (manifest and tarball can trail the CI step by minutes); the changelog-github read scopes are confirmed; record that the `release.yml` trusted publishers were created just before the #218 merge (AM-041 premise) | infra-supervisor | F3 | done | docs/00-f10-npm-registry-notes | #221 | AM-042 |
 | F11 | F | Storybook smoke tier in Playwright (spec §6.F.4): serve Storybook to the browser tier and check that the G1–G3 MDX pages and the G6 palette / role stories render without console errors | infra-supervisor | F6, G1, G2, G3, G6 | todo | — | — | — |
+| F12 | F | Fix the Storybook toolbar: both `@storybook/addon-themes` decorators read the one global `theme`, so the toolbar shows a single menu instead of independent `data-accent` / `data-gray` switchers (spec §6.F.1); replace the addon with two native `globalTypes` menus | infra-supervisor | F1 | in_review | fix/00-f12-storybook-toolbar-menus | #235 | AM-051 |
 
 ## Stream G — Documentation (`webcomponents-supervisor`)
 
