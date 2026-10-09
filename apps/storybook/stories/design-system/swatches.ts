@@ -79,7 +79,7 @@ export const swatchStyles = html`<style>
   }
 </style>`;
 
-/** One chip filled with `var(token)`, labelled with the token name. */
+/** Renders one chip filled with `var(token)` and labels it with the token name. */
 export const swatch = (token: string): TemplateResult => html`
   <figure class="ds-swatch" data-token=${token}>
     <div class="ds-chip" style="background-color: var(${token})"></div>
@@ -87,7 +87,7 @@ export const swatch = (token: string): TemplateResult => html`
   </figure>
 `;
 
-/** Text in `{prefix}-contrast` on a `{prefix}-9` fill, e.g. prefix `--line-amber`. */
+/** Renders text in `{prefix}-contrast` on a `{prefix}-9` fill, e.g. prefix `--line-amber`. */
 export const contrastSample = (prefix: string, note = ''): TemplateResult => html`
   <div
     class="ds-contrast"

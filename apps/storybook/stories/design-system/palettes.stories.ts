@@ -3,9 +3,9 @@ import { HUES, type Hue, PER_HUE_CONTRAST, STEPS } from '@websublime/line-schema
 import { html, type TemplateResult } from 'lit';
 import { contrastSample, MODES, type Mode, swatch, swatchStyles } from './swatches.js';
 
-// Every hue's 12 base steps, 12 alpha steps and contrast token, in light and
-// dark. Each mode block sets color-scheme, which picks the light-dark() branch,
-// and draws the alpha steps over the mode's gray-1 backdrop.
+// This story shows every hue's 12 base steps, 12 alpha steps and contrast token
+// in light and dark. Each mode block sets color-scheme, which picks the
+// light-dark() branch, and draws the alpha steps over the mode's gray-1 backdrop.
 
 const modeBlock = (hue: Hue, mode: Mode): TemplateResult => html`
   <div class="ds-mode" data-mode=${mode} style="color-scheme: ${mode}">

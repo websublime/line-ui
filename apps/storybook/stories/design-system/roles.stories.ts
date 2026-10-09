@@ -14,9 +14,9 @@ import {
 import { html, type TemplateResult } from 'lit';
 import { contrastSample, MODES, type Mode, swatch, swatchStyles } from './swatches.js';
 
-// Each role bound to every hue it can take, plus the six roles at the preview
-// root. Accent panels set only data-accent, so defaults.css auto-pairs their
-// gray role. The aliases resolve inside each panel's own scope.
+// These stories show each role bound to every hue it can take, and the six roles
+// at the preview root. Accent panels set only data-accent, so defaults.css
+// auto-pairs their gray role. The aliases resolve inside each panel's own scope.
 
 interface RolesArgs {
   mode: Mode;
