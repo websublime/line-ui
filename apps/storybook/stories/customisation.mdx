@@ -1,0 +1,128 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as CustomisationStories from './customisation.stories';
+
+<Meta title="Customisation" />
+
+# Customisation
+
+line://ui components carry no visual opinion, so you style every component yourself. You do it through two surfaces. `::part()` gives you total control over each internal element, and `--line-*` custom properties give you quick adjustments. This guide covers the `::part()` contract, the three tiers of custom properties, the component token naming convention and the cascade strategy.
+
+## `::part()`
+
+Phase 00 ships the design system and no components. This section explains the contract that every component follows, and the live demo uses a hand-rolled `<line-demo-button>` with the same shape. Phase 1 components such as `<line-button>` expose the same parts.
+
+Every styleable zone of a component exposes a part. An internal node without a part renders nothing, so you can restyle any visible surface without forking the component. Part names come from one shared list, so a part such as `root`, `label`, `trigger`, `content` or `icon` means the same zone in every component.
+
+```html
+<!-- Shadow DOM of <line-demo-button> -->
+<button part="root">
+  <span part="label"><slot></slot></span>
+</button>
+```
+
+```css
+line-demo-button::part(root) {
+  background-color: var(--line-gray-bg);
+  border: var(--line-border-1) solid var(--line-gray-border);
+  border-radius: var(--line-radius-round);
+}
+
+line-demo-button::part(label) {
+  color: var(--line-gray-text);
+  font-weight: var(--line-font-weight-6);
+}
+```
+
+The demo renders the default element next to an element restyled with the rules above.
+
+<Canvas of={CustomisationStories.Parts} />
+
+Parts and slots do different jobs. A slot holds content you control, such as a label or a prefix icon, and you style slotted content with ordinary selectors because it stays in your DOM. A part is an internal element that the component renders and coordinates with its state, such as a clear button or a password toggle.
+
+A `::part()` selector reaches into one shadow root, which is the shadow root of the element the selector matches. It does not reach parts inside a component nested in that shadow root.
+
+## Custom properties
+
+Custom properties form three tiers, and each tier can override the tier above it.
+
+1. Tier 1 holds the global tokens. `line-tokens` declares foundation tokens such as `--line-radius-2` and `--line-size-3`, `line-colors` declares palette tokens such as `--line-blue-9`, and `line-themes` declares role tokens such as `--line-accent-solid`.
+2. Tier 2 holds the component tokens. Each component declares them on `:host` and gives each one a Tier 1 default.
+3. Tier 3 holds your overrides. You set component tokens on the element, or you restyle a part with `::part()`.
+
+```css
+/* Tier 2, inside the shadow root of <line-demo-button> */
+:host {
+  --line-demo-button-radius: var(--line-radius-2);
+  --line-demo-button-bg: var(--line-accent-solid);
+  --line-demo-button-color: var(--line-accent-contrast);
+}
+
+/* Tier 3, in your stylesheet */
+line-demo-button {
+  --line-demo-button-radius: var(--line-radius-round);
+  --line-demo-button-bg: var(--line-success-solid);
+}
+
+line-demo-button::part(root) {
+  /* total control */
+}
+```
+
+The demo renders one instance for each case below.
+
+<Canvas of={CustomisationStories.Tiers} />
+
+- (a) The element uses its defaults, so it shows the accent solid colour and `--line-radius-2`.
+- (b) A wrapper sets `data-accent="crimson"` and overrides `--line-radius-2`. Tier 1 tokens reach the component by inheritance, so the element turns crimson and takes the larger radius.
+- (c) The element itself sets `--line-demo-button-bg` and `--line-demo-button-radius`. The browser ranks a normal declaration from your page above a normal declaration from the component's shadow root, whatever the specificity. Your rule therefore beats the `:host` rule, and the element takes your values.
+- (d) A wrapper sets the same component tokens, and the element keeps its defaults. The `:host` rule declares the tokens on the element itself, and a declared value always beats a value the element would inherit from its parent.
+- (e) The element sets `--line-demo-button-bg`, and a `::part(root)` rule sets `background-color`. The part rule comes from your page, so it beats the component's rule that reads the token, and the element shows the danger colour.
+
+Set Tier 1 tokens on any ancestor, and set component tokens on the element.
+
+A `var()` reference resolves on the element that declares the property, and descendants inherit the resolved value. `line-themes` declares the named aliases such as `--line-accent-solid` on `html` and on every element with `data-accent` or `data-gray`. An override of `--line-accent-9` on a plain wrapper therefore leaves `--line-accent-solid` unchanged inside it. To re-theme a subtree, set `data-accent` or `data-gray` on the wrapper, as the [Theming guide](?path=/docs/theming--docs) shows.
+
+## Component tokens
+
+Component tokens follow the convention `--line-{component}-{prop}`. The component is the tag name without the `line-` prefix, and the prop names the value the token sets.
+
+| Token | Default |
+|-------|---------|
+| `--line-demo-button-radius` | `var(--line-radius-2)` |
+| `--line-demo-button-bg` | `var(--line-accent-solid)` |
+| `--line-demo-button-color` | `var(--line-accent-contrast)` |
+| `--line-demo-button-padding-x` | `var(--line-size-3)` |
+| `--line-demo-button-padding-y` | `var(--line-size-2)` |
+| `--line-demo-button-font-size` | `var(--line-font-size-1)` |
+
+Every custom property that line://ui authors starts with `--line-`. The prefix keeps the tokens apart from your own custom properties and from other libraries. A Phase 1 `<line-button>` declares tokens such as `--line-button-radius` and `--line-button-bg` in the same way.
+
+## Cascade strategy
+
+Every selector in `line-tokens`, `line-colors` and `line-themes` sits inside `:where()`, so every package declaration has zero specificity.
+
+- `line-tokens` declares its tokens in `:where(html)`. `shadows.css` declares its shadow tokens in `:where(html, [data-accent], [data-gray])`, so each theming scope tints its shadows with its own gray role.
+- `line-colors` declares the palettes in `:where(html)`.
+- `line-themes` declares the role maps in `:where([data-accent="X"])` and `:where([data-gray="Y"])`, the defaults and the auto-pairs in `defaults.css`, the semantic roles in `:where(html)` and the aliases in `:where(html, [data-accent], [data-gray])`.
+
+Any rule of yours with a type, class, attribute or ID selector has higher specificity, so it beats the package rule. A rule of yours inside `:where()` ties at zero specificity, and the rule that comes later in source order wins.
+
+```css
+/* Wins over line-tokens, because html has specificity */
+html {
+  --line-radius-2: 6px;
+}
+
+/* Ties with line-tokens, so it wins only when it loads after line-tokens */
+:where(html) {
+  --line-radius-2: 6px;
+}
+```
+
+Shadow DOM isolates each component. Your selectors do not match elements inside a shadow root, and the component's rules match only its shadow tree and its host element. Three things cross the boundary.
+
+- Inherited properties such as `color` and `font-family` flow from the host into the shadow tree.
+- Custom properties inherit into the shadow tree, which carries Tier 1 tokens to the component and lets you set component tokens on the host.
+- `::part()` rules style the internal elements that a component exposes.
+
+`@layer` is not needed. Zero specificity already places every package rule below your rules, and Shadow DOM keeps the component rules apart from your page. Your stylesheets need no layer order to win.
