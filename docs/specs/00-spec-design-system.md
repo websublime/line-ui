@@ -4,7 +4,7 @@
 **Author:** Ada (architect)
 **Date:** 2026-05-19
 **Phase target:** `line://ui` v0.1.0
-**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.10, APPROVED)
+**Source PRD:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/PRD.md`](../PRD.md) (v0.8.11, APPROVED)
 **Source Plan:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/plans/00-plan-design-system.md`](../plans/00-plan-design-system.md) (APPROVED)
 **Source Architecture:** [`/Users/ramosmig/Public/WS-Labs/line-ui/docs/ARCHITECTURE.md`](../ARCHITECTURE.md)
 **Source Research:**
@@ -526,6 +526,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-051 | 2026-10-09 | ledger `00-F12` (decision — Miguel chose two native `globalTypes` toolbar menus and the removal of `@storybook/addon-themes` over keeping the addon for data-accent with a native data-gray menu) | Three changes. (a) §6.F.1 drops `@storybook/addon-themes` from the `main.ts` `addons` block. The old `@storybook/addon-themes` paragraph becomes the **Theme toolbar** paragraph. It describes two native `globalTypes` toolbar menus, `accent` and `gray`, declared in `.storybook/preview.ts` and built from `ACCENT_HUES` / `GRAY_HUES`. (b) The §6.A.3 dependency table loses the `@storybook/addon-themes` row. (c) §11 Q4 is marked superseded by AM-051. Reverses the §11 Q4 decision. | The addon keys every decorator on one global named `theme`. Two `withThemeByDataAttribute` decorators therefore share one toolbar menu, and the spec's two independent dropdowns cannot exist. Native `globalTypes` give one global per attribute. | In `@storybook/addon-themes@10.4.1`, `node_modules/@storybook/addon-themes/dist/_browser-chunks/chunk-DN7ZGZUH.js` line 8 sets `GLOBAL_KEY = "theme"`. `dist/index.js` lines 6 and 29 import it and read `globals[GLOBAL_KEY]` for every decorator. In the 00-G6 render proof, picking `violet` set `<html data-accent="violet" data-gray="undefined">`. |
 | AM-052 | 2026-10-09 | ledger `00-C16` (decision — Miguel chose to rename the hue over renaming the role, and the name neutral over ash) | The Radix `gray` hue ships as `neutral` (PRD v0.8.10). §4.2 exports `./neutral` instead of `./gray`. §4.4 lists `accent/neutral.css` and `gray/neutral.css`. The migration deletes `line-colors/src/gray.css`, `line-themes/src/accent/gray.css` and `line-themes/src/gray/gray.css`, and replaces the `defaults.css` block `[data-accent="gray"]:not([data-gray])` with `[data-accent="neutral"]:not([data-gray])`, which maps the gray role to `--line-neutral-*`. The live body states only the steady-state file sets. §6.C.1 lists `neutral` in `HUES` and `GRAY_HUES` and states the hue-role naming invariant. §6.C.3 adds the shared module `scripts/radix-sources.mjs`, which exports the source-to-emitted name map and a lookup helper. `generate-palettes.mjs` and `validate-contrast.mjs` read Radix objects only through it. §6.C.4 corrects a factual error. `generate-role-maps.mjs` declares no `AUTO_PAIR_TABLE` constant, and the pairs live in the hand-authored `defaults.css`. The section states the `neutral` block in `defaults.css`, the `index.css` imports, and the exact file sets that `schema.test.ts` enforces. §6.C.7, §6.F.4 and §9.2 add the browser test `hue-role-names.e2e.ts`. The gray role keeps `--line-gray-*` and `data-gray`. No alias keeps the old hue tokens. | Hue tokens (`--line-{hue}-{step}`) and role tokens (`--line-{role}-{step}`) share one pattern, so the hue `gray` and the gray role wrote the same names. `gray/gray.css` and the `[data-accent="gray"]:not([data-gray])` block in `defaults.css` declared `--line-gray-N: var(--line-gray-N)`, a self-reference cycle. Every other gray-role mapping overrode the hue's own `--line-gray-N` on its element. An alias for the old hue tokens would recreate the collision. | Chromium on the built `0.1.0` CSS. With no attributes on `<html>`, `--line-gray-1` held the slate value `light-dark(#fcfcfd,#111113)`, not the gray hue `#fcfcfc`. With `data-gray="gray"` or `data-accent="gray"`, `--line-gray-1` was invalid and `background: var(--line-gray-1)` was transparent. Context: `docs/context/00-c16.md`. |
 | AM-053 | 2026-10-09 | ledger `00-G1` pre-implementation investigation (factual correction; Miguel approved 2026-10-09) | Three changes, no design change. (a) The §6.A.3 dependency table gains `@storybook/addon-docs` `^10.4.0` with the note "compiles and renders the §6.G MDX docs and autodocs pages (AM-053)". (b) The §6.F.1 `main.ts` block lists `'@storybook/addon-docs'` next to `'@storybook/addon-a11y'` in `addons`. (c) §6.G.1 item 1 replaces "note CDN unavailable in Phase 00" with a note that CDN delivery (unpkg, jsDelivr) is not supported until Phase 1 (§2 Non-Goals). The PRD is unchanged. | (a, b) §6.G ships every Phase 00 doc as Storybook MDX, but Storybook 10 core compiles no MDX. The MDX compiler and the doc blocks, autodocs included, live in `@storybook/addon-docs`, which neither §6.A.3 nor §6.F.1 listed. AM-016 and AM-017 had stated that autodocs ships in core. The addon's dependencies (`react`, `react-dom`, `@mdx-js/react`, `@storybook/csf-plugin`, `@storybook/react-dom-shim`, `@storybook/icons`, `ts-dedent`) enter only the dev tree of the private Storybook app. (c) The line-ui packages are on npm at `0.1.x` since Phase 00 (AM-041), so the public CDNs already serve them and "CDN unavailable" is false. Phase 00 excludes supported CDN distribution, which PRD §1, plan §3 and §2 Non-Goals start in Phase 1. | (a, b) `node_modules/@storybook/` held only `addon-a11y` and `web-components-vite`; root `package.json` lists `storybook`, `@storybook/web-components-vite` and `@storybook/addon-a11y` at `^10.4.0`, and the installed `storybook` is 10.4.1. A throwaway `apps/storybook/stories/zz-probe.mdx` holding `# Probe` made `storybook build` index `zz-probe--docs` and then fail with Rolldown `[PARSE_ERROR] Invalid Character` at `zz-probe.mdx:1:2`; the probe was deleted. `npm view @storybook/addon-docs@10.4.1` lists the dependencies above and peer `storybook ^10.4.1`. (c) On 2026-10-09 `https://cdn.jsdelivr.net/npm/@websublime/line-themes@0.1.1/dist/index.css` and `https://unpkg.com/@websublime/line-colors@0.1.1/dist/indigo.css` both returned `200 text/css`. |
+| AM-054 | 2026-10-10 | ledger `00-C17` (decision — Miguel chose the full fix over a rename and over a light-only fix, the gray role per theming scope over the gray role at `<html>` only and over the fixed `neutral` hue, and `light-dark()` alone over the `.dark` / `.light` classes of row `00-Z14` and over `prefers-color-scheme`) | Shadows take their colour from the gray role (PRD v0.8.11). (a) §6.C.2 gains the **Shadow colour and opacity** bullets and their CSS block. The block is Biome-formatted, so the committed `shadows.css` can match it byte for byte. `shadows.css` mixes `--line-gray-12` in light mode and `--line-gray-1` in dark mode, each with a `--line-neutral-*` fallback, into seven colour tokens `--line-shadow-color-{2,3,4,5,6,7,9}`. Each colour token is `light-dark()` over two `color-mix(in srgb, …, transparent)` calls. `--line-shadow-strength` (1%) and the new `--line-shadow-strength-dark` (25%) are declared only in `:where(html)`. `--line-shadow-color` becomes an optional consumer knob that no package declares, and it takes an opaque colour. `--line-shadow-color-{2,3,4,5,6,7,9}`, `--line-shadow-1..6` and `--line-shadow-inner-1..3` are declared in `:where(html, [data-accent], [data-gray])`. A knob override on any element reaches every theming scope below it, but not a non-scope element itself. The colour tokens and the shadow tokens are derived values, so an override of one on `<html>` stops at the first nested theming scope. With `line-tokens` alone the scale computes `none` until a consumer sets `--line-shadow-color`, and `line-tokens` stays a leaf with no package dependency. The geometry is unchanged, and each layer takes its Open Props 1.7.23 offset. The §6.C.2 sentence "All declarations use `:where(html)`" names this exception, and the README requirement lists the tokens-only behaviour, the opaque knob and both override rules. (b) The §6.F.4 "Playwright runs:" list gains the `line-tokens` shadow check (`shadows.e2e.ts`). It reads the expected colour on a probe element in the same scope, compares channels and alpha to two decimals, and fails on `0.1.0`. (c) The header cites PRD v0.8.11. | `shadows.css` pointed `--line-shadow-color` at `--line-gray-a-12`, which no package declares, so every shadow token (`--line-shadow-1..6`, `--line-shadow-inner-1..3`) computed `none`. The spec was silent on shadow colour and opacity. A rename to `--line-gray-a12` drew a black rim in light mode and a white glow in dark mode, because that alpha step is about 89% opaque and the scale had no per-layer opacity. A custom property's `var()` is substituted on the element that declares it, so tokens declared only in `:where(html)` keep the root gray inside a nested theming scope (the AM-049 mechanism). A knob redeclared in each scope would reset a consumer's `<html>` override, so the strength knobs live only in `:where(html)` and the colour knob is read through a `var()` fallback. `light-dark()` resolves on the element that paints the shadow, so dark mode needs no class and no media query. Context: `docs/context/00-c17.md`. | Throwaway Playwright probe of the §6.C.2 block over the built `line-colors` and `line-themes` `dist/` CSS in chromium 148, firefox 150 and webkit 26.4, with the same alphas in all three. On `<html data-gray="slate">` the first layer of `--line-shadow-1` has alpha 0.1 and the first layer of `--line-shadow-4` has alpha 0.03 in light mode. In a `color-scheme: dark` container on the light page they have 0.34 and 0.27. The six `--line-shadow-4` layers read 0.03, 0.04, 0.04, 0.05, 0.06 and 0.07 in light mode. The colour equals each engine's reading of slate step 12 (light) and step 1 (dark) at the root, of sand in a nested `data-gray="sand"`, and of mauve in a nested `data-accent="crimson"`. Without `line-themes` it equals `--line-neutral-12` and `--line-neutral-1`. With `--line-shadow-color: rgb(255 0 0)`, `--line-shadow-strength: 10%` and `--line-shadow-strength-dark: 40%` on `<html>`, both nested scopes give red at 0.19 and 0.12 in light mode and at 0.49 and 0.42 in dark mode. A strength override of 10% on a plain `<div>` reached a `[data-accent]` inside it (0.12) but not the `<div>` itself (0.03). On a nested `[data-gray]` it reached that element and a `[data-accent]` inside it. `--line-shadow-4` set on `<html>` applied at the root but not in the nested sand and crimson scopes, and a consumer rule for `html, [data-accent], [data-gray]` applied in all of them. `--line-shadow-color: rgb(0 0 0 / 10%)` gave the first layer of `--line-shadow-1` an alpha of 0.01. With `line-tokens` alone every shadow token computed `none`, and `--line-shadow-color: rgb(0 0 0)` on `<html>` gave 0.03 in light mode and 0.34 in dark mode. No token computed `none` with `line-colors` loaded. The `0.1.0` `shadows.css`, unchanged since, computes `none` in all three engines. `biome format` reflows the `color-mix()` calls to the block shown, and `biome check` passes on it. Through the repo `postcss.config.mjs` the block keeps its 7 `light-dark()` and 14 `color-mix()` calls, changed only in whitespace, and the minified output gives the same values in all three engines. |
 
 **A4 — npm scope.**
 
@@ -683,11 +684,154 @@ src/
 ├── svg.css              # structural — stroke widths etc., no colour values
 ```
 
-All declarations use `:where(html)` (zero specificity, per PRD §9.12). All names are `--line-*` prefixed and singular (`--line-radius-1`, not `--line-radii-1`). Token values are seeded from Open Props as a design reference; **no runtime dependency on Open Props**.
+All declarations use `:where(html)` (zero specificity, per PRD §9.12), except the shadow tokens in `shadows.css`, which every theming scope also declares (see **Shadow colour and opacity** below). All names are `--line-*` prefixed and singular (`--line-radius-1`, not `--line-radii-1`). Token values are seeded from Open Props as a design reference; **no runtime dependency on Open Props**.
 
 The `reset.css` file is **distinct from** `line-core/styles/*` (which is the shadow-DOM internal reset suite). PRD §9.9 + ARCHITECTURE §14.2 mandate this separation; the spec preserves it (see §6.D below).
 
 **Decorative families that historically held colour values (`gradients`, `highlights`, `svg`) are structural-only in Phase 00.** Any colour reference inside these files MUST be a `var(--line-{hue}-{step})` token. CI lint (`scripts/lint-layers.mjs`) greps these three files for hex/rgb/hsl literals and fails the build on any match.
+
+**Shadow colour and opacity (AM-054).** `shadows.css` takes its colour from the gray role and its per-layer opacity from Open Props 1.7.23.
+
+- Light mode uses `--line-gray-12` and dark mode uses `--line-gray-1`. Each falls back to the same `--line-neutral-*` step, so the scale works with `line-colors` alone, and `line-themes` adds the gray tint. With `line-tokens` alone the colour has no value, so every shadow token computes `none` until a consumer sets `--line-shadow-color`. `line-tokens` stays a leaf (§6.B B2) and declares no package dependency on `line-colors` or `line-themes`, because `scripts/lint-layers.mjs` also reads `peerDependencies` and rejects any edge outside the allowed table.
+- `--line-shadow-strength` (1%) sets the light-mode base opacity, and `--line-shadow-strength-dark` (25%) sets the dark-mode base. Both are declared only in `:where(html)`.
+- `--line-shadow-color` is an optional consumer knob that no package declares. When a consumer sets it, it replaces the gray-role colour in both modes. A `light-dark()` value gives each mode its own colour. The knob takes an opaque colour, because the scale applies each layer's opacity on top of it. A translucent value multiplies the two alphas, so `rgb(0 0 0 / 10%)` gives the first layer of `--line-shadow-1` an alpha of 0.01 instead of 0.1.
+- Seven colour tokens, `--line-shadow-color-{2,3,4,5,6,7,9}`, hold the shadow colour at the base strength plus N percentage points. They match Open Props `--shadow-strength-{3,4,5,6,7,8,10}`. Each one is `light-dark()` over two `color-mix(in srgb, <colour> calc(<strength> + N%), transparent)` calls. The mix uses `srgb` because a mix with `transparent` changes only the alpha, the gray steps are near-achromatic so the conversion to sRGB loses nothing visible, and every engine reports the result as `color(srgb …)`, which the §6.F.4 check compares.
+- `light-dark()` resolves on the element that paints the shadow, so a `color-scheme: dark` container on a light page gets dark-mode shadows. `shadows.css` uses neither `prefers-color-scheme` nor the `.dark` / `.light` classes.
+- `--line-shadow-color-{2,3,4,5,6,7,9}`, `--line-shadow-1..6` and `--line-shadow-inner-1..3` are declared in `:where(html, [data-accent], [data-gray])`. Each theming scope resolves them against its own gray role, and that includes the auto-pair that `defaults.css` sets inside a `[data-accent]` without `data-gray` (§6.C.4).
+- The three knobs inherit, and each theming scope substitutes them where it declares the colour tokens. No nested scope declares the knobs again, so a knob override on any element reaches every theming scope below it. An override on `<html>`, a `[data-accent]` or a `[data-gray]` also reaches that element. An override on any other element does not reach that element or its descendants outside a theming scope, because their shadow tokens were substituted at the nearest theming scope above.
+- The colour tokens and the shadow tokens are derived values, not knobs. An override of one on `<html>` stops at the first nested theming scope, which declares it again. A consumer who overrides one everywhere writes a rule for `html, [data-accent], [data-gray]`, and that rule beats the zero-specificity `:where()` (PRD §9.12).
+- The geometry of every layer is unchanged, and each layer takes the Open Props offset for that layer. The inner shadows use the +9 offset and carry no highlight layer, because Open Props builds its highlight from colour literals.
+- The `shadows.css` header comment and the `line-tokens` README state the colour dependency (`line-colors`, plus `line-themes` for the gray tint). They also state that the scale draws nothing with `line-tokens` alone until `--line-shadow-color` is set, that `--line-shadow-color` takes an opaque colour, where knob overrides take effect, and that an override of a derived token stops at the next theming scope.
+
+```css
+:where(html) {
+  --line-shadow-strength: 1%;
+  --line-shadow-strength-dark: 25%;
+}
+
+:where(html, [data-accent], [data-gray]) {
+  /* --line-shadow-color-N holds the shadow colour at strength + N points. */
+  --line-shadow-color-2: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 2%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 2%),
+      transparent
+    )
+  );
+  --line-shadow-color-3: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 3%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 3%),
+      transparent
+    )
+  );
+  --line-shadow-color-4: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 4%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 4%),
+      transparent
+    )
+  );
+  --line-shadow-color-5: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 5%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 5%),
+      transparent
+    )
+  );
+  --line-shadow-color-6: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 6%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 6%),
+      transparent
+    )
+  );
+  --line-shadow-color-7: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 7%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 7%),
+      transparent
+    )
+  );
+  --line-shadow-color-9: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 9%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 9%),
+      transparent
+    )
+  );
+
+  --line-shadow-1: 0 1px 2px -1px var(--line-shadow-color-9);
+  --line-shadow-2: 0 3px 5px -2px var(--line-shadow-color-3), 0 7px 14px -5px var(--line-shadow-color-5);
+  --line-shadow-3:
+    0 -1px 3px 0 var(--line-shadow-color-2),
+    0 1px 2px -5px var(--line-shadow-color-2),
+    0 2px 5px -5px var(--line-shadow-color-4),
+    0 4px 12px -5px var(--line-shadow-color-5),
+    0 12px 15px -5px var(--line-shadow-color-7);
+  --line-shadow-4:
+    0 -2px 5px 0 var(--line-shadow-color-2),
+    0 1px 1px -2px var(--line-shadow-color-3),
+    0 2px 2px -2px var(--line-shadow-color-3),
+    0 5px 5px -2px var(--line-shadow-color-4),
+    0 9px 9px -2px var(--line-shadow-color-5),
+    0 16px 16px -2px var(--line-shadow-color-6);
+  --line-shadow-5:
+    0 -1px 2px 0 var(--line-shadow-color-2),
+    0 2px 1px -2px var(--line-shadow-color-3),
+    0 5px 5px -2px var(--line-shadow-color-3),
+    0 10px 10px -2px var(--line-shadow-color-4),
+    0 20px 20px -2px var(--line-shadow-color-5),
+    0 40px 40px -2px var(--line-shadow-color-7);
+  --line-shadow-6:
+    0 -1px 2px 0 var(--line-shadow-color-2),
+    0 3px 2px -2px var(--line-shadow-color-3),
+    0 7px 5px -2px var(--line-shadow-color-3),
+    0 12px 10px -2px var(--line-shadow-color-4),
+    0 22px 18px -2px var(--line-shadow-color-5),
+    0 41px 33px -2px var(--line-shadow-color-6),
+    0 100px 80px -2px var(--line-shadow-color-7);
+
+  --line-shadow-inner-1: inset 0 0 0 1px var(--line-shadow-color-9);
+  --line-shadow-inner-2: inset 0 1px 2px 0 var(--line-shadow-color-9);
+  --line-shadow-inner-3: inset 0 1px 4px 0 var(--line-shadow-color-9);
+}
+```
 
 #### 6.C.3 `line-colors` — palette generation (C3 palette generation, C4 palette freshness guard)
 
@@ -1534,6 +1678,7 @@ Playwright runs:
 - The FormAssociated browser tier (§6.D.5).
 - The `line-themes` alias-scope check: every alias equals its mapped numeric step in the root and in nested `[data-accent]` / `[data-gray]` scopes (`packages/line-themes/__tests__/aliases-scope.e2e.ts`, AM-049).
 - The `line-themes` hue-role name check (§6.C.7, AM-052). It runs in the chromium, firefox and webkit projects of `playwright.config.ts` (`packages/line-themes/__tests__/hue-role-names.e2e.ts`).
+- The `line-tokens` shadow check (§6.C.2, AM-054). It runs in the chromium, firefox and webkit projects of `playwright.config.ts` (`packages/line-tokens/__tests__/shadows.e2e.ts`) and reads the built `dist/` CSS of `line-colors`, `line-themes` and `line-tokens`. Each of `--line-shadow-1..6` and `--line-shadow-inner-1..3` computes a `box-shadow` other than `none`. In light mode each layer's alpha equals `--line-shadow-strength` plus its offset. In a `color-scheme: dark` container on a light page it equals `--line-shadow-strength-dark` plus the offset. The colour equals the nearest gray role at the root, in a nested `[data-gray]` and in a nested `[data-accent]` without `data-gray`. Without `line-themes` it equals `--line-neutral-*`. Overrides of `--line-shadow-color`, `--line-shadow-strength` and `--line-shadow-strength-dark` on `<html>` reach a nested theming scope. The test reads the expected colour on a probe element in the same scope, styled `color: color-mix(in srgb, var(--line-gray-12) 100%, transparent)`, with step 1 inside the dark container and `--line-neutral-*` without `line-themes`. It compares channels and alpha to two decimals, because the mix converts the P3 palette values to sRGB and WebKit reports the resulting `color(srgb …)` with its own precision. The test fails on `0.1.0`, where every shadow token computes `none`.
 - **Smoke page-render checks only** for Storybook (getting-started + theming + customisation MDX pages load without console errors; palette/role design-system stories render). Phase 00 does **not** capture per-pixel visual-regression baselines (`toHaveScreenshot()` is not invoked). Full visual-regression infrastructure — baseline storage, per-browser diffs, update workflow — is deferred to Phase 1, aligned with PRD §5.2.1 J2 contract (no per-component visual baselines until components ship).
 
 `bunx playwright install --with-deps` runs in CI before the Playwright step.

@@ -1,52 +1,145 @@
 /* @websublime/line-tokens — shadows.css
  *
- * Primitive family: elevation shadow scale (box-shadow geometry).
- * Values seeded from Open Props as a design reference — NO runtime dependency.
+ * Primitive family: elevation shadow scale. Geometry and per-layer opacity
+ * follow Open Props 1.7.23 as a design reference, with no runtime dependency.
  *
- * Zero colour opinion (Manifesto Law): shadow colour is NOT a literal. Each
- * elevation references --line-shadow-color, which itself defers to a neutral
- * alpha hue token supplied by line-colors (C3). At C2 build time these are
- * dangling var() refs — they resolve at use-site once line-colors is loaded.
- * --line-shadow-strength scales the per-step alpha.
+ * The colour comes from line-colors (--line-neutral-*), and line-themes adds the
+ * gray tint (--line-gray-12 in light, --line-gray-1 in dark). With line-tokens
+ * alone every shadow token computes none until a consumer sets
+ * --line-shadow-color. That knob takes an opaque colour, because each layer
+ * applies its own opacity on top of it. light-dark() picks the mode from the
+ * color-scheme of the element that paints the shadow.
+ *
+ * The knobs (--line-shadow-color, --line-shadow-strength,
+ * --line-shadow-strength-dark) take effect at every theming scope at or below
+ * the element that sets them. A theming scope is html, [data-accent] or
+ * [data-gray]. The colour and shadow tokens are derived values, so an override
+ * of one on <html> stops at the first nested theming scope.
  */
 :where(html) {
-  /* Shadow colour + strength knobs (themeable; resolve via line-colors). */
-  --line-shadow-color: var(--line-gray-a-12);
   --line-shadow-strength: 1%;
+  --line-shadow-strength-dark: 25%;
+}
 
-  --line-shadow-1: 0 1px 2px -1px var(--line-shadow-color);
-  --line-shadow-2: 0 3px 5px -2px var(--line-shadow-color), 0 7px 14px -5px var(--line-shadow-color);
+:where(html, [data-accent], [data-gray]) {
+  /* --line-shadow-color-N holds the shadow colour at strength + N points. */
+  --line-shadow-color-2: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 2%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 2%),
+      transparent
+    )
+  );
+  --line-shadow-color-3: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 3%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 3%),
+      transparent
+    )
+  );
+  --line-shadow-color-4: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 4%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 4%),
+      transparent
+    )
+  );
+  --line-shadow-color-5: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 5%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 5%),
+      transparent
+    )
+  );
+  --line-shadow-color-6: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 6%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 6%),
+      transparent
+    )
+  );
+  --line-shadow-color-7: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 7%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 7%),
+      transparent
+    )
+  );
+  --line-shadow-color-9: light-dark(
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-12, var(--line-neutral-12))) calc(var(--line-shadow-strength) + 9%),
+      transparent
+    ),
+    color-mix(
+      in srgb,
+      var(--line-shadow-color, var(--line-gray-1, var(--line-neutral-1))) calc(var(--line-shadow-strength-dark) + 9%),
+      transparent
+    )
+  );
+
+  --line-shadow-1: 0 1px 2px -1px var(--line-shadow-color-9);
+  --line-shadow-2: 0 3px 5px -2px var(--line-shadow-color-3), 0 7px 14px -5px var(--line-shadow-color-5);
   --line-shadow-3:
-    0 -1px 3px 0 var(--line-shadow-color),
-    0 1px 2px -5px var(--line-shadow-color),
-    0 2px 5px -5px var(--line-shadow-color),
-    0 4px 12px -5px var(--line-shadow-color),
-    0 12px 15px -5px var(--line-shadow-color);
+    0 -1px 3px 0 var(--line-shadow-color-2),
+    0 1px 2px -5px var(--line-shadow-color-2),
+    0 2px 5px -5px var(--line-shadow-color-4),
+    0 4px 12px -5px var(--line-shadow-color-5),
+    0 12px 15px -5px var(--line-shadow-color-7);
   --line-shadow-4:
-    0 -2px 5px 0 var(--line-shadow-color),
-    0 1px 1px -2px var(--line-shadow-color),
-    0 2px 2px -2px var(--line-shadow-color),
-    0 5px 5px -2px var(--line-shadow-color),
-    0 9px 9px -2px var(--line-shadow-color),
-    0 16px 16px -2px var(--line-shadow-color);
+    0 -2px 5px 0 var(--line-shadow-color-2),
+    0 1px 1px -2px var(--line-shadow-color-3),
+    0 2px 2px -2px var(--line-shadow-color-3),
+    0 5px 5px -2px var(--line-shadow-color-4),
+    0 9px 9px -2px var(--line-shadow-color-5),
+    0 16px 16px -2px var(--line-shadow-color-6);
   --line-shadow-5:
-    0 -1px 2px 0 var(--line-shadow-color),
-    0 2px 1px -2px var(--line-shadow-color),
-    0 5px 5px -2px var(--line-shadow-color),
-    0 10px 10px -2px var(--line-shadow-color),
-    0 20px 20px -2px var(--line-shadow-color),
-    0 40px 40px -2px var(--line-shadow-color);
+    0 -1px 2px 0 var(--line-shadow-color-2),
+    0 2px 1px -2px var(--line-shadow-color-3),
+    0 5px 5px -2px var(--line-shadow-color-3),
+    0 10px 10px -2px var(--line-shadow-color-4),
+    0 20px 20px -2px var(--line-shadow-color-5),
+    0 40px 40px -2px var(--line-shadow-color-7);
   --line-shadow-6:
-    0 -1px 2px 0 var(--line-shadow-color),
-    0 3px 2px -2px var(--line-shadow-color),
-    0 7px 5px -2px var(--line-shadow-color),
-    0 12px 10px -2px var(--line-shadow-color),
-    0 22px 18px -2px var(--line-shadow-color),
-    0 41px 33px -2px var(--line-shadow-color),
-    0 100px 80px -2px var(--line-shadow-color);
+    0 -1px 2px 0 var(--line-shadow-color-2),
+    0 3px 2px -2px var(--line-shadow-color-3),
+    0 7px 5px -2px var(--line-shadow-color-3),
+    0 12px 10px -2px var(--line-shadow-color-4),
+    0 22px 18px -2px var(--line-shadow-color-5),
+    0 41px 33px -2px var(--line-shadow-color-6),
+    0 100px 80px -2px var(--line-shadow-color-7);
 
-  /* Inner (inset) shadows. */
-  --line-shadow-inner-1: inset 0 0 0 1px var(--line-shadow-color);
-  --line-shadow-inner-2: inset 0 1px 2px 0 var(--line-shadow-color);
-  --line-shadow-inner-3: inset 0 1px 4px 0 var(--line-shadow-color);
+  --line-shadow-inner-1: inset 0 0 0 1px var(--line-shadow-color-9);
+  --line-shadow-inner-2: inset 0 1px 2px 0 var(--line-shadow-color-9);
+  --line-shadow-inner-3: inset 0 1px 4px 0 var(--line-shadow-color-9);
 }
