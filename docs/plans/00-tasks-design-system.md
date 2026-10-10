@@ -49,7 +49,7 @@ number in the stream + 1.
 | C14 | C | Emit per-file `dist/accent/*.css` and `dist/gray/*.css` in `line-themes` build | webcomponents-supervisor | C6 | done | — | #193 | — |
 | C15 | C | Fix `aliases.css`: the 54 named aliases resolve only at `:where(html)`, so a nested `[data-accent]` / `[data-gray]` scope keeps the root's alias values against PRD §9.4 scoping; declare them in every theming scope (spec §6.C.4) | webcomponents-supervisor | C6 | done | fix/00-c15-aliases-nested-scopes | #233 | AM-049 |
 | C16 | C | Rename the Radix `gray` hue to `neutral`: the gray hue and the gray role both emit `--line-gray-*`, so `data-gray="gray"` / `data-accent="gray"` form a self-reference cycle and the gray palette never shows with `line-themes` loaded (PRD §9.2, §9.6) | webcomponents-supervisor | C6 | done | fix/00-c16-gray-hue-to-neutral | #236 | AM-052 |
-| C17 | C | Fix `line-tokens` `shadows.css`: `--line-shadow-color` references `--line-gray-a-12`, which no package declares (the gray role declares `--line-gray-a12`), so `--line-shadow-color` and every `--line-shadow-*` token that uses it compute invalid and draw no shadow | webcomponents-supervisor | C2 | todo | — | — | — |
+| C17 | C | Fix `line-tokens` `shadows.css`: `--line-shadow-color` references `--line-gray-a-12`, which no package declares (the gray role declares `--line-gray-a12`), so `--line-shadow-color` and every `--line-shadow-*` token that uses it compute invalid and draw no shadow | webcomponents-supervisor | C2 | in_progress | fix/00-c17-shadow-color | — | — |
 
 ## Stream D — Base Class & Runtime Core (`webcomponents-supervisor`)
 
