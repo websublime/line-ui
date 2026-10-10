@@ -29,6 +29,9 @@ The Radix gray hue is named `neutral` (`--line-neutral-*`); `--line-gray-*` is t
 - **Theming** covers `data-accent` and `data-gray` scoping, the hue catalogue, gray auto-pairing, light and dark
   mode, the semantic roles and the named aliases. Its demo stories live in `stories/theming.stories.ts` under the
   `!dev` tag, so the sidebar lists only the guide.
+- **Customisation** covers the `::part()` contract, the three tiers of custom properties, the component token
+  naming convention and the cascade strategy. Its demo stories and the hand-rolled `<line-demo-button>` live in
+  `stories/customisation.stories.ts` under the `!dev` tag.
 
 ## Design-system stories
 
