@@ -133,6 +133,11 @@ async function expectScope(p: Page, id: string, light = LIGHT, dark = DARK): Pro
 test.describe('with line-colors and line-themes', () => {
   test.beforeEach(async ({ page: p }) => {
     await p.setContent(page(`${colors}\n${themes}\n${tokens}`, 'data-gray="slate"'));
+    // Precondition. Each nested scope resolves a gray other than the root's in light mode.
+    const root = (await read(p, 'root', false)).color;
+    for (const id of ['sand', 'crimson']) {
+      expect((await read(p, id, false)).color, `gray probe in #${id} vs root`).not.toBe(root);
+    }
   });
 
   test('the scale follows the gray role at the root', async ({ page: p }) => {
@@ -145,12 +150,6 @@ test.describe('with line-colors and line-themes', () => {
 
   test('the scale follows the auto-pair of a nested data-accent', async ({ page: p }) => {
     await expectScope(p, 'crimson');
-  });
-
-  test('the scopes resolve different grays', async ({ page: p }) => {
-    const root = await read(p, 'root', false);
-    const sand = await read(p, 'sand', false);
-    expect(sand.color).not.toBe(root.color);
   });
 });
 
