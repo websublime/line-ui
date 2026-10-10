@@ -13,8 +13,7 @@ const config: StorybookConfig = {
     '@storybook/addon-a11y',
     {
       name: '@storybook/addon-docs',
-      // MDX 3 parses CommonMark only; remark-gfm renders the guides' GFM
-      // tables (spec AM-056).
+      // MDX 3 parses CommonMark only; remark-gfm adds GFM tables (AM-056).
       options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
     },
   ],
