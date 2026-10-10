@@ -37,7 +37,7 @@ The demo renders the default element next to an element restyled with the rules 
 
 <Canvas of={CustomisationStories.Parts} />
 
-Parts and slots do different jobs. A slot holds content you control, such as a label or a prefix icon, and you style slotted content with ordinary selectors because it stays in your DOM. A part is an element that the component renders inside its shadow root, and you style it only through `::part()`. An interactive piece that the component must coordinate with its state, such as a clear button or a password toggle, is always a part and never a slot.
+Parts and slots do different jobs. A slot holds content you control, such as a label or a prefix icon, and you style slotted content with ordinary selectors because it stays in your DOM. A part is an element that the component renders inside its shadow root, and only a `::part()` selector from your page can select it. An interactive piece that the component must coordinate with its state, such as a clear button or a password toggle, is always a part and never a slot.
 
 A `::part()` selector reaches into one shadow root, which is the shadow root of the element the selector matches. It does not reach parts inside a component nested in that shadow root.
 
@@ -127,10 +127,17 @@ Shadow DOM isolates each component. Your selectors do not match elements inside 
 
 The library needs no `@layer`. Zero specificity already places every package token declaration below your unlayered rules, and Shadow DOM keeps the component rules apart from your page.
 
-Every package rule is unlayered, and an unlayered declaration beats any layered declaration before the browser compares specificity. Keep your overrides outside `@layer`. If your stylesheets use layers, import the packages into your lowest layer, so that every layer you declare later wins over them.
+Every package rule is unlayered, and an unlayered declaration beats any layered declaration before the browser compares specificity. Keep your overrides outside `@layer`. If your stylesheets use layers, import every line package into your lowest layer, so that every layer you declare later wins over them.
 
 ```css
 @import '@websublime/line-tokens' layer(line);
+@import '@websublime/line-colors/indigo' layer(line);
+@import '@websublime/line-colors/slate' layer(line);
+@import '@websublime/line-colors/green' layer(line);
+@import '@websublime/line-colors/amber' layer(line);
+@import '@websublime/line-colors/red' layer(line);
+@import '@websublime/line-colors/blue' layer(line);
+@import '@websublime/line-themes' layer(line);
 
 @layer base {
   :root {
