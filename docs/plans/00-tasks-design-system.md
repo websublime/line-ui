@@ -96,7 +96,7 @@ number in the stream + 1.
 |---|---|---|---|---|---|---|---|---|
 | G1 | G | Getting Started (`apps/storybook/stories/getting-started.mdx`) | webcomponents-supervisor | C6, F1 | done | docs/00-g1-getting-started | #238 | AM-053 |
 | G2 | G | Theming guide (`theming.mdx`) | webcomponents-supervisor | C6, F1 | done | docs/00-g2-theming-guide | #239 | — |
-| G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | in_review | docs/00-g3-customisation-guide | #243 | — |
+| G3 | G | Customisation guide (`customisation.mdx`) | webcomponents-supervisor | D1, F1 | done | docs/00-g3-customisation-guide | #243 | — |
 | G4 | G | `docs/specs/COMPONENT-SPEC-TEMPLATE.md` | webcomponents-supervisor | Z11 | done | docs/00-g4-component-spec-template | #231 | AM-043, AM-047 |
 | G5 | G | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` skeleton | webcomponents-supervisor | — | done | docs/00-g5-competitive-component-analysis | #232 | AM-048 |
 | G6 | G | Design-system stories `palettes.stories.ts` + `roles.stories.ts` rendering all 31 hues (spec §6.F.1, §9.7) | webcomponents-supervisor | C6, F1, C15, C16, F12 | done | docs/00-g6-design-system-stories | #237 | AM-050 |
@@ -126,3 +126,4 @@ number in the stream + 1.
 | Z13 | Z | Bring `CLAUDE.md` in line with the repository: drop the "pending" claims for merged work (Playwright tier F6, workflows F3/F4, Astro site F5, machine adapter D6, reset sheets D7, icon resolvers E1) and list the F9 scripts `publish` and `verify-pack` | main session | — | done | docs/00-z13-claude-md-state | #230 | — |
 | Z14 | Z | Decide the `.dark` / `.light` classes on `<html>`: PRD §9.8 keeps them as a public API next to `color-scheme`, but no package under `packages/*/src` declares them; either implement them or remove them from the PRD and align ARCHITECTURE, plan and spec | main session | — | done | docs/00-z14-color-scheme-only | #242 | AM-055 |
 | Z15 | Z | Correct PRD §9.12 and the spec: consumer rules inside `@layer` lose to the unlayered package rules, so "consumer rules always win" and "cover all cascade scenarios" hold only for unlayered consumer CSS; state the recipe (import every line package into the consumer's lowest layer, as `customisation.mdx` teaches). Factual correction, design and decision T2 unchanged | main session | G3 | todo | — | — | — |
+| Z16 | Z | Fix the Storybook MDX tables: MDX 3 parses CommonMark only, so the GFM tables in `theming.mdx` and `customisation.mdx` render as paragraphs; add `remark-gfm` to the `@storybook/addon-docs` MDX compile options in `.storybook/main.ts` (spec §6.F.1, §6.A.3) | infra-supervisor | G2, G3 | in_review | fix/00-z16-mdx-gfm-tables | #244 | — |
