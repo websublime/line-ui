@@ -5,11 +5,11 @@ import * as CustomisationStories from './customisation.stories';
 
 # Customisation
 
-line://ui components carry no visual opinion, so you style every component yourself. You do it through two surfaces. `::part()` gives you total control over each internal element, and `--line-*` custom properties give you quick adjustments. This guide covers the `::part()` contract, the three tiers of custom properties, the component token naming convention and the cascade strategy.
+line://ui components carry no visual opinion, so you style every component yourself. You do it through two surfaces. `::part()` gives you total control over each internal element, and `--line-*` custom properties give you quick adjustments.
 
 ## `::part()`
 
-Phase 00 ships the design system and no components. This section explains the contract that every component follows, and the live demo uses a hand-rolled `<line-demo-button>` with the same shape. Phase 1 components such as `<line-button>` expose the same parts.
+Phase 00 ships the design system and no components. Every component follows the contract below, and the live demo uses a hand-rolled `<line-demo-button>` with the same shape. Phase 1 components such as `<line-button>` expose their parts and component tokens the same way.
 
 Every styleable zone of a component exposes a part. An internal node without a part renders nothing, so you can restyle any visible surface without forking the component. Part names come from one shared list, so a part such as `root`, `label`, `trigger`, `content` or `icon` means the same zone in every component.
 
@@ -37,7 +37,7 @@ The demo renders the default element next to an element restyled with the rules 
 
 <Canvas of={CustomisationStories.Parts} />
 
-Parts and slots do different jobs. A slot holds content you control, such as a label or a prefix icon, and you style slotted content with ordinary selectors because it stays in your DOM. A part is an internal element that the component renders and coordinates with its state, such as a clear button or a password toggle.
+Parts and slots do different jobs. A slot holds content you control, such as a label or a prefix icon, and you style slotted content with ordinary selectors because it stays in your DOM. A part is an element that the component renders inside its shadow root, and you style it only through `::part()`. An interactive piece that the component must coordinate with its state, such as a clear button or a password toggle, is always a part and never a slot.
 
 A `::part()` selector reaches into one shadow root, which is the shadow root of the element the selector matches. It does not reach parts inside a component nested in that shadow root.
 
@@ -78,7 +78,7 @@ The demo renders one instance for each case below.
 - (d) A wrapper sets the same component tokens, and the element keeps its defaults. The `:host` rule declares the tokens on the element itself, and a declared value always beats a value the element would inherit from its parent.
 - (e) The element sets `--line-demo-button-bg`, and a `::part(root)` rule sets `background-color`. The part rule comes from your page, so it beats the component's rule that reads the token, and the element shows the danger colour.
 
-Set Tier 1 tokens on any ancestor, and set component tokens on the element.
+Set the Tier 1 tokens that a component reads directly, such as `--line-radius-2` or `--line-accent-solid`, on any ancestor, and set component tokens on the element.
 
 A `var()` reference resolves on the element that declares the property, and descendants inherit the resolved value. `line-themes` declares the named aliases such as `--line-accent-solid` on `html` and on every element with `data-accent` or `data-gray`. An override of `--line-accent-9` on a plain wrapper therefore leaves `--line-accent-solid` unchanged inside it. To re-theme a subtree, set `data-accent` or `data-gray` on the wrapper, as the [Theming guide](?path=/docs/theming--docs) shows.
 
@@ -99,16 +99,16 @@ Every custom property that line://ui authors starts with `--line-`. The prefix k
 
 ## Cascade strategy
 
-Every selector in `line-tokens`, `line-colors` and `line-themes` sits inside `:where()`, so every package declaration has zero specificity.
+Every token declaration in `line-tokens`, `line-colors` and `line-themes` sits inside `:where()`, so it has zero specificity.
 
 - `line-tokens` declares its tokens in `:where(html)`. `shadows.css` declares its shadow tokens in `:where(html, [data-accent], [data-gray])`, so each theming scope tints its shadows with its own gray role.
 - `line-colors` declares the palettes in `:where(html)`.
 - `line-themes` declares the role maps in `:where([data-accent="X"])` and `:where([data-gray="Y"])`, the defaults and the auto-pairs in `defaults.css`, the semantic roles in `:where(html)` and the aliases in `:where(html, [data-accent], [data-gray])`.
 
-Any rule of yours with a type, class, attribute or ID selector has higher specificity, so it beats the package rule. A rule of yours inside `:where()` ties at zero specificity, and the rule that comes later in source order wins.
+Any unlayered rule of yours whose selector has non-zero specificity, such as `:root`, `html`, `.app` or `#app`, beats the package declaration of the same token. A rule of yours inside `:where()` ties at zero specificity, and the rule that comes later in source order wins.
 
 ```css
-/* Wins over line-tokens, because html has specificity */
+/* Wins over line-tokens, because html has specificity (0,0,1) and :where(html) has none */
 html {
   --line-radius-2: 6px;
 }
@@ -125,4 +125,16 @@ Shadow DOM isolates each component. Your selectors do not match elements inside 
 - Custom properties inherit into the shadow tree, which carries Tier 1 tokens to the component and lets you set component tokens on the host.
 - `::part()` rules style the internal elements that a component exposes.
 
-`@layer` is not needed. Zero specificity already places every package rule below your rules, and Shadow DOM keeps the component rules apart from your page. Your stylesheets need no layer order to win.
+The library needs no `@layer`. Zero specificity already places every package token declaration below your unlayered rules, and Shadow DOM keeps the component rules apart from your page.
+
+Every package rule is unlayered, and an unlayered declaration beats any layered declaration before the browser compares specificity. Keep your overrides outside `@layer`. If your stylesheets use layers, import the packages into your lowest layer, so that every layer you declare later wins over them.
+
+```css
+@import '@websublime/line-tokens' layer(line);
+
+@layer base {
+  :root {
+    --line-radius-2: 6px;
+  }
+}
+```
