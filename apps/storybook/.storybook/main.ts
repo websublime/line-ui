@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/web-components-vite';
+import remarkGfm from 'remark-gfm';
 
 // Storybook 10 + @storybook/web-components-vite builder (spec § 6.F.1).
 //
@@ -8,7 +9,15 @@ import type { StorybookConfig } from '@storybook/web-components-vite';
 const config: StorybookConfig = {
   framework: { name: '@storybook/web-components-vite', options: {} },
   stories: ['../stories/**/*.@(mdx|stories.@(ts|js))'],
-  addons: ['@storybook/addon-a11y', '@storybook/addon-docs'],
+  addons: [
+    '@storybook/addon-a11y',
+    {
+      name: '@storybook/addon-docs',
+      // MDX 3 parses CommonMark only; remark-gfm renders the guides' GFM
+      // tables (spec AM-056).
+      options: { mdxPluginOptions: { mdxCompileOptions: { remarkPlugins: [remarkGfm] } } },
+    },
+  ],
   staticDirs: ['../public'],
   // Stories tagged 'autodocs' get a docs page by default, so no docs config
   // entry is needed.

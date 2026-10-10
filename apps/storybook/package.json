@@ -19,6 +19,7 @@
     "@websublime/line-themes": "workspace:^",
     "@websublime/line-tokens": "workspace:^",
     "@websublime/line-utils": "workspace:^",
+    "remark-gfm": "^4.0.1",
     "wrangler": "4.148.0"
   }
 }
