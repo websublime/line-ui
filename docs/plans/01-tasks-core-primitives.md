@@ -64,7 +64,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 | C20 | C | Spinner, `<line-spinner>` at `./spinner`, CSS-only; component spec `docs/specs/0022-spinner.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, G1, G4, G5, Z5 | todo | — | — | — |
 | C21 | C | `LineMachineController` calls `updateProps` on every host update (D7), sets the update-rate budget on a fixture machine, and corrects the "four public" count in `packages/line-core/README.md` and `src/machine/index.ts` (spec §6.C.1) | webcomponents-supervisor | — | todo | — | — | — |
 | C22 | C | `line-icons` reference resolvers fetch the SVG from a consumer-set `base` URL; adds the `./registry`, `./resolvers/lucide` and `./resolvers/phosphor` subpaths, the consumer matrix test and the CDN gate (spec §6.C.3) | webcomponents-supervisor | — | todo | — | — | — |
-| C23 | C | `LineElement` attaches `ElementInternals` once, in a `#private` field reached through the exported `INTERNALS` Symbol, and `reflectState` writes `data-<state>` and `:state(<state>)` (spec §6.C.2) | webcomponents-supervisor | — | todo | — | — | — |
+| C23 | C | `LineElement` attaches `ElementInternals` once, in a `#private` field reached through the exported `INTERNALS` Symbol, and `reflectState` writes `data-<state>` and `:state(<state>)` (spec §6.C.2) | webcomponents-supervisor | — | in_progress | feat/01-c23-line-element-internals | — | — |
 
 ## Stream G — Agent-Driven UI Foundation (`webcomponents-supervisor`)
 
