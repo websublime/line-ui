@@ -7,7 +7,7 @@
 | Import | Exports |
 | --- | --- |
 | `@websublime/line-core` | `LineElement`, `INTERNALS` and `FormAssociated` (+ `FormAssociatedMembers` type). The other mixins load from `@websublime/line-core/mixins/<name>`; `@websublime/line-core/mixins/form-associated` re-exports `FormAssociated` from the root. |
-| `@websublime/line-core/machine` | `LineMachineController` (+ `LineMachineControllerOptions` type) — the Lit `ReactiveController` adapter around Zag.js — and the four public `@zag-js/vanilla` primitives: `VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps` (+ `Attrs` type). `bindable` is intentionally not re-exported. |
+| `@websublime/line-core/machine` | `LineMachineController` (+ `LineMachineControllerOptions` type) — the Lit `ReactiveController` adapter around Zag.js — and four of the five values `@zag-js/vanilla` exports: `VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps` (+ `Attrs` type); `toStyleString` is left out. `bindable` is intentionally not re-exported. |
 
 Components must never import `@zag-js/vanilla` directly (Biome `noRestrictedImports` enforces this outside `line-core`). `LineMachineController` implements Manifesto Law 9: if the machine fails to start it flips `fallback` to `true`, logs to `console.error`, and re-renders instead of throwing at the consumer.
 
