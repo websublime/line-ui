@@ -14,7 +14,7 @@
  * helper is therefore loaded via a dynamic `import()` AFTER registration so
  * lit-html binds to the real happy-dom `document`.
  *
- * happy-dom 20.10.5 has no `HTMLElement.prototype.attachInternals`, yet
+ * happy-dom has no `HTMLElement.prototype.attachInternals`, yet
  * `LineElement` calls it in every constructor (spec §6.C.2, §7.8). After
  * registration the preload installs a fake returning a `FakeInternals` (from
  * `packages/line-core/__tests__/mocks/element-internals.ts`) whose `host` is
