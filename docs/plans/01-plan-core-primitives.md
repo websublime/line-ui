@@ -5,7 +5,7 @@
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
 **Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.27)
-**Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.12)
+**Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.13)
 
 > **What this document is.** A phase plan (PROCESS §1–§2, the lifecycle and gate rules). It sets scope, streams, dependencies, research targets, acceptance criteria and risks for Phase 1 (PRD §7.3, the Core Primitives phase).
 >
