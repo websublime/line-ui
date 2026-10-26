@@ -27,7 +27,7 @@ event has happened (PROCESS §6).
 | P4 | P | Trusted publisher bootstrap, spec §6.P.4 steps 1–6, with Miguel for the npmjs.com steps. The PR adds `docs/context/01-p4.md` with the evidence (spec §6.P.4) | infra-supervisor | P1, P3 | todo | — | — | — |
 | P5 | P | Bundle-splitting verification: removes the "Zero-export smoke" step before C2, adds the undeclared-specifier scan and the one-`LineElement` identity test (spec §6.P.5, §7.5) | infra-supervisor | P1, P9, C1 | todo | — | — | — |
 | P6 | P | CDN delivery check (unpkg, jsDelivr) against a canary that contains C1 and C2, dispatched after C2 merges (spec §6.P.6, §7.7) | infra-supervisor | P4, C1, C2 | todo | — | — | — |
-| P7 | P | axe-core tier for the zero-violation exit criterion (spec §6.P.7, §7.4) | infra-supervisor | — | todo | — | — | — |
+| P7 | P | axe-core tier for the zero-violation exit criterion (spec §6.P.7, §7.4) | infra-supervisor | — | in_progress | test/01-p7-axe-tier | — | — |
 | P8 | P | TypeScript 7.x upgrade: `tsc --emitDeclarationOnly` replaces `vite-plugin-dts` in the Vite builds, ambient `declare module` lines fix TS2882 in `apps/storybook` (spec §6.P.8, §7.1) | infra-supervisor | — | done | chore/01-p8-typescript-7 | #283 | AM-074 (Phase 00 spec) |
 | P9 | P | Library builds keep `@websublime/*` external, derived from each manifest's `dependencies` and `peerDependencies` (spec §6.P.9) | infra-supervisor | P8 | done | chore/01-p9-websublime-external | #285 | AM-046; AM-075, AM-076 (Phase 00 spec) |
 | P10 | P | CEM wiring and packaging: the analyser runs before the Storybook build, `preview.ts` merges the package manifests, `line-components` ships its manifest (spec §6.P.10, §7.3) | infra-supervisor | P8 | todo | — | — | — |
