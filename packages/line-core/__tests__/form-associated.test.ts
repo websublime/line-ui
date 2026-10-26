@@ -1,7 +1,7 @@
 /**
  * FormAssociated mixin unit tests (D5, spec §6.D.5, AM-032).
  *
- * happy-dom 20.10.5 has no `attachInternals`, so every test installs the
+ * happy-dom has no `attachInternals`, so every test installs the
  * recording fake from `mocks/element-internals.ts` and checks that the mixin
  * forwards to it. Real form submission, reset, and validation live in the
  * browser tier (`integration/form-associated/form-associated.e2e.ts`).
@@ -14,7 +14,7 @@
 
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { fixture, html } from '@open-wc/testing-helpers';
-import { LineElement } from '../src/line-element.js';
+import { INTERNALS, LineElement } from '../src/index.js';
 import { FormAssociated } from '../src/mixins/form-associated.js';
 import { type FakeInternals, installElementInternals } from './mocks/element-internals.js';
 
@@ -138,5 +138,21 @@ describe('FormAssociated', () => {
     expect(el.hasAttribute('data-dirty')).toBe(true);
     el.toggleState('dirty', false);
     expect(el.hasAttribute('data-dirty')).toBe(false);
+  });
+
+  test('the mixin and LineElement share the one attached internals', async () => {
+    const { el, fake } = await mount();
+    expect(created.filter((candidate) => candidate.host === el)).toHaveLength(1);
+    expect(Reflect.get(el, INTERNALS)).toBe(fake);
+  });
+
+  test('reflectState keeps a kebab-case state name verbatim', async () => {
+    const { el, fake } = await mount();
+    el.toggleState('focus-visible', true);
+    expect(el.hasAttribute('data-focus-visible')).toBe(true);
+    expect([...fake.states]).toEqual(['focus-visible']);
+    el.toggleState('focus-visible', false);
+    expect(el.hasAttribute('data-focus-visible')).toBe(false);
+    expect(fake.states.size).toBe(0);
   });
 });

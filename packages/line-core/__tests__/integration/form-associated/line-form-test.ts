@@ -7,6 +7,7 @@
  * current value with `setFormValue` and, when `required` and empty, reports
  * `valueMissing` with `setValidity`. A form reset clears the current value,
  * restoring the default, and counts the `formResetCallback` call in `resets`.
+ * `toggleState` exposes the protected `reflectState` hook (spec §6.C.2).
  *
  * @module __tests__/integration/form-associated/line-form-test
  */
@@ -54,6 +55,11 @@ export class LineFormTest extends FormAssociated(LineElement) {
   override formResetCallback(): void {
     this.resets += 1;
     this.value = null;
+  }
+
+  /** Calls `reflectState(name, active)`. */
+  toggleState(name: string, active: boolean): void {
+    this.reflectState(name, active);
   }
 }
 
