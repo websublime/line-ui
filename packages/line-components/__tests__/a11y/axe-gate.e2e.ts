@@ -14,17 +14,17 @@
 import { expect, type Page, test } from 'playwright/test';
 import { axe, expectNoAxeViolations } from './axe';
 
-/** Loads a page whose `<axe-gate-host aria-label="Save">` renders `inner` in an open shadow root. */
+/** Loads a page whose `<line-axe-gate-host aria-label="Save">` renders `inner` in an open shadow root. */
 async function loadFixture(page: Page, inner: string): Promise<void> {
   await page.setContent(`<!doctype html>
 <html lang="en">
   <head><title>axe gate fixture</title></head>
   <body>
     <main>
-      <axe-gate-host aria-label="Save"></axe-gate-host>
+      <line-axe-gate-host aria-label="Save"></line-axe-gate-host>
     </main>
     <script>
-      customElements.define('axe-gate-host', class extends HTMLElement {
+      customElements.define('line-axe-gate-host', class extends HTMLElement {
         constructor() {
           super();
           this.attachShadow({ mode: 'open' }).innerHTML = ${JSON.stringify(inner)};
@@ -33,7 +33,7 @@ async function loadFixture(page: Page, inner: string): Promise<void> {
     </script>
   </body>
 </html>`);
-  await expect(page.locator('axe-gate-host button')).toBeAttached();
+  await expect(page.locator('line-axe-gate-host button')).toBeAttached();
 }
 
 test('an unnamed inner <button> behind a labelled host fails with button-name', async ({ page }) => {
