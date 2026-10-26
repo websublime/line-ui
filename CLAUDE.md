@@ -36,7 +36,8 @@ line-ui/
 ├── packages/        # @websublime/line-* — tokens, colors, schemas, themes, utils (design system, done);
 │                    # core (LineElement, Inspector/Metadata/Direction/FormAssociated mixins, machine adapter, reset sheets);
 │                    # icons (resolver contract + Lucide/Phosphor resolvers); components (empty until Phase 1);
-│                    # genui (agent-driven UI catalog + A2UI renderer, from Phase 1)
+│                    # genui (agent-driven UI catalog + A2UI renderer, from Phase 1);
+│                    # testing (private, never published; test helpers shared across packages, htmx harness; row 01-Z5)
 ├── apps/            # storybook (Storybook 10 + MDX); site (Astro 7)
 ├── scripts/         # generate-palettes, generate-role-maps, validate-contrast, verify-palettes-fresh, lint-layers, publish, verify-pack
 ├── docs/            # MANIFESTO, PRD, ARCHITECTURE, PROCESS, STYLE, plans/ (plan + ledger), research/, specs/

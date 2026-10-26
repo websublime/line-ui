@@ -2,8 +2,8 @@
  * The H1 spike server (spec §6.H.1). A small `Bun.serve` that keeps the
  * counter state server-side and answers every htmx request with an HTML
  * fragment. `/?htmx=2` (the default) loads htmx 2.0.11 and `/?htmx=4` loads
- * htmx 4.0.0, both from the aliased root devDependencies `htmx2` and `htmx4`
- * (AM-060). The example component is bundled once at start-up.
+ * htmx 4.0.0, both from the aliased `line-core` devDependencies `htmx2` and
+ * `htmx4` (AM-060, AM-077). The example component is bundled once at start-up.
  *
  * Run from the repository root: `bun packages/line-core/__experimental__/htmx/example/server.ts`.
  * The server binds the loopback address 127.0.0.1 only, because its POST

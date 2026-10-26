@@ -12,7 +12,6 @@
  * @module __tests__/integration/htmx/htmx-harness.e2e
  */
 
-import { expect, test } from 'playwright/test';
 import {
   expectFormValue,
   expectNoRequestWithoutCommit,
@@ -23,7 +22,8 @@ import {
   type HtmxFixture,
   routeHtmx,
   type SlotSpec,
-} from './htmx-harness.js';
+} from '@websublime/line-testing/htmx';
+import { expect, test } from 'playwright/test';
 
 const DEFAULT_SLOT: SlotSpec = {
   name: null,

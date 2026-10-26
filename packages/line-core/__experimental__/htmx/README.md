@@ -33,8 +33,8 @@ bun packages/line-core/__experimental__/htmx/example/server.ts
 - `http://127.0.0.1:4330/?htmx=2` loads htmx 2.0.11, and `http://127.0.0.1:4330/?htmx=4` loads htmx 4.0.0.
 - The server binds 127.0.0.1 only, because its POST routes change the server state.
 - `PORT=4400 bun …` picks another port.
-- The server bundles the counter with `Bun.build` at start-up and serves htmx from the aliased root devDependencies
-  `htmx2` and `htmx4`.
+- The server bundles the counter with `Bun.build` at start-up and serves htmx from the aliased `line-core`
+  devDependencies `htmx2` and `htmx4`.
 - The count lives in the server process, so a restart resets it. All counters on the page share it.
 - Each state fragment echoes what the server received (method, path, form fields, `X-Line-Consumer`).
 
@@ -109,8 +109,8 @@ Both majors behave the same in all three engines unless a cell says otherwise. T
 | Do slotted light-DOM `hx-*` work? | Yes, without the mixin. The button inherits host `hx-vals` and `hx-headers` (`consumer=page`, header `page`). | Yes. It inherits only `hx-vals:inherited` (`consumer=page`, no header). | `slottedLightDom` |
 
 Inheritance stops at the shadow root in both majors. htmx 2 walks from the shadow root to `null`
-(`node_modules/htmx2/dist/htmx.esm.js:425-429`), and htmx 4 calls `closest()` on the parent node, which a shadow root
-lacks (`node_modules/htmx4/dist/htmx.esm.js:299,308`).
+(`packages/line-core/node_modules/htmx2/dist/htmx.esm.js:425-429`), and htmx 4 calls `closest()` on the parent node,
+which a shadow root lacks (`packages/line-core/node_modules/htmx4/dist/htmx.esm.js:299,308`).
 
 ### Server-driven state
 
@@ -130,13 +130,13 @@ lacks (`node_modules/htmx4/dist/htmx.esm.js:299,308`).
 |---|---|---|---|
 | Shadow root nobody processes | Inert, 0 requests. | Same. | `baselineInert` |
 | First render | `updated()` processing makes the internals live, and each counter sends one `GET /value` on load. | Same. | `initialLoad`, AM-059 |
-| A re-render changes a bound `hx-post` | Works (`POST /dec`). htmx 2 captures the path when it wires the element (`htmx2/dist/htmx.esm.js:2723-2744`), so the re-processing in `updated()` picks up the change. | Works. htmx 4 reads the verb attribute when the event fires (`htmx4/dist/htmx.esm.js:328-346`). | `litBoundAttribute` |
+| A re-render changes a bound `hx-post` | Works (`POST /dec`). htmx 2 captures the path when it wires the element (`packages/line-core/node_modules/htmx2/dist/htmx.esm.js:2723-2744`), so the re-processing in `updated()` picks up the change. | Works. htmx 4 reads the verb attribute when the event fires (`packages/line-core/node_modules/htmx4/dist/htmx.esm.js:328-346`). | `litBoundAttribute` |
 | A re-render inserts an `hx-*` element | Works through `updated()`. With the mixin's processing off, the inserted Reset sends nothing. | Same. | `litInsertedElement`, `updatedNeededForLitInserted` |
-| Re-processing after a swap | Not needed. With the mixin's processing off, the server-sent Undo still works, because htmx processes swapped content itself. | Same. htmx 4 processes it right after `htmx:after:settle` (`htmx4/dist/htmx.esm.js:1484`). | `settleNotNeededForSwappedContent` |
+| Re-processing after a swap | Not needed. With the mixin's processing off, the server-sent Undo still works, because htmx processes swapped content itself. | Same. htmx 4 processes it right after `htmx:after:settle` (`packages/line-core/node_modules/htmx4/dist/htmx.esm.js:1484`). | `settleNotNeededForSwappedContent` |
 | Swapped and slotted content across re-renders | Both survive two Lit re-renders. | Same. | `survivesRerender` |
 | htmx events on host listeners | `htmx:beforeRequest`, `htmx:afterRequest`, `htmx:afterSwap`, `htmx:afterSettle`, all `composed: true`. | `htmx:before:request`, `htmx:after:request`, `htmx:after:swap`, `htmx:after:settle`, all `composed: true`. | `composedEvents` |
 | Three reconnects, then one click | One request, one hook call. | Same. | `reconnect` |
-| Three re-renders during the `load` request | No duplicate (3 `GET /value` for 3 counters). htmx 2 fires `load` only before `firstInitCompleted` (`htmx2/dist/htmx.esm.js:2782`). | No duplicate. htmx 4 skips elements it has initialised (`htmx4/dist/htmx.esm.js:984`). | `inFlightRerender` |
+| Three re-renders during the `load` request | No duplicate (3 `GET /value` for 3 counters). htmx 2 fires `load` only before `firstInitCompleted` (`packages/line-core/node_modules/htmx2/dist/htmx.esm.js:2782`). | No duplicate. htmx 4 skips elements it has initialised (`packages/line-core/node_modules/htmx4/dist/htmx.esm.js:984`). | `inFlightRerender` |
 
 ## Blockers
 
@@ -155,7 +155,7 @@ committed adapter would still have to own these constraints:
 - htmx loaded as an ES module. The mixin reads `globalThis.htmx`.
 - A host attribute changed after the first render. The checks forward `hx-headers` as the page sets it at load.
 - A changed `hx-trigger` under htmx 4. From the source, `process()` skips initialised elements unless `force` is
-  passed (`htmx4/dist/htmx.esm.js:920-944, 984`).
+  passed (`packages/line-core/node_modules/htmx4/dist/htmx.esm.js:920-944, 984`).
 - Out-of-band swaps and htmx 4 `<hx-partial>` aimed at shadow content, htmx extensions, closed shadow roots,
   declarative shadow DOM, and the cost of processing a large shadow tree after every render.
 

@@ -2,12 +2,12 @@
  * Cascade layer `line` — browser tier (spec §6.C and §6.F.4, AM-058).
  *
  * Loads the built `line-tokens` CSS (its `dist/index.css` inlines `reset.css`)
- * and the built `line-colors` and `line-themes` CSS into a page, and checks in
- * each engine that consumer rules beat the package rules: an unlayered
- * `:where(html)` override loaded before the packages, an override in
- * `@layer base` once the page starts with `@layer line;`, and a `.mt-4` utility
- * in `@layer utilities` against `reset.css`. Each case fails against unlayered
- * package CSS.
+ * and the built `line-colors` and `line-themes` CSS, each resolved by package
+ * name, into a page, and checks in each engine that consumer rules beat the
+ * package rules: an unlayered `:where(html)` override loaded before the
+ * packages, an override in `@layer base` once the page starts with
+ * `@layer line;`, and a `.mt-4` utility in `@layer utilities` against
+ * `reset.css`. Each case fails against unlayered package CSS.
  *
  * @module __tests__/cascade-layer.e2e
  */
@@ -16,8 +16,8 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { expect, type Page, test } from 'playwright/test';
 
-const packages = ['../../line-tokens/dist/index.css', '../../line-colors/dist/index.css', '../dist/index.css']
-  .map((path) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8'))
+const packages = ['@websublime/line-tokens', '@websublime/line-colors', '@websublime/line-themes']
+  .map((name) => readFileSync(fileURLToPath(import.meta.resolve(name)), 'utf8'))
   .join('\n');
 
 /** One token from each package, with a consumer value no package declares. */

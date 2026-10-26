@@ -1,0 +1,19 @@
+{
+  "name": "@websublime/line-testing",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./htmx": "./src/htmx.ts"
+  },
+  "dependencies": {
+    "htmx2": "npm:htmx.org@2.0.11",
+    "htmx4": "npm:htmx.org@4.0.0"
+  },
+  "peerDependencies": {
+    "playwright": "^1.64.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

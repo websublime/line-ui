@@ -11,9 +11,9 @@
  *       used as accent without `data-gray`, the gray role self-pairs to that
  *       hue (PRD §9.5 auto-pair table, the `defaults.css` blocks);
  *   (c) at a themed root, every `--line-{h}-1` equals its reference.
- * Reference values come from a page that loads only `line-colors`. A `var()`
- * is substituted where its property is declared, so this needs a real cascade
- * (AM-015).
+ * Reference values come from a page that loads only `line-colors`. Both
+ * packages' CSS resolves by package name. A `var()` is substituted where its
+ * property is declared, so this needs a real cascade (AM-015).
  *
  * @module __tests__/hue-role-names.e2e
  */
@@ -30,8 +30,8 @@ const STEPS = [
   'contrast',
 ];
 
-const [colorsCss, themesCss] = ['../../line-colors/dist/index.css', '../dist/index.css'].map((path) =>
-  readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8'),
+const [colorsCss, themesCss] = ['@websublime/line-colors', '@websublime/line-themes'].map((name) =>
+  readFileSync(fileURLToPath(import.meta.resolve(name)), 'utf8'),
 );
 
 /** Reads `--line-{name}-{step}` for every step on the element with `id`. */

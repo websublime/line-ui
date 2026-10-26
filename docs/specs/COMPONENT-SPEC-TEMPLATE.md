@@ -214,7 +214,7 @@
 | Unit | `bun test` on happy-dom | <props, events, state reflection, C8 degradation> |
 | Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | <keyboard, focus, form participation, native behaviour> |
 | A11y | axe-core | Zero violations (MANIFESTO Law 3) in <the states checked> |
-| htmx | Playwright `*.e2e.ts` through the shared harness in `packages/line-core/__tests__/integration/htmx/`, on htmx 2 and htmx 4 in chromium, firefox and webkit | <`n/a` for a component that is neither value-bearing nor compound. Otherwise (a) the value reaches the `<form hx-post>` request, (b) `hx-trigger` on the commit event sends one request per commit, (c) a non-commit interaction sends none, and (d) server content swapped into slots renders, and the component picks it up. Mark (a) `n/a` with a reason unless the component is form-associated, and mark (d) `n/a` with a reason when it has no slot> |
+| htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`; its self-test stays in `packages/line-core/__tests__/integration/htmx/`), on htmx 2 and htmx 4 in chromium, firefox and webkit | <`n/a` for a component that is neither value-bearing nor compound. Otherwise (a) the value reaches the `<form hx-post>` request, (b) `hx-trigger` on the commit event sends one request per commit, (c) a non-commit interaction sends none, and (d) server content swapped into slots renders, and the component picks it up. Mark (a) `n/a` with a reason unless the component is form-associated, and mark (d) `n/a` with a reason when it has no slot> |
 
 ---
 

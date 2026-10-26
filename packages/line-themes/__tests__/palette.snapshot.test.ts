@@ -1,9 +1,10 @@
 /**
  * Palette CSS snapshot tests (C9, spec §6.C.7).
  *
- * For each of the 31 hues, the generated `@websublime/line-colors`
- * `dist/{hue}.css` palette file must match a committed snapshot. The special
- * palette (`special.css`) is snapshotted as well.
+ * For each of the 31 hues, the built `@websublime/line-colors/{hue}` palette
+ * file must match a committed snapshot. The special palette
+ * (`@websublime/line-colors/special`) is snapshotted as well. Each file
+ * resolves through the `line-colors` exports (PRD §5.2 rule 1).
  *
  * Snapshots use Bun test's built-in serializer writing to `__snapshots__/`.
  * Baselines auto-create on first run and are committed; subsequent runs detect
@@ -18,16 +19,28 @@
 
 import { describe, expect, test } from 'bun:test';
 import { existsSync, readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { HUES } from '@websublime/line-schemas';
 
-const COLORS_DIST = resolve(import.meta.dirname, '../../line-colors/dist');
+/**
+ * Resolves `specifier` and returns the file path, or `undefined` when the file
+ * is missing. Bun throws on a missing export target, so a throw counts as missing.
+ */
+function resolveBuilt(specifier: string): string | undefined {
+  try {
+    const path = fileURLToPath(import.meta.resolve(specifier));
+    return existsSync(path) ? path : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
-function readPalette(file: string): string {
-  const path = resolve(COLORS_DIST, file);
-  if (!existsSync(path)) {
+function readPalette(entry: string): string {
+  const specifier = `@websublime/line-colors/${entry}`;
+  const path = resolveBuilt(specifier);
+  if (!path) {
     throw new Error(
-      `line-colors dist file missing: ${path}. Run the upstream build first ` +
+      `line-colors dist file missing: ${specifier}. Run the upstream build first ` +
         `(bun --filter '@websublime/line-colors' build).`,
     );
   }
@@ -36,16 +49,16 @@ function readPalette(file: string): string {
 
 describe('palette CSS snapshots', () => {
   test('line-colors dist/ exists (upstream build must run first)', () => {
-    expect(existsSync(COLORS_DIST)).toBe(true);
+    expect(resolveBuilt('@websublime/line-colors')).toBeDefined();
   });
 
   for (const hue of HUES) {
     test(`dist/${hue}.css matches snapshot`, () => {
-      expect(readPalette(`${hue}.css`)).toMatchSnapshot();
+      expect(readPalette(hue)).toMatchSnapshot();
     });
   }
 
   test('dist/special.css matches snapshot', () => {
-    expect(readPalette('special.css')).toMatchSnapshot();
+    expect(readPalette('special')).toMatchSnapshot();
   });
 });

@@ -1,12 +1,14 @@
 /**
- * Shadow scale — browser tier (C17, spec §6.C.2 and §6.F.4, AM-054).
+ * Shadow scale — browser tier (C17, spec §6.C.2 and §6.F.4, AM-054, AM-077).
  *
- * Loads the built `line-colors`, `line-themes` and `line-tokens` CSS into a
- * page and checks, in each engine, that every shadow token paints. Each layer
- * takes the nearest gray role's colour at the base strength plus its Open Props
- * offset, in light and in a `color-scheme: dark` container. The knobs set on
- * `<html>` reach nested theming scopes. `light-dark()` and `var()` resolve in
- * the cascade, so this needs a real browser.
+ * Loads the built `line-colors`, `line-themes` and `line-tokens` CSS, resolved
+ * by package name, into a page and checks, in each engine, that every shadow
+ * token paints. Each layer takes the nearest gray role's colour at the base
+ * strength plus its Open Props offset, in light and in a `color-scheme: dark`
+ * container. The knobs set on `<html>` reach nested theming scopes.
+ * `light-dark()` and `var()` resolve in the cascade, so this needs a real
+ * browser. The shadow tokens ship in `line-tokens`, and the test lives in
+ * `line-themes`, the highest layer it reads (PRD §5.2 rule 5).
  *
  * @module __tests__/shadows.e2e
  */
@@ -34,11 +36,11 @@ const TOKENS = Object.keys(OFFSETS);
 const LIGHT = 1;
 const DARK = 25;
 
-const load = (path: string): string => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8');
+const load = (name: string): string => readFileSync(fileURLToPath(import.meta.resolve(name)), 'utf8');
 
-const colors = load('../../line-colors/dist/index.css');
-const themes = load('../../line-themes/dist/index.css');
-const tokens = load('../dist/index.css');
+const colors = load('@websublime/line-colors');
+const themes = load('@websublime/line-themes');
+const tokens = load('@websublime/line-tokens');
 
 /** An sRGB colour with channels and alpha in 0..1. */
 type Rgba = [number, number, number, number];

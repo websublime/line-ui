@@ -64,8 +64,6 @@
     "@zag-js/core": "^1.46.0",
     "@zag-js/vanilla": "^1.46.0",
     "cssnano": "^8.0.10",
-    "htmx2": "npm:htmx.org@2.0.11",
-    "htmx4": "npm:htmx.org@4.0.0",
     "lit": "^3.3.3",
     "lucide-static": "^1.56.0",
     "playwright": "^1.64.0",

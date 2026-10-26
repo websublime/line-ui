@@ -1,5 +1,5 @@
 /**
- * htmx harness — the shared Playwright helper of spec §6.F.4 (AM-063).
+ * htmx harness — the shared Playwright helper of Phase 00 spec §6.F.4 (AM-063, AM-077).
  *
  * Each `expect…` function takes a Playwright `page` that has htmx loaded and the
  * component under test defined, plus an {@link HtmxFixture} that describes the
@@ -16,7 +16,11 @@
  * request htmx started has finished. htmx starts a queued request in the same task that
  * finishes the previous one, so a settled count is final.
  *
- * @module __tests__/integration/htmx/htmx-harness
+ * The module lives in the private package `@websublime/line-testing`, which declares
+ * `htmx2` and `htmx4`. A package whose tests import `@websublime/line-testing/htmx`
+ * declares `@websublime/line-testing` as a devDependency (PRD §5.2 rule 4).
+ *
+ * @module @websublime/line-testing/htmx
  */
 
 import { fileURLToPath } from 'node:url';
@@ -100,17 +104,15 @@ const HOST_ID = 'line-htmx-harness-host';
 const LOG_ID = 'line-htmx-harness-log';
 const SLOTTED = ['First slotted item', 'Second slotted item'];
 
-const REPO_ROOT = new URL('../../../../../', import.meta.url);
-
 interface Server {
   readonly requests: HarnessRequest[];
 }
 
 const servers = new WeakMap<Page, Server>();
 
-/** Answers `./vendor/htmx.js` on `page` with the given htmx major from the root `node_modules`. */
+/** Answers `./vendor/htmx.js` on `page` with the given htmx major, resolved from this package's dependencies. */
 export async function routeHtmx(page: Page, major: HtmxMajor): Promise<void> {
-  const path = fileURLToPath(new URL(`node_modules/htmx${major}/dist/htmx.js`, REPO_ROOT));
+  const path = fileURLToPath(import.meta.resolve(`htmx${major}/dist/htmx.js`));
   await page.route('**/vendor/htmx.js', (route) => route.fulfill({ path }));
 }
 

@@ -5,7 +5,9 @@
  *   (a) Zod validators reject invalid hue/role inputs and accept valid ones.
  *   (b) Generated CSS dist files exist for every schema member (parity):
  *       31 accent role maps ↔ ACCENT_HUES, 6 gray role maps ↔ GRAY_HUES,
- *       31 palette files ↔ HUES.
+ *       31 palette files ↔ HUES. Each file resolves through the `exports` of
+ *       `@websublime/line-colors` or of this package, and the resolved path is
+ *       checked on disk (PRD §5.2 rules 1 and 2).
  *   (b') The committed role-map sources match the schema lists EXACTLY: the
  *       file set of `src/accent/` equals HUES and `src/gray/` equals GRAY_HUES,
  *       so a stale extra file fails (AM-052). This reads `src/`, not `dist/`,
@@ -27,6 +29,7 @@
 import { describe, expect, test } from 'bun:test';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import {
   ACCENT_HUES,
   AccentHueSchema,
@@ -40,9 +43,21 @@ import {
   SEMANTIC_MAP,
 } from '@websublime/line-schemas';
 
-const THEMES_DIST = resolve(import.meta.dirname, '../dist');
-const COLORS_DIST = resolve(import.meta.dirname, '../../line-colors/dist');
 const THEMES_SRC = resolve(import.meta.dirname, '../src');
+
+/**
+ * Resolves `specifier` and returns the file path, or `undefined` when the file
+ * is missing. Node returns the path of a missing wildcard target and Bun throws,
+ * so the path is checked on disk and a throw counts as missing.
+ */
+function resolveBuilt(specifier: string): string | undefined {
+  try {
+    const path = fileURLToPath(import.meta.resolve(specifier));
+    return existsSync(path) ? path : undefined;
+  } catch {
+    return undefined;
+  }
+}
 
 describe('schema validators', () => {
   test('HueSchema accepts valid hues and rejects invalid', () => {
@@ -89,22 +104,22 @@ describe('schema ↔ dist file parity', () => {
 
   test('every HUES member has a line-colors palette dist file (31)', () => {
     for (const hue of HUES) {
-      const path = resolve(COLORS_DIST, `${hue}.css`);
-      expect(existsSync(path), `missing palette dist: ${path}`).toBe(true);
+      const specifier = `@websublime/line-colors/${hue}`;
+      expect(resolveBuilt(specifier), `missing palette dist: ${specifier}`).toBeDefined();
     }
   });
 
   test('every ACCENT_HUES member has a line-themes accent role-map dist file (31)', () => {
     for (const hue of ACCENT_HUES) {
-      const path = resolve(THEMES_DIST, `accent/${hue}.css`);
-      expect(existsSync(path), `missing accent role-map dist: ${path}`).toBe(true);
+      const specifier = `@websublime/line-themes/accent/${hue}`;
+      expect(resolveBuilt(specifier), `missing accent role-map dist: ${specifier}`).toBeDefined();
     }
   });
 
   test('every GRAY_HUES member has a line-themes gray role-map dist file (6)', () => {
     for (const hue of GRAY_HUES) {
-      const path = resolve(THEMES_DIST, `gray/${hue}.css`);
-      expect(existsSync(path), `missing gray role-map dist: ${path}`).toBe(true);
+      const specifier = `@websublime/line-themes/gray/${hue}`;
+      expect(resolveBuilt(specifier), `missing gray role-map dist: ${specifier}`).toBeDefined();
     }
   });
 });
@@ -123,8 +138,8 @@ describe('schema ↔ src file set (exact)', () => {
 
 describe('aliases.css variable count', () => {
   test('aliases.css declares EXACTLY 54 --line-* variables (ALIASES × ROLES)', () => {
-    const path = resolve(THEMES_DIST, 'aliases.css');
-    expect(existsSync(path), `missing aliases dist: ${path}`).toBe(true);
+    const path = resolveBuilt('@websublime/line-themes/aliases');
+    if (!path) throw new Error('missing aliases dist: @websublime/line-themes/aliases');
     const aliasesCss = readFileSync(path, 'utf-8');
     // Count custom-property DECLARATIONS (`--line-*:`). dist is single-line
     // minified, so count `:`-terminated occurrences rather than lines.

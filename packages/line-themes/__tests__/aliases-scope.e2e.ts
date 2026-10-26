@@ -1,11 +1,12 @@
 /**
  * Alias scoping — browser tier (C15, spec §6.C.4 and §6.F.4, AM-049).
  *
- * Loads the built `line-colors` and `line-themes` CSS into a page and checks,
- * in each engine, that every named alias equals its mapped numeric step on the
- * same element: at the root and in nested `[data-accent]` / `[data-gray]`
- * scopes. A `var()` is substituted where its property is declared, so this
- * needs a real cascade; happy-dom does not resolve it reliably (AM-015).
+ * Loads the built `line-colors` and `line-themes` CSS, resolved by package
+ * name, into a page and checks, in each engine, that every named alias equals
+ * its mapped numeric step on the same element: at the root and in nested
+ * `[data-accent]` / `[data-gray]` scopes. A `var()` is substituted where its
+ * property is declared, so this needs a real cascade; happy-dom does not
+ * resolve it reliably (AM-015).
  *
  * @module __tests__/aliases-scope.e2e
  */
@@ -28,8 +29,8 @@ const STEP: Record<(typeof ALIASES)[number], number> = {
   text: 12,
 };
 
-const css = ['../../line-colors/dist/index.css', '../dist/index.css']
-  .map((path) => readFileSync(fileURLToPath(new URL(path, import.meta.url)), 'utf8'))
+const css = ['@websublime/line-colors', '@websublime/line-themes']
+  .map((name) => readFileSync(fileURLToPath(import.meta.resolve(name)), 'utf8'))
   .join('\n');
 
 type Role = 'accent' | 'gray';
