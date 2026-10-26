@@ -13,10 +13,19 @@
  * every lit-mounting test then throws `l.createComment is not a function`. The
  * helper is therefore loaded via a dynamic `import()` AFTER registration so
  * lit-html binds to the real happy-dom `document`.
+ *
+ * happy-dom 20.10.5 has no `HTMLElement.prototype.attachInternals`, yet
+ * `LineElement` calls it in every constructor (spec §6.C.2, §7.8). After
+ * registration the preload installs a fake returning a `FakeInternals` (from
+ * `packages/line-core/__tests__/mocks/element-internals.ts`) whose `host` is
+ * the element — only when no native implementation exists, so a future
+ * happy-dom with real `ElementInternals` is not shadowed. That mock touches no
+ * DOM global at module load, so its static import is safe ahead of registration.
  */
 import { dirname, resolve } from 'node:path';
 import { GlobalRegistrator } from '@happy-dom/global-registrator';
 import { plugin } from 'bun';
+import { FakeInternals } from './packages/line-core/__tests__/mocks/element-internals.ts';
 
 /**
  * Bun's runtime does not implement Vite's `?inline` query: `import css from
@@ -38,6 +47,13 @@ plugin({
 });
 
 GlobalRegistrator.register();
+
+const internalsProto: { attachInternals?: () => ElementInternals } = HTMLElement.prototype;
+if (typeof internalsProto.attachInternals !== 'function') {
+  internalsProto.attachInternals = function (this: HTMLElement) {
+    return new FakeInternals(this) as unknown as ElementInternals;
+  };
+}
 
 import { afterEach } from 'bun:test';
 
