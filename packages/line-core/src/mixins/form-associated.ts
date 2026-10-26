@@ -1,3 +1,4 @@
+import { INTERNALS } from '../internals.js';
 import type { LineElement } from '../line-element.js';
 
 /**
@@ -52,16 +53,12 @@ export interface FormAssociatedMembers {
  * FormAssociated mixin (D5). Makes a `LineElement` a form-associated custom
  * element backed by `ElementInternals`.
  *
- * Sets `static formAssociated = true`, attaches the element's internals in the
- * constructor, and forwards the form API (`setFormValue`, `setValidity`,
- * `reportValidity`, `checkValidity`, `form`, `validity`, `validationMessage`,
- * `willValidate`) to them. `name` reads the host attribute and `type` is the
- * local name. `reflectState(name, active)` toggles a host `data-*` attribute
- * through `dataset` and the `name` custom state. `name` must be a single-word
- * or camelCase key: `dataset` maps camelCase to a kebab-case attribute
- * (`userInvalid` → `data-user-invalid`) and throws a `SyntaxError` on a
- * kebab-case key, while the custom state keeps `name` verbatim
- * (`:state(userInvalid)`).
+ * Sets `static formAssociated = true` and forwards the form API
+ * (`setFormValue`, `setValidity`, `reportValidity`, `checkValidity`, `form`,
+ * `validity`, `validationMessage`, `willValidate`) to the internals that
+ * `LineElement` attached, through `this[INTERNALS]`. `name` reads the host
+ * attribute and `type` is the local name. State reflection is the
+ * `LineElement` `reflectState` body.
  *
  * Opt-in per component: `class LineInput extends FormAssociated(LineElement) {}`.
  * Sub-classes implement the form lifecycle callbacks they need.
@@ -74,32 +71,24 @@ export function FormAssociated<T extends Constructor<LineElement>>(
   class FormAssociatedElement extends Base {
     static formAssociated = true as const;
 
-    #internals: ElementInternals;
-
-    // biome-ignore lint/suspicious/noExplicitAny: spec §6.D.5 mandates `any[]` for the mixin constructor signature.
-    constructor(...args: any[]) {
-      super(...args);
-      this.#internals = this.attachInternals();
-    }
-
     setFormValue(value: FormValue, state?: FormValue): void {
-      this.#internals.setFormValue(value, state);
+      this[INTERNALS].setFormValue(value, state);
     }
 
     setValidity(flags: ValidityStateFlags, message?: string, anchor?: HTMLElement): void {
-      this.#internals.setValidity(flags, message, anchor);
+      this[INTERNALS].setValidity(flags, message, anchor);
     }
 
     reportValidity(): boolean {
-      return this.#internals.reportValidity();
+      return this[INTERNALS].reportValidity();
     }
 
     checkValidity(): boolean {
-      return this.#internals.checkValidity();
+      return this[INTERNALS].checkValidity();
     }
 
     get form(): HTMLFormElement | null {
-      return this.#internals.form;
+      return this[INTERNALS].form;
     }
 
     get name(): string | null {
@@ -111,34 +100,15 @@ export function FormAssociated<T extends Constructor<LineElement>>(
     }
 
     get validity(): ValidityState {
-      return this.#internals.validity;
+      return this[INTERNALS].validity;
     }
 
     get validationMessage(): string {
-      return this.#internals.validationMessage;
+      return this[INTERNALS].validationMessage;
     }
 
     get willValidate(): boolean {
-      return this.#internals.willValidate;
-    }
-
-    /**
-     * Toggles `this.dataset[name]` (camelCase `name` → kebab-case `data-*`
-     * attribute; a kebab-case `name` throws) and the custom state `name`, verbatim.
-     */
-    protected override reflectState(name: string, active: boolean): void {
-      if (active) {
-        this.dataset[name] = '';
-      } else {
-        delete this.dataset[name];
-      }
-      if (this.#internals.states) {
-        if (active) {
-          this.#internals.states.add(name);
-        } else {
-          this.#internals.states.delete(name);
-        }
-      }
+      return this[INTERNALS].willValidate;
     }
 
     formAssociatedCallback?(form: HTMLFormElement | null): void;
