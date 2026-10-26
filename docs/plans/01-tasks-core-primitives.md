@@ -33,7 +33,8 @@ event has happened (PROCESS §6).
 | P10 | P | CEM wiring and packaging: the analyser runs before the Storybook build, `preview.ts` merges the package manifests, `line-components` ships its manifest (spec §6.P.10, §7.3) | infra-supervisor | P8 | todo | — | — | — |
 | P11 | P | Visual regression tier: Playwright `toHaveScreenshot` over the Storybook stories, Chromium only, with the baseline and off-pair workflows; commits no `.visual.ts` file (spec §6.P.11) | infra-supervisor | — | done | test/01-p11-visual-regression-tier | #288 | — |
 | P12 | P | Roles visual baselines: 62 default pairs that gate every PR and 310 off pairs that run before each release (spec §6.P.12) | infra-supervisor | P11 | done | test/01-p12-roles-visual-baselines | #289 | AM-047 |
-| P13 | P | Release trusted publisher, spec §6.P.4 step 7, with Miguel for the npmjs.com step, plus a `minor` changeset for each package the merged Phase 1 changesets do not bump at `minor`. The PR adds `docs/context/01-p13.md`. `blocked` until the main session has run the exit sweep, the sweep's rows are `done` and Miguel has recorded the release-time runs on `main`; it lands within the 48 hours before the Phase 1 Version PR merge (spec §6.P.13, §7.2) | infra-supervisor | every other Phase 1 row except D3 and Z3, the exit-sweep rows included | blocked | — | — | — |
+| P13 | P | Phase-exit `minor` changesets: one for each package whose manifest version is still `0.1.x` and that has no pending `minor` changeset, so every package ends Phase 1 in `0.2.x`; the phase-exit Version PR follows it. The changeset file gives the row its PR. `blocked` until the main session has run the exit sweep and the sweep's rows are `done` (spec §6.P.13, §7.2) | infra-supervisor | every other Phase 1 row except D3 and Z3, the exit-sweep rows included | blocked | — | — | AM-051 |
+| P14 | P | Release trusted publisher, spec §6.P.4 step 7, with Miguel for the npmjs.com step. Miguel creates the `release.yml` trusted publisher for `line-genui` within the 48 hours before he merges the first Version PR that releases `line-genui` 0.2.0, and merges no Version PR between the P1 merge and the P14 merge. The PR adds `docs/context/01-p14.md` with the evidence (spec §6.P.14, §7.2) | infra-supervisor | P4 | todo | — | — | AM-051 |
 
 ## Stream C — Core Primitives (`webcomponents-supervisor`)
 
@@ -84,7 +85,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 |---|---|---|---|---|---|---|---|---|
 | D1 | D | Agent-driven UI guide (spec §6.D.1) | webcomponents-supervisor | G1–G6 | todo | — | — | — |
 | D2 | D | Recipes index for the transport recipes (spec §6.D.2) | webcomponents-supervisor | G7 | todo | — | — | — |
-| D3 | D | Getting Started updates for `line-genui` and the Phase 1 components, with snippets on the published `0.2.0`. `blocked` until the Phase 1 Version PR merges (spec §6.D.3) | webcomponents-supervisor | C1–C20, G4, P6 | blocked | — | — | — |
+| D3 | D | Getting Started updates for `line-genui` and the Phase 1 components, with snippets on the published phase-exit versions (`0.2.x`). `blocked` until the Phase 1 Version PR merges (spec §6.D.3) | webcomponents-supervisor | C1–C20, G4, P6 | blocked | — | — | — |
 
 ## Stream S — Site (`webcomponents-supervisor`)
 
