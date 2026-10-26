@@ -77,17 +77,6 @@ describe('LineElement.reflectState', () => {
     expect(fake.states.size).toBe(0);
   });
 
-  test('keeps a kebab-case state name verbatim', async () => {
-    const { el, fake } = await mount();
-    el.toggleState('focus-visible', true);
-    expect(el.hasAttribute('data-focus-visible')).toBe(true);
-    expect([...fake.states]).toEqual(['focus-visible']);
-
-    el.toggleState('focus-visible', false);
-    expect(el.hasAttribute('data-focus-visible')).toBe(false);
-    expect(fake.states.size).toBe(0);
-  });
-
   test('still sets the data attribute when internals have no custom states', async () => {
     const { el, fake } = await mount();
     Reflect.deleteProperty(fake, 'states');

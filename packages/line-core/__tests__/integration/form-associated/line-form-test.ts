@@ -13,8 +13,7 @@
  */
 
 import type { PropertyDeclarations } from 'lit';
-import { LineElement } from '../../../src/line-element.js';
-import { FormAssociated } from '../../../src/mixins/form-associated.js';
+import { FormAssociated, LineElement } from '../../../src/index.js';
 
 export class LineFormTest extends FormAssociated(LineElement) {
   static override properties: PropertyDeclarations = {

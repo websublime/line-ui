@@ -6,7 +6,7 @@
  * description is `line.internals`, never `internals` or `privateInternals`: axe-core looks up an element's
  * internals through own-property symbols with those two descriptions, and the prototype accessor with this
  * description keeps every line://ui element outside that lookup. This module imports nothing, so
- * `line-element.ts`, `mixins/form-associated.ts` and `index.ts` share it without an import cycle.
+ * `line-element.ts`, `form-associated.ts` and `index.ts` share it without an import cycle.
  *
  * @see docs/specs/01-spec-core-primitives.md §6.C.2, §10 SD19
  */

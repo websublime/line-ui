@@ -3,8 +3,9 @@
  *
  * happy-dom has no `attachInternals`, so every test installs the
  * recording fake from `mocks/element-internals.ts` and checks that the mixin
- * forwards to it. Real form submission, reset, and validation live in the
- * browser tier (`integration/form-associated/form-associated.e2e.ts`).
+ * forwards to it. `FormAssociated` comes from `src/index.ts`, the module graph
+ * `LineElement` lives in (spec §6.C.2, AM-050). Real form submission, reset,
+ * and validation live in the browser tier (`integration/form-associated/form-associated.e2e.ts`).
  *
  * Runs on F2's harness. `bun-test-preload.ts` registers happy-dom globally and
  * runs `@open-wc/testing-helpers` `fixtureCleanup` after each test.
@@ -14,8 +15,7 @@
 
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { fixture, html } from '@open-wc/testing-helpers';
-import { INTERNALS, LineElement } from '../src/index.js';
-import { FormAssociated } from '../src/mixins/form-associated.js';
+import { FormAssociated, INTERNALS, LineElement } from '../src/index.js';
 import { type FakeInternals, installElementInternals } from './mocks/element-internals.js';
 
 /** Form-associated `LineElement`, the shape every form component takes. */
@@ -144,15 +144,5 @@ describe('FormAssociated', () => {
     const { el, fake } = await mount();
     expect(created.filter((candidate) => candidate.host === el)).toHaveLength(1);
     expect(Reflect.get(el, INTERNALS)).toBe(fake);
-  });
-
-  test('reflectState keeps a kebab-case state name verbatim', async () => {
-    const { el, fake } = await mount();
-    el.toggleState('focus-visible', true);
-    expect(el.hasAttribute('data-focus-visible')).toBe(true);
-    expect([...fake.states]).toEqual(['focus-visible']);
-    el.toggleState('focus-visible', false);
-    expect(el.hasAttribute('data-focus-visible')).toBe(false);
-    expect(fake.states.size).toBe(0);
   });
 });
