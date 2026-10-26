@@ -7,6 +7,22 @@
  * notification calls `host.requestUpdate()`, so the host re-renders on each
  * transition.
  *
+ * Host props reach the machine on every host update (Phase 1 plan §5.6 D7,
+ * spec §6.C.1). A component declares its machine props as a function of its
+ * own properties; the controller passes that function to `VanillaMachine` when
+ * it starts the machine and to `updateProps` from `hostUpdate()`, so `watch`
+ * trackers re-run and guards read the current values on the next event.
+ * Components never call `updateProps` themselves and never send events from
+ * `updated()` to carry props. The call sits in `hostUpdate()`, before
+ * `update()`, while the host's update is still pending: the
+ * `host.requestUpdate()` that `updateProps` triggers through the subscription
+ * folds into the running update instead of scheduling another one.
+ *
+ * Each `updateProps` call wraps the previous props source in one more closure,
+ * so a `prop()` read costs more with every host update over an instance's
+ * lifetime. The update-rate harness in `__tests__/harness/update-rate.ts`
+ * measures that cost against the C21 budget (spec §10 SD18).
+ *
  * Failure mode (Manifesto Law 9): if constructing, subscribing, or starting the
  * machine throws, the controller flips `fallback = true`, logs to
  * `console.error`, and requests an update so the template can render a static
@@ -23,8 +39,13 @@ import type { ReactiveController, ReactiveControllerHost } from 'lit';
 export interface LineMachineControllerOptions<T extends MachineSchema> {
   /** Machine config built by the component (e.g. from createMachine(...) or a pre-built Zag machine). */
   machine: ConstructorParameters<typeof VanillaMachine<T>>[0];
-  /** Initial props passed to VanillaMachine. */
-  props?: ConstructorParameters<typeof VanillaMachine<T>>[1];
+  /**
+   * Machine props as a function of the host's own properties, e.g.
+   * `() => ({ disabled: this.disabled })`. The controller passes it to
+   * `VanillaMachine` when the machine starts and to `updateProps` on every
+   * host update, so the machine always reads the current host values.
+   */
+  props?: () => Partial<T['props']>;
   /** When true, swallow start() errors and flip into fallback mode (Manifesto Law 9). Default: true. */
   staticFallbackOnFailure?: boolean;
 }
@@ -78,6 +99,13 @@ export class LineMachineController<T extends MachineSchema> implements ReactiveC
         throw err;
       }
     }
+  }
+
+  /** Pushes the host's current props into the machine before every render (D7). */
+  hostUpdate(): void {
+    const props = this.#options.props;
+    if (this.#fallback || !this.#vanilla || !props) return;
+    this.#vanilla.updateProps(props);
   }
 
   hostDisconnected(): void {

@@ -1,5 +1,5 @@
 /**
- * `LineMachineController` unit tests (D6, spec §6.D.6).
+ * `LineMachineController` unit tests (D6, spec §6.D.6; D7, spec §6.C.1).
  *
  * Covers the contract components depend on:
  *   1. machine notifications drive `host.requestUpdate()` (transition → re-render);
@@ -7,7 +7,11 @@
  *      the consumer, `send` becomes a no-op, the reads return `undefined`;
  *   3. `staticFallbackOnFailure: false` opts out and lets the error propagate;
  *   4. disconnect tears the machine down; reconnect starts a fresh one;
- *   5. the `./machine` public surface is exactly the spec'd names (§9.3).
+ *   5. the `./machine` public surface is exactly the spec'd names (§9.3);
+ *   6. host props reach the machine on every host update (D7): guards read the
+ *      new value on the next event and `watch` trackers re-run without any
+ *      component call, `updateProps` runs once per host update without an update
+ *      loop, and a fallback or props-less controller never calls it.
  *
  * `VanillaMachine.send` dispatches on a microtask, so transition assertions
  * await the host's `updateComplete` after sending.
@@ -18,10 +22,10 @@
 import { describe, expect, spyOn, test } from 'bun:test';
 import { fixture, html } from '@open-wc/testing-helpers';
 import { createMachine } from '@zag-js/core';
-import { html as litHtml } from 'lit';
+import { html as litHtml, type PropertyDeclarations } from 'lit';
 import { LineElement } from '../src/line-element.js';
 import * as machineSurface from '../src/machine/index.js';
-import { LineMachineController, type LineMachineControllerOptions } from '../src/machine/index.js';
+import { LineMachineController, type LineMachineControllerOptions, VanillaMachine } from '../src/machine/index.js';
 
 interface ToggleSchema {
   state: 'off' | 'on';
@@ -59,15 +63,40 @@ const brokenStartMachine = createMachine<ToggleSchema>({
   },
 });
 
-/** Base host; subclasses pick the controller options they mount with. */
-class MachineHost extends LineElement {
-  readonly ctrl = new LineMachineController<ToggleSchema>(this, this.options());
+interface GateSchema {
+  props: { disabled?: boolean };
+  state: 'off' | 'on';
+  guard: 'isEnabled';
+  event: { type: 'TOGGLE' } | { type: 'RESET' };
+}
+
+/**
+ * `TOGGLE` out of `off` is guarded by the `disabled` prop, and a `watch` on the
+ * same prop sends `RESET` when the host disables an `on` machine.
+ */
+const gateMachine = createMachine<GateSchema>({
+  initialState: () => 'off',
+  watch({ track, prop, send, state }) {
+    track([() => prop('disabled')], () => {
+      if (prop('disabled') && state.matches('on')) send({ type: 'RESET' });
+    });
+  },
+  states: {
+    off: { on: { TOGGLE: { target: 'on', guard: 'isEnabled' } } },
+    on: { on: { TOGGLE: { target: 'off' }, RESET: { target: 'off' } } },
+  },
+  implementations: {
+    guards: {
+      isEnabled: ({ prop }) => prop('disabled') !== true,
+    },
+  },
+});
+
+/** Counts renders and signals each completed update; subclasses own the controller. */
+abstract class RenderHost extends LineElement {
+  abstract readonly ctrl: { readonly fallback: boolean; readonly state: { get(): string } | undefined };
   renders = 0;
   #rendered = Promise.withResolvers<void>();
-
-  protected options(): LineMachineControllerOptions<ToggleSchema> {
-    return { machine: toggleMachine };
-  }
 
   /** Resolves after the next completed update — the real re-render signal, not a guessed delay. */
   nextRender(): Promise<void> {
@@ -82,6 +111,15 @@ class MachineHost extends LineElement {
   override updated() {
     this.#rendered.resolve();
     this.#rendered = Promise.withResolvers<void>();
+  }
+}
+
+/** Base host; subclasses pick the controller options they mount with. */
+class MachineHost extends RenderHost {
+  readonly ctrl = new LineMachineController<ToggleSchema>(this, this.options());
+
+  protected options(): LineMachineControllerOptions<ToggleSchema> {
+    return { machine: toggleMachine };
   }
 }
 class BrokenHost extends MachineHost {
@@ -100,10 +138,33 @@ class StrictHost extends MachineHost {
   }
 }
 
+/** Declares its machine props as a function of its reactive `disabled` property (D7). */
+class PropsHost extends RenderHost {
+  static override properties: PropertyDeclarations = { disabled: { type: Boolean } };
+  declare disabled: boolean;
+  readonly ctrl = new LineMachineController<GateSchema>(this, this.options());
+
+  constructor() {
+    super();
+    this.disabled = false;
+  }
+
+  protected options(): LineMachineControllerOptions<GateSchema> {
+    return { machine: gateMachine, props: () => ({ disabled: this.disabled }) };
+  }
+}
+class BrokenPropsHost extends PropsHost {
+  protected override options(): LineMachineControllerOptions<GateSchema> {
+    return { ...super.options(), machine: brokenStartMachine as unknown as typeof gateMachine };
+  }
+}
+
 customElements.define('line-test-machine', MachineHost);
 customElements.define('line-test-machine-broken', BrokenHost);
 customElements.define('line-test-machine-broken-start', BrokenStartHost);
 customElements.define('line-test-machine-strict', StrictHost);
+customElements.define('line-test-machine-props', PropsHost);
+customElements.define('line-test-machine-props-broken', BrokenPropsHost);
 
 const text = (el: Element) => el.shadowRoot?.querySelector('p')?.textContent;
 
@@ -196,5 +257,84 @@ describe('LineMachineController', () => {
       ['LineMachineController', 'VanillaMachine', 'mergeProps', 'normalizeProps', 'spreadProps'].sort(),
     );
     expect('bindable' in machineSurface).toBe(false);
+  });
+
+  describe('host props (D7)', () => {
+    test('a host property change reaches the machine guard on the next event without a component call', async () => {
+      const el = await fixture<PropsHost>(html`<line-test-machine-props></line-test-machine-props>`);
+      expect(el.ctrl.state?.get()).toBe('off');
+
+      el.disabled = true;
+      await el.updateComplete;
+      el.ctrl.send({ type: 'TOGGLE' });
+      await Promise.resolve(); // where VanillaMachine.send dispatches; the guard holds it in `off`
+      expect(el.ctrl.state?.get()).toBe('off');
+
+      el.disabled = false;
+      await el.updateComplete;
+      el.ctrl.send({ type: 'TOGGLE' });
+      await el.nextRender();
+      expect(el.ctrl.state?.get()).toBe('on');
+      expect(text(el)).toBe('on');
+    });
+
+    test('a host property change re-runs the machine watch trackers without a component call', async () => {
+      const el = await fixture<PropsHost>(html`<line-test-machine-props></line-test-machine-props>`);
+      el.ctrl.send({ type: 'TOGGLE' });
+      await el.nextRender();
+      expect(el.ctrl.state?.get()).toBe('on');
+
+      // Only `updateProps` re-runs trackers; without it `RESET` never fires (R7 §2.3, probe P2).
+      // The tracker sends `RESET` during the prop update, and the transition renders once more.
+      el.disabled = true;
+      await el.updateComplete;
+      expect(el.ctrl.state?.get()).toBe('off');
+      await el.nextRender();
+      expect(text(el)).toBe('off');
+    });
+
+    test('updateProps runs once per host update, and its requestUpdate folds into that update', async () => {
+      const updateProps = spyOn(VanillaMachine.prototype, 'updateProps');
+      try {
+        const el = await fixture<PropsHost>(html`<line-test-machine-props></line-test-machine-props>`);
+        expect(updateProps).toHaveBeenCalledTimes(el.renders);
+
+        updateProps.mockClear();
+        const before = el.renders;
+        el.disabled = true;
+        await el.updateComplete;
+        // A requestUpdate from hostUpdated() would leave a second update pending here.
+        expect(el.isUpdatePending).toBe(false);
+        expect(el.renders).toBe(before + 1);
+        expect(updateProps).toHaveBeenCalledTimes(1);
+        await el.updateComplete;
+        expect(el.renders).toBe(before + 1);
+      } finally {
+        updateProps.mockRestore();
+      }
+    });
+
+    test('a controller without props, or in fallback, never calls updateProps', async () => {
+      const updateProps = spyOn(VanillaMachine.prototype, 'updateProps');
+      const error = spyOn(console, 'error').mockImplementation(() => {});
+      try {
+        const plain = await fixture<MachineHost>(html`<line-test-machine></line-test-machine>`);
+        plain.requestUpdate();
+        await plain.updateComplete;
+
+        const broken = await fixture<PropsHost>(
+          html`<line-test-machine-props-broken></line-test-machine-props-broken>`,
+        );
+        expect(broken.ctrl.fallback).toBe(true);
+        broken.disabled = true;
+        await broken.updateComplete;
+        expect(text(broken)).toBe('static');
+
+        expect(updateProps).not.toHaveBeenCalled();
+      } finally {
+        updateProps.mockRestore();
+        error.mockRestore();
+      }
+    });
   });
 });
