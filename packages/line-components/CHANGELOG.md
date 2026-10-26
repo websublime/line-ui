@@ -1,5 +1,12 @@
 # @websublime/line-components
 
+## 0.1.3
+
+### Patch Changes
+
+- Updated dependencies [[`a394d44`](https://github.com/websublime/line-ui/commit/a394d44c8ab7979c87d3beda19db37f2e3d5c8e2), [`67ff29c`](https://github.com/websublime/line-ui/commit/67ff29cce09e1ff9622f83adb97fab8e02e94d3c)]:
+  - @websublime/line-core@0.2.0
+
 ## 0.1.2
 
 ### Patch Changes

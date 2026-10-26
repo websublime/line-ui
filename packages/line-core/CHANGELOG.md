@@ -1,5 +1,13 @@
 # @websublime/line-core
 
+## 0.2.0
+
+### Minor Changes
+
+- [#293](https://github.com/websublime/line-ui/pull/293) [`a394d44`](https://github.com/websublime/line-ui/commit/a394d44c8ab7979c87d3beda19db37f2e3d5c8e2) Thanks [@miguelramos](https://github.com/miguelramos)! - `LineMachineController` now passes host props to the machine on every host update, so `watch` trackers and guards see each property change; the `props` option must be a function of the host's properties, `props: () => ({ disabled: this.disabled })`.
+
+- [#291](https://github.com/websublime/line-ui/pull/291) [`67ff29c`](https://github.com/websublime/line-ui/commit/67ff29cce09e1ff9622f83adb97fab8e02e94d3c) Thanks [@miguelramos](https://github.com/miguelramos)! - `LineElement` now attaches `ElementInternals` once per element and reflects machine state as both `data-<state>` and `:state(<state>)` (kebab-case names such as `focus-visible` included); subclasses reach the internals through the new `INTERNALS` export, and `FormAssociated` (now also exported from `@websublime/line-core`, with `@websublime/line-core/mixins/form-associated` re-exporting it) reuses them.
+
 ## 0.1.3
 
 ### Patch Changes
