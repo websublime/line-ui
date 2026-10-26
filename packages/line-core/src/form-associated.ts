@@ -62,8 +62,12 @@ export interface FormAssociatedMembers {
  *
  * Opt-in per component: `class LineInput extends FormAssociated(LineElement) {}`.
  * Sub-classes implement the form lifecycle callbacks they need. The root entry
- * exports it, and `./mixins/form-associated` re-exports it from the root, so
- * both specifiers share one `INTERNALS` Symbol on every delivery path.
+ * exports it, and `./mixins/form-associated` re-exports it through the bare
+ * self-reference `@websublime/line-core` instead of a relative copy, so both
+ * specifiers share one `INTERNALS` Symbol wherever that name resolves to the
+ * root module: through `exports` in a bundler, on jsDelivr `+esm` only when
+ * every URL names the same exact version, and on unpkg raw through the import
+ * map's `@websublime/line-core` entry (spec §7.7; P6 checks both CDN paths).
  *
  * @see docs/specs/00-spec-design-system.md §6.D.5 (AM-032, AM-080)
  * @see docs/specs/01-spec-core-primitives.md §6.C.2 (AM-050)
