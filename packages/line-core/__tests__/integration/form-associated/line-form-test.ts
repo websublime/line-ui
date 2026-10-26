@@ -7,13 +7,13 @@
  * current value with `setFormValue` and, when `required` and empty, reports
  * `valueMissing` with `setValidity`. A form reset clears the current value,
  * restoring the default, and counts the `formResetCallback` call in `resets`.
+ * `toggleState` exposes the protected `reflectState` hook (spec §6.C.2).
  *
  * @module __tests__/integration/form-associated/line-form-test
  */
 
 import type { PropertyDeclarations } from 'lit';
-import { LineElement } from '../../../src/line-element.js';
-import { FormAssociated } from '../../../src/mixins/form-associated.js';
+import { FormAssociated, LineElement } from '../../../src/index.js';
 
 export class LineFormTest extends FormAssociated(LineElement) {
   static override properties: PropertyDeclarations = {
@@ -54,6 +54,11 @@ export class LineFormTest extends FormAssociated(LineElement) {
   override formResetCallback(): void {
     this.resets += 1;
     this.value = null;
+  }
+
+  /** Calls `reflectState(name, active)`. */
+  toggleState(name: string, active: boolean): void {
+    this.reflectState(name, active);
   }
 }
 

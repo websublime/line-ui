@@ -6,7 +6,8 @@
  * the value reaches `FormData`, the `formdata` event, and the submitted request;
  * `form.reset()` reaches `formResetCallback`; `setValidity` drives
  * `checkValidity` / `reportValidity`, `:invalid` / `:valid`, and whether the
- * form submits.
+ * form submits. `reflectState` writes the `LineElement` body: a kebab-case
+ * state reaches `data-*` and `:state()` verbatim (spec §6.C.2).
  *
  * @module __tests__/integration/form-associated/form-associated.e2e
  */
@@ -186,4 +187,21 @@ test('validity drives checkValidity, reportValidity, :invalid / :valid, and form
   });
   await requestSubmit();
   expect(await counts()).toEqual({ submit: 1, invalid: 4 });
+});
+
+test('reflectState reflects focus-visible as data-focus-visible and :state(focus-visible)', async ({ page }) => {
+  const errors: Error[] = [];
+  page.on('pageerror', (error) => errors.push(error));
+  await mount(page);
+  const toggle = (active: boolean) =>
+    page.evaluate((next) => {
+      const field = document.querySelector('line-form-test');
+      if (!field) throw new Error('fixture not mounted');
+      field.toggleState('focus-visible', next);
+      return { attribute: field.getAttribute('data-focus-visible'), state: field.matches(':state(focus-visible)') };
+    }, active);
+
+  expect(await toggle(true)).toEqual({ attribute: '', state: true });
+  expect(await toggle(false)).toEqual({ attribute: null, state: false });
+  expect(errors).toEqual([]);
 });

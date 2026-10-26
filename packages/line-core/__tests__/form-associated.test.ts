@@ -1,10 +1,11 @@
 /**
  * FormAssociated mixin unit tests (D5, spec §6.D.5, AM-032).
  *
- * happy-dom 20.10.5 has no `attachInternals`, so every test installs the
+ * happy-dom has no `attachInternals`, so every test installs the
  * recording fake from `mocks/element-internals.ts` and checks that the mixin
- * forwards to it. Real form submission, reset, and validation live in the
- * browser tier (`integration/form-associated/form-associated.e2e.ts`).
+ * forwards to it. `FormAssociated` comes from `src/index.ts`, the module graph
+ * `LineElement` lives in (spec §6.C.2, AM-050). Real form submission, reset,
+ * and validation live in the browser tier (`integration/form-associated/form-associated.e2e.ts`).
  *
  * Runs on F2's harness. `bun-test-preload.ts` registers happy-dom globally and
  * runs `@open-wc/testing-helpers` `fixtureCleanup` after each test.
@@ -14,8 +15,7 @@
 
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import { fixture, html } from '@open-wc/testing-helpers';
-import { LineElement } from '../src/line-element.js';
-import { FormAssociated } from '../src/mixins/form-associated.js';
+import { FormAssociated, INTERNALS, LineElement } from '../src/index.js';
 import { type FakeInternals, installElementInternals } from './mocks/element-internals.js';
 
 /** Form-associated `LineElement`, the shape every form component takes. */
@@ -138,5 +138,11 @@ describe('FormAssociated', () => {
     expect(el.hasAttribute('data-dirty')).toBe(true);
     el.toggleState('dirty', false);
     expect(el.hasAttribute('data-dirty')).toBe(false);
+  });
+
+  test('the mixin and LineElement share the one attached internals', async () => {
+    const { el, fake } = await mount();
+    expect(created.filter((candidate) => candidate.host === el)).toHaveLength(1);
+    expect(Reflect.get(el, INTERNALS)).toBe(fake);
   });
 });

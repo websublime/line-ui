@@ -1,6 +1,6 @@
 /**
- * Recording fake `ElementInternals` for the FormAssociated unit tier (spec §6.D.5, AM-032).
- * happy-dom 20.10.5 has no `attachInternals`, so the mixin's constructor needs this one.
+ * Recording fake `ElementInternals` for the line-core unit tier (spec §6.C.2, §6.D.5, AM-032).
+ * happy-dom has no `attachInternals`, so `bun-test-preload.ts` installs one that returns this fake.
  * @module __tests__/mocks/element-internals
  */
 
@@ -27,14 +27,27 @@ export class FakeInternals {
   }
 }
 
-/** Installs a fake `HTMLElement.prototype.attachInternals` (happy-dom has none); `restore()` removes it. */
+/**
+ * Installs a recording `HTMLElement.prototype.attachInternals` that collects every fake it creates in
+ * `created`; `restore()` puts back the `attachInternals` it replaced (the preload fake), so later tests keep one.
+ */
 export function installElementInternals() {
   const proto: { attachInternals?: () => ElementInternals } = HTMLElement.prototype;
+  const previous = proto.attachInternals;
   const created: FakeInternals[] = [];
   proto.attachInternals = function (this: HTMLElement) {
     const fake = new FakeInternals(this);
     created.push(fake);
     return fake as unknown as ElementInternals;
   };
-  return { created, restore: () => delete proto.attachInternals };
+  return {
+    created,
+    restore: () => {
+      if (previous) {
+        proto.attachInternals = previous;
+      } else {
+        delete proto.attachInternals;
+      }
+    },
+  };
 }

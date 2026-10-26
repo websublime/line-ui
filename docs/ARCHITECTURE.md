@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-10-21
+**Date:** 2026-10-26
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -12,6 +12,8 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.13 (2026-10-26)** — Aligned with PRD v0.8.27 and Phase 1 spec AM-050 (ledger row `01-C23`, decision by Miguel on 2026-10-26).
+  - §12 (Bundle Splitting Rule, shared runtime) says each library build also keeps the package's own name external, so every bare specifier in `dist/` is declared or is a self-reference through the package's `exports`. `@websublime/line-core/mixins/form-associated` re-exports `FormAssociated` from the `line-core` root that way, so the jsDelivr `+esm` path, which inlines relative imports into each URL, keeps one `INTERNALS` Symbol (Phase 1 spec §6.C.2, §7.7, §10 SD2, AM-050).
 - **v0.8.12 (2026-10-21)** — Aligned with PRD v0.8.26, with coherence review rounds 30 and 31 (ledger row `00-Z48`).
   - §17.3 (Descriptors and catalogs) gives Text inside a Button a `<span>`, as Phase 1 spec §10 SD59 sets (Phase 1 spec AM-040; finding L3R30-03).
   - §12 (Bundle Splitting Rule, the side-effect contract) cites Phase 1 spec §4, §4.3–§4.5, §10 SD4, SD5 on the sentence about the manifests that keep `"sideEffects"`, and Phase 1 spec §7.5, §10 SD4 on the harness sentence (Phase 1 spec AM-040, AM-041; findings L3R30-07, L3R31-08).
@@ -506,7 +508,7 @@ Icons are **orthogonal to the design system.** `@websublime/line-icons` is a sep
 
 **Side-effect contract.** Each component file calls `customElements.define()` at module top — this is the **only** side-effect. Importing one component never imports or executes another. There is no barrel, so a consumer that imports one subpath pulls in only that subpath's module graph, and unused subpaths never enter the bundle. The `"sideEffects"` field does not provide this isolation, because listing a file keeps it in the bundle and an entry-file list drops registrations whose `define()` sits in a shared chunk. `line-components` and `line-genui` therefore omit the field and use the default Rolldown chunks; the other packages keep theirs (Phase 1 spec §4, §4.3–§4.5, §10 SD4, SD5). A registration harness, an isolation scan and one esbuild consumer bundle verify the split on the packed tarball (Phase 1 spec §7.5, §10 SD4).
 
-**Shared runtime stays external.** The library builds keep `@websublime/*` external, so a consumer that imports `line-core` and a component gets one `LineElement` class. A copy of `line-core` inlined into `line-components` would give two classes, and `instanceof` would fail. Each build derives `external` from its manifest's `dependencies` and `peerDependencies`, so every bare specifier in `dist/` is declared (Phase 1 spec §10 SD2).
+**Shared runtime stays external.** The library builds keep `@websublime/*` external, so a consumer that imports `line-core` and a component gets one `LineElement` class. A copy of `line-core` inlined into `line-components` would give two classes, and `instanceof` would fail. Each build derives `external` from its manifest's `dependencies` and `peerDependencies`, plus the package's own name, so every bare specifier in `dist/` is declared or is a self-reference through the package's `exports` (Phase 1 spec §10 SD2, AM-050).
 
 ```js
 // Consumer imports surgically — registers only what is used

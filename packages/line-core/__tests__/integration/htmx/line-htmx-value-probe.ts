@@ -12,8 +12,7 @@
  */
 
 import { html } from 'lit';
-import { LineElement } from '../../../src/line-element.js';
-import { FormAssociated } from '../../../src/mixins/form-associated.js';
+import { FormAssociated, LineElement } from '../../../src/index.js';
 
 export class LineHtmxValueProbe extends FormAssociated(LineElement) {
   /** The last committed value; the form submits it under the host's `name`. */
