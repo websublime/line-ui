@@ -159,8 +159,8 @@ Gates are proportional to the class. A phase is not locked until its gate passes
   any dispatch of the other supervisor on the branch has returned (§4), is `bun run changeset`: pick every
   published package the branch changed (`src`, build or exports config, dependencies) and the semver bump —
   `patch` for fixes, `minor` for new capability, `major` for a breaking contract — and write a one-line
-  consumer-facing summary. A branch that changed no published package runs
-  `bun run empty` instead, so every PR carries a file under `.changeset/`. `bun run status` shows what the
+  consumer-facing summary. A branch that changed no published package runs `bun run empty` instead, so every PR
+  carries a file under `.changeset/`. `bun run changeset status --since=origin/main` shows what the
   branch will bump. No changeset file, no PR. Once a package's first `minor` of a phase has shipped, that package's
   further changesets in that phase use `patch`, even for new capability, so its next minor stays the next phase's
   version (PRD §7.1, §6.5). Shipped means released by a merged Version PR. The implementer picks the bump against
