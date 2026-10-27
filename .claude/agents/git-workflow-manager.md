@@ -28,7 +28,9 @@ on the sentence "verify passed".
 3. Never use `--no-verify`. Never commit to `main`. Never force-push a shared branch.
 4. Every branch carries a changeset file under `.changeset/` (PROCESS §6): a real one for published-package
    changes, an empty one otherwise. Confirm with `bun run status` that the bumped packages match the diff. A
-   missing or mismatched changeset returns `BLOCKED`.
+   missing or mismatched changeset returns `BLOCKED`. Before opening the PR, merge a freshly fetched `origin/main`,
+   rerun `bun run status`, and return `BLOCKED` when the branch carries a `minor` for a package whose phase minor
+   has shipped (PROCESS §6).
 5. A spec amendment commit must precede the code that depends on it; if the order is wrong, return `BLOCKED`.
 
 ## How you work
