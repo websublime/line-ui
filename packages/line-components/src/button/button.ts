@@ -225,7 +225,7 @@ export class LineButton extends FormAssociated(LineElement) {
     this.formAction = '';
     this.formNoValidate = false;
     this.customValidity = '';
-    this.addEventListener('click', this.#onClick);
+    this.addEventListener('click', this.#onClick, { capture: true });
   }
 
   override formDisabledCallback(disabled: boolean): void {
@@ -240,9 +240,11 @@ export class LineButton extends FormAssociated(LineElement) {
   }
 
   /**
-   * Stops a click while the button is not interactive. Otherwise it activates
-   * in a later task, once the click dispatch has ended, unless a listener
-   * called `preventDefault()`.
+   * Stops a click while the button is not interactive. It listens in the
+   * capture phase, so it runs before every bubble listener on the host,
+   * including an inline `onclick` or a listener added before the upgrade.
+   * Otherwise it activates in a later task, once the click dispatch has
+   * ended, unless a listener called `preventDefault()`.
    */
   readonly #onClick = (event: MouseEvent): void => {
     if (!this.#api().interactive) {
