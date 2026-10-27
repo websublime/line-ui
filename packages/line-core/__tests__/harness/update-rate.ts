@@ -24,9 +24,8 @@ import { VanillaMachine } from '../../src/machine/index.js';
 
 /**
  * Budget: wall time of one host update, in milliseconds (C21; spec §10 SD18).
- * On the C21 fixture one host update costs 0.02–0.04 ms at 100 accumulated
- * updates. [INFERENCE] 1 ms keeps about ten components streaming in the same
- * 16.7 ms frame inside a 10 ms scripting share.
+ * [INFERENCE] 1 ms keeps about ten components streaming in the same 16.7 ms
+ * frame inside a 10 ms scripting share.
  */
 export const UPDATE_BUDGET_MS = 1;
 
