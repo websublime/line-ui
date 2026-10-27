@@ -227,6 +227,8 @@ On a toggle button, activation flips `pressed` and fires `line-change`.
 - **Screen-reader pass** (Phase 1 spec §6.C.4; R8 §6 Q1, Q5). Two checks run on the shipped component.
   - A Playwright `ariaSnapshot` in the Browser tier, in chromium, firefox and webkit, records one `button` node with the expected name and pressed state, and records whether the named `generic` host appears.
   - A manual VoiceOver pass runs on macOS in Safari and Chrome. It tabs to a plain, a toggle and a loading button, flips the toggle and turns `loading` on and off with focus on the button. It records what VoiceOver announces, whether the host name is announced twice, and whether the change to the loading name is announced. The C1 PR records the result in this section.
+  - **Result, ariaSnapshot** (C1, `__tests__/integration/button/button.e2e.ts`, 2026-10-27). In chromium, firefox and webkit each host yields one `button` node: `button "Save"`, `button "Bold" [pressed]`, `button "Save Saving…" [disabled]` for the loading button (its `aria-disabled="true"`), and `button "Close dialog"` for a host `aria-label`. The named `generic` host does not appear in any engine. Playwright builds the snapshot itself rather than reading the engine's accessibility tree, so the three engines give the same snapshot and it does not show whether an engine exposes the host.
+  - **Result, VoiceOver pass** (Miguel, Verify): pending.
 - An unannounced loading change is a known risk [INFERENCE: React Aria announces pending changes through a live region, R7 `:208-209`]. If the manual pass shows no announcement, the finding goes to Miguel before the spec moves to `implemented`.
 
 ### Agent contract
