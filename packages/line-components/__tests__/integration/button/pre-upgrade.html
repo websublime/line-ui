@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>line-button pre-upgrade listeners fixture (spec 0002-button.md)</title>
+    <!-- The module runs after parsing, so the inline script below adds its listeners before line-button is defined. -->
+    <script type="module" src="./fixture.ts"></script>
+  </head>
+  <body>
+    <main>
+      <form id="orders">
+        <line-button id="busy" loading name="intent" value="save">Busy</line-button>
+        <line-button id="off" disabled name="intent" value="save">Off</line-button>
+      </form>
+    </main>
+    <script>
+      window.lineClicks = [];
+      window.lineSubmits = 0;
+      window.lineDefinedBeforeListeners = customElements.get('line-button') !== undefined;
+      // An inline handler attribute, then a listener, both before line-button is defined.
+      for (const id of ['busy', 'off']) {
+        document.getElementById(id).setAttribute('onclick', `window.lineClicks.push('inline:${id}')`);
+        document.getElementById(id).addEventListener('click', () => window.lineClicks.push(`listener:${id}`));
+      }
+      document.getElementById('orders').addEventListener('submit', (event) => {
+        event.preventDefault();
+        window.lineSubmits += 1;
+      });
+    </script>
+  </body>
+</html>

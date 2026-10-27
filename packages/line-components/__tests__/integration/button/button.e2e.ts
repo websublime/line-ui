@@ -406,6 +406,50 @@ test.describe('form behaviour', () => {
   });
 });
 
+test.describe('listeners added before the upgrade', () => {
+  test('an inline onclick and an earlier listener never run while loading or disabled', async ({ page }) => {
+    await page.goto(`${FIXTURE_URL}pre-upgrade.html`);
+    await page.evaluate(() => customElements.whenDefined('line-button'));
+    expect(
+      await page.evaluate(
+        () => (window as unknown as { lineDefinedBeforeListeners: boolean }).lineDefinedBeforeListeners,
+      ),
+    ).toBe(false);
+    await expect(host(page, 'busy')).toHaveAttribute('data-loading', '');
+    await expect(host(page, 'off')).toHaveAttribute('data-disabled', '');
+
+    await host(page, 'busy').click();
+    await host(page, 'busy').focus();
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
+    await host(page, 'off').click({ force: true });
+    for (const id of ['busy', 'off']) await host(page, id).evaluate((el: HTMLElement) => el.click());
+
+    const seen = await page.evaluate(
+      () =>
+        new Promise<{ clicks: string[]; submits: number }>((resolve) => {
+          const state = window as unknown as { lineClicks: string[]; lineSubmits: number };
+          setTimeout(() => setTimeout(() => resolve({ clicks: state.lineClicks, submits: state.lineSubmits })));
+        }),
+    );
+    expect(seen).toEqual({ clicks: [], submits: 0 });
+  });
+
+  test('the earlier listeners run once the button is interactive again', async ({ page }) => {
+    await page.goto(`${FIXTURE_URL}pre-upgrade.html`);
+    await page.evaluate(() => customElements.whenDefined('line-button'));
+    await host(page, 'busy').evaluate((el: HTMLElement & { loading: boolean }) => {
+      el.loading = false;
+    });
+    await expect(host(page, 'busy')).not.toHaveAttribute('data-loading');
+    await host(page, 'busy').click();
+    expect(await page.evaluate(() => (window as unknown as { lineClicks: string[] }).lineClicks)).toEqual([
+      'inline:busy',
+      'listener:busy',
+    ]);
+  });
+});
+
 test.describe('screen-reader pass (ariaSnapshot)', () => {
   test('one button node per host with the expected name and pressed state', async ({ page }) => {
     await mount(
