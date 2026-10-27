@@ -5,7 +5,8 @@
  * `visual` project. The Linux baselines come from a `visual-baselines.yml`
  * run. The `default`, `primary` and `borderless` stories must differ, because
  * each variant sets its own `--line-button-bg` and `--line-button-color`
- * defaults (AM-056); the last test compares their screenshots.
+ * defaults (AM-056); the last test renders the three with one label and
+ * compares their `::part(root)` backgrounds and their screenshots.
  *
  * @module __tests__/visual/button.visual
  */
@@ -22,13 +23,21 @@ for (const id of BUTTON_STORIES) {
   });
 }
 
-test('the default, primary and borderless stories render differently', async ({ page }) => {
+test('the default, primary and borderless variants render differently with the same label', async ({ page }) => {
   const shots = new Set<string>();
+  const backgrounds = new Set<string>();
   for (const variant of ['default', 'primary', 'borderless']) {
-    await page.goto(`${STORYBOOK_ORIGIN}/iframe.html?id=components-button--${variant}&viewMode=story`);
+    await page.goto(`${STORYBOOK_ORIGIN}/iframe.html?id=components-button--${variant}&viewMode=story&args=label:Save`);
     await expect(page.locator('body')).toHaveClass(/\bsb-show-main\b/);
-    await expect(page.locator('#storybook-root line-button')).toBeVisible();
+    const host = page.locator('#storybook-root line-button');
+    await expect(host).toHaveText('Save');
+    backgrounds.add(
+      await host.evaluate(
+        (el) => getComputedStyle(el.shadowRoot?.querySelector('[part="root"]') as Element).backgroundColor,
+      ),
+    );
     shots.add((await page.screenshot({ fullPage: true })).toString('base64'));
   }
+  expect(backgrounds.size).toBe(3);
   expect(shots.size).toBe(3);
 });
