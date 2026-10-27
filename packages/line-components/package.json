@@ -22,7 +22,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./custom-elements.json": "./custom-elements.json"
+    "./custom-elements.json": "./custom-elements.json",
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "import": "./dist/button/index.js"
+    }
   },
   "dependencies": {
     "@websublime/line-core": "workspace:^",
