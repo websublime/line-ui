@@ -43,5 +43,3 @@ jobs:
         run: bun run e2e
       - name: Storybook build
         run: bun --filter '@websublime/line-storybook' build
-      - name: Storybook analyze (CEM)          # AM-024: no `run`
-        run: bun --filter '@websublime/line-storybook' analyze
