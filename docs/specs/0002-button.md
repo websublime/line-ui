@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `reviewed` |
+| Status | `approved` (Miguel, 2026-10-27) |
 | Phase | `1` |
 | Tier | `Custom` |
 | Tag | `line-button` |
