@@ -276,7 +276,10 @@ test.describe('form behaviour', () => {
       button.customValidity = '';
     });
     await expect(el).not.toHaveAttribute('data-invalid');
-    await el.click();
+    // Linux WebKit renders the validation bubble into the anchor's user-agent shadow root, which hides the
+    // inner button's content after a blocked submit, so the second activation uses the keyboard.
+    await el.focus();
+    await page.keyboard.press('Enter');
     expect(await submissions(page)).toHaveLength(1);
   });
 
