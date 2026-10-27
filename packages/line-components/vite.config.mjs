@@ -1,8 +1,8 @@
 import { mergeConfig } from 'vite';
 import shared from '../../vite.config.shared.mjs';
 
-// The root entry stays a zero-export module until P5 (Phase 1 spec §6.C.0 step 3). Each C row adds
-// its own `'<c>/index'` entry (§4.2).
+// Phase 00: dist/index.js must be a zero-export module (§4.7, §9.1).
+// Source is `export {};` — no real components ship until Phase 1.
 //
 // Chunks that hold `src/shared/` modules land in `dist/shared/`, so the isolation scan can tell
 // shared code by path (Phase 1 spec §6.P.9, §7.5). Every other chunk keeps Vite's library-mode name.
