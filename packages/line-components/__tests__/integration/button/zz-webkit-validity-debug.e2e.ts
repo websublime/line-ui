@@ -82,7 +82,11 @@ for (const anchor of [true, false]) {
   test(`P2 plain FACE, setValidity ${anchor ? 'with' : 'without'} a shadow anchor`, async ({ page, browserName }) => {
     test.setTimeout(90_000);
     const log: unknown[] = [browserName, process.platform];
-    await setup(page, log, '<form><x-face id="plain"></x-face><button id="native" type="submit">Go</button></form>');
+    await setup(
+      page,
+      log,
+      '<form><line-debug-face id="plain"></line-debug-face><button id="native" type="submit">Go</button></form>',
+    );
     await step(log, 'define', () =>
       page.evaluate((withAnchor) => {
         class XFace extends HTMLElement {
@@ -100,7 +104,7 @@ for (const anchor of [true, false]) {
             this.internals.setValidity({ customError: true }, 'Pick a plan', withAnchor ? inner : undefined);
           }
         }
-        customElements.define('x-face', XFace);
+        customElements.define('line-debug-face', XFace);
         (document.querySelector('#plain') as HTMLElement & { invalidate(): void }).invalidate();
         return 'ok';
       }, anchor),
