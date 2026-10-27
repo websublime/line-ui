@@ -4,11 +4,15 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./htmx": "./src/htmx.ts"
+    "./htmx": "./src/htmx.ts",
+    "./update-rate": "./src/update-rate.ts"
   },
   "dependencies": {
     "htmx2": "npm:htmx.org@2.0.11",
     "htmx4": "npm:htmx.org@4.0.0"
+  },
+  "devDependencies": {
+    "lit": "^3.3.3"
   },
   "peerDependencies": {
     "playwright": "^1.64.0"
