@@ -9,7 +9,7 @@
  * For every publishable package (packages/* minus `"private": true` minus the
  * `.changeset/config.json` ignore list) it packs a staged copy (workspace: ranges
  * rewritten from packages/*\/package.json versions) with `bun pm pack` and checks:
- *   (a) every exports target / main / module / types exists in the tarball
+ *   (a) every exports target / main / module / types / customElements exists in the tarball
  *   (b) every tarball path is on the allowlist (package.json, README*, LICENSE*, LICENCE*, `files` entries)
  *   (c) no tarball path hits the denylist (__tests__/, *.test.*, *.spec.*, tsconfig*.json, vite.config.*, *.tsbuildinfo, .-prefixed segments, *.pem, *.key)
  *   (d) no workspace:/catalog: range in the packed manifest's four dependency fields
