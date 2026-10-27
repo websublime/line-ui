@@ -59,11 +59,11 @@ The following are explicitly **out of scope** for Phase 00 and must not be intro
 │  ├── line-themes       L3  CSS    — roles, semantics, aliases, defaults    │
 │  ├── line-utils        —   TS     — contrast, mix helpers                  │
 │  ├── line-core         —   TS     — LineElement + mixins + machine adapter │
-│  ├── line-components   —   TS     — empty umbrella (Phase 00)              │
+│  ├── line-components   —   TS     — empty umbrella (Phase 00), CEM analyser│
 │  └── line-icons        —   TS     — registry contract + resolver           │
 │                                                                            │
 │  apps/  (2 unpublished apps)                                               │
-│  ├── storybook    — Storybook 10 + web-components-vite + CEM analyser      │
+│  ├── storybook    — Storybook 10 + web-components-vite                     │
 │  └── site         — Astro 7 scaffold + Cloudflare Pages + placeholder      │
 │                                                                            │
 │  Tooling                                                                   │
@@ -425,7 +425,7 @@ Root `package.json` `build` script is `"bun --filter './packages/*' build && bun
 - Pin `@biomejs/biome` to the **2.5.x line** at `^2.5.15` minimum (AM-064). After the bump, `bunx biome migrate --write` updates `biome.json`, so its `$schema` URL and any renamed config keys match the installed Biome version.
 - Remove ESLint, Prettier, and all related plugins (`eslint`, `prettier`, `eslint-plugin-*`, `eslint-config-*`, `@typescript-eslint/*`) — full `devDependencies` sweep.
 - Delete `.eslintrc*`, `.prettierrc*`, `.prettierignore`.
-- `biome.json` configures: lint level "recommended"; format style 2-space indent, single quotes, trailing commas "all"; `organizeImports: on`; CSS support enabled (v2 feature); ignores `dist/`, `node_modules/`, `*.generated.css`, `customElements.json`.
+- `biome.json` configures: lint level "recommended"; format style 2-space indent, single quotes, trailing commas "all"; `organizeImports: on`; CSS support enabled (v2 feature); ignores `dist/`, `node_modules/`, `*.generated.css` (AM-082).
 - Root scripts already wire `lint`, `lint:fix`, `format`. No further script changes.
 - Accept the documented "minor rule loss" (PRD §8) — no rule-by-rule mapping is required.
 
@@ -554,6 +554,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-079 | 2026-10-26 | ledger `01-C23` (Phase 1 spec §6.C.2 and §12 AM-050; factual alignment) | One edit to the §6.F.2 `vite.config.shared.mjs` block: `names` starts with the manifest's own `name` before the `dependencies` and `peerDependencies` keys, and the comment says that the package's own name and its subpaths stay external too, so a self-reference stays a bare specifier in `dist/`. | Phase 1 spec AM-050 (decision, Miguel, 2026-10-26) moves `FormAssociated` to the `line-core` root, and `src/mixins/form-associated.ts` re-exports it through the bare self-reference `@websublime/line-core`. Without the own name among the externals, Rolldown tries to resolve that import for bundling and the `line-core` build fails with "Rolldown failed to resolve import "@websublime/line-core" from …/src/mixins/form-associated.ts", because the package has no `node_modules/@websublime/line-core` link to itself. With the name external, the import stays bare in `dist/mixins/form-associated.js`. The block now matches the file. No design choice changes beyond AM-050. | `vite.config.shared.mjs:6-11` after commit `1af06c2`; a rebuild of `line-core` with the `main` factory (01-C23 Verify reviewer, 2026-10-26); `packages/line-core/dist/mixins/form-associated.js` at commit `fdad331`; Phase 1 spec §6.C.2, §6.P.9, §12 AM-050 |
 | AM-080 | 2026-10-26 | ledger `01-C23` (Phase 1 spec §6.C.2 and §12 AM-050; factual alignment) | Two edits to §6.D.5. (1) The file line names `packages/line-core/src/form-associated.ts` as the `FormAssociated` implementation, and a new paragraph under it says that `src/mixins/form-associated.ts` re-exports `FormAssociated` and `FormAssociatedMembers` through the bare self-reference `@websublime/line-core`, so `@websublime/line-core/mixins/form-associated` keeps working, and that Phase 1 row 01-C23 changed the body: the mixin reuses the internals `LineElement` attaches through `this[INTERNALS]` and has no `reflectState` override, and the block below shows the Phase 00 body. (2) The block's `LineElement` type import reads `./line-element.js` (was `../line-element.js`), the path from the new file. | Phase 1 spec AM-050 (decision, Miguel, 2026-10-26) moved the implementation to a module the root entry includes, so the subpath reaches the root's `Symbol('line.internals')` through its own package name instead of a relative copy: in a bundler through `exports`, on jsDelivr `+esm` when every URL names the same exact version (Phase 1 spec §7.7), and on unpkg raw through the import map's `@websublime/line-core` entry [INFERENCE in Phase 1 spec §7.7; P6 checks it]. §6.D.5 named the old file as the implementation. No design choice changes beyond AM-050 and Phase 1 spec §6.C.2. | `packages/line-core/src/form-associated.ts` and `packages/line-core/src/mixins/form-associated.ts` after the 01-C23 implementation commit; Phase 1 spec §6.C.2, §7.7, §12 AM-050 |
 | AM-081 | 2026-10-27 | ledger `01-C24` (factual alignment to Phase 1 spec AM-052) | One edit to the §6.A A3 dependency table. The `@zag-js/core` and `@zag-js/vanilla` floors move from `^1.46.0` to `^1.47.0`, and each source cell adds AM-081. | Phase 1 row 01-C24 raises every `@zag-js/*` floor to `^1.47.0`, because `@zag-js/vanilla` 1.47.0 carries the zag#3557 fix and Zag packages pin their siblings to exact versions (Phase 1 spec §6.C.7, AM-052). This table states the repo floors, so it moves with them. | Phase 1 spec §12 AM-052; `npm view @zag-js/toggle@1.47.0 dependencies` and `npm view @zag-js/presence@1.47.0 dependencies` (exact `1.47.0` siblings), 2026-10-27; `packages/line-core/package.json:38-39` and root `package.json:65-66`, which C24 raises |
+| AM-082 | 2026-10-27 | ledger `01-P10` (Phase 1 spec §6.P.10, §10 SD26, SD27, approved by Miguel on 2026-10-20) | Eight edits for the move from a root-only manifest to a package manifest. (1) §6.A A2: the Biome ignore list drops `customElements.json`. (2) §6.F.1 tree: the `apps/storybook/customElements.json` line is removed. (3) §6.F.1 `main.ts` block: the `viteFinal` comment says 01-P10 wires `setCustomElementsManifest` from the line-components package manifest. (4) §6.F.1 "CEM analyser config — root-only" paragraph becomes "per package" and describes the package config, build and shipped manifest. (5) §6.F.5 `checks.yml` block: the "Storybook analyze (CEM)" step is removed. (6) §7.3 describes the package manifest and its Storybook consumption. (7) §3 diagram: "CEM analyser" moves from the `apps/storybook` line to the `line-components` line. (8) Q3 gains a note that AM-082 supersedes it. The Q3 decision text and earlier AM rows stay as historical record. | Phase 1 ships each component package's manifest in its tarball (D8, SD26) and removes the root config, the `apps/storybook` `analyze` script and its CI step (SD27). The Phase 00 live text, including the §3 diagram, described the removed root wiring, and Q3 read as the current rule. | Phase 1 spec §6.P.10, §7.3, §12 AM-019, AM-020, AM-053; `packages/line-components/custom-elements-manifest.config.mjs`; `.github/workflows/checks.yml`; `apps/storybook/.storybook/preview.ts`; §3 diagram (AM-074) and Q3; Verify gate reviewer findings on 01-P10. |
 
 **A4 — npm scope.**
 
@@ -1632,7 +1633,6 @@ storybook/
 │   └── design-system/
 │       ├── palettes.stories.ts # renders each hue swatch grid
 │       └── roles.stories.ts    # renders each role × accent/gray combo
-└── customElements.json         # generated by CEM analyser (Phase 1 onwards has component entries)
 ```
 
 `.storybook/main.ts`:
@@ -1654,7 +1654,7 @@ const config: StorybookConfig = {
   ],
   staticDirs: ['../public'],
   viteFinal: async (cfg) => {
-    // Storybook loads the CEM only when preview.ts calls setCustomElementsManifest; Phase 00 does not (AM-073).
+    // Storybook loads the CEM only when preview.ts calls setCustomElementsManifest; Phase 1 row 01-P10 wires it from the line-components package manifest (AM-073, AM-082).
     // The package CSS is already built for the D10 targets; cssTarget 'esnext' keeps
     // the minifier from lowering light-dark() again (AM-050).
     // chunkSizeWarningLimit is in kB. The chunks above Vite's 500 kB default are
@@ -1668,7 +1668,7 @@ export default config;
 
 **Theme toolbar.** `.storybook/preview.ts` declares two native `globalTypes` toolbar menus, `accent` and `gray` (AM-051). Their items come from `ACCENT_HUES` and `GRAY_HUES` of `@websublime/line-schemas`, so no hue is written by hand. The first entry of each menu removes its attribute. For accent that entry is `default`; for gray it is `auto`. The PRD §9.5 defaults and the auto-pairing then show. `initialGlobals` select those first entries. A decorator sets or removes `data-accent` and `data-gray` on `document.documentElement`. Changing one menu leaves the other attribute untouched. Authors can check any of the 31 accents × 6 grays without per-combination stories. This matches the attribute-based theming model (PRD §9.5).
 
-**CEM analyser config — root-only.** A single `custom-elements-manifest.config.mjs` lives at the **repo root** (not per-package). It declares Lit plugin + globs `packages/*/src/**/*.ts`. Per-package CEM configs were considered and rejected as unnecessary overhead for Phase 00 (no components ship) and Phase 1 (Storybook consumes a single unified manifest anyway). The glob covers every package, so the analyser emits each module, and `LineElement` appears as `customElement: true` (AM-073). The wiring is verified by running `bun run analyze` (CEM CLI) in CI and asserting the manifest file is written.
+**CEM analyser config — per package (AM-082).** Phase 00 shipped a single root `custom-elements-manifest.config.mjs` globbing `packages/*/src/**/*.ts` and writing `apps/storybook/customElements.json`. Phase 1 row 01-P10 replaced it: each component package owns `custom-elements-manifest.config.mjs`, its `build` script runs `analyze` after `tsc`, and it ships `custom-elements.json` (Phase 1 spec §6.P.10, §7.3). Storybook merges the package manifests in `preview.ts` and passes them to `setCustomElementsManifest`. The root build runs packages before apps, so the manifest exists before the Storybook build.
 
 #### 6.F.2 Vite 8+ component build (F1 cont.)
 
@@ -1863,8 +1863,6 @@ jobs:
         run: bun run e2e
       - name: Storybook build
         run: bun --filter '@websublime/line-storybook' build
-      - name: Storybook analyze (CEM)          # AM-024: no `run`
-        run: bun --filter '@websublime/line-storybook' analyze
 ```
 
 `.github/workflows/release.yml` — runs on push to `main`:
@@ -2512,9 +2510,9 @@ Two invariants govern this matrix:
 
 ### 7.3 CEM (Custom Elements Manifest)
 
-- `@custom-elements-manifest/analyzer` v0.11 wired at the repo root (`custom-elements-manifest.config.mjs`).
-- The analyser globs every package and emits each module. `LineElement` appears as `customElement: true` (AM-073). Wiring is verified in CI.
-- Phase 1 onwards: components declare JSDoc → CEM extracts → Storybook consumes for argTypes.
+- `@custom-elements-manifest/analyzer` v0.11 runs per package (AM-082). `packages/line-components/custom-elements-manifest.config.mjs` globs the package sources and `../line-core/src/**/*.ts`, and the package build writes `packages/line-components/custom-elements.json`, which ships in the tarball through the `customElements` field and the `./custom-elements.json` export. `verify-pack` checks the target exists.
+- `LineElement` resolves by class name from the line-core sources (Phase 1 spec AM-053).
+- Components declare JSDoc → CEM extracts → `apps/storybook/.storybook/preview.ts` passes the package manifest to `setCustomElementsManifest` → Storybook consumes it for argTypes.
 
 ### 7.4 Lint rules with semantic teeth
 
@@ -2740,7 +2738,7 @@ All seven questions raised during initial spec authoring were answered by the us
 
 ### Q3. CEM analyser config — root-only or per-package?
 
-**Status: Resolved (2026-05-19).** **Root-only** — a single `custom-elements-manifest.config.mjs` at the repo root, globbing `packages/*/src/**/*.ts`. Simpler, sufficient for Phase 00 (no components ship), and aligned with Phase 1's expected single-manifest consumption from Storybook. Applied in §6.F.1 and §7.3.
+**Status: Resolved (2026-05-19).** **Root-only** — a single `custom-elements-manifest.config.mjs` at the repo root, globbing `packages/*/src/**/*.ts`. Simpler, sufficient for Phase 00 (no components ship), and aligned with Phase 1's expected single-manifest consumption from Storybook. Applied in §6.F.1 and §7.3. *(Superseded by AM-082 — Phase 1 row 01-P10 moved the analyser into the `line-components` build, which ships `custom-elements.json`, and removed the root config.)*
 
 ### Q4. Storybook addons beyond essentials + a11y
 

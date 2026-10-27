@@ -3,8 +3,14 @@
 import '@websublime/line-colors';
 import '@websublime/line-themes';
 
-import type { Decorator, Preview } from '@storybook/web-components-vite';
+import { type Decorator, type Preview, setCustomElementsManifest } from '@storybook/web-components-vite';
+import componentsManifest from '@websublime/line-components/custom-elements.json' with { type: 'json' };
 import { ACCENT_HUES, GRAY_HUES } from '@websublime/line-schemas';
+
+// Custom Elements Manifest (Phase 1 spec § 6.P.10, § 7.3). Each component
+// package ships its own manifest; Storybook takes one, so the package
+// manifests merge by concatenating their modules.
+setCustomElementsManifest({ ...componentsManifest, modules: [...componentsManifest.modules] });
 
 // Theme toolbar (spec § 6.F.1, PRD §9.5).
 //
