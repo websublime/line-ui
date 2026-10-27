@@ -69,6 +69,25 @@ test('P1 line-button custom-validity, same flow as the failing test', async ({ p
   await step(log, 'ping0', () => ping(page));
   await step(log, 'click1', () => el.click({ timeout: 4000 }));
   await step(log, 'ping1', () => ping(page));
+  await step(log, 'rects', () =>
+    page.evaluate(() => {
+      const host = document.querySelector('#save') as HTMLElement;
+      const root = host.shadowRoot?.querySelector('[part="root"]') as HTMLElement;
+      const box = (element: Element): string => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return `${Math.round(rect.width)}x${Math.round(rect.height)} display=${style.display} visibility=${style.visibility}`;
+      };
+      return { host: box(host), root: box(root), hostChildren: host.childNodes.length };
+    }),
+  );
+  await page.waitForTimeout(6000);
+  await step(log, 'rectsAfter6s', () =>
+    page.evaluate(() => {
+      const rect = (document.querySelector('#save') as HTMLElement).getBoundingClientRect();
+      return `${Math.round(rect.width)}x${Math.round(rect.height)}`;
+    }),
+  );
   await step(log, 'clear', () =>
     el.evaluate((button: HTMLElement & { customValidity: string }) => {
       button.customValidity = '';
@@ -93,6 +112,27 @@ test('P3 line-button custom-validity, second activation by keyboard', async ({ p
     }),
   );
   await step(log, 'enter', () => el.press('Enter', { timeout: 4000 }));
+  await step(log, 'ping2', () => ping(page));
+  expect(log, 'diagnostic dump').toEqual(['dump']);
+});
+
+test('P4 native submit button with setCustomValidity', async ({ page, browserName }) => {
+  test.setTimeout(90_000);
+  const log: unknown[] = [browserName, process.platform];
+  await setup(page, log, '<form><button id="native" type="submit">Go</button></form>');
+  await step(log, 'invalidate', () =>
+    page.evaluate(() => {
+      (document.querySelector('#native') as HTMLButtonElement).setCustomValidity('Pick a plan');
+    }),
+  );
+  await step(log, 'click1', () => page.locator('#native').click({ timeout: 4000 }));
+  await step(log, 'ping1', () => ping(page));
+  await step(log, 'clear', () =>
+    page.evaluate(() => {
+      (document.querySelector('#native') as HTMLButtonElement).setCustomValidity('');
+    }),
+  );
+  await step(log, 'click2', () => page.locator('#native').click({ timeout: 4000 }));
   await step(log, 'ping2', () => ping(page));
   expect(log, 'diagnostic dump').toEqual(['dump']);
 });
