@@ -43,7 +43,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| C1 | C | Button, `<line-button>` at `./button`; component spec `docs/specs/0002-button.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, Z5 | todo | — | — | — |
+| C1 | C | Button, `<line-button>` at `./button`; component spec `docs/specs/0002-button.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, Z5 | in_progress | feat/01-c1-button | — | — |
 | C2 | C | Icon, `<line-icon>` at `./icon`, with the registry hook, SVG injection rule and icon surface acceptance; component spec `docs/specs/0014-icon.md` (spec §6.C.3, §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P5, P7–P12, C22, Z5 | todo | — | — | — |
 | C3 | C | Stack, `<line-stack>` at `./stack`; component spec `docs/specs/0018-stack.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, Z5 | todo | — | — | — |
 | C4 | C | Separator, `<line-separator>` at `./separator`; component spec `docs/specs/0011-separator.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, Z5 | todo | — | — | — |
