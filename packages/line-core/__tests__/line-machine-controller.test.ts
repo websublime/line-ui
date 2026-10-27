@@ -8,9 +8,10 @@
  *   3. `staticFallbackOnFailure: false` opts out and lets the error propagate;
  *   4. disconnect tears the machine down; reconnect starts a fresh one;
  *   5. the `./machine` public surface is exactly the spec'd names (§9.3);
- *   6. host props reach the machine on every host update (D7): guards read the
- *      new value on the next event and `watch` trackers re-run without any
- *      component call, `updateProps` runs once per host update without an update
+ *   6. host props reach the machine on every host update (D7, §6.C.7): guards
+ *      read the new value on the next event and `watch` trackers re-run without
+ *      any component call, through `updateProps({})` against the live props
+ *      function, `updateProps` runs once per host update without an update
  *      loop, and a fallback or props-less controller never calls it.
  *
  * `VanillaMachine.send` dispatches on a microtask, so transition assertions
@@ -278,19 +279,31 @@ describe('LineMachineController', () => {
       expect(text(el)).toBe('on');
     });
 
-    test('a host property change re-runs the machine watch trackers without a component call', async () => {
-      const el = await fixture<PropsHost>(html`<line-test-machine-props></line-test-machine-props>`);
-      el.ctrl.send({ type: 'TOGGLE' });
-      await el.nextRender();
-      expect(el.ctrl.state?.get()).toBe('on');
+    test('a host property change re-runs the machine watch trackers through updateProps({})', async () => {
+      const updateProps = spyOn(VanillaMachine.prototype, 'updateProps');
+      try {
+        const el = await fixture<PropsHost>(html`<line-test-machine-props></line-test-machine-props>`);
+        el.ctrl.send({ type: 'TOGGLE' });
+        await el.nextRender();
+        expect(el.ctrl.state?.get()).toBe('on');
 
-      // Only `updateProps` re-runs trackers; without it `RESET` never fires (R7 §2.3, probe P2).
-      // The tracker sends `RESET` during the prop update, and the transition renders once more.
-      el.disabled = true;
-      await el.updateComplete;
-      expect(el.ctrl.state?.get()).toBe('off');
-      await el.nextRender();
-      expect(text(el)).toBe('off');
+        // Only `updateProps` re-runs trackers; without it `RESET` never fires (R7 §2.3, probe P2).
+        // The tracker reads the new value from the live props function and sends `RESET`
+        // during the prop update, and the transition renders once more.
+        updateProps.mockClear();
+        el.disabled = true;
+        await el.updateComplete;
+        expect(el.ctrl.service?.prop('disabled')).toBe(true);
+        expect(el.ctrl.state?.get()).toBe('off');
+        await el.nextRender();
+        expect(text(el)).toBe('off');
+
+        // The signal is an empty patch; the props function is never passed again.
+        expect(updateProps.mock.calls.length).toBeGreaterThan(0);
+        for (const [patch] of updateProps.mock.calls) expect(patch).toEqual({});
+      } finally {
+        updateProps.mockRestore();
+      }
     });
 
     test('updateProps runs once per host update, and its requestUpdate folds into that update', async () => {

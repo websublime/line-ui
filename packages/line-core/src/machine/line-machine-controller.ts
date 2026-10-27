@@ -8,20 +8,24 @@
  * transition.
  *
  * Host props reach the machine on every host update (Phase 1 plan §5.6 D7,
- * spec §6.C.1). A component declares its machine props as a function of its
- * own properties; the controller passes that function to `VanillaMachine` when
- * it starts the machine and to `updateProps` from `hostUpdate()`, so `watch`
- * trackers re-run and guards read the current values on the next event.
- * Components never call `updateProps` themselves and never send events from
- * `updated()` to carry props. The call sits in `hostUpdate()`, before
+ * spec §6.C.1, §6.C.7). A component declares its machine props as a function
+ * of its own properties. The controller passes that function to
+ * `VanillaMachine` when it starts the machine, which keeps it as a live source,
+ * and signals each host update with `updateProps({})` from `hostUpdate()`. The
+ * empty patch stores nothing and notifies, so `watch` trackers re-run against
+ * the live function and guards read the current values on the next event. The
+ * function is never passed again: every stored function runs on each `prop()`
+ * read. Components never call `updateProps` themselves and never send events
+ * from `updated()` to carry props. The call sits in `hostUpdate()`, before
  * `update()`, while the host's update is still pending: the
  * `host.requestUpdate()` that `updateProps` triggers through the subscription
  * folds into the running update instead of scheduling another one.
  *
- * Each `updateProps` call wraps the previous props source in one more closure,
- * so a `prop()` read costs more with every host update over an instance's
- * lifetime. The update-rate harness in `__tests__/harness/update-rate.ts`
- * measures that cost against the C21 budget (spec §10 SD18).
+ * Only prop values are live. The machine reads `scope` (`id`, `ids`,
+ * `getRootNode`) once, when it is constructed in `hostConnected()`.
+ *
+ * The update-rate harness in `__tests__/harness/update-rate.ts` measures the
+ * cost of one host update against the C21 budget (spec §10 SD18).
  *
  * Failure mode (Manifesto Law 9): if constructing, subscribing, or starting the
  * machine throws, the controller flips `fallback = true`, logs to
@@ -42,8 +46,9 @@ export interface LineMachineControllerOptions<T extends MachineSchema> {
   /**
    * Machine props as a function of the host's own properties, e.g.
    * `() => ({ disabled: this.disabled })`. The controller passes it to
-   * `VanillaMachine` when the machine starts and to `updateProps` on every
-   * host update, so the machine always reads the current host values.
+   * `VanillaMachine` when the machine starts, which reads it live, and calls
+   * `updateProps({})` on every host update, so `watch` trackers re-run and
+   * guards read the current host values.
    */
   props?: () => Partial<T['props']>;
   /** When true, swallow start() errors and flip into fallback mode (Manifesto Law 9). Default: true. */
@@ -101,11 +106,10 @@ export class LineMachineController<T extends MachineSchema> implements ReactiveC
     }
   }
 
-  /** Pushes the host's current props into the machine before every render (D7). */
+  /** Signals the machine before every render that the host props may have changed (D7). */
   hostUpdate(): void {
-    const props = this.#options.props;
-    if (this.#fallback || !this.#vanilla || !props) return;
-    this.#vanilla.updateProps(props);
+    if (this.#fallback || !this.#vanilla || !this.#options.props) return;
+    this.#vanilla.updateProps({});
   }
 
   hostDisconnected(): void {
