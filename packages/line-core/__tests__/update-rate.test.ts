@@ -85,7 +85,7 @@ function expectWellFormed(report: UpdateRateReport) {
 }
 
 describe('update-rate harness (C21 fixture machine)', () => {
-  test('bare VanillaMachine chain: updateProps + one prop() read', () => {
+  test('bare VanillaMachine: updateProps({}) + one prop() read', () => {
     let level = 0;
     const report = measureVanillaChain({
       label: 'fixture machine, VanillaMachine',
@@ -118,7 +118,7 @@ describe('update-rate harness (C21 fixture machine)', () => {
       console.info(formatUpdateRate(report));
       expectWellFormed(report);
 
-      // One render per driven update: no update loop, whatever the chain length.
+      // One render per driven update: no update loop, whatever the update count.
       expect(el.renders - rendersBefore).toBe(driven);
       // The watch re-ran on every update, and the guard reads the last level on the next event.
       expect(el.ctrl.refs?.get('seen')).toBe(driven);
