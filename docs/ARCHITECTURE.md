@@ -18,7 +18,7 @@ This document captures the **cross-cutting architectural decisions** that apply 
   - §5 (CSS Parts Naming Convention) adds `::part(loading)`, the wrapper of a component's loading content, which §13.1 and §13.5 already name.
   - §7 (Form Association Strategy) says that Enter on a focused `<line-button type="submit">` submits, and that implicit submission from a text field never picks a custom element as the form's default button (WICG/webcomponents#814).
   - §14.9 (Focus Management) says an interactive component draws a default ring on `::part(root)` under `[data-focus-visible]` through its `--line-{component}-focus-ring` token, which defaults to `var(--line-focus-ring, 2px solid currentColor)`, because `line-themes` ships no focus-ring rule and WCAG 2.4.7 needs a visible indicator. Themes and consumers override the token or the part.
-  - §17.2 rule C6 lets a semantic variant change the defaults of the component's own `--line-{component}-*` tokens on `:host`, and nothing else; the variant adds no other CSS rule, and consumers override the tokens or `::part()` (PRD v0.8.28; Phase 1 spec AM-056; decision by Miguel on 2026-10-27). §4 says that `<line-button variant="primary">` resolves its surface through the accent role.
+  - §17.2 rule C6 lets a semantic variant change the defaults of the component's own `--line-{component}-*` tokens on `:host`, and nothing else; the variant adds no other CSS rule, and consumers override the tokens or `::part()` (PRD v0.8.28; Phase 1 spec AM-056; decision by Miguel on 2026-10-27). §4 says that `<line-button variant="primary">` resolves its surface through the accent role, and its override example re-binds only the primary surface.
 - **v0.8.14 (2026-10-27)** — Aligned with Phase 1 spec AM-052 (ledger row `01-C24`, decision by Miguel on 2026-10-27).
   - §6 (Base Class — LineElement) says the controller hands the component's props function to the machine at start and signals each host update with `updateProps({})`, so the machine reads the live function and the update cost stays flat on Zag 1.47.0 (Phase 1 spec §6.C.7, §10 SD18, AM-052).
   - §8 (State Management) and §13.1 (Button Ecosystem) name Zag 1.47.0, the Phase 1 floor (Phase 1 spec §10 SD11, SD30, AM-052).
@@ -223,7 +223,10 @@ line-button {
   --line-button-radius: var(--line-radius-round);
   --line-button-height: 3rem;
   --line-button-font-size: var(--line-font-size-3);
-  /* Re-bind the solid surface to a different role: */
+}
+
+/* Re-bind the primary surface to a different role: */
+line-button[variant="primary"] {
   --line-button-bg: var(--line-danger-solid);
   --line-button-color: var(--line-danger-contrast);
 }
