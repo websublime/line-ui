@@ -29,8 +29,8 @@ on the sentence "verify passed".
 4. Every branch carries a changeset file under `.changeset/` (PROCESS §6): a real one for published-package
    changes, an empty one otherwise. Confirm with `bun run status` that the bumped packages match the diff. A
    missing or mismatched changeset returns `BLOCKED`. Before opening the PR, merge a freshly fetched `origin/main`,
-   rerun `bun run status`, and return `BLOCKED` when the branch carries a `minor` for a package whose phase minor
-   has shipped (PROCESS §6).
+   run `bun run changeset status --since=origin/main --verbose`, and return `BLOCKED` when a package listed under
+   `minor` shows a new version past the phase's minor line, for example `0.3.0` in Phase 1 (PROCESS §6).
 5. A spec amendment commit must precede the code that depends on it; if the order is wrong, return `BLOCKED`.
 
 ## How you work

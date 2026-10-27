@@ -164,9 +164,9 @@ Gates are proportional to the class. A phase is not locked until its gate passes
   branch will bump. No changeset file, no PR. Once a package's first `minor` of a phase has shipped, that package's
   further changesets in that phase use `patch`, even for new capability, so its next minor stays the next phase's
   version (PRD §7.1, §6.5). Shipped means released by a merged Version PR. The implementer picks the bump against
-  `main` as it stands when the PR opens. Before it opens the PR, `git-workflow-manager` merges a freshly fetched
-  `origin/main` into the task branch, with no rebase and no force-push, reruns `bun run status` and sends back a
-  `minor` for a package whose phase minor has shipped. This is the only statement of the rule; other files point here.
+  `main` as it stands when the PR opens. Before opening the PR, `git-workflow-manager` merges a freshly fetched `origin/main`
+  (no rebase, no force-push), runs `bun run changeset status --since=origin/main --verbose` and sends back a `minor`
+  that lists a version past the phase's minor line. This is the only statement of the rule; other files point here.
 - **The PR opens only with a Verify record and a reviewer verdict in hand.** One PR per row, title
   `<NN>-<ID> — <task title>`, body with Understand (class, write-back), Decisions, Deviations and AM rows,
   Verify (the record, the reviewer verdict, which agents ran), Ledger (row change). `git-workflow-manager`
