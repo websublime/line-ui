@@ -517,7 +517,7 @@ R11 + D1 ───────────────────────�
 P8 ──────────────────────────────────► P9, P10 (spec §6.C.0, AM-040)
 P9 @websublime/* external ───────────► C1
 C21 controller updateProps (D7) ─────► C1
-C21 ─► C24 Zag 1.47.0 updateProps({}) ─► C1, C5, C6, C8, C11, C16 (spec §6.C.7, AM-052)
+C21 ─────────────────────────────────► C24 Zag 1.47.0 updateProps({}) ──► C1, C5, C6, C8, C11, C16 (spec §6.C.7, AM-052)
 C23 LineElement internals (SD19) ────► C1
 C22 line-icons resolvers ────────────► C2 Icon
 P5 bundle-splitting check ───────────► C2 Icon (spec §6.P.5, AM-019)

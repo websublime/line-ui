@@ -15,7 +15,6 @@ This document captures the **cross-cutting architectural decisions** that apply 
 - **v0.8.14 (2026-10-27)** — Aligned with Phase 1 spec AM-052 (ledger row `01-C24`, decision by Miguel on 2026-10-27).
   - §6 (Base Class — LineElement) says the controller hands the component's props function to the machine at start and signals each host update with `updateProps({})`, so the machine reads the live function and the update cost stays flat on Zag 1.47.0 (Phase 1 spec §6.C.7, §10 SD18, AM-052).
   - §8 (State Management) and §13.1 (Button Ecosystem) name Zag 1.47.0, the Phase 1 floor (Phase 1 spec §10 SD11, SD30, AM-052).
-
 - **v0.8.13 (2026-10-26)** — Aligned with PRD v0.8.27 and Phase 1 spec AM-050 (ledger row `01-C23`, decision by Miguel on 2026-10-26).
   - §12 (Bundle Splitting Rule, shared runtime) says each library build also keeps the package's own name external, so every bare specifier in `dist/` is declared or is a self-reference through the package's `exports`. `@websublime/line-core/mixins/form-associated` re-exports `FormAssociated` from the `line-core` root that way, so the jsDelivr `+esm` path, which inlines relative imports into each URL, keeps one `INTERNALS` Symbol (Phase 1 spec §6.C.2, §7.7, §10 SD2, AM-050).
 - **v0.8.12 (2026-10-21)** — Aligned with PRD v0.8.26, with coherence review rounds 30 and 31 (ledger row `00-Z48`).

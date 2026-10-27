@@ -5,7 +5,7 @@
 This file is the live state of Phase 1. It describes state; scope and acceptance criteria live in the plan
 and the spec. One row per unit of work; the row changes in the same PR as the work. Ids are `<Stream><n>`
 here and `01-<Stream><n>` everywhere else. The rows follow the spec §6 streams, and each Task cell names its
-spec section. C21–C23 come after the 20 component rows, so C1–C20 keep their component mapping (plan §4.3).
+spec section. C21–C24 come after the 20 component rows, so C1–C20 keep their component mapping (plan §4.3).
 Gaps stay (no Z2, spec AM-002); new rows take the highest number in the stream + 1.
 
 Every row also rests on the APPROVED spec and its coherence review, Phase 00 rows `00-Z46` and `00-Z48`
@@ -66,7 +66,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 | C21 | C | `LineMachineController` calls `updateProps` on every host update (D7), sets the update-rate budget on a fixture machine, and corrects the "four public" count in `packages/line-core/README.md` and `src/machine/index.ts` (spec §6.C.1) | webcomponents-supervisor | — | done | feat/01-c21-machine-update-props | #293 | — |
 | C22 | C | `line-icons` reference resolvers fetch the SVG from a consumer-set `base` URL; adds the `./registry`, `./resolvers/lucide` and `./resolvers/phosphor` subpaths, the consumer matrix test and the CDN gate (spec §6.C.3) | webcomponents-supervisor | — | todo | — | — | — |
 | C23 | C | `LineElement` attaches `ElementInternals` once, in a `#private` field reached through the exported `INTERNALS` Symbol, and `reflectState` writes `data-<state>` and `:state(<state>)` (spec §6.C.2) | webcomponents-supervisor | — | done | feat/01-c23-line-element-internals | #291 | AM-049, AM-050; AM-078, AM-079, AM-080 (Phase 00 spec) |
-| C24 | C | Zag 1.47.0 and the `updateProps({})` signal (decision, Miguel 2026-10-27). Upstream zag#3557 (closes our zag#3556, filed by C21) ships in `@zag-js/vanilla` 1.47.0. An object passed to `updateProps` is merged flat, but a function passed to it is still kept in a list that every `prop()` read walks. `LineMachineController` passes the props function on every host update, so its cost still grows. The `@zag-js/*` floor moves to `^1.47.0`, the controller signals each host update with `updateProps({})` (the live function given to the constructor keeps the values current), and the SD18 subclass contingency is retired; the update-rate harness stays as the regression guard (spec §6.C.1, §10 SD18, SD30) | webcomponents-supervisor | C21 | in_progress | feat/01-c24-zag-1-47-update-props-signal | — | AM-052; AM-081 (Phase 00 spec) |
+| C24 | C | Zag 1.47.0 and the `updateProps({})` signal (decision, Miguel 2026-10-27). Upstream zag#3557 (closes our zag#3556, filed by C21) ships in `@zag-js/vanilla` 1.47.0. An object passed to `updateProps` is merged flat, but a function passed to it is still kept in a list that every `prop()` read walks. `LineMachineController` passes the props function on every host update, so its cost still grows. The `@zag-js/*` floor moves to `^1.47.0`, the controller signals each host update with `updateProps({})` (the live function given to the constructor keeps the values current), and the SD18 subclass contingency is retired; the update-rate harness stays as the regression guard (spec §6.C.1, §6.C.7, §10 SD18, SD30) | webcomponents-supervisor | C21 | in_progress | feat/01-c24-zag-1-47-update-props-signal | — | AM-052; AM-081 (Phase 00 spec) |
 
 ## Stream G — Agent-Driven UI Foundation (`webcomponents-supervisor`)
 
