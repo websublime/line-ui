@@ -1,5 +1,11 @@
 # @websublime/line-core
 
+## 0.2.1
+
+### Patch Changes
+
+- [#296](https://github.com/websublime/line-ui/pull/296) [`97c1d28`](https://github.com/websublime/line-ui/commit/97c1d283ef3533f0a1836c2978b9b283bda47ec5) Thanks [@miguelramos](https://github.com/miguelramos)! - Host updates now cost the same however long an element lives: `LineMachineController` signals each host update with `updateProps({})` on Zag 1.47.0 (`@zag-js/core` and `@zag-js/vanilla` ^1.47.0).
+
 ## 0.2.0
 
 ### Minor Changes
