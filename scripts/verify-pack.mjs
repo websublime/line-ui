@@ -156,11 +156,11 @@ const DENY = [
 
 const norm = (p) => p.replace(/^\.\//, '');
 
-/** (a) every exports target (recursing into conditions; `*` must match ≥1 file) plus main/module/types exists. */
+/** (a) every exports target (recursing into conditions; `*` must match ≥1 file) plus main/module/types/customElements exists. */
 export function checkExports(paths, manifest) {
   const set = new Set(paths);
   const targets = collectExportTargets(manifest.exports, []);
-  for (const field of ['main', 'module', 'types']) {
+  for (const field of ['main', 'module', 'types', 'customElements']) {
     if (typeof manifest[field] === 'string') targets.push(manifest[field]);
   }
   const failures = [];
