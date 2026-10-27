@@ -1,5 +1,11 @@
 # @websublime/line-components
 
+## 0.2.0
+
+### Minor Changes
+
+- [#298](https://github.com/websublime/line-ui/pull/298) [`e95fa93`](https://github.com/websublime/line-ui/commit/e95fa93e87fee31449906e28edb21f6a6d9fe8b3) Thanks [@miguelramos](https://github.com/miguelramos)! - Ship the Custom Elements Manifest: the package now includes `custom-elements.json`, declared by the `customElements` field and the `./custom-elements.json` export.
+
 ## 0.1.4
 
 ### Patch Changes
