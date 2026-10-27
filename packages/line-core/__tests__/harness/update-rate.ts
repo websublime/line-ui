@@ -1,20 +1,19 @@
 /**
  * Update-rate harness (Phase 1 spec §6.C.1, §10 SD18, SD28; §12 AM-020, L3R14-04).
  *
- * `LineMachineController` calls `VanillaMachine.updateProps` on every host
- * update (D7). Each call wraps the previous props source in one more merge
- * closure, and every `prop()` read runs the whole chain (R7 §2.3, probe P4), so
- * the cost of one host update grows with the number of host updates the
- * instance has already had. The harness measures that cost at increasing
- * accumulated update counts on ONE instance, fits it to a line and derives how
- * many updates the instance takes before one update crosses the budget.
+ * `LineMachineController` hands the component's props function to the
+ * `VanillaMachine` constructor as a live source and signals every host update
+ * with `updateProps({})` (D7; spec §6.C.7). The empty patch stores nothing, so
+ * one host update should cost the same however many the instance has already
+ * had. The harness measures that cost at increasing accumulated update counts
+ * on ONE instance, fits it to a line and derives how many updates the instance
+ * takes before one update crosses the budget.
  *
  * It measures and reports; it never gates on timing. Machine rows (C1, C5, C6,
  * C8, C11, C16) point `measureHostUpdates` at their own connected host and a
  * mutator of one host property that feeds the machine props, print the report
- * with `formatUpdateRate` and record it in their PR. The first row whose
- * `maxUpdates` falls below `BUDGET_UPDATES` adds the `line-core`
- * `VanillaMachine` subclass (spec §6.C.1).
+ * with `formatUpdateRate` and record it in their PR. A row whose rate exceeds
+ * the budget stops and returns to the orchestrator (spec §6.C.1).
  *
  * @module __tests__/harness/update-rate
  */
@@ -25,10 +24,8 @@ import { VanillaMachine } from '../../src/machine/index.js';
 
 /**
  * Budget: wall time of one host update, in milliseconds (C21; spec §10 SD18).
- * On the C21 fixture one host update costs 0.02–0.04 ms at 100 accumulated
- * updates, so the budget is crossed only through chain growth. [INFERENCE]
- * 1 ms keeps about ten components streaming in the same 16.7 ms frame inside a
- * 10 ms scripting share.
+ * [INFERENCE] 1 ms keeps about ten components streaming in the same 16.7 ms
+ * frame inside a 10 ms scripting share.
  */
 export const UPDATE_BUDGET_MS = 1;
 
@@ -69,13 +66,13 @@ export interface UpdateRateSample {
   updates: number;
   /** Median wall time of one update, in ms: a full host update, or one `updateProps` call plus one `prop()` read. */
   updateMs: number;
-  /** Median wall time of one `prop()` read at this chain depth, in ms. */
+  /** Median wall time of one `prop()` read at this update count, in ms. */
   propReadMs: number;
 }
 
 export interface UpdateRateReport {
   label: string;
-  /** `host`: one sample is a full host update; `chain`: one `updateProps` call plus one `prop()` read. */
+  /** `host`: one sample is a full host update; `chain`: one `updateProps({})` call plus one `prop()` read. */
   kind: 'host' | 'chain';
   budgetMs: number;
   samples: UpdateRateSample[];
@@ -140,9 +137,7 @@ function report(
  * Drives `target.host` through host updates, one `mutate` + `updateComplete`
  * each, and samples the wall time of one host update and of one `prop()` read
  * at every checkpoint. The update count covers only the updates the harness
- * drives; a machine transition that re-renders the host adds chain links the
- * count does not see, so the derived `maxUpdates` errs on the generous side for
- * a machine that transitions on every prop change.
+ * drives, not the re-renders a machine transition adds.
  */
 export async function measureHostUpdates(
   target: UpdateRateTarget,
@@ -183,9 +178,10 @@ export interface VanillaChainTarget<T extends MachineSchema> {
 }
 
 /**
- * The same measurement on a bare `VanillaMachine`, without Lit: one sample is
- * `mutate` + one `updateProps(props)` call + one `prop(key)` read, the chain
- * cost alone (R7 §2.3, probe P4).
+ * The same measurement on a bare `VanillaMachine`, without Lit, wired as the
+ * controller wires it: `props` goes to the constructor only, and every driven
+ * update and every sample calls `updateProps({})`. One sample is `mutate` + one
+ * `updateProps({})` call + one `prop(key)` read (R7 §2.3, probe P4).
  */
 export function measureVanillaChain<T extends MachineSchema>(
   target: VanillaChainTarget<T>,
@@ -201,14 +197,14 @@ export function measureVanillaChain<T extends MachineSchema>(
     for (const checkpoint of checkpoints) {
       while (calls < checkpoint) {
         mutate(calls++);
-        vanilla.updateProps(props);
+        vanilla.updateProps({});
       }
       const at = calls;
       const times: number[] = [];
       for (let s = 0; s < samples; s++) {
         const start = performance.now();
         mutate(calls++);
-        vanilla.updateProps(props);
+        vanilla.updateProps({});
         vanilla.prop(key);
         times.push(performance.now() - start);
       }
@@ -223,7 +219,7 @@ export function measureVanillaChain<T extends MachineSchema>(
 /**
  * Plain-text table of a report, for the test log and the machine row's PR. The
  * budget verdict applies to `host` reports only; a `chain` report is the
- * diagnostic of the closure chain alone.
+ * diagnostic of the bare `VanillaMachine` path alone.
  */
 export function formatUpdateRate(report: UpdateRateReport): string {
   const ms = (value: number) => value.toFixed(4);
@@ -234,7 +230,7 @@ export function formatUpdateRate(report: UpdateRateReport): string {
   const seconds = report.maxUpdates / ASSUMED_STREAM_RATE;
   const verdict = report.maxUpdates >= BUDGET_UPDATES ? 'within budget' : 'PAST budget';
   return [
-    `update rate — ${report.label} (${report.kind === 'host' ? 'full host update' : 'updateProps + one prop() read'})`,
+    `update rate — ${report.label} (${report.kind === 'host' ? 'full host update' : 'updateProps({}) + one prop() read'})`,
     `  budget: ${report.budgetMs} ms per host update after ${BUDGET_UPDATES} accumulated updates on one instance`,
     '  updates | update ms |   prop ms | updates/s',
     ...rows,

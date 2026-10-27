@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-10-26
+**Date:** 2026-10-27
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -12,6 +12,9 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.14 (2026-10-27)** — Aligned with Phase 1 spec AM-052 (ledger row `01-C24`, decision by Miguel on 2026-10-27).
+  - §6 (Base Class — LineElement) says the controller hands the component's props function to the machine at start and signals each host update with `updateProps({})`, so the machine reads the live function and the update cost stays flat on Zag 1.47.0 (Phase 1 spec §6.C.7, §10 SD18, AM-052).
+  - §8 (State Management) and §13.1 (Button Ecosystem) name Zag 1.47.0, the Phase 1 floor (Phase 1 spec §10 SD11, SD30, AM-052).
 - **v0.8.13 (2026-10-26)** — Aligned with PRD v0.8.27 and Phase 1 spec AM-050 (ledger row `01-C23`, decision by Miguel on 2026-10-26).
   - §12 (Bundle Splitting Rule, shared runtime) says each library build also keeps the package's own name external, so every bare specifier in `dist/` is declared or is a self-reference through the package's `exports`. `@websublime/line-core/mixins/form-associated` re-exports `FormAssociated` from the `line-core` root that way, so the jsDelivr `+esm` path, which inlines relative imports into each URL, keeps one `INTERNALS` Symbol (Phase 1 spec §6.C.2, §7.7, §10 SD2, AM-050).
 - **v0.8.12 (2026-10-21)** — Aligned with PRD v0.8.26, with coherence review rounds 30 and 31 (ledger row `00-Z48`).
@@ -322,7 +325,7 @@ A component declares its tier by composing a `LineMachineController` with a pre-
 
 - **Lit-aware reactivity.** `host.requestUpdate()` is called on each machine state transition, so Lit re-renders deterministically.
 - **Lifecycle management.** Machine starts in `hostConnected` (subscribes to state); stops in `hostDisconnected` (unsubscribes). No manual `connectedCallback`/`disconnectedCallback` plumbing in component subclasses.
-- **Host props into the machine.** The controller calls `updateProps` on every host update. A component declares its machine props as a function of its properties, so controlled props and prop `watch` effects follow host property changes.
+- **Host props into the machine.** The controller hands the component's props function to the machine at start and calls `updateProps({})` on every host update. The empty patch adds no props source and still notifies the machine, so it re-reads the live function. A component declares its machine props as a function of its properties, so controlled props and prop `watch` effects follow host property changes.
 - **Graceful failure (Manifesto Law 9).** If the machine fails to start, the controller flags fallback mode and the component renders a static state. No uncaught error propagates.
 - **Single import surface.** Re-exports `normalizeProps`, `spreadProps`, `mergeProps`, `VanillaMachine` and the type `Attrs` from `@zag-js/vanilla`, so component authors import from one place: `@websublime/line-core/machine`. It leaves out `toStyleString`, which `@zag-js/vanilla` has exported since 1.44.0. **No component imports `@zag-js/vanilla` directly** — the adapter is the single point of maintenance for Zag API changes. Note: `bindable` is **not** re-exported because `@zag-js/vanilla` does not publicly export it. It is an internal Zag helper accessed inside machine configs via the `context({ bindable })` callback (see §8 example).
 
@@ -366,7 +369,7 @@ All form control components implement `static formAssociated = true` and use `El
 | **Custom machine** | Uses `createMachine()` from `@zag-js/core` | Interactive components with states where no pre-built machine exists | Input, Textarea, Field, Tag Input, Search Field |
 | **Static** | No machine | Purely presentational components with zero interaction state | Badge, Separator, Skeleton, VisuallyHidden, Center |
 
-`@zag-js/password-input` and `@zag-js/date-input` exist at 1.46.0, so PasswordInput and DateInput have pre-built candidates. The Phase 2 spec settles their tier.
+`@zag-js/password-input` and `@zag-js/date-input` exist at 1.47.0, so PasswordInput and DateInput have pre-built candidates. The Phase 2 spec settles their tier.
 
 **Why custom machines for "simple" components like Input:**
 
@@ -553,7 +556,7 @@ Architectural decisions for specific components that were debated and resolved. 
 - **ButtonGroup** — `role="toolbar"` with roving focus (APG Toolbar). Arrow keys move between the buttons, and the group is one Tab stop. A custom roving-focus machine drives it, because `@zag-js/toolbar` ships only pre-release versions (`latest` and `next` are 2.0.0-next.x on 2026-10-20). Border collapse, slot-based (does NOT import Button).
 - **SplitButton** — Custom, Phase 3 (depends on Button + Menu), bundles both internally.
 - **ToggleButton** — NOT a separate component; use ToggleGroup with single item or Button with `pressed` state.
-- **Chip** — A toggle button with `aria-pressed`, Phase 1. It runs on the pre-built `@zag-js/toggle` 1.46.0 machine and carries no remove button.
+- **Chip** — A toggle button with `aria-pressed`, Phase 1. It runs on the pre-built `@zag-js/toggle` 1.47.0 machine and carries no remove button.
 
 ### 13.2 Avatar Group
 
