@@ -1,5 +1,14 @@
 # @websublime/line-components
 
+## 0.1.4
+
+### Patch Changes
+
+- [#296](https://github.com/websublime/line-ui/pull/296) [`97c1d28`](https://github.com/websublime/line-ui/commit/97c1d283ef3533f0a1836c2978b9b283bda47ec5) Thanks [@miguelramos](https://github.com/miguelramos)! - Requires `@zag-js/core` ^1.47.0.
+
+- Updated dependencies [[`97c1d28`](https://github.com/websublime/line-ui/commit/97c1d283ef3533f0a1836c2978b9b283bda47ec5)]:
+  - @websublime/line-core@0.2.1
+
 ## 0.1.3
 
 ### Patch Changes
