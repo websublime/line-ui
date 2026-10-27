@@ -55,7 +55,9 @@ async function step(log: unknown[], label: string, work: () => Promise<unknown>)
     const result = await race(work());
     log.push(`${label} -> ${JSON.stringify(result)} (${Date.now() - started}ms)`);
   } catch (error) {
-    log.push(`${label} -> THREW ${(error as Error).message.split('\n')[0]} (${Date.now() - started}ms)`);
+    const lines = (error as Error).message.split('\n');
+    const detail = lines.filter((line) => /intercept|retrying|waiting for|not stable|visible|enabled/.test(line));
+    log.push(`${label} -> THREW ${lines[0]} | ${detail.slice(0, 6).join(' / ')} (${Date.now() - started}ms)`);
   }
 }
 
@@ -65,7 +67,7 @@ test('P1 line-button custom-validity, same flow as the failing test', async ({ p
   await setup(page, log, '<form><line-button id="save" custom-validity="Pick a plan">Save</line-button></form>');
   const el = page.locator('#save');
   await step(log, 'ping0', () => ping(page));
-  await step(log, 'click1', () => el.click({ timeout: 5000 }));
+  await step(log, 'click1', () => el.click({ timeout: 4000 }));
   await step(log, 'ping1', () => ping(page));
   await step(log, 'clear', () =>
     el.evaluate((button: HTMLElement & { customValidity: string }) => {
@@ -73,8 +75,25 @@ test('P1 line-button custom-validity, same flow as the failing test', async ({ p
     }),
   );
   await step(log, 'ping2', () => ping(page));
-  await step(log, 'click2', () => el.click({ timeout: 5000 }));
+  await step(log, 'click2', () => el.click({ timeout: 4000 }));
   await step(log, 'ping3', () => ping(page));
+  expect(log, 'diagnostic dump').toEqual(['dump']);
+});
+
+test('P3 line-button custom-validity, second activation by keyboard', async ({ page, browserName }) => {
+  test.setTimeout(90_000);
+  const log: unknown[] = [browserName, process.platform];
+  await setup(page, log, '<form><line-button id="save" custom-validity="Pick a plan">Save</line-button></form>');
+  const el = page.locator('#save');
+  await step(log, 'click1', () => el.click({ timeout: 4000 }));
+  await step(log, 'ping1', () => ping(page));
+  await step(log, 'clear', () =>
+    el.evaluate((button: HTMLElement & { customValidity: string }) => {
+      button.customValidity = '';
+    }),
+  );
+  await step(log, 'enter', () => el.press('Enter', { timeout: 4000 }));
+  await step(log, 'ping2', () => ping(page));
   expect(log, 'diagnostic dump').toEqual(['dump']);
 });
 
@@ -110,9 +129,9 @@ for (const anchor of [true, false]) {
       }, anchor),
     );
     await step(log, 'ping0', () => ping(page));
-    await step(log, 'submit1', () => page.locator('#native').click({ timeout: 5000 }));
+    await step(log, 'submit1', () => page.locator('#native').click({ timeout: 4000 }));
     await step(log, 'ping1', () => ping(page));
-    await step(log, 'submit2', () => page.locator('#native').click({ timeout: 5000 }));
+    await step(log, 'submit2', () => page.locator('#native').click({ timeout: 4000 }));
     await step(log, 'ping2', () => ping(page));
     expect(log, 'diagnostic dump').toEqual(['dump']);
   });
