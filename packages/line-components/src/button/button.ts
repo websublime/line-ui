@@ -260,7 +260,8 @@ export class LineButton extends FormAssociated(LineElement) {
     const form = this.form;
     if (!form) return;
     if (this.type === 'reset') {
-      form.reset();
+      // A control with id or name "reset" shadows the method on the form.
+      HTMLFormElement.prototype.reset.call(form);
     } else if (this.type === 'submit') {
       this.#submit(form);
     }
