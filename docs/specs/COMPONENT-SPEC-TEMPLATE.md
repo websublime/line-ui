@@ -52,7 +52,7 @@
 
 ### Variants
 
-> A semantic variant is a reflected attribute with a closed enum and no styles (C6); write `none` when the component has no variants.
+> A semantic variant is a reflected attribute with a closed enum that may change only the defaults of the component's own `--line-<component>-*` tokens (C6); list those defaults under CSS custom properties, and write `none` when the component has no variants.
 
 | Attribute | Values | Use when |
 |-----------|--------|----------|
@@ -158,7 +158,7 @@
 | C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | <how> |
 | C4 | Form-associated components expose `value` and accept external validity | <how, or "not form-associated"> |
 | C5 | The host accepts an accessible name and applies it to the element with the role | <how> |
-| C6 | Semantic variants are reflected closed enums with no styles | <how, or "no variants"> |
+| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | <how, or "no variants"> |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | <how> |
 | C8 | Missing or partial props degrade to an empty or neutral state | <how> |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | <how, or "neither value-bearing nor compound"> |

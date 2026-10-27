@@ -64,7 +64,7 @@
 | `variant` | `default \| primary \| borderless` | `default` for an ordinary action; `primary` for the main action of a view; `borderless` for a low-emphasis action in dense UI |
 
 - The values mirror the A2UI basic `Button` `variant` enum, so the `basic` catalog maps it one to one (`docs/research/assets/01-r2/summary.json:744`).
-- The attribute carries no styles (ARCH §17.2 C6). Themes and consumers style `line-button[variant="primary"]`.
+- Each value only changes the defaults of `--line-button-bg` and `--line-button-color` on `:host` (ARCH §17.2 C6; CSS custom properties below). It adds no other CSS rule, and a consumer overrides the tokens or `::part(root)` as for any other default.
 - An unknown value behaves as `default`, and the attribute keeps what the author wrote (C8).
 
 ---
@@ -188,8 +188,8 @@ The host also takes `aria-label` and `aria-description` and copies both to the i
 | Property | Default | Used by part |
 |----------|---------|--------------|
 | `--line-button-radius` | `var(--line-radius-2)` | `root` |
-| `--line-button-bg` | `var(--line-accent-solid)` | `root` |
-| `--line-button-color` | `var(--line-accent-contrast)` | `root` |
+| `--line-button-bg` | `var(--line-gray-bg)`; `primary`: `var(--line-accent-solid)`; `borderless`: `transparent` | `root` |
+| `--line-button-color` | `var(--line-gray-text)`; `primary`: `var(--line-accent-contrast)`; `borderless`: `var(--line-accent-text)` | `root` |
 | `--line-button-height` | `var(--line-size-7)` | `root` (`min-block-size`) |
 | `--line-button-padding-inline` | `var(--line-size-3)` | `root` |
 | `--line-button-gap` | `var(--line-size-2)` | `root` |
@@ -197,9 +197,9 @@ The host also takes `aria-label` and `aria-description` and copies both to the i
 | `--line-button-font-weight` | `var(--line-font-weight-5)` | `root` |
 | `--line-button-focus-ring` | `var(--line-focus-ring, 2px solid currentColor)` | `root`, as `outline` under `:host([data-focus-visible])` |
 
-- `:host` declares the tokens (PRD §9.11). Without `line-themes` the role tokens are undefined, so the background resolves to transparent and the colour inherits.
+- `:host` declares the tokens (PRD §9.11), and `:host([variant="primary"])` and `:host([variant="borderless"])` redeclare the two colour tokens. `default`, a missing attribute and an unknown value all keep the `:host` defaults. Without `line-themes` the role tokens are undefined, so the background resolves to transparent and the colour inherits, whatever the variant.
 - The focus ring is the only state style. WCAG 2.4.7 needs a visible focus indicator, the reset removes the native outline (ARCH §14.9), and `line-themes` ships no focus-ring rule. `--line-focus-ring` resolves through `--line-focus-ring-color: var(--line-accent-8)` (`packages/line-tokens/src/focus-ring.css:16-19`), so without the theme layer it is invalid and the `currentColor` fallback draws the ring.
-- Hover, active, pressed, loading, disabled and every variant carry no styles. Themes and consumers style them through `[data-*]`, `:state()` and `[variant]`.
+- Hover, active, pressed, loading and disabled carry no styles. Themes and consumers style them through `[data-*]` and `:state()`.
 - There is no size variant, so the height token has no size suffix.
 
 ### Keyboard
@@ -240,7 +240,7 @@ On a toggle button, activation flips `pressed` and fires `line-change`.
 | C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | `@fires line-change` with `{ value: boolean }`; no unprefixed `input` or `change` |
 | C4 | Form-associated components expose `value` and accept external validity | `value` property; `custom-validity` sets validity through the mixin's `setValidity` and reflects `data-invalid` and `:state(invalid)` |
 | C5 | The host accepts an accessible name and applies it to the element with the role | host `aria-label` and `aria-description` are copied to the inner `<button>` |
-| C6 | Semantic variants are reflected closed enums with no styles | `variant` reflects `default`, `primary` or `borderless` and has no styles |
+| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `variant` reflects `default`, `primary` or `borderless`; `primary` and `borderless` redeclare the defaults of `--line-button-bg` and `--line-button-color` on `:host` and add no other rule |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries every tag for each slot, part, token and event, and `@attr name`, because `name` is an inherited getter and no reactive property declares its attribute (R4 `:80`); nothing is deprecated |
 | C8 | Missing or partial props degrade to an empty or neutral state | with no attributes it renders an empty `type="submit"` button with `variant="default"`; unknown enum values fall back to the default |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | value-bearing, because the binding map names `pressed` as the value prop; `line-change` is its one commit event and fires once per flip |
@@ -329,7 +329,7 @@ On a toggle button, activation flips `pressed` and fires `line-change`.
 | Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | Tab order with `disabled` and `loading`; Enter and Space activation; `data-active` on pointer and keys; `data-focus-visible` on keyboard focus only; submit with `name=value` in the `FormData` and `event.submitter` as the temporary button; `formaction`, `formmethod`, `formnovalidate` and `method="dialog"`; reset; the `form` attribute; a disabled `fieldset`; `preventDefault()` on `click` cancelling submit and reset; no `click` reaching host listeners while `disabled` or `loading`; the `ariaSnapshot` screen-reader check |
 | A11y | axe-core | zero violations (MANIFESTO Law 3) in every story: default, `primary`, `borderless`, prefix and suffix, disabled, loading with the `loading` slot, toggle off and on, `aria-label` only, and the form story |
 | htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx`, on htmx 2 and htmx 4 in chromium, firefox and webkit | (a) `n/a`. Button is form-associated, so the template expects (a) to run, but Button's value prop is `pressed`, which never enters form data, and the host's own form value stays `null`. A button's `name=value` enters the form data only when that button submits, and the harness submits through a separate native button, so Button contributes nothing there, as a native button would not. A Button-local e2e on both htmx majors replaces (a) and proves that `<line-button type="submit" name="intent" value="save">` inside `<form hx-post>` sends `intent=save`. (b) `hx-trigger="line-change"` on `<line-button pressed="false">` sends one request per click. (c) focus and hover send no request. (d) server content swapped into the default slot renders, and the inner button's accessible name contains the swapped text |
-| Visual | Playwright `button.visual.ts` on the `visual` project | every Button story, with Linux baselines from a `visual-baselines.yml` run (Phase 1 spec §6.C.6, §10 SD98) |
+| Visual | Playwright `button.visual.ts` on the `visual` project | every Button story, with Linux baselines from a `visual-baselines.yml` run, and the `default`, `primary` and `borderless` baselines differ from each other (Phase 1 spec §6.C.6, §10 SD98) |
 | Update rate | `measureHostUpdates` on a connected `<line-button>` | the rate is recorded in the C1 PR; a rate past the C21 budget stops the row and returns it to the orchestrator (Phase 1 spec §6.C.6; §10 SD18) |
 
 - The axe and visual tests run against the Storybook stories on port 4320 (Phase 1 spec §6.P.7, §6.P.11). The keyboard, form and htmx tests need a fixture page that loads `@websublime/line-components/button` (and `./vendor/htmx.js` for htmx). The implementer places that page within the Phase 1 spec §4 file classes. A new Playwright `webServer` entry is an infra-supervisor edit.
@@ -350,3 +350,4 @@ On a toggle button, activation flips `pressed` and fires `line-change`.
 | 8 | How does a `line-components` test reach `measureHostUpdates`, which lives in `packages/line-core/__tests__/harness/update-rate.ts` (Phase 1 spec §10 SD28), when a test must not reach another package by relative path and shared helpers must live in `@websublime/line-testing` (Phase 1 spec §6.Z.3)? | Miguel | Phase 1 spec AM-055 moves `measureHostUpdates`, its constants and `formatUpdateRate` to `@websublime/line-testing/update-rate` and keeps `measureVanillaChain` in `line-core` (Miguel, 2026-10-27) |
 | 9 | Who draws the focus ring? ARCH §14.9 left it to the theme, `line-themes` ships no rule, and `--line-focus-ring` is invalid without the theme layer. It sets the convention for every interactive component | Miguel | Each component draws a default ring through `--line-{component}-focus-ring`, defaulting to `var(--line-focus-ring, 2px solid currentColor)` (Miguel, 2026-10-27; ARCH v0.8.15 §14.9) |
 | 10 | What `type` does a surface-created Button get? A2UI `Button` has no `type`, and the native `submit` default acts on a host-page form that wraps the light-DOM surface | Miguel | The agent chooses `type` through the prop schema, which also carries `name` and `value`; the native `submit` default applies, over a surface that always forces `type="button"` (Miguel, 2026-10-27) |
+| 11 | Do the variants look different out of the box? No package styled `[variant]`, so the three rendered the same, the agent's emphasis reached the user as nothing and the variant baselines were identical | Miguel | Each variant sets the defaults of `--line-button-bg` and `--line-button-color` on `:host`, through the gray role for `default` and the accent role for `primary` and `borderless`, and adds no other rule. ARCH §17.2 C6 now allows exactly that (PRD v0.8.28; Phase 1 spec AM-056), over variants with no styles and a Storybook CSS recipe (Miguel, 2026-10-27) |
