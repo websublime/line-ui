@@ -12,17 +12,17 @@
 
 import { describe, expect, test } from 'bun:test';
 import { fixture, html } from '@open-wc/testing-helpers';
-import { createMachine } from '@zag-js/core';
-import { html as litHtml, type PropertyDeclarations } from 'lit';
-import { LineElement } from '../src/line-element.js';
-import { LineMachineController } from '../src/machine/index.js';
 import {
   DEFAULT_CHECKPOINTS,
   formatUpdateRate,
   measureHostUpdates,
-  measureVanillaChain,
   type UpdateRateReport,
-} from './harness/update-rate.js';
+} from '@websublime/line-testing/update-rate';
+import { createMachine } from '@zag-js/core';
+import { html as litHtml, type PropertyDeclarations } from 'lit';
+import { LineElement } from '../src/line-element.js';
+import { LineMachineController } from '../src/machine/index.js';
+import { measureVanillaChain } from './harness/update-rate.js';
 
 interface FixtureSchema {
   props: { level?: number; limit?: number };

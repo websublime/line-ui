@@ -24,8 +24,8 @@
  * Only prop values are live. The machine reads `scope` (`id`, `ids`,
  * `getRootNode`) once, when it is constructed in `hostConnected()`.
  *
- * The update-rate harness in `__tests__/harness/update-rate.ts` measures the
- * cost of one host update against the C21 budget (spec §10 SD18).
+ * `measureHostUpdates` in `@websublime/line-testing/update-rate` measures the
+ * cost of one host update against the C21 budget (spec §10 SD18, SD28).
  *
  * Failure mode (Manifesto Law 9): if constructing, subscribing, or starting the
  * machine throws, the controller flips `fallback = true`, logs to
