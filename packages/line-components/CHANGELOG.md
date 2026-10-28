@@ -1,5 +1,14 @@
 # @websublime/line-components
 
+## 0.2.1
+
+### Patch Changes
+
+- [#300](https://github.com/websublime/line-ui/pull/300) [`00612da`](https://github.com/websublime/line-ui/commit/00612dab2e7c798333218b7935045fa4b777c397) Thanks [@miguelramos](https://github.com/miguelramos)! - Add `<line-button>` at `@websublime/line-components/button`: a form-associated button with `submit`, `reset` and `button` types, `primary` and `borderless` variants, a `pressed` toggle that fires `line-change`, a `loading` state with its own slot, and `--line-button-*` tokens.
+
+- Updated dependencies [[`00612da`](https://github.com/websublime/line-ui/commit/00612dab2e7c798333218b7935045fa4b777c397)]:
+  - @websublime/line-core@0.2.2
+
 ## 0.2.0
 
 ### Minor Changes

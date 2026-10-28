@@ -1,5 +1,11 @@
 # @websublime/line-core
 
+## 0.2.2
+
+### Patch Changes
+
+- [#300](https://github.com/websublime/line-ui/pull/300) [`00612da`](https://github.com/websublime/line-ui/commit/00612dab2e7c798333218b7935045fa4b777c397) Thanks [@miguelramos](https://github.com/miguelramos)! - The `LineMachineController` module docs now point at `measureHostUpdates` for measuring the cost of a host update.
+
 ## 0.2.1
 
 ### Patch Changes
