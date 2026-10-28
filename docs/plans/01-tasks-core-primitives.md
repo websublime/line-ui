@@ -45,7 +45,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 |---|---|---|---|---|---|---|---|---|
 | C1 | C | Button, `<line-button>` at `./button`; component spec `docs/specs/0002-button.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, Z5 | in_review | feat/01-c1-button | #300 | AM-055, AM-056, AM-057 |
 | C2 | C | Icon, `<line-icon>` at `./icon`, with the registry hook, SVG injection rule and icon surface acceptance; component spec `docs/specs/0014-icon.md` (spec §6.C.3, §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P5, P7–P12, C22, Z5 | todo | — | — | — |
-| C3 | C | Stack, `<line-stack>` at `./stack`; component spec `docs/specs/0018-stack.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, Z5 | todo | — | — | — |
+| C3 | C | Stack, `<line-stack>` at `./stack`; component spec `docs/specs/0018-stack.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, Z5 | in_progress | feat/01-c3-stack | — | — |
 | C4 | C | Separator, `<line-separator>` at `./separator`; component spec `docs/specs/0011-separator.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, Z5 | todo | — | — | — |
 | C5 | C | IconButton, `<line-icon-button>` at `./icon-button`, on the shared Button machine; component spec `docs/specs/0003-icon-button.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, G1, G4, G5, C1, Z5 | todo | — | — | — |
 | C6 | C | ButtonGroup, `<line-button-group>` at `./button-group`, custom roving-focus machine; component spec `docs/specs/0004-button-group.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, G1, G4, G5, C1, Z5 | todo | — | — | — |
