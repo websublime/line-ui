@@ -20,7 +20,7 @@
 
 #### Description
 
-`<line-stack>` lays out its children in one row or one column with a gap between them (PRD §4.1, `docs/PRD.md:258`). The host itself is the flex container, and the children are its flex items. Five reflected attributes set direction, main-axis distribution, cross-axis alignment, gap and wrapping. The gap comes from the `--line-layout-gap-*` token scale (`packages/line-tokens/src/layouts.css:20-24`). Stack adds no role, no state and no behaviour, so it stays a `generic` element in the accessibility tree (R8 `docs/research/01-research-accessibility.md:80`).
+`<line-stack>` lays out its children in one row or one column with a gap between them (PRD §4.1, `docs/PRD.md:258`). The host itself is the flex container, and the children are its flex items. Five reflected attributes set orientation, main-axis distribution, cross-axis alignment, gap and wrapping. The gap comes from the `--line-layout-gap-*` token scale (`packages/line-tokens/src/layouts.css:20-24`). Stack adds no role, no state and no behaviour, so it stays a `generic` element in the accessibility tree (R8 `docs/research/01-research-accessibility.md:80`).
 
 #### Use cases
 
@@ -36,7 +36,7 @@
 - Centring one child in a box. Use `<line-center>` (Phase 1 row C18).
 - A visible divider between items. Put `<line-separator>` (row C4) between the children.
 - A semantic list where native markup is available. A plain `<ul>`/`<li>` needs no custom element.
-- Breakpoint-driven direction changes through attributes. Stack has no responsive props, so use a container or media query on `line-stack` in the consumer's CSS.
+- Breakpoint-driven orientation changes through attributes. Stack has no responsive props, so use a container or media query on `line-stack` in the consumer's CSS.
 
 #### User expectations
 
@@ -60,7 +60,7 @@
 | `gap` | `0 \| 1 \| 2 \| 3 \| 4 \| 5` | `0` for no space; `1`–`5` for growing space on the `--line-layout-gap-*` scale (0.25rem, 0.5rem, 1rem, 1.5rem, 2rem); no attribute gives step `2` |
 
 - `gap` is the one C6 semantic variant. Each value only redeclares the default of `--line-stack-gap` on `:host` and adds no other rule (ARCH §17.2 C6; decision D3).
-- `direction`, `justify`, `align` and `wrap` are layout props, not C6 variants. Each one maps to a CSS layout property on `:host` (Props below), and none touches a token.
+- `orientation`, `justify`, `align` and `wrap` are layout props, not C6 variants. Each one maps to a CSS layout property on `:host` (Props below), and none touches a token.
 - An unknown `gap` value behaves as no attribute, and the attribute keeps what the author wrote (C8).
 
 ---
@@ -113,17 +113,17 @@ Stack has no finite states and no state flags, so it writes no `data-*` attribut
 
 | Property | Attribute | Type | Default | Reflects | Description |
 |----------|-----------|------|---------|----------|-------------|
-| `direction` | `direction` | `'row' \| 'column'` | `'column'` | yes | main axis; `row` → `flex-direction: row`, `column` → `flex-direction: column` |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'vertical'` | yes | main axis; `horizontal` → `flex-direction: row`, `vertical` → `flex-direction: column` (AM-001) |
 | `justify` | `justify` | `'start' \| 'center' \| 'end' \| 'spaceBetween' \| 'spaceAround' \| 'spaceEvenly' \| 'stretch'` | `'start'` | yes | distribution on the main axis; maps to `justify-content` (`flex-start`, `center`, `flex-end`, `space-between`, `space-around`, `space-evenly`); `stretch` grows the items instead (below) |
 | `align` | `align` | `'start' \| 'center' \| 'end' \| 'stretch'` | `'stretch'` | yes | alignment on the cross axis; maps to `align-items` (`flex-start`, `center`, `flex-end`, `stretch`) |
 | `gap` | `gap` | `'0' \| '1' \| '2' \| '3' \| '4' \| '5'` | `undefined` (step `2`) | yes | space between items; C6 variant over `--line-stack-gap` (Variants, CSS custom properties) |
 | `wrap` | `wrap` | `boolean` | `false` | yes | `flex-wrap: wrap` when present, `nowrap` otherwise |
 
-- Each prop is styled by an attribute selector on `:host`, such as `:host([direction="row"])` and `:host([wrap])`. The `:host` defaults cover the default values, a missing attribute and an unknown value.
+- Each prop is styled by an attribute selector on `:host`, such as `:host([orientation="horizontal"])` and `:host([wrap])`. The `:host` defaults cover the default values, a missing attribute and an unknown value.
 - The `justify` and `align` values mirror the A2UI basic v0.9 `Row`/`Column` enums one to one (`a2ui-project/a2ui@cbaa5ee` `specification/v0_9/catalogs/basic/catalog.json`; decision D2). `baseline` appears in upstream's `ALIGN_MAP` but not in the schema enum, so Stack leaves it out.
 - `justify="stretch"` sets `::slotted(*) { flex-grow: 1 }`, so every item grows to share the main axis. CSS `justify-content: stretch` behaves as `flex-start` on a flex container and would drop the agent's intent [INFERENCE: CSS Box Alignment 3 §5.1, not probed].
 - That rule diverges on purpose from upstream `web_core`, which writes `stretch` as the CSS keyword through an inline style, so the items do not grow (`a2ui-project/a2ui@cbaa5ee` `typescript/core/web_core/src/universal/basic_catalog/components/Row.ts`, `Column.ts`).
-- `direction="row"` follows the writing direction, so items run right to left under `dir="rtl"`, because flexbox lays out on logical axes.
+- `orientation="horizontal"` follows the writing direction, so items run right to left under `dir="rtl"`, because flexbox lays out on logical axes.
 - An unknown value of any enum prop behaves as that prop's default, and the attribute keeps what the author wrote (C8), as Button's converters do (`packages/line-components/src/button/button.ts`).
 - Stack has no responsive props. Consumers change layout with container or media queries on the host.
 
@@ -180,9 +180,9 @@ Stack takes no focus. Focus moves through its children in tree order.
 | C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | no events |
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated |
 | C5 | The host accepts an accessible name and applies it to the element with the role | the host is the only element and carries any author role; a name is valid only with an author role that allows it (A11y) |
-| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `gap` reflects `0`–`5` and redeclares only the default of `--line-stack-gap` on `:host`; `direction`, `justify`, `align` and `wrap` are layout props, not variants |
+| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `gap` reflects `0`–`5` and redeclares only the default of `--line-stack-gap` on `:host`; `orientation`, `justify`, `align` and `wrap` are layout props, not variants |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, `@slot` for the default slot and `@cssprop --line-stack-gap`; no `@csspart` or `@fires`, because there are no parts or events; nothing is deprecated |
-| C8 | Missing or partial props degrade to an empty or neutral state | with no attributes it is a column with a 0.5rem gap; with no children it renders an empty flex box; unknown enum values fall back to the default |
+| C8 | Missing or partial props degrade to an empty or neutral state | with no attributes it is a vertical stack with a 0.5rem gap; with no children it renders an empty flex box; unknown enum values fall back to the default |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound |
 
 #### Inputs outside the prop schema (C1)
@@ -198,18 +198,18 @@ Stack takes no focus. Focus moves through its children in tree order.
 | Catalog name | `Stack` |
 | Tag | `line-stack` |
 | `load()` subpath | `@websublime/line-components/stack` |
-| Prop schema | `direction`, `justify`, `align`, `gap`, `wrap`, plus the catalog-only `children` (`ChildList`), which the frontend-tool walker leaves out (Phase 1 spec §6.G.3) |
+| Prop schema | `orientation`, `justify`, `align`, `gap`, `wrap`, plus the catalog-only `children` (`ChildList`), which the frontend-tool walker leaves out (Phase 1 spec §6.G.3) |
 | Slot map | `(default)` → `ChildList` (`children`) |
-| Binding map | `direction`, `justify`, `align`, `gap`, `wrap` → attribute; no value prop; no commit event |
+| Binding map | `orientation`, `justify`, `align`, `gap`, `wrap` → attribute; no value prop; no commit event |
 | Action map | none |
 | Accessibility requirements | none for the component; for A2UI `List` the surface sets `role="list"` and `role="listitem"` (Phase 1 spec §10 SD59) |
-| Agent-facing description | A layout container that places its children in one row or column with even spacing. Put the children in `children`. `direction` is `column` (default) or `row`; a row follows the page's writing direction. `justify` spreads children along that axis: `start` (default), `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`, or `stretch` to make every child grow to share the space. `align` places children across the axis: `stretch` (default), `start`, `center` or `end`. `gap` sets the spacing on a scale from `0` (none) to `5` (widest); leave it out for a medium gap. Set `wrap` to let children flow onto more lines when space runs out. Stack adds nothing to what assistive technology announces. |
+| Agent-facing description | A layout container that places its children in one row or column with even spacing. Put the children in `children`. `orientation` is `vertical` (default) or `horizontal`; a horizontal stack follows the page's writing direction. `justify` spreads children along that axis: `start` (default), `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`, or `stretch` to make every child grow to share the space. `align` places children across the axis: `stretch` (default), `start`, `center` or `end`. `gap` sets the spacing on a scale from `0` (none) to `5` (widest); leave it out for a medium gap. Set `wrap` to let children flow onto more lines when space runs out. Stack adds nothing to what assistive technology announces. |
 | `agentExposed` | `true` (Phase 1 spec §6.C.4 C3 row) |
 
 - Stream G writes this descriptor in G1, because C3 ships without one (Phase 1 spec §6.C.0 step 3).
 - The `basic` catalog maps A2UI `Row`, `Column` and `List` onto `line-stack` (ARCH §17.3, `docs/ARCHITECTURE.md:1580`).
-  - `Row` sets `direction="row"` and `Column` sets `direction="column"`.
-  - `List.direction` translates `vertical` → `column` and `horizontal` → `row`.
+  - `Row` sets `orientation="horizontal"` and `Column` sets `orientation="vertical"`.
+  - `List.direction` passes one to one: `vertical` and `horizontal` are `orientation` values (AM-001).
   - `justify` and `align` pass through one to one (decision D2).
   - `List` gets `role="list"` on the host and `role="listitem"` on each item `line-stack`, or on a `<div role="listitem">` wrapper when the item is another component (Phase 1 spec §6.G.4; §10 SD59).
 - A2UI basic `Row`, `Column` and `List` have no `gap` or `wrap` (`a2ui-project/a2ui@cbaa5ee` `specification/v0_9/catalogs/basic/catalog.json`), so basic nodes get the default gap and no wrapping. The `line` catalog exposes both.
@@ -230,22 +230,22 @@ Stack takes no focus. Focus moves through its children in tree order.
 ### Markup examples
 
 ```html
-<!-- Default: column, gap step 2 -->
+<!-- Default: vertical, gap step 2 -->
 <line-stack>
   <p>First</p>
   <p>Second</p>
 </line-stack>
 
-<!-- Directions -->
-<line-stack direction="column">…</line-stack>
-<line-stack direction="row">…</line-stack>
+<!-- Orientations -->
+<line-stack orientation="vertical">…</line-stack>
+<line-stack orientation="horizontal">…</line-stack>
 
 <!-- Justify and align -->
-<line-stack direction="row" justify="spaceBetween" align="center">
+<line-stack orientation="horizontal" justify="spaceBetween" align="center">
   <span>Title</span>
   <line-button>Edit</line-button>
 </line-stack>
-<line-stack direction="row" justify="stretch">
+<line-stack orientation="horizontal" justify="stretch">
   <line-button>Yes</line-button>
   <line-button>No</line-button>
 </line-stack>
@@ -256,7 +256,7 @@ Stack takes no focus. Focus moves through its children in tree order.
 <line-stack gap="5">…</line-stack>
 
 <!-- Wrap -->
-<line-stack direction="row" wrap>
+<line-stack orientation="horizontal" wrap>
   <line-button>One</line-button>
   <line-button>Two</line-button>
   <line-button>Three</line-button>
@@ -275,7 +275,7 @@ Stack takes no focus. Focus moves through its children in tree order.
 |------|--------|--------|
 | Unit | `bun test` on happy-dom | prop defaults and reflection; enum converters falling back to the default while the attribute keeps the author's value; `wrap` boolean parsing; the shadow root holding only a `<slot>`; no `role`, `aria-*` or `internals.role` written, and an author `role` left unchanged; the C8 empty render; `packages/line-components/__tests__/manifest-paths.test.ts` on the packed tarball (Phase 1 spec §6.C.6) |
 | Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | computed `flex-direction`, `justify-content`, `align-items` and `flex-wrap` for every value; computed `gap` in px for each step with `line-tokens` loaded, and `normal` without; `justify="stretch"` items sharing the main axis; reversed visual order of a row under `dir="rtl"`; consumer CSS on `line-stack` beating the `:host` defaults; `<line-stack hidden>` rendering nothing; an `ariaSnapshot` of the author list story showing a `list` with `listitem` children |
-| A11y | axe-core | zero violations (MANIFESTO Law 3) in every story: default, each direction, justify and align, gap scale, wrap, and the author list story |
+| A11y | axe-core | zero violations (MANIFESTO Law 3) in every story: default, each orientation, justify and align, gap scale, wrap, and the author list story |
 | htmx | n/a | `n/a`. Stack is neither value-bearing nor compound, so the template marks the row `n/a`, as Phase 1 spec §10 SD34 expects for static rows |
 | Visual | Playwright `stack.visual.ts` on the `visual` project | every Stack story, with Linux baselines from a `visual-baselines.yml` run (Phase 1 spec §6.C.6, §10 SD98) |
 
@@ -292,7 +292,7 @@ Stack takes no focus. Focus moves through its children in tree order.
 | 2 | Which values do `justify` and `align` use? | Miguel | The A2UI basic v0.9 camelCase values one to one, so the `basic` catalog maps them without translation; CSS kebab-case values rejected (Miguel, 2026-10-28) |
 | 3 | How is the gap controlled? | Miguel | A reflected `gap` attribute with a closed scale `0`–`5` that only redeclares the default of `--line-stack-gap`; no attribute gives `var(--line-layout-gap-2)`. Token-only and free-length attributes rejected (Miguel, 2026-10-28) |
 | 4 | Does Stack carry list semantics beyond Phase 1 spec §6.G.4 / SD59? | Miguel | No. Stack never sets a role and never overrides an author host `role`; authors and the surface put `role="list"`/`role="listitem"` in markup. A `list` attribute setting `internals.role` rejected (Miguel, 2026-10-28) |
-| 5 | What are the `direction` values and default? | orchestrator | `row \| column`, default `column`, reflected; the surface translates A2UI `List.direction` and Row/Column (orchestrator default shown to Miguel on 2026-10-28, no objection) |
+| 5 | What are the orientation values and default? | Miguel | `orientation`: `horizontal \| vertical`, default `vertical`, reflected; A2UI `List.direction` passes one to one and the surface maps `Row` → `horizontal`, `Column` → `vertical`. The first draft's `direction: row \| column` collided with `LineElement.direction` (AM-001; Miguel, 2026-10-28) |
 | 6 | What does `justify="stretch"` do? | orchestrator | `::slotted(*) { flex-grow: 1 }`, a deliberate divergence from upstream `web_core` (orchestrator default shown to Miguel on 2026-10-28, no objection) |
 | 7 | Which `align` values ship? | orchestrator | `start \| center \| end \| stretch`, default `stretch`; `baseline` excluded (orchestrator default shown to Miguel on 2026-10-28, no objection) |
 | 8 | How does wrapping work? | orchestrator | boolean `wrap` → `flex-wrap: wrap` (orchestrator default shown to Miguel on 2026-10-28, no objection) |
@@ -300,3 +300,13 @@ Stack takes no focus. Focus moves through its children in tree order.
 | 10 | How do unknown enum values behave? | orchestrator | As the default, with the attribute keeping the author's value (C8) (orchestrator default shown to Miguel on 2026-10-28, no objection) |
 | 11 | Can consumer CSS override the layout? | orchestrator | Yes; consumer rules on `line-stack` beat the `:host` rules for normal declarations (orchestrator default shown to Miguel on 2026-10-28, no objection) |
 | 12 | Does `<line-stack hidden>` hide? `:host { display: flex }` beats the UA `[hidden]` rule and `commonReset` does not reach the host | orchestrator | `:host([hidden]) { display: none }`, following the Button precedent (`packages/line-components/src/button/button.ts:129-131`) (orchestrator default shown to Miguel on 2026-10-28, no objection) |
+
+---
+
+## Amendments
+
+PROCESS §3 requires that any change to this spec after approval lands as a row here, in the same commit as the change.
+
+| ID | Date | Trigger | Change | Reason | Evidence |
+|---|---|---|---|---|---|
+| AM-001 | 2026-10-28 | decision — Miguel chose `orientation` over a renamed property or `axis` | The main-axis prop is `orientation` (attribute and property), `'horizontal' \| 'vertical'`, default `'vertical'`, reflected; an unknown value behaves as `vertical` (C8). `horizontal` → `flex-direction: row`, `vertical` → `flex-direction: column`. `direction` is not used on Stack. A2UI `List.direction` passes one to one; the surface maps `Row` → `horizontal` and `Column` → `vertical`. Description, Use cases, Variants, Props, Agent contract, Descriptor fields, Markup examples, Tests and Open Question 5 updated | `LineElement` already owns a read-only reactive `direction: 'ltr' \| 'rtl'` from `DirectionMixin`, so a Stack `direction` prop cannot type-check or coexist with it; `orientation` matches `<line-separator>` (C4), `aria-orientation` and A2UI `List.direction` | `packages/line-core/src/mixins/direction.ts:66-90`; `tsc` on `src/stack/stack.ts`: `TS2416: Property 'direction' in type 'LineStack' is not assignable to the same property in base type 'LineElement'. Type '"column"' is not assignable to type '"ltr" \| "rtl"'` |
