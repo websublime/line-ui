@@ -11,6 +11,7 @@ export default mergeConfig(
     root: import.meta.dirname,
     entries: {
       index: 'src/index.ts',
+      'button/index': 'src/button/index.ts',
     },
   }),
   {

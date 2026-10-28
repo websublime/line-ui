@@ -22,7 +22,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./custom-elements.json": "./custom-elements.json"
+    "./custom-elements.json": "./custom-elements.json",
+    "./button": {
+      "types": "./dist/button/index.d.ts",
+      "import": "./dist/button/index.js"
+    }
   },
   "dependencies": {
     "@websublime/line-core": "workspace:^",
@@ -33,7 +37,8 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
-    "@websublime/line-schemas": "workspace:^"
+    "@websublime/line-schemas": "workspace:^",
+    "@websublime/line-testing": "workspace:^"
   },
   "scripts": {
     "build": "vite build && tsc -p tsconfig.json --noEmit false --emitDeclarationOnly && bun run analyze",
