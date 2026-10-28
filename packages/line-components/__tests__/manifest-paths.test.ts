@@ -71,4 +71,12 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(button?.path).toBe('src/button/button.ts');
     expect(paths.has('src/button/button.ts')).toBe(true);
   });
+
+  test('line-stack resolves to src/stack/stack.ts', () => {
+    const stack = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-stack'),
+    );
+    expect(stack?.path).toBe('src/stack/stack.ts');
+    expect(paths.has('src/stack/stack.ts')).toBe(true);
+  });
 });

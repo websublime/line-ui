@@ -12,6 +12,7 @@ export default mergeConfig(
     entries: {
       index: 'src/index.ts',
       'button/index': 'src/button/index.ts',
+      'stack/index': 'src/stack/index.ts',
     },
   }),
   {
