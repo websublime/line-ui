@@ -1,5 +1,11 @@
 # @websublime/line-components
 
+## 0.2.2
+
+### Patch Changes
+
+- [#303](https://github.com/websublime/line-ui/pull/303) [`dd1d1f0`](https://github.com/websublime/line-ui/commit/dd1d1f04094c8baa47bf2597428a6ff6dca9df36) Thanks [@miguelramos](https://github.com/miguelramos)! - Add `<line-stack>` at `@websublime/line-components/stack`: a flex layout container with `orientation`, `justify`, `align`, `wrap` and a `gap` scale from `0` to `5` over `--line-stack-gap`.
+
 ## 0.2.1
 
 ### Patch Changes
