@@ -3,6 +3,8 @@ import { defineConfig, devices } from 'playwright/test';
 export default defineConfig({
   testDir: '.',
   testMatch: ['packages/**/*.e2e.ts', 'apps/**/*.e2e.ts'],
+  // CDN-backed specs (C22) run only from the cdn-check workflow under LINE_E2E_CDN; the visual project sets its own.
+  testIgnore: process.env.LINE_E2E_CDN ? [] : ['**/*cdn.e2e.ts'],
   // A testDir turns off the .gitignore default; keep it so temp/, dist and storybook-static are never walked.
   respectGitIgnore: true,
   use: { baseURL: 'http://127.0.0.1:4319', trace: 'on-first-retry' },
