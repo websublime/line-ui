@@ -1,12 +1,21 @@
-import { describe, expect, mock, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
 import { createLucideResolver, createPhosphorResolver, IconRegistry, iconRegistry } from '../src/index.js';
 import * as registryEntry from '../src/registry.js';
+import { type FetchMock, LUCIDE_BASE, mockFetch, PHOSPHOR_BASE } from './fetch-mock.js';
+
+let fetchMock: FetchMock;
+beforeEach(() => {
+  fetchMock = mockFetch();
+});
+afterEach(() => {
+  fetchMock.mockRestore();
+});
 
 describe('IconRegistry', () => {
   test('dispatches to the registered resolver with the exact arguments', async () => {
     const registry = new IconRegistry();
-    const lucide = mock(createLucideResolver());
-    const phosphor = mock(createPhosphorResolver());
+    const lucide = mock(createLucideResolver({ base: LUCIDE_BASE }));
+    const phosphor = mock(createPhosphorResolver({ base: PHOSPHOR_BASE }));
     registry.register('lucide', lucide);
     registry.register('phosphor', phosphor);
 
@@ -17,7 +26,7 @@ describe('IconRegistry', () => {
     ];
     for (const [name, options] of lucideCalls) {
       const svg = await registry.resolve('lucide', name, options);
-      expect(svg).toBe(await createLucideResolver()(name));
+      expect(svg).toBe(await createLucideResolver({ base: LUCIDE_BASE })(name));
     }
     expect(lucide.mock.calls).toEqual(lucideCalls);
 
@@ -28,14 +37,14 @@ describe('IconRegistry', () => {
     ];
     for (const [name, options] of phosphorCalls) {
       const svg = await registry.resolve('phosphor', name, options);
-      expect(svg).toBe(await createPhosphorResolver()(name, options));
+      expect(svg).toBe(await createPhosphorResolver({ base: PHOSPHOR_BASE })(name, options));
     }
     expect(phosphor.mock.calls).toEqual(phosphorCalls);
   });
 
   test('has() reports registration', () => {
     const registry = new IconRegistry();
-    registry.register('lucide', createLucideResolver());
+    registry.register('lucide', createLucideResolver({ base: LUCIDE_BASE }));
     expect(registry.has('lucide')).toBe(true);
     expect(registry.has('phosphor')).toBe(false);
   });
