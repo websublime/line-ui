@@ -23,6 +23,13 @@ first.
 
 The Radix gray hue is named `neutral` (`--line-neutral-*`); `--line-gray-*` is the gray role.
 
+## Accessibility panel
+
+`@storybook/addon-a11y` checks each story with axe when the story renders, and shows the result in the
+Accessibility panel. It gates nothing; the CI gate is the Playwright axe tier. In a browser under automation
+(`navigator.webdriver` is true), `preview.ts` sets `globals.a11y.manual`, so the addon waits for the **Run
+accessibility scan** button and its axe-core never runs beside the tier's in the same frame.
+
 ## Guides
 
 - **Getting Started** installs the three CSS packages and shows a hello world themed with `data-accent`.
