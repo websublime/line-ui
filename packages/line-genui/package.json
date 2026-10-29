@@ -1,0 +1,47 @@
+{
+  "name": "@websublime/line-genui",
+  "version": "0.1.0",
+  "type": "module",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/websublime/line-ui.git",
+    "directory": "packages/line-genui"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    "./catalog": {
+      "types": "./dist/catalog/index.d.ts",
+      "import": "./dist/catalog/index.js"
+    },
+    "./a2ui": {
+      "types": "./dist/a2ui/index.d.ts",
+      "import": "./dist/a2ui/index.js"
+    }
+  },
+  "dependencies": {
+    "@a2ui/web_core": "0.14.0",
+    "@websublime/line-core": "workspace:^",
+    "zod": "^3.25.76"
+  },
+  "peerDependencies": {
+    "@websublime/line-components": "workspace:^0.1.0 || ^0.2.0",
+    "@websublime/line-icons": "workspace:^0.1.0 || ^0.2.0"
+  },
+  "devDependencies": {
+    "@websublime/line-components": "workspace:^0.1.0 || ^0.2.0",
+    "@websublime/line-icons": "workspace:^0.1.0 || ^0.2.0"
+  },
+  "scripts": {
+    "build": "vite build && tsc -p tsconfig.json --noEmit false --emitDeclarationOnly",
+    "dev": "trap 'kill 0' INT TERM; vite build --watch & tsc -p tsconfig.json --noEmit false --emitDeclarationOnly --watch & wait",
+    "clean": "rm -rf dist custom-elements.json",
+    "typecheck": "tsc --noEmit"
+  }
+}

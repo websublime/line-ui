@@ -19,7 +19,7 @@ jobs:
         run: bun install --frozen-lockfile
       - name: Lint (biome check)
         run: bun run lint
-      - name: Build packages                   # AM-029: two-phase (packages, then apps) — Bun --filter ignores devDependencies ordering
+      - name: Build packages                   # AM-029: two-phase (packages, then apps)
         run: bun run build
       - name: Typecheck                        # AM-025: after build — needs line-schemas dist/*.d.ts
         run: bun --filter '@websublime/*' typecheck
