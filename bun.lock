@@ -101,7 +101,7 @@
     },
     "packages/line-icons": {
       "name": "@websublime/line-icons",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@websublime/line-tokens": "workspace:^",
       },
