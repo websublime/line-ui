@@ -22,7 +22,7 @@ bun add @websublime/line-icons @phosphor-icons/core   # Phosphor
 
 ## Reference resolvers
 
-`createLucideResolver({ base })` and `createPhosphorResolver({ base, weight? })` fetch one SVG file per icon from `base` and resolve to its text. `base` is required and names the folder that serves the icon files, with a trailing slash. A path-only base such as `/icons/lucide/` resolves against `document.baseURI`. The resolvers make no request to any host you did not name in `base`.
+`createLucideResolver({ base })` and `createPhosphorResolver({ base, weight? })` fetch one SVG file per icon from `base` and resolve to its text. `base` is required and names the folder that serves the icon files, with a trailing slash. A path-only base such as `/icons/lucide/` resolves against `document.baseURI`. The resolvers send each request to the origin of `base`, and to no other host unless that server redirects, because `fetch` follows redirects.
 
 | Resolver | File fetched, relative to `base` | Folder in the peer package |
 |---|---|---|
@@ -75,6 +75,8 @@ iconRegistry.register('phosphor', createPhosphorResolver({ base: '/icons/phospho
 const house = await iconRegistry.resolve('lucide', 'house');
 const boldHouse = await iconRegistry.resolve('phosphor', 'house', { weight: 'bold' });
 ```
+
+The resolved value is untrusted SVG text from the server behind `base`. Do not put it into `innerHTML` unsanitised; `<line-icon>` sanitises it before it renders.
 
 ## Icons inside your bundle
 
