@@ -79,4 +79,12 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(stack?.path).toBe('src/stack/stack.ts');
     expect(paths.has('src/stack/stack.ts')).toBe(true);
   });
+
+  test('line-separator resolves to src/separator/separator.ts', () => {
+    const separator = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-separator'),
+    );
+    expect(separator?.path).toBe('src/separator/separator.ts');
+    expect(paths.has('src/separator/separator.ts')).toBe(true);
+  });
 });

@@ -27,6 +27,10 @@
       "types": "./dist/button/index.d.ts",
       "import": "./dist/button/index.js"
     },
+    "./separator": {
+      "types": "./dist/separator/index.d.ts",
+      "import": "./dist/separator/index.js"
+    },
     "./stack": {
       "types": "./dist/stack/index.d.ts",
       "import": "./dist/stack/index.js"
