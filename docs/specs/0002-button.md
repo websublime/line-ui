@@ -224,12 +224,12 @@ On a toggle button, activation flips `pressed` and fires `line-change`.
 
 - The host stays a role-less `generic` element, and it keeps any `aria-label` the author set. Chromium exposes it as a named `generic` node. axe-core 4.14.0 reports no violation for that case (R8 §2.4 fixtures).
 - Loading text joins the name through the `loading` slot. A consumer who wants only the loading text read hides `::part(label)` with `display: none` while `[data-loading]`.
-- **Screen-reader pass** (Phase 1 spec §6.C.4; R8 §6 Q1, Q5). Two checks run on the shipped component.
+- **Screen-reader pass** (Phase 1 spec §6.C.4; R8 §6 Q1, Q5; Phase 1 spec AM-058; AM-001). The automated check below runs on the shipped component; the manual pass is optional and does not block the row.
   - A Playwright `ariaSnapshot` in the Browser tier, in chromium, firefox and webkit, records one `button` node with the expected name and pressed state, and records whether the named `generic` host appears.
-  - A manual VoiceOver pass runs on macOS in Safari and Chrome. It tabs to a plain, a toggle and a loading button, flips the toggle and turns `loading` on and off with focus on the button. It records what VoiceOver announces, whether the host name is announced twice, and whether the change to the loading name is announced. The C1 PR records the result in this section.
+  - An optional manual VoiceOver pass, if run, runs on macOS in Safari and Chrome. It tabs to a plain, a toggle and a loading button, flips the toggle and turns `loading` on and off with focus on the button. It records what VoiceOver announces, whether the host name is announced twice, and whether the change to the loading name is announced. Any run records its result in this section.
   - **Result, ariaSnapshot** (C1, `__tests__/integration/button/button.e2e.ts`, 2026-10-27). In chromium, firefox and webkit each host yields one `button` node: `button "Save"`, `button "Bold" [pressed]`, `button "Save Saving…" [disabled]` for the loading button (its `aria-disabled="true"`), and `button "Close dialog"` for a host `aria-label`. The named `generic` host does not appear in any engine. Playwright builds the snapshot itself rather than reading the engine's accessibility tree, so the three engines give the same snapshot and it does not show whether an engine exposes the host.
-  - **Result, VoiceOver pass** (Miguel, Verify): pending.
-- An unannounced loading change is a known risk [INFERENCE: React Aria announces pending changes through a live region, R7 `:208-209`]. If the manual pass shows no announcement, the finding goes to Miguel before the spec moves to `implemented`.
+  - **Result, VoiceOver pass** (optional per Phase 1 spec AM-058): not run.
+- An unannounced loading change is a known risk [INFERENCE: React Aria announces pending changes through a live region, R7 `:208-209`]. If an optional manual pass is run and shows no announcement, the finding goes to Miguel before the spec moves to `implemented`.
 
 ### Agent contract
 
@@ -348,8 +348,18 @@ On a toggle button, activation flips `pressed` and fires `line-change`.
 | 4 | How does loading content appear, given ARCH §13.1 (no bundled spinner) and §13.5 (`::part(loading)`)? | Miguel | A `loading` slot inside a `loading` part, rendered only while `loading` is on (Miguel, 2026-10-27) |
 | 5 | Does Button have semantic variants? | Miguel | `variant` with `default`, `primary` and `borderless`, mirroring A2UI basic; no `size` attribute (Miguel, 2026-10-27) |
 | 6 | Which attribute carries external validity (C4)? It sets the convention for the Phase 2 form controls | Miguel | `custom-validity` / `customValidity`, mirroring the native `setCustomValidity()` (Miguel, 2026-10-27) |
-| 7 | Who runs the manual VoiceOver pass? | Miguel | Miguel, during Verify of the C1 PR, following the A11y section; the result lands in that section before merge (Miguel, 2026-10-27) |
+| 7 | Who runs the manual VoiceOver pass? | Miguel | Miguel, during Verify of the C1 PR, following the A11y section; the result lands in that section before merge (Miguel, 2026-10-27). Superseded: the pass is optional and never blocks the row (Phase 1 spec AM-058, Miguel 2026-10-28; AM-001) |
 | 8 | How does a `line-components` test reach `measureHostUpdates`, which lives in `packages/line-core/__tests__/harness/update-rate.ts` (Phase 1 spec §10 SD28), when a test must not reach another package by relative path and shared helpers must live in `@websublime/line-testing` (Phase 1 spec §6.Z.3)? | Miguel | Phase 1 spec AM-055 moves `measureHostUpdates`, its constants and `formatUpdateRate` to `@websublime/line-testing/update-rate` and keeps `measureVanillaChain` in `line-core` (Miguel, 2026-10-27) |
 | 9 | Who draws the focus ring? ARCH §14.9 left it to the theme, `line-themes` ships no rule, and `--line-focus-ring` is invalid without the theme layer. It sets the convention for every interactive component | Miguel | Each component draws a default ring through `--line-{component}-focus-ring`, defaulting to `var(--line-focus-ring, 2px solid currentColor)` (Miguel, 2026-10-27; ARCH v0.8.15 §14.9) |
 | 10 | What `type` does a surface-created Button get? A2UI `Button` has no `type`, and the native `submit` default acts on a host-page form that wraps the light-DOM surface | Miguel | The agent chooses `type` through the prop schema, which also carries `name` and `value`; the native `submit` default applies, over a surface that always forces `type="button"` (Miguel, 2026-10-27) |
 | 11 | Do the variants look different out of the box? No package styled `[variant]`, so the three rendered the same, the agent's emphasis reached the user as nothing and the variant baselines were identical | Miguel | Each variant sets the defaults of `--line-button-bg` and `--line-button-color` on `:host`, through the gray role for `default` and the accent role for `primary` and `borderless`, and adds no other rule. ARCH §17.2 C6 now allows exactly that (PRD v0.8.28; Phase 1 spec AM-056), over variants with no styles and a Storybook CSS recipe (Miguel, 2026-10-27) |
+
+---
+
+## Amendments
+
+PROCESS §3 requires that any change to this spec after approval lands as a row here, in the same commit as the change.
+
+| ID | Date | Trigger | Change | Reason | Evidence |
+|---|---|---|---|---|---|
+| AM-001 | 2026-10-29 | decision — Phase 1 spec AM-058 (Miguel, 2026-10-28, 01-C4 understand) | A11y, Screen-reader pass: the manual VoiceOver pass is optional and never blocks the row; its result line reads "not run"; the loading-announcement bullet applies only if an optional pass is run. Open Question 7 records the change. The ariaSnapshot result is unchanged | Miguel changed the rule for every component: roles are proved by automated checks, and a manual screen-reader pass is optional | `docs/specs/01-spec-core-primitives.md` §12 AM-058 |
