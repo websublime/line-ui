@@ -55,7 +55,11 @@ const preview: Preview = {
       },
     },
   },
-  initialGlobals: { accent: DEFAULT_ACCENT, gray: AUTO_GRAY },
+  // addon-a11y analyses each story after it renders unless globals.a11y.manual is true. That run loads
+  // the addon's own axe-core, which takes over window.axe in the story frame while the axe tier's
+  // AxeBuilder runs there (row 01-P15). Automated browsers report navigator.webdriver, so they get
+  // manual mode, and the panel keeps its "Run accessibility scan" button.
+  initialGlobals: { accent: DEFAULT_ACCENT, gray: AUTO_GRAY, a11y: { manual: navigator.webdriver } },
   decorators: [withThemeAttributes],
   parameters: {
     controls: {
