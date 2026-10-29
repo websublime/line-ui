@@ -21,7 +21,7 @@ event has happened (PROCESS §6).
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| P1 | P | Scaffold `packages/line-genui` with `exports`, `files` and `repository`. From the P1 merge until the P14 merge, Miguel merges no Version PR (spec §6.P.1, §4.1, §7.2, §6.P.14) | infra-supervisor | P2 | todo | — | — | AM-051 |
+| P1 | P | Scaffold `packages/line-genui` with `exports`, `files` and `repository`. From the P1 merge until the P14 merge, Miguel merges no Version PR (spec §6.P.1, §4.1, §7.2, §6.P.14) | infra-supervisor | P2 | in_progress | feat/01-p1-genui-scaffold | — | AM-051, AM-060 |
 | P2 | P | Layer edges: the Phase 1 spec §3.2 edge table in `ALLOWED_EDGES` (`scripts/lint-layers.mjs`) (spec §6.P.2, §3.3) | infra-supervisor | — | done | chore/01-p2-layer-edges | #286 | — |
 | P3 | P | Publish, `verify-pack` and Changesets coverage of the 9th package. From the P1 merge until the P14 merge, Miguel merges no Version PR (spec §6.P.3, §7.2, §6.P.14) | infra-supervisor | P1 | todo | — | — | AM-051 |
 | P4 | P | Trusted publisher bootstrap, spec §6.P.4 steps 1–6, with Miguel for the npmjs.com steps. The PR adds `docs/context/01-p4.md` with the evidence. From the P1 merge until the P14 merge, Miguel merges no Version PR (spec §6.P.4, §7.2, §6.P.14) | infra-supervisor | P1, P3 | todo | — | — | AM-051 |
