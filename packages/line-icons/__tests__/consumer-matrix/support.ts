@@ -76,7 +76,14 @@ export interface StaticServer {
 export async function serveFolders(folders: Record<string, string>): Promise<StaticServer> {
   const prefixes = Object.keys(folders).sort((a, b) => b.length - a.length);
   const server = createServer((request, response) => {
-    const pathname = decodeURIComponent(new URL(request.url ?? '/', 'http://localhost').pathname);
+    let pathname: string;
+    try {
+      pathname = decodeURIComponent(new URL(request.url ?? '/', 'http://localhost').pathname);
+    } catch {
+      // A malformed `%` sequence; answer it instead of throwing inside the handler.
+      response.writeHead(400, { 'content-type': 'text/plain' }).end('Bad Request');
+      return;
+    }
     const prefix = prefixes.find((p) => pathname.startsWith(p));
     const root = prefix === undefined ? undefined : folders[prefix];
     let file = root === undefined || prefix === undefined ? undefined : join(root, pathname.slice(prefix.length));
