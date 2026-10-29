@@ -92,8 +92,8 @@ export class LineButton extends FormAssociated(LineElement) {
   static override shadowRootOptions: ShadowRootInit = { ...LitElement.shadowRootOptions, delegatesFocus: true };
 
   static override properties: PropertyDeclarations = {
-    variant: { reflect: true, converter: variantConverter },
-    type: { reflect: true, converter: typeConverter },
+    variant: { reflect: true, useDefault: true, converter: variantConverter },
+    type: { reflect: true, useDefault: true, converter: typeConverter },
     disabled: { type: Boolean, reflect: true },
     loading: { type: Boolean, reflect: true },
     pressed: { reflect: true, converter: pressedConverter },
@@ -217,6 +217,7 @@ export class LineButton extends FormAssociated(LineElement) {
 
   constructor() {
     super();
+    // `useDefault` keeps these initial values out of the attributes, so an unknown author value stays (C8).
     this.variant = 'default';
     this.type = 'submit';
     this.disabled = false;
