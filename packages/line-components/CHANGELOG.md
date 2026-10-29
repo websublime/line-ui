@@ -1,5 +1,11 @@
 # @websublime/line-components
 
+## 0.2.3
+
+### Patch Changes
+
+- [#305](https://github.com/websublime/line-ui/pull/305) [`0519606`](https://github.com/websublime/line-ui/commit/05196068b3f183fc085afb392c680d1fbd4e1cdf) Thanks [@miguelramos](https://github.com/miguelramos)! - Add `<line-separator>` at `@websublime/line-components/separator`: a horizontal or vertical line with the `separator` role through `ElementInternals`, a `decorative` attribute for role `none`, and `--line-separator-color` and `--line-separator-thickness` tokens.
+
 ## 0.2.2
 
 ### Patch Changes
