@@ -68,9 +68,7 @@ describe('<line-button> defaults and reflection', () => {
     expect(el.formNoValidate).toBe(false);
     expect(el.customValidity).toBe('');
     expect(el.name).toBeNull();
-    expect(el.getAttribute('variant')).toBe('default');
-    expect(el.getAttribute('type')).toBe('submit');
-    for (const name of ['disabled', 'loading', 'pressed', 'value', 'formaction', 'formnovalidate']) {
+    for (const name of ['variant', 'type', 'disabled', 'loading', 'pressed', 'value', 'formaction', 'formnovalidate']) {
       expect(el.hasAttribute(name)).toBe(false);
     }
 
@@ -159,6 +157,35 @@ describe('<line-button> converters', () => {
     expect(el.getAttribute('type')).toBe('menu');
     el.removeAttribute('type');
     expect(el.type).toBe('submit');
+  });
+
+  test('variant: an unknown value in the initial markup behaves as default and keeps the author attribute', async () => {
+    const el = await mount(html`<line-button variant="foo">Save</line-button>`);
+    expect(el.variant).toBe('default');
+    expect(el.getAttribute('variant')).toBe('foo');
+  });
+
+  test('type: an unknown value in the initial markup behaves as submit and keeps the author attribute', async () => {
+    const el = await mount(html`<line-button type="menu">Save</line-button>`);
+    expect(el.type).toBe('submit');
+    expect(el.getAttribute('type')).toBe('menu');
+  });
+
+  test('type: an uppercase value in the initial markup parses and keeps the author attribute', async () => {
+    const el = await mount(html`<line-button type="RESET">Reset</line-button>`);
+    expect(el.type).toBe('reset');
+    expect(el.getAttribute('type')).toBe('RESET');
+  });
+
+  test('removing variant or type restores the default and leaves no attribute', async () => {
+    const el = await mount(html`<line-button variant="primary" type="reset">Reset</line-button>`);
+    el.removeAttribute('variant');
+    el.removeAttribute('type');
+    await el.updateComplete;
+    expect(el.variant).toBe('default');
+    expect(el.type).toBe('submit');
+    expect(el.hasAttribute('variant')).toBe(false);
+    expect(el.hasAttribute('type')).toBe(false);
   });
 
   test('pressed: absent is undefined, "false" is false, any other value is true', async () => {
