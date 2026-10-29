@@ -1,5 +1,11 @@
 # @websublime/line-icons
 
+## 0.2.0
+
+### Minor Changes
+
+- [#310](https://github.com/websublime/line-ui/pull/310) [`828b5b8`](https://github.com/websublime/line-ui/commit/828b5b873f67770e70421cd04ed434f32364e851) Thanks [@miguelramos](https://github.com/miguelramos)! - Breaking: `createLucideResolver({ base })` and `createPhosphorResolver({ base, weight? })` now fetch each SVG from a required `base` URL (a version-pinned jsDelivr folder or your self-hosted copy of the peer's `icons/` or `assets/` folder) and render in Vite, esbuild and webpack builds with no bundler configuration, and the new `./registry`, `./resolvers/lucide` and `./resolvers/phosphor` subpaths expose them; a resolver created without `base` rejects.
+
 ## 0.1.0
 
 ### Minor Changes
