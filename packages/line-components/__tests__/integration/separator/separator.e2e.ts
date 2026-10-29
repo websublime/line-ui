@@ -325,13 +325,28 @@ test.describe('Chromium accessibility tree (CDP)', () => {
   test('the border colour stays visible in forced-colors mode', async ({ page }) => {
     await page.emulateMedia({ forcedColors: 'active' });
     await open(page);
-    await mount(page, '<line-separator></line-separator>');
-    const { line, canvas } = await page.evaluate(() => ({
-      line: getComputedStyle(document.querySelector('main line-separator') as Element).borderTopColor,
-      canvas: getComputedStyle(document.body).backgroundColor,
-    }));
+    await mount(
+      page,
+      `<div id="text" style="color: rgb(200, 0, 0)">
+        <line-separator></line-separator>
+      </div>
+      <div id="canvas" style="background-color: Canvas"></div>
+      <div id="background-line" style="background-color: rgb(200, 0, 0)"></div>`,
+    );
+    const { line, text, canvas, backgroundLine } = await page.evaluate(() => {
+      const color = (selector: string, property: 'color' | 'backgroundColor' | 'borderTopColor') =>
+        getComputedStyle(document.querySelector(selector) as Element)[property];
+      return {
+        line: color('main line-separator', 'borderTopColor'),
+        text: color('#text', 'color'),
+        canvas: color('#canvas', 'backgroundColor'),
+        backgroundLine: color('#background-line', 'backgroundColor'),
+      };
+    });
+    // The UA forces the border to the text colour, and a background-drawn line to Canvas, where it vanishes.
+    expect(line).toBe(text);
     expect(line).not.toBe(canvas);
-    expect(line).not.toBe('rgba(0, 0, 0, 0)');
+    expect(backgroundLine).toBe(canvas);
   });
 });
 
