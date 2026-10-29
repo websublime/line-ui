@@ -69,7 +69,7 @@
     },
     "packages/line-components": {
       "name": "@websublime/line-components",
-      "version": "0.2.3",
+      "version": "0.2.4",
       "dependencies": {
         "@websublime/line-core": "workspace:^",
         "@websublime/line-themes": "workspace:^",

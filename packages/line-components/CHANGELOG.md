@@ -1,5 +1,11 @@
 # @websublime/line-components
 
+## 0.2.4
+
+### Patch Changes
+
+- [#308](https://github.com/websublime/line-ui/pull/308) [`71e3d0e`](https://github.com/websublime/line-ui/commit/71e3d0e61281522db563553efc9e810109569a91) Thanks [@miguelramos](https://github.com/miguelramos)! - `<line-button>` keeps the `variant` and `type` attributes an author writes, including unknown values, and a bare button no longer carries `variant` or `type` attributes.
+
 ## 0.2.3
 
 ### Patch Changes
