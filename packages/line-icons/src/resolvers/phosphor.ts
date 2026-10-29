@@ -1,5 +1,5 @@
 // Phosphor ships one SVG file per weight and icon.
-import type { IconResolver } from '../index.js';
+import type { IconResolver } from '../registry.js';
 import { assertIconName } from './icon-name.js';
 
 type PhosphorWeight = 'thin' | 'light' | 'regular' | 'bold' | 'fill' | 'duotone';

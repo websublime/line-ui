@@ -1,5 +1,5 @@
 // Lucide ships one SVG file per icon.
-import type { IconResolver } from '../index.js';
+import type { IconResolver } from '../registry.js';
 import { assertIconName } from './icon-name.js';
 
 export function createLucideResolver(): IconResolver {

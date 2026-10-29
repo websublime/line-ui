@@ -1,5 +1,6 @@
 import { describe, expect, mock, test } from 'bun:test';
-import { createLucideResolver, createPhosphorResolver, IconRegistry } from '../src/index.js';
+import { createLucideResolver, createPhosphorResolver, IconRegistry, iconRegistry } from '../src/index.js';
+import * as registryEntry from '../src/registry.js';
 
 describe('IconRegistry', () => {
   test('dispatches to the registered resolver with the exact arguments', async () => {
@@ -54,5 +55,11 @@ describe('IconRegistry', () => {
     registry.register('icons', second);
     expect(await registry.resolve('icons', 'house')).toBe('second');
     expect(first).not.toHaveBeenCalled();
+  });
+
+  test('the ./registry entry and the root export the same registry', () => {
+    expect(registryEntry.IconRegistry).toBe(IconRegistry);
+    expect(registryEntry.iconRegistry).toBe(iconRegistry);
+    expect(iconRegistry).toBeInstanceOf(IconRegistry);
   });
 });

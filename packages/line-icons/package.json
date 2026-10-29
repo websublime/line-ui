@@ -20,6 +20,18 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./registry": {
+      "types": "./dist/registry.d.ts",
+      "import": "./dist/registry.js"
+    },
+    "./resolvers/lucide": {
+      "types": "./dist/resolvers/lucide.d.ts",
+      "import": "./dist/resolvers/lucide.js"
+    },
+    "./resolvers/phosphor": {
+      "types": "./dist/resolvers/phosphor.d.ts",
+      "import": "./dist/resolvers/phosphor.js"
     }
   },
   "dependencies": {
