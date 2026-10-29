@@ -76,7 +76,7 @@ const house = await iconRegistry.resolve('lucide', 'house');
 const boldHouse = await iconRegistry.resolve('phosphor', 'house', { weight: 'bold' });
 ```
 
-The resolved value is untrusted SVG text from the server behind `base`. Do not put it into `innerHTML` unsanitised; `<line-icon>` sanitises it before it renders.
+The resolved value is untrusted SVG text from the server behind `base`. Do not put it into `innerHTML` unsanitised.
 
 ## Icons inside your bundle
 
