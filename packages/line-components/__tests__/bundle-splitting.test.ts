@@ -14,8 +14,8 @@
  * - `dist/` of `line-components` imports `@websublime/line-core` and `@websublime/line-core/styles` bare.
  * - Undeclared bare specifiers: every bare import in `dist/**\/*.js` of the three packages names a declared
  *   `dependencies`/`peerDependencies` entry, or the package's own name or `name/…` (a self-reference through its
- *   `exports`, AM-050). A Node built-in counts as undeclared: these packages ship browser code, and no manifest
- *   field can declare a built-in.
+ *   `exports`, AM-050). A Node built-in such as `fs` or `node:fs` fails unless the manifest declares a package of
+ *   that name, as with an `events` polyfill. Its failure line says "(Node built-in)".
  * - `line-core/styles` per-sheet shaking: a §7.6 esbuild bundle of `commonReset` holds the built
  *   `reset.common.css` string and none of the other ten (SD20); its gzip size is logged against R9's 1161 B.
  *
@@ -184,7 +184,7 @@ describe('bare specifiers in dist/ (§7.5, SD2)', () => {
         ...Object.keys(manifest.peerDependencies ?? {}),
       ]);
       const undeclared = bareImports(name)
-        .filter(({ specifier }) => isBuiltin(specifier) || !declared.has(packageOf(specifier)))
+        .filter(({ specifier }) => !declared.has(packageOf(specifier)))
         .map(({ file, specifier }) => `${file} imports ${specifier}${isBuiltin(specifier) ? ' (Node built-in)' : ''}`);
       expect(undeclared).toEqual([]);
     });
