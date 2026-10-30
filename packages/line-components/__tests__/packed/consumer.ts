@@ -2,10 +2,12 @@
  * Packed-tarball consumer — shared helper for the §7.5 checks (Phase 1 spec §7.5, §10 SD2, SD4; ledger 01-P5).
  *
  * Packs workspace packages with `stageAndPack` from `scripts/verify-pack.mjs`, the publish path's own pack step,
- * and extracts each tarball into `<temp>/node_modules/<name>`, so a check reads what npm ships rather than `dist/`
- * (§7.5 intro, SD4). Third-party packages (Lit, Zag) resolve from the root `node_modules` through esbuild
- * `nodePaths`; no `@websublime/*` package lives there, so every `@websublime/*` import resolves to an extracted
- * tarball (PRD §5.2, ledger 01-Z5). Needs `bun run build` first, as the CI unit tier has.
+ * and extracts each tarball into `<temp>/node_modules/<name>`, so a check reads the files npm ships (§7.5 intro,
+ * SD4). The temp root lives under `<repo>/node_modules/.cache/line-p5/`, so esbuild's walk up the parent
+ * `node_modules` folders reaches the root `node_modules` and never a shared system temp folder. Third-party
+ * packages (Lit, Zag) resolve from the root `node_modules`. No `@websublime/*` package lives there, so every
+ * `@websublime/*` import resolves to an extracted tarball (PRD §5.2, ledger 01-Z5). Needs `bun run build` first,
+ * as the CI unit tier has.
  *
  * `freshRealm()` is a new happy-dom `Window` with its own VM context. A module evaluated there gets its own
  * globals and its own `customElements` registry, apart from the global happy-dom of `bun-test-preload.ts`.
@@ -16,7 +18,6 @@
  */
 
 import { existsSync, mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { type BuildOptions, build, type Message, type Metafile } from 'esbuild';
 
@@ -46,9 +47,11 @@ export interface Consumer {
   cleanup(): void;
 }
 
-/** Packs each named workspace package and extracts it into one temp `node_modules`. */
+/** Packs each named workspace package and extracts it into one temp `node_modules` inside the repo. */
 export async function installPacked(names: readonly string[]): Promise<Consumer> {
-  const root = mkdtempSync(join(tmpdir(), 'line-consumer-'));
+  const cache = join(ROOT, 'node_modules', '.cache', 'line-p5');
+  mkdirSync(cache, { recursive: true });
+  const root = mkdtempSync(join(cache, 'consumer-'));
   const cleanup = () => rmSync(root, { recursive: true, force: true });
   try {
     const workspace = readWorkspacePackages();
