@@ -27,14 +27,15 @@ function createSheet(css: string): CSSStyleSheet {
   return sheet;
 }
 
-export const commonReset = createSheet(commonCSS);
-export const inputReset = createSheet(inputCSS);
-export const buttonReset = createSheet(buttonCSS);
-export const textareaReset = createSheet(textareaCSS);
-export const selectReset = createSheet(selectCSS);
-export const rangeReset = createSheet(rangeCSS);
-export const progressReset = createSheet(progressCSS);
-export const summaryReset = createSheet(summaryCSS);
-export const fieldsetReset = createSheet(fieldsetCSS);
-export const tableReset = createSheet(tableCSS);
-export const scrollbarReset = createSheet(scrollbarCSS);
+// `/* @__PURE__ */` lets a bundler drop every sheet a consumer does not import (Phase 1 spec §7.6, §10 SD20).
+export const commonReset = /* @__PURE__ */ createSheet(commonCSS);
+export const inputReset = /* @__PURE__ */ createSheet(inputCSS);
+export const buttonReset = /* @__PURE__ */ createSheet(buttonCSS);
+export const textareaReset = /* @__PURE__ */ createSheet(textareaCSS);
+export const selectReset = /* @__PURE__ */ createSheet(selectCSS);
+export const rangeReset = /* @__PURE__ */ createSheet(rangeCSS);
+export const progressReset = /* @__PURE__ */ createSheet(progressCSS);
+export const summaryReset = /* @__PURE__ */ createSheet(summaryCSS);
+export const fieldsetReset = /* @__PURE__ */ createSheet(fieldsetCSS);
+export const tableReset = /* @__PURE__ */ createSheet(tableCSS);
+export const scrollbarReset = /* @__PURE__ */ createSheet(scrollbarCSS);
