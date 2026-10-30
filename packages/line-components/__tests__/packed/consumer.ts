@@ -7,10 +7,10 @@
  * `nodePaths`; no `@websublime/*` package lives there, so every `@websublime/*` import resolves to an extracted
  * tarball (PRD §5.2, ledger 01-Z5). Needs `bun run build` first, as the CI unit tier has.
  *
- * `freshRealm()` is a new happy-dom `Window` with its own VM context: a module evaluated there gets its own
+ * `freshRealm()` is a new happy-dom `Window` with its own VM context. A module evaluated there gets its own
  * globals and its own `customElements` registry, apart from the global happy-dom of `bun-test-preload.ts`.
  * happy-dom shares its element classes (`HTMLElement` and the rest) between windows, so a check never writes to
- * their prototypes: the write would reach every other test in the process.
+ * their prototypes. Such a write would reach every other test in the process.
  *
  * @module __tests__/packed/consumer
  */
@@ -19,7 +19,9 @@ import { existsSync, mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync } f
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { type BuildOptions, build, type Message, type Metafile } from 'esbuild';
-// A repo-root script, not a package: §7.5 names this pack step.
+
+// The repo-root pack script is not a package, and §7.5 names its pack step.
+
 import { ROOT, readTarball, readWorkspacePackages, stageAndPack } from '../../../../scripts/verify-pack.mjs';
 
 /** The `package.json` fields the checks read. */

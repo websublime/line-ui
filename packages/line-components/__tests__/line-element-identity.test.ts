@@ -5,7 +5,7 @@
  * `line-core` and `line-components` are packed with `stageAndPack` and extracted into one temp `node_modules`
  * (`./packed/consumer.ts`). One esbuild consumer bundle imports `LineElement` from `@websublime/line-core` and
  * every component subpath from `@websublime/line-components`, and runs in a fresh happy-dom realm. Every element
- * a subpath defines must be `instanceof` the imported `LineElement`: `line-components` keeps `line-core` external,
+ * a subpath defines must be `instanceof` the imported `LineElement`. `line-components` keeps `line-core` external,
  * so the consumer gets one copy of it. Needs `bun run build` first, as the CI unit tier has.
  *
  * @module __tests__/line-element-identity

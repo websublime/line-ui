@@ -5,9 +5,8 @@
  * `line-core`, `line-components` and `line-genui` are packed with `stageAndPack` and extracted into one temp
  * `node_modules` (`./packed/consumer.ts`). The `line-genui` registration row of §7.5 is G4's (§6.G.4).
  *
- * - Registration harness: each subpath runs in a fresh happy-dom realm with `customElements.define` wrapped; it
- *   must define exactly its `EXPECTED_TAGS` row, and the root `"."` nothing (SD24: this replaces the Phase 00
- *   zero-export smoke step).
+ * - Registration harness: each subpath runs in a fresh happy-dom realm with `customElements.define` wrapped. A
+ *   subpath defines exactly its `EXPECTED_TAGS` row, and the root `"."` defines nothing (SD24).
  * - Isolation scan: an esbuild `--metafile` bundle per subpath holds no other component's module or tag. Modules
  *   under `src/shared/`, emitted to `dist/shared/**` (§6.P.9), may sit in any bundle.
  * - esbuild consumer bundle: one bare-import bundle of every subpath emits no `ignored-bare-import` warning.
@@ -193,8 +192,8 @@ describe('bare specifiers in dist/ (§7.5, SD2)', () => {
 
 describe('line-core/styles per-sheet shaking (§7.6, SD20)', () => {
   test('a commonReset bundle holds the built reset.common.css string and none of the other ten', async () => {
-    // The built CSS strings, read by running the tarball's dist/styles/index.js with a recording CSSStyleSheet:
-    // the minified build renames `createSheet`, so the check reads CSS, not call names.
+    // The test reads the built CSS strings by running the tarball's dist/styles/index.js with a recording
+    // CSSStyleSheet. The minified build renames `createSheet`, so the check compares CSS and ignores call names.
     const code = await iife(`import * as sheets from '${CORE}/styles';\nglobalThis.__lineSheets = sheets;\n`);
     const realm = freshRealm();
     let built: Record<string, string>;
