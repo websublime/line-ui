@@ -9,7 +9,7 @@
  * Packs `line-components` and `line-core` with `stageAndPack` (scripts/verify-pack.mjs), extracts both
  * tarballs into a scratch `node_modules` under `<repo>/node_modules/.cache/line-p5/`, and measures with esbuild
  * `--bundle --minify --format=esm --target=es2022`, then `gzip -9 -n`:
- *   - every `line-components` subpath in the packed `exports` (minus `.` and `./custom-elements.json`),
+ *   - every `line-components` subpath in the packed `exports` whose import target is a `.js` file (`.` excluded),
  *     component only, with Lit, `line-core` and Zag external (SD21);
  *   - the shared baseline once: Lit, `line-core` `LineElement`, `line-core/styles` (all 11 sheets),
  *     Zag core + vanilla (R9 §2.4 table);
@@ -121,6 +121,17 @@ function printTable(title, headers, rows) {
 
 const cells = (m) => (m.error ? [m.label, 'error', m.error] : [m.label, m.minified, m.gzip]);
 
+/** The `import` target of an `exports` entry, a bare string or a conditions object. */
+const importTarget = (entry) =>
+  typeof entry === 'string' ? entry : typeof entry?.import === 'string' ? entry.import : undefined;
+
+/** Every `exports` key but `"."` whose import target is a `.js` file, the rule of the P5 tests' `componentSubpaths()`. */
+const componentSubpaths = (manifest) =>
+  Object.entries(manifest.exports ?? {})
+    .filter(([key, entry]) => key !== '.' && importTarget(entry)?.endsWith('.js'))
+    .map(([key]) => key)
+    .sort();
+
 async function main() {
   let scratch;
   try {
@@ -130,7 +141,7 @@ async function main() {
     const components = await packInto(COMPONENTS, nodeModules, scratch);
     await packInto(CORE, nodeModules, scratch);
 
-    const subpaths = Object.keys(components.exports ?? {}).filter((k) => k !== '.' && k !== './custom-elements.json');
+    const subpaths = componentSubpaths(components);
     const componentRows = subpaths.map((subpath) => ({
       label: subpath,
       contents: `export * from '${COMPONENTS}/${subpath.slice(2)}';\n`,
