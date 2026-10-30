@@ -25,8 +25,8 @@ jobs:
         run: bun --filter '@websublime/*' typecheck
       - name: Pack verification (AM-036)
         run: bun run scripts/verify-pack.mjs    # after build — packs every publishable package offline and checks the tarballs
-      - name: Zero-export smoke (§9.1, RK11, AM-007)
-        run: bun -e "const m = await import('./packages/line-components/dist/index.js'); const n = Object.keys(m).length; if (n !== 0) { console.error('line-components must export nothing in Phase 00, got', n); process.exit(1); }"
+      - name: Size report                      # Phase 1 spec §7.6: gates nothing (SD21); the script always exits 0
+        run: bun run scripts/report-size.mjs
       - name: Layer lint (downward-only enforcement)
         run: bun run scripts/lint-layers.mjs
       - name: Palette freshness
