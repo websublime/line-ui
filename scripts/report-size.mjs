@@ -41,9 +41,15 @@ const SCRATCH_PARENT = join(ROOT, 'node_modules', '.cache', 'line-p5');
 const inActions = process.env.GITHUB_ACTIONS === 'true';
 const problems = [];
 
+/** Escapes GitHub workflow-command data, turning `%`, CR and LF into `%25`, `%0D` and `%0A`. */
+export const escapeCommandData = (text) => text.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+
+/** Collapses line breaks and their indentation to one space, so no printed line starts with a raw `::` command. */
+export const oneLine = (text) => text.replace(/\s*[\r\n]+\s*/g, ' ').trim();
+
 function warn(message) {
-  problems.push(message);
-  if (inActions) console.info(`::warning title=Size report::${message.replace(/\r?\n/g, ' ')}`);
+  problems.push(oneLine(message));
+  if (inActions) console.info(`::warning title=Size report::${escapeCommandData(message)}`);
 }
 
 /** Pack a workspace package and extract its tarball to `<nodeModules>/<name>`. Returns the packed manifest. */
