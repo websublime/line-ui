@@ -101,7 +101,7 @@
     },
     "packages/line-genui": {
       "name": "@websublime/line-genui",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "dependencies": {
         "@a2ui/web_core": "0.14.0",
         "@websublime/line-core": "workspace:^",
