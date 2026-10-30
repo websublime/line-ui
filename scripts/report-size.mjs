@@ -3,21 +3,21 @@
 /**
  * scripts/report-size.mjs — Per-component size report (ledger 01-P5).
  *
- * Spec: docs/specs/01-spec-core-primitives.md §7.6 and §6.P.5; §10 SD20, SD21; R9 §2.4
- * (docs/research/01-research-packaging.md). Runs after `bun run build` (needs `dist/`). No network.
+ * It implements docs/specs/01-spec-core-primitives.md §7.6 and §6.P.5 (§10 SD20, SD21; R9 §2.4 in
+ * docs/research/01-research-packaging.md). It runs after `bun run build`, reads `dist/` and uses no network.
  *
- * Packs `line-components` and `line-core` with `stageAndPack` (scripts/verify-pack.mjs), extracts both
- * tarballs into a scratch `node_modules` under `<repo>/node_modules/.cache/line-p5/`, and measures with esbuild
- * `--bundle --minify --format=esm --target=es2022`, then `gzip -9 -n`:
- *   - every `line-components` subpath in the packed `exports` whose import target is a `.js` file (`.` excluded),
- *     component only, with Lit, `line-core` and Zag external (SD21);
- *   - the shared baseline once: Lit, `line-core` `LineElement`, `line-core/styles` (all 11 sheets),
- *     Zag core + vanilla (R9 §2.4 table);
- *   - `line-core/styles` per-sheet shaking: `commonReset` alone, against R9's 1161 B for all 11 sheets
+ * It packs `line-components` and `line-core` with `stageAndPack` (scripts/verify-pack.mjs) and extracts both
+ * tarballs into a scratch `node_modules` under `<repo>/node_modules/.cache/line-p5/`. Each bundle goes through
+ * esbuild `--bundle --minify --format=esm --target=es2022`, then `gzip -9 -n`. The report has three tables.
+ *   - One row per `line-components` subpath in the packed `exports` whose import target is a `.js` file
+ *     (`.` excluded) measures the component alone, with Lit, `line-core` and Zag external (SD21).
+ *   - The shared baseline prints once. It covers Lit, `line-core` `LineElement`, `line-core/styles` with all
+ *     11 sheets, and Zag core + vanilla (R9 §2.4 table).
+ *   - The per-sheet row bundles `commonReset` alone and compares it with R9's 1161 B for all 11 sheets
  *     (§6.P.5 acceptance; R9 §2.1).
  *
- * Gates nothing (SD21): the < 5 KB target is monitored. A measurement problem prints in its row (and as a
- * GitHub `::warning::` in Actions) and the script still exits 0.
+ * The report gates nothing (SD21) and only monitors the < 5 KB target. A failed measurement prints in its row
+ * and as a GitHub `::warning::` in Actions, and the script still exits 0.
  */
 
 import { mkdirSync, mkdtempSync, renameSync, rmSync } from 'node:fs';
@@ -52,7 +52,7 @@ function warn(message) {
   if (inActions) console.info(`::warning title=Size report::${escapeCommandData(message)}`);
 }
 
-/** Pack a workspace package and extract its tarball to `<nodeModules>/<name>`. Returns the packed manifest. */
+/** Packs a workspace package, extracts its tarball to `<nodeModules>/<name>` and returns the packed manifest. */
 async function packInto(name, nodeModules, scratch) {
   const pkg = readWorkspacePackages().find((p) => p.name === name);
   if (!pkg) throw new Error(`${name} is not a packages/* workspace package`);
@@ -70,14 +70,14 @@ async function packInto(name, nodeModules, scratch) {
   }
 }
 
-/** `gzip -9 -n` byte count of `bytes`, from the CLI (R9 §2.4: Node zlib gives slightly larger numbers). */
+/** Returns the `gzip -9 -n` byte count of `bytes` from the CLI. Node zlib gives slightly larger numbers (R9 §2.4). */
 function gzipSize(bytes) {
   const proc = Bun.spawnSync(['gzip', '-9', '-n', '-c'], { stdin: bytes, stdout: 'pipe', stderr: 'pipe' });
   if (proc.exitCode !== 0) throw new Error(`gzip -9 -n failed: ${proc.stderr.toString().trim()}`);
   return proc.stdout.byteLength;
 }
 
-/** esbuild `--bundle --minify --format=esm --target=es2022` of `contents`. Returns { minified, gzip, warnings }. */
+/** Bundles `contents` with esbuild `--bundle --minify --format=esm --target=es2022` and returns its sizes and warnings. */
 async function measure(contents, external, resolveDir) {
   const result = await build({
     stdin: { contents, resolveDir, loader: 'js', sourcefile: 'entry.js' },
@@ -93,7 +93,7 @@ async function measure(contents, external, resolveDir) {
   return { minified: bytes.byteLength, gzip: gzipSize(bytes), warnings: result.warnings };
 }
 
-/** Measure each row; a failed row reports its error instead of numbers. */
+/** Measures each row. A failed row reports its error instead of numbers. */
 async function measureRows(rows, resolveDir) {
   const measured = [];
   for (const row of rows) {
@@ -121,11 +121,11 @@ function printTable(title, headers, rows) {
 
 const cells = (m) => (m.error ? [m.label, 'error', m.error] : [m.label, m.minified, m.gzip]);
 
-/** The `import` target of an `exports` entry, a bare string or a conditions object. */
+/** Returns the `import` target of an `exports` entry, given as a bare string or a conditions object. */
 const importTarget = (entry) =>
   typeof entry === 'string' ? entry : typeof entry?.import === 'string' ? entry.import : undefined;
 
-/** Every `exports` key but `"."` whose import target is a `.js` file, the rule of the P5 tests' `componentSubpaths()`. */
+/** Lists every `exports` key but `"."` whose import target is a `.js` file, as the P5 tests' `componentSubpaths()` does. */
 const componentSubpaths = (manifest) =>
   Object.entries(manifest.exports ?? {})
     .filter(([key, entry]) => key !== '.' && importTarget(entry)?.endsWith('.js'))
