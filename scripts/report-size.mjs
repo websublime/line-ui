@@ -7,7 +7,7 @@
  * (docs/research/01-research-packaging.md). Runs after `bun run build` (needs `dist/`). No network.
  *
  * Packs `line-components` and `line-core` with `stageAndPack` (scripts/verify-pack.mjs), extracts both
- * tarballs into a temp `node_modules`, and measures with esbuild
+ * tarballs into a scratch `node_modules` under `<repo>/node_modules/.cache/line-p5/`, and measures with esbuild
  * `--bundle --minify --format=esm --target=es2022`, then `gzip -9 -n`:
  *   - every `line-components` subpath in the packed `exports` (minus `.` and `./custom-elements.json`),
  *     component only, with Lit, `line-core` and Zag external (SD21);
@@ -21,7 +21,6 @@
  */
 
 import { mkdirSync, mkdtempSync, renameSync, rmSync } from 'node:fs';
-import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { build } from 'esbuild';
 import { ROOT, readTarball, readWorkspacePackages, stageAndPack } from './verify-pack.mjs';
@@ -34,6 +33,10 @@ const LIT_EXTERNAL = ['lit', 'lit/*', 'lit-html', 'lit-html/*', 'lit-element', '
 const CORE_EXTERNAL = [CORE, `${CORE}/*`];
 const ZAG_EXTERNAL = ['@zag-js/*'];
 const COMPONENT_EXTERNAL = [...LIT_EXTERNAL, ...CORE_EXTERNAL, ...ZAG_EXTERNAL];
+
+// esbuild walks up the parent `node_modules` folders from the scratch root, so it reaches the repo root
+// `node_modules` for Lit and Zag and never a shared system temp folder.
+const SCRATCH_PARENT = join(ROOT, 'node_modules', '.cache', 'line-p5');
 
 const inActions = process.env.GITHUB_ACTIONS === 'true';
 const problems = [];
@@ -77,7 +80,6 @@ async function measure(contents, external, resolveDir) {
     format: 'esm',
     target: 'es2022',
     external,
-    nodePaths: [join(ROOT, 'node_modules')],
     write: false,
     logLevel: 'silent',
   });
@@ -114,8 +116,10 @@ function printTable(title, headers, rows) {
 const cells = (m) => (m.error ? [m.label, 'error', m.error] : [m.label, m.minified, m.gzip]);
 
 async function main() {
-  const scratch = mkdtempSync(join(tmpdir(), 'line-size-'));
+  let scratch;
   try {
+    mkdirSync(SCRATCH_PARENT, { recursive: true });
+    scratch = mkdtempSync(join(SCRATCH_PARENT, 'size-'));
     const nodeModules = join(scratch, 'node_modules');
     const components = await packInto(COMPONENTS, nodeModules, scratch);
     await packInto(CORE, nodeModules, scratch);
@@ -182,7 +186,7 @@ async function main() {
   } catch (err) {
     warn(`size report aborted: ${err.message}`);
   } finally {
-    rmSync(scratch, { recursive: true, force: true });
+    if (scratch) rmSync(scratch, { recursive: true, force: true });
   }
   if (problems.length) {
     console.info(`\nSize report: ${problems.length} measurement problem(s), not gating:`);
