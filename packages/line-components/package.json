@@ -45,6 +45,7 @@
     "lit": "^3.3.3"
   },
   "devDependencies": {
+    "@websublime/line-icons": "workspace:^",
     "@websublime/line-schemas": "workspace:^",
     "@websublime/line-testing": "workspace:^"
   },
@@ -53,6 +54,6 @@
     "analyze": "custom-elements-manifest analyze --config custom-elements-manifest.config.mjs",
     "dev": "trap 'kill 0' INT TERM; vite build --watch & tsc -p tsconfig.json --noEmit false --emitDeclarationOnly --watch & wait",
     "clean": "rm -rf dist custom-elements.json",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.test.json --noEmit"
   }
 }
