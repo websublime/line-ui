@@ -7,6 +7,8 @@
  *
  * - Registration harness: each subpath runs in a fresh happy-dom realm with `customElements.define` wrapped. A
  *   subpath defines exactly its `EXPECTED_TAGS` row, and the root `"."` defines nothing (SD24).
+ * - Icon registry slot: importing the root `"."` or `./icon` leaves `globalThis[Symbol.for('line.icon-registry')]`
+ *   undefined until the first access through `setIconRegistry` or `LineIcon.registry` (§6.C.3; AM-010).
  * - Isolation scan: an esbuild `--metafile` bundle per subpath holds no other component's module or tag. Modules
  *   under `src/shared/`, emitted to `dist/shared/**` (§6.P.9), may sit in any bundle.
  * - esbuild consumer bundle: one bare-import bundle of every subpath emits no `ignored-bare-import` warning.
@@ -53,6 +55,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './button': ['line-button'],
   './stack': ['line-stack'],
   './separator': ['line-separator'],
+  './icon': ['line-icon'],
 };
 
 /** The gzip size of `import { commonReset }` with every sheet kept (R9 §2.1). */
@@ -101,6 +104,30 @@ describe('registration harness (§7.5)', () => {
       const { realm, defined } = runRecordingDefines(code);
       try {
         expect(defined.sort()).toEqual([...tags].sort());
+      } finally {
+        await realm.happyDOM.close();
+      }
+    });
+  }
+});
+
+describe('icon registry slot (§6.C.3)', () => {
+  const SLOT = "globalThis[Symbol.for('line.icon-registry')]";
+
+  for (const [subpath, exposed, access] of [
+    ['.', 'setIconRegistry', 'globalThis.__lineExposed(undefined)'],
+    ['./icon', 'LineIcon', 'globalThis.__lineExposed.registry'],
+  ] as const) {
+    test(`importing ${subpath} creates no slot until ${exposed} first runs`, async () => {
+      const code = await iife(
+        `import { ${exposed} } from '${specifierOf(COMPONENTS, subpath)}';\nglobalThis.__lineExposed = ${exposed};\n`,
+      );
+      const { realm } = runRecordingDefines(code);
+      try {
+        expect(realm.eval('typeof globalThis.__lineExposed')).not.toBe('undefined');
+        expect(realm.eval(SLOT)).toBeUndefined();
+        realm.eval(access);
+        expect(realm.eval(`${SLOT}.events instanceof EventTarget && ${SLOT}.registry === undefined`)).toBe(true);
       } finally {
         await realm.happyDOM.close();
       }
