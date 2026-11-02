@@ -1,11 +1,13 @@
 # @websublime/line-components
 
 Headless web component implementations for the line://ui design system. Each component ships as its own subpath
-that registers one tag, and the root entry registers nothing.
+that registers one tag. The root entry registers nothing and exports only the icon registry hook,
+`setIconRegistry` and the `LineIconRegistry` type.
 
 | Subpath | Registers |
 |---------|-----------|
 | `@websublime/line-components/button` | `<line-button>` |
+| `@websublime/line-components/icon` | `<line-icon>` |
 | `@websublime/line-components/separator` | `<line-separator>` |
 | `@websublime/line-components/stack` | `<line-stack>` |
 
@@ -65,3 +67,53 @@ role and orientation are `ElementInternals` defaults, so an author `role` or `ar
 separator no `aria-label`. The line is a border side coloured by `--line-separator-color` (default
 `var(--line-gray-6, currentColor)`) and as thick as `--line-separator-thickness` (default
 `var(--line-border-1, 1px)`), so it stays visible without `line-themes`, `line-tokens` and in forced-colors mode.
+
+## Icon
+
+`<line-icon>` draws one glyph at the size and in the colour of the surrounding text. Register your icon sets
+once with `setIconRegistry` from the root entry; any object with `resolve(library, name, options?)` fits, such as
+the `IconRegistry` of `@websublime/line-icons`.
+
+```js
+import { setIconRegistry } from '@websublime/line-components';
+import '@websublime/line-components/icon';
+import { IconRegistry } from '@websublime/line-icons';
+import { createLucideResolver } from '@websublime/line-icons/resolvers/lucide';
+
+const registry = new IconRegistry();
+registry.register('lucide', createLucideResolver({ base: '/icons/lucide/' }));
+setIconRegistry(registry);
+```
+
+| Attribute or property | Values | Default |
+|-----------------------|--------|---------|
+| `library` | the key a resolver is registered under | none |
+| `name` | an icon name in that library | none |
+| `weight` | passed to the resolver as `options.weight`, such as a Phosphor `fill` | none |
+| `mirror` | boolean; flips the glyph in a right-to-left context | off |
+| `src` | URL of an SVG file | none |
+| `path` (property only) | SVG path data in a `0 0 24 24` box | none |
+
+```html
+<line-icon library="lucide" name="house"></line-icon>
+<line-icon library="lucide" name="circle-alert" aria-label="Error"></line-icon>
+<line-icon library="lucide" name="arrow-left" mirror></line-icon>
+<line-icon src="/my-icons/logo.svg"></line-icon>
+```
+
+The first non-empty source of `path`, `src`, then `name` with `library` wins, with no fallback between them.
+`library` has no default, so a `name` without `library`, an unknown name or any failed load leaves an empty box
+of the icon's size and raises no error. `LineIcon.registry` reads and writes the same registry as
+`setIconRegistry`; every connected icon, from any copy of the package, resolves again when either runs.
+
+The icon is decorative and hidden from assistive technology. A host `aria-label` or `aria-labelledby` makes it an
+image with that name. Both are `ElementInternals` defaults, so an author `role` or `aria-*` attribute wins. The
+size comes from `--line-icon-size` (default `1em`), set on the icon or on any ancestor, and the colour from
+`color`; `::part(svg)` reaches the glyph.
+
+Every SVG string, from a resolver or from `src`, passes the Trusted Types policy `line-icon`, `DOMParser` and an
+element and attribute allowlist that keeps vector shapes only. A page that enforces Trusted Types lists
+`trusted-types line-icon lit-html`, because Lit creates its own `lit-html` policy. Two copies of the package on
+one page each create a `line-icon` policy, which needs `'allow-duplicates'`; without it the second copy's icons
+stay empty. A resolver may return an `SVGElement` instead, which is inserted unchanged, so return a fresh node per
+call and give it `aria-hidden="true"` unless it should be announced.

@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-10-27
+**Date:** 2026-11-02
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -12,6 +12,10 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.16 (2026-11-02)** — Aligned with component spec `0014-icon.md` (ledger row `01-C2`, decisions by Miguel on 2026-11-02).
+  - §2 (Composition Model) and §11 (Icon System) give every `<line-icon name>` example a `library` and drop `size="xs"`. A `name` without `library` renders the neutral C8 state, because `line-icons` picks no default set, and `<line-icon>` has no `size` attribute (spec `0014-icon.md` decisions D2, D3; Phase 1 spec §6.C.3, §10 SD15). The §2 Field example names the Lucide glyph `circle-alert`, the current name of `alert-circle`.
+  - §5 (CSS Parts Naming Convention) adds `::part(svg)`, the root `<svg>` of a graphic a component injects, which `<line-icon>` exposes (spec `0014-icon.md` Parts).
+  - §11 (Icon System) says that `<line-icon>` is decorative by default and becomes an `img` when the author names it with `aria-label` or `aria-labelledby`, and that its size comes from `--line-icon-size`, default `1em` (spec `0014-icon.md` decisions D1, D2).
 - **v0.8.15 (2026-10-27)** — Aligned with component spec `0002-button.md` (ledger row `01-C1`, decisions by Miguel on 2026-10-27).
   - §13.1 (Button Ecosystem) gives Button a `loading` slot inside `::part(loading)`, rendered only while loading, the reflected `variant` enum `default | primary | borderless`, and form submission through a temporary native submit button, so `name`, `value` and the `form*` overrides behave natively (spec `0002-button.md` Open Questions 2, 4, 5).
   - §4 (CSS Customisation) names the height token `--line-button-height`, because Button has no size variant (spec `0002-button.md` CSS custom properties).
@@ -146,7 +150,7 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ```html
 <line-button>
-  <line-icon slot="prefix" name="check"></line-icon>
+  <line-icon slot="prefix" library="lucide" name="check"></line-icon>
   Save
 </line-button>
 ```
@@ -171,14 +175,14 @@ This document captures the **cross-cutting architectural decisions** that apply 
 ```html
 <line-field>
   <span slot="label">
-    Email <line-icon name="info" size="xs"></line-icon>
+    Email <line-icon library="lucide" name="info"></line-icon>
   </span>
   <line-input type="email" required>
-    <line-icon slot="prefix" name="mail"></line-icon>
+    <line-icon slot="prefix" library="lucide" name="mail"></line-icon>
   </line-input>
   <span slot="hint">We use your email for login</span>
   <span slot="error">
-    <line-icon name="alert-circle"></line-icon>
+    <line-icon library="lucide" name="circle-alert"></line-icon>
     Invalid email address
   </span>
 </line-field>
@@ -296,6 +300,7 @@ Because `accent` and `gray` namespaces are independent, multiple colour contexts
 ::part(decrement)   /* Decrement stepper */
 ::part(remove)      /* Remove button (e.g., dismiss of a removable item) */
 ::part(loading)     /* Loading content wrapper (e.g., button spinner and text) */
+::part(svg)         /* Root <svg> of an injected graphic (e.g., an icon glyph) */
 ::part(overflow)    /* Overflow indicator (e.g., avatar group +N) */
 ```
 
@@ -489,7 +494,7 @@ Icons are **orthogonal to the design system.** `@websublime/line-icons` is a sep
 
 ```html
 <line-button>
-  <line-icon slot="prefix" name="check"></line-icon>
+  <line-icon slot="prefix" library="lucide" name="check"></line-icon>
   Save
 </line-button>
 
@@ -510,6 +515,8 @@ Icons are **orthogonal to the design system.** `@websublime/line-icons` is a sep
 - `line-icon` reads its **registry** from a shared module, `src/shared/icon-registry.ts`. The module keeps a slot at `globalThis[Symbol.for('line.icon-registry')]` that holds `{ registry, events }`, where `events` is an `EventTarget`. The module creates the slot on first access (`setIconRegistry`, the `LineIcon.registry` getter or setter, or a `<line-icon>` connect), never at module load, so `define()` stays the only module-top side effect of `./icon` and the root defines and creates nothing (§12; Phase 1 spec AM-010). Every copy, such as separate jsDelivr `+esm` bundles or another version, reads and writes one place (Phase 1 spec AM-006, decision D-G; AM-008). The consumer sets it with `setIconRegistry(registry)` exported from the `line-components` root `"."` (which defines no element, §12) or through the static hook `LineIcon.registry`; both write `registry` in that slot and dispatch a `line-icon-registry-change` event on `events`. The event name carries the Law 2 prefix, because it is a cross-copy, cross-version contract (Phase 1 spec AM-010). Every `<line-icon>` copy subscribes to `events` through the slot when it connects, unsubscribes when it disconnects, and resolves again on `line-icon-registry-change`, so an element that connects before the registry is set still renders (Phase 1 spec AM-008). The registry is any object that satisfies `LineIconRegistry`, `resolve(library: string, name: string, options?: { weight?: string }): Promise<string | SVGElement>`, such as the `line-icons` `IconRegistry`. `<line-icon>` has a `weight` attribute, which it passes as `options.weight`, and a boolean `mirror` attribute; with `mirror` set, its own CSS flips the glyph under `:dir(rtl)`. On the agent path the surface sets `weight` and `mirror` from its `iconMap` entry (§17.4). `line-components` defines and exports the `LineIconRegistry` type from its root, so it gains no edge to `line-icons`. `line-genui` never writes the registry; its docs show the consumer line (Phase 1 spec §10 SD15, AM-004, AM-006).
 - Each library is a resolver: given a name, returns the SVG.
 - Zero icons bundled in `line-icons` core — the consumer brings their own resolver (Lucide, Phosphor, Iconoir, `@radix-ui/react-icons`, custom).
+- `name` resolves only together with `library`. `line-icons` picks no default set, so a `name` without `library` renders the neutral C8 state (§17.2), as does a `library` the registry does not know (Phase 1 spec §6.C.3, §10 SD15, SD92).
+- `<line-icon>` is decorative by default and hides itself from assistive technology. A host `aria-label` or `aria-labelledby` makes it an `img` with that name. Its size comes from the `--line-icon-size` custom property, default `1em`, and its colour from `currentColor`; it has no `size` attribute (spec `0014-icon.md`).
 - Dependency direction is one-way: `line-icons → line-tokens` is permitted (icons reuse icon-size / sizing tokens); the inverse is forbidden.
 
 ---
