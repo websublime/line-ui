@@ -24,6 +24,8 @@ export interface StoryScreenshotOptions {
   args?: string;
   /** Screenshot name; defaults to `${storyId}.png`. */
   name?: string;
+  /** Waits for content the story loads after Storybook shows it, such as fetched icons. */
+  ready?: () => Promise<void>;
 }
 
 /** Opens a story in the preview iframe, waits for Storybook to show it and asserts its screenshot. */
@@ -32,9 +34,10 @@ export async function expectStoryScreenshot(
   storyId: string,
   options: StoryScreenshotOptions = {},
 ): Promise<void> {
-  const { globals, args, name = `${storyId}.png` } = options;
+  const { globals, args, name = `${storyId}.png`, ready } = options;
   const query = `id=${storyId}&viewMode=story${globals ? `&globals=${globals}` : ''}${args ? `&args=${args}` : ''}`;
   await page.goto(`${STORYBOOK_ORIGIN}/iframe.html?${query}`);
   await expect(page.locator('body')).toHaveClass(/\bsb-show-main\b/);
+  await ready?.();
   await expect(page).toHaveScreenshot(name, { fullPage: true });
 }
