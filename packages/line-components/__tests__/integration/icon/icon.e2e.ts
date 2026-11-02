@@ -260,6 +260,20 @@ test.describe('SVG injection', () => {
     ]);
   });
 
+  test('CSS-escaped url( such as u\\rl( and \\75 rl( is removed', async ({ page }) => {
+    await useRegistry(page, {
+      escaped: svg(
+        '<path d="M0 0" fill="u\\rl(#x)"/><path d="M1 1" fill="\\75 rl(#y)" stroke="\\55 RL(#z)"/><rect width="1" height="1" fill="red"/>',
+      ),
+    });
+    await mount(page, '<line-icon library="set" name="escaped"></line-icon>');
+    expect((await expectGlyph(page)).children).toEqual([
+      { name: 'path', ns: SVG_NS, attributes: { d: 'M0 0' }, children: [] },
+      { name: 'path', ns: SVG_NS, attributes: { d: 'M1 1' }, children: [] },
+      { name: 'rect', ns: SVG_NS, attributes: { width: '1', height: '1', fill: 'red' }, children: [] },
+    ]);
+  });
+
   test('g with transform and path with fill-rule="evenodd" survive intact', async ({ page }) => {
     await useRegistry(page, {
       group: svg('<g transform="translate(2 2) rotate(45)"><path d="M0 0h10v10H0z" fill-rule="evenodd"/></g>'),

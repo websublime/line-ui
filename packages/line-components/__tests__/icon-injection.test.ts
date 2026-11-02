@@ -84,6 +84,19 @@ describe('injectSvg — allowlist', () => {
     expect(root?.querySelector('rect')?.getAttribute('fill')).toBe('red');
   });
 
+  test('CSS-escaped url( such as u\\rl( and \\75 rl( is removed', () => {
+    const root = injectSvg(
+      svg(
+        `<path d="M0 0" fill="u\\rl(#x)"/><path d="M1 1" fill="\\75 rl(#y)" stroke="\\55 RL(#z)"/>
+        <rect x="1" y="1" width="2" height="2" fill="red"/>`,
+      ),
+    );
+    const [first, second] = [...(root?.querySelectorAll('path') ?? [])];
+    expect(attributesOf(first)).toEqual(['d=M0 0']);
+    expect(attributesOf(second)).toEqual(['d=M1 1']);
+    expect(root?.querySelector('rect')?.getAttribute('fill')).toBe('red');
+  });
+
   test('g with transform and path with fill-rule="evenodd" survive intact', () => {
     const root = injectSvg(
       svg('<g transform="translate(2 2) rotate(45)"><path d="M0 0h10v10H0z" fill-rule="evenodd"/></g>'),

@@ -71,6 +71,9 @@ const NEVER_ATTRIBUTES: ReadonlySet<string> = new Set(['href', 'xlink:href', 'st
 
 const URL_FUNCTION = /url\(/i;
 
+/** CSS decodes escapes such as `\75 rl(` after the literal `url(` match, so any backslash drops the value. */
+const CSS_ESCAPE = '\\';
+
 /** The part of the Trusted Types API the policy step uses; `lib.dom` declares none of it. */
 interface LineIconPolicy {
   /** Returns a `TrustedHTML` in the engine, which `DOMParser.parseFromString` takes where it takes a string. */
@@ -107,7 +110,8 @@ function passes(attribute: Attr): boolean {
     ATTRIBUTES.has(attribute.name) &&
     !NEVER_ATTRIBUTES.has(attribute.name) &&
     !attribute.name.startsWith('on') &&
-    !URL_FUNCTION.test(attribute.value)
+    !URL_FUNCTION.test(attribute.value) &&
+    !attribute.value.includes(CSS_ESCAPE)
   );
 }
 
