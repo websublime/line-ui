@@ -82,6 +82,25 @@ const chain = (depth: number) =>
   ).map((node, i) => (i === 0 ? { ...node, id: 'root' } : node));
 
 describe('limit breaches (§6.G.4 Limits)', () => {
+  test('the defaults are 1,000 nodes, depth 32 and 1,048,576 UTF-8 bytes (§12 AM-078)', async () => {
+    expect(DEFAULT_LIMITS).toEqual({ maxNodes: 1_000, maxDepth: 32, maxDataModelSize: 1_048_576 });
+    const room = 1_048_576 - dataModelSize({ blob: '' });
+    const cases: [unknown, number, string | undefined][] = [
+      [components(column(999)), 2, undefined],
+      [components(column(1_000)), 1, 'maxNodes'],
+      [components(chain(32)), 2, undefined],
+      [components(chain(33)), 1, 'maxDepth'],
+      [data('/blob', 'x'.repeat(room)), 2, undefined],
+      [data('/blob', 'x'.repeat(room + 1)), 1, 'maxDataModelSize'],
+    ];
+    for (const [probe, applied, limit] of cases) {
+      const { feed, errors, surface } = mount();
+      expect(await feed(create(), probe as Parameters<typeof feed>[0])).toBe(applied);
+      expect(errors.map((e) => e.error.limit)).toEqual(limit ? [limit] : []);
+      surface.remove();
+    }
+  });
+
   test('the default accepts each probe message', async () => {
     for (const probe of [components(column(6)), components(chain(6)), data('/blob', 'x'.repeat(4000))]) {
       const { feed, errors, surface } = mount();

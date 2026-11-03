@@ -63,9 +63,9 @@ function shadowParts(root: ShadowRoot): HTMLElement {
  * @summary The A2UI renderer: projects an A2UI surface onto line://ui components in the light DOM.
  *
  * @attr {string} surface-id - The id of the A2UI surface this element renders.
- * @attr {number} max-nodes - The most nodes a surface may hold, a positive integer; a message that would exceed it is rejected. Any other value keeps the default.
- * @attr {number} max-depth - The deepest the rendered tree may go, the root at depth 1, a positive integer; a message that would exceed it is rejected. Any other value keeps the default.
- * @attr {number} max-data-model-size - The largest the data model may grow, in UTF-8 bytes of its JSON text, a positive integer; a message that would exceed it is rejected. Any other value keeps the default.
+ * @attr {number} [max-nodes=1000] - The most nodes a surface may hold: component definitions and rendered nodes, placeholders included. A positive integer; a message that would exceed it is rejected. Any other value keeps the default, 1000.
+ * @attr {number} [max-depth=32] - The deepest the rendered tree may go, the root at depth 1. A positive integer; a message that would exceed it is rejected. Any other value keeps the default, 32.
+ * @attr {number} [max-data-model-size=1048576] - The largest the data model may grow, in UTF-8 bytes of `JSON.stringify` of the data model as the message leaves it. A positive integer; a message that would exceed it is rejected. Any other value keeps the default, 1048576 (1 MiB).
  * @attr {string} live-update-text - What the live region announces after a batch that changed the surface. Default "Content updated.".
  * @attr {string} live-error-text - What the live region announces after an error. Default "Some content could not be shown.".
  *
@@ -170,7 +170,10 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
     setValue(this.#projection.markdownRenderer, renderer);
   }
 
-  /** The `max-nodes` limit in effect; reflects `max-nodes`. Setting a value that is not a positive integer keeps the default. */
+  /**
+   * The `max-nodes` limit in effect, 1000 by default; reflects `max-nodes`. Setting a value that is not a positive
+   * integer keeps the default.
+   */
   get maxNodes(): number {
     return positiveInteger(this.getAttribute('max-nodes')) ?? DEFAULT_LIMITS.maxNodes;
   }
@@ -179,7 +182,10 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
     this.setAttribute('max-nodes', String(value));
   }
 
-  /** The `max-depth` limit in effect; reflects `max-depth`. Setting a value that is not a positive integer keeps the default. */
+  /**
+   * The `max-depth` limit in effect, 32 by default; reflects `max-depth`. Setting a value that is not a positive
+   * integer keeps the default.
+   */
   get maxDepth(): number {
     return positiveInteger(this.getAttribute('max-depth')) ?? DEFAULT_LIMITS.maxDepth;
   }
@@ -189,8 +195,8 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
   }
 
   /**
-   * The `max-data-model-size` limit in effect, in UTF-8 bytes of `JSON.stringify` of the data model; reflects
-   * `max-data-model-size`. Setting a value that is not a positive integer keeps the default.
+   * The `max-data-model-size` limit in effect, in UTF-8 bytes of `JSON.stringify` of the data model, 1048576 by
+   * default; reflects `max-data-model-size`. Setting a value that is not a positive integer keeps the default.
    */
   get maxDataModelSize(): number {
     return positiveInteger(this.getAttribute('max-data-model-size')) ?? DEFAULT_LIMITS.maxDataModelSize;

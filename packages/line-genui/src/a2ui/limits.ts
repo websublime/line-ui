@@ -14,7 +14,7 @@ import { extractRefFields, MAX_DYNAMIC_CHILD_LIST_SIZE } from '@a2ui/web_core/re
 import { DataModel, type SurfaceModel } from '@a2ui/web_core/state';
 import { isJsonObject as isRecord, type JsonObject as Json } from './guards.js';
 
-/** The three limits of a surface, each a positive integer or `Infinity`. */
+/** The three limits of a surface, each a positive integer. */
 export interface Limits {
   /** The most nodes a surface holds: component definitions, and nodes of the resolved tree, placeholders included. */
   readonly maxNodes: number;
@@ -28,13 +28,14 @@ export interface Limits {
 export type LimitName = keyof Limits;
 
 /**
- * The limits a surface applies while an attribute leaves one unset. The finite defaults land through the G4
- * stress-test amendment (§6.G.4 Limits; §10 SD56).
+ * The limits a surface applies while an attribute leaves one unset, from the G4 stress test, sized on the slowest
+ * engine (§6.G.4 Limits; §10 SD56; §12 AM-078): 1,000 nodes, depth 32, and 1,048,576 UTF-8 bytes of
+ * `JSON.stringify` of the data model.
  */
 export const DEFAULT_LIMITS: Limits = Object.freeze({
-  maxNodes: Number.POSITIVE_INFINITY,
-  maxDepth: Number.POSITIVE_INFINITY,
-  maxDataModelSize: Number.POSITIVE_INFINITY,
+  maxNodes: 1_000,
+  maxDepth: 32,
+  maxDataModelSize: 1_048_576,
 });
 
 /** A breached limit: which one, the value the message would reach (at least) and the limit. */

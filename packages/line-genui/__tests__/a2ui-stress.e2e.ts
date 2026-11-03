@@ -12,7 +12,7 @@
  *
  * Each row records `process` (the synchronous `Session.process` call: the limit check and `web_core`), `settle`
  * (from the call until `feed()` resolves: projection, component loads and `aria-busy` cleared) and whether the
- * message applied. The surface runs with the limits unset, so nothing is rejected.
+ * message applied. The surface runs with each limit set far past its default, so nothing is rejected by a limit.
  *
  * It measures and asserts nothing; it runs only with `LINE_A2UI_STRESS=1` and prints one JSON report per engine,
  * also attached to the test result.
@@ -62,6 +62,8 @@ async function harness(page: Page): Promise<void> {
       async run(caseName: string, n: number, setup: unknown[], measured: unknown[]) {
         const surface = document.createElement('line-a2ui-surface') as Surface;
         surface.setAttribute('surface-id', 's');
+        for (const limit of ['max-nodes', 'max-depth', 'max-data-model-size'])
+          surface.setAttribute(limit, '1000000000');
         const errors: string[] = [];
         surface.addEventListener('line-a2ui-error', (event) => {
           const { error } = (event as CustomEvent<{ error: { code: string; message: string } }>).detail;

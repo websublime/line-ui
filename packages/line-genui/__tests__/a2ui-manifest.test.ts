@@ -25,7 +25,7 @@ import {
 interface Declaration {
   name: string;
   tagName?: string;
-  attributes?: { name: string }[];
+  attributes?: { name: string; default?: string }[];
   members?: { name: string; kind: string }[];
   events?: { name: string }[];
 }
@@ -82,6 +82,14 @@ describe('custom-elements.json in the packed line-genui tarball (§10 SD94)', ()
     expect(surface?.attributes?.map((attribute) => attribute.name).sort()).toEqual(
       ['live-error-text', 'live-update-text', 'max-data-model-size', 'max-depth', 'max-nodes', 'surface-id'].sort(),
     );
+    const defaults = Object.fromEntries(
+      (surface?.attributes ?? []).map((attribute) => [attribute.name, attribute.default]),
+    );
+    expect([defaults['max-nodes'], defaults['max-depth'], defaults['max-data-model-size']]).toEqual([
+      '1000',
+      '32',
+      '1048576',
+    ]);
     const fields = new Set(surface?.members?.filter((member) => member.kind === 'field').map((member) => member.name));
     for (const name of [
       'iconMap',
