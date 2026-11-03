@@ -20,6 +20,7 @@
       "types": "./dist/catalog/index.d.ts",
       "import": "./dist/catalog/index.js"
     },
+    "./catalog.json": "./dist/catalog.json",
     "./a2ui": {
       "types": "./dist/a2ui/index.d.ts",
       "import": "./dist/a2ui/index.js"
@@ -39,7 +40,7 @@
     "@websublime/line-icons": "workspace:^0.1.0 || ^0.2.0"
   },
   "scripts": {
-    "build": "vite build && tsc -p tsconfig.json --noEmit false --emitDeclarationOnly",
+    "build": "vite build && bun run ../../scripts/emit-catalog.mjs && tsc -p tsconfig.json --noEmit false --emitDeclarationOnly",
     "dev": "trap 'kill 0' INT TERM; vite build --watch & tsc -p tsconfig.json --noEmit false --emitDeclarationOnly --watch & wait",
     "clean": "rm -rf dist custom-elements.json",
     "typecheck": "tsc --noEmit"

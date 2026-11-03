@@ -1,0 +1,72 @@
+/**
+ * The 59 A2UI v0.9.1 `Icon.name` values, in the order of the enum in the A2UI basic catalog
+ * (`specification/v0_9_1/catalogs/basic/catalog.json` at a2ui-project/a2ui `cbaa5ee`; R10 §2.1, P2).
+ *
+ * @module a2ui/names
+ */
+
+/** The A2UI icon names; {@link A2uiIconName} is their union. */
+export const A2UI_ICON_NAMES = [
+  'accountCircle',
+  'add',
+  'arrowBack',
+  'arrowForward',
+  'attachFile',
+  'calendarToday',
+  'call',
+  'camera',
+  'check',
+  'close',
+  'delete',
+  'download',
+  'edit',
+  'event',
+  'error',
+  'fastForward',
+  'favorite',
+  'favoriteOff',
+  'folder',
+  'help',
+  'home',
+  'info',
+  'locationOn',
+  'lock',
+  'lockOpen',
+  'mail',
+  'menu',
+  'moreVert',
+  'moreHoriz',
+  'notificationsOff',
+  'notifications',
+  'pause',
+  'payment',
+  'person',
+  'phone',
+  'photo',
+  'play',
+  'print',
+  'refresh',
+  'rewind',
+  'search',
+  'send',
+  'settings',
+  'share',
+  'shoppingCart',
+  'skipNext',
+  'skipPrevious',
+  'star',
+  'starHalf',
+  'starOff',
+  'stop',
+  'upload',
+  'visibility',
+  'visibilityOff',
+  'volumeDown',
+  'volumeMute',
+  'volumeOff',
+  'volumeUp',
+  'warning',
+] as const;
+
+/** An A2UI v0.9.1 `Icon.name` value: one of the 59 names of the A2UI basic catalog's `Icon.name` enum. */
+export type A2uiIconName = (typeof A2UI_ICON_NAMES)[number];
