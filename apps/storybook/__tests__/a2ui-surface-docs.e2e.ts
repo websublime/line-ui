@@ -47,8 +47,8 @@ test('the A2UI Surface docs page shows attributes, properties and events from th
     ['max-nodes', '1000'],
     ['max-depth', '32'],
     ['max-data-model-size', '1048576'],
-    ['live-update-text', '""'],
-    ['live-error-text', '""'],
+    ['live-update-text', 'Content updated.'],
+    ['live-error-text', 'Some content could not be shown.'],
   ]);
   expect((await rowsOf(table, 'properties')).map(([name]) => name)).toEqual([
     'surfaceId',
