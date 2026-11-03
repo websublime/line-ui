@@ -15,6 +15,7 @@
 import { afterEach, describe, expect, test } from 'bun:test';
 import { DEFAULT_LIMITS, Session } from '../src/a2ui/index.js';
 import { childrenFirst, dataModelSize, positiveInteger, utf8Length } from '../src/a2ui/limits.js';
+import { BASIC_CATALOG_ID } from '../src/catalog/index.js';
 import { components, create, data, invalidMessages, mount, text } from './a2ui-fixture.js';
 
 afterEach(() => {
@@ -211,6 +212,75 @@ describe('limit breaches (§6.G.4 Limits)', () => {
     ]);
     expect(surface.textContent).toBe('short');
     expect(session.dataModel('main')).toBeUndefined();
+  });
+});
+
+describe('every message shape (§6.G.4 Projection and messages; §12 AM-080)', () => {
+  const big = 'x'.repeat(200);
+  const codes = (errors: { error: { code: string; limit?: unknown } }[]) =>
+    errors.map((e) => `${e.error.code}${e.error.limit ? `:${String(e.error.limit)}` : ''}`);
+
+  test('an internal operation is limit-checked', async () => {
+    const { surface, errors } = mount({ 'max-data-model-size': '64' });
+    await surface.feed([create(), { type: 'updateDataModel', surfaceId: 'main', path: '/blob', value: big }]);
+    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxDataModelSize']);
+  });
+
+  test('each message of an array element gets its own limit check and its own call', async () => {
+    const { surface, errors } = mount({ 'max-nodes': '3' });
+    const applied = await surface.feed([
+      create(),
+      [components(column(5)), components([text('root', { path: '/msg' })]), data('/msg', 'kept')],
+    ]);
+    expect(applied).toBe(3);
+    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxNodes']);
+    expect(surface.textContent).toBe('kept');
+  });
+
+  test('each message of a { messages } wrapper gets its own limit check and its own call', async () => {
+    const { surface, errors } = mount({ 'max-depth': '3' });
+    const applied = await surface.feed([
+      create(),
+      { version: 'v0.9.1', messages: [components(chain(4)), components([text('root', 'kept')])] },
+    ]);
+    expect(applied).toBe(2);
+    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxDepth']);
+    expect(surface.textContent).toBe('kept');
+  });
+
+  test('a v0.8 surfaceUpdate and dataModelUpdate are limit-checked', async () => {
+    const { surface, errors } = mount({ 'max-nodes': '1', 'max-data-model-size': '64' });
+    await surface.feed([
+      create(),
+      {
+        surfaceUpdate: {
+          surfaceId: 'main',
+          components: [
+            { id: 'a', component: { Text: { text: { literalString: 'a' } } } },
+            { id: 'b', component: { Text: { text: { literalString: 'b' } } } },
+          ],
+        },
+      },
+      { dataModelUpdate: { surfaceId: 'main', path: '/', contents: [{ key: 'blob', valueString: big }] } },
+    ]);
+    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxNodes', 'LIMIT_EXCEEDED:maxDataModelSize']);
+  });
+
+  test('a createSurface with inline components or a dataModel is limit-checked', async () => {
+    const { surface, errors, session } = mount({ 'max-nodes': '3', 'max-data-model-size': '64' });
+    const inline = (extra: Record<string, unknown>) => ({
+      type: 'createSurface',
+      surfaceId: 'main',
+      catalogId: BASIC_CATALOG_ID,
+      sendDataModel: true,
+      ...extra,
+    });
+    expect(await surface.feed([inline({ components: column(5) })])).toBe(0);
+    expect(await surface.feed([inline({ dataModel: { blob: big } })])).toBe(0);
+    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxNodes', 'LIMIT_EXCEEDED:maxDataModelSize']);
+    expect(session.dataModel('main')).toBeUndefined();
+    expect(await surface.feed([inline({ components: column(2), dataModel: { msg: 'ok' } })])).toBe(1);
+    expect(surface.querySelectorAll('p')).toHaveLength(2);
   });
 });
 
