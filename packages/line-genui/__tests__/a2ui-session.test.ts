@@ -84,18 +84,24 @@ describe('registrations and processing (§6.G.4 Projection and messages)', () =>
   });
 
   test('[ok, invalid, ok] applies the first and third message and raises one error', async () => {
-    const { feed, errors, session } = mount();
-    await feed(create(), components([{ id: 'root', component: 'Column', children: ['t'] }, text('t', { path: '/a' })]));
+    const { feed, errors, surface } = mount();
+    await feed(
+      create(),
+      components([
+        { id: 'root', component: 'Column', children: ['ta', 'tb'] },
+        text('ta', { path: '/a' }),
+        text('tb', { path: '/b' }),
+      ]),
+    );
     const applied = await feed(
       data('/a', 'first'),
-      components([{ id: 'bad', component: 'Button', child: 't', variant: 'huge', action: action('x') }]),
+      components([{ id: 'bad', component: 'Button', child: 'ta', variant: 'huge', action: action('x') }]),
       data('/b', 'third'),
     );
     expect(applied).toBe(2);
     expect(errors).toHaveLength(1);
     expect(errors[0]?.error.code).toBe('VALIDATION_ERROR');
-    expect(session.dataModel(SURFACE)).toBeUndefined();
-    expect(document.querySelector('line-a2ui-surface p')?.textContent).toBe('first');
+    expect([...surface.querySelectorAll('p')].map((p) => p.textContent)).toEqual(['first', 'third']);
   });
 
   test('RELAXED_VALIDATION: components before their root, and a dangling child, apply', async () => {
