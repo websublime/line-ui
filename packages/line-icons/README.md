@@ -19,6 +19,7 @@ bun add @websublime/line-icons @phosphor-icons/core   # Phosphor
 | `@websublime/line-icons/resolvers/lucide` | `createLucideResolver({ base })` and the `LucideResolverOptions` type |
 | `@websublime/line-icons/resolvers/phosphor` | `createPhosphorResolver({ base, weight? })` and the `PhosphorResolverOptions` and `PhosphorWeight` types; `weight` is `thin`, `light`, `regular` (default), `bold`, `fill` or `duotone` |
 | `@websublime/line-icons` | Everything above, plus the `IconBase` type |
+| `@websublime/line-icons/a2ui` | Preview. `a2uiIconMap(set, { library })` and the `A2uiIconName`, `A2uiIconEntry` and `A2uiIconMap` types, for the `<line-a2ui-surface>` property `iconMap`; the root does not re-export them |
 
 ## Reference resolvers
 
@@ -107,3 +108,28 @@ declare module 'lucide-static/dist/esm/icons/*.mjs' {
   export default svg;
 }
 ```
+
+## A2UI icon map (`./a2ui`, preview)
+
+`@websublime/line-icons/a2ui` is a preview export. It follows the preview status of `@websublime/line-genui/a2ui`: it may change in any minor release and sits outside the breaking-changes policy (PRD §7.1) until line://ui targets a final A2UI v1.0, because its types and helper feed the preview surface property `iconMap`. The rest of `line-icons` follows the normal policy.
+
+An A2UI agent names icons with the 59 values of the A2UI v0.9.1 `Icon.name` enum, such as `arrowBack` or `favorite`; `A2uiIconName` is their union. `a2uiIconMap(set, { library })` maps each of them to a file of the Lucide or the Phosphor set. `set` is `'lucide'` or `'phosphor'`, and `library` is the key under which you registered that set. `line-icons` picks no default set.
+
+```ts
+import { setIconRegistry } from '@websublime/line-components';
+import { a2uiIconMap } from '@websublime/line-icons/a2ui';
+import { IconRegistry } from '@websublime/line-icons/registry';
+import { createPhosphorResolver } from '@websublime/line-icons/resolvers/phosphor';
+
+const registry = new IconRegistry();
+registry.register('phosphor', createPhosphorResolver({ base: '/icons/phosphor/' }));
+setIconRegistry(registry);
+
+surface.iconMap = a2uiIconMap('phosphor', { library: 'phosphor' });
+```
+
+Each `A2uiIconEntry` is `{ library, name, weight?, mirror }`: the registered key, the file name in the set, the Phosphor weight and whether the glyph flips in right-to-left layouts. The surface sets the `<line-icon>` attributes of the same names from it. The returned map is frozen and has a `null` prototype, so a name such as `constructor` is not a key.
+
+- **Weight.** Phosphor entries carry `fill` for `favorite`, `star` and `starHalf`, which A2UI draws filled, and `regular` for the others. Lucide entries carry no weight.
+- **Mirroring.** Nine names mirror in RTL: `arrowBack`, `arrowForward`, `help`, `send`, `starHalf`, `volumeDown`, `volumeMute`, `volumeOff` and `volumeUp`. The media names, such as `play` and `skipNext`, do not.
+- **Lucide collisions.** Lucide has no filled glyphs, so three pairs draw the same glyph: `call` and `phone` (`phone`), `favorite` and `favoriteOff` (`heart`), and `star` and `starOff` (`star`). In Phosphor only `call` and `phone` share a glyph.
