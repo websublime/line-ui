@@ -371,7 +371,11 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
     this.#loaded.add(descriptor.tag);
     const loading = descriptor.load().then(
       () => undefined,
-      (err: unknown) => this.#raise(toA2uiError(err, this.surfaceId, { tag: descriptor.tag })),
+      (err: unknown) => {
+        const reason = err instanceof Error ? err.message : String(err);
+        const message = `The component ${descriptor.tag} failed to load: ${reason}`;
+        this.#raise(surfaceError('COMPONENT_LOAD_ERROR', this.surfaceId, message, { tag: descriptor.tag }));
+      },
     );
     this.#loading.add(loading);
     loading.finally(() => this.#loading.delete(loading));

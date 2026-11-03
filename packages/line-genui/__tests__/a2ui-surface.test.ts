@@ -21,6 +21,7 @@ import { LineA2uiSurface } from '../src/a2ui/index.js';
 import { BASIC_CATALOG_ID, LINE_CATALOG_ID } from '../src/catalog/index.js';
 import {
   action,
+  checkClientMessage,
   components,
   create,
   data,
@@ -603,5 +604,52 @@ describe('lazy loading (§6.G.4; ARCH §17.4; Law 6)', () => {
       atImport: ['line-a2ui-surface'],
       afterButton: ['line-a2ui-surface', 'line-button'],
     });
+  });
+
+  test('a load() that rejects raises one COMPONENT_LOAD_ERROR that validates (§12 AM-077)', async () => {
+    // A fresh process: the separator must be undefined, and its descriptor is the one the dist `./a2ui` uses.
+    const script = `
+      import { GlobalRegistrator } from '@happy-dom/global-registrator';
+      GlobalRegistrator.register();
+      const { separatorDescriptor } = await import('@websublime/line-genui/catalog');
+      separatorDescriptor.load = () => Promise.reject(new Error('offline'));
+      const { Session } = await import('@websublime/line-genui/a2ui');
+      const surface = document.createElement('line-a2ui-surface');
+      surface.setAttribute('surface-id', 'main');
+      const errors = [];
+      surface.addEventListener('line-a2ui-error', (event) => errors.push(event.detail));
+      document.body.append(surface);
+      surface.session = new Session();
+      await surface.feed([
+        { version: 'v0.9.1', createSurface: { surfaceId: 'main', catalogId: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json' } },
+        { version: 'v0.9.1', updateComponents: { surfaceId: 'main', components: [{ id: 'root', component: 'Divider' }] } },
+      ]);
+      console.log(JSON.stringify(errors));
+      process.exit(0);
+    `;
+    const child = Bun.spawn([process.execPath, '--eval', script], {
+      cwd: new URL('..', import.meta.url).pathname,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [stdout, stderr, code] = await Promise.all([
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+      child.exited,
+    ]);
+    expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
+    const errors = JSON.parse(stdout) as { error: Record<string, unknown> }[];
+    for (const error of errors) checkClientMessage(error);
+    expect(errors).toEqual([
+      {
+        version: 'v0.9.1',
+        error: {
+          code: 'COMPONENT_LOAD_ERROR',
+          surfaceId: 'main',
+          message: 'The component line-separator failed to load: offline',
+          tag: 'line-separator',
+        },
+      },
+    ]);
   });
 });
