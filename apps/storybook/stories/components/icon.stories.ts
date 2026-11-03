@@ -59,7 +59,7 @@ const meta = {
   argTypes: {
     library: { control: 'inline-radio', options: ['lucide', 'phosphor'] },
     name: { control: 'text' },
-    weight: { control: 'inline-radio', options: ['', 'regular', 'fill'] },
+    weight: { control: { type: 'inline-radio', labels: { '': 'unset' } }, options: ['', 'regular', 'fill'] },
   },
   render: ({ library, name, weight, mirror }) =>
     html`<line-icon library=${library} name=${name} weight=${weight || nothing} ?mirror=${mirror}></line-icon>`,
