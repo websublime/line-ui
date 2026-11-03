@@ -3,10 +3,12 @@
  * SD20, SD24; ledger 01-P5).
  *
  * `line-core`, `line-components` and `line-genui` are packed with `stageAndPack` and extracted into one temp
- * `node_modules` (`./packed/consumer.ts`). The `line-genui` registration row of §7.5 is G4's (§6.G.4).
+ * `node_modules` (`./packed/consumer.ts`).
  *
  * - Registration harness: each subpath runs in a fresh happy-dom realm with `customElements.define` wrapped. A
  *   subpath defines exactly its `EXPECTED_TAGS` row, and the root `"."` defines nothing (SD24).
+ * - `line-genui` registration (added by G4, §6.G.4): in the same harness, `./catalog` defines no element and
+ *   `./a2ui` defines only `line-a2ui-surface` (PRD §7.3; R9 §2.2).
  * - Icon registry slot: importing the root `"."` or `./icon` leaves `globalThis[Symbol.for('line.icon-registry')]`
  *   undefined until the first access through `setIconRegistry` or `LineIcon.registry` (§6.C.3; AM-010).
  * - Isolation scan: an esbuild `--metafile` bundle per subpath holds no other component's module or tag. Modules
@@ -58,6 +60,12 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './icon': ['line-icon'],
 };
 
+/** The tags each `line-genui` subpath registers: none for `./catalog`, only the surface for `./a2ui` (§7.5). */
+const GENUI_EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
+  './catalog': [],
+  './a2ui': ['line-a2ui-surface'],
+};
+
 /** The gzip size of `import { commonReset }` with every sheet kept (R9 §2.1). */
 const R9_ALL_SHEETS_GZIP = 1161;
 
@@ -101,6 +109,20 @@ describe('registration harness (§7.5)', () => {
   for (const [subpath, tags] of Object.entries(EXPECTED_TAGS)) {
     test(`${subpath} defines ${tags.length ? tags.join(', ') : 'nothing'} in a fresh realm`, async () => {
       const code = await iife(`import '${specifierOf(COMPONENTS, subpath)}';\n`);
+      const { realm, defined } = runRecordingDefines(code);
+      try {
+        expect(defined.sort()).toEqual([...tags].sort());
+      } finally {
+        await realm.happyDOM.close();
+      }
+    });
+  }
+});
+
+describe('line-genui registration (§7.5; §6.G.4)', () => {
+  for (const [subpath, tags] of Object.entries(GENUI_EXPECTED_TAGS)) {
+    test(`${subpath} defines ${tags.length ? tags.join(', ') : 'nothing'} in a fresh realm`, async () => {
+      const code = await iife(`import '${specifierOf(GENUI, subpath)}';\n`);
       const { realm, defined } = runRecordingDefines(code);
       try {
         expect(defined.sort()).toEqual([...tags].sort());

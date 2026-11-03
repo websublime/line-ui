@@ -5,9 +5,10 @@
  * and extracts each tarball into `<temp>/node_modules/<name>`, so a check reads the files npm ships (§7.5 intro,
  * SD4). The temp root lives under `<repo>/node_modules/.cache/line-p5/`, so esbuild's walk up the parent
  * `node_modules` folders reaches the root `node_modules` and never a shared system temp folder. Third-party
- * packages (Lit, Zag) resolve from the root `node_modules`. No `@websublime/*` package lives there, so every
- * `@websublime/*` import resolves to an extracted tarball (PRD §5.2, ledger 01-Z5). Needs `bun run build` first,
- * as the CI unit tier has.
+ * packages (Lit, Zag) resolve from the root `node_modules`; a dependency Bun links only under its workspace
+ * package, such as `@a2ui/web_core` under `line-genui`, is linked into the temp `node_modules`. No `@websublime/*`
+ * package lives in either, so every `@websublime/*` import resolves to an extracted tarball (PRD §5.2, ledger
+ * 01-Z5). Needs `bun run build` first, as the CI unit tier has.
  *
  * `freshRealm()` is a new happy-dom `Window` with its own VM context. A module evaluated there gets its own
  * globals and its own `customElements` registry, apart from the global happy-dom of `bun-test-preload.ts`.
@@ -17,7 +18,16 @@
  * @module __tests__/packed/consumer
  */
 
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, renameSync, rmSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  mkdtempSync,
+  readdirSync,
+  realpathSync,
+  renameSync,
+  rmSync,
+  symlinkSync,
+} from 'node:fs';
 import { dirname, join } from 'node:path';
 import { type BuildOptions, build, type Message, type Metafile } from 'esbuild';
 
@@ -70,6 +80,7 @@ export async function installPacked(names: readonly string[]): Promise<Consumer>
         renameSync(join(scratch, 'package'), dir);
         rmSync(scratch, { recursive: true, force: true });
         packages.set(name, { dir, manifest });
+        linkDependencies(root, pkg.dir, manifest);
       } finally {
         dropTarball();
       }
@@ -78,6 +89,23 @@ export async function installPacked(names: readonly string[]): Promise<Consumer>
   } catch (err) {
     cleanup();
     throw err;
+  }
+}
+
+/**
+ * Links into the consumer each third-party dependency that Bun installs only under the package's workspace
+ * folder, such as `@a2ui/web_core` under `line-genui`, as npm would install it beside the tarball. Root
+ * `node_modules` packages and `@websublime/*` packages are left alone: those resolve from the root or from an
+ * extracted tarball.
+ */
+function linkDependencies(root: string, workspaceDir: string, manifest: PackedManifest): void {
+  for (const dependency of Object.keys(manifest.dependencies ?? {})) {
+    if (dependency.startsWith('@websublime/') || existsSync(join(ROOT, 'node_modules', dependency))) continue;
+    const source = join(workspaceDir, 'node_modules', dependency);
+    const target = join(root, 'node_modules', dependency);
+    if (!existsSync(source) || existsSync(target)) continue;
+    mkdirSync(dirname(target), { recursive: true });
+    symlinkSync(realpathSync(source), target, 'dir');
   }
 }
 
