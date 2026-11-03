@@ -19,6 +19,7 @@ import {
   ADVERTISED_VERSIONS,
   BASIC_CATALOG_ID,
   basicImplementations,
+  buttonDescriptor,
   type CatalogJson,
   defineDescriptor,
   descriptors,
@@ -215,16 +216,21 @@ describe('the basic implementation map (§6.G.2; §10 SD43)', () => {
     const map = basicImplementations(BASIC_CATALOG_ID);
     if (!map) throw new Error('no map under the v0_9 basic id');
     expect(map.Image.target).toEqual({ kind: 'native', tag: 'img', url: 'image', attributes: {} });
-    expect(map.Video.target).toMatchObject({ kind: 'native', tag: 'video', url: 'video' });
+    expect(map.Video.target).toEqual({ kind: 'native', tag: 'video', url: 'video', attributes: {} });
     expect(map.AudioPlayer.target).toEqual({
       kind: 'native',
       tag: 'audio',
       url: 'audio',
       attributes: { controls: '' },
     });
-    expect(map.Text.target).toMatchObject({ kind: 'text', inButton: 'span' });
-    expect(map.Icon.target).toMatchObject({ kind: 'component', descriptor: iconDescriptor });
-    expect(map.Divider.target).toMatchObject({ kind: 'component', descriptor: separatorDescriptor });
+    expect(map.Text.target).toEqual({
+      kind: 'text',
+      tagByVariant: { h1: 'h1', h2: 'h2', h3: 'h3', h4: 'h4', h5: 'h5', caption: 'small', body: 'p' },
+      inButton: 'span',
+    });
+    expect(map.Icon.target).toEqual({ kind: 'component', descriptor: iconDescriptor, attributes: {} });
+    expect(map.Divider.target).toEqual({ kind: 'component', descriptor: separatorDescriptor, attributes: {} });
+    expect(map.Button.target).toEqual({ kind: 'component', descriptor: buttonDescriptor, attributes: {} });
     expect(map.Row.target).toEqual({
       kind: 'component',
       descriptor: stackDescriptor,
