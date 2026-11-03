@@ -99,10 +99,18 @@ function lookupOwned(descriptor: LineDescriptor): ReadonlySet<string> {
   return owned;
 }
 
+/**
+ * Fixed attributes of a `line` catalog node's element, as the `basic` map carries them for basic types: every
+ * `line-button` the surface renders is `type="button"`, so an agent Button never submits or resets a host form
+ * around the light-DOM surface (§6.G.4 Button; §12 AM-081).
+ */
+const LINE_ATTRIBUTES: Readonly<Record<string, Readonly<Record<string, string>>>> = { Button: { type: 'button' } };
+
 function targetOf(catalogId: string | undefined, type: string): Target | undefined {
   if (catalogId === LINE_CATALOG_ID) {
     const descriptor = LINE_DESCRIPTORS.get(type);
-    return descriptor ? { kind: 'component', descriptor, attributes: {}, basicType: undefined } : undefined;
+    const attributes = Object.hasOwn(LINE_ATTRIBUTES, type) ? (LINE_ATTRIBUTES[type] ?? {}) : {};
+    return descriptor ? { kind: 'component', descriptor, attributes, basicType: undefined } : undefined;
   }
   const basic = catalogId === undefined ? undefined : basicImplementations(catalogId);
   if (!(basic && Object.hasOwn(basic, type))) return undefined;

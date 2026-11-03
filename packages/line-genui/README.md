@@ -83,7 +83,7 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 | Icon | `{ kind: 'component' }`: the Icon descriptor, `<line-icon>` |
 | Row, Column, List | `{ kind: 'component' }`: the Stack descriptor, `<line-stack>`, with `orientation="horizontal"`, `orientation="vertical"` and `role="list"` |
 | Divider | `{ kind: 'component' }`: the Separator descriptor, `<line-separator>` |
-| Button | `{ kind: 'component' }`: the Button descriptor, `<line-button>` |
+| Button | `{ kind: 'component' }`: the Button descriptor, `<line-button type="button">`, so an agent Button never submits or resets a host form around the surface |
 
 ## The A2UI renderer (`./a2ui`)
 

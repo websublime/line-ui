@@ -118,7 +118,11 @@ const IMPLEMENTATIONS: Record<BasicTypeName, BasicImplementation> = {
   // A List's `line-stack` carries `role="list"`, and each item `role="listitem"` (§6.G.4 Accessibility; SD59).
   List: { api: ListApi, target: { kind: 'component', descriptor: stackDescriptor, attributes: { role: 'list' } } },
   Divider: { api: DividerApi, target: { kind: 'component', descriptor: separatorDescriptor, attributes: NONE } },
-  Button: { api: ButtonApi, target: { kind: 'component', descriptor: buttonDescriptor, attributes: NONE } },
+  // An agent Button never submits or resets a host form around the light-DOM surface (§6.G.4 Button; AM-081).
+  Button: {
+    api: ButtonApi,
+    target: { kind: 'component', descriptor: buttonDescriptor, attributes: { type: 'button' } },
+  },
 };
 
 /** Freezes a target with its attribute or variant table; the descriptor stays as it is. */

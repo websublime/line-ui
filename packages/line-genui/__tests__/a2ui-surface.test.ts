@@ -138,7 +138,7 @@ describe('basic mapping (§6.G.4 Basic mapping; ARCH §17.3)', () => {
     expect(kids[8]?.getAttribute('role')).toBe('list');
     expect(kids[8]?.getAttribute('orientation')).toBe('horizontal');
     expect(kids[9]?.getAttribute('orientation')).toBe('vertical');
-    expect(kids[10]?.outerHTML).toBe('<line-button variant="primary"><span>Go</span></line-button>');
+    expect(kids[10]?.outerHTML).toBe('<line-button variant="primary" type="button"><span>Go</span></line-button>');
   });
 
   test('each unmapped basic type renders an inert placeholder and raises one error', async () => {
@@ -192,10 +192,42 @@ describe('the line catalog (§6.G.2; §10 SD42)', () => {
     expect(errors).toEqual([]);
     expect(surface.innerHTML).toBe(
       '<line-stack orientation="horizontal" gap="2">' +
-        '<line-button aria-label="Close"><line-icon></line-icon></line-button>' +
+        '<line-button type="button" aria-label="Close"><line-icon></line-icon></line-button>' +
         '<line-separator orientation="vertical"></line-separator>' +
         '<line-icon mirror=""></line-icon></line-stack>',
     );
+  });
+});
+
+describe('Button (§6.G.4 Button; §12 AM-081)', () => {
+  test('every surface Button is type="button" with no name or value, from both catalogs', async () => {
+    const basic = await render([{ id: 'root', component: 'Button', child: 't', action: action('a') }, text('t', 'A')]);
+    const line = await render(
+      [{ id: 'root', component: 'Button', accessibility: { label: 'B' }, action: action('b') }],
+      {
+        catalogId: LINE_CATALOG_ID,
+      },
+    );
+    for (const { surface } of [basic, line]) {
+      const button = surface.querySelector('line-button');
+      expect([button?.getAttribute('type'), button?.hasAttribute('name'), button?.hasAttribute('value')]).toEqual([
+        'button',
+        false,
+        false,
+      ]);
+    }
+  });
+
+  test('a line Button node that carries type, name or value is rejected by the strict schema', async () => {
+    for (const extra of [{ type: 'submit' }, { name: 'intent' }, { value: 'save' }]) {
+      const { surface, errors } = await render(
+        [{ id: 'root', component: 'Button', accessibility: { label: 'B' }, action: action('b'), ...extra }],
+        { catalogId: LINE_CATALOG_ID },
+      );
+      expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+      expect(surface.querySelector('line-button')).toBeNull();
+      surface.remove();
+    }
   });
 });
 
@@ -224,7 +256,7 @@ describe('accessibility (§6.G.4 Accessibility)', () => {
       { id: 'root', component: 'Button', child: 't', action: action('x') },
       text('t', 'Send', { variant: 'h2' }),
     ]);
-    expect(surface.innerHTML).toBe('<line-button><span>Send</span></line-button>');
+    expect(surface.innerHTML).toBe('<line-button type="button"><span>Send</span></line-button>');
   });
 
   test('accessibility.label and .description become aria-label and aria-description on a Button', async () => {
@@ -275,7 +307,7 @@ describe('accessibility (§6.G.4 Accessibility)', () => {
     );
     expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
     await feed(data('/l', 'Now named'));
-    expect(surface.innerHTML).toBe('<line-button><span>Now named</span></line-button>');
+    expect(surface.innerHTML).toBe('<line-button type="button"><span>Now named</span></line-button>');
     expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
   });
 

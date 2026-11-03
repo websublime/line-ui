@@ -238,7 +238,11 @@ describe('the basic implementation map (§6.G.2; §10 SD43)', () => {
     });
     expect(map.Icon.target).toEqual({ kind: 'component', descriptor: iconDescriptor, attributes: {} });
     expect(map.Divider.target).toEqual({ kind: 'component', descriptor: separatorDescriptor, attributes: {} });
-    expect(map.Button.target).toEqual({ kind: 'component', descriptor: buttonDescriptor, attributes: {} });
+    expect(map.Button.target).toEqual({
+      kind: 'component',
+      descriptor: buttonDescriptor,
+      attributes: { type: 'button' },
+    });
     expect(map.Row.target).toEqual({
       kind: 'component',
       descriptor: stackDescriptor,

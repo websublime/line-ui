@@ -228,6 +228,103 @@ test.describe('icons (§6.G.4 Basic mapping; §10 SD15, SD33, SD92)', () => {
   });
 });
 
+test.describe('Button in a host form (§6.G.4 Button; §12 AM-081)', () => {
+  test('a basic and a line Button submit nothing, reset nothing, add no field, and still raise their action', async ({
+    page,
+  }) => {
+    await page.goto('/iframe.html?id=agent-ui-a2ui-surface--basic&viewMode=story');
+    await expect(page.locator('#storybook-root line-a2ui-surface')).toBeAttached();
+    const result = await page.evaluate(async () => {
+      const story = document.querySelector('line-a2ui-surface') as SurfaceElement;
+      const Session = story.session?.constructor as new () => unknown;
+      const form = document.createElement('form');
+      form.innerHTML = '<input name="kept" value="initial">';
+      const counts = { submit: 0, reset: 0, actions: [] as string[] };
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        counts.submit++;
+      });
+      form.addEventListener('reset', () => counts.reset++);
+      const surfaces = (['basic', 'line'] as const).map((kind) => {
+        const surface = document.createElement('line-a2ui-surface') as SurfaceElement;
+        surface.setAttribute('surface-id', kind);
+        surface.addEventListener('line-a2ui-action', (event) =>
+          counts.actions.push(String((event as CustomEvent<{ action: { name: string } }>).detail.action.name)),
+        );
+        form.append(surface);
+        surface.session = new Session() as SurfaceElement['session'];
+        return surface;
+      });
+      story.closest('#storybook-root')?.replaceChildren(form);
+      const [basic, line] = surfaces as [SurfaceElement, SurfaceElement];
+      await basic.feed([
+        {
+          version: 'v0.9.1',
+          createSurface: {
+            surfaceId: 'basic',
+            catalogId: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
+          },
+        },
+        {
+          version: 'v0.9.1',
+          updateComponents: {
+            surfaceId: 'basic',
+            components: [
+              { id: 'root', component: 'Button', child: 't', action: { event: { name: 'basic' } } },
+              { id: 't', component: 'Text', text: 'Basic' },
+            ],
+          },
+        },
+      ]);
+      await line.feed([
+        {
+          version: 'v0.9.1',
+          createSurface: {
+            surfaceId: 'line',
+            catalogId: 'https://line-ui.websublime.com/a2ui/catalogs/line/v1/catalog.json',
+          },
+        },
+        {
+          version: 'v0.9.1',
+          updateComponents: {
+            surfaceId: 'line',
+            components: [
+              {
+                id: 'root',
+                component: 'Button',
+                accessibility: { label: 'Line' },
+                action: { event: { name: 'line' } },
+              },
+            ],
+          },
+        },
+      ]);
+      const input = form.querySelector('input') as HTMLInputElement;
+      input.value = 'changed';
+      const buttons = [...form.querySelectorAll('line-button')] as (HTMLElement & {
+        updateComplete: Promise<unknown>;
+      })[];
+      await Promise.all(buttons.map((button) => button.updateComplete));
+      for (const button of buttons) button.shadowRoot?.querySelector('button')?.click();
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return {
+        ...counts,
+        types: buttons.map((button) => button.getAttribute('type')),
+        input: input.value,
+        fields: [...new FormData(form).keys()],
+      };
+    });
+    expect(result).toEqual({
+      submit: 0,
+      reset: 0,
+      actions: ['basic', 'line'],
+      types: ['button', 'button'],
+      input: 'changed',
+      fields: ['kept'],
+    });
+  });
+});
+
 test.describe('rendering (§6.G.4; plan §7.2)', () => {
   test('document ::part() rules reach the rendered elements', async ({ page }) => {
     await page.goto('/iframe.html?id=agent-ui-a2ui-surface--basic&viewMode=story');

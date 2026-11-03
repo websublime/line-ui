@@ -34,12 +34,9 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   Button: {
     variant: 'enum',
-    type: 'enum',
     disabled: 'DynamicBoolean',
     loading: 'DynamicBoolean',
     pressed: 'DynamicBoolean',
-    name: 'DynamicString',
-    value: 'DynamicString',
     child: 'ComponentId',
     action: 'Action',
   },
