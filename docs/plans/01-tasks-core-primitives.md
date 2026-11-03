@@ -74,7 +74,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| G1 | G | Descriptor API in `line-genui` and the descriptors of C1–C4 (spec §6.G.1) | webcomponents-supervisor | P1, P2, C1–C4 | todo | — | — | — |
+| G1 | G | Descriptor API in `line-genui` and the descriptors of C1–C4 (spec §6.G.1) | webcomponents-supervisor | P1, P2, C1–C4 | in_progress | feat/01-g1-descriptor-api | — | — |
 | G2 | G | `line` and `basic` catalog emitters (A2UI v0.9.1) and the `line-icons` `./a2ui` icon-name map (spec §6.G.2) | webcomponents-supervisor | G1 | todo | — | — | — |
 | G3 | G | Frontend-tool JSON Schema emitter (spec §6.G.3) | webcomponents-supervisor | G1 | todo | — | — | — |
 | G4 | G | `<line-a2ui-surface>` (preview), direct projection on `NodeResolver`, with the `line-genui` manifest merged into Storybook (spec §6.G.4) | webcomponents-supervisor | G1, G2, P5 | todo | — | — | — |
