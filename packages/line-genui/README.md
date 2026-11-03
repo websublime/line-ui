@@ -14,7 +14,7 @@ bun add @websublime/line-genui @websublime/line-components @websublime/line-icon
 
 | Import | Exports |
 | --- | --- |
-| `@websublime/line-genui/catalog` | Descriptors, catalogs and emitters. No DOM access. |
+| `@websublime/line-genui/catalog` | Descriptors, catalogs and emitters. Defines no element, and its own modules touch no DOM at load. Unbundled, the `@a2ui/web_core/v0_9` module it imports loads Lit, which touches the DOM when it loads; a bundler drops it. |
 | `@websublime/line-genui/a2ui` | The A2UI session and `<line-a2ui-surface>`. Preview. |
 
 The package has no root `.` export. Both entry points are empty until the Phase 1 G rows land.
