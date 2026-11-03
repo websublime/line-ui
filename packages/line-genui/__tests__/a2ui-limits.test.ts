@@ -13,8 +13,8 @@
  */
 
 import { afterEach, describe, expect, test } from 'bun:test';
-import { DEFAULT_LIMITS } from '../src/a2ui/index.js';
-import { dataModelSize, positiveInteger, utf8Length } from '../src/a2ui/limits.js';
+import { DEFAULT_LIMITS, Session } from '../src/a2ui/index.js';
+import { childrenFirst, dataModelSize, positiveInteger, utf8Length } from '../src/a2ui/limits.js';
 import { components, create, data, invalidMessages, mount, text } from './a2ui-fixture.js';
 
 afterEach(() => {
@@ -164,5 +164,43 @@ describe('limit breaches (§6.G.4 Limits)', () => {
     ]);
     expect(surface.textContent).toBe('short');
     expect(session.dataModel('main')).toBeUndefined();
+  });
+});
+
+describe('apply order (§6.G.4 Projection and messages)', () => {
+  /** A surface model of a fresh session, created on the basic catalog. */
+  function surfaceModel(): Parameters<typeof childrenFirst>[1] {
+    const session = new Session();
+    const models: Parameters<typeof childrenFirst>[1][] = [];
+    session.onSurface((surface) => models.push(surface));
+    session.process([create()], 'main');
+    const model = models[0];
+    if (!model) throw new Error('no surface model');
+    return model;
+  }
+
+  test('childrenFirst puts each component after the components of the body it references', () => {
+    const body = [
+      { id: 'root', component: 'Column', children: ['row', 'list'] },
+      { id: 'row', component: 'Row', children: ['a', 'b'] },
+      { id: 'list', component: 'List', children: { componentId: 'item', path: '/items' } },
+      text('a', 'A'),
+      text('b', 'B'),
+      text('item', { path: 'label' }),
+    ];
+    const order = childrenFirst(body, surfaceModel()).map((component) => (component as { id: string }).id);
+    expect(order.toSorted()).toEqual(body.map((component) => component.id).toSorted());
+    const before = (child: string, parent: string) => order.indexOf(child) < order.indexOf(parent);
+    expect([before('a', 'row'), before('b', 'row'), before('item', 'list'), before('row', 'root')]).toEqual([
+      true,
+      true,
+      true,
+      true,
+    ]);
+  });
+
+  test('childrenFirst leaves a body with a duplicate id as it is, for web_core to reject', () => {
+    const body = [text('a', '1'), text('a', '2')];
+    expect(childrenFirst(body, surfaceModel())).toBe(body);
   });
 });

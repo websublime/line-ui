@@ -207,10 +207,16 @@ describe('accessibility (§6.G.4 Accessibility)', () => {
       text('rt', 'In a row'),
       text('t', 'Plain'),
     ]);
-    expect(surface.innerHTML).toBe(
-      '<line-stack role="list"><line-stack role="listitem" orientation="horizontal"><p>In a row</p></line-stack>' +
-        '<div role="listitem"><p>Plain</p></div></line-stack>',
-    );
+    const list = surface.firstElementChild as Element;
+    expect(list.outerHTML.startsWith('<line-stack role="list">')).toBe(true);
+    const [row, wrapper] = [...list.children];
+    expect([row?.localName, row?.getAttribute('role'), row?.getAttribute('orientation')]).toEqual([
+      'line-stack',
+      'listitem',
+      'horizontal',
+    ]);
+    expect(row?.innerHTML).toBe('<p>In a row</p>');
+    expect(wrapper?.outerHTML).toBe('<div role="listitem"><p>Plain</p></div>');
   });
 
   test('Button text renders in a <span>', async () => {

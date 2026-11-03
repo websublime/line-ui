@@ -202,6 +202,65 @@ function* childrenOf(
   }
 }
 
+/** The component ids a component references, its template's item component included, whatever the data holds. */
+function referencedIds(component: CandidateComponent, api: ComponentApi): string[] {
+  const ids: string[] = [];
+  for (const [id] of childrenOf(component, api, '/', undefined)) if (typeof id === 'string') ids.push(id);
+  for (const [key, ref] of extractRefFields(api.schema)) {
+    const value = component.properties[key];
+    if (ref.kind === 'list' && isRecord(value) && typeof value.componentId === 'string') ids.push(value.componentId);
+  }
+  return ids;
+}
+
+/**
+ * Orders the components of one `updateComponents` body so that each comes after the components of the same body
+ * it references. `web_core` applies the components in order, and `NodeResolver` re-materializes a parent each time
+ * one of its pending children arrives, so a parent sent before its N children costs O(N²); sent after them, it
+ * materializes once (`@a2ui/web_core` 0.14.0 `src/resolution/node-resolver.js`, `onComponentCreated`). The order
+ * changes nothing else: `web_core` validates the whole body before it applies any of it. Returns `components`
+ * unchanged when it holds anything this order cannot read.
+ *
+ * @param components The `components` array of the body.
+ * @param surface The surface the body targets.
+ */
+export function childrenFirst(components: readonly unknown[], surface: SurfaceModel): readonly unknown[] {
+  const inBody = new Map<string, unknown>();
+  for (const update of components) {
+    if (!isRecord(update) || typeof update.id !== 'string' || inBody.has(update.id)) return components;
+    inBody.set(update.id, update);
+  }
+  const candidate = candidateComponents(surface, components);
+  const children = (id: string): string[] => {
+    const component = candidate.get(id);
+    const api = component?.catalog?.components.get(component.type);
+    return component && api ? referencedIds(component, api).filter((child) => inBody.has(child)) : [];
+  };
+  const ordered: string[] = [];
+  const seen = new Set<string>();
+  for (const root of inBody.keys()) postOrder(root, children, seen, ordered);
+  return ordered.map((id) => inBody.get(id));
+}
+
+/**
+ * Appends `root` and the ids under it that `seen` lacks to `out`, each after its children, with an explicit stack
+ * so a deep chain cannot overflow the call stack. A cycle stops at the first repeat.
+ */
+function postOrder(root: string, children: (id: string) => string[], seen: Set<string>, out: string[]): void {
+  const stack: [string, boolean][] = [[root, false]];
+  for (let top = stack.pop(); top; top = stack.pop()) {
+    const [id, expanded] = top;
+    if (expanded) {
+      out.push(id);
+      continue;
+    }
+    if (seen.has(id)) continue;
+    seen.add(id);
+    stack.push([id, true]);
+    for (const child of children(id)) if (!seen.has(child)) stack.push([child, false]);
+  }
+}
+
 /** The breach a node of the walk reaches, if any: its ordinal against `maxNodes`, its depth against `maxDepth`. */
 function nodeBreach(ordinal: number, depth: number, limits: Limits): LimitBreach | undefined {
   if (ordinal > limits.maxNodes) return { limit: 'maxNodes', value: ordinal, max: limits.maxNodes };

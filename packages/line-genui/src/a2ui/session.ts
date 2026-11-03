@@ -14,7 +14,7 @@ import { descriptors } from '../catalog/index.js';
 import { lineCatalog } from '../catalog/line.js';
 import { A2UI_VERSION, type A2uiActionMessage, type A2uiErrorMessage, surfaceError, toA2uiError } from './errors.js';
 import { isJsonObject } from './guards.js';
-import { checkLimits, DEFAULT_LIMITS, type Limits } from './limits.js';
+import { checkLimits, childrenFirst, DEFAULT_LIMITS, type Limits } from './limits.js';
 import { allowedUrl, type UrlPolicy } from './url-policy.js';
 
 /**
@@ -38,6 +38,21 @@ function surfaceIdOf(message: unknown): string | undefined {
     if (isJsonObject(body) && typeof body.surfaceId === 'string') return body.surfaceId;
   }
   return undefined;
+}
+
+/**
+ * The message with the components of an `updateComponents` body in children-first order, so `NodeResolver`
+ * materializes each parent once ({@link childrenFirst}); any other message, or one it cannot read, as it is.
+ */
+function inApplyOrder(message: unknown, surface: SurfaceModel | undefined): unknown {
+  if (!(surface && isJsonObject(message) && isJsonObject(message.updateComponents))) return message;
+  const body = message.updateComponents;
+  if (!Array.isArray(body.components)) return message;
+  try {
+    return { ...message, updateComponents: { ...body, components: childrenFirst(body.components, surface) } };
+  } catch {
+    return message;
+  }
 }
 
 /** Calls every listener, so one that throws neither stops the others nor reaches `web_core` (MANIFESTO Law 9). */
@@ -124,7 +139,8 @@ export class Session {
       for (const message of messages) {
         const surfaceId = surfaceIdOf(message) ?? fallbackSurfaceId;
         try {
-          const breach = checkLimits(message, this.#processor.getSurface(surfaceId), this.#limits(surfaceId));
+          const surface = this.#processor.getSurface(surfaceId);
+          const breach = checkLimits(message, surface, this.#limits(surfaceId));
           if (breach) {
             this.#emitError(
               surfaceError(
@@ -136,7 +152,7 @@ export class Session {
             );
             continue;
           }
-          this.#processor.processMessages(message as never);
+          this.#processor.processMessages(inApplyOrder(message, surface) as never);
           applied++;
         } catch (err) {
           this.#emitError(toA2uiError(err, surfaceId));
