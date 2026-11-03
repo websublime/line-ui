@@ -377,9 +377,9 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
     this.#loaded.add(descriptor.tag);
     const loading = descriptor.load().then(
       () => undefined,
-      (err: unknown) => {
-        const reason = err instanceof Error ? err.message : String(err);
-        const message = `The component ${descriptor.tag} failed to load: ${reason}`;
+      // A fixed message: the import error may name host asset URLs, and the error travels to the agent.
+      () => {
+        const message = `The component ${descriptor.tag} failed to load.`;
         this.#raise(surfaceError('COMPONENT_LOAD_ERROR', this.surfaceId, message, { tag: descriptor.tag }));
       },
     );

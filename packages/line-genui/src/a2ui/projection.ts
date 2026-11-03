@@ -374,25 +374,28 @@ export class Projection {
   #text(view: View, element: Element, value: string): void {
     const renderer = getValue(this.markdownRenderer);
     if (renderer) {
+      // The message names the Text and the kind of failure only: the hook's own error text may hold consumer
+      // internals, and the error travels to the agent.
+      let threw = false;
       let rendered: unknown;
-      let failure: unknown;
       try {
         rendered = renderer(value);
-      } catch (err) {
-        failure = err;
+      } catch {
+        threw = true;
       }
       if (rendered instanceof Node) {
         element.replaceChildren(rendered);
         return;
       }
       view.raised = undefined;
+      const id = view.node.componentId;
       this.#raise(
         view,
         'markdown',
         'MARKDOWN_RENDER_ERROR',
-        failure === undefined
-          ? `markdownRenderer returned a value that is not a Node for Text '${view.node.componentId}'.`
-          : `markdownRenderer threw for Text '${view.node.componentId}': ${failure instanceof Error ? failure.message : String(failure)}`,
+        threw
+          ? `markdownRenderer threw for Text '${id}'.`
+          : `markdownRenderer returned a value that is not a Node for Text '${id}'.`,
       );
     }
     const only = element.firstChild;

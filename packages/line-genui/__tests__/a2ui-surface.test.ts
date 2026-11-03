@@ -531,7 +531,7 @@ describe('URLs, text and theme (§6.G.4 URLs, text, theme; §10 SD57, SD58)', ()
   test('a markdownRenderer that throws, or returns a string, leaves plain text and raises an error', async () => {
     for (const renderer of [
       () => {
-        throw new Error('bad markdown');
+        throw new Error('bad markdown at /internal/renderer.js');
       },
       () => '<b>x</b>' as unknown as Node,
     ]) {
@@ -539,6 +539,9 @@ describe('URLs, text and theme (§6.G.4 URLs, text, theme; §10 SD57, SD58)', ()
       surface.markdownRenderer = renderer;
       expect(surface.innerHTML).toBe('<p>**bold**</p>');
       expect(codes(errors)).toEqual(['MARKDOWN_RENDER_ERROR']);
+      expect(errors[0]?.error.message).toMatch(
+        /^markdownRenderer (threw|returned a value that is not a Node) for Text 'root'\.$/,
+      );
       surface.remove();
     }
   });
@@ -652,7 +655,7 @@ describe('lazy loading (§6.G.4; ARCH §17.4; Law 6)', () => {
         error: {
           code: 'COMPONENT_LOAD_ERROR',
           surfaceId: 'main',
-          message: 'The component line-separator failed to load: offline',
+          message: 'The component line-separator failed to load.',
           tag: 'line-separator',
         },
       },
