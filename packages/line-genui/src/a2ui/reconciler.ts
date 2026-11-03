@@ -57,11 +57,38 @@ export class Reconciler {
       const next = desired[i + 1] as Node;
       if (node.nextSibling !== next) this.#move(parent, node, next);
     }
-    for (let i = anchor + 1; i < desired.length; i++) {
+    this.#placeAfter(parent, desired, anchor);
+  }
+
+  /**
+   * Places `desired[from + 1 …]` after `desired[from]`. Consecutive new nodes, which have no parent yet, go in as one
+   * fragment: one insertion per run, not one per node, which WebKit pays for per insertion into a `role="list"`.
+   */
+  #placeAfter(parent: Node, desired: readonly Node[], from: number): void {
+    let run: Node[] = [];
+    let runAfter: Node | undefined;
+    const flush = () => {
+      const before = runAfter?.nextSibling ?? null;
+      if (run.length === 1) parent.insertBefore(run[0] as Node, before);
+      else if (run.length > 1) {
+        const fragment = (parent.ownerDocument ?? document).createDocumentFragment();
+        fragment.append(...run);
+        parent.insertBefore(fragment, before);
+      }
+      run = [];
+    };
+    for (let i = from + 1; i < desired.length; i++) {
       const node = desired[i] as Node;
       const previous = desired[i - 1] as Node;
+      if (node.parentNode === null) {
+        if (run.length === 0) runAfter = previous;
+        run.push(node);
+        continue;
+      }
+      flush();
       if (node.previousSibling !== previous) this.#move(parent, node, previous.nextSibling);
     }
+    flush();
   }
 
   /** Claims the desired nodes for `parent` and marks its other children as leaving. */
