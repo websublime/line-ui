@@ -12,6 +12,8 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.20 (2026-11-03)** — Aligned with Phase 1 spec AM-071 (ledger row `01-G1`, decision by Miguel on 2026-11-03 with an orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 list item.
+  - §17.3 (Descriptors and catalogs) says a binding-map entry may be a surface lookup, such as Icon `name` → `iconMap`, besides prop → property or attribute (Phase 1 spec §6.G.1, §6.G.4, AM-071).
 - **v0.8.19 (2026-11-03)** — Aligned with Phase 1 spec AM-070 (ledger row `01-G1`, orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 sentence.
   - §17.3 (Descriptors and catalogs) says the drift test checks an action-map event the descriptor marks native against a fixed list of DOM event names instead of the manifest, so a misspelt native event still fails (Phase 1 spec §6.G.5, AM-070).
 - **v0.8.18 (2026-11-03)** — Aligned with Phase 1 spec AM-067 (ledger row `01-G1`, orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 bullet.
@@ -1565,7 +1567,7 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
 - A descriptor holds these fields:
   - the catalog name, the tag, and `load()`, which imports the component subpath;
   - the prop schema and the slot map;
-  - the binding map (prop → property or attribute, the value prop, the commit event that §17.2 rule C9 names);
+  - the binding map (prop → property or attribute, or a surface lookup such as Icon `name` → `iconMap` (Phase 1 spec AM-071), the value prop, the commit event that §17.2 rule C9 names);
   - the action map (prop → DOM event);
   - the accessibility requirements and the agent-facing description;
   - the `agentExposed` flag, which defaults to `true`.

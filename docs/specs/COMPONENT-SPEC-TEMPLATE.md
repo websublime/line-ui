@@ -178,8 +178,8 @@
 | `load()` subpath | `@websublime/line-components/<subpath>` |
 | Prop schema | <props from the Props table, minus the C1 exclusions> |
 | Slot map | <slot → `ComponentId` or `ChildList`> |
-| Binding map | <prop → property or attribute; value prop; commit event (C9)> |
-| Action map | <prop → DOM event> |
+| Binding map | <prop → property or attribute, or a surface lookup such as Icon `name` → `iconMap` (Phase 1 spec §6.G.1); value prop; commit event (C9)> |
+| Action map | <prop → DOM event; mark a native DOM event, such as `click`, native (Phase 1 spec §6.G.1)> |
 | Accessibility requirements | <requirements the renderer validates> |
 | Agent-facing description | <at most 1024 characters> |
 | `agentExposed` | `<true \| false, with the reason>` |
