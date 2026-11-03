@@ -6,6 +6,9 @@
  * `server_to_client.json` reach the catalog through the relative `catalog.json`, which resolves to
  * `https://a2ui.org/specification/v0_9/catalog.json`, so the document under test is added under that `$id`.
  *
+ * One test reads the built `@websublime/line-genui/catalog.json` through the package's `exports`, so it needs
+ * `bun run build` first, as the CI unit tier has.
+ *
  * @module __tests__/catalog-emitters
  */
 
@@ -72,6 +75,11 @@ const messages = [
 ];
 
 describe('the line catalog document (§6.G.2; §10 SD42)', () => {
+  test('the built @websublime/line-genui/catalog.json is this document', () => {
+    const file = Bun.resolveSync('@websublime/line-genui/catalog.json', import.meta.dir);
+    expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual(document);
+  });
+
   test('carries the line id, $defs/anyFunction false and an open $defs/theme', () => {
     expect(document.catalogId).toBe('https://line-ui.websublime.com/a2ui/catalogs/line/v1/catalog.json');
     const defs = document.$defs as Json;
