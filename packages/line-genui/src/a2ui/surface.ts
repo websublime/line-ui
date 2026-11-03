@@ -66,8 +66,8 @@ function shadowParts(root: ShadowRoot): HTMLElement {
  * @attr {number} [max-nodes=1000] - The most nodes a surface may hold: component definitions and rendered nodes, placeholders included. A positive integer; a message that would exceed it is rejected. Any other value keeps the default, 1000.
  * @attr {number} [max-depth=32] - The deepest the rendered tree may go, the root at depth 1. A positive integer; a message that would exceed it is rejected. Any other value keeps the default, 32.
  * @attr {number} [max-data-model-size=1048576] - The largest the data model may grow, in UTF-8 bytes of `JSON.stringify` of the data model as the message leaves it. A positive integer; a message that would exceed it is rejected. Any other value keeps the default, 1048576 (1 MiB).
- * @attr {string} live-update-text - What the live region announces after a batch that changed the surface. Default "Content updated.".
- * @attr {string} live-error-text - What the live region announces after an error. Default "Some content could not be shown.".
+ * @attr {string} [live-update-text=Content updated.] - What the live region announces after a batch that changed the surface.
+ * @attr {string} [live-error-text=Some content could not be shown.] - What the live region announces after an error.
  *
  * @fires {CustomEvent<A2uiActionMessage>} line-a2ui-action - A user action on a component; `detail` is the resolved A2UI `action` message, ready for the transport. Bubbles and is composed.
  * @fires {CustomEvent<A2uiErrorMessage>} line-a2ui-error - A message was rejected, or a node could not render; `detail` is an A2UI `error` message in its generic form, ready for the transport. Bubbles and is composed.

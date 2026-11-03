@@ -85,11 +85,13 @@ describe('custom-elements.json in the packed line-genui tarball (§10 SD94)', ()
     const defaults = Object.fromEntries(
       (surface?.attributes ?? []).map((attribute) => [attribute.name, attribute.default]),
     );
-    expect([defaults['max-nodes'], defaults['max-depth'], defaults['max-data-model-size']]).toEqual([
-      '1000',
-      '32',
-      '1048576',
-    ]);
+    expect([
+      defaults['max-nodes'],
+      defaults['max-depth'],
+      defaults['max-data-model-size'],
+      defaults['live-update-text'],
+      defaults['live-error-text'],
+    ]).toEqual(['1000', '32', '1048576', 'Content updated.', 'Some content could not be shown.']);
     const fields = new Set(surface?.members?.filter((member) => member.kind === 'field').map((member) => member.name));
     for (const name of [
       'iconMap',
