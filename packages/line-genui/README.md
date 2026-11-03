@@ -16,9 +16,10 @@ bun add @websublime/line-genui @websublime/line-components @websublime/line-icon
 | --- | --- |
 | `@websublime/line-genui/catalog` | Descriptors, the `line` catalog emitters and the `basic` implementation map. Defines no element, and its own modules touch no DOM at load. Unbundled, the `@a2ui/web_core/v0_9` module it imports loads Lit, which touches the DOM when it loads; a bundler drops it. |
 | `@websublime/line-genui/catalog.json` | The `line` catalog document, JSON (see below). |
-| `@websublime/line-genui/a2ui` | The A2UI session and `<line-a2ui-surface>`. Preview. |
+| `@websublime/line-genui/a2ui` | The A2UI session and `<line-a2ui-surface>`. Defines `line-a2ui-surface` and nothing else; each component loads on first use. Preview. |
+| `@websublime/line-genui/custom-elements.json` | The Custom Elements Manifest of `<line-a2ui-surface>`. |
 
-The package has no root `.` export. `./a2ui` is empty until the Phase 1 G4 row lands.
+The package has no root `.` export.
 
 ## Descriptors (`./catalog`)
 
@@ -83,6 +84,36 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 | Row, Column, List | `{ kind: 'component' }`: the Stack descriptor, `<line-stack>`, with `orientation="horizontal"`, `orientation="vertical"` and `role="list"` |
 | Divider | `{ kind: 'component' }`: the Separator descriptor, `<line-separator>` |
 | Button | `{ kind: 'component' }`: the Button descriptor, `<line-button>` |
+
+## The A2UI renderer (`./a2ui`)
+
+```ts
+import { setIconRegistry } from '@websublime/line-components';
+import { Session } from '@websublime/line-genui/a2ui';
+import { IconRegistry } from '@websublime/line-icons';
+import { a2uiIconMap } from '@websublime/line-icons/a2ui';
+import { createPhosphorResolver } from '@websublime/line-icons/resolvers/phosphor';
+
+const registry = new IconRegistry();
+registry.register('phosphor', createPhosphorResolver({ base: '/icons/phosphor/' }));
+setIconRegistry(registry);
+
+const surface = document.querySelector('line-a2ui-surface'); // <line-a2ui-surface surface-id="main">
+surface.iconMap = a2uiIconMap('phosphor', { library: 'phosphor' });
+surface.session = new Session();
+surface.addEventListener('line-a2ui-action', (event) => transport.send(event.detail));
+surface.addEventListener('line-a2ui-error', (event) => transport.send(event.detail));
+await surface.feed(messages); // or session.process(messages, 'main')
+```
+
+| Export | What it is |
+| --- | --- |
+| `Session` | One `web_core` `MessageProcessor` with the `line` and `basic` catalogs and `RELAXED_VALIDATION`: `process(messages, fallbackSurfaceId)`, `onError`, `onAction`, `onSurface`, `onSurfaceDeleted`, `dataModel()`, `dispose()` |
+| `LineA2uiSurface` | The `<line-a2ui-surface>` class: attributes `surface-id`, `max-nodes`, `max-depth`, `max-data-model-size`, `live-update-text`, `live-error-text`; properties `session`, `iconMap`, `urlPolicy`, `markdownRenderer`; `feed()`, `settled()`; events `line-a2ui-action`, `line-a2ui-error` |
+| `A2uiActionMessage`, `A2uiErrorMessage`, `A2uiErrorBody`, `SurfaceErrorCode` | The A2UI client-to-server messages the surface emits, and the codes it raises itself |
+| `Limits`, `LimitName`, `DEFAULT_LIMITS`, `UrlPolicy`, `UrlUse`, `MarkdownRenderer` | The types of the limits, the URL policy and the Markdown hook |
+
+The Storybook page "Agent UI/A2UI Surface" documents the rest: the limits and their unit, the URL policy, Markdown, accessibility and the template-list limit.
 
 ## Preview status of `./a2ui`
 
