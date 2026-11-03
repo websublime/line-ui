@@ -432,16 +432,37 @@ describe('Icon (§6.G.4 Basic mapping, line catalog Icon; §10 SD15, SD33)', () 
     expect(codes(errors)).toEqual(['UNMAPPED_ICON']);
   });
 
-  test('a line Icon with a mapped name takes its entry, and ignores the node mirror', async () => {
+  test('a line Icon with a mapped name takes library, name, weight and mirror from its entry, not the node', async () => {
     const { feed, surface, errors } = mount();
     surface.iconMap = PHOSPHOR;
-    await feed(create(LINE_CATALOG_ID), components([{ id: 'root', component: 'Icon', name: 'home', mirror: true }]));
-    const element = surface.querySelector('line-icon');
-    expect([element?.getAttribute('library'), element?.getAttribute('name'), element?.hasAttribute('mirror')]).toEqual([
-      'phosphor',
-      PHOSPHOR.home.name,
-      false,
-    ]);
+    await feed(
+      create(LINE_CATALOG_ID),
+      components([
+        { id: 'root', component: 'Stack', children: ['home', 'back'] },
+        { id: 'home', component: 'Icon', name: 'home', mirror: true },
+        { id: 'back', component: 'Icon', name: 'arrowBack', mirror: false },
+      ]),
+    );
+    const [home, back] = [...surface.querySelectorAll('line-icon')];
+    const attributes = (element: Element | undefined) => ({
+      library: element?.getAttribute('library'),
+      name: element?.getAttribute('name'),
+      weight: element?.getAttribute('weight'),
+      mirror: element?.hasAttribute('mirror'),
+    });
+    expect(PHOSPHOR.arrowBack.mirror).toBe(true);
+    expect(attributes(home)).toEqual({
+      library: 'phosphor',
+      name: PHOSPHOR.home.name,
+      weight: PHOSPHOR.home.weight,
+      mirror: false,
+    });
+    expect(attributes(back)).toEqual({
+      library: 'phosphor',
+      name: PHOSPHOR.arrowBack.name,
+      weight: PHOSPHOR.arrowBack.weight,
+      mirror: true,
+    });
     expect(errors).toEqual([]);
   });
 
