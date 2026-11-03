@@ -12,15 +12,16 @@
  *
  * Each row records `process` (the synchronous `Session.process` call: the limit check and `web_core`), `settle`
  * (from the call until `feed()` resolves: projection, component loads and `aria-busy` cleared) and whether the
- * message applied. The surface runs with each limit set far past its default, so nothing is rejected by a limit.
+ * message applied. The surface runs with each limit set far past its default, and a row that records
+ * `LIMIT_EXCEEDED` fails the run, so every row measures the work and not a limit's rejection.
  *
- * It measures and asserts nothing; it runs only with `LINE_A2UI_STRESS=1` and prints one JSON report per engine,
+ * Besides that guard it asserts nothing; it runs only with `LINE_A2UI_STRESS=1` and prints one JSON report per engine,
  * also attached to the test result.
  *
  * @module __tests__/a2ui-stress.e2e
  */
 
-import { type Page, test } from 'playwright/test';
+import { expect, type Page, test } from 'playwright/test';
 
 test.use({ baseURL: 'http://127.0.0.1:4320' });
 test.skip(!process.env.LINE_A2UI_STRESS, 'The G4 stress test runs only with LINE_A2UI_STRESS=1.');
@@ -182,6 +183,10 @@ test('surface limits stress', async ({ page, browserName }, testInfo) => {
     for (const n of sizes) {
       const row = await run(page, name, n, setup(n), measured(n));
       rows.push(row);
+      expect(
+        row.errors.filter((error) => error.startsWith('LIMIT_EXCEEDED')),
+        `${name} at ${n}`,
+      ).toEqual([]);
       console.info(JSON.stringify({ browser: browserName, ...row }));
       // A series stops once one message takes longer than any default could allow.
       if (row.settle > STOP_AFTER_MS || row.setup > STOP_AFTER_MS) break;
