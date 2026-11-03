@@ -224,7 +224,7 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
     this.setAttribute('live-error-text', value);
   }
 
-  /** The limits in effect, which the session checks each message against. */
+  /** @internal The limits in effect, which the session checks each message against; read `maxNodes` and the others. */
   get limits(): Limits {
     return { maxNodes: this.maxNodes, maxDepth: this.maxDepth, maxDataModelSize: this.maxDataModelSize };
   }
