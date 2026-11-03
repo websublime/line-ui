@@ -366,7 +366,8 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
   }
 
   #load(descriptor: LineDescriptor): void {
-    if (this.#loaded.has(descriptor.tag)) return;
+    // A tag the page defined already, from this or another copy of the component, needs no second load.
+    if (this.#loaded.has(descriptor.tag) || customElements.get(descriptor.tag)) return;
     this.#loaded.add(descriptor.tag);
     const loading = descriptor.load().then(
       () => undefined,
