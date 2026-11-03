@@ -1,7 +1,8 @@
 /**
  * `@websublime/line-icons/a2ui` (Phase 1 spec §6.C.3, §6.G.2; §10 SD14, SD15; ledger 01-G2).
  *
- * - `A2uiIconName` matches the `Icon.name` enum of the vendored A2UI v0.9.1 basic catalog, name for name.
+ * - The map is keyed by the 59 A2UI names in their internal order. Their parity with the vendored A2UI v0.9.1
+ *   basic catalog is checked in `packages/line-genui/__tests__/`, which holds the fixture (§7.8).
  * - Every name of both sets resolves to a file of the installed peer through the reference resolvers.
  * - The map has a `null` prototype and is frozen, carries the consumer's `library` in each entry, and mirrors
  *   exactly the nine names R10 lists.
@@ -10,27 +11,17 @@
  */
 
 import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
-import { readFileSync } from 'node:fs';
 import { a2uiIconMap } from '../src/a2ui/index.js';
 import { A2UI_ICON_NAMES } from '../src/a2ui/names.js';
 import { createLucideResolver, createPhosphorResolver, IconRegistry } from '../src/index.js';
 import { type FetchMock, LUCIDE_BASE, lucideFile, mockFetch, PHOSPHOR_BASE, phosphorFile } from './fetch-mock.js';
 
-/** The `Icon.name` enum of the A2UI v0.9.1 basic catalog that line-genui vendors (Phase 1 spec §6.G.2). */
-function basicCatalogIconNames(): string[] {
-  const url = new URL('../../line-genui/__tests__/fixtures/a2ui-v0_9_1/basic_catalog.json', import.meta.url);
-  const catalog = JSON.parse(readFileSync(url, 'utf8'));
-  const [, , own] = catalog.components.Icon.allOf;
-  return own.properties.name.oneOf.find((branch: { enum?: string[] }) => branch.enum).enum;
-}
-
 const SETS = ['lucide', 'phosphor'] as const;
 
 describe('A2uiIconName (§6.C.3; R10 §2.1)', () => {
-  test('holds the 59 Icon.name values of the A2UI v0.9.1 basic catalog, in its order', () => {
-    const upstream = basicCatalogIconNames();
-    expect(upstream).toHaveLength(59);
-    expect([...A2UI_ICON_NAMES]).toEqual(upstream);
+  test.each(SETS)('the %s map is keyed by the 59 distinct A2UI names, in their order', (set) => {
+    expect(new Set(A2UI_ICON_NAMES).size).toBe(59);
+    expect(Object.keys(a2uiIconMap(set, { library: 'icons' }))).toEqual([...A2UI_ICON_NAMES]);
   });
 });
 
@@ -49,7 +40,6 @@ describe('a2uiIconMap(set, { library }) (§6.C.3; §10 SD15)', () => {
     registry.register('phosphor-here', createPhosphorResolver({ base: PHOSPHOR_BASE }));
     const map = a2uiIconMap(set, { library: `${set}-here` });
 
-    expect(Object.keys(map)).toEqual([...A2UI_ICON_NAMES]);
     for (const name of A2UI_ICON_NAMES) {
       const entry = map[name];
       const options = entry.weight === undefined ? undefined : { weight: entry.weight };
