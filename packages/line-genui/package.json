@@ -20,6 +20,7 @@
       "types": "./dist/catalog/index.d.ts",
       "import": "./dist/catalog/index.js"
     },
+    "./catalog.json": "./dist/catalog.json",
     "./a2ui": {
       "types": "./dist/a2ui/index.d.ts",
       "import": "./dist/a2ui/index.js"
