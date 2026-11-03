@@ -101,6 +101,34 @@ describe('limit breaches (§6.G.4 Limits)', () => {
     }
   });
 
+  test('a limit set above its default admits a message the default rejects', async () => {
+    const room = 1_048_576 - dataModelSize({ blob: '' });
+    const cases: [Record<string, string>, unknown][] = [
+      [{ 'max-nodes': '2000' }, components(column(1_000))],
+      [{ 'max-depth': '40' }, components(chain(33))],
+      [{ 'max-data-model-size': '2000000' }, data('/blob', 'x'.repeat(room + 1))],
+    ];
+    for (const [attributes, probe] of cases) {
+      const { feed, errors, surface } = mount(attributes);
+      expect(await feed(create(), probe as Parameters<typeof feed>[0])).toBe(2);
+      expect(errors).toEqual([]);
+      surface.remove();
+    }
+  });
+
+  test('with two surfaces on one surface id, the strictest limit wins', async () => {
+    const { feed, errors, session, surface } = mount({ 'max-nodes': '2000' });
+    const second = document.createElement('line-a2ui-surface');
+    second.setAttribute('surface-id', 'main');
+    second.setAttribute('max-nodes', '10');
+    document.body.append(second);
+    second.session = session;
+    expect(await feed(create(), components(column(10)))).toBe(1);
+    expect(errors.map((e) => e.error.max)).toEqual([10]);
+    second.remove();
+    surface.remove();
+  });
+
   test('the default accepts each probe message', async () => {
     for (const probe of [components(column(6)), components(chain(6)), data('/blob', 'x'.repeat(4000))]) {
       const { feed, errors, surface } = mount();

@@ -237,17 +237,22 @@ export class Session {
     this.#hosts.clear();
   }
 
-  /** The strictest limits of the surfaces attached under `surfaceId`, or the defaults when none is. */
+  /**
+   * The limits of the surfaces attached under `surfaceId`: each host's own value, which is its default when its
+   * attribute is unset, so a consumer can raise a limit as well as lower it; with several hosts, the strictest wins.
+   * The defaults when no surface is attached.
+   */
   #limits(surfaceId: string): Limits {
-    const hosts = this.#hosts.get(surfaceId);
-    if (!hosts || hosts.size === 0) return DEFAULT_LIMITS;
-    const limits = { ...DEFAULT_LIMITS };
-    for (const { limits: own } of hosts) {
-      limits.maxNodes = Math.min(limits.maxNodes, own.maxNodes);
-      limits.maxDepth = Math.min(limits.maxDepth, own.maxDepth);
-      limits.maxDataModelSize = Math.min(limits.maxDataModelSize, own.maxDataModelSize);
-    }
-    return limits;
+    const [first, ...rest] = [...(this.#hosts.get(surfaceId) ?? [])].map((host) => host.limits);
+    if (!first) return DEFAULT_LIMITS;
+    return rest.reduce<Limits>(
+      (strictest, own) => ({
+        maxNodes: Math.min(strictest.maxNodes, own.maxNodes),
+        maxDepth: Math.min(strictest.maxDepth, own.maxDepth),
+        maxDataModelSize: Math.min(strictest.maxDataModelSize, own.maxDataModelSize),
+      }),
+      first,
+    );
   }
 
   #emitError(message: A2uiErrorMessage): void {
