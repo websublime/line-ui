@@ -26,7 +26,8 @@
     "./a2ui": {
       "types": "./dist/a2ui/index.d.ts",
       "import": "./dist/a2ui/index.js"
-    }
+    },
+    "./custom-elements.json": "./custom-elements.json"
   },
   "dependencies": {
     "@a2ui/web_core": "0.14.0",
