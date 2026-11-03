@@ -146,8 +146,8 @@ export class LineA2uiSurface extends HTMLElement implements SessionHost {
   /**
    * A URL policy that runs after the default one, with the URL resolved against the document base, for Image,
    * Video and AudioPlayer URLs and `openUrl`. `false`, or a throw, keeps the URL from the DOM and from `openUrl`.
-   * It can reject a URL the default allows and cannot admit one the default rejects (`https:`, `http:`, and
-   * `mailto:` and `tel:` for media only; never `data:`). No default.
+   * It can reject a URL the default allows and cannot admit one the default rejects (`https:`, `http:`, `mailto:`
+   * and `tel:`; never `data:`). No default.
    */
   get urlPolicy(): UrlPolicy | undefined {
     return peekValue(this.#projection.urlPolicy);

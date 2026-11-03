@@ -7,7 +7,8 @@
  * - The `line` and `basic` registrations are always on; each message goes through its own `processMessages`
  *   call under `RELAXED_VALIDATION`, so `[ok, invalid, ok]` applies the first and third and raises one error.
  * - A self-cycle rejects its message; every `web_core` throw becomes `line-a2ui-error` with its `web_core` code.
- * - The session's `openUrl` runs behind the URL policy and only on a user activation (AM-075).
+ * - The session's `openUrl` takes the default allowlist, runs behind the URL policy and only on a user activation
+ *   (AM-075, AM-076).
  * - Every emitted message validates against `client_to_server.json`.
  *
  * @module __tests__/a2ui-session
@@ -188,7 +189,7 @@ describe('registrations and processing (§6.G.4 Projection and messages)', () =>
   });
 });
 
-describe('openUrl (§6.G.4 URLs; AM-075)', () => {
+describe('openUrl (§6.G.4 URLs; AM-075, AM-076)', () => {
   const opened: string[] = [];
   const open = window.open;
 
@@ -219,15 +220,23 @@ describe('openUrl (§6.G.4 URLs; AM-075)', () => {
     Reflect.deleteProperty(navigator, 'userActivation');
   });
 
-  test('an https URL opens on a click', async () => {
-    const { surface } = await clickOpen('https://example.com/a');
-    surface.querySelector('line-button')?.click();
-    await tick();
-    expect(opened).toEqual(['https://example.com/a']);
+  test('https:, http:, mailto: and tel: URLs open on a click', async () => {
+    for (const url of ['https://example.com/a', 'http://example.com/b', 'mailto:a@example.com', 'tel:+351000']) {
+      const { surface } = await clickOpen(url);
+      surface.querySelector('line-button')?.click();
+      await tick();
+      expect(opened).toEqual([url]);
+      surface.remove();
+    }
   });
 
-  test('mailto:, tel:, data: and javascript: never open', async () => {
-    for (const url of ['mailto:a@example.com', 'tel:+351000', 'data:text/html,x', 'javascript:alert(1)']) {
+  test('data:, javascript: and other schemes never open', async () => {
+    for (const url of [
+      'data:text/html,x',
+      'javascript:alert(1)',
+      'ftp://example.com/a',
+      'blob:https://example.com/x',
+    ]) {
       const { surface } = await clickOpen(url);
       surface.querySelector('line-button')?.click();
       await tick();

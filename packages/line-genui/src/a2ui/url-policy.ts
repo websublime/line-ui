@@ -14,11 +14,10 @@ export type UrlUse = 'image' | 'video' | 'audio' | 'openUrl';
 export type UrlPolicy = (url: URL, use: UrlUse) => boolean;
 
 /**
- * The default allowlist. `mailto:` and `tel:` apply to media URLs only; `openUrl` takes `http:` and `https:`
- * (§6.G.4). `data:` is never on it: that is line policy, stricter than R5's default View CSP (§10 SD57).
+ * The default allowlist, for media URLs and `openUrl` alike (§6.G.4; §12 AM-076). `data:` is never on it: that is
+ * line policy, stricter than R5's default View CSP (§10 SD57).
  */
-const MEDIA_SCHEMES: Readonly<Record<string, true>> = { 'https:': true, 'http:': true, 'mailto:': true, 'tel:': true };
-const OPEN_URL_SCHEMES: Readonly<Record<string, true>> = { 'https:': true, 'http:': true };
+const SCHEMES: Readonly<Record<string, true>> = { 'https:': true, 'http:': true, 'mailto:': true, 'tel:': true };
 
 /**
  * Resolves `raw` against `base` and returns the URL when the default policy and then `policy` allow it for `use`,
@@ -37,8 +36,7 @@ export function allowedUrl(raw: unknown, use: UrlUse, base: string, policy: UrlP
   } catch {
     return undefined;
   }
-  const schemes = use === 'openUrl' ? OPEN_URL_SCHEMES : MEDIA_SCHEMES;
-  if (!Object.hasOwn(schemes, url.protocol)) return undefined;
+  if (!Object.hasOwn(SCHEMES, url.protocol)) return undefined;
   if (!policy) return url;
   try {
     return policy(new URL(url.href), use) === true ? url : undefined;
