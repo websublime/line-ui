@@ -12,6 +12,8 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.18 (2026-11-03)** — Aligned with Phase 1 spec AM-067 (ledger row `01-G1`, orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 bullet.
+  - §17.3 (Descriptors and catalogs) says the drift test skips an action-map event the descriptor marks native, such as `click`, because the browser dispatches it and the manifest lists only the component's own events (Phase 1 spec §6.G.1, §6.G.5, AM-067).
 - **v0.8.17 (2026-11-03)** — Aligned with PRD v0.8.29 and Phase 1 spec AM-065 (ledger row `01-G1`, decision by Miguel on 2026-11-03).
   - §17.4 (Renderer) says the surface is not built on Lit: no `line-genui` module imports `lit` or the `@experimental` `A2uiLitElement`. The `@a2ui/web_core/v0_9` barrel, the only public path to the common types the descriptors reuse, loads `lit-html` and `lit-element` when it runs unbundled, and a bundler drops both (Phase 1 spec §4.1, §6.G.4, AM-065).
 - **v0.8.16 (2026-11-02)** — Aligned with component spec `0014-icon.md` (ledger row `01-C2`, decisions by Miguel on 2026-11-02).
@@ -1567,7 +1569,7 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
   - the `agentExposed` flag, which defaults to `true`.
 - Descriptors are written on the Zod 3 API and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings) in the catalogs. Only the Zod 3 API composes with those schemas.
 - The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no ARIA metadata. Form association appears in it only as the inherited static member `formAssociated`.
-- A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26).
+- A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26). An action-map event that the descriptor marks native, such as `click`, is a DOM event the manifest does not list, so the test skips it (Phase 1 spec AM-067).
 - A coverage test fails when a `@websublime/line-components` component in the CEM has no descriptor. `<line-a2ui-surface>` lives in `line-genui`, so the test does not cover it.
 - Every component keeps a descriptor. A component that makes no sense to an agent carries `agentExposed: false` with a reason, and the emitters leave flagged descriptors out of the catalogs and the frontend-tool schemas.
 - The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). An A2UI v1.0 emitter follows when v1.0 is final.
