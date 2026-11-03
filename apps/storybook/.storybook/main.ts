@@ -21,8 +21,9 @@ const config: StorybookConfig = {
   // Stories tagged 'autodocs' get a docs page by default, so no docs config
   // entry is needed.
   viteFinal: async (cfg) => {
-    // The Custom Elements Manifest is not loaded here: preview.ts passes the
-    // line-components package manifest to setCustomElementsManifest.
+    // The Custom Elements Manifest is not loaded here: preview.ts passes one
+    // manifest, merged from the line-components and line-genui package
+    // manifests, to setCustomElementsManifest.
     //
     // The design-system CSS arrives already built for the project's browser
     // targets. cssTarget 'esnext' stops the build minifier from lowering it
