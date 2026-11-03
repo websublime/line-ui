@@ -12,6 +12,8 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.21 (2026-11-03)** — Aligned with Phase 1 spec AM-072 (ledger row `01-G1`, orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 sentence.
+  - §17.3 (Descriptors and catalogs) says that for a surface-lookup binding the drift test checks the members the lookup entry sets, such as `library`, `name`, `weight` and `mirror`, against the manifest, and not the surface key `iconMap` (Phase 1 spec §6.G.5, AM-072).
 - **v0.8.20 (2026-11-03)** — Aligned with Phase 1 spec AM-071 (ledger row `01-G1`, decision by Miguel on 2026-11-03 with an orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 list item.
   - §17.3 (Descriptors and catalogs) says a binding-map entry may be a surface lookup, such as Icon `name` → `iconMap`, besides prop → property or attribute (Phase 1 spec §6.G.1, §6.G.4, AM-071).
 - **v0.8.19 (2026-11-03)** — Aligned with Phase 1 spec AM-070 (ledger row `01-G1`, orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 sentence.
@@ -1573,7 +1575,7 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
   - the `agentExposed` flag, which defaults to `true`.
 - Descriptors are written on the Zod 3 API and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings) in the catalogs. Only the Zod 3 API composes with those schemas.
 - The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no ARIA metadata. Form association appears in it only as the inherited static member `formAssociated`.
-- A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26). An action-map event that the descriptor marks native, such as `click`, is a DOM event the manifest does not list, so the test checks it against a fixed list of DOM event names instead (Phase 1 spec AM-067, AM-070).
+- A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26). An action-map event that the descriptor marks native, such as `click`, is a DOM event the manifest does not list, so the test checks it against a fixed list of DOM event names instead (Phase 1 spec AM-067, AM-070). For a surface-lookup binding, such as Icon `name` → `iconMap`, the test checks the members the entry sets (`library`, `name`, `weight`, `mirror`) and not the surface key (Phase 1 spec AM-072).
 - A coverage test fails when a `@websublime/line-components` component in the CEM has no descriptor. `<line-a2ui-surface>` lives in `line-genui`, so the test does not cover it.
 - Every component keeps a descriptor. A component that makes no sense to an agent carries `agentExposed: false` with a reason, and the emitters leave flagged descriptors out of the catalogs and the frontend-tool schemas.
 - The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). An A2UI v1.0 emitter follows when v1.0 is final.
