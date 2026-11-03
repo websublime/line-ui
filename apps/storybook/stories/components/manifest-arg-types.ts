@@ -9,7 +9,10 @@ import componentsManifest from '@websublime/line-components/custom-elements.json
 // Button's `loading`, replaces it, and the default slot, whose name is empty,
 // is dropped. This one keys slots and parts by category, keeps attribute and
 // property keys equal to the arg names, and lists only public instance fields.
-// A component meta passes it as `parameters.docs.extractArgTypes`.
+// It maps the primitive manifest types `boolean`, `number` and `string`, with
+// `| undefined` and `| null` removed, to Storybook's own type names, so those
+// rows get a toggle, a number or a text control; every other type stays
+// `other`. A component meta passes it as `parameters.docs.extractArgTypes`.
 
 interface CemItem {
   name: string;
@@ -36,11 +39,18 @@ interface CemDeclaration {
 const manifest = componentsManifest as unknown as { modules: { declarations?: CemDeclaration[] }[] };
 const declarations = manifest.modules.flatMap((module) => module.declarations ?? []);
 
+/** `boolean | undefined` → `{ name: 'boolean' }`; a type that is not one primitive stays `other`. */
+function argType(text: string): NonNullable<ArgTypes[string]['type']> {
+  const members = text.split('|').map((member) => member.trim());
+  const kept = members.filter((member) => member !== 'undefined' && member !== 'null').join(' | ');
+  return kept === 'boolean' || kept === 'number' || kept === 'string' ? { name: kept } : { name: 'other', value: text };
+}
+
 function row(item: CemItem, category: string): ArgTypes[string] {
   return {
     name: item.name,
     description: item.description ?? '',
-    type: { name: 'other', value: item.type?.text ?? '' },
+    type: argType(item.type?.text ?? ''),
     table: {
       category,
       type: { summary: item.type?.text ?? '' },
