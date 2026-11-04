@@ -6,8 +6,6 @@
  * @module __tests__/a2ui-fixture
  */
 
-// Defines the line components from their `src/` modules first, so `bun test` never defines a tag twice.
-import './line-components-src.js';
 import { readFileSync } from 'node:fs';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';

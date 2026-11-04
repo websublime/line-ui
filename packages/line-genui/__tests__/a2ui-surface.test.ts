@@ -629,9 +629,14 @@ describe('lazy loading (§6.G.4; ARCH §17.4; Law 6)', () => {
   test('importing ./a2ui defines only line-a2ui-surface, and a Button loads only line-button', async () => {
     const script = `
       import { GlobalRegistrator } from '@happy-dom/global-registrator';
-      import { FakeInternals } from '../line-core/__tests__/mocks/element-internals.ts';
       GlobalRegistrator.register();
-      HTMLElement.prototype.attachInternals = function () { return new FakeInternals(this); };
+      // LineElement calls attachInternals, which happy-dom lacks; a stand-in like line-element-identity.test.ts uses,
+      // with the two form calls the form-associated Button makes on update.
+      if (typeof HTMLElement.prototype.attachInternals !== 'function') {
+        HTMLElement.prototype.attachInternals = function () {
+          return { host: this, states: new Set(), setFormValue() {}, setValidity() {} };
+        };
+      }
       const defined = [];
       const define = customElements.define.bind(customElements);
       customElements.define = (name, ...rest) => { defined.push(name); define(name, ...rest); };
@@ -713,5 +718,47 @@ describe('lazy loading (§6.G.4; ARCH §17.4; Law 6)', () => {
         },
       },
     ]);
+  });
+
+  test('a tag the page already defines, from another copy of the component, is not loaded again', async () => {
+    // A fresh process: the page defines line-separator itself before the surface needs it; a second copy's
+    // define would throw, so the surface must not call load() (surface.ts #load).
+    const script = `
+      import { GlobalRegistrator } from '@happy-dom/global-registrator';
+      GlobalRegistrator.register();
+      class PageSeparator extends HTMLElement {}
+      customElements.define('line-separator', PageSeparator);
+      const { separatorDescriptor } = await import('@websublime/line-genui/catalog');
+      let loads = 0;
+      const load = separatorDescriptor.load;
+      separatorDescriptor.load = () => { loads++; return load(); };
+      const { Session } = await import('@websublime/line-genui/a2ui');
+      const surface = document.createElement('line-a2ui-surface');
+      surface.setAttribute('surface-id', 'main');
+      const errors = [];
+      surface.addEventListener('line-a2ui-error', (event) => errors.push(event.detail));
+      document.body.append(surface);
+      surface.session = new Session();
+      await surface.feed([
+        { version: 'v0.9.1', createSurface: { surfaceId: 'main', catalogId: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json' } },
+        { version: 'v0.9.1', updateComponents: { surfaceId: 'main', components: [{ id: 'root', component: 'Divider' }] } },
+      ]);
+      await surface.settled();
+      const node = surface.querySelector('line-separator');
+      console.log(JSON.stringify({ loads, errors, pageCopy: node instanceof PageSeparator }));
+      process.exit(0);
+    `;
+    const child = Bun.spawn([process.execPath, '--eval', script], {
+      cwd: new URL('..', import.meta.url).pathname,
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
+    const [stdout, stderr, code] = await Promise.all([
+      new Response(child.stdout).text(),
+      new Response(child.stderr).text(),
+      child.exited,
+    ]);
+    expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
+    expect(JSON.parse(stdout)).toEqual({ loads: 0, errors: [], pageCopy: true });
   });
 });
