@@ -23,7 +23,7 @@ The package has no root `.` export.
 
 ## Descriptors (`./catalog`)
 
-A descriptor tells the agent-facing layers how to use one `line-components` component. Its fields are the catalog name, the tag, `load()` (a dynamic import of the component subpath), a Zod 3 prop schema built on the `@a2ui/web_core` common types, the slot, binding and action maps, the accessibility requirements, the agent-facing description and `agentExposed` (default `true`; `false` takes `agentHiddenReason`).
+A descriptor tells the agent-facing layers how to use one `line-components` component. Its fields are the catalog name, the tag, `load()` (a dynamic import of the component subpath), a Zod 3 prop schema built on the `@a2ui/web_core` common types, the slot, binding and action maps, the accessibility requirements, the agent-facing description, the optional tool description (`toolDescription`), which only the frontend tools read, and `agentExposed` (default `true`; `false` takes `agentHiddenReason`).
 
 ```ts
 import { Catalog } from '@a2ui/web_core/catalog';
@@ -87,7 +87,9 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 
 ## Frontend tools (`./catalog`)
 
-In the controlled tier the agent picks a component and fills its props through a tool call, and your app renders the call. `frontendTools(descriptors, provider)` emits one tool, `{ name, description, parameters }`, for each descriptor with `agentExposed: true`, and none for a descriptor with `agentExposed: false`. `name` is the catalog name, such as `Button`, and matches `^[a-zA-Z0-9_-]{1,64}$`; `description` is the descriptor's agent-facing description, at most 1024 characters. `parameters` is flat and literal: no `$ref`, `oneOf`, `allOf`, recursion, open map, A2UI common type or data binding.
+In the controlled tier the agent picks a component and fills its props through a tool call, and your app renders the call. `frontendTools(descriptors, provider)` emits one tool, `{ name, description, parameters }`, for each descriptor with `agentExposed: true`, and none for a descriptor with `agentExposed: false`. `name` is the catalog name, such as `Button`, and matches `^[a-zA-Z0-9_-]{1,64}$`. `parameters` is flat and literal: no `$ref`, `oneOf`, `allOf`, recursion, open map, A2UI common type or data binding; its `properties` object has a null prototype.
+
+`description` is the descriptor's `toolDescription` when it sets one, and its agent-facing description otherwise, at most 1024 characters either way. A tool description names no parameter the tool lacks. Button, Separator and Stack set one, because their agent-facing descriptions, which the `line` catalog keeps, name props the tool leaves out (Button `child`, Stack `children`) or the `accessibility` object, which the tool flattens (Button, Separator). Icon sets none, so its tool takes its agent-facing description. An empty or whitespace-only `toolDescription` is a descriptor error: the emitter throws and does not fall back to the agent-facing description.
 
 ```ts
 import { descriptors, frontendTools } from '@websublime/line-genui/catalog';
@@ -109,7 +111,7 @@ const geminiTools = [{ functionDeclarations: frontendTools(descriptors, 'gemini'
 
 | Export | What it is |
 | --- | --- |
-| `frontendTools(descriptors, provider)` | The tools of the agent-exposed descriptors, in the order given, serialised for `provider`. Returns fresh objects. Throws when a name breaks the pattern, a description exceeds 1024 characters, or a prop has no literal form |
+| `frontendTools(descriptors, provider)` | The tools of the agent-exposed descriptors, in the order given, serialised for `provider`. Returns fresh objects. Throws when a name breaks the pattern, a `toolDescription` is empty or whitespace-only, a tool description exceeds 1024 characters, a prop is named `accessibilityLabel` or `accessibilityDescription` (with or without the accessibility parameters on that tool), or a prop has no literal form |
 | `TOOL_PROVIDERS` | `['openai', 'anthropic', 'gemini']` |
 | `FrontendTool`, `ToolParameters`, `ToolProperty`, `ToolProvider`, `ToolValueType` | The types of a tool, its parameters, one parameter, the provider and a parameter's literal type |
 
