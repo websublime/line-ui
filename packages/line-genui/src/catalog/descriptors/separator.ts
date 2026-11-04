@@ -8,6 +8,8 @@ export const separatorDescriptor = defineDescriptor({
   load: () => import('@websublime/line-components/separator'),
   description:
     'A thin line that separates sections of content. `orientation` is `horizontal` (default) for a line across the full width between content stacked top to bottom, or `vertical` for a line between items placed side by side, such as inside a horizontal Stack. Assistive technology announces it as a separator. Set `decorative` when the line only adds visual rhythm, so assistive technology skips it, and give a decorative line no `accessibility.label`. Give a separator `accessibility.label` only when the section that follows needs a spoken name. It has no children and adds no spacing, so the surrounding layout sets the gap.',
+  toolDescription:
+    'A thin line that separates sections of content. `orientation` is `horizontal` (default) for a line across the full width between content stacked top to bottom, or `vertical` for a line between items placed side by side, such as inside a horizontal Stack. Assistive technology announces it as a separator. Set `decorative` when the line only adds visual rhythm, so assistive technology skips it, and give a decorative line no `accessibilityLabel`. Give a separator `accessibilityLabel` only when the section that follows needs a spoken name. It has no children and adds no spacing, so the surrounding layout sets the gap.',
   props: {
     orientation: z
       .enum(['horizontal', 'vertical'])

@@ -171,8 +171,15 @@ export interface DescriptorFields<Shape extends z.ZodRawShape> {
    * defines no element and the surface loads each component only when a node needs it (ARCH §17.4).
    */
   readonly load: () => Promise<unknown>;
-  /** The agent-facing component description. */
+  /** The agent-facing component description, which the `line` catalog carries. */
   readonly description: string;
+  /**
+   * The tool description: when set, the frontend-tool emitter takes it as the tool `description` in place of
+   * `description`, and the catalogs never read it. Set it when `description` names, in backticks, a prop the tool
+   * leaves out (a `ComponentId`, `ChildList` or `Action` prop) or a member of `accessibility`; it names no parameter
+   * the tool lacks (§6.G.1 Fields; §6.G.3; §12 AM-086).
+   */
+  readonly toolDescription?: string;
   readonly schema: DescriptorSchema<Shape>;
   readonly slots: SlotMap<keyof Shape & string>;
   readonly bindings: BindingMap<keyof Shape & string>;
@@ -194,14 +201,16 @@ export type DescriptorInit<Shape extends z.ZodRawShape> = Omit<DescriptorFields<
 
 /**
  * Builds a descriptor. The schema comes from `props` and `description` through {@link componentSchema}, and
- * `agentExposed` defaults to `true`; `false` requires `agentHiddenReason` (§6.G.1 Contract).
+ * `agentExposed` defaults to `true`; `false` requires `agentHiddenReason` (§6.G.1 Contract). The descriptor carries
+ * `toolDescription` only when `init` sets it (§12 AM-086).
  *
  * @param init The descriptor fields.
  */
 export function defineDescriptor<Shape extends z.ZodRawShape>(init: DescriptorInit<Shape>): LineDescriptor<Shape> {
-  const { props, agentExposed, agentHiddenReason, ...fields } = init;
+  const { props, agentExposed, agentHiddenReason, toolDescription, ...fields } = init;
   const schema = componentSchema(fields.description, props);
+  const tool = toolDescription === undefined ? {} : { toolDescription };
   return agentExposed === false
-    ? { ...fields, schema, agentExposed, agentHiddenReason }
-    : { ...fields, schema, agentExposed: true };
+    ? { ...fields, ...tool, schema, agentExposed, agentHiddenReason }
+    : { ...fields, ...tool, schema, agentExposed: true };
 }

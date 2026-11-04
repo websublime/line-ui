@@ -8,6 +8,8 @@ export const stackDescriptor = defineDescriptor({
   load: () => import('@websublime/line-components/stack'),
   description:
     "A layout container that places its children in one row or column with even spacing. Put the children in `children`. `orientation` is `vertical` (default) or `horizontal`; a horizontal stack follows the page's writing direction. `justify` spreads children along that axis: `start` (default), `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`, or `stretch` to make every child grow to share the space. `align` places children across the axis: `stretch` (default), `start`, `center` or `end`. `gap` sets the spacing on a scale from `0` (none) to `5` (widest); leave it out for a medium gap. Set `wrap` to let children flow onto more lines when space runs out. Stack adds nothing to what assistive technology announces.",
+  toolDescription:
+    "A layout container that places its children in one row or column with even spacing. The app places the children inside it. `orientation` is `vertical` (default) or `horizontal`; a horizontal stack follows the page's writing direction. `justify` spreads children along that axis: `start` (default), `center`, `end`, `spaceBetween`, `spaceAround`, `spaceEvenly`, or `stretch` to make every child grow to share the space. `align` places children across the axis: `stretch` (default), `start`, `center` or `end`. `gap` sets the spacing on a scale from `0` (none) to `5` (widest); leave it out for a medium gap. Set `wrap` to let children flow onto more lines when space runs out. Stack adds nothing to what assistive technology announces.",
   props: {
     orientation: z
       .enum(['horizontal', 'vertical'])

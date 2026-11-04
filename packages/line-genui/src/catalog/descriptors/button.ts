@@ -8,6 +8,8 @@ export const buttonDescriptor = defineDescriptor({
   load: () => import('@websublime/line-components/button'),
   description:
     'A button that runs an action when the user activates it. Put its visible text in the default slot (`child`); a button without text needs `accessibility.label`. `variant` marks emphasis, with `primary` for the main action of a view, `borderless` for a low-emphasis action and `default` otherwise. Set `disabled` when the action is unavailable and `loading` while it runs; a loading button stays focusable and ignores presses. Set `pressed` to `true` or `false` to make a toggle, so each press flips it and fires `line-change` with the new value. Leave `pressed` unset for a plain button.',
+  toolDescription:
+    'A button that runs an action when the user activates it. The tool sets no visible text. Set `accessibilityLabel` to the text the button stands for; the app gives the button that text as its accessible name, and a button without it has no name. `variant` marks emphasis, with `primary` for the main action of a view, `borderless` for a low-emphasis action and `default` otherwise. Set `disabled` when the action is unavailable and `loading` while it runs; a loading button stays focusable and ignores presses. Set `pressed` to `true` or `false` to make a toggle, so each press flips it and fires `line-change` with the new value. Leave `pressed` unset for a plain button.',
   props: {
     variant: z
       .enum(['default', 'primary', 'borderless'])

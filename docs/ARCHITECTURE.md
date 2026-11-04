@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-11-03
+**Date:** 2026-11-04
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -12,6 +12,8 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.22 (2026-11-04)** — Aligned with PRD v0.8.30 and Phase 1 spec AM-086 (ledger row `01-G3`, decision by Miguel on 2026-11-04). The change is minimal: one §17.3 list item and one §17.3 sentence.
+  - §17.3 (Descriptors and catalogs) adds an optional tool description to the descriptor fields, and says the frontend-tool emitter uses it over the agent-facing description when a descriptor sets it. A descriptor sets it when its agent-facing description names props the tool lacks, because the walker leaves out `ComponentId`, `ChildList` and `Action` props and flattens `accessibility` (Phase 1 spec §6.G.1, §6.G.3, AM-086).
 - **v0.8.21 (2026-11-03)** — Aligned with Phase 1 spec AM-072 (ledger row `01-G1`, orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 sentence.
   - §17.3 (Descriptors and catalogs) says that for a surface-lookup binding the drift test checks the members the lookup entry sets, such as `library`, `name`, `weight` and `mirror`, against the manifest, and not the surface key `iconMap` (Phase 1 spec §6.G.5, AM-072).
 - **v0.8.20 (2026-11-03)** — Aligned with Phase 1 spec AM-071 (ledger row `01-G1`, decision by Miguel on 2026-11-03 with an orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 list item.
@@ -1572,13 +1574,14 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
   - the binding map (prop → property or attribute, or a surface lookup such as Icon `name` → `iconMap` (Phase 1 spec AM-071), the value prop, the commit event that §17.2 rule C9 names);
   - the action map (prop → DOM event);
   - the accessibility requirements and the agent-facing description;
+  - an optional tool description, which a descriptor sets when its agent-facing description names props the frontend tool lacks (Phase 1 spec AM-086);
   - the `agentExposed` flag, which defaults to `true`.
 - Descriptors are written on the Zod 3 API and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings) in the catalogs. Only the Zod 3 API composes with those schemas.
 - The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no ARIA metadata. Form association appears in it only as the inherited static member `formAssociated`.
 - A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26). An action-map event that the descriptor marks native, such as `click`, is a DOM event the manifest does not list, so the test checks it against a fixed list of DOM event names instead (Phase 1 spec AM-067, AM-070). For a surface-lookup binding, such as Icon `name` → `iconMap`, the test checks the members the entry sets (`library`, `name`, `weight`, `mirror`) and not the surface key (Phase 1 spec AM-072).
 - A coverage test fails when a `@websublime/line-components` component in the CEM has no descriptor. `<line-a2ui-surface>` lives in `line-genui`, so the test does not cover it.
 - Every component keeps a descriptor. A component that makes no sense to an agent carries `agentExposed: false` with a reason, and the emitters leave flagged descriptors out of the catalogs and the frontend-tool schemas.
-- The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). An A2UI v1.0 emitter follows when v1.0 is final.
+- The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). A tool's `description` is the descriptor's tool description when it has one and its agent-facing description otherwise (Phase 1 spec AM-086). An A2UI v1.0 emitter follows when v1.0 is final.
 - line://ui ships two catalogs, versioned independently.
   - The `line` catalog carries the full vocabulary under its own versioned `catalogId`. Any incompatible change gets a new id. `@websublime/line-genui/catalog.json` holds its emitted JSON.
   - A2UI v0.9.1 publishes no standalone catalog meta-schema, so the `line` catalog is checked against published artifacts. Its inline form validates against `client_capabilities.json#/$defs/Catalog`, `web_core` reads it back with `Catalog.fromJson`, and its `validationSchema` compiles.
