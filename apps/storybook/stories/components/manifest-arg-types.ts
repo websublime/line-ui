@@ -1,5 +1,4 @@
-import type { ArgTypes } from '@storybook/web-components-vite';
-import componentsManifest from '@websublime/line-components/custom-elements.json' with { type: 'json' };
+import { type ArgTypes, getCustomElements } from '@storybook/web-components-vite';
 
 // The autodocs table of a line://ui component, read from the shipped Custom
 // Elements Manifest (Phase 1 spec §6.C.6, §7.3).
@@ -13,6 +12,10 @@ import componentsManifest from '@websublime/line-components/custom-elements.json
 // `| undefined` and `| null` removed, to Storybook's own type names, so those
 // rows get a toggle, a number or a text control; every other type stays
 // `other`. A component meta passes it as `parameters.docs.extractArgTypes`.
+//
+// It reads the manifest Storybook holds, the one preview.ts merges from every
+// package that ships one, so the line-components and line-genui tables share
+// one source.
 
 interface CemItem {
   name: string;
@@ -35,9 +38,11 @@ interface CemDeclaration {
   cssProperties?: CemItem[];
 }
 
-/** The JSON import types every literal; the manifest follows the CEM schema, whose fields this file reads. */
-const manifest = componentsManifest as unknown as { modules: { declarations?: CemDeclaration[] }[] };
-const declarations = manifest.modules.flatMap((module) => module.declarations ?? []);
+/** The declarations of the manifest preview.ts registers; it follows the CEM schema, whose fields this file reads. */
+function declarations(): CemDeclaration[] {
+  const manifest = getCustomElements() as { modules?: { declarations?: CemDeclaration[] }[] } | undefined;
+  return (manifest?.modules ?? []).flatMap((module) => module.declarations ?? []);
+}
 
 /** `boolean | undefined` → `{ name: 'boolean' }`; a type that is not one primitive stays `other`. */
 function argType(text: string): NonNullable<ArgTypes[string]['type']> {
@@ -75,7 +80,7 @@ function isPublicField(member: CemItem): boolean {
 }
 
 export function extractArgTypes(tagName: string): ArgTypes {
-  const declaration = declarations.find((candidate) => candidate.tagName === tagName);
+  const declaration = declarations().find((candidate) => candidate.tagName === tagName);
   if (!declaration) return {};
   const { members = [], attributes = [], events = [], slots = [], cssParts = [], cssProperties = [] } = declaration;
   return Object.fromEntries([

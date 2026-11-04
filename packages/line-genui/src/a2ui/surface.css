@@ -1,0 +1,12 @@
+/*
+ * The shadow root of <line-a2ui-surface> holds only its live region; the projected elements stay in the light DOM
+ * (Phase 1 spec §6.G.4; ARCH §17.4). The region is visually hidden and stays in the accessibility tree.
+ */
+[data-line-a2ui-live] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

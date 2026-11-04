@@ -5,7 +5,8 @@
   "license": "MIT",
   "files": [
     "dist",
-    "src"
+    "src",
+    "custom-elements.json"
   ],
   "repository": {
     "type": "git",
@@ -15,6 +16,7 @@
   "publishConfig": {
     "access": "public"
   },
+  "customElements": "./custom-elements.json",
   "exports": {
     "./catalog": {
       "types": "./dist/catalog/index.d.ts",
@@ -24,7 +26,8 @@
     "./a2ui": {
       "types": "./dist/a2ui/index.d.ts",
       "import": "./dist/a2ui/index.js"
-    }
+    },
+    "./custom-elements.json": "./custom-elements.json"
   },
   "dependencies": {
     "@a2ui/web_core": "0.14.0",
@@ -40,7 +43,8 @@
     "@websublime/line-icons": "workspace:^0.1.0 || ^0.2.0"
   },
   "scripts": {
-    "build": "vite build && bun run ../../scripts/emit-catalog.mjs && tsc -p tsconfig.json --noEmit false --emitDeclarationOnly",
+    "build": "vite build && bun run ../../scripts/emit-catalog.mjs && tsc -p tsconfig.json --noEmit false --emitDeclarationOnly && bun run analyze",
+    "analyze": "custom-elements-manifest analyze --config custom-elements-manifest.config.mjs",
     "dev": "trap 'kill 0' INT TERM; vite build --watch & tsc -p tsconfig.json --noEmit false --emitDeclarationOnly --watch & wait",
     "clean": "rm -rf dist custom-elements.json",
     "typecheck": "tsc --noEmit"
