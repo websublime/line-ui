@@ -6,15 +6,14 @@
  */
 
 import { Catalog, type ComponentApi, createFunctionImplementation } from '@a2ui/web_core/catalog';
-import { defaultVersionAdapterFactory, MessageProcessor, RELAXED_VALIDATION } from '@a2ui/web_core/processing';
+import { MessageProcessor, RELAXED_VALIDATION } from '@a2ui/web_core/processing';
 import type { SurfaceModel } from '@a2ui/web_core/state';
 import { BASIC_FUNCTIONS, OpenUrlApi } from '@a2ui/web_core/v0_9';
-import { validateRecursionAndPaths } from '@a2ui/web_core/validating';
 import { BASIC_CATALOG_ID, basicImplementations } from '../catalog/basic.js';
 import { descriptors } from '../catalog/index.js';
 import { lineCatalog } from '../catalog/line.js';
 import { A2UI_VERSION, type A2uiActionMessage, type A2uiErrorMessage, surfaceError, toA2uiError } from './errors.js';
-import { isJsonObject } from './guards.js';
+import { isJsonObject, type JsonObject } from './guards.js';
 import { checkLimits, childrenFirst, DEFAULT_LIMITS, type Limits } from './limits.js';
 import { allowedUrl, type UrlPolicy } from './url-policy.js';
 
@@ -42,59 +41,57 @@ function surfaceIdOf(message: unknown): string | undefined {
   return undefined;
 }
 
-/** The `type`s of `web_core`'s internal operations, which `processMessages` takes as they are. */
-const OPERATION_TYPES: Readonly<Record<string, true>> = {
-  createSurface: true,
-  updateComponents: true,
-  updateDataModel: true,
-  deleteSurface: true,
-  callRendererFunction: true,
-  agentFunctionResponse: true,
-};
+/** The `version` values of the A2UI v0.9 envelopes the session accepts (§10 SD45; §12 AM-083). */
+const V09_VERSIONS: Readonly<Record<string, true>> = { 'v0.9': true, 'v0.9.1': true };
 
-/**
- * The operations of one batch element, read exactly as `processMessages` reads it: nothing for an empty element,
- * the element itself for an internal operation, and otherwise what the version adapter extracts, one operation per
- * message of an array or a `{ messages }` wrapper (`@a2ui/web_core` 0.14.0 `prepareOperations`; §12 AM-080).
- * Throws what `web_core` throws for an element it rejects.
- */
-function operationsOf(element: unknown): readonly unknown[] {
-  if (!element || (Array.isArray(element) && element.length === 0)) return [];
-  validateRecursionAndPaths(element);
-  if (isJsonObject(element) && typeof element.type === 'string' && Object.hasOwn(OPERATION_TYPES, element.type)) {
-    return [element];
-  }
-  return defaultVersionAdapterFactory.resolveFromPayload(element).extractOperations(element);
+/** A `{ messages: […] }` wrapper, which `processMessages` also takes. */
+const isWrapper = (value: unknown): value is JsonObject & { messages: unknown[] } =>
+  isJsonObject(value) && Array.isArray(value.messages);
+
+/** One message of a batch as the session reads it: a v0.9 envelope to apply, or a shape it rejects. */
+type Unit =
+  | { readonly kind: 'message'; readonly message: JsonObject; readonly surfaceId: string }
+  | { readonly kind: 'unsupported'; readonly surfaceId: string };
+
+/** One element read as a message: a v0.9 envelope, or anything else, which the session does not accept. */
+function unitOf(element: unknown, fallbackSurfaceId: string): Unit {
+  const surfaceId = surfaceIdOf(element) ?? fallbackSurfaceId;
+  const envelope =
+    isJsonObject(element) &&
+    !isWrapper(element) &&
+    typeof element.version === 'string' &&
+    Object.hasOwn(V09_VERSIONS, element.version);
+  return envelope ? { kind: 'message', message: element, surfaceId } : { kind: 'unsupported', surfaceId };
 }
 
 /**
- * An `updateComponents` operation with its components in children-first order, so `NodeResolver` materializes
- * each parent once ({@link childrenFirst}); any other operation, or one it cannot read, as it is.
+ * The messages of one batch element: an array of messages or a `{ messages }` wrapper unwraps one level, and each
+ * inner element is judged on its own; an array or wrapper inside one is not a v0.9 envelope (§6.G.4; §12 AM-083).
  */
-function inApplyOrder(op: unknown, surface: SurfaceModel | undefined): unknown {
-  if (!(surface && isJsonObject(op) && op.type === 'updateComponents' && Array.isArray(op.components))) return op;
+function unitsOf(element: unknown, fallbackSurfaceId: string): Unit[] {
+  const inner = Array.isArray(element) ? element : isWrapper(element) ? element.messages : undefined;
+  if (!inner) return [unitOf(element, fallbackSurfaceId)];
+  const surfaceId = surfaceIdOf(element) ?? fallbackSurfaceId;
+  return inner.map((item) => unitOf(item, surfaceId));
+}
+
+/**
+ * The envelope with the components of its `updateComponents` body in children-first order, so `NodeResolver`
+ * materializes each parent once ({@link childrenFirst}); any other envelope, or one it cannot read, as it is.
+ */
+function inApplyOrder(message: JsonObject, surface: SurfaceModel | undefined): JsonObject {
+  const body = message.updateComponents;
+  if (!(surface && isJsonObject(body) && Array.isArray(body.components))) return message;
   try {
-    return { ...op, components: childrenFirst(op.components, surface) };
+    return { ...message, updateComponents: { ...body, components: childrenFirst(body.components, surface) } };
   } catch {
-    return op;
+    return message;
   }
 }
 
-/** One batch element read for processing: its operations, or the error `web_core` threw reading it. */
-interface Prepared {
-  readonly surfaceId: string;
-  readonly operations: readonly unknown[];
-  readonly error?: unknown;
-}
-
-/** Reads one batch element; an element `web_core` rejects keeps the error and holds no operation. */
-function prepare(message: unknown, surfaceId: string): Prepared {
-  try {
-    return { surfaceId, operations: operationsOf(message) };
-  } catch (error) {
-    return { surfaceId, operations: [], error: error ?? new Error('The message was rejected.') };
-  }
-}
+/** The fixed text of `UNSUPPORTED_MESSAGE`, which travels to the agent. */
+const UNSUPPORTED_TEXT =
+  'The message is not an A2UI v0.9 envelope; the surface accepts messages whose version is v0.9 or v0.9.1.';
 
 /** Calls every listener, so one that throws neither stops the others nor reaches `web_core` (MANIFESTO Law 9). */
 function notify<T>(listeners: ReadonlySet<Listener<T>>, value: T): void {
@@ -115,9 +112,11 @@ function notify<T>(listeners: ReadonlySet<Listener<T>>, value: T): void {
  * implementations under `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, both always on, and
  * `RELAXED_VALIDATION` (§6.G.4; §10 SD42, SD43, SD52).
  *
- * Feed it with {@link Session.process}, or through a surface's `feed()`. Each message goes through its own
- * `processMessages` call, so a rejected message drops only itself (R1 §2.7; §10 SD51). Nothing `web_core` throws
- * leaves the session: each throw becomes an A2UI `error` message for {@link Session.onError}.
+ * Feed it with {@link Session.process}, or through a surface's `feed()`. It accepts only A2UI v0.9 envelopes, whose
+ * `version` is `v0.9` or `v0.9.1`; anything else raises `UNSUPPORTED_MESSAGE` before `web_core` sees it
+ * (§6.G.4; §12 AM-083). Each message goes through its own limit check and its own `processMessages` call, so a
+ * rejected message drops only itself (R1 §2.7; §10 SD51; §12 AM-082). Nothing `web_core` throws leaves the
+ * session: each throw becomes an A2UI `error` message for {@link Session.onError}.
  *
  * Preview: `@websublime/line-genui/a2ui` may change in any minor release until it targets A2UI v1.0.
  *
@@ -130,7 +129,6 @@ function notify<T>(listeners: ReadonlySet<Listener<T>>, value: T): void {
  */
 export class Session {
   readonly #processor: MessageProcessor<ComponentApi>;
-  readonly #catalogs: readonly Catalog<ComponentApi>[];
   readonly #errorListeners = new Set<Listener<A2uiErrorMessage>>();
   readonly #actionListeners = new Set<Listener<A2uiActionMessage>>();
   readonly #surfaceListeners = new Set<Listener<SurfaceModel>>();
@@ -150,9 +148,8 @@ export class Session {
       basic ? Object.values(basic).map((entry) => entry.api) : [],
       functions,
     );
-    this.#catalogs = [lineCatalog(descriptors), basicCatalog];
     this.#processor = new MessageProcessor<ComponentApi>(
-      [...this.#catalogs],
+      [lineCatalog(descriptors), basicCatalog],
       (action) => notify(this.#actionListeners, { version: A2UI_VERSION, action: { ...action } }),
       { validationConfig: RELAXED_VALIDATION },
     );
@@ -164,24 +161,30 @@ export class Session {
   }
 
   /**
-   * Processes one transport batch and returns how many messages applied. Each element is read as `processMessages`
-   * reads it, and each message it holds, an array or a `{ messages }` wrapper holding several, goes through its own
-   * limit check and its own `processMessages` call (§6.G.4; §10 SD51; §12 AM-080). A message that `web_core`
-   * rejects, or that would breach a limit of its surface, drops only itself and raises an error (§6.G.4 Errors,
-   * Limits). Each attached surface that the batch names holds `aria-busy` until the batch settles.
+   * Processes one transport batch and returns how many A2UI v0.9 messages applied, counting each message of an
+   * array or `{ messages }` wrapper on its own. Each batch element is a v0.9 envelope, or an array or wrapper that
+   * unwraps one level into elements judged on their own; any other shape applies nothing and raises
+   * `UNSUPPORTED_MESSAGE` (§6.G.4; §12 AM-083). Each envelope is one unit: one limit check, then one
+   * `processMessages` call, so it applies whole or not at all; a message that `web_core` rejects, or that would
+   * breach a limit of its surface, drops only itself and raises an error (§6.G.4 Errors, Limits; §10 SD51, SD56;
+   * §12 AM-082). Each attached surface that the batch names holds `aria-busy` until the batch settles.
    *
    * @param messages The A2UI messages of the batch, in order.
    * @param fallbackSurfaceId The surface an error belongs to when its message names none.
    */
   process(messages: readonly unknown[], fallbackSurfaceId: string): number {
-    const prepared = messages.map((message) => prepare(message, surfaceIdOf(message) ?? fallbackSurfaceId));
-    const hosts = this.#hostsOf(prepared);
+    const units = messages.flatMap((message) => unitsOf(message, fallbackSurfaceId));
+    const hosts = new Set<SessionHost>();
+    for (const id of new Set(units.map((unit) => unit.surfaceId))) {
+      for (const host of this.#hosts.get(id) ?? []) hosts.add(host);
+    }
     for (const host of hosts) host.batchStart();
     let applied = 0;
     try {
-      for (const { surfaceId, operations, error } of prepared) {
-        if (error !== undefined) this.#emitError(toA2uiError(error, surfaceId));
-        for (const op of operations) if (this.#apply(op, surfaceIdOf(op) ?? surfaceId)) applied++;
+      for (const unit of units) {
+        if (unit.kind === 'unsupported') {
+          this.#emitError(surfaceError('UNSUPPORTED_MESSAGE', unit.surfaceId, UNSUPPORTED_TEXT));
+        } else if (this.#apply(unit.message, unit.surfaceId)) applied++;
       }
     } finally {
       for (const host of hosts) host.batchEnd();
@@ -189,28 +192,17 @@ export class Session {
     return applied;
   }
 
-  /** The attached surfaces a batch names, through its elements and the operations they hold. */
-  #hostsOf(prepared: readonly Prepared[]): Set<SessionHost> {
-    const ids = new Set<string>();
-    for (const { surfaceId, operations } of prepared) {
-      ids.add(surfaceId);
-      for (const op of operations) ids.add(surfaceIdOf(op) ?? surfaceId);
-    }
-    const hosts = new Set<SessionHost>();
-    for (const id of ids) for (const host of this.#hosts.get(id) ?? []) hosts.add(host);
-    return hosts;
-  }
-  /** Checks one operation against its surface's limits and applies it; returns whether it applied. */
-  #apply(op: unknown, surfaceId: string): boolean {
+  /** Checks one v0.9 envelope against its surface's limits, then applies it in one call; returns whether it applied. */
+  #apply(message: JsonObject, surfaceId: string): boolean {
     try {
       const surface = this.#processor.getSurface(surfaceId);
-      const breach = checkLimits(op, surface, this.#limits(surfaceId), this.#catalogs);
+      const breach = checkLimits(message, surface, this.#limits(surfaceId));
       if (breach) {
-        const message = `The message would take ${breach.limit} to ${breach.value}, over its limit of ${breach.max}.`;
-        this.#emitError(surfaceError('LIMIT_EXCEEDED', surfaceId, message, { ...breach }));
+        const text = `The message would take ${breach.limit} to ${breach.value}, over its limit of ${breach.max}.`;
+        this.#emitError(surfaceError('LIMIT_EXCEEDED', surfaceId, text, { ...breach }));
         return false;
       }
-      this.#processor.processMessages(inApplyOrder(op, surface) as never);
+      this.#processor.processMessages(inApplyOrder(message, surface) as never);
       return true;
     } catch (err) {
       this.#emitError(toA2uiError(err, surfaceId));

@@ -142,11 +142,21 @@ describe('registrations and processing (§6.G.4 Projection and messages)', () =>
     const session = new Session();
     const errors: { error: { surfaceId: string; code: string } }[] = [];
     session.onError((error) => errors.push(error));
-    session.process([{ nonsense: true }, 'text'], 'fallback');
+    session.process([{ nonsense: true }, 'text', { version: 'v0.9.1', nonsense: true }], 'fallback');
     expect(errors.map((e) => [e.error.surfaceId, e.error.code])).toEqual([
-      ['fallback', 'VALIDATION_ERROR'],
+      ['fallback', 'UNSUPPORTED_MESSAGE'],
+      ['fallback', 'UNSUPPORTED_MESSAGE'],
       ['fallback', 'VALIDATION_ERROR'],
     ]);
+  });
+
+  test('a version other than v0.9 or v0.9.1 is rejected before web_core (§12 AM-083)', () => {
+    const session = new Session();
+    const errors: { error: { code: string } }[] = [];
+    session.onError((error) => errors.push(error));
+    const create = (version: string) => ({ version, createSurface: { surfaceId: version, catalogId: 'x' } });
+    expect(session.process([create('v0.8'), create('v1.0'), create('0.9'), 7, null], 'main')).toBe(0);
+    expect(errors.map((e) => e.error.code)).toEqual(Array(5).fill('UNSUPPORTED_MESSAGE'));
   });
 
   test('an error carries the generic A2UI form', async () => {

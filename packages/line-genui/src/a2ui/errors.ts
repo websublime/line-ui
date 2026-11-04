@@ -17,13 +17,15 @@ export const A2UI_VERSION = 'v0.9.1';
  * - `MISSING_ACCESSIBLE_NAME`: a node whose descriptor requires a name has none.
  * - `UNMAPPED_ICON`: an Icon name is not an own property of `iconMap`, or `iconMap` is unset.
  * - `COMPONENT_LOAD_ERROR`: a descriptor's `load()` rejected, so its component never defines (§12 AM-077).
+ * - `UNSUPPORTED_MESSAGE`: a batch element is not an A2UI v0.9 envelope, so it never reached `web_core` (§12 AM-083).
  */
 export type SurfaceErrorCode =
   | 'LIMIT_EXCEEDED'
   | 'MARKDOWN_RENDER_ERROR'
   | 'MISSING_ACCESSIBLE_NAME'
   | 'UNMAPPED_ICON'
-  | 'COMPONENT_LOAD_ERROR';
+  | 'COMPONENT_LOAD_ERROR'
+  | 'UNSUPPORTED_MESSAGE';
 
 /** The generic A2UI error body: a code that is not `VALIDATION_FAILED`, the surface id, a message and any extras. */
 export interface A2uiErrorBody {

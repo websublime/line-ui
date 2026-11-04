@@ -231,7 +231,7 @@ export function childrenFirst(components: readonly unknown[], surface: SurfaceMo
     if (!isRecord(update) || typeof update.id !== 'string' || inBody.has(update.id)) return components;
     inBody.set(update.id, update);
   }
-  const candidate = candidateComponents(surfaceBase(surface), components);
+  const candidate = candidateComponents(surface, components);
   const children = (id: string): string[] => {
     const component = candidate.get(id);
     const api = component?.catalog?.components.get(component.type);
@@ -296,115 +296,63 @@ function walk(
   return undefined;
 }
 
-/** What a candidate tree starts from: a live surface, or the empty surface a `createSurface` makes. */
-interface CandidateBase {
-  components(): Iterable<readonly [string, CandidateComponent]>;
-  readonly rootId: string;
-  readonly defaultCatalog: Catalog<ComponentApi> | undefined;
-  readonly catalogs: ReadonlyMap<string, Catalog<ComponentApi>>;
-}
-
-/** The candidate base of a live surface: its definitions, data model, root and catalogs. */
-function surfaceBase(surface: SurfaceModel): CandidateBase {
-  return {
-    *components() {
-      for (const [id, model] of surface.componentsModel.entries) {
-        yield [id, { type: model.type, properties: model.properties, catalog: model.catalog }] as const;
-      }
-    },
-    rootId: surface.rootId,
-    defaultCatalog: surface.defaultCatalog,
-    catalogs: surface.availableCatalogs,
-  };
-}
-
 /** Applies one raw component update to the candidate map, as `MessageProcessor.applyComponentUpdate` applies it. */
-function applyUpdate(components: Map<string, CandidateComponent>, base: CandidateBase, update: unknown): void {
+function applyUpdate(components: Map<string, CandidateComponent>, surface: SurfaceModel, update: unknown): void {
   if (!isRecord(update)) return;
   const { id, component, catalogId, metadata: _metadata, ...properties } = update;
   if (typeof id !== 'string' || !id) return;
   const existing = components.get(id);
   const type = typeof component === 'string' && component ? component : existing?.type;
   if (!type) return;
-  const named = typeof catalogId === 'string' && catalogId ? base.catalogs.get(catalogId) : undefined;
-  const catalog = named ?? (existing?.type === type ? existing.catalog : base.defaultCatalog);
+  const named = typeof catalogId === 'string' && catalogId ? surface.availableCatalogs.get(catalogId) : undefined;
+  const catalog = named ?? (existing?.type === type ? existing.catalog : surface.defaultCatalog);
   components.set(id, { type, properties, catalog });
 }
 
-/** The candidate component map: the base's definitions with `updates` applied as `web_core` applies them. */
-function candidateComponents(base: CandidateBase, updates: readonly unknown[]): Map<string, CandidateComponent> {
-  const components = new Map<string, CandidateComponent>(base.components());
-  for (const update of updates) applyUpdate(components, base, update);
+/** The candidate component map: the surface's definitions with `updates` applied as `web_core` applies them. */
+function candidateComponents(surface: SurfaceModel, updates: readonly unknown[]): Map<string, CandidateComponent> {
+  const components = new Map<string, CandidateComponent>();
+  for (const [id, model] of surface.componentsModel.entries) {
+    components.set(id, { type: model.type, properties: model.properties, catalog: model.catalog });
+  }
+  for (const update of updates) applyUpdate(components, surface, update);
   return components;
 }
 
-/** The breach of a data model's size, if any. */
-function sizeBreach(data: unknown, limits: Limits): LimitBreach | undefined {
-  const size = dataModelSize(data);
-  return size > limits.maxDataModelSize
-    ? { limit: 'maxDataModelSize', value: size, max: limits.maxDataModelSize }
-    : undefined;
-}
-
-/** Checks the data model an `updateDataModel` operation leaves, then the tree its templates expand to. */
+/** Checks the data model an `updateDataModel` body leaves, then the tree its templates expand to. */
 function checkDataUpdate(update: Json, surface: SurfaceModel, limits: Limits): LimitBreach | undefined {
   const path = typeof update.path === 'string' && update.path ? update.path : '/';
   // `DataModel.set` on a copy of the path's containers gives the model exactly as `web_core` would leave it.
   const scratch = new DataModel(spineCopy(surface.dataModel.get('/'), path) as Json);
   scratch.set(path, update.value);
   const data: unknown = scratch.get('/');
-  return sizeBreach(data, limits) ?? walk(candidateComponents(surfaceBase(surface), []), data, surface.rootId, limits);
+  const size = dataModelSize(data);
+  if (size > limits.maxDataModelSize) return { limit: 'maxDataModelSize', value: size, max: limits.maxDataModelSize };
+  return walk(candidateComponents(surface, []), data, surface.rootId, limits);
 }
 
 /**
- * Checks a `createSurface` operation that carries inline `components` or a `dataModel`, as
- * `MessageProcessor.processCreateSurfaceOp` would apply them on a new surface.
- */
-function checkCreate(op: Json, limits: Limits, catalogs: readonly Catalog<ComponentApi>[]): LimitBreach | undefined {
-  const byId = new Map(catalogs.map((catalog) => [catalog.id, catalog]));
-  const data: unknown = isRecord(op.dataModel) ? op.dataModel : {};
-  const base: CandidateBase = {
-    components: () => [],
-    rootId: typeof op.rootId === 'string' ? op.rootId : 'root',
-    defaultCatalog: typeof op.catalogId === 'string' ? byId.get(op.catalogId) : catalogs[0],
-    catalogs: byId,
-  };
-  const updates = Array.isArray(op.components) ? op.components : [];
-  return sizeBreach(data, limits) ?? walk(candidateComponents(base, updates), data, base.rootId, limits);
-}
-
-/**
- * Checks one operation, as the `web_core` version adapter extracts it from a message, against `limits` before it
- * applies, and returns the first breach, or `undefined` when it stays within every limit or is not one that changes
- * the tree or the data model. A malformed operation is left to `web_core`, which rejects it with its own code
- * (§6.G.4 Limits; §12 AM-080).
+ * Checks one A2UI v0.9 envelope against `limits` before it applies, as one unit, and returns the first breach, or
+ * `undefined` when it stays within every limit or changes neither the tree nor the data model (§6.G.4 Limits;
+ * §12 AM-082, AM-083). A v0.9 envelope holds one operation: its `createSurface` carries no inline `components` or
+ * `dataModel`, which the strict v0.9 schema of `web_core` 0.14.0 rejects, and `deleteSurface` adds nothing. A
+ * malformed envelope is left to `web_core`, which rejects it with its own code.
  *
- * @param op One internal operation: `createSurface`, `updateComponents`, `updateDataModel` or another.
- * @param surface The surface the operation targets, if it exists.
+ * @param message One A2UI v0.9 envelope.
+ * @param surface The surface the envelope targets, if it exists.
  * @param limits The limits of that surface.
- * @param catalogs The session's catalogs, which a `createSurface` resolves its catalog from.
  */
-export function checkLimits(
-  op: unknown,
-  surface: SurfaceModel | undefined,
-  limits: Limits,
-  catalogs: readonly Catalog<ComponentApi>[],
-): LimitBreach | undefined {
-  if (!isRecord(op)) return undefined;
+export function checkLimits(message: Json, surface: SurfaceModel | undefined, limits: Limits): LimitBreach | undefined {
+  if (!surface) return undefined;
   try {
-    if (op.type === 'createSurface') return checkCreate(op, limits, catalogs);
-    if (!surface) return undefined;
-    if (op.type === 'updateComponents' && Array.isArray(op.components)) {
-      return walk(
-        candidateComponents(surfaceBase(surface), op.components),
-        surface.dataModel.get('/'),
-        surface.rootId,
-        limits,
-      );
+    const components = message.updateComponents;
+    if (isRecord(components) && Array.isArray(components.components)) {
+      const candidate = candidateComponents(surface, components.components);
+      return walk(candidate, surface.dataModel.get('/'), surface.rootId, limits);
     }
-    if (op.type === 'updateDataModel') return checkDataUpdate(op, surface, limits);
+    if (isRecord(message.updateDataModel)) return checkDataUpdate(message.updateDataModel, surface, limits);
   } catch {
-    // An operation the check cannot read is one `web_core` rejects, so it never applies.
+    // An envelope the check cannot read is one `web_core` rejects, so it never applies.
   }
   return undefined;
 }

@@ -215,18 +215,12 @@ describe('limit breaches (§6.G.4 Limits)', () => {
   });
 });
 
-describe('every message shape (§6.G.4 Projection and messages; §12 AM-080)', () => {
+describe('message shapes (§6.G.4 Projection and messages; §12 AM-082, AM-083)', () => {
   const big = 'x'.repeat(200);
   const codes = (errors: { error: { code: string; limit?: unknown } }[]) =>
     errors.map((e) => `${e.error.code}${e.error.limit ? `:${String(e.error.limit)}` : ''}`);
 
-  test('an internal operation is limit-checked', async () => {
-    const { surface, errors } = mount({ 'max-data-model-size': '64' });
-    await surface.feed([create(), { type: 'updateDataModel', surfaceId: 'main', path: '/blob', value: big }]);
-    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxDataModelSize']);
-  });
-
-  test('each message of an array element gets its own limit check and its own call', async () => {
+  test('each v0.9 message of an array element gets its own limit check and its own call', async () => {
     const { surface, errors } = mount({ 'max-nodes': '3' });
     const applied = await surface.feed([
       create(),
@@ -237,7 +231,7 @@ describe('every message shape (§6.G.4 Projection and messages; §12 AM-080)', (
     expect(surface.textContent).toBe('kept');
   });
 
-  test('each message of a { messages } wrapper gets its own limit check and its own call', async () => {
+  test('each v0.9 message of a { messages } wrapper gets its own limit check and its own call', async () => {
     const { surface, errors } = mount({ 'max-depth': '3' });
     const applied = await surface.feed([
       create(),
@@ -248,39 +242,79 @@ describe('every message shape (§6.G.4 Projection and messages; §12 AM-080)', (
     expect(surface.textContent).toBe('kept');
   });
 
-  test('a v0.8 surfaceUpdate and dataModelUpdate are limit-checked', async () => {
-    const { surface, errors } = mount({ 'max-nodes': '1', 'max-data-model-size': '64' });
-    await surface.feed([
-      create(),
+  const rejected: [string, unknown][] = [
+    ['an internal operation', { type: 'updateDataModel', surfaceId: 'main', path: '/blob', value: big }],
+    [
+      'a v0.8 surfaceUpdate',
       {
         surfaceUpdate: {
           surfaceId: 'main',
-          components: [
-            { id: 'a', component: { Text: { text: { literalString: 'a' } } } },
-            { id: 'b', component: { Text: { text: { literalString: 'b' } } } },
+          components: [{ id: 'root', component: { Text: { text: { literalString: 'v0.8' } } } }],
+        },
+      },
+    ],
+    [
+      'a v0.8 dataModelUpdate with two contents entries',
+      {
+        dataModelUpdate: {
+          surfaceId: 'main',
+          path: '/',
+          contents: [
+            { key: 'msg', valueString: 'first' },
+            { key: 'blob', valueString: big },
           ],
         },
       },
-      { dataModelUpdate: { surfaceId: 'main', path: '/', contents: [{ key: 'blob', valueString: big }] } },
+    ],
+    [
+      'an internal createSurface with an array dataModel',
+      { type: 'createSurface', surfaceId: 'main', catalogId: BASIC_CATALOG_ID, dataModel: ['x'.repeat(5_000)] },
+    ],
+  ];
+  for (const [name, message] of rejected) {
+    test(`${name} applies nothing and raises one UNSUPPORTED_MESSAGE`, async () => {
+      const { surface, errors, session } = mount({ 'max-data-model-size': '64' });
+      await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+      const surfaces: string[] = [];
+      session.onSurface((model) => surfaces.push(model.id));
+      expect(await surface.feed([message as Record<string, unknown>])).toBe(0);
+      expect(errors.map((e) => [e.error.code, e.error.surfaceId])).toEqual([['UNSUPPORTED_MESSAGE', 'main']]);
+      expect(surface.textContent).toBe('before');
+      expect(surfaces).toEqual(['main']);
+    });
+  }
+
+  test('[v0.9 ok, v0.8, v0.9 ok] applies the first and third and raises one error', async () => {
+    const { surface, errors } = mount();
+    await surface.feed([create(), components([text('root', { path: '/msg' })])]);
+    const applied = await surface.feed([
+      data('/msg', 'first'),
+      { dataModelUpdate: { surfaceId: 'main', path: '/', contents: [{ key: 'msg', valueString: 'v0.8' }] } },
+      data('/msg', 'third'),
     ]);
-    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxNodes', 'LIMIT_EXCEEDED:maxDataModelSize']);
+    expect(applied).toBe(2);
+    expect(codes(errors)).toEqual(['UNSUPPORTED_MESSAGE']);
+    expect(surface.textContent).toBe('third');
   });
 
-  test('a createSurface with inline components or a dataModel is limit-checked', async () => {
-    const { surface, errors, session } = mount({ 'max-nodes': '3', 'max-data-model-size': '64' });
-    const inline = (extra: Record<string, unknown>) => ({
-      type: 'createSurface',
-      surfaceId: 'main',
-      catalogId: BASIC_CATALOG_ID,
-      sendDataModel: true,
-      ...extra,
-    });
-    expect(await surface.feed([inline({ components: column(5) })])).toBe(0);
-    expect(await surface.feed([inline({ dataModel: { blob: big } })])).toBe(0);
-    expect(codes(errors)).toEqual(['LIMIT_EXCEEDED:maxNodes', 'LIMIT_EXCEEDED:maxDataModelSize']);
-    expect(session.dataModel('main')).toBeUndefined();
-    expect(await surface.feed([inline({ components: column(2), dataModel: { msg: 'ok' } })])).toBe(1);
-    expect(surface.querySelectorAll('p')).toHaveLength(2);
+  test('a wrapper of mixed shapes applies each v0.9 envelope and rejects each other element on its own', async () => {
+    const { surface, errors } = mount();
+    await surface.feed([create(), components([text('root', { path: '/msg' })])]);
+    const applied = await surface.feed([
+      {
+        version: 'v0.9.1',
+        messages: [
+          data('/msg', 'first'),
+          { type: 'updateDataModel', surfaceId: 'main', path: '/msg', value: 'internal' },
+          [data('/msg', 'nested')],
+          { version: 'v0.8', updateDataModel: { surfaceId: 'main', path: '/msg', value: 'v0.8' } },
+          data('/msg', 'last'),
+        ],
+      },
+    ]);
+    expect(applied).toBe(2);
+    expect(codes(errors)).toEqual(['UNSUPPORTED_MESSAGE', 'UNSUPPORTED_MESSAGE', 'UNSUPPORTED_MESSAGE']);
+    expect(surface.textContent).toBe('last');
   });
 });
 
