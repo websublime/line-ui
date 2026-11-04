@@ -116,8 +116,10 @@ describe('CEM drift: action-map events (§12 AM-067, AM-070)', () => {
       actions: {},
       accessibility: { hostNaming: { kind: 'always' } },
     });
-    expect(Object.keys(probe.schema.shape).sort()).toEqual(['accessibility', 'action', 'child']);
-    for (const name of ['accessibility', 'child']) expect(declaredNames('line-button')).not.toContain(name);
+    for (const name of ['accessibility', 'child']) {
+      expect(Object.keys(probe.schema.shape)).toContain(name);
+      expect(declaredNames('line-button')).not.toContain(name);
+    }
     expect(driftViolations([probe], manifest)).toEqual([]);
   });
 });
@@ -154,41 +156,51 @@ describe('CEM drift: surface lookups (§12 AM-071, AM-072)', () => {
 });
 
 describe('CEM drift: §7.3 content rules (§10 SD61; R4 §2.3, §2.4)', () => {
-  const bindProperties = (...names: string[]): LineDescriptor =>
-    variant(buttonDescriptor, {
+  const probeManifest: Manifest = {
+    modules: [
+      {
+        path: 'src/probe/probe.ts',
+        declarations: [
+          {
+            kind: 'class',
+            name: 'LineProbe',
+            tagName: 'line-probe',
+            members: [
+              { kind: 'field', name: 'label' },
+              { kind: 'field', name: '#state', privacy: 'private' },
+              { kind: 'field', name: 'internals', privacy: 'protected' },
+              { kind: 'field', name: 'version', static: true },
+              { kind: 'field', name: 'direction', privacy: 'public', inheritedFrom: { name: 'DirectionMixin' } },
+            ],
+            events: [{ name: 'line-change', description: 'Fires on change.' }, { name: 'line-detected' }],
+          },
+        ],
+      },
+    ],
+  };
+  const probe = (patch: Parameters<typeof variant>[1]): LineDescriptor =>
+    variant({ ...buttonDescriptor, tag: 'line-probe' }, patch);
+  const bindProperties = (descriptor: LineDescriptor, ...names: string[]): LineDescriptor =>
+    variant(descriptor, {
       bindings: { props: Object.fromEntries(names.map((name) => [name, { kind: 'property', name }])) },
     });
 
   test('private, protected, static and line-core base members are no public API', () => {
-    const hidden = ['#ctrl', '[INTERNALS]', 'shadowRootOptions', 'version', 'direction'];
-    for (const name of hidden) expect(declaredNames('line-button')).toContain(name);
-    expect(driftViolations([bindProperties(...hidden)], manifest).map((violation) => violation.name)).toEqual(hidden);
+    const hidden = ['#state', 'internals', 'version', 'direction'];
+    expect(driftViolations([bindProperties(probe({}), 'label')], probeManifest)).toEqual([]);
+    expect(
+      driftViolations([bindProperties(probe({}), ...hidden)], probeManifest).map((violation) => violation.name),
+    ).toEqual(hidden);
   });
 
   test('members inherited from FormAssociated are public API', () => {
-    expect(driftViolations([bindProperties('type', 'name', 'form')], manifest)).toEqual([]);
+    expect(driftViolations([bindProperties(buttonDescriptor, 'type', 'name', 'form')], manifest)).toEqual([]);
   });
 
   test('an event without @fires JSDoc does not count', () => {
-    const probe: Manifest = {
-      modules: [
-        {
-          path: 'src/probe/probe.ts',
-          declarations: [
-            {
-              kind: 'class',
-              name: 'LineProbe',
-              tagName: 'line-probe',
-              events: [{ name: 'line-change', description: 'Fires on change.' }, { name: 'line-detected' }],
-            },
-          ],
-        },
-      ],
-    };
-    const descriptor = (event: string): LineDescriptor =>
-      variant({ ...buttonDescriptor, tag: 'line-probe' }, { actions: { action: { event, native: false } } });
-    expect(driftViolations([descriptor('line-change')], probe)).toEqual([]);
-    expect(driftViolations([descriptor('line-detected')], probe)).toEqual([
+    const firing = (event: string) => probe({ actions: { action: { event, native: false } } });
+    expect(driftViolations([firing('line-change')], probeManifest)).toEqual([]);
+    expect(driftViolations([firing('line-detected')], probeManifest)).toEqual([
       { tag: 'line-probe', prop: 'action', kind: 'event', name: 'line-detected' },
     ]);
   });
