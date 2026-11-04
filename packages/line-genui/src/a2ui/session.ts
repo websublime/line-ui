@@ -46,22 +46,38 @@ const V09_VERSIONS: Readonly<Record<string, true>> = { 'v0.9': true, 'v0.9.1': t
 
 /** A `{ messages: […] }` wrapper, which `processMessages` also takes. */
 const isWrapper = (value: unknown): value is JsonObject & { messages: unknown[] } =>
-  isJsonObject(value) && Array.isArray(value.messages);
+  isJsonObject(value) && Object.hasOwn(value, 'messages') && Array.isArray(value.messages);
+
+/** The action keys of an A2UI v0.9 envelope, one of which it carries (§6.G.4; §12 AM-084). */
+const V09_ACTIONS = ['createSurface', 'updateComponents', 'updateDataModel', 'deleteSurface'] as const;
+
+/**
+ * Whether `element` is an A2UI v0.9 envelope as the session accepts it (§6.G.4; §12 AM-083, AM-084): a `version` of
+ * `v0.9` or `v0.9.1`, no own `type`, and exactly one own v0.9 action key. `web_core` treats any object with an
+ * internal-operation `type` as a raw operation before it picks a version adapter (`message-processor.js:366-379`),
+ * so a `type` must never reach it. Own-property checks only, so nothing inherited counts either way.
+ */
+function isV09Envelope(element: unknown): element is JsonObject {
+  if (!isJsonObject(element) || isWrapper(element) || Object.hasOwn(element, 'type')) return false;
+  const version = Object.hasOwn(element, 'version') ? element.version : undefined;
+  if (typeof version !== 'string' || !Object.hasOwn(V09_VERSIONS, version)) return false;
+  return V09_ACTIONS.filter((key) => Object.hasOwn(element, key)).length === 1;
+}
 
 /** One message of a batch as the session reads it: a v0.9 envelope to apply, or a shape it rejects. */
 type Unit =
   | { readonly kind: 'message'; readonly message: JsonObject; readonly surfaceId: string }
   | { readonly kind: 'unsupported'; readonly surfaceId: string };
 
-/** One element read as a message: a v0.9 envelope, or anything else, which the session does not accept. */
+/**
+ * One element read as a message: a v0.9 envelope, or anything else, which the session does not accept. An envelope
+ * goes on as a copy of its own properties, because `web_core` tests `'type' in message`, which an inherited `type`
+ * would pass (`operations.js:33-38`; §12 AM-084).
+ */
 function unitOf(element: unknown, fallbackSurfaceId: string): Unit {
   const surfaceId = surfaceIdOf(element) ?? fallbackSurfaceId;
-  const envelope =
-    isJsonObject(element) &&
-    !isWrapper(element) &&
-    typeof element.version === 'string' &&
-    Object.hasOwn(V09_VERSIONS, element.version);
-  return envelope ? { kind: 'message', message: element, surfaceId } : { kind: 'unsupported', surfaceId };
+  if (!isV09Envelope(element)) return { kind: 'unsupported', surfaceId };
+  return { kind: 'message', message: { ...element }, surfaceId };
 }
 
 /**

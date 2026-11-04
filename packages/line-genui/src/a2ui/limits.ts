@@ -345,12 +345,15 @@ function checkDataUpdate(update: Json, surface: SurfaceModel, limits: Limits): L
 export function checkLimits(message: Json, surface: SurfaceModel | undefined, limits: Limits): LimitBreach | undefined {
   if (!surface) return undefined;
   try {
-    const components = message.updateComponents;
+    // The session accepts an envelope with exactly one own action key (§12 AM-084); read only that key.
+    const own = (key: string): unknown => (Object.hasOwn(message, key) ? message[key] : undefined);
+    const components = own('updateComponents');
     if (isRecord(components) && Array.isArray(components.components)) {
       const candidate = candidateComponents(surface, components.components);
       return walk(candidate, surface.dataModel.get('/'), surface.rootId, limits);
     }
-    if (isRecord(message.updateDataModel)) return checkDataUpdate(message.updateDataModel, surface, limits);
+    const update = own('updateDataModel');
+    if (isRecord(update)) return checkDataUpdate(update, surface, limits);
   } catch {
     // An envelope the check cannot read is one `web_core` rejects, so it never applies.
   }

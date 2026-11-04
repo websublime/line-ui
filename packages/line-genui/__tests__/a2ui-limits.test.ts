@@ -284,6 +284,75 @@ describe('message shapes (§6.G.4 Projection and messages; §12 AM-082, AM-083)'
     });
   }
 
+  const strict: [string, Record<string, string>, unknown][] = [
+    [
+      'a v0.9.1 element with an internal-operation type (probe A)',
+      { 'max-data-model-size': '64' },
+      { version: 'v0.9.1', type: 'updateDataModel', surfaceId: 'main', path: '/blob', value: 'x'.repeat(500) },
+    ],
+    [
+      'a v0.9.1 createSurface operation with inline components (probe B)',
+      { 'max-nodes': '3' },
+      {
+        version: 'v0.9.1',
+        type: 'createSurface',
+        surfaceId: 'main',
+        catalogId: BASIC_CATALOG_ID,
+        components: column(20),
+      },
+    ],
+    [
+      'a decoy with a type beside a small updateDataModel body',
+      { 'max-data-model-size': '64' },
+      {
+        version: 'v0.9.1',
+        type: 'updateDataModel',
+        surfaceId: 'main',
+        path: '/blob',
+        value: 'x'.repeat(500),
+        updateDataModel: { surfaceId: 'main', path: '/msg', value: 'small' },
+      },
+    ],
+    ['a v0.9.1 element with no action key', {}, { version: 'v0.9.1' }],
+    [
+      'a v0.9.1 element with two action keys',
+      {},
+      {
+        version: 'v0.9.1',
+        updateDataModel: { surfaceId: 'main', path: '/msg', value: 'a' },
+        deleteSurface: { surfaceId: 'main' },
+      },
+    ],
+  ];
+  for (const [name, attributes, message] of strict) {
+    test(`${name} applies nothing and raises one UNSUPPORTED_MESSAGE (§12 AM-084)`, async () => {
+      const { surface, errors } = mount(attributes);
+      await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+      expect(await surface.feed([message as Record<string, unknown>])).toBe(0);
+      expect(codes(errors)).toEqual(['UNSUPPORTED_MESSAGE']);
+      expect(surface.textContent).toBe('before');
+      expect(surface.querySelectorAll('p')).toHaveLength(1);
+    });
+  }
+
+  test('an inherited type or action key neither rejects nor admits an element (§12 AM-084)', async () => {
+    const { surface, errors } = mount();
+    await surface.feed([create(), components([text('root', { path: '/msg' })])]);
+    const proto = { type: 'updateDataModel', deleteSurface: { surfaceId: 'main' } };
+    const inherited = Object.assign(Object.create(proto) as Record<string, unknown>, data('/msg', 'own'));
+    expect(await surface.feed([inherited])).toBe(1);
+    expect(errors).toEqual([]);
+    expect(surface.textContent).toBe('own');
+  });
+
+  test('a v0.9.1 envelope with one action key and an unknown extra key keeps VALIDATION_ERROR', async () => {
+    const { surface, errors } = mount();
+    await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+    expect(await surface.feed([{ ...data('/msg', 'after'), extra: true }])).toBe(0);
+    expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+    expect(surface.textContent).toBe('before');
+  });
+
   test('[v0.9 ok, v0.8, v0.9 ok] applies the first and third and raises one error', async () => {
     const { surface, errors } = mount();
     await surface.feed([create(), components([text('root', { path: '/msg' })])]);

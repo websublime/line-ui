@@ -146,7 +146,7 @@ describe('registrations and processing (§6.G.4 Projection and messages)', () =>
     expect(errors.map((e) => [e.error.surfaceId, e.error.code])).toEqual([
       ['fallback', 'UNSUPPORTED_MESSAGE'],
       ['fallback', 'UNSUPPORTED_MESSAGE'],
-      ['fallback', 'VALIDATION_ERROR'],
+      ['fallback', 'UNSUPPORTED_MESSAGE'],
     ]);
   });
 
