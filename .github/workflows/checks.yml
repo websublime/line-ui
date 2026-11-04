@@ -36,7 +36,7 @@ jobs:
       - name: F2 preload-presence assertion (AM-018)  # AM-025: anchored and escaped
         run: grep -qE '^preload = \["\./bun-test-preload\.ts"\]$' bunfig.toml
       - name: Unit tier
-        run: bun test
+        run: bun test --isolate  # AM-086: a fresh global object per test file
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps chromium firefox webkit
       - name: Browser tier
