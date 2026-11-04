@@ -21,6 +21,9 @@ import {
   descriptors,
   type FrontendTool,
   frontendTools,
+  iconDescriptor,
+  type LineDescriptor,
+  lineCatalogDocument,
   TOOL_PROVIDERS,
   type ToolProvider,
 } from '../src/catalog/index.js';
@@ -180,11 +183,6 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
     });
   });
 
-  test('the tool description is the descriptor description', () => {
-    for (const descriptor of descriptors)
-      expect(tool('openai', descriptor.name).description).toBe(descriptor.description);
-  });
-
   test('a descriptor with agentExposed: false produces no tool', () => {
     const hidden = defineDescriptor({
       ...fixture({ tone: z.enum(['a', 'b']).describe('A tone.').optional() }),
@@ -205,8 +203,91 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
     expect(() => frontendTools([value], 'openai')).toThrow('ToolFixture.value');
   });
 
+  test.each(ACCESSIBILITY)(
+    'a prop named %s throws, whether or not the tool takes the accessibility strings',
+    (name) => {
+      for (const kind of ['always', 'never'] as const) {
+        const colliding = defineDescriptor({
+          ...fixture({ [name]: commonProp('DynamicString', 'A name.').optional() }),
+          accessibility: { hostNaming: { kind } },
+        });
+        for (const provider of TOOL_PROVIDERS) {
+          expect(() => frontendTools([colliding], provider)).toThrow(`ToolFixture.${name}`);
+        }
+      }
+    },
+  );
+
+  test.each([...TOOL_PROVIDERS])('%s: parameters.properties has a null prototype', (provider) => {
+    for (const each of tools(provider)) expect(Object.getPrototypeOf(each.parameters.properties)).toBeNull();
+    const plain = defineDescriptor(fixture({ tone: z.enum(['a', 'b']).describe('A tone.').optional() }));
+    for (const each of frontendTools([plain], provider)) {
+      expect(Object.getPrototypeOf(each.parameters.properties)).toBeNull();
+      expect('toString' in each.parameters.properties).toBe(false);
+    }
+  });
+
   test('an unknown provider throws', () => {
     expect(() => frontendTools(descriptors, 'mistral' as ToolProvider)).toThrow('Unknown tool provider');
+  });
+});
+
+describe('the tool description (§6.G.3; §12 AM-086)', () => {
+  test('each tool takes the descriptor toolDescription when set, and its description otherwise', () => {
+    for (const provider of TOOL_PROVIDERS) {
+      for (const descriptor of descriptors) {
+        expect(tool(provider, descriptor.name).description).toBe(descriptor.toolDescription ?? descriptor.description);
+      }
+    }
+  });
+
+  test('a descriptor without toolDescription emits its description; Icon sets none', () => {
+    const plain = defineDescriptor(fixture({}));
+    expect(Object.hasOwn(plain, 'toolDescription')).toBe(false);
+    expect(Object.hasOwn(iconDescriptor, 'toolDescription')).toBe(false);
+    for (const provider of TOOL_PROVIDERS) {
+      expect(frontendTools([plain], provider)[0]?.description).toBe('A fixture.');
+      expect(tool(provider, 'Icon').description).toBe(iconDescriptor.description);
+    }
+  });
+
+  test('a descriptor with toolDescription emits it, under the 1024-character cap', () => {
+    const override = defineDescriptor({ ...fixture({}), toolDescription: 'A fixture tool.' });
+    expect(override.toolDescription).toBe('A fixture tool.');
+    const long = defineDescriptor({ ...fixture({}), toolDescription: 'x'.repeat(1025) });
+    const exact = defineDescriptor({ ...fixture({}), toolDescription: 'x'.repeat(1024) });
+    const longDescription = defineDescriptor({
+      ...fixture({}),
+      description: 'x'.repeat(1025),
+      toolDescription: 'A fixture tool.',
+    });
+    for (const provider of TOOL_PROVIDERS) {
+      expect(frontendTools([override], provider)[0]?.description).toBe('A fixture tool.');
+      expect(() => frontendTools([long], provider)).toThrow('1025 characters');
+      expect(frontendTools([exact], provider)[0]?.description).toBe('x'.repeat(1024));
+      expect(frontendTools([longDescription], provider)[0]?.description).toBe('A fixture tool.');
+    }
+  });
+
+  test.each(['', ' ', ' \t\n\u00a0'])('toolDescription %p throws, with no fallback to description', (blank) => {
+    const descriptor = defineDescriptor({ ...fixture({}), toolDescription: blank });
+    for (const provider of TOOL_PROVIDERS) {
+      expect(() => frontendTools([descriptor], provider)).toThrow('ToolFixture: toolDescription is empty');
+    }
+  });
+
+  test('toolDescription stays out of the line catalog document', () => {
+    const withTool = (descriptor: LineDescriptor): LineDescriptor =>
+      descriptor.agentExposed ? { ...descriptor, toolDescription: `The ${descriptor.name} tool.` } : descriptor;
+    const document = lineCatalogDocument(descriptors);
+    const text = JSON.stringify(document);
+    expect(text.includes('toolDescription')).toBe(false);
+    for (const descriptor of descriptors) {
+      if (descriptor.toolDescription) expect(text.includes(descriptor.toolDescription)).toBe(false);
+    }
+    const plain = defineDescriptor(fixture({}));
+    expect(lineCatalogDocument([withTool(plain)])).toEqual(lineCatalogDocument([plain]));
+    expect(lineCatalogDocument(descriptors.map(withTool))).toEqual(document);
   });
 });
 
