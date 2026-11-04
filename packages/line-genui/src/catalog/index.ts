@@ -1,5 +1,5 @@
 // The ./catalog subpath: the descriptor API, the descriptors of the agent-exposed components (§6.G.1), the `line`
-// catalog emitters and the `basic` implementation map (§6.G.2).
+// catalog emitters and the `basic` implementation map (§6.G.2), and the frontend-tool emitter (§6.G.3).
 import {
   BASIC_CATALOG_ID,
   type BasicImplementation,
@@ -28,6 +28,15 @@ import {
   lineCatalogDocument,
   type VersionCapabilities,
 } from './line.js';
+import {
+  type FrontendTool,
+  frontendTools,
+  TOOL_PROVIDERS,
+  type ToolParameters,
+  type ToolProperty,
+  type ToolProvider,
+  type ToolValueType,
+} from './tools.js';
 
 export type {
   AccessibilityRequirements,
@@ -53,10 +62,15 @@ export type {
   BasicTextVariant,
   BasicTypeName,
   CatalogJson,
+  FrontendTool,
   InlineCatalog,
   LineCapabilities,
   LineCapabilitiesOptions,
   TargetAttributes,
+  ToolParameters,
+  ToolProperty,
+  ToolProvider,
+  ToolValueType,
   VersionCapabilities,
 };
 export {
@@ -67,6 +81,7 @@ export {
   commonProp,
   componentSchema,
   defineDescriptor,
+  frontendTools,
   iconDescriptor,
   inlineCatalog,
   LINE_CATALOG_ID,
@@ -75,6 +90,7 @@ export {
   lineCatalogDocument,
   separatorDescriptor,
   stackDescriptor,
+  TOOL_PROVIDERS,
 };
 
 /** Every component descriptor, in catalog-name order. */
