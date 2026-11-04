@@ -72,12 +72,17 @@ type Unit =
 /**
  * One element read as a message: a v0.9 envelope, or anything else, which the session does not accept. An envelope
  * goes on as a copy of its own properties, because `web_core` tests `'type' in message`, which an inherited `type`
- * would pass (`operations.js:33-38`; §12 AM-084).
+ * would pass (`operations.js:33-38`; §12 AM-084). Its surface is the one its own action body names, the surface
+ * `web_core` applies it to, so the limit check and the error both go there; a top-level or inherited `surfaceId`
+ * only routes an `UNSUPPORTED_MESSAGE`.
  */
 function unitOf(element: unknown, fallbackSurfaceId: string): Unit {
-  const surfaceId = surfaceIdOf(element) ?? fallbackSurfaceId;
-  if (!isV09Envelope(element)) return { kind: 'unsupported', surfaceId };
-  return { kind: 'message', message: { ...element }, surfaceId };
+  if (!isV09Envelope(element)) return { kind: 'unsupported', surfaceId: surfaceIdOf(element) ?? fallbackSurfaceId };
+  const message: JsonObject = { ...element };
+  const action = V09_ACTIONS.find((key) => Object.hasOwn(message, key));
+  const body = action ? message[action] : undefined;
+  const named = isJsonObject(body) && Object.hasOwn(body, 'surfaceId') ? body.surfaceId : undefined;
+  return { kind: 'message', message, surfaceId: typeof named === 'string' ? named : fallbackSurfaceId };
 }
 
 /**

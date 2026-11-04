@@ -335,6 +335,28 @@ describe('message shapes (§6.G.4 Projection and messages; §12 AM-082, AM-083)'
     });
   }
 
+  test('an inherited top-level surfaceId cannot steer the limit check off the surface the body names (probe D)', async () => {
+    const { surface, errors } = mount({ 'max-data-model-size': '64' });
+    await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+    const probe = Object.assign(Object.create({ surfaceId: 'other' }) as Record<string, unknown>, {
+      version: 'v0.9.1',
+      updateDataModel: { surfaceId: 'main', path: '/blob', value: 'x'.repeat(500) },
+    });
+    expect(await surface.feed([probe])).toBe(0);
+    expect(errors.map((e) => [e.error.code, e.error.surfaceId, e.error.limit])).toEqual([
+      ['LIMIT_EXCEEDED', 'main', 'maxDataModelSize'],
+    ]);
+    expect(surface.textContent).toBe('before');
+  });
+
+  test('a web_core error on an envelope with a top-level surfaceId goes to the surface the body names (probe E)', async () => {
+    const { surface, errors } = mount();
+    await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+    expect(await surface.feed([{ ...data('/msg', 'after'), surfaceId: 'other' }])).toBe(0);
+    expect(errors.map((e) => [e.error.code, e.error.surfaceId])).toEqual([['VALIDATION_ERROR', 'main']]);
+    expect(surface.textContent).toBe('before');
+  });
+
   test('an inherited type or action key neither rejects nor admits an element (§12 AM-084)', async () => {
     const { surface, errors } = mount();
     await surface.feed([create(), components([text('root', { path: '/msg' })])]);
