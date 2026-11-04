@@ -108,9 +108,9 @@ await surface.feed(messages); // or session.process(messages, 'main')
 
 | Export | What it is |
 | --- | --- |
-| `Session` | One `web_core` `MessageProcessor` with the `line` and `basic` catalogs and `RELAXED_VALIDATION`: `process(messages, fallbackSurfaceId)`, `onError`, `onAction`, `onSurface`, `onSurfaceDeleted`, `dataModel()`, `dispose()` |
+| `Session` | One `web_core` `MessageProcessor` with the `line` and `basic` catalogs and `RELAXED_VALIDATION`: `process(messages, fallbackSurfaceId)`, `onError`, `onAction`, `onSurface`, `onSurfaceDeleted`, `dataModel()`, `dispose()`. It accepts only A2UI v0.9 envelopes (`version` `v0.9` or `v0.9.1`), unwrapping an array or `{ messages }` wrapper one level; any other shape raises `UNSUPPORTED_MESSAGE` |
 | `LineA2uiSurface` | The `<line-a2ui-surface>` class: attributes `surface-id`, `max-nodes`, `max-depth`, `max-data-model-size`, `live-update-text`, `live-error-text`; properties `session`, `iconMap`, `urlPolicy`, `markdownRenderer`; `feed()`, `settled()`; events `line-a2ui-action`, `line-a2ui-error` |
-| `A2uiActionMessage`, `A2uiErrorMessage`, `A2uiErrorBody`, `SurfaceErrorCode` | The A2UI client-to-server messages the surface emits, and the codes it raises itself |
+| `A2uiActionMessage`, `A2uiErrorMessage`, `A2uiErrorBody`, `SurfaceErrorCode` | The A2UI client-to-server messages the surface emits, and the codes it raises itself: `LIMIT_EXCEEDED`, `MARKDOWN_RENDER_ERROR`, `MISSING_ACCESSIBLE_NAME`, `UNMAPPED_ICON`, `COMPONENT_LOAD_ERROR`, `UNSUPPORTED_MESSAGE` |
 | `Limits`, `LimitName`, `DEFAULT_LIMITS`, `UrlPolicy`, `UrlUse`, `MarkdownRenderer` | The types of the limits, the URL policy and the Markdown hook |
 
 The Storybook page "Agent UI/A2UI Surface" documents the rest: the limits and their unit, the URL policy, Markdown, accessibility and the template-list limit.
