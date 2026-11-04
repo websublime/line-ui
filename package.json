@@ -68,6 +68,7 @@
     "ajv-formats": "^3.0.1",
     "cssnano": "^8.0.10",
     "esbuild": "^0.28.2",
+    "gpt-tokenizer": "^4.1.0",
     "lit": "^3.3.3",
     "lucide-static": "^1.56.0",
     "playwright": "^1.64.0",
