@@ -16,7 +16,7 @@ import { afterEach, describe, expect, test } from 'bun:test';
 import { DEFAULT_LIMITS, Session } from '../src/a2ui/index.js';
 import { childrenFirst, dataModelSize, positiveInteger, utf8Length } from '../src/a2ui/limits.js';
 import { BASIC_CATALOG_ID } from '../src/catalog/index.js';
-import { components, create, data, invalidMessages, mount, text } from './a2ui-fixture.js';
+import { checkClientMessage, components, create, data, invalidMessages, mount, text } from './a2ui-fixture.js';
 
 afterEach(() => {
   expect(invalidMessages).toEqual([]);
@@ -365,6 +365,53 @@ describe('message shapes (§6.G.4 Projection and messages; §12 AM-082, AM-083)'
     expect(await surface.feed([inherited])).toBe(1);
     expect(errors).toEqual([]);
     expect(surface.textContent).toBe('own');
+  });
+
+  test('an inherited body surfaceId is dropped, so the message names no surface and applies nowhere (probe G)', async () => {
+    const { surface, session, errors } = mount({ 'max-data-model-size': '64' });
+    await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+    const body = Object.assign(Object.create({ surfaceId: 'main' }) as Record<string, unknown>, {
+      path: '/blob',
+      value: 'x'.repeat(500),
+    });
+    const raised: { code: string; surfaceId: string }[] = [];
+    session.onError((error) => {
+      checkClientMessage(error);
+      raised.push({ code: error.error.code, surfaceId: error.error.surfaceId });
+    });
+    expect(session.process([{ version: 'v0.9.1', updateDataModel: body }], 'other')).toBe(0);
+    await surface.settled();
+    expect(raised).toEqual([{ code: 'VALIDATION_ERROR', surfaceId: 'other' }]);
+    expect(errors).toEqual([]);
+    expect(surface.textContent).toBe('before');
+    // The 500-byte blob never landed on `main`: a small update still fits its 64-byte limit.
+    expect(await surface.feed([data('/msg', 'after')])).toBe(1);
+    expect(raised).toHaveLength(1);
+    expect(surface.textContent).toBe('after');
+  });
+
+  test('an inherited action body is not applied', async () => {
+    const { surface, errors } = mount();
+    await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+    const probe = Object.assign(Object.create(data('/msg', 'after')) as Record<string, unknown>, {
+      version: 'v0.9.1',
+    });
+    expect(await surface.feed([probe])).toBe(0);
+    expect(errors.map((e) => e.error.code)).toEqual(['UNSUPPORTED_MESSAGE']);
+    expect(surface.textContent).toBe('before');
+  });
+
+  test('an element that is not JSON, a cycle or a BigInt, raises UNSUPPORTED_MESSAGE', async () => {
+    const { surface, errors } = mount();
+    await surface.feed([create(), components([text('root', { path: '/msg' })]), data('/msg', 'before')]);
+    const cyclic: Record<string, unknown> = data('/msg', 'after');
+    cyclic.self = cyclic;
+    expect(await surface.feed([cyclic, data('/msg', 10n)])).toBe(0);
+    expect(errors.map((e) => [e.error.code, e.error.surfaceId])).toEqual([
+      ['UNSUPPORTED_MESSAGE', 'main'],
+      ['UNSUPPORTED_MESSAGE', 'main'],
+    ]);
+    expect(surface.textContent).toBe('before');
   });
 
   test('a v0.9.1 envelope with one action key and an unknown extra key keeps VALIDATION_ERROR', async () => {

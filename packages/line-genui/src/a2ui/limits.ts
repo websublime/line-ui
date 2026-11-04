@@ -338,22 +338,19 @@ function checkDataUpdate(update: Json, surface: SurfaceModel, limits: Limits): L
  * `dataModel`, which the strict v0.9 schema of `web_core` 0.14.0 rejects, and `deleteSurface` adds nothing. A
  * malformed envelope is left to `web_core`, which rejects it with its own code.
  *
- * @param message One A2UI v0.9 envelope.
+ * @param message One A2UI v0.9 envelope, plain JSON data with exactly one action key (§12 AM-084).
  * @param surface The surface the envelope targets, if it exists.
  * @param limits The limits of that surface.
  */
 export function checkLimits(message: Json, surface: SurfaceModel | undefined, limits: Limits): LimitBreach | undefined {
   if (!surface) return undefined;
   try {
-    // The session accepts an envelope with exactly one own action key (§12 AM-084); read only that key.
-    const own = (key: string): unknown => (Object.hasOwn(message, key) ? message[key] : undefined);
-    const components = own('updateComponents');
+    const components = message.updateComponents;
     if (isRecord(components) && Array.isArray(components.components)) {
       const candidate = candidateComponents(surface, components.components);
       return walk(candidate, surface.dataModel.get('/'), surface.rootId, limits);
     }
-    const update = own('updateDataModel');
-    if (isRecord(update)) return checkDataUpdate(update, surface, limits);
+    if (isRecord(message.updateDataModel)) return checkDataUpdate(message.updateDataModel, surface, limits);
   } catch {
     // An envelope the check cannot read is one `web_core` rejects, so it never applies.
   }

@@ -31,7 +31,7 @@ export interface SessionHost {
 
 type Listener<T> = (value: T) => void;
 
-/** The surface id a batch element names, read before `web_core` parses it, so a rejected element still names it. */
+/** The surface id a rejected element names, so its `UNSUPPORTED_MESSAGE` reaches that surface. */
 function surfaceIdOf(message: unknown): string | undefined {
   if (!isJsonObject(message)) return undefined;
   if (typeof message.surfaceId === 'string') return message.surfaceId;
@@ -41,25 +41,39 @@ function surfaceIdOf(message: unknown): string | undefined {
   return undefined;
 }
 
+/**
+ * A batch element as plain JSON data, or `undefined` when it is not JSON (a cycle, a `BigInt`). A2UI messages are
+ * JSON by protocol; the round trip drops every inherited property, getter and non-JSON value at any depth, so the
+ * value the session judges, limit-checks and hands `web_core` is one plain own-data object.
+ */
+function asJson(element: unknown): unknown {
+  try {
+    const text = JSON.stringify(element);
+    return text === undefined ? undefined : JSON.parse(text);
+  } catch {
+    return undefined;
+  }
+}
+
 /** The `version` values of the A2UI v0.9 envelopes the session accepts (§10 SD45; §12 AM-083). */
 const V09_VERSIONS: Readonly<Record<string, true>> = { 'v0.9': true, 'v0.9.1': true };
 
 /** A `{ messages: […] }` wrapper, which `processMessages` also takes. */
 const isWrapper = (value: unknown): value is JsonObject & { messages: unknown[] } =>
-  isJsonObject(value) && Object.hasOwn(value, 'messages') && Array.isArray(value.messages);
+  isJsonObject(value) && Array.isArray(value.messages);
 
 /** The action keys of an A2UI v0.9 envelope, one of which it carries (§6.G.4; §12 AM-084). */
 const V09_ACTIONS = ['createSurface', 'updateComponents', 'updateDataModel', 'deleteSurface'] as const;
 
 /**
- * Whether `element` is an A2UI v0.9 envelope as the session accepts it (§6.G.4; §12 AM-083, AM-084): a `version` of
- * `v0.9` or `v0.9.1`, no own `type`, and exactly one own v0.9 action key. `web_core` treats any object with an
- * internal-operation `type` as a raw operation before it picks a version adapter (`message-processor.js:366-379`),
- * so a `type` must never reach it. Own-property checks only, so nothing inherited counts either way.
+ * Whether `element`, plain JSON data, is an A2UI v0.9 envelope as the session accepts it (§6.G.4; §12 AM-083,
+ * AM-084): a `version` of `v0.9` or `v0.9.1`, no `type`, and exactly one v0.9 action key. `web_core` treats any
+ * object with an internal-operation `type` as a raw operation before it picks a version adapter
+ * (`message-processor.js:366-379`), so a `type` must never reach it.
  */
 function isV09Envelope(element: unknown): element is JsonObject {
   if (!isJsonObject(element) || isWrapper(element) || Object.hasOwn(element, 'type')) return false;
-  const version = Object.hasOwn(element, 'version') ? element.version : undefined;
+  const version = element.version;
   if (typeof version !== 'string' || !Object.hasOwn(V09_VERSIONS, version)) return false;
   return V09_ACTIONS.filter((key) => Object.hasOwn(element, key)).length === 1;
 }
@@ -70,29 +84,28 @@ type Unit =
   | { readonly kind: 'unsupported'; readonly surfaceId: string };
 
 /**
- * One element read as a message: a v0.9 envelope, or anything else, which the session does not accept. An envelope
- * goes on as a copy of its own properties, because `web_core` tests `'type' in message`, which an inherited `type`
- * would pass (`operations.js:33-38`; §12 AM-084). Its surface is the one its own action body names, the surface
- * `web_core` applies it to, so the limit check and the error both go there; a top-level or inherited `surfaceId`
- * only routes an `UNSUPPORTED_MESSAGE`.
+ * One plain JSON element read as a message: a v0.9 envelope, or anything else, which the session does not accept.
+ * An envelope's surface is the one its action body names, the surface `web_core` applies it to, so the limit check
+ * and the error both go there; a top-level `surfaceId` only routes an `UNSUPPORTED_MESSAGE`.
  */
 function unitOf(element: unknown, fallbackSurfaceId: string): Unit {
   if (!isV09Envelope(element)) return { kind: 'unsupported', surfaceId: surfaceIdOf(element) ?? fallbackSurfaceId };
-  const message: JsonObject = { ...element };
-  const action = V09_ACTIONS.find((key) => Object.hasOwn(message, key));
-  const body = action ? message[action] : undefined;
-  const named = isJsonObject(body) && Object.hasOwn(body, 'surfaceId') ? body.surfaceId : undefined;
-  return { kind: 'message', message, surfaceId: typeof named === 'string' ? named : fallbackSurfaceId };
+  const action = V09_ACTIONS.find((key) => Object.hasOwn(element, key));
+  const body = action ? element[action] : undefined;
+  const named = isJsonObject(body) ? body.surfaceId : undefined;
+  return { kind: 'message', message: element, surfaceId: typeof named === 'string' ? named : fallbackSurfaceId };
 }
 
 /**
- * The messages of one batch element: an array of messages or a `{ messages }` wrapper unwraps one level, and each
- * inner element is judged on its own; an array or wrapper inside one is not a v0.9 envelope (§6.G.4; §12 AM-083).
+ * The messages of one batch element, normalised once to plain JSON data ({@link asJson}): an array of messages or
+ * a `{ messages }` wrapper unwraps one level, and each inner element is judged on its own; an array or wrapper inside
+ * one is not a v0.9 envelope, and neither is an element that is not JSON (§6.G.4; §12 AM-083).
  */
 function unitsOf(element: unknown, fallbackSurfaceId: string): Unit[] {
-  const inner = Array.isArray(element) ? element : isWrapper(element) ? element.messages : undefined;
-  if (!inner) return [unitOf(element, fallbackSurfaceId)];
-  const surfaceId = surfaceIdOf(element) ?? fallbackSurfaceId;
+  const plain = asJson(element);
+  const inner = Array.isArray(plain) ? plain : isWrapper(plain) ? plain.messages : undefined;
+  if (!inner) return [unitOf(plain, fallbackSurfaceId)];
+  const surfaceId = surfaceIdOf(plain) ?? fallbackSurfaceId;
   return inner.map((item) => unitOf(item, surfaceId));
 }
 
