@@ -5,7 +5,8 @@
  * In the controlled tier the agent picks a component and fills its props through a tool call, and the app renders
  * the call. The emitter turns each agent-exposed descriptor into one tool, `{name, description, parameters}`. A
  * line-owned walker reads the descriptor's Zod 3 prop schema into one flat literal model, and the provider argument
- * serialises that model for OpenAI strict, Anthropic strict or Gemini `parameters`.
+ * serialises that model for OpenAI strict, Anthropic strict or Gemini `parameters`. The tool `description` is the
+ * descriptor's `toolDescription` when it sets one, and its agent-facing `description` otherwise (§12 AM-086).
  *
  * @module catalog/tools
  */
@@ -41,7 +42,8 @@ export interface ToolProperty {
  * The `parameters` of a tool: a flat object of literal parameters, with no `$ref`, `oneOf`, `allOf`, recursion,
  * open map, common type or dynamic binding (ARCH §17.3). OpenAI and Anthropic close it with
  * `additionalProperties: false`; Gemini allows no `additionalProperties`. `required` is absent when it would be
- * empty, except for OpenAI, which lists every parameter.
+ * empty, except for OpenAI, which lists every parameter. `properties` has a null prototype, so every key is an own
+ * property and no lookup reads an inherited member (§12 AM-086).
  */
 export interface ToolParameters {
   readonly type: 'object';
@@ -54,7 +56,10 @@ export interface ToolParameters {
 export interface FrontendTool {
   /** The descriptor's catalog name, such as `Button`; it matches `^[a-zA-Z0-9_-]{1,64}$`. */
   readonly name: string;
-  /** The descriptor's agent-facing description, at most 1024 characters. */
+  /**
+   * The descriptor's `toolDescription` when it sets one, and its agent-facing `description` otherwise; at most 1024
+   * characters (§6.G.3; §12 AM-086).
+   */
   readonly description: string;
   readonly parameters: ToolParameters;
 }
@@ -111,6 +116,9 @@ const ACCESSIBILITY_PARAMETERS: readonly ModelParameter[] = [
     optional: true,
   },
 ];
+
+/** The names of the flat accessibility parameters, which no descriptor prop may take (§6.G.3; §12 AM-086). */
+const ACCESSIBILITY_NAMES: ReadonlySet<string> = new Set(ACCESSIBILITY_PARAMETERS.map((parameter) => parameter.name));
 
 /** The `REF:#/$defs/<Type>|<description>` marker that `commonProp` writes. */
 const REF_MARKER = /^REF:#\/\$defs\/([A-Za-z]+)(?:\|([\s\S]*))?$/;
@@ -180,20 +188,39 @@ function modelParameter(component: string, name: string, prop: z.ZodTypeAny): Mo
 }
 
 /**
- * Builds the flat literal model of a descriptor: its literal props, its dynamic props as literals, no
- * `ComponentId`, `ChildList` or `Action` prop, and `accessibility` flattened to two optional strings where the
- * descriptor takes them (§6.G.3; §10 SD47, SD48; §12 AM-069). It throws when the name or the description breaks a
- * provider-wide rule (§10 SD49).
+ * The tool description of a descriptor: its `toolDescription` when it sets one, and its agent-facing `description`
+ * otherwise (§6.G.3; §12 AM-086). It throws on an empty or whitespace-only `toolDescription`, which is a descriptor
+ * error and never falls back to `description`, and on a tool description over 1024 characters (§10 SD49).
  */
-function toolModel(descriptor: LineDescriptor): ToolModel {
-  const { name, description } = descriptor;
-  if (!TOOL_NAME.test(name)) throw new Error(`[line-genui] Tool name "${name}" does not match ${TOOL_NAME.source}.`);
+function toolDescription(descriptor: LineDescriptor): string {
+  const { name, toolDescription: override } = descriptor;
+  if (override !== undefined && override.trim() === '') {
+    throw new Error(`[line-genui] ${name}: toolDescription is empty; leave it unset to take the description.`);
+  }
+  const description = override ?? descriptor.description;
   const length = Array.from(description).length;
   if (length > MAX_DESCRIPTION_LENGTH) {
-    throw new Error(`[line-genui] ${name}: the description has ${length} characters; tools allow 1024.`);
+    throw new Error(`[line-genui] ${name}: the tool description has ${length} characters; tools allow 1024.`);
   }
+  return description;
+}
+
+/**
+ * Builds the flat literal model of a descriptor: its literal props, its dynamic props as literals, no
+ * `ComponentId`, `ChildList` or `Action` prop, and `accessibility` flattened to two optional strings where the
+ * descriptor takes them (§6.G.3; §10 SD47, SD48; §12 AM-069). It throws when the name or the tool description
+ * breaks a provider-wide rule (§10 SD49), and when a prop takes the name of a flat accessibility parameter, whether
+ * or not the tool carries them (§12 AM-086).
+ */
+function toolModel(descriptor: LineDescriptor): ToolModel {
+  const { name } = descriptor;
+  if (!TOOL_NAME.test(name)) throw new Error(`[line-genui] Tool name "${name}" does not match ${TOOL_NAME.source}.`);
+  const description = toolDescription(descriptor);
   const parameters: ModelParameter[] = [];
   for (const [prop, schema] of Object.entries(descriptor.schema.shape)) {
+    if (ACCESSIBILITY_NAMES.has(prop)) {
+      throw new Error(`[line-genui] ${name}.${prop}: the prop takes the name of a flat accessibility parameter.`);
+    }
     if (prop === 'accessibility') continue;
     const parameter = modelParameter(name, prop, schema);
     if (parameter) parameters.push(parameter);
@@ -227,7 +254,7 @@ function toolProperty(parameter: ModelParameter, provider: ToolProvider): ToolPr
 
 /** Serialises a model's parameters for `provider` (§6.G.3 provider table; §10 SD48). */
 function toolParameters(parameters: readonly ModelParameter[], provider: ToolProvider): ToolParameters {
-  const properties: Record<string, ToolProperty> = {};
+  const properties: Record<string, ToolProperty> = Object.create(null);
   for (const parameter of parameters) properties[parameter.name] = toolProperty(parameter, provider);
   const required = parameters
     .filter((parameter) => provider === 'openai' || !parameter.optional)
@@ -245,10 +272,12 @@ function toolParameters(parameters: readonly ModelParameter[], provider: ToolPro
  * with `agentExposed: true`, in the order given, and none for a descriptor with `agentExposed: false`
  * (§6.G.3; ARCH §17.3; PRD Appendix D).
  *
- * Each tool's parameters are flat and literal. A dynamic prop takes its literal type (`DynamicString` →
- * `string`), an enum stays an enum, `ComponentId`, `ChildList` and `Action` props are left out, and the
- * `accessibility` object becomes the optional strings `accessibilityLabel` and `accessibilityDescription` where
- * the surface would set it on the host (§12 AM-069). `provider` picks the serialisation:
+ * A tool's `description` is the descriptor's `toolDescription` when it sets one, and its agent-facing
+ * `description` otherwise (§12 AM-086). Each tool's parameters are flat and literal. A dynamic prop takes its
+ * literal type (`DynamicString` → `string`), an enum stays an enum, `ComponentId`, `ChildList` and `Action` props
+ * are left out, and the `accessibility` object becomes the optional strings `accessibilityLabel` and
+ * `accessibilityDescription` where the surface would set it on the host (§12 AM-069). `parameters.properties` has a
+ * null prototype. `provider` picks the serialisation:
  *
  * - `openai`: every parameter in `required`, an optional one typed `[T, "null"]` (with `null` in its enum), and
  *   `additionalProperties: false`, for `strict: true`.
@@ -258,8 +287,9 @@ function toolParameters(parameters: readonly ModelParameter[], provider: ToolPro
  * @param descriptors The component descriptors, usually `descriptors`.
  * @param provider The provider the tools are for.
  * @returns Fresh tool objects that the caller may modify.
- * @throws When a tool name does not match `^[a-zA-Z0-9_-]{1,64}$`, a description exceeds 1024 characters, or a
- *   prop has no literal form.
+ * @throws When a tool name does not match `^[a-zA-Z0-9_-]{1,64}$`, a `toolDescription` is empty or whitespace-only,
+ *   a tool description exceeds 1024 characters, a prop is named `accessibilityLabel` or `accessibilityDescription`,
+ *   or a prop has no literal form.
  */
 export function frontendTools(descriptors: readonly LineDescriptor[], provider: ToolProvider): FrontendTool[] {
   if (!TOOL_PROVIDERS.includes(provider)) {
