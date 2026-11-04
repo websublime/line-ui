@@ -24,6 +24,8 @@ import {
   iconDescriptor,
   type LineDescriptor,
   lineCatalogDocument,
+  separatorDescriptor,
+  stackDescriptor,
   TOOL_PROVIDERS,
   type ToolProvider,
 } from '../src/catalog/index.js';
@@ -64,6 +66,26 @@ function fixture(props: z.ZodRawShape): DescriptorInit<z.ZodRawShape> {
 }
 
 const ACCESSIBILITY = ['accessibilityLabel', 'accessibilityDescription'];
+
+/**
+ * The backticked names in `text` that `each` lacks as parameters: an `accessibility` member, or a prop of
+ * `descriptor` the walker left out of the tool (its `ComponentId`, `ChildList` and `Action` props). Enum values and
+ * event names name no prop, so they pass (§6.G.3 Contract; §12 AM-086).
+ */
+function lackedNames(text: string, descriptor: LineDescriptor, each: FrontendTool): string[] {
+  const carried = new Set(Object.keys(each.parameters.properties));
+  const leftOut = new Set(
+    Object.keys(descriptor.schema.shape).filter((prop) => prop !== 'accessibility' && !carried.has(prop)),
+  );
+  const names = Array.from(text.matchAll(/`([^`]+)`/g), (match) => match[1] ?? '');
+  return names.filter((name) => /^accessibility(\.|$)/.test(name) || leftOut.has(name));
+}
+
+function descriptorNamed(name: string): LineDescriptor {
+  const found = descriptors.find((candidate) => candidate.name === name);
+  if (!found) throw new Error(`no ${name} descriptor`);
+  return found;
+}
 
 /** One case per provider and tool, as `[provider, tool name]`: acceptance holds per tool (§10 SD49). */
 const CASES = TOOL_PROVIDERS.flatMap((provider) =>
@@ -288,6 +310,31 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
     const plain = defineDescriptor(fixture({}));
     expect(lineCatalogDocument([withTool(plain)])).toEqual(lineCatalogDocument([plain]));
     expect(lineCatalogDocument(descriptors.map(withTool))).toEqual(document);
+  });
+
+  test.each(CASES)('%s %s: the description names, in backticks, no parameter the tool lacks', (provider, name) => {
+    const each = tool(provider, name);
+    expect(lackedNames(each.description, descriptorNamed(name), each)).toEqual([]);
+  });
+
+  test('the guard fails on the agent-facing descriptions the three tool descriptions replace', () => {
+    for (const provider of TOOL_PROVIDERS) {
+      const lacked = (descriptor: LineDescriptor) =>
+        lackedNames(descriptor.description, descriptor, tool(provider, descriptor.name));
+      expect(lacked(buttonDescriptor)).toEqual(['child', 'accessibility.label']);
+      expect(lacked(separatorDescriptor)).toEqual(['accessibility.label', 'accessibility.label']);
+      expect(lacked(stackDescriptor)).toEqual(['children']);
+    }
+  });
+
+  test('Button, Separator and Stack emit their toolDescription in place of their description', () => {
+    for (const descriptor of [buttonDescriptor, separatorDescriptor, stackDescriptor]) {
+      expect(descriptor.toolDescription).toBeString();
+      expect(descriptor.toolDescription).not.toBe(descriptor.description);
+      for (const provider of TOOL_PROVIDERS) {
+        expect(tool(provider, descriptor.name).description).toBe(descriptor.toolDescription ?? '');
+      }
+    }
   });
 });
 
