@@ -14,7 +14,7 @@ bun add @websublime/line-genui @websublime/line-components @websublime/line-icon
 
 | Import | Exports |
 | --- | --- |
-| `@websublime/line-genui/catalog` | Descriptors, the `line` catalog emitters and the `basic` implementation map. Defines no element, and its own modules touch no DOM at load. Unbundled, the `@a2ui/web_core/v0_9` module it imports loads Lit, which touches the DOM when it loads; a bundler drops it. |
+| `@websublime/line-genui/catalog` | Descriptors, the `line` catalog emitters, the frontend-tool emitter and the `basic` implementation map. Defines no element, and its own modules touch no DOM at load. Unbundled, the `@a2ui/web_core/v0_9` module it imports loads Lit, which touches the DOM when it loads; a bundler drops it. |
 | `@websublime/line-genui/catalog.json` | The `line` catalog document, JSON (see below). |
 | `@websublime/line-genui/a2ui` | The A2UI session and `<line-a2ui-surface>`. Defines `line-a2ui-surface` and nothing else; each component loads on first use. Preview. |
 | `@websublime/line-genui/custom-elements.json` | The Custom Elements Manifest of `<line-a2ui-surface>`. |
@@ -84,6 +84,64 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 | Row, Column, List | `{ kind: 'component' }`: the Stack descriptor, `<line-stack>`, with `orientation="horizontal"`, `orientation="vertical"` and `role="list"` |
 | Divider | `{ kind: 'component' }`: the Separator descriptor, `<line-separator>` |
 | Button | `{ kind: 'component' }`: the Button descriptor, `<line-button type="button">`, so an agent Button never submits or resets a host form around the surface |
+
+## Frontend tools (`./catalog`)
+
+In the controlled tier the agent picks a component and fills its props through a tool call, and your app renders the call. `frontendTools(descriptors, provider)` emits one tool, `{ name, description, parameters }`, for each descriptor with `agentExposed: true`, and none for a descriptor with `agentExposed: false`. `name` is the catalog name, such as `Button`, and matches `^[a-zA-Z0-9_-]{1,64}$`; `description` is the descriptor's agent-facing description, at most 1024 characters. `parameters` is flat and literal: no `$ref`, `oneOf`, `allOf`, recursion, open map, A2UI common type or data binding.
+
+```ts
+import { descriptors, frontendTools } from '@websublime/line-genui/catalog';
+
+// OpenAI Responses API, strict function calling
+const openaiTools = frontendTools(descriptors, 'openai').map((tool) => ({ type: 'function', ...tool, strict: true }));
+
+// Anthropic Messages API, strict tool use
+const anthropicTools = frontendTools(descriptors, 'anthropic').map(({ name, description, parameters }) => ({
+  name,
+  description,
+  input_schema: parameters,
+  strict: true,
+}));
+
+// Gemini function calling: `parameters` is an OpenAPI 3.0.3 Schema
+const geminiTools = [{ functionDeclarations: frontendTools(descriptors, 'gemini') }];
+```
+
+| Export | What it is |
+| --- | --- |
+| `frontendTools(descriptors, provider)` | The tools of the agent-exposed descriptors, in the order given, serialised for `provider`. Returns fresh objects. Throws when a name breaks the pattern, a description exceeds 1024 characters, or a prop has no literal form |
+| `TOOL_PROVIDERS` | `['openai', 'anthropic', 'gemini']` |
+| `FrontendTool`, `ToolParameters`, `ToolProperty`, `ToolProvider`, `ToolValueType` | The types of a tool, its parameters, one parameter, the provider and a parameter's literal type |
+
+Each descriptor prop becomes a parameter as follows.
+
+| Descriptor prop | Tool parameter |
+| --- | --- |
+| `DynamicString`, `DynamicBoolean`, `DynamicNumber` | `string`, `boolean`, `number`, with the prop's description |
+| `z.enum` | A string enum, with the prop's description |
+| `ComponentId`, `ChildList`, `Action` (Button `child` and `action`, Stack `children`) | None: they carry tree structure and actions, not literal values |
+| `accessibility` | `accessibilityLabel` and `accessibilityDescription`, optional strings, on Button and Separator; Icon and Stack take neither |
+
+The provider decides how an optional parameter is written.
+
+| Provider | `parameters` |
+| --- | --- |
+| `openai` | OpenAI strict: every parameter in `required`, an optional one typed `["T", "null"]` (an optional enum also lists `null`), `additionalProperties: false` |
+| `anthropic` | Anthropic strict: optional parameters left out of `required`, `additionalProperties: false` |
+| `gemini` | The Gemini `parameters` subset of OpenAPI 3.0.3: optional parameters marked `nullable: true` and left out of `required`; no `additionalProperties`, `const`, `$ref`, `oneOf` or `allOf` |
+
+Anthropic caps one request at 20 strict tools, 24 optional parameters and 16 union-typed parameters across all strict schemas. Send fewer tools in a request whose tools exceed them.
+
+### Rendering a tool call
+
+Your app renders the call: it creates the tool's element (`descriptor.tag`, after `await descriptor.load()`) and writes each argument as the descriptor's binding map says (`descriptor.bindings.props`). Skip a `null` argument, which OpenAI sends for an unset optional parameter and Gemini may send. Apply `accessibilityLabel` and `accessibilityDescription` as `<line-a2ui-surface>` applies `accessibility.label` and `accessibility.description`, with the same exceptions:
+
+- Set `accessibilityLabel` as the host `aria-label` and `accessibilityDescription` as the host `aria-description`.
+- A value that is empty after trimming whitespace sets nothing.
+- Separator: set neither while `decorative` is true, and remove both when `decorative` turns true.
+- Icon and Stack tools carry neither parameter.
+
+A tool-created Button has no `child`, because the tool leaves it out, so `accessibilityLabel` is its route to an accessible name.
 
 ## The A2UI renderer (`./a2ui`)
 
