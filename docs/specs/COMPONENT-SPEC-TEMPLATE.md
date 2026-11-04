@@ -182,7 +182,7 @@
 | Action map | <prop → DOM event; mark a native DOM event, such as `click`, native (Phase 1 spec §6.G.1)> |
 | Accessibility requirements | <requirements the renderer validates> |
 | Agent-facing description | <at most 1024 characters> |
-| Tool description | <none, so the frontend tool takes the agent-facing description; or, when the agent-facing description names a `ComponentId`, `ChildList` or `Action` prop or an `accessibility` member, the text the tool takes instead, naming only the tool's parameters, at most 1024 characters (Phase 1 spec §6.G.1, §6.G.3)> |
+| Tool description | <none, so the frontend tool takes the agent-facing description; or, when the agent-facing description names a `ComponentId`, `ChildList` or `Action` prop or an `accessibility` member, the non-empty text the tool takes instead, which names no parameter the tool lacks, at most 1024 characters (Phase 1 spec §6.G.1, §6.G.3)> |
 | `agentExposed` | `<true \| false, with the reason>` |
 
 ### Bundle / entrypoint
