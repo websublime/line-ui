@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` |
+| Status | `approved` (Miguel, 2026-11-05) |
 | Phase | `1` |
 | Tier | `Custom` |
 | Tag | `line-icon-button` |
