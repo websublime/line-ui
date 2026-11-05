@@ -57,8 +57,8 @@ async function send(parts) {
     metadata: undefined,
   });
   // A Message reply holds its parts; a Task reply holds them in its status message.
-  const parts = 'parts' in reply ? reply.parts : (reply.status?.message?.parts ?? []);
-  const messages = parts.flatMap((part) =>
+  const replyParts = 'parts' in reply ? reply.parts : (reply.status?.message?.parts ?? []);
+  const messages = replyParts.flatMap((part) =>
     part.content?.$case === 'data' && A2UI.includes(part.metadata?.mimeType)
       ? [part.content.value].flat()
       : [],
