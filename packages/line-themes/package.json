@@ -23,7 +23,8 @@
     "./gray/*": "./dist/gray/*.css",
     "./semantics": "./dist/semantics.css",
     "./aliases": "./dist/aliases.css",
-    "./defaults": "./dist/defaults.css"
+    "./defaults": "./dist/defaults.css",
+    "./hosts/mcp-apps.css": "./dist/hosts/mcp-apps.css"
   },
   "dependencies": {
     "@websublime/line-colors": "workspace:^",
@@ -33,8 +34,8 @@
     "@websublime/line-tokens": "workspace:^"
   },
   "scripts": {
-    "build": "postcss src/index.css -o dist/index.css && postcss 'src/*.css' -d dist && postcss 'src/accent/*.css' -d dist/accent && postcss 'src/gray/*.css' -d dist/gray",
-    "dev": "trap 'kill 0' INT TERM; postcss src/index.css -o dist/index.css --watch & postcss 'src/*.css' -d dist --watch & postcss 'src/accent/*.css' -d dist/accent --watch & postcss 'src/gray/*.css' -d dist/gray --watch & wait",
+    "build": "postcss src/index.css -o dist/index.css && postcss 'src/*.css' -d dist && postcss 'src/accent/*.css' -d dist/accent && postcss 'src/gray/*.css' -d dist/gray && postcss 'src/hosts/*.css' -d dist/hosts",
+    "dev": "trap 'kill 0' INT TERM; postcss src/index.css -o dist/index.css --watch & postcss 'src/*.css' -d dist --watch & postcss 'src/accent/*.css' -d dist/accent --watch & postcss 'src/gray/*.css' -d dist/gray --watch & postcss 'src/hosts/*.css' -d dist/hosts --watch & wait",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit"
   }
