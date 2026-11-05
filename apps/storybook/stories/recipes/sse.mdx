@@ -1,0 +1,58 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as SseStories from './sse.stories';
+
+<Meta of={SseStories} />
+
+# SSE recipe
+
+This recipe renders A2UI messages that a server streams over [server-sent events](https://html.spec.whatwg.org/multipage/server-sent-events.html), with `<line-a2ui-surface>` and the browser's own `EventSource`. A2UI defines no SSE binding yet, so the recipe sets its own framing. line://ui ships no transport code.
+
+## The framing
+
+- One A2UI message travels per SSE event, as the JSON text of `data:`.
+- The stream ends with a named `end` event. `EventSource` reconnects whenever the server closes the stream, so the client closes it on `end`.
+- The A2UI client capabilities travel in the query string, because `EventSource` sends no body and no custom header.
+- A Button action goes back as a POST of the A2UI `action` message as JSON.
+- A `line-a2ui-error` goes back as a POST of the A2UI `error` message as JSON.
+
+```
+GET /a2ui/stream?capabilities=%7B%22v0.9%22%3A…%7D
+Accept: text/event-stream
+
+data: {"version":"v0.9.1","createSurface":{"surfaceId":"main","catalogId":"…"}}
+
+data: {"version":"v0.9.1","updateComponents":{"surfaceId":"main","components":[…]}}
+
+event: end
+data: {}
+```
+
+```ts
+const capabilities = {
+  'v0.9': {
+    supportedCatalogIds: [
+      'https://line-ui.websublime.com/a2ui/catalogs/line/v1/catalog.json',
+      'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
+    ],
+  },
+};
+
+const url = new URL('/a2ui/stream', location.href);
+url.searchParams.set('capabilities', JSON.stringify(capabilities));
+const source = new EventSource(url);
+source.addEventListener('message', (event) => void surface.feed([JSON.parse(event.data)]));
+source.addEventListener('end', () => source.close());
+
+const post = (message) =>
+  fetch('/a2ui/inbox', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(message) });
+surface.addEventListener('line-a2ui-action', (event) => post(event.detail));
+surface.addEventListener('line-a2ui-error', (event) => post(event.detail));
+```
+
+## The story
+
+The deployed Storybook is static, so a Service Worker plays the server. The story registers `sse-recipe-sw.js` from the Storybook root; the worker answers the recipe's `GET …/sse-recipe/stream` with `text/event-stream` and its POSTs to `…/sse-recipe/inbox`, and lets every other request through. A Service Worker is the server-side stand-in that serves the native `EventSource` in Chromium, Firefox and WebKit alike: a `blob:` URL fails in Firefox, and a `data:` URL works only in Chromium.
+
+Press **Save** or **Like** to POST an action. **Ask for an A2UI v0.8 update** opens a stream that sends a message the surface rejects, and the recipe POSTs the error.
+
+<Canvas of={SseStories.EventStream} />

@@ -1,0 +1,58 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as McpStories from './mcp.stories';
+
+<Meta of={McpStories} />
+
+# MCP recipe
+
+This recipe renders the A2UI surfaces an [MCP](https://modelcontextprotocol.io) server returns from a tool call, with `<line-a2ui-surface>`. line://ui ships no transport code: your app owns the MCP client.
+
+## Inbound
+
+A2UI arrives only as a tool-result `EmbeddedResource`: an item `{ "type": "resource", "resource": { … } }` of the result `content` whose `resource.mimeType` is `application/a2ui+json` and whose `resource.text` holds the JSON array of A2UI messages. The result also carries a `TextContent` fallback for hosts that do not render A2UI, and `annotations.audience: ["user"]` keeps the JSON away from the model.
+
+The `_meta.ui.resourceUri` key belongs to MCP Apps, whose resources use the `ui://` scheme and the MIME type `text/html;profile=mcp-app`. The recipe does not point at A2UI templates through it.
+
+## Outbound
+
+- A Button action is a `tools/call` of `a2ui_action`. Its arguments are the five fields of the A2UI `action` message: `name`, `surfaceId`, `sourceComponentId`, `timestamp` and `context`. Declare all five on the server, so an SDK does not strip them.
+- A `line-a2ui-error` is a `tools/call` of `a2ui_error`, with the fields of the A2UI `error` message: `code`, `surfaceId`, `message` and, when the error has one, `path`.
+- The A2UI client capabilities travel in `_meta.a2ui.clientCapabilities` on every call.
+
+With the MCP TypeScript SDK v2:
+
+```ts
+import { Client, StreamableHTTPClientTransport } from '@modelcontextprotocol/client';
+
+const client = new Client({ name: 'inbox-app', version: '1.0.0' });
+await client.connect(new StreamableHTTPClientTransport(new URL('https://agent.example/mcp')));
+
+const capabilities = {
+  'v0.9': {
+    supportedCatalogIds: [
+      'https://line-ui.websublime.com/a2ui/catalogs/line/v1/catalog.json',
+      'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
+    ],
+  },
+};
+
+async function call(name, args) {
+  const result = await client.callTool({ name, arguments: args, _meta: { a2ui: { clientCapabilities: capabilities } } });
+  const messages = result.content.flatMap((item) =>
+    item.type === 'resource' && item.resource.mimeType === 'application/a2ui+json'
+      ? JSON.parse(item.resource.text)
+      : [],
+  );
+  if (messages.length > 0) await surface.feed(messages);
+}
+
+surface.addEventListener('line-a2ui-action', (event) => call('a2ui_action', event.detail.action));
+surface.addEventListener('line-a2ui-error', (event) => call('a2ui_error', event.detail.error));
+await call('show_inbox', {});
+```
+
+## The story
+
+The story imports no MCP SDK. Its client and an in-memory server pass JSON-RPC 2.0 requests and responses to each other as JSON, in the page, and the wire log shows each one. Press **Save** or **Like** to call `a2ui_action`; the server answers with a new title. **Ask for an A2UI v0.8 update** makes the server return a message the surface rejects, and the recipe calls `a2ui_error`.
+
+<Canvas of={McpStories.ToolResult} />

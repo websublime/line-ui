@@ -1,0 +1,94 @@
+import { Canvas, Meta } from '@storybook/addon-docs/blocks';
+import * as A2aStories from './a2a.stories';
+
+<Meta of={A2aStories} />
+
+# A2A recipe
+
+This recipe renders the A2UI surfaces an [A2A](https://a2a-protocol.org) agent sends, with `<line-a2ui-surface>`. It targets A2A v1.0 with `@a2a-js/sdk` 1.3.0. line://ui ships no transport code: your app owns the A2A client.
+
+## Inbound
+
+A2UI travels in a DataPart whose part `metadata.mimeType` is `application/a2ui+json`. Upstream does not agree on what one part holds. The A2UI v0.9.1 A2A extension says `data` is an array of messages; the A2UI protocol text and both reference agents send one message per part, and the Python agent still writes the older `application/json+a2ui` for v0.8 and v0.9. So the recipe accepts:
+
+- an array of messages or a single message per DataPart;
+- `application/a2ui+json` and `application/json+a2ui`.
+
+It feeds every A2UI message of one reply to the surface as one batch, in order.
+
+## Outbound
+
+The recipe sends only `application/a2ui+json`, always as an array:
+
+- a Button action as `[action]`, the `action` message of `line-a2ui-action`;
+- a `line-a2ui-error` as `[error]`, the `error` message the surface raised. The A2UI v0.9.1 A2A extension requires `data` to be an array of messages.
+
+The A2UI client capabilities travel in the message metadata, `message.metadata.a2uiClientCapabilities`, on every message.
+
+```ts
+import { Role } from '@a2a-js/sdk';
+import { ClientFactory } from '@a2a-js/sdk/client';
+
+const client = await new ClientFactory().createFromUrl('https://agent.example');
+const capabilities = {
+  'v0.9': {
+    supportedCatalogIds: [
+      'https://line-ui.websublime.com/a2ui/catalogs/line/v1/catalog.json',
+      'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
+    ],
+  },
+};
+const A2UI = ['application/a2ui+json', 'application/json+a2ui'];
+
+async function send(parts) {
+  const reply = await client.sendMessage({
+    tenant: '',
+    message: {
+      messageId: crypto.randomUUID(),
+      contextId: '',
+      taskId: '',
+      role: Role.ROLE_USER,
+      parts,
+      metadata: { a2uiClientCapabilities: capabilities },
+      extensions: [],
+      referenceTaskIds: [],
+    },
+    configuration: undefined,
+    metadata: undefined,
+  });
+  // A Message reply holds its parts; a Task reply holds them in its status message.
+  const replyParts = 'parts' in reply ? reply.parts : (reply.status?.message?.parts ?? []);
+  const messages = replyParts.flatMap((part) =>
+    part.content?.$case === 'data' && A2UI.includes(part.metadata?.mimeType)
+      ? [part.content.value].flat()
+      : [],
+  );
+  if (messages.length > 0) await surface.feed(messages);
+}
+
+const a2uiPart = (message) => ({
+  content: { $case: 'data', value: [message] },
+  metadata: { mimeType: 'application/a2ui+json' },
+  filename: '',
+  mediaType: '',
+});
+
+surface.addEventListener('line-a2ui-action', (event) => send([a2uiPart(event.detail)]));
+surface.addEventListener('line-a2ui-error', (event) => send([a2uiPart(event.detail)]));
+```
+
+On the wire, `@a2a-js/sdk` 1.3.0 speaks A2A v1.0 JSON-RPC: the method is `SendMessage`, the request carries `A2A-Version: 1.0`, and a DataPart is `{ "data": […], "metadata": { "mimeType": "application/a2ui+json" } }` with no `kind`.
+
+## The stories
+
+The deployed Storybook is static, so the stories give the client a `fetchImpl` that answers from an in-memory A2A v1.0 agent, the SDK's own `DefaultRequestHandler` and `JsonRpcTransportHandler` running in the page. Every request and response still crosses the JSON-RPC wire as JSON; the wire log shows each one.
+
+An agent that answers with one `application/a2ui+json` DataPart holding every message:
+
+<Canvas of={A2aStories.ArrayDataPart} />
+
+An agent that answers with one `application/json+a2ui` DataPart per `v0.9` message, as the Python agent does:
+
+<Canvas of={A2aStories.SingleMessageDataParts} />
+
+Press **Save** or **Like** to send an `[action]`; the agent answers with a new title. **Ask for an A2UI v0.8 update** makes the agent answer with a message the surface rejects, and the recipe sends the `[error]` back.

@@ -1,0 +1,89 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Recipes/MCP Apps View" />
+
+# Loading line://ui into an MCP Apps View
+
+An [MCP Apps](https://github.com/modelcontextprotocol/ext-apps) View is one HTML document, of MIME type `text/html;profile=mcp-app`, that the host renders in a sandboxed iframe from a `ui://` resource. line://ui works unchanged inside it, `<line-a2ui-surface>` included, once two things hold: the lazy component chunks load, and the View takes the host's theme.
+
+The host's default Content Security Policy allows inline script and inline style only:
+
+```
+default-src 'none';
+script-src 'self' 'unsafe-inline';
+style-src 'self' 'unsafe-inline';
+img-src 'self' data:;
+media-src 'self' data:;
+connect-src 'none';
+```
+
+Inside the View, `'self'` is the sandbox origin, which serves no line://ui files, and `data:` and `blob:` imports are blocked. Each component loads on first use through a lazy `import()`, so those chunks must either sit inside the one HTML file or come from an origin the View declares.
+
+## First choice: one inlined file
+
+Build the View with [`vite-plugin-singlefile`](https://www.npmjs.com/package/vite-plugin-singlefile). It turns code splitting off, so every lazy `load()` chunk folds into the one module that the plugin inlines into `index.html`.
+
+```ts
+// vite.config.ts
+import { defineConfig } from 'vite';
+import { viteSingleFile } from 'vite-plugin-singlefile';
+
+export default defineConfig({ plugins: [viteSingleFile()] });
+```
+
+The plugin's README warns that some apps still end up with chunks it did not inline. Check that the build output is one HTML file and nothing else before you serve it as the `ui://` resource.
+
+## Alternative: a CDN in `resourceDomains`
+
+The server can list a CDN origin in the resource's `_meta.ui.csp.resourceDomains`. The host adds it to `script-src`, `style-src`, `img-src`, `font-src` and `media-src`, and the View imports line://ui from it with full subpath URLs that name one exact version.
+
+```ts
+// Server: the ui:// resource that holds the View
+{
+  uri: 'ui://inbox/view',
+  mimeType: 'text/html;profile=mcp-app',
+  text: viewHtml,
+  _meta: { ui: { csp: { resourceDomains: ['https://cdn.jsdelivr.net'] } } },
+}
+```
+
+```html
+<script type="module">
+  // <version>: one exact version, the same in every @websublime/* URL of the View.
+  import 'https://cdn.jsdelivr.net/npm/@websublime/line-genui@<version>/a2ui/+esm';
+</script>
+```
+
+## Fonts
+
+The default policy has no `font-src`, so a font falls back to `default-src 'none'` and does not load. Server authors list every font origin in `resourceDomains`: the origin of your own fonts, and the origins that the host's `styles.css.fonts` CSS points at.
+
+## Theme: `mcp-apps.css` and the ext-apps helpers
+
+`@websublime/line-themes/hosts/mcp-apps.css` maps the standard MCP Apps host style variables onto line://ui theme aliases and tokens. Load it after the `line-themes` CSS:
+
+```css
+@import '@websublime/line-themes';
+@import '@websublime/line-themes/hosts/mcp-apps.css';
+```
+
+The View applies the host context with the ext-apps 2.x SDK. Import it from `@modelcontextprotocol/ext-apps/app-with-deps`: that entry bundles its Zod 4 and MCP client dependencies, while the main entry needs them as peers and pulls Zod 4 into an app that runs Zod 3.
+
+```ts
+import { App, applyDocumentTheme, applyHostStyleVariables } from '@modelcontextprotocol/ext-apps/app-with-deps';
+
+const app = new App({ name: 'Inbox', version: '1.0.0' }, {});
+
+function applyHostContext(context) {
+  // Sets each host variable as a custom property on <html>, where mcp-apps.css reads it.
+  if (context?.styles?.variables) applyHostStyleVariables(context.styles.variables);
+  // Sets data-theme and color-scheme on <html>, so light-dark() follows the host theme.
+  if (context?.theme) applyDocumentTheme(context.theme);
+}
+
+app.onhostcontextchanged = applyHostContext;
+await app.connect();
+applyHostContext(app.getHostContext());
+```
+
+A variable the host leaves unset keeps the line://ui value.

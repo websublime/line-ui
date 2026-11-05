@@ -1,0 +1,105 @@
+import { Canvas, Controls, Meta } from '@storybook/addon-docs/blocks';
+import * as AgUiStories from './ag-ui.stories';
+
+<Meta of={AgUiStories} />
+
+# AG-UI recipe
+
+This recipe renders the A2UI surfaces an [AG-UI](https://docs.ag-ui.com) 1.0 agent sends, with `<line-a2ui-surface>`. line://ui ships no transport code: your app owns the AG-UI client, and the surface takes A2UI messages in and raises `line-a2ui-action` and `line-a2ui-error` out.
+
+## The server convention
+
+The agent runs behind `@ag-ui/a2ui-middleware`, pinned exactly at **0.0.13**, the npm `latest` on 2026-10-20. The middleware injects a `render_a2ui` tool, streams the tool arguments, and emits each surface as `ACTIVITY_SNAPSHOT` events with `activityType: "a2ui-surface"`, `replace: true` and one `messageId` per tool call. The content of each snapshot is a lifecycle `status` first, then `a2ui_operations`.
+
+Set `defaultCatalogId` to the A2UI basic catalog id. When nothing names a catalog, the middleware falls back to `https://a2ui.org/specification/v0_9/basic_catalog.json`, which is not the basic catalog id the surface registers, so the surface would not render.
+
+```ts
+// Server. "@ag-ui/a2ui-middleware": "0.0.13" (exact), "@ag-ui/client": "1.0.3", "rxjs": "7.8.1"
+import { A2UIMiddleware } from '@ag-ui/a2ui-middleware';
+
+agent.use(
+  new A2UIMiddleware({
+    injectA2UITool: true,
+    defaultCatalogId: 'https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json',
+  }),
+);
+```
+
+The middleware is server code. It imports Node's `crypto` and the CommonJS-only `clarinet`, so it does not run fully in a browser. The stories on this page run an in-browser mock producer instead, an `AbstractAgent` that emits the snapshots the middleware 0.0.13 emits for the same `render_a2ui` call. A Bun test runs the pinned middleware and checks that it emits the mock's `building` → operations sequence.
+
+## The client
+
+```ts
+import { HttpAgent } from '@ag-ui/client';
+
+const agent = new HttpAgent({ url: 'https://agent.example/ag-ui' });
+const created = new Set();
+
+const subscriber = {
+  onActivitySnapshotEvent({ event }) {
+    if (event.activityType !== 'a2ui-surface') return; // tolerate other activity types
+    const { content } = event;
+    if (Array.isArray(content.a2ui_operations)) {
+      showStatus(null);
+      surface.inert = false;
+      // Every snapshot repeats createSurface; drop it once the surface exists.
+      const operations = content.a2ui_operations.filter((op) => {
+        const id = op.createSurface?.surfaceId;
+        if (id === undefined) return true;
+        if (created.has(id)) return false;
+        created.add(id);
+        return true;
+      });
+      void surface.feed(operations);
+    } else if (content.status === 'building' || content.status === 'retrying') {
+      showStatus(content);
+    } else if (content.status === 'failed') {
+      showStatus(null);
+      surface.inert = true;
+    }
+  },
+};
+
+const run = (forwardedProps) => {
+  // Strip activity messages from the history you send back (AG-UI 1.0).
+  agent.setMessages(agent.messages.filter((message) => message.role !== 'activity'));
+  return agent.runAgent(forwardedProps ? { forwardedProps } : {}, subscriber);
+};
+
+surface.addEventListener('line-a2ui-action', (event) => {
+  void run({ a2uiAction: { userAction: event.detail.action } });
+});
+surface.addEventListener('line-a2ui-error', (event) => {
+  console.info('line-a2ui-error, not sent: AG-UI has no error channel', event.detail);
+});
+```
+
+## The lifecycle states
+
+The recipe maps the `status` of each snapshot. It never writes `aria-busy`: the surface sets it while each batch of messages settles. "Inert" is the HTML `inert` attribute on the surface host.
+
+| Producer `status` | Recipe effect |
+|---|---|
+| `building`, `retrying` | A recipe-owned status line outside the surface shows the state |
+| `failed` | The recipe sets `inert` on the surface host |
+| Next operations snapshot | The recipe removes the status line and `inert` |
+
+Pick a scenario below, or set **step** to `manual` and release one snapshot at a time with **Next event**.
+
+<Canvas of={AgUiStories.Building} />
+
+<Controls of={AgUiStories.Building} />
+
+A first attempt the middleware rejected, then a valid one:
+
+<Canvas of={AgUiStories.Retrying} />
+
+A generation that failed, then a new render. The middleware's type declarations define `failed`; no probe observed a snapshot after it, so the mock's following operations snapshot is an assumption.
+
+<Canvas of={AgUiStories.Failed} />
+
+## Actions and errors
+
+A Button action goes out as `forwardedProps.a2uiAction.userAction` on the next run. Its fields are those of the A2UI `action` message: `name`, `surfaceId`, `sourceComponentId`, `timestamp` and `context`. The middleware turns it into a `log_a2ui_event` tool call and result in the agent's history.
+
+`line-a2ui-error` has nowhere to go. AG-UI and `@ag-ui/a2ui-middleware` define no error channel, so the recipe logs the error locally and sends nothing. Revisit this when a middleware release ships an error path. **Ask for an A2UI v0.8 update** makes the mock send an operation the surface rejects, so the wire log shows the error kept on the page.
