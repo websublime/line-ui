@@ -1,6 +1,6 @@
-// A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The C1–C4 render
-// fixture: Button, Icon, Separator and Stack through both catalogs. Each C5–C20 row that is agent-exposed adds
-// its component here and to the surface axe test (§6.C.6).
+// A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
+// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5) through the `line` catalog.
+// Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
 export type A2uiMessage = Record<string, unknown>;
@@ -51,7 +51,7 @@ export const basicShowcase: A2uiMessage[] = [
   data('/title', showcaseData.title),
 ];
 
-/** The `line` catalog: Stack, Button, Icon and Separator under the `line` id. */
+/** The `line` catalog: Stack, Button, Icon, Separator and IconButton under the `line` id. */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
   components([
@@ -61,7 +61,7 @@ export const lineShowcase: A2uiMessage[] = [
       orientation: 'horizontal',
       align: 'center',
       gap: '2',
-      children: ['home', 'sep', 'send', 'glyph'],
+      children: ['home', 'sep', 'send', 'glyph', 'close'],
     },
     {
       id: 'home',
@@ -75,6 +75,15 @@ export const lineShowcase: A2uiMessage[] = [
     { id: 'sep', component: 'Separator', orientation: 'vertical', decorative: true },
     { id: 'send', component: 'Button', variant: 'primary', accessibility: { label: 'Send' }, action: event('send') },
     { id: 'glyph', component: 'Icon', path: 'M12 2 L22 22 L2 22 Z' },
+    {
+      id: 'close',
+      component: 'IconButton',
+      variant: 'borderless',
+      child: 'closeIcon',
+      accessibility: { label: 'Close' },
+      action: event('close'),
+    },
+    { id: 'closeIcon', component: 'Icon', path: 'M6 6 L18 18 M18 6 L6 18' },
   ]),
 ];
 
