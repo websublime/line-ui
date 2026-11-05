@@ -1,12 +1,8 @@
 import '@websublime/line-genui/a2ui';
 
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
-import { setIconRegistry } from '@websublime/line-components';
 import { type LineA2uiSurface, Session } from '@websublime/line-genui/a2ui';
-import { IconRegistry } from '@websublime/line-icons';
 import { a2uiIconMap } from '@websublime/line-icons/a2ui';
-import { createLucideResolver } from '@websublime/line-icons/resolvers/lucide';
-import { createPhosphorResolver } from '@websublime/line-icons/resolvers/phosphor';
 import { extractArgTypes } from '../components/manifest-arg-types.js';
 import {
   type A2uiMessage,
@@ -18,15 +14,13 @@ import {
   rtlShowcase,
   SURFACE_ID,
 } from './a2ui-fixtures.js';
+import { registerStoryIcons } from './story-icons.js';
 
 // <line-a2ui-surface> stories (Phase 1 spec §6.G.4). Each story renders one A2UI message stream through a
 // fresh Session. No story imports a line-components subpath: the surface loads each component on first use.
 // The icon files are self-hosted under public/icons/, so the stories make no third-party request.
 
-const registry = new IconRegistry();
-registry.register('lucide', createLucideResolver({ base: './icons/lucide/' }));
-registry.register('phosphor', createPhosphorResolver({ base: './icons/phosphor/' }));
-setIconRegistry(registry);
+registerStoryIcons();
 
 const DESCRIPTION = `\`<line-a2ui-surface>\` renders an [A2UI](https://a2ui.org) v0.9.1 surface with line://ui components, in its light DOM, so document \`::part()\` rules reach every rendered element. **Preview**: \`@websublime/line-genui/a2ui\` may change in any minor release until it targets A2UI v1.0.
 

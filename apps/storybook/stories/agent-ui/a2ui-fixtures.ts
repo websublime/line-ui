@@ -21,28 +21,34 @@ const text = (id: string, value: unknown, extra: A2uiMessage = {}) => ({
 });
 const event = (name: string, context: A2uiMessage = {}) => ({ event: { name, context } });
 
+/** The component list of {@link basicShowcase}: Text, Row, Column, Divider, Icon and two Buttons with actions. */
+export const showcaseComponents: A2uiMessage[] = [
+  { id: 'root', component: 'Column', align: 'start', children: ['title', 'intro', 'rule', 'actions'] },
+  text('title', { path: '/title' }, { variant: 'h2' }),
+  text('intro', 'A basic catalog stream, rendered with line://ui components.'),
+  { id: 'rule', component: 'Divider' },
+  { id: 'actions', component: 'Row', align: 'center', children: ['save', 'split', 'like'] },
+  {
+    id: 'save',
+    component: 'Button',
+    variant: 'primary',
+    child: 'saveLabel',
+    action: event('save', { title: { path: '/title' } }),
+  },
+  text('saveLabel', 'Save'),
+  { id: 'split', component: 'Divider', axis: 'vertical' },
+  { id: 'like', component: 'Button', child: 'likeIcon', accessibility: { label: 'Like' }, action: event('like') },
+  { id: 'likeIcon', component: 'Icon', name: 'favorite' },
+];
+
+/** The data model of {@link basicShowcase}: the title the `title` Text binds. */
+export const showcaseData = { title: 'Inbox' };
+
 /** The A2UI basic catalog: Text, Row, Column, Divider, Icon and Button, with a bound title and an action. */
 export const basicShowcase: A2uiMessage[] = [
   create(BASIC_CATALOG_ID),
-  components([
-    { id: 'root', component: 'Column', align: 'start', children: ['title', 'intro', 'rule', 'actions'] },
-    text('title', { path: '/title' }, { variant: 'h2' }),
-    text('intro', 'A basic catalog stream, rendered with line://ui components.'),
-    { id: 'rule', component: 'Divider' },
-    { id: 'actions', component: 'Row', align: 'center', children: ['save', 'split', 'like'] },
-    {
-      id: 'save',
-      component: 'Button',
-      variant: 'primary',
-      child: 'saveLabel',
-      action: event('save', { title: { path: '/title' } }),
-    },
-    text('saveLabel', 'Save'),
-    { id: 'split', component: 'Divider', axis: 'vertical' },
-    { id: 'like', component: 'Button', child: 'likeIcon', accessibility: { label: 'Like' }, action: event('like') },
-    { id: 'likeIcon', component: 'Icon', name: 'favorite' },
-  ]),
-  data('/title', 'Inbox'),
+  components(showcaseComponents),
+  data('/title', showcaseData.title),
 ];
 
 /** The `line` catalog: Stack, Button, Icon and Separator under the `line` id. */
@@ -123,3 +129,9 @@ export const rtlShowcase: A2uiMessage[] = [
     text('label', 'رجوع'),
   ]),
 ];
+
+/**
+ * An A2UI v0.8 envelope, as an agent on the older protocol sends it. The surface applies nothing and raises
+ * `UNSUPPORTED_MESSAGE`.
+ */
+export const v08Envelope: A2uiMessage = { surfaceUpdate: { surfaceId: SURFACE_ID, components: [] } };
