@@ -94,13 +94,17 @@ describe('<line-icon-button> defaults and reflection', () => {
     el.disabled = true;
     el.loading = true;
     el.pressed = true;
+    el.ariaLabel = 'Preferences';
     el.ariaDescription = 'Opens the settings';
     await el.updateComplete;
     expect(el.getAttribute('variant')).toBe('primary');
     expect(el.hasAttribute('disabled')).toBe(true);
     expect(el.hasAttribute('loading')).toBe(true);
     expect(el.getAttribute('pressed')).toBe('true');
+    expect(el.getAttribute('aria-label')).toBe('Preferences');
     expect(el.getAttribute('aria-description')).toBe('Opens the settings');
+    expect(root(el).getAttribute('aria-label')).toBe('Preferences');
+    expect(root(el).getAttribute('aria-description')).toBe('Opens the settings');
   });
 
   test('the inner button stays type="button" whatever the host carries', async () => {
