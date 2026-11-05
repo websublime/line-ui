@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `draft` (not approved; Open Questions D1–D6 wait for Miguel) |
+| Status | `proposed` |
 | Phase | `1` |
 | Tier | `Custom` |
 | Tag | `line-icon-button` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C5` |
 | Governing sections | Phase 1 spec §4.2, §6.C.0, §6.C.4 (C5 row and notes), §6.C.5 (Button, IconButton), §6.C.6, §6.G.1, §6.G.2, §6.G.3, §6.G.4 (Accessibility, Basic mapping), §6.G.5, §7.3, §7.4, §7.5, §7.6, §7.8, §10 SD18, SD31, SD35, SD36, SD39, SD82, SD98, SD99, §12 AM-002, AM-020 (L3R14-06), AM-055, AM-056, AM-058, AM-067, AM-068, AM-069, AM-070, AM-086; ARCH §5, §7, §12, §13.1, §13.5, §14.7–§14.9, §17.2–§17.4; PRD §4.1, §5.2, §8 |
 
-Text marked `[PENDING Dn]` follows the recommended default of Open Question Dn and changes if Miguel picks another option. Text marked `[INFERENCE]` has no probe or source behind it yet.
+Text marked `[INFERENCE]` has no probe or source behind it yet.
 
 ---
 
@@ -22,14 +22,14 @@ Text marked `[PENDING Dn]` follows the recommended default of Open Question Dn a
 
 #### Description
 
-`<line-icon-button>` runs an action when the user activates it, and shows only an icon. It renders a native `<button>` inside its shadow root, so the platform keeps its keyboard, focus and accessibility behaviour (Phase 1 spec §10 SD31). It has no visible text, so its accessible name comes from the author: the host `aria-label` is copied to the inner button (ARCH §17.2 C5; PRD §4.1 "Requires accessible label for screen readers", `docs/PRD.md:245`) `[PENDING D1]`. It runs on the same press machine as `<line-button>`, imported from `src/shared/button-machine.ts`, and never imports Button (ARCH §13.1, `docs/ARCHITECTURE.md:585`; Phase 1 spec §6.C.5). It is not form-associated: its inner button is always `type="button"`, so it never submits or resets a form (Phase 1 spec §10 SD36). The icon arrives through the default slot, because a component never imports another to compose its children (MANIFESTO Law 4, `docs/MANIFESTO.md:45`) `[PENDING D2]`. It carries no visual opinion beyond its `--line-icon-button-*` tokens, which resolve through the theme roles (PRD §9.11) `[PENDING D6]`.
+`<line-icon-button>` runs an action when the user activates it, and shows only an icon. It renders a native `<button>` inside its shadow root, so the platform keeps its keyboard, focus and accessibility behaviour (Phase 1 spec §10 SD31). It has no visible text, so its accessible name comes from the author: the host `aria-label` is copied to the inner button (ARCH §17.2 C5; PRD §4.1 "Requires accessible label for screen readers", `docs/PRD.md:245`; decision D1). It runs on the same press machine as `<line-button>`, imported from `src/shared/button-machine.ts`, and never imports Button (ARCH §13.1, `docs/ARCHITECTURE.md:585`; Phase 1 spec §6.C.5). It is not form-associated: its inner button is always `type="button"`, so it never submits or resets a form (Phase 1 spec §10 SD36). The icon arrives through the default slot, because a component never imports another to compose its children (MANIFESTO Law 4, `docs/MANIFESTO.md:45`; decision D2). It carries no visual opinion beyond its `--line-icon-button-*` tokens, which resolve through the theme roles (PRD §9.11; decision D6).
 
 #### Use cases
 
 - Run an action from a compact control whose meaning the icon carries, such as close, settings, more or delete.
-- Toggle an on/off option from an icon, such as mute or bold, with `pressed` `[PENDING D3]`.
-- Show that an action is running, with `loading` and a spinner in the `loading` slot `[PENDING D3]`.
-- Render an agent `IconButton` node from the `line` catalog on `<line-a2ui-surface>` (ARCH §17.3; Phase 1 spec §6.C.4 C5 row, `agentExposed: true`) `[PENDING D4]`.
+- Toggle an on/off option from an icon, such as mute or bold, with `pressed` (decision D3).
+- Show that an action is running, with `loading` and a spinner in the `loading` slot (decision D3).
+- Render an agent `IconButton` node from the `line` catalog on `<line-a2ui-surface>` (ARCH §17.3; Phase 1 spec §6.C.4 C5 row, `agentExposed: true`; decision D4).
 
 #### Anti-patterns
 
@@ -46,8 +46,8 @@ Text marked `[PENDING Dn]` follows the recommended default of Open Question Dn a
 - Enter and Space activate it, and Tab reaches it unless it is disabled (APG Button, R8 `docs/research/01-research-accessibility.md:65-66`).
 - A screen reader announces its name and the `button` role, though no text is visible.
 - A disabled icon button cannot be focused or pressed.
-- A loading icon button stays in the tab order, is announced as unavailable, and ignores presses (Phase 1 spec §10 SD35) `[PENDING D3]`.
-- A toggle icon button announces its pressed state and flips it on each press `[PENDING D3]`.
+- A loading icon button stays in the tab order, is announced as unavailable, and ignores presses (Phase 1 spec §10 SD35).
+- A toggle icon button announces its pressed state and flips it on each press.
 - Inside a form, activating it never submits or resets the form (Phase 1 spec §10 SD36).
 - A `<fieldset disabled>` ancestor does not disable it, unlike a native button, because only a form-associated custom element receives `formDisabledCallback` and IconButton is not one (Phase 1 spec §10 SD36) [INFERENCE: not probed; Tests, Browser row].
 
@@ -55,16 +55,14 @@ Text marked `[PENDING Dn]` follows the recommended default of Open Question Dn a
 
 | Component | Relation | Connects through |
 |-----------|----------|------------------|
-| `<line-icon>` | child | the default slot `[PENDING D2]`; IconButton never imports Icon (MANIFESTO Law 4; Phase 1 spec §6.C.6 "Import no other component", `docs/specs/01-spec-core-primitives.md:1228`) |
-| `<line-spinner>` | child | the `loading` slot (ARCH §13.5) `[PENDING D3]` |
+| `<line-icon>` | child | the default slot (decision D2); IconButton never imports Icon (MANIFESTO Law 4; Phase 1 spec §6.C.6 "Import no other component", `docs/specs/01-spec-core-primitives.md:1228`) |
+| `<line-spinner>` | child | the `loading` slot (ARCH §13.5; decision D3) |
 | `<line-button>` | sibling | the shared machine module `src/shared/button-machine.ts`; neither component imports the other (ARCH §13.1; Phase 1 spec §6.C.5, `:1203`; §12 AM-002) |
 | `<line-button-group>` | parent | the group's default slot; the group discovers its buttons through `slotchange` and imports no button (Phase 1 spec §6.C.5 ButtonGroup). Whether the group's roving focus covers slotted `line-icon-button` hosts is for spec `0004-button-group.md`, whose probe runs on `line-button` hosts (Phase 1 spec §10 SD10) [INFERENCE] |
 | native `<form>` | none | not form-associated; the inner button is `type="button"` and has no form owner (Phase 1 spec §10 SD36; ARCH §7 list unchanged, `docs/ARCHITECTURE.md:386`) |
-| `<line-a2ui-surface>` | orchestrator | creates `line-icon-button` by tag from a `line` catalog `IconButton` node, puts the `child` Icon in the default slot, maps `action` to `click`, sets `accessibility.label` as the host `aria-label`, and renders a placeholder and raises `line-a2ui-error` for a node with no name (ARCH §17.4; Phase 1 spec §6.C.5, §6.G.4 Accessibility) `[PENDING D1, D2, D4]` |
+| `<line-a2ui-surface>` | orchestrator | creates `line-icon-button` by tag from a `line` catalog `IconButton` node, puts the `child` Icon in the default slot, maps `action` to `click`, sets `accessibility.label` as the host `aria-label`, and renders a placeholder and raises `line-a2ui-error` for a node with no name (ARCH §17.4; Phase 1 spec §6.C.5, §6.G.4 Accessibility; decisions D1, D2, D4) |
 
 ### Variants
-
-`[PENDING D3, D6]`
 
 | Attribute | Values | Use when |
 |-----------|--------|----------|
@@ -86,15 +84,15 @@ Text marked `[PENDING Dn]` follows the recommended default of Open Question Dn a
 └── #shadow-root
     └── <button part="root" type="button">       role button; aria-label, aria-description, aria-pressed, aria-disabled, disabled
         ├── <span part="icon"><slot></slot></span>
-        └── <span part="loading">                rendered only while loading           [PENDING D3]
+        └── <span part="loading">                rendered only while loading
             └── <slot name="loading">
 ```
 
 - The inner `<button>` is always `type="button"` (Phase 1 spec §6.C.5, `:1202`; §10 SD36). It sits in the shadow tree, so it has no form owner, and the host is not form-associated, so nothing acts on a form.
 - The role sits on the inner native `<button>` (Phase 1 spec §6.C.4 C5 row, "Inner native `<button>` (§10 SD31)").
 - The host extends `LineElement` without the `FormAssociated` mixin (Phase 1 spec §6.C.2, "Only §7 components opt in", `:987`). `LineElement` still attaches `ElementInternals`, so `reflectState` writes `data-*` and `:state()` (ARCH §14.8, `docs/ARCHITECTURE.md:1178`; Phase 1 spec §10 SD19).
-- The `icon` part takes its name from the ARCH §5 vocabulary (`docs/ARCHITECTURE.md:303`) `[PENDING D2]`.
-- Content in the `loading` slot is not rendered and not in the accessibility tree while `loading` is off, because its slot is absent (`0002-button.md` Anatomy) `[PENDING D3]`.
+- The `icon` part takes its name from the ARCH §5 vocabulary (`docs/ARCHITECTURE.md:303`; decision D2).
+- Content in the `loading` slot is not rendered and not in the accessibility tree while `loading` is off, because its slot is absent (`0002-button.md` Anatomy).
 
 ### States
 
@@ -111,8 +109,8 @@ The states and transitions are the machine's (`button-machine.ts:46-89`); IconBu
 
 | Flag | Source | Host reflection |
 |------|--------|-----------------|
-| `pressed` | `pressed` prop is `true` `[PENDING D3]` | `data-pressed`, `:state(pressed)` |
-| `loading` | `loading` prop `[PENDING D3]` | `data-loading`, `:state(loading)` |
+| `pressed` | `pressed` prop is `true` | `data-pressed`, `:state(pressed)` |
+| `loading` | `loading` prop | `data-loading`, `:state(loading)` |
 | `disabled` | `disabled` prop only; no `fieldset` source, because IconButton is not form-associated (Phase 1 spec §10 SD36) | `data-disabled`, `:state(disabled)` |
 | `focus-visible` | machine context `focusVisible`, set when the inner button matches `:focus-visible` on focus | `data-focus-visible`, `:state(focus-visible)` (ARCH §14.9) |
 
@@ -125,8 +123,8 @@ The states and transitions are the machine's (`button-machine.ts:46-89`); IconBu
 
 | Slot | Kind | Accepts |
 |------|------|---------|
-| `(default)` | `ComponentId` | the icon, usually one `<line-icon>`; the A2UI `child` `[PENDING D2]` |
-| `loading` | `ComponentId` | a spinner, loading text or both; rendered only while `loading` is on; hand-written markup only, outside the descriptor slot map, as on Button (`0002-button.md` AM-005) `[PENDING D3]` |
+| `(default)` | `ComponentId` | the icon, usually one `<line-icon>`; the A2UI `child` (decision D2) |
+| `loading` | `ComponentId` | a spinner, loading text or both; rendered only while `loading` is on; hand-written markup only, outside the descriptor slot map, as on Button (`0002-button.md` AM-005; decision D3) |
 
 - A `<line-icon>` with no `aria-label` is decorative and hidden through its internals (`0014-icon.md` decision D1), so the icon never names the button. The name comes only from the sources in A11y.
 
@@ -135,12 +133,12 @@ The states and transitions are the machine's (`button-machine.ts:46-89`); IconBu
 | Part | Element | Purpose |
 |------|---------|---------|
 | `root` | `<button>` | the control: square box, background, border, focus ring |
-| `icon` | `<span>` | wraps the default slot `[PENDING D2]` |
-| `loading` | `<span>` | wraps the `loading` slot; present only while `loading` is on (ARCH §5, `:314`; §13.5) `[PENDING D3]` |
+| `icon` | `<span>` | wraps the default slot (decision D2) |
+| `loading` | `<span>` | wraps the `loading` slot; present only while `loading` is on (ARCH §5, `:314`; §13.5) |
 
 ### Props
 
-`[PENDING D1, D3]`
+Decisions D1 and D3 set this table.
 
 | Property | Attribute | Type | Default | Reflects | Description |
 |----------|-----------|------|---------|----------|-------------|
@@ -157,7 +155,7 @@ The states and transitions are the machine's (`button-machine.ts:46-89`); IconBu
 
 ### Events
 
-`[PENDING D3]`
+Decision D3 keeps `pressed`, so IconButton fires one event.
 
 | Event | `detail` type | Fires when |
 |-------|---------------|------------|
@@ -172,7 +170,7 @@ The states and transitions are the machine's (`button-machine.ts:46-89`); IconBu
 
 ### CSS custom properties
 
-`[PENDING D6]`
+Decision D6 sets these tokens and the square box.
 
 | Property | Default | Used by part |
 |----------|---------|--------------|
@@ -196,11 +194,11 @@ The states and transitions are the machine's (`button-machine.ts:46-89`); IconBu
 | `Space` | enters `active` on keydown and activates on keyup |
 | `Enter` / `Space` while loading | no activation and no `active` state |
 
-On a toggle icon button, activation flips `pressed` and fires `line-change` `[PENDING D3]`. The keys are those of the APG Button pattern (R8 `:65-66`), handled by the native button; the host listens to `keydown` and `keyup` only to drive `active` (`button.ts:306-312`).
+On a toggle icon button, activation flips `pressed` and fires `line-change`. The keys are those of the APG Button pattern (R8 `:65-66`), handled by the native button; the host listens to `keydown` and `keyup` only to drive `active` (`button.ts:306-312`).
 
 ### A11y
 
-`[PENDING D1]`
+Decision D1 sets the name sources.
 
 | Field | Value |
 |-------|-------|
@@ -211,10 +209,10 @@ On a toggle icon button, activation flips `pressed` and fires `line-change` `[PE
 
 - **Name check.** TypeScript cannot check the name in markup or on elements the surface creates by tag, so the check is split (ARCH §13.1, `:585`; Phase 1 spec §10 SD36; R8 `:302-304`, `:349-350` Q12). On hand-written markup the axe gate catches a missing name through `button-name` on the inner native `<button>` (Phase 1 spec §6.C.5, `:1201`; R8 `:198`, probe P1; R2 `docs/research/01-research-projection-technique.md:162`, §6 Q5 `:299`). On the agent path the descriptor marks the name required and the surface refuses a nameless node before render (Phase 1 spec §6.C.5, `:1200`; §10 SD82). axe's naming rules apply because the role is on an inner native element (Phase 1 spec §7.4, `:2125`).
 - **Host.** The host stays a role-less `generic` element and keeps the author's `aria-label`. Chromium exposes it as a named `generic` node, and axe-core 4.14.0 reports no violation for that case (R8 `:156-159`, `:199`; `0002-button.md` A11y).
-- **Why not host `aria-labelledby` today.** An `aria-labelledby` ID in the document does not reach an element inside the shadow root, and one copied inside cannot reach a light-DOM id, so copying the attribute leaves the inner button unnamed (R8 `:130-132`). Element reflection, `button.ariaLabelledByElements = [element]` set from inside, names it in Chromium and reads back in all three engines (R8 `:135-137`, `:204`, probe P5 `:264`). Open Question D1 weighs that route.
-- **Loading.** With the name taken from `aria-label`, content in the `loading` slot does not join the name, because `aria-label` wins over content in the name computation [INFERENCE: accname rule, not probed here]. A consumer who wants the loading state announced changes `aria-label` while loading `[PENDING D3]`. An unannounced loading change is a known risk, as on Button (`0002-button.md` A11y; R7 `:208-209`).
-- **Toggle label.** A toggle keeps one label in both states, because `aria-pressed` carries the state [INFERENCE: APG Button pattern guidance, https://www.w3.org/WAI/ARIA/apg/patterns/button/, not quoted in R8] `[PENDING D3]`.
-- **Internals proof (AM-058).** IconButton sets no role or ARIA state through `ElementInternals`; its internals carry only the custom states of `reflectState`. The Chromium CDP accessibility-tree assertion and `INTERNALS` read-back that Phase 1 spec §6.C.4 requires for internals-only roles therefore do not apply (Phase 1 spec `:1180`; §10 SD39; §12 AM-058). If D1 picks option (b), the Browser tier adds a Chromium CDP assertion of the name that `ariaLabelledByElements` gives, because axe does not check an element-reflection name path [INFERENCE: R8 `:204` shows axe 4.14.0 silent on that fixture].
+- **No host `aria-labelledby`.** An `aria-labelledby` ID in the document does not reach an element inside the shadow root, and one copied inside cannot reach a light-DOM id, so copying the attribute leaves the inner button unnamed (R8 `:130-132`). Element reflection, `button.ariaLabelledByElements = [element]` set from inside, names it in Chromium and reads back in all three engines (R8 `:135-137`, `:204`, probe P5 `:264`). Decision D1 keeps Button parity and leaves that route out; an author who labels by a visible element repeats its text in `aria-label`.
+- **Loading.** With the name taken from `aria-label`, content in the `loading` slot does not join the name, because `aria-label` wins over content in the name computation [INFERENCE: accname rule, not probed here]. A consumer who wants the loading state announced changes `aria-label` while loading. An unannounced loading change is a known risk, as on Button (`0002-button.md` A11y; R7 `:208-209`).
+- **Toggle label.** A toggle keeps one label in both states, because `aria-pressed` carries the state [INFERENCE: APG Button pattern guidance, https://www.w3.org/WAI/ARIA/apg/patterns/button/, not quoted in R8].
+- **Internals proof (AM-058).** IconButton sets no role or ARIA state through `ElementInternals`; its internals carry only the custom states of `reflectState`. The Chromium CDP accessibility-tree assertion and `INTERNALS` read-back that Phase 1 spec §6.C.4 requires for internals-only roles therefore do not apply (Phase 1 spec `:1180`; §10 SD39; §12 AM-058).
 - **Screen-reader check.** A Playwright `ariaSnapshot` in the Browser tier, in chromium, firefox and webkit, records one `button` node with the expected name and pressed state per host, as Button's does (`0002-button.md` A11y; `packages/line-components/__tests__/integration/button/button.e2e.ts:456-479`). Playwright computes the snapshot itself, so it does not show what each engine exposes. A manual screen-reader pass is optional and never blocks the row (Phase 1 spec §12 AM-058).
 - **Firefox and WebKit gap.** No check above proves what Firefox and WebKit expose to assistive technology for the inner button's copied name and pressed state; the gap is recorded here (Phase 1 spec §6.C.4 notes, `:1180`; §12 AM-058).
 
@@ -224,15 +222,15 @@ On a toggle icon button, activation flips `pressed` and fires `line-change` `[PE
 
 | Rule | Summary | How this component meets it |
 |------|---------|-----------------------------|
-| C1 | Public inputs are JSON-serialisable attributes or properties | every prop is a string enum, a boolean, an optional boolean or a string `[PENDING D1, D3]` |
-| C2 | Slots carry `@slot` and a single or multiple classification | `@slot` for the default and `loading` slots; both `ComponentId` (Slots table) `[PENDING D2, D3]` |
-| C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | `@fires line-change` with `{ value: boolean }`; no unprefixed `input` or `change` `[PENDING D3]` |
+| C1 | Public inputs are JSON-serialisable attributes or properties | every prop is a string enum, a boolean, an optional boolean or a string |
+| C2 | Slots carry `@slot` and a single or multiple classification | `@slot` for the default and `loading` slots; both `ComponentId` (Slots table) |
+| C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | `@fires line-change` with `{ value: boolean }`; no unprefixed `input` or `change` |
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated (Phase 1 spec §10 SD36) |
-| C5 | The host accepts an accessible name and applies it to the element with the role | host `aria-label` and `aria-description` are copied to the inner `<button>` `[PENDING D1]` |
-| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `variant` is `default`, `primary` or `borderless`; a value the author or code sets is reflected and the default leaves no attribute; `primary` and `borderless` redeclare the defaults of `--line-icon-button-bg` and `--line-icon-button-color` on `:host` and add no other rule `[PENDING D3, D6]` |
+| C5 | The host accepts an accessible name and applies it to the element with the role | host `aria-label` and `aria-description` are copied to the inner `<button>` (decision D1) |
+| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `variant` is `default`, `primary` or `borderless`; a value the author or code sets is reflected and the default leaves no attribute; `primary` and `borderless` redeclare the defaults of `--line-icon-button-bg` and `--line-icon-button-color` on `:host` and add no other rule (decisions D3, D6) |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries every tag for each slot, part, token and event; nothing is deprecated |
 | C8 | Missing or partial props degrade to an empty or neutral state | with no attributes and no content it renders an empty, unnamed `type="button"` inner button with no host `variant` attribute; unknown `variant` values behave as `default` and keep the author's attribute. axe reports the missing name on such markup, which is the SD36 catch, not a crash |
-| C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | value-bearing, because the binding map names `pressed` as the value prop; `line-change` is its one commit event and fires once per flip `[PENDING D3]` |
+| C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | value-bearing, because the binding map names `pressed` as the value prop; `line-change` is its one commit event and fires once per flip |
 
 #### Inputs outside the prop schema (C1)
 
@@ -242,7 +240,7 @@ On a toggle icon button, activation flips `pressed` and fires `line-change` `[PE
 
 #### Descriptor fields
 
-`[PENDING D1, D2, D3, D4]`
+Decisions D1–D4 set these fields.
 
 | Field | Value |
 |-------|-------|
@@ -259,10 +257,10 @@ On a toggle icon button, activation flips `pressed` and fires `line-change` `[PE
 | `agentExposed` | `true` (Phase 1 spec §6.C.4 C5 row) |
 
 - The agent-facing description names `child` (a `ComponentId`) and `accessibility.label`, so the descriptor sets the tool description, which names neither (Phase 1 spec §6.G.3, `:1423`; §12 AM-086). Both texts stay under the 1024-character cap (Phase 1 spec §6.G.3, `:1422`).
-- The frontend tool carries `variant`, `disabled`, `loading`, `pressed`, and the optional `accessibilityLabel` and `accessibilityDescription`, because `hostNaming` is `always` (`packages/line-genui/src/catalog/tools.ts:140-148`, `:228`; Phase 1 spec §6.G.3, `:1405`; §12 AM-069). The walker drops `child`, so a tool-created icon button has no icon, and the tool schema keeps `accessibilityLabel` optional, so the schema does not enforce the required name; the app renders a tool call (PRD Appendix D, Tiers). Open Questions D1 and D2 weigh both.
+- The frontend tool carries `variant`, `disabled`, `loading`, `pressed`, and the optional `accessibilityLabel` and `accessibilityDescription`, because `hostNaming` is `always` (`packages/line-genui/src/catalog/tools.ts:140-148`, `:228`; Phase 1 spec §6.G.3, `:1405`; §12 AM-069). The walker drops `child`, so a tool-created icon button has no icon, and the tool schema keeps `accessibilityLabel` optional, so the schema does not enforce the required name; the app renders a tool call (PRD Appendix D, Tiers). Decisions D1 (a) and D2 (a) accept both limits, over a required tool name (D1 (d)) and an agent `icon` prop (D2 (b)).
 - The surface checks `requiredName` before render. A node with no label renders `[data-line-a2ui-placeholder="missing-name"]` and raises one `line-a2ui-error` with code `MISSING_ACCESSIBLE_NAME`; a label still pending keeps the node hidden without an error (`packages/line-genui/src/a2ui/projection.ts:345-353`, `:366-380`; Phase 1 spec §6.G.4 Errors, `:1487`; §10 SD82).
 - The surface sets no `type` on `line-icon-button`: the inner button is always `type="button"` and the host has no `type`, `name` or `value`, so the AM-081 rule for `line-button` has nothing to force here (Phase 1 spec §6.G.4 Button, `:1541-1545`; §10 SD36).
-- Catalog membership: the `line` catalog only. The `basic` map keeps A2UI `Button` → `line-button` and gains no route to `line-icon-button` (ARCH §17.3 table, `docs/ARCHITECTURE.md:1602`; Phase 1 spec §6.G.2, `:1389`; `packages/line-genui/src/catalog/basic.ts:122-125`) `[PENDING D4]`. The descriptor joins the `descriptors` array in catalog-name order (`packages/line-genui/src/catalog/index.ts:97-102`).
+- Catalog membership: the `line` catalog only (decision D4). The `basic` map keeps A2UI `Button` → `line-button` and gains no route to `line-icon-button` (ARCH §17.3 table, `docs/ARCHITECTURE.md:1602`; Phase 1 spec §6.G.2, `:1389`; `packages/line-genui/src/catalog/basic.ts:122-125`). The descriptor joins the `descriptors` array in catalog-name order (`packages/line-genui/src/catalog/index.ts:97-102`).
 - C5 ships its descriptor in the same PR (Phase 1 spec §6.C.0 step 3, `:927`).
 
 ### Bundle / entrypoint
@@ -287,7 +285,7 @@ On a toggle icon button, activation flips `pressed` and fires `line-change` `[PE
   <line-icon library="lucide" name="settings"></line-icon>
 </line-icon-button>
 
-<!-- Variants [PENDING D3] -->
+<!-- Variants -->
 <line-icon-button variant="primary" aria-label="Add item">
   <line-icon library="lucide" name="plus"></line-icon>
 </line-icon-button>
@@ -300,19 +298,19 @@ On a toggle icon button, activation flips `pressed` and fires `line-change` `[PE
   <line-icon library="lucide" name="trash-2"></line-icon>
 </line-icon-button>
 
-<!-- Loading, with a consumer-supplied spinner [PENDING D3] -->
+<!-- Loading, with a consumer-supplied spinner -->
 <line-icon-button loading aria-label="Refreshing">
   <line-icon library="lucide" name="refresh-cw"></line-icon>
   <line-spinner slot="loading"></line-spinner>
 </line-icon-button>
 
-<!-- Toggle [PENDING D3] -->
+<!-- Toggle -->
 <line-icon-button pressed="false" aria-label="Mute">
   <line-icon library="lucide" name="volume-x"></line-icon>
 </line-icon-button>
 ```
 
-A `line` catalog node pair that the surface renders as the borderless example above, once `iconMap` maps `close` (`packages/line-icons/src/a2ui/sets.ts:33`) `[PENDING D2, D4]`:
+A `line` catalog node pair that the surface renders as the borderless example above, once `iconMap` maps `close` (`packages/line-icons/src/a2ui/sets.ts:33`):
 
 ```json
 [
@@ -326,10 +324,10 @@ A `line` catalog node pair that the surface renders as the borderless example ab
 
 | Tier | Runner | Covers |
 |------|--------|--------|
-| Unit | `bun test` on happy-dom | render with no errors; prop defaults and reflection, with no host `variant` attribute for a default; the `pressed` and `variant` converters; an unknown `variant` in the initial markup keeping the author's attribute; `data-*` and `:state()` reflection through the fake internals; `line-change` once per toggle activation and never on a property or attribute change; guards blocking activation while `disabled` or `loading`; `aria-label`, `aria-description`, `aria-pressed` and `aria-disabled` on the inner button; the inner button always `type="button"`; no `formAssociated` on the class; the `icon` and `loading` parts; the default and `loading` slots; the token defaults on `:host`; the C8 empty render; the machine-failure fallback render; `manifest-paths.test.ts` stays green with the new declaration (Phase 1 spec §6.C.6 stream acceptance) `[PENDING D1, D2, D3, D6]` |
-| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | Tab order with `disabled` and `loading`; Enter and Space activation; `data-active` on pointer and keys; `data-focus-visible` on keyboard focus only; no `click` reaching host listeners while `disabled` or `loading`; `preventDefault()` on `click` cancelling a toggle flip; an icon button inside a `<form>` submits and resets nothing; the `<fieldset disabled>` behaviour, recorded as found [INFERENCE until run]; the `ariaSnapshot` check (A11y); if D1 picks (b), the `aria-labelledby` name through a Chromium CDP `Accessibility.getPartialAXTree` assertion and an `ariaLabelledByElements` read-back in all three engines (Phase 1 spec §7.8, `:2180`; §10 SD99) |
+| Unit | `bun test` on happy-dom | render with no errors; prop defaults and reflection, with no host `variant` attribute for a default; the `pressed` and `variant` converters; an unknown `variant` in the initial markup keeping the author's attribute; `data-*` and `:state()` reflection through the fake internals; `line-change` once per toggle activation and never on a property or attribute change; guards blocking activation while `disabled` or `loading`; `aria-label`, `aria-description`, `aria-pressed` and `aria-disabled` on the inner button; the inner button always `type="button"`; no `formAssociated` on the class; the `icon` and `loading` parts; the default and `loading` slots; the token defaults on `:host`; the C8 empty render; the machine-failure fallback render; `manifest-paths.test.ts` stays green with the new declaration (Phase 1 spec §6.C.6 stream acceptance) |
+| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | Tab order with `disabled` and `loading`; Enter and Space activation; `data-active` on pointer and keys; `data-focus-visible` on keyboard focus only; no `click` reaching host listeners while `disabled` or `loading`; `preventDefault()` on `click` cancelling a toggle flip; an icon button inside a `<form>` submits and resets nothing; the `<fieldset disabled>` behaviour, recorded as found [INFERENCE until run]; the `ariaSnapshot` check (A11y) (Phase 1 spec §7.8, `:2180`; §10 SD99) |
 | A11y | axe-core | zero violations (MANIFESTO Law 3) in every IconButton story: default, `primary`, `borderless`, disabled, loading with the `loading` slot, toggle off and on (Phase 1 spec §7.4, `:2118-2119`). A negative fixture built with `page.setContent()`, a `<line-icon-button>` with a decorative `<line-icon>` and no name, must report `button-name`, so the gate is proved to catch the hand-written case (Phase 1 spec §6.C.5, `:1201`; pattern of `packages/line-components/__tests__/a11y/axe-gate.e2e.ts:1-12`) |
-| htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `[PENDING D5]` (a) `n/a`: IconButton is not form-associated, and its value prop `pressed` never enters form data. (b) `hx-trigger="line-change"` on `<line-icon-button pressed="false" aria-label="Mute">` sends one request per click. (c) focus and hover send no request. (d) server content swapped into the default slot renders, and the inner button keeps the host `aria-label` as its name (plan §2.4, `docs/plans/01-plan-core-primitives.md:171-174`; ARCH §17.2 C9; pattern of `packages/line-components/__tests__/integration/button/button.htmx.e2e.ts`) |
+| htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | The harness runs (decision D5). Check (a), form value: `n/a`, because IconButton is not form-associated and its value prop `pressed` never enters form data. Check (b), one request per commit: `hx-trigger="line-change"` on `<line-icon-button pressed="false" aria-label="Mute">` sends one request per click. Check (c), no request without a commit: focus and hover send none. Check (d), slot swap: server content swapped into the default slot renders, and the inner button keeps the host `aria-label` as its name (plan §2.4, `docs/plans/01-plan-core-primitives.md:171-174`; ARCH §17.2 C9; pattern of `packages/line-components/__tests__/integration/button/button.htmx.e2e.ts`) |
 | Visual | Playwright `icon-button.visual.ts` on the `visual` project | every IconButton story, with Linux baselines from a `visual-baselines.yml` run; the `default`, `primary` and `borderless` baselines differ from each other (Phase 1 spec §6.C.6, `:1233`; §10 SD98) |
 | Update rate | `measureHostUpdates` from `@websublime/line-testing/update-rate` on a connected `<line-icon-button>`, driven by flipping `pressed` | the rate is recorded in the C5 PR; a rate past the C21 budget, `UPDATE_BUDGET_MS` (1 ms per host update) at `BUDGET_UPDATES` (3,600 accumulated updates), stops the row and returns it to the orchestrator (`packages/line-testing/src/update-rate.ts:31`, `:50`; Phase 1 spec §6.C.6, `:1232`; §10 SD18; §12 AM-055; pattern of `packages/line-components/__tests__/button.update-rate.test.ts`) |
 | Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a `line` catalog `IconButton` node with no `accessibility.label`, and one with `" "`, renders the `missing-name` placeholder and raises one `MISSING_ACCESSIBLE_NAME` `line-a2ui-error` (Phase 1 spec §6.C.5 acceptance, `:1204`; §6.G.4, `:1586`, `:1589`; §12 AM-020, L3R14-06); a named node renders `<line-icon-button aria-label="…">` with its `line-icon` child in the default slot and raises `line-a2ui-action` on click; the node joins the surface render fixture (`apps/storybook/stories/agent-ui/a2ui-fixtures.ts`) and the surface axe test with zero violations (Phase 1 spec §6.C.6, `:1231`; §6.G.4, `:1556`) |
@@ -338,7 +336,7 @@ A `line` catalog node pair that the surface renders as the borderless example ab
 
 - PRD §5.2 checklist mapping (`docs/PRD.md:531-540`; Phase 1 spec §6.C.6, `:1222`): (1) render, (2) reactive props, (3) slots, (4) parts, (5) custom properties and (6) events in the Unit tier; (7) keyboard in the Browser tier (§10 SD99); (8) axe in the A11y tier.
 - The axe and visual tests run against the Storybook stories on port 4320 (Phase 1 spec §6.P.7, §6.P.11). The story list lives in `packages/line-components/__tests__/icon-button-stories.ts`, as `button-stories.ts` does for Button. The keyboard, form and htmx tests use fixture pages under `packages/line-components/__tests__/integration/icon-button/`, served by the existing port-4321 `webServer` (`playwright.config.ts:25`).
-- The C5 PR also fills the IconButton row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs and adds a changeset (Phase 1 spec §6.C.6, `:1223-1226`); this draft does not.
+- The C5 PR also fills the IconButton row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs and adds a changeset (Phase 1 spec §6.C.6, `:1223-1226`).
 
 ---
 
@@ -346,14 +344,14 @@ A `line` catalog node pair that the surface renders as the borderless example ab
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| D1 | Which name sources does IconButton accept, on markup and on the agent path? (Phase 1 spec §6.C.4 C5 row, "Name sources it accepts") | Miguel | open; recommended default: option (a) |
-| D2 | How does the icon reach IconButton, given MANIFESTO Law 4? | Miguel | open; recommended default: option (a) |
-| D3 | Which Button props carry over? | Miguel | open; recommended default: option (a) |
-| D4 | Does the `basic` catalog route any A2UI basic type to `line-icon-button`? | Miguel | open; recommended default: option (a) |
-| D5 | Does the htmx row run, or is it `n/a`? | Miguel | open; recommended default: option (a), which follows D3 (a) |
-| D6 | Which CSS custom properties does IconButton expose, and how is it square? | Miguel | open; recommended default: option (a) |
+| D1 | Which name sources does IconButton accept, on markup and on the agent path? (Phase 1 spec §6.C.4 C5 row, "Name sources it accepts") | Miguel | resolved: option (a), Button parity: the host `aria-label` and `aria-description` are copied to the inner button, with no `aria-labelledby` and no `label` property, and the descriptor requires `accessibilityLabel` only (Miguel, 2026-11-05) |
+| D2 | How does the icon reach IconButton, given MANIFESTO Law 4? | Miguel | resolved: option (a), the default slot inside `part="icon"`; on the agent path `child` names an Icon node (Miguel, 2026-11-05) |
+| D3 | Which Button props carry over? | Miguel | resolved: option (a), `variant`, `disabled`, `loading` (with the `loading` slot and part) and `pressed`; no form props and no size prop (Miguel, 2026-11-05) |
+| D4 | Does the `basic` catalog route any A2UI basic type to `line-icon-button`? | Miguel | resolved: option (a), no; IconButton is in the `line` catalog only, and basic `Button` stays `line-button` (Miguel, 2026-11-05) |
+| D5 | Does the htmx row run, or is it `n/a`? | Miguel | resolved: option (a), the harness runs; check (a) is `n/a`, and checks (b), (c) and (d) run as the Tests htmx row states (Miguel, 2026-11-05) |
+| D6 | Which CSS custom properties does IconButton expose, and how is it square? | Miguel | resolved: option (a), its own `--line-icon-button-*` tokens, with the square from `--line-icon-button-size` as `min-inline-size` and `min-block-size` (square sub-choice (i)) (Miguel, 2026-11-05) |
 
-The recommended defaults are the orchestrator's drafting choices for Miguel's review; the body follows them where marked `[PENDING Dn]`.
+Miguel decided D1–D6 on 2026-11-05, each on the option the draft recommended. The option tables below stay as the record of what he weighed.
 
 ### D1 — Name sources
 
@@ -361,7 +359,7 @@ Evidence: C5 lets the host accept `aria-label` and `aria-description` "or a docu
 
 | Option | Markup path | Agent path | Tradeoff |
 |---|---|---|---|
-| (a) **Recommended default.** Button parity | host `aria-label` and `aria-description`, copied to the inner button | `requiredName: [{ kind: 'accessibilityLabel' }]` | Proven in three engines through Button; no new code path; one name API across Button and IconButton. Authors who label by a visible element (`aria-labelledby`) must repeat the text in `aria-label` |
+| (a) **Chosen** (Miguel, 2026-11-05). Button parity | host `aria-label` and `aria-description`, copied to the inner button | `requiredName: [{ kind: 'accessibilityLabel' }]` | Proven in three engines through Button; no new code path; one name API across Button and IconButton. Authors who label by a visible element (`aria-labelledby`) must repeat the text in `aria-label` |
 | (b) (a) plus host `aria-labelledby` | (a), and the host resolves its `aria-labelledby` ids in its root node (`getRootNode()`) and sets `ariaLabelledByElements` on the inner button | as (a); A2UI has no labelled-by input | Matches R8 `:66` and the `aria-labelledby` support Icon and Separator have on their hosts. Costs id resolution on attribute change and on connect, misses an element added after resolution unless the host observes the tree [INFERENCE], adds a Chromium CDP Browser test, and Firefox and WebKit naming stays unverified (R8 P5 read back only). axe treatment of `aria-labelledby` on the generic host is not probed |
 | (c) (a) plus a `label` attribute | a `label` string property rendered as the inner `aria-label`, documented as C5's label property | either keep `accessibilityLabel` only, or add a `label` `DynamicString` prop with a new `NameSource` kind | Gives a name API that does not look like ARIA. Two attributes name the same thing, and Button has no `label`. The agent variant needs a descriptor API change (`descriptor.ts:128-130`) and a surface change (`projection.ts:366-380`), so Phase 1 spec §6.G.1 and §6.G.4 AMs, and the tool would carry both `label` and `accessibilityLabel` |
 | (d) (a) plus a required tool name | as (a) | as (a), and the IconButton tool marks `accessibilityLabel` required | Closes the gap where a tool-created IconButton has no enforced name. Needs a G3 emitter change and a Phase 1 spec §6.G.3 AM, because the walker emits the accessibility parameters as optional for every tool (`:1405`) |
@@ -372,7 +370,7 @@ Evidence: MANIFESTO Law 4 bars a component from importing another to compose its
 
 | Option | Shape | Tradeoff |
 |---|---|---|
-| (a) **Recommended default.** Default slot | one default slot, `ComponentId`, wrapped in `part="icon"`; the agent `child` (`ComponentId`) names an Icon node, which the surface puts in the default slot | Same wiring as Button's `child` (`descriptors/button.ts:29`, `:32`); no API change. An agent can name any component as `child`, not only an Icon [INFERENCE: `ComponentId` carries no type constraint]. A tool-created icon button has no icon, as a tool-created Button has no text (`0002-button.md` Descriptor fields) |
+| (a) **Chosen** (Miguel, 2026-11-05). Default slot | one default slot, `ComponentId`, wrapped in `part="icon"`; the agent `child` (`ComponentId`) names an Icon node, which the surface puts in the default slot | Same wiring as Button's `child` (`descriptors/button.ts:29`, `:32`); no API change. An agent can name any component as `child`, not only an Icon [INFERENCE: `ComponentId` carries no type constraint]. A tool-created icon button has no icon, as a tool-created Button has no text (`0002-button.md` Descriptor fields) |
 | (b) Default slot plus an agent `icon` name | (a) on markup; the descriptor adds an `icon` `DynamicString` (an A2UI icon name), and the surface creates a `<line-icon>` from `iconMap` and slots it into the host | The surface composes, so Law 4 holds, and the tool gains an `icon` parameter. Needs a new binding kind that creates a child, G1 and G4 AMs, and a CEM drift rule for a prop that names no element member (ARCH `:1581`). Two agent routes to one icon (`child` and `icon`) |
 | (c) An `icon` attribute rendered inside | `<line-icon-button icon="settings">` renders `<line-icon>` in its shadow root | Not viable: it composes a child by component, which Law 4 and the §6.C.6 obligation forbid. Listed so the ban is on record |
 
@@ -382,7 +380,7 @@ Evidence: the shared machine already takes `disabled`, `loading` and `pressed` (
 
 | Option | Props | Tradeoff |
 |---|---|---|
-| (a) **Recommended default.** Full parity minus form | `variant`, `disabled`, `loading` (with the `loading` slot and part, `aria-disabled`, consumer loading content), `pressed` (toggle, `aria-pressed`, `line-change`, value prop); no `type`, `name`, `value`, `form*`, `custom-validity`; no size or shape prop | One mental model across Button and IconButton; icon toggles (mute, bold) are covered. Value-bearing, so C9 and the htmx row apply. A spinner beside the icon breaks the square unless the consumer hides `::part(icon)` while `[data-loading]` |
+| (a) **Chosen** (Miguel, 2026-11-05). Full parity minus form | `variant`, `disabled`, `loading` (with the `loading` slot and part, `aria-disabled`, consumer loading content), `pressed` (toggle, `aria-pressed`, `line-change`, value prop); no `type`, `name`, `value`, `form*`, `custom-validity`; no size or shape prop | One mental model across Button and IconButton; icon toggles (mute, bold) are covered. Value-bearing, so C9 and the htmx row apply. A spinner beside the icon breaks the square unless the consumer hides `::part(icon)` while `[data-loading]` |
 | (b) Without `pressed` | `variant`, `disabled`, `loading` | Not value-bearing: no `line-change`, htmx `n/a`. Icon toggles go to Button with `pressed` and an icon in its default slot, which needs the same `aria-label` |
 | (c) Without `loading` | `variant`, `disabled`, `pressed` | No loading slot or part in a square box. A consumer who swaps the icon for a spinner and sets `disabled` loses focus, against the SD35 "stays focusable" rule for Button |
 | (d) Minimal | `disabled` only | Smallest surface. No variant tokens (C6 not used), no toggle, no loading; agents lose the emphasis hints Button carries |
@@ -393,7 +391,7 @@ Evidence: ARCH §17.3 maps A2UI basic `Button` to `<line-button>` and lists no I
 
 | Option | Routing | Tradeoff |
 |---|---|---|
-| (a) **Recommended default.** `line` catalog only | IconButton is a `line` catalog component; basic `Button` stays `line-button` | No ARCH, Phase 1 spec or `basic.ts` change; basic agents keep a working, name-checked icon-only Button. Basic agents never get IconButton's square tokens or `icon` part |
+| (a) **Chosen** (Miguel, 2026-11-05). `line` catalog only | IconButton is a `line` catalog component; basic `Button` stays `line-button` | No ARCH, Phase 1 spec or `basic.ts` change; basic agents keep a working, name-checked icon-only Button. Basic agents never get IconButton's square tokens or `icon` part |
 | (b) Route basic `Button` with an `Icon` child | basic `Button` whose resolved `child` is an `Icon` renders `line-icon-button` | Basic agents get the dedicated component. Needs an ARCH §17.3 table change and a Phase 1 spec §6.G.2 AM, a child-dependent `BasicTarget` shape, and a rule for a `child` still pending (`projection.ts:161-162`), whose type is unknown at first render; a later tag switch replaces the element and can lose focus [INFERENCE: the reconciler keys by `instanceId`, not by tag]. A2UI's basic `variant` enum has no icon value to route on instead, and line does not re-emit the basic schema (Phase 1 spec `:1371`) |
 
 ### D5 — htmx row
@@ -402,8 +400,8 @@ Evidence: the htmx row applies to value-bearing or compound components (plan §2
 
 | Option | Row | Tradeoff |
 |---|---|---|
-| (a) **Recommended default** (follows D3 (a)). Run the harness | (a) `n/a`, not form-associated and `pressed` never enters form data; (b) one request per `line-change`; (c) none on focus or hover; (d) a swapped icon renders and the name stays | Proves the commit event in both htmx majors and the slot swap. One more e2e file and fixture page |
-| (b) `n/a` | `n/a`: neither value-bearing nor compound | Valid only if D3 drops `pressed` or the binding map names no value prop. Otherwise it breaks plan §2.4 and C9 |
+| (a) **Chosen** (Miguel, 2026-11-05). Run the harness | Harness check (a), form value, is `n/a`: IconButton is not form-associated and `pressed` never enters form data. Checks (b) one request per `line-change`, (c) no request on focus or hover, and (d) a swapped icon renders and the name stays, all run | Proves the commit event in both htmx majors and the slot swap. One more e2e file and fixture page |
+| (b) Mark the row `n/a` | The whole row `n/a`: neither value-bearing nor compound | Valid only if D3 drops `pressed` or the binding map names no value prop. Otherwise it breaks plan §2.4 and C9 |
 
 ### D6 — CSS custom properties and square sizing
 
@@ -411,10 +409,10 @@ Evidence: C6 lets a variant change only "the component's own `--line-{component}
 
 | Option | Tokens | Tradeoff |
 |---|---|---|
-| (a) **Recommended default.** Own tokens | `--line-icon-button-radius`, `-bg`, `-color`, `-size`, `-font-size`, `-focus-ring`, with Button's defaults; the square from `-size` as `min-inline-size` and `min-block-size` with no inline padding | Meets C6 and §14.9 as written; one theme rule styles each component. A consumer who restyles both buttons sets two token families |
+| (a) **Chosen** (Miguel, 2026-11-05). Own tokens | `--line-icon-button-radius`, `-bg`, `-color`, `-size`, `-font-size`, `-focus-ring`, with Button's defaults; the square from `-size` as `min-inline-size` and `min-block-size` with no inline padding | Meets C6 and §14.9 as written; one theme rule styles each component. A consumer who restyles both buttons sets two token families |
 | (b) Own tokens that fall back to Button's | as (a), each default written as `var(--line-button-…, <Button default>)` | A consumer sets `--line-button-*` once on an ancestor and both follow. Couples IconButton's API to Button's token names, and the fallback only sees ancestor values, not `line-button`'s own `:host` defaults [INFERENCE] |
 | (c) Reuse `--line-button-*` | IconButton reads `--line-button-*` directly | Fewest tokens. Conflicts with C6 ("own tokens") and §14.9 naming, so it needs an ARCH change; the variant redeclaration would write Button's tokens on IconButton's host |
-| Square sub-choice | (i) `min-*` sizes, content may grow (recommended within (a)); (ii) fixed `inline-size` and `block-size`, content may overflow; (iii) a padding token around the icon, square only when the icon is | (i) keeps the square for any icon up to the box and never clips; (ii) guarantees the box; (iii) follows the icon size and leaves squareness to the content |
+| Square sub-choice | (i) `min-*` sizes, content may grow (chosen within (a), Miguel, 2026-11-05); (ii) fixed `inline-size` and `block-size`, content may overflow; (iii) a padding token around the icon, square only when the icon is | (i) keeps the square for any icon up to the box and never clips; (ii) guarantees the box; (iii) follows the icon size and leaves squareness to the content |
 
 ---
 
