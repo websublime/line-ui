@@ -4,9 +4,11 @@
  * Opens every story of `apps/storybook/stories/agent-ui/a2ui-surface.stories.ts` on `storybook-static`
  * (port 4320), waits until the surface has settled and every rendered `line-*` element has upgraded and updated,
  * and expects zero violations of the §7.4 ruleset in chromium, firefox and webkit. The stories render C1–C4
- * (Button, Icon, Separator, Stack) through the basic and `line` catalogs; each agent-exposed C5–C20 row adds its
- * component to the stories' render fixture and to this file (§6.C.6). The List stories also prove axe's list
- * rules: `aria-required-children` on the `role="list"` host and `aria-required-parent` on each item pass.
+ * (Button, Icon, Separator, Stack) through the basic and `line` catalogs, and C5 (IconButton) through the `line`
+ * catalog; each agent-exposed C5–C20 row adds its component to the stories' render fixture and to this file
+ * (§6.C.6). The List stories also prove axe's list rules: `aria-required-children` on the `role="list"` host and
+ * `aria-required-parent` on each item pass. The Line catalog story also shows the IconButton named by its
+ * `accessibility.label`.
  *
  * @module __tests__/a11y/a2ui-surface.e2e
  */
@@ -19,7 +21,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 6,
+  'agent-ui-a2ui-surface--line-catalog': 8,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -46,9 +48,9 @@ async function openSurfaceStory(page: Page, id: SurfaceStoryId): Promise<void> {
   });
   const surface = page.locator('#storybook-root line-a2ui-surface');
   await expect(surface.locator('[data-line-a2ui-placeholder="pending"]')).toHaveCount(0);
-  await expect(surface.locator(':is(line-button, line-icon, line-separator, line-stack)')).toHaveCount(
-    SURFACE_STORIES[id],
-  );
+  await expect(
+    surface.locator(':is(line-button, line-icon, line-icon-button, line-separator, line-stack)'),
+  ).toHaveCount(SURFACE_STORIES[id]);
   await expect(surface).not.toHaveAttribute('aria-busy', 'true');
 }
 
@@ -82,3 +84,11 @@ for (const id of ['agent-ui-a2ui-surface--list', 'agent-ui-a2ui-surface--mixed-l
     expect(passed['aria-required-parent']).toBe(items);
   });
 }
+
+test('the Line catalog story renders the IconButton named by its accessibility.label', async ({ page }) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
+  const iconButton = page.locator('#storybook-root line-a2ui-surface line-icon-button');
+  await expect(iconButton).toHaveAttribute('aria-label', 'Close');
+  await expect(iconButton.getByRole('button')).toHaveAccessibleName('Close');
+  await expect(iconButton.locator('line-icon svg')).toHaveCount(1);
+});

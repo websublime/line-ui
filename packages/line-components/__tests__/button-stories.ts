@@ -16,4 +16,5 @@ export const BUTTON_STORIES = [
   'components-button--toggle-on',
   'components-button--aria-label-only',
   'components-button--form',
+  'components-button--styled-states',
 ] as const;

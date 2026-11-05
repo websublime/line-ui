@@ -60,12 +60,24 @@ function ajvWith(catalog: Json): Ajv2020 {
 
 const document = lineCatalogDocument(descriptors);
 
+/** The catalog names of the agent-exposed descriptors, in catalog-name order. */
+const LINE_COMPONENTS = ['Button', 'Icon', 'IconButton', 'Separator', 'Stack'];
+
 /** A tree of `line` components, as an agent sends it. */
 const components: Json[] = [
-  { id: 'root', component: 'Stack', orientation: 'horizontal', children: ['save', 'rule'] },
+  { id: 'root', component: 'Stack', orientation: 'horizontal', children: ['save', 'rule', 'close'] },
   { id: 'save', component: 'Button', variant: 'primary', child: 'save-icon', action: { event: { name: 'save' } } },
   { id: 'save-icon', component: 'Icon', name: { path: '/icon' } },
   { id: 'rule', component: 'Separator', decorative: true },
+  {
+    id: 'close',
+    component: 'IconButton',
+    variant: 'borderless',
+    child: 'close-icon',
+    accessibility: { label: 'Close dialog' },
+    action: { event: { name: 'close' } },
+  },
+  { id: 'close-icon', component: 'Icon', name: 'close' },
 ];
 
 /** The stream that renders `components` on a `line` surface. */
@@ -87,7 +99,7 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
     expect(defs.theme).toMatchObject({ type: 'object' });
     expect(defs.theme).not.toHaveProperty('additionalProperties');
     expect(defs.theme).not.toHaveProperty('unevaluatedProperties');
-    expect(Object.keys(document.components as Json)).toEqual(['Button', 'Icon', 'Separator', 'Stack']);
+    expect(Object.keys(document.components as Json)).toEqual(LINE_COMPONENTS);
   });
 
   test('Ajv 2020 compiles common_types.json and server_to_client.json against it', () => {
@@ -116,14 +128,15 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
   test('web_core reads it back with Catalog.fromJson, and its validationSchema compiles', () => {
     const catalog = Catalog.fromJson(document);
     expect(catalog.id).toBe(LINE_CATALOG_ID);
-    expect([...catalog.components.keys()]).toEqual(['Button', 'Icon', 'Separator', 'Stack']);
+    expect([...catalog.components.keys()]).toEqual(LINE_COMPONENTS);
     expect(catalog.toJson()).toEqual(document);
 
     const ajv = new Ajv2020({ allErrors: true, strict: false });
     addFormats(ajv);
     ajv.addSchema({ ...catalog.validationSchema, $id: 'urn:line-genui:validation' });
     const component = ajv.compile({ $ref: 'urn:line-genui:validation#/$defs/anyComponent' });
-    expect(components.map((node) => component(node))).toEqual([true, true, true, true]);
+    expect(components.map((node) => component(node))).toEqual(components.map(() => true));
+    expect(component({ id: 'c', component: 'IconButton', child: 'i', type: 'submit' })).toBe(false);
     expect(component({ id: 'b', component: 'Button', variant: 'loud' })).toBe(false);
   });
 
@@ -142,7 +155,7 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
       agentHiddenReason: 'It escapes the surface.',
     });
     const withHidden = lineCatalogDocument([...descriptors, hidden]);
-    expect(Object.keys(withHidden.components as Json)).toEqual(['Button', 'Icon', 'Separator', 'Stack']);
+    expect(Object.keys(withHidden.components as Json)).toEqual(LINE_COMPONENTS);
     expect(JSON.stringify(withHidden)).not.toContain('HiddenFixture');
     expect(withHidden).toEqual(document);
   });
@@ -157,7 +170,7 @@ describe('the inline projection (§6.G.2; plan §5.6 D2)', () => {
     const inline = inlineCatalog(document);
     expect({ valid: validate(inline), errors: validate.errors }).toEqual({ valid: true, errors: null });
     expect(inline.catalogId).toBe(LINE_CATALOG_ID);
-    expect(Object.keys(inline.components ?? {})).toEqual(['Button', 'Icon', 'Separator', 'Stack']);
+    expect(Object.keys(inline.components ?? {})).toEqual(LINE_COMPONENTS);
     expect(validate(document)).toBe(false);
   });
 
@@ -165,7 +178,7 @@ describe('the inline projection (§6.G.2; plan §5.6 D2)', () => {
     const inline = inlineCatalog(document);
     const catalog = Catalog.fromJson(inline, '0.9');
     expect(catalog.id).toBe(LINE_CATALOG_ID);
-    expect([...catalog.components.keys()]).toEqual(['Button', 'Icon', 'Separator', 'Stack']);
+    expect([...catalog.components.keys()]).toEqual(LINE_COMPONENTS);
     expect(Object.keys(catalog.validationSchema.$defs as Json)).toContain('anyComponent');
   });
 });

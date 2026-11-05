@@ -625,6 +625,97 @@ describe('two-way value (§6.G.1 binding map; ARCH §17.2 rule C9)', () => {
   });
 });
 
+describe('IconButton (Phase 1 spec §6.C.5 IconButton; `0003-icon-button.md` Agent contract)', () => {
+  const closeButton = (extra: Message = {}): Message => ({
+    id: 'root',
+    component: 'IconButton',
+    variant: 'borderless',
+    child: 'icon',
+    action: action('close'),
+    ...extra,
+  });
+  const icon: Message = { id: 'icon', component: 'Icon', path: 'M6 6L18 18M18 6L6 18' };
+
+  test('a node without accessibility.label, or with " ", renders a placeholder and raises MISSING_ACCESSIBLE_NAME', async () => {
+    for (const accessibility of [undefined, { label: ' ' }, { description: 'Closes the dialog' }]) {
+      const { surface, errors } = await render([closeButton(accessibility ? { accessibility } : {}), icon], {
+        catalogId: LINE_CATALOG_ID,
+      });
+      expect(surface.querySelector('line-icon-button')).toBeNull();
+      const placeholder = surface.querySelector('[data-line-a2ui-placeholder="missing-name"]') as HTMLElement;
+      expect(placeholder.inert).toBe(true);
+      expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
+      expect(errors[0]?.error.componentId).toBe('root');
+      surface.remove();
+    }
+  });
+
+  test('a named node renders line-icon-button with its aria-label and the Icon in the default slot', async () => {
+    const { surface, errors } = await render(
+      [closeButton({ accessibility: { label: 'Close dialog', description: 'Discards the draft' } }), icon],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe(
+      '<line-icon-button variant="borderless" aria-label="Close dialog" aria-description="Discards the draft">' +
+        '<line-icon></line-icon></line-icon-button>',
+    );
+    const host = surface.querySelector('line-icon-button') as HTMLElement;
+    expect(host.hasAttribute('type')).toBe(false);
+    expect((host.firstElementChild as unknown as { path: string }).path).toBe('M6 6L18 18M18 6L6 18');
+  });
+
+  test('a click on the rendered element raises one line-a2ui-action', async () => {
+    const { surface, actions } = await render([closeButton({ accessibility: { label: 'Close dialog' } }), icon], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    await customElements.whenDefined('line-icon-button');
+    const host = surface.querySelector('line-icon-button') as HTMLElement & { updateComplete: Promise<unknown> };
+    await host.updateComplete;
+    expect(host.shadowRoot?.querySelector('button')?.getAttribute('aria-label')).toBe('Close dialog');
+    host.click();
+    await tick();
+    expect(actions.map((each) => each.action.name)).toEqual(['close']);
+    expect(actions[0]?.action.sourceComponentId).toBe('root');
+  });
+
+  test('child takes any component, not only an Icon', async () => {
+    const { surface, errors } = await render(
+      [
+        closeButton({ accessibility: { label: 'Split' }, child: 'rule' }),
+        { id: 'rule', component: 'Separator', orientation: 'vertical' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe(
+      '<line-icon-button variant="borderless" aria-label="Split">' +
+        '<line-separator orientation="vertical"></line-separator></line-icon-button>',
+    );
+  });
+
+  test('a committed pressed value is written back through its binding', async () => {
+    const { feed, surface, session } = mount();
+    await feed(
+      message({ createSurface: { surfaceId: SURFACE, catalogId: LINE_CATALOG_ID, sendDataModel: true } }),
+      components([closeButton({ pressed: { path: '/muted' }, accessibility: { label: 'Mute' } }), icon]),
+      data('/muted', false),
+    );
+    const host = surface.querySelector('line-icon-button') as HTMLElement & { pressed: boolean | undefined };
+    expect(host.pressed).toBe(false);
+    host.pressed = true;
+    host.dispatchEvent(new CustomEvent('line-change', { detail: { value: true }, bubbles: true }));
+    await tick();
+    expect(session.dataModel(SURFACE)).toMatchObject({ surfaces: { [SURFACE]: { muted: true } } });
+  });
+
+  test('the basic catalog keeps no route to line-icon-button (decision D4)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'IconButton', action: action('close') }]);
+    expect(surface.querySelector('line-icon-button')).toBeNull();
+    expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+  });
+});
+
 describe('lazy loading (§6.G.4; ARCH §17.4; Law 6)', () => {
   test('importing ./a2ui defines only line-a2ui-surface, and a Button loads only line-button', async () => {
     const script = `

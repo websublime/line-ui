@@ -48,7 +48,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 | C2 | C | Icon, `<line-icon>` at `./icon`, with the registry hook, SVG injection rule and icon surface acceptance; component spec `docs/specs/0014-icon.md` (spec §6.C.3, §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P5, P7–P12, C22, Z5 | done | feat/01-c2-icon | #316 | AM-063, AM-064 (Phase 1 spec); AM-001, AM-002 (0014); AM-003 (0002) |
 | C3 | C | Stack, `<line-stack>` at `./stack`; component spec `docs/specs/0018-stack.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, Z5 | done | feat/01-c3-stack | #303 | AM-001, AM-002, AM-003 |
 | C4 | C | Separator, `<line-separator>` at `./separator`; component spec `docs/specs/0011-separator.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, Z5 | done | feat/01-c4-separator | #305 | AM-058 (Phase 1 spec); AM-001 (0011); AM-004 (0018); AM-001 (0002) |
-| C5 | C | IconButton, `<line-icon-button>` at `./icon-button`, on the shared Button machine; component spec `docs/specs/0003-icon-button.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, G1, G4, G5, C1, Z5 | todo | — | — | — |
+| C5 | C | IconButton, `<line-icon-button>` at `./icon-button`, on the shared Button machine; component spec `docs/specs/0003-icon-button.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, G1, G4, G5, C1, Z5 | in_review | feat/01-c5-icon-button | #326 | AM-089 (Phase 1 spec); AM-001, AM-002 (0003); AM-008 (0002) |
 | C6 | C | ButtonGroup, `<line-button-group>` at `./button-group`, custom roving-focus machine; component spec `docs/specs/0004-button-group.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, G1, G4, G5, C1, Z5 | todo | — | — | — |
 | C7 | C | Alert, `<line-alert>` at `./alert`; component spec `docs/specs/0006-alert.md` (spec §6.C.4, §6.C.6) | webcomponents-supervisor | C21, C23, P7–P12, G1, G4, G5, Z5 | todo | — | — | — |
 | C8 | C | Chip, `<line-chip>` at `./chip`, on `@zag-js/toggle`; component spec `docs/specs/0008-chip.md` (spec §6.C.4–§6.C.6) | webcomponents-supervisor | C21, C23, C24, P7–P12, G1, G4, G5, Z5 | todo | — | — | — |
@@ -82,7 +82,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 | G4 | G | `<line-a2ui-surface>` (preview), direct projection on `NodeResolver`, with the `line-genui` manifest merged into Storybook (spec §6.G.4) | webcomponents-supervisor | G1, G2, P5 | done | feat/01-g4-a2ui-surface | #321 | AM-074–AM-085 (Phase 1 spec); AM-086 (Phase 00 spec); AM-006 (0002) |
 | G5 | G | CEM drift test and descriptor coverage test (spec §6.G.5) | webcomponents-supervisor | G1, P10 | done | test/01-g5-cem-drift-coverage | #322 | — |
 | G6 | G | MCP Apps bridge `line-themes/hosts/mcp-apps.css` (spec §6.G.6) | webcomponents-supervisor | P1, C1–C4 | done | feat/01-g6-mcp-apps-bridge | #324 | AM-087 (Phase 1 spec) |
-| G7 | G | Transport recipes in Storybook (AG-UI, A2A, MCP, SSE) (spec §6.G.7) | webcomponents-supervisor | G4, G6 | in_review | feat/01-g7-transport-recipes | #325 | AM-088 (Phase 1 spec) |
+| G7 | G | Transport recipes in Storybook (AG-UI, A2A, MCP, SSE) (spec §6.G.7) | webcomponents-supervisor | G4, G6 | done | feat/01-g7-transport-recipes | #325 | AM-088 (Phase 1 spec) |
 
 ## Stream D — Cross-Cutting Documentation (`webcomponents-supervisor`)
 

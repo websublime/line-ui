@@ -8,6 +8,7 @@ that registers one tag. The root entry registers nothing and exports only the ic
 |---------|-----------|
 | `@websublime/line-components/button` | `<line-button>` |
 | `@websublime/line-components/icon` | `<line-icon>` |
+| `@websublime/line-components/icon-button` | `<line-icon-button>` |
 | `@websublime/line-components/separator` | `<line-separator>` |
 | `@websublime/line-components/stack` | `<line-stack>` |
 
@@ -117,3 +118,32 @@ element and attribute allowlist that keeps vector shapes only. A page that enfor
 one page each create a `line-icon` policy, which needs `'allow-duplicates'`; without it the second copy's icons
 stay empty. A resolver may return an `SVGElement` instead, which is inserted unchanged, so return a fresh node per
 call and give it `aria-hidden="true"` unless it should be announced.
+
+## IconButton
+
+`<line-icon-button>` runs an action and shows only an icon. It renders a native `<button type="button">` inside
+its shadow root, so it never submits or resets a form, and it is not form-associated. Put the icon in its default
+slot and name the button with the host `aria-label`, which is copied to the inner button; without it the button
+has no name.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `variant` | `default`, `primary`, `borderless` | `default` |
+| `disabled` | boolean | off |
+| `loading` | boolean; keeps focus, sets `aria-disabled="true"` and renders the `loading` slot | off |
+| `pressed` | `true`, `false`; makes a toggle that flips on each press and fires `line-change` | unset |
+| `aria-label`, `aria-description` | copied to the inner button | none |
+
+```html
+<line-icon-button variant="borderless" aria-label="Close dialog">
+  <line-icon library="lucide" name="x"></line-icon>
+</line-icon-button>
+<line-icon-button pressed="false" aria-label="Mute">
+  <line-icon library="lucide" name="volume-x"></line-icon>
+</line-icon-button>
+```
+
+The box is a square of at least `--line-icon-button-size` (default `var(--line-size-7)`, `2rem`), and the icon
+follows `--line-icon-button-font-size`. `::part(root)`, `::part(icon)` and `::part(loading)` reach the inner
+button and the wrappers of its two slots; the state shows as `data-*` attributes and `:state()` on the host.
+A `<fieldset disabled>` ancestor does not disable it, because it is not form-associated; set `disabled` on it.

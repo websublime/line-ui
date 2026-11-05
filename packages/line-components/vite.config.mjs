@@ -10,6 +10,7 @@ export default mergeConfig(
       index: 'src/index.ts',
       'button/index': 'src/button/index.ts',
       'icon/index': 'src/icon/index.ts',
+      'icon-button/index': 'src/icon-button/index.ts',
       'separator/index': 'src/separator/index.ts',
       'stack/index': 'src/stack/index.ts',
     },

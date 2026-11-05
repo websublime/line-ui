@@ -7,13 +7,15 @@ import '@websublime/line-tokens/typography';
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import type { ButtonType, ButtonVariant } from '@websublime/line-components/button';
 import { html, nothing, type TemplateResult } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { extractArgTypes } from './manifest-arg-types.js';
 
 // <line-button> stories (spec 0002-button.md). The autodocs page reads the
 // attributes, slots, events and parts from the shipped Custom Elements
 // Manifest that preview.ts registers. The stories import only the token
 // families Button uses; the line-tokens barrel carries reset.css, which would
-// restyle the docs page.
+// restyle the docs page. The Styled states stylesheet is story-local; the
+// package ships no state style besides the focus ring (spec AM-008).
 
 interface ButtonArgs {
   label: string;
@@ -32,11 +34,43 @@ const CHEVRON_DOWN = 'M4 6l4 4 4-4';
 const GEAR =
   'M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.5 1.5M11.5 11.5L13 13M3 13l1.5-1.5M11.5 4.5L13 3';
 
+/**
+ * The Styled states story's stylesheet, scoped to the story; the docs snippet is the same rules without the scope.
+ * The role aliases come from `line-themes`, which preview.ts loads.
+ */
+const STATE_CSS = `.styled-states line-button:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-gray-bg-hover); }
+.styled-states line-button[data-active]::part(root) { background: var(--line-gray-bg-active); }
+.styled-states line-button[variant='primary']:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-solid-hover); }
+.styled-states line-button[variant='primary'][data-active]::part(root) { background: var(--line-accent-text-low); }
+.styled-states line-button[variant='borderless']:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-bg-hover); }
+.styled-states line-button[variant='borderless'][data-active]::part(root) { background: var(--line-accent-bg-active); }
+.styled-states line-button[data-pressed]::part(root) { background: var(--line-accent-bg-active); color: var(--line-accent-text); }
+.styled-states line-button[data-pressed]:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-6); }
+.styled-states line-button[data-pressed][data-active]:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-7); }
+.styled-states line-button:state(loading)::part(root) { cursor: progress; }
+.styled-states line-button[data-disabled]::part(root) { opacity: 0.5; }`;
+
+const DESCRIPTION = `\`<line-button>\` runs an action, submits or resets its form, or toggles with \`pressed\`.
+
+### Styling states
+
+The button draws only the focus ring. Hover, active, pressed, loading and disabled carry no style, so a theme or your own CSS styles them on the host and reaches the inner button through \`::part(root)\`:
+
+- \`:hover\` and \`:active\` match the host itself, so there is no \`data-hovered\`. \`:hover\` also matches a disabled or loading host, which ignores presses, so scope a hover rule with \`:not([data-disabled], [data-loading])\`.
+- \`[data-active]\`, \`[data-pressed]\`, \`[data-loading]\`, \`[data-disabled]\` and \`[data-focus-visible]\` reflect the button's state, with the same names as \`:state()\`, such as \`:state(loading)\`. \`data-active\` also covers a press by Enter or Space.
+- The \`line-themes\` role aliases give each state a colour step, such as \`--line-gray-bg-hover\`, \`--line-gray-bg-active\` and \`--line-accent-solid-hover\`. A pressed toggle rests on \`--line-accent-bg-active\` (step 5) and climbs one step on hover and one more while pressed, through the numeric \`--line-accent-6\` and \`--line-accent-7\`, because the background aliases stop at step 5. Its rules come after the hover and active rules and carry one more attribute, so hover never hides the pressed state.
+
+The **Styled states** story uses these rules:
+
+\`\`\`css
+${STATE_CSS.replaceAll('.styled-states ', '')}
+\`\`\``;
+
 const meta = {
   title: 'Components/Button',
   component: 'line-button',
   tags: ['autodocs'],
-  parameters: { docs: { extractArgTypes } },
+  parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },
   args: { label: 'Save', variant: 'default', type: 'submit', disabled: false, loading: false },
   argTypes: {
     label: { control: 'text', description: 'Text in the default slot' },
@@ -121,4 +155,19 @@ export const Form: Story = {
       <output name="result" aria-live="polite"></output>
     </form>`;
   },
+};
+
+export const StyledStates: Story = {
+  name: 'Styled states',
+  render: () =>
+    html`${unsafeHTML(`<style>${STATE_CSS}</style>`)}
+      <div class="styled-states" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+        <line-button type="button">Default</line-button>
+        <line-button type="button" variant="primary">Primary</line-button>
+        <line-button type="button" variant="borderless">Borderless</line-button>
+        <line-button type="button" pressed="false">Bold</line-button>
+        <line-button type="button" pressed="true">Italic</line-button>
+        <line-button type="button" loading>Save<span slot="loading">…</span></line-button>
+        <line-button type="button" disabled>Delete</line-button>
+      </div>`,
 };

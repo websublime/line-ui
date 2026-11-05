@@ -4,11 +4,12 @@
 Row 01-C1 on 2026-10-27 applies Miguel's decision that a semantic variant may set the defaults of its component's own tokens and nothing else (ARCHITECTURE §17.2 rule C6), citing PRD v0.8.28 and ARCHITECTURE v0.8.15 (Source PRD and Source Architecture lines; spec AM-056).
 Row 01-G1 on 2026-11-03 applies Miguel's decision to accept that the `@a2ui/web_core/v0_9` barrel loads Lit when `line-genui` runs unbundled: `./catalog` defines no element and its own modules touch no DOM at load, and no `line-genui` module imports Lit (§2.1 surfaces table, §5.6 PT (b) row; spec §4.1, §6.G.4, AM-065), citing PRD v0.8.29 and ARCHITECTURE v0.8.17 (Source PRD and Source Architecture lines).
 Row 01-G3 on 2026-11-04 applies Miguel's decision that a descriptor may carry an optional tool description, which the frontend-tool emitter uses over the agent-facing description (spec §6.G.1, §6.G.3, AM-086). No plan section states the descriptor fields, so only the header changes, citing PRD v0.8.30 and ARCHITECTURE v0.8.22 (Source PRD and Source Architecture lines).
+Row 01-C5 on 2026-11-05 records ARCHITECTURE v0.8.23, a factual correction of §14.2 and §14.8 on which native pseudo-classes match a component host (spec AM-089; component specs `0002-button.md` AM-008, `0003-icon-button.md` AM-002). No plan section states it, so only the Source Architecture line changes.
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
 **Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.30)
-**Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.22)
+**Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.23)
 
 > **What this document is.** A phase plan (PROCESS §1–§2, the lifecycle and gate rules). It sets scope, streams, dependencies, research targets, acceptance criteria and risks for Phase 1 (PRD §7.3, the Core Primitives phase).
 >
