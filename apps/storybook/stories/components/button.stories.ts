@@ -45,6 +45,8 @@ const STATE_CSS = `.styled-states line-button:hover:not([data-disabled], [data-l
 .styled-states line-button[variant='borderless']:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-bg-hover); }
 .styled-states line-button[variant='borderless'][data-active]::part(root) { background: var(--line-accent-bg-active); }
 .styled-states line-button[data-pressed]::part(root) { background: var(--line-accent-bg-active); color: var(--line-accent-text); }
+.styled-states line-button[data-pressed]:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-6); }
+.styled-states line-button[data-pressed][data-active]:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-7); }
 .styled-states line-button:state(loading)::part(root) { cursor: progress; }
 .styled-states line-button[data-disabled]::part(root) { opacity: 0.5; }`;
 
@@ -56,7 +58,7 @@ The button draws only the focus ring. Hover, active, pressed, loading and disabl
 
 - \`:hover\` and \`:active\` match the host itself, so there is no \`data-hovered\`. \`:hover\` also matches a disabled or loading host, which ignores presses, so scope a hover rule with \`:not([data-disabled], [data-loading])\`.
 - \`[data-active]\`, \`[data-pressed]\`, \`[data-loading]\`, \`[data-disabled]\` and \`[data-focus-visible]\` reflect the button's state, with the same names as \`:state()\`, such as \`:state(loading)\`. \`data-active\` also covers a press by Enter or Space.
-- The \`line-themes\` role aliases give each state a colour step, such as \`--line-gray-bg-hover\`, \`--line-gray-bg-active\` and \`--line-accent-solid-hover\`.
+- The \`line-themes\` role aliases give each state a colour step, such as \`--line-gray-bg-hover\`, \`--line-gray-bg-active\` and \`--line-accent-solid-hover\`. A pressed toggle rests on \`--line-accent-bg-active\` (step 5) and climbs one step on hover and one more while pressed, through the numeric \`--line-accent-6\` and \`--line-accent-7\`, because the background aliases stop at step 5. Its rules come after the hover and active rules and carry one more attribute, so hover never hides the pressed state.
 
 The **Styled states** story uses these rules:
 
