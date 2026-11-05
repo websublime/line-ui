@@ -58,6 +58,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './stack': ['line-stack'],
   './separator': ['line-separator'],
   './icon': ['line-icon'],
+  './icon-button': ['line-icon-button'],
 };
 
 /** The tags each `line-genui` subpath registers: none for `./catalog`, only the surface for `./a2ui` (§7.5). */

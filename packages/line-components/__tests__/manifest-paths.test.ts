@@ -95,4 +95,12 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(icon?.path).toBe('src/icon/icon.ts');
     expect(paths.has('src/icon/icon.ts')).toBe(true);
   });
+
+  test('line-icon-button resolves to src/icon-button/icon-button.ts', () => {
+    const iconButton = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-icon-button'),
+    );
+    expect(iconButton?.path).toBe('src/icon-button/icon-button.ts');
+    expect(paths.has('src/icon-button/icon-button.ts')).toBe(true);
+  });
 });
