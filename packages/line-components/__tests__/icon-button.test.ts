@@ -331,11 +331,12 @@ describe('<line-icon-button> parts, slots and tokens', () => {
     );
   });
 
-  test('the root is square through --line-icon-button-size, with no inline padding', () => {
+  test('the root is square through --line-icon-button-size, with no inline padding and flex slot wrappers', () => {
     const css = ownCss();
     expect(css).toContain('min-inline-size: var(--line-icon-button-size);');
     expect(css).toContain('min-block-size: var(--line-icon-button-size);');
     expect(css).toContain('padding-inline: 0;');
+    expect(css).toContain("[part='icon'], [part='loading'] { display: inline-flex; }");
     expect(css).toContain(":host([data-focus-visible]) [part='root'] { outline: var(--line-icon-button-focus-ring); }");
   });
 });

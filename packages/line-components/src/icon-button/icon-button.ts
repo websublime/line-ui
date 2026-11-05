@@ -114,7 +114,8 @@ export class LineIconButton extends LineElement {
         font-size: var(--line-icon-button-font-size);
       }
 
-      [part='icon'] {
+      [part='icon'],
+      [part='loading'] {
         display: inline-flex;
       }
 
