@@ -1,6 +1,6 @@
 {
   "name": "@websublime/line-genui",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "license": "MIT",
   "files": [
@@ -39,8 +39,8 @@
     "@websublime/line-icons": "workspace:^0.1.0 || ^0.2.0"
   },
   "devDependencies": {
-    "@websublime/line-components": "workspace:^0.1.0 || ^0.2.0",
-    "@websublime/line-icons": "workspace:^0.1.0 || ^0.2.0"
+    "@websublime/line-components": "workspace:^0.2.5",
+    "@websublime/line-icons": "workspace:^0.2.1"
   },
   "scripts": {
     "build": "vite build && bun run ../../scripts/emit-catalog.mjs && tsc -p tsconfig.json --noEmit false --emitDeclarationOnly && bun run analyze",

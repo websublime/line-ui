@@ -1,5 +1,11 @@
 # @websublime/line-core
 
+## 0.2.3
+
+### Patch Changes
+
+- [#315](https://github.com/websublime/line-ui/pull/315) [`59a2265`](https://github.com/websublime/line-ui/commit/59a22652ef36d38483bcec2638904559701b5e06) Thanks [@miguelramos](https://github.com/miguelramos)! - Unused reset sheets from `@websublime/line-core/styles` now tree-shake: each sheet is marked pure, so a bundle keeps only the sheets it imports.
+
 ## 0.2.2
 
 ### Patch Changes
