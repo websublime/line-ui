@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-11-04
+**Date:** 2026-11-05
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -12,6 +12,9 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.23 (2026-11-05)** — Factual correction from component specs `0002-button.md` AM-008 and `0003-icon-button.md` AM-002 (ledger row `01-C5`; the probe ran in chromium, firefox and webkit). The change is minimal: one §14.2 table row, and one §14.8 paragraph, table row and note.
+  - §14.2 (Three Layers of Neutralisation) no longer says native pseudo-classes don't work on custom elements: the State reflection row says which ones fall short on the host (§14.8).
+  - §14.8 (State Reflection) no longer says native pseudo-classes don't work on custom elements. On the Button and IconButton hosts, `:hover`, `:active` and `:focus` match as on any element, and `:disabled` matches the disabled form-associated `line-button`; `:focus-visible` does not match the host when focus sits on an element in its shadow root, so `data-focus-visible` carries it. The `hovered` row says Button and IconButton reflect no `hovered` state, because `:hover` on the host already works, and a note lists what matches (`packages/line-components/__tests__/integration/state-styling/state-styling.e2e.ts`).
 - **v0.8.22 (2026-11-04)** — Aligned with PRD v0.8.30 and Phase 1 spec AM-086 (ledger row `01-G3`, decision by Miguel on 2026-11-04). The change is minimal: one §17.3 list item and one §17.3 sentence.
   - §17.3 (Descriptors and catalogs) adds an optional tool description to the descriptor fields, and says the frontend-tool emitter uses it over the agent-facing description when a descriptor sets it. A descriptor sets it when its agent-facing description names props the tool lacks, because the walker leaves out `ComponentId`, `ChildList` and `Action` props and flattens `accessibility` (Phase 1 spec §6.G.1, §6.G.3, AM-086).
 - **v0.8.21 (2026-11-03)** — Aligned with Phase 1 spec AM-072 (ledger row `01-G1`, orchestrator default for Miguel's review at the 01-G1 PR). The change is minimal: one §17.3 sentence.
@@ -642,7 +645,7 @@ line://ui must neutralise ALL of these defaults so that every component renders 
 |-------|---------------|-------------------|
 | **Shadow DOM isolation** | Document-level styles (body margins, heading sizes, link colours) do NOT leak into components | Automatic — Shadow DOM provides this |
 | **Internal CSS reset** | Native elements INSIDE shadow DOM (`<input>`, `<button>`, `<textarea>`) still receive browser defaults. Must be neutralised. | Modular reset sheets, each component imports only what it needs |
-| **State reflection** | Native pseudo-classes (`:disabled`, `:required`, `:checked`, `:focus-visible`, etc.) don't work on custom elements. Must be replicated via host attributes and `CustomStateSet`. | Zag.js machine + `LineElement` base class |
+| **State reflection** | Native pseudo-classes cover only part of a component's state: `:hover`, `:active` and `:focus` match the host, but `:focus-visible` does not when focus sits inside the shadow root, `:disabled` matches only a form-associated host, and states the machine owns, such as pressed or loading, have no native pseudo-class (§14.8). Those must be replicated via host attributes and `CustomStateSet`. | Zag.js machine + `LineElement` base class |
 
 **Two distinct reset systems** — these serve **different DOM contexts** and must not be confused:
 
@@ -1157,7 +1160,7 @@ Which modules each component category uses:
 
 ### 14.8 State Reflection — Pseudo-Class Equivalents
 
-Native pseudo-classes don't work on custom elements. line://ui provides two parallel APIs for consumers:
+Some native pseudo-classes match a component host and some do not. On the host, `:hover`, `:active` and `:focus` match as on any element, and `:disabled` matches a disabled form-associated host such as `line-button` but not one that is not form-associated, such as `line-icon-button`. `:focus-visible` does not match the host when the focused element is in its shadow root. Probed for Button and IconButton in chromium, firefox and webkit (`packages/line-components/__tests__/integration/state-styling/state-styling.e2e.ts`). For the states a machine owns, line://ui provides two parallel APIs:
 
 **API 1: Host data attributes** (works everywhere, simple CSS selectors)
 
@@ -1204,7 +1207,7 @@ protected reflectState(name: string, active: boolean) {
 |---------------|---------------|---------------|-----------------|
 | focused | `data-focused` | `:state(focused)` | `:focus` |
 | focus-visible | `data-focus-visible` | `:state(focus-visible)` | `:focus-visible` |
-| hovered | `data-hovered` | `:state(hovered)` | `:hover` |
+| hovered | `data-hovered` | `:state(hovered)` | `:hover` (Button and IconButton reflect no `hovered`: `:hover` matches their host, see the note below) |
 | active | `data-active` | `:state(active)` | `:active` |
 | disabled | `data-disabled` | `:state(disabled)` | `:disabled` |
 | readonly | `data-readonly` | `:state(readonly)` | `:read-only` |
@@ -1224,6 +1227,8 @@ protected reflectState(name: string, active: boolean) {
 | open | `data-open` | `:state(open)` | `:open` |
 
 **Note on `:valid` / `:invalid`:** These two are special — they work natively on form-associated custom elements via `ElementInternals.setValidity()`. We still reflect them as data attributes and CustomStateSet for consistency, but the native pseudo-classes also work. A consumer can use EITHER `line-input:invalid` OR `line-input[data-invalid]` OR `line-input:state(invalid)`.
+
+**Note on `:hover`, `:active`, `:focus` and `:disabled`:** these match the host natively, so a consumer styles hover with `line-button:hover::part(root)` and no `data-hovered` exists on Button or IconButton. `:active` follows the browser's own active state; `data-active` follows the machine's press, by pointer or by Enter or Space. `:disabled` matches only a form-associated host with `disabled`; `data-disabled` covers every component, and a disabled `fieldset` around a form-associated one. `:focus` matches the host while its inner control has focus, but `:focus-visible` does not, so keyboard focus is `data-focus-visible` (§14.9).
 
 **Note on `:state()` browser support:** Chrome 125+, Firefox 126+, Safari 17.4+. Chrome 90–124 support only the older `:--foo` syntax. line://ui's latest-2 browser target (PRD §1.7) lies inside the `:state()` range. The `data-*` attributes provide a universal fallback that works everywhere.
 
