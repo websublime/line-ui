@@ -81,8 +81,8 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 | G3 | G | Frontend-tool JSON Schema emitter (spec §6.G.3) | webcomponents-supervisor | G1 | done | feat/01-g3-frontend-tool-emitter | #323 | AM-086 (Phase 1 spec); AM-087 (Phase 00 spec); AM-007 (0002); AM-004 (0011); AM-005 (0014); AM-006 (0018) |
 | G4 | G | `<line-a2ui-surface>` (preview), direct projection on `NodeResolver`, with the `line-genui` manifest merged into Storybook (spec §6.G.4) | webcomponents-supervisor | G1, G2, P5 | done | feat/01-g4-a2ui-surface | #321 | AM-074–AM-085 (Phase 1 spec); AM-086 (Phase 00 spec); AM-006 (0002) |
 | G5 | G | CEM drift test and descriptor coverage test (spec §6.G.5) | webcomponents-supervisor | G1, P10 | done | test/01-g5-cem-drift-coverage | #322 | — |
-| G6 | G | MCP Apps bridge `line-themes/hosts/mcp-apps.css` (spec §6.G.6) | webcomponents-supervisor | P1, C1–C4 | in_review | feat/01-g6-mcp-apps-bridge | #324 | AM-087 (Phase 1 spec) |
-| G7 | G | Transport recipes in Storybook (AG-UI, A2A, MCP, SSE) (spec §6.G.7) | webcomponents-supervisor | G4, G6 | in_progress | feat/01-g7-transport-recipes | — | AM-088 (Phase 1 spec) |
+| G6 | G | MCP Apps bridge `line-themes/hosts/mcp-apps.css` (spec §6.G.6) | webcomponents-supervisor | P1, C1–C4 | done | feat/01-g6-mcp-apps-bridge | #324 | AM-087 (Phase 1 spec) |
+| G7 | G | Transport recipes in Storybook (AG-UI, A2A, MCP, SSE) (spec §6.G.7) | webcomponents-supervisor | G4, G6 | in_review | feat/01-g7-transport-recipes | #325 | AM-088 (Phase 1 spec) |
 
 ## Stream D — Cross-Cutting Documentation (`webcomponents-supervisor`)
 
