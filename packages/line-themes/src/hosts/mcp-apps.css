@@ -1,0 +1,67 @@
+/* @websublime/line-themes/hosts/mcp-apps.css — MCP Apps host bridge (spec §6.G.6).
+ *
+ * Maps the role-matched subset of the MCP Apps host style keys (40 of 76) onto
+ * line aliases and tokens. The host sets its values as custom properties on
+ * <html>, through ext-apps `applyHostStyleVariables`.
+ *
+ * Load order: this sheet MUST load after the `line-themes` CSS (§10 SD85). Its
+ * aliases tie on specificity with `aliases.css` inside the same `@layer line`,
+ * so the later sheet wins.
+ *
+ * Form A (18 aliases) sits on :where(html) with the line step as fallback.
+ * Nothing is declared in [data-accent] or [data-gray] scopes, so nested scopes
+ * keep the line steps (§10 SD63).
+ *
+ * Form P (22 primitives) sits on body with an `inherit` fallback, so the
+ * primitives apply from body down; without a host value body inherits the
+ * line token from html. No token literal is copied (§10 SD17). */
+@layer line {
+  :where(html) {
+    --line-gray-surface: var(--color-background-primary, var(--line-gray-2));
+    --line-gray-bg: var(--color-background-secondary, var(--line-gray-3));
+    --line-gray-bg-hover: var(--color-background-tertiary, var(--line-gray-4));
+    --line-info-bg: var(--color-background-info, var(--line-info-3));
+    --line-danger-bg: var(--color-background-danger, var(--line-danger-3));
+    --line-success-bg: var(--color-background-success, var(--line-success-3));
+    --line-warning-bg: var(--color-background-warning, var(--line-warning-3));
+    --line-gray-text: var(--color-text-primary, var(--line-gray-12));
+    --line-gray-text-low: var(--color-text-secondary, var(--line-gray-11));
+    --line-info-text-low: var(--color-text-info, var(--line-info-11));
+    --line-danger-text-low: var(--color-text-danger, var(--line-danger-11));
+    --line-success-text-low: var(--color-text-success, var(--line-success-11));
+    --line-warning-text-low: var(--color-text-warning, var(--line-warning-11));
+    --line-gray-border: var(--color-border-primary, var(--line-gray-7));
+    --line-info-border: var(--color-border-info, var(--line-info-7));
+    --line-danger-border: var(--color-border-danger, var(--line-danger-7));
+    --line-success-border: var(--color-border-success, var(--line-success-7));
+    --line-warning-border: var(--color-border-warning, var(--line-warning-7));
+  }
+
+  body {
+    --line-focus-ring-color: var(--color-ring-primary, inherit);
+    --line-font-sans: var(--font-sans, inherit);
+    --line-font-mono: var(--font-mono, inherit);
+    --line-font-weight-4: var(--font-weight-normal, inherit);
+    --line-font-weight-5: var(--font-weight-medium, inherit);
+    --line-font-weight-6: var(--font-weight-semibold, inherit);
+    --line-font-weight-7: var(--font-weight-bold, inherit);
+    --line-font-size-0: var(--font-text-xs-size, inherit);
+    --line-font-size-1: var(--font-text-md-size, inherit);
+    --line-font-size-2: var(--font-text-lg-size, inherit);
+    --line-font-size-3: var(--font-heading-lg-size, inherit);
+    --line-font-size-4: var(--font-heading-xl-size, inherit);
+    --line-font-size-5: var(--font-heading-2xl-size, inherit);
+    --line-font-size-6: var(--font-heading-3xl-size, inherit);
+    --line-leading-3: var(--font-text-xs-line-height, inherit);
+    --line-leading-4: var(--font-text-md-line-height, inherit);
+    --line-leading-2: var(--font-heading-xl-line-height, inherit);
+    --line-leading-1: var(--font-heading-3xl-line-height, inherit);
+    --line-radius-1: var(--border-radius-xs, inherit);
+    --line-radius-2: var(--border-radius-sm, inherit);
+    --line-radius-3: var(--border-radius-xl, inherit);
+    --line-radius-round: var(--border-radius-full, inherit);
+
+    /* Recomposed on body so the ring follows the host ring colour (AM-004). */
+    --line-focus-ring: var(--line-focus-ring-width) var(--line-focus-ring-style) var(--line-focus-ring-color);
+  }
+}
