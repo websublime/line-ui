@@ -21,6 +21,7 @@ const FIXTURE_URL = 'http://127.0.0.1:4321/state-styling/';
 /** One rule per selector, each on its own property, so the computed style shows which rules apply. */
 const CONSUMER_CSS = `
   :is(line-button, line-icon-button):hover::part(root) { background-color: rgb(0, 128, 0); }
+  :is(line-button, line-icon-button):hover:not([data-disabled], [data-loading])::part(root) { text-emphasis-color: rgb(0, 128, 1); }
   :is(line-button, line-icon-button):active::part(root) { color: rgb(128, 0, 0); }
   :is(line-button, line-icon-button)[data-active]::part(root) { border-top-color: rgb(0, 0, 128); }
   :is(line-button, line-icon-button):state(active)::part(root) { border-bottom-color: rgb(0, 0, 129); }
@@ -35,6 +36,7 @@ const CONSUMER_CSS = `
 /** The property each selector of `CONSUMER_CSS` sets, with the value it sets. */
 const RULES = {
   hover: ['background-color', 'rgb(0, 128, 0)'],
+  scopedHover: ['text-emphasis-color', 'rgb(0, 128, 1)'],
   activePseudo: ['color', 'rgb(128, 0, 0)'],
   dataActive: ['border-top-color', 'rgb(0, 0, 128)'],
   stateActive: ['border-bottom-color', 'rgb(0, 0, 129)'],
@@ -106,7 +108,7 @@ for (const tag of TAGS) {
       const host = page.locator('#host');
       await host.hover();
       expect(await matches(host, ':hover')).toBe(true);
-      expect(await applied(host)).toEqual(['hover']);
+      expect(await applied(host)).toEqual(['hover', 'scopedHover']);
       await page.locator('#away').hover();
       expect(await applied(host)).toEqual([]);
     });
@@ -117,10 +119,30 @@ for (const tag of TAGS) {
       await host.hover();
       await page.mouse.down();
       await expect(host).toHaveAttribute('data-active', '');
-      expect(await applied(host)).toEqual(['hover', 'activePseudo', 'dataActive', 'stateActive']);
+      expect(await applied(host)).toEqual(['hover', 'scopedHover', 'activePseudo', 'dataActive', 'stateActive']);
       await page.mouse.up();
       await expect(host).not.toHaveAttribute('data-active');
-      expect(await applied(host)).toEqual(['hover']);
+      expect(await applied(host)).toEqual(['hover', 'scopedHover']);
+    });
+
+    test('the scoped hover rule the docs give skips a disabled or loading host, which :hover still matches', async ({
+      page,
+    }) => {
+      await mount(
+        page,
+        `<p id="away">Away</p><${tag} id="loading" loading aria-label="Save">S</${tag}>
+        <${tag} id="disabled" disabled aria-label="Delete">D</${tag}>`,
+      );
+      for (const [id, state] of [
+        ['loading', ['dataLoading', 'stateLoading']],
+        ['disabled', ['dataDisabled', 'stateDisabled']],
+      ] as const) {
+        const host = page.locator(`#${id}`);
+        await host.hover({ force: true });
+        expect(await matches(host, ':hover')).toBe(true);
+        expect(await applied(host)).toEqual(['hover', ...state]);
+        await page.locator('#away').hover();
+      }
     });
 
     test('[data-pressed], [data-loading] and [data-disabled] style ::part(root), as their :state() twins', async ({

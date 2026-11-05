@@ -38,11 +38,11 @@ const GEAR =
  * The Styled states story's stylesheet, scoped to the story; the docs snippet is the same rules without the scope.
  * The role aliases come from `line-themes`, which preview.ts loads.
  */
-const STATE_CSS = `.styled-states line-button:hover::part(root) { background: var(--line-gray-bg-hover); }
+const STATE_CSS = `.styled-states line-button:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-gray-bg-hover); }
 .styled-states line-button[data-active]::part(root) { background: var(--line-gray-bg-active); }
-.styled-states line-button[variant='primary']:hover::part(root) { background: var(--line-accent-solid-hover); }
+.styled-states line-button[variant='primary']:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-solid-hover); }
 .styled-states line-button[variant='primary'][data-active]::part(root) { background: var(--line-accent-text-low); }
-.styled-states line-button[variant='borderless']:hover::part(root) { background: var(--line-accent-bg-hover); }
+.styled-states line-button[variant='borderless']:hover:not([data-disabled], [data-loading])::part(root) { background: var(--line-accent-bg-hover); }
 .styled-states line-button[variant='borderless'][data-active]::part(root) { background: var(--line-accent-bg-active); }
 .styled-states line-button[data-pressed]::part(root) { background: var(--line-accent-bg-active); color: var(--line-accent-text); }
 .styled-states line-button:state(loading)::part(root) { cursor: progress; }
@@ -54,7 +54,7 @@ const DESCRIPTION = `\`<line-button>\` runs an action, submits or resets its for
 
 The button draws only the focus ring. Hover, active, pressed, loading and disabled carry no style, so a theme or your own CSS styles them on the host and reaches the inner button through \`::part(root)\`:
 
-- \`:hover\` and \`:active\` match the host itself, so there is no \`data-hovered\`.
+- \`:hover\` and \`:active\` match the host itself, so there is no \`data-hovered\`. \`:hover\` also matches a disabled or loading host, which ignores presses, so scope a hover rule with \`:not([data-disabled], [data-loading])\`.
 - \`[data-active]\`, \`[data-pressed]\`, \`[data-loading]\`, \`[data-disabled]\` and \`[data-focus-visible]\` reflect the button's state, with the same names as \`:state()\`, such as \`:state(loading)\`. \`data-active\` also covers a press by Enter or Space.
 - The \`line-themes\` role aliases give each state a colour step, such as \`--line-gray-bg-hover\`, \`--line-gray-bg-active\` and \`--line-accent-solid-hover\`.
 
