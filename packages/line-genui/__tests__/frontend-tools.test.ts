@@ -21,6 +21,7 @@ import {
   descriptors,
   type FrontendTool,
   frontendTools,
+  iconButtonDescriptor,
   iconDescriptor,
   type LineDescriptor,
   lineCatalogDocument,
@@ -95,7 +96,7 @@ const CASES = TOOL_PROVIDERS.flatMap((provider) =>
 describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)', () => {
   test('one tool per agent-exposed descriptor, {name, description, parameters}', () => {
     for (const provider of TOOL_PROVIDERS) {
-      expect(tools(provider).map((each) => each.name)).toEqual(['Button', 'Icon', 'Separator', 'Stack']);
+      expect(tools(provider).map((each) => each.name)).toEqual(['Button', 'Icon', 'IconButton', 'Separator', 'Stack']);
       for (const each of tools(provider)) expect(Object.keys(each)).toEqual(['name', 'description', 'parameters']);
     }
   });
@@ -160,16 +161,17 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
       const names = (name: string) => Object.keys(tool(provider, name).parameters.properties);
       expect(names('Button')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('Icon')).toEqual(['name', 'mirror', 'path']);
+      expect(names('IconButton')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('Separator')).toEqual(['orientation', 'decorative', ...ACCESSIBILITY]);
       expect(names('Stack')).toEqual(['orientation', 'justify', 'align', 'gap', 'wrap']);
     }
   });
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Button and Separator take the accessibility strings, Icon and Stack neither',
+    '%s: Button, IconButton and Separator take the optional accessibility strings, Icon and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
-      for (const name of ['Button', 'Separator']) {
+      for (const name of ['Button', 'IconButton', 'Separator']) {
         const { properties, required } = tool(provider, name).parameters;
         expect(properties.accessibility).toBeUndefined();
         expect(ACCESSIBILITY.map((parameter) => properties[parameter]?.type)).toEqual([optionalString, optionalString]);
@@ -317,18 +319,19 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
     expect(lackedNames(each.description, descriptorNamed(name), each)).toEqual([]);
   });
 
-  test('the guard fails on the agent-facing descriptions the three tool descriptions replace', () => {
+  test('the guard fails on the agent-facing descriptions the four tool descriptions replace', () => {
     for (const provider of TOOL_PROVIDERS) {
       const lacked = (descriptor: LineDescriptor) =>
         lackedNames(descriptor.description, descriptor, tool(provider, descriptor.name));
       expect(lacked(buttonDescriptor)).toEqual(['child', 'accessibility.label']);
+      expect(lacked(iconButtonDescriptor)).toEqual(['child', 'accessibility.label']);
       expect(lacked(separatorDescriptor)).toEqual(['accessibility.label', 'accessibility.label']);
       expect(lacked(stackDescriptor)).toEqual(['children']);
     }
   });
 
-  test('Button, Separator and Stack emit their toolDescription in place of their description', () => {
-    for (const descriptor of [buttonDescriptor, separatorDescriptor, stackDescriptor]) {
+  test('Button, IconButton, Separator and Stack emit their toolDescription in place of their description', () => {
+    for (const descriptor of [buttonDescriptor, iconButtonDescriptor, separatorDescriptor, stackDescriptor]) {
       expect(descriptor.toolDescription).toBeString();
       expect(descriptor.toolDescription).not.toBe(descriptor.description);
       for (const provider of TOOL_PROVIDERS) {

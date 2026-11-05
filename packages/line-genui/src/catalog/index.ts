@@ -13,6 +13,7 @@ import {
 import { commonProp, componentSchema, defineDescriptor, type LineDescriptor } from './descriptor.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { iconDescriptor } from './descriptors/icon.js';
+import { iconButtonDescriptor } from './descriptors/icon-button.js';
 import { separatorDescriptor } from './descriptors/separator.js';
 import { stackDescriptor } from './descriptors/stack.js';
 import {
@@ -82,6 +83,7 @@ export {
   componentSchema,
   defineDescriptor,
   frontendTools,
+  iconButtonDescriptor,
   iconDescriptor,
   inlineCatalog,
   LINE_CATALOG_ID,
@@ -97,6 +99,7 @@ export {
 export const descriptors: readonly LineDescriptor[] = [
   buttonDescriptor,
   iconDescriptor,
+  iconButtonDescriptor,
   separatorDescriptor,
   stackDescriptor,
 ];
