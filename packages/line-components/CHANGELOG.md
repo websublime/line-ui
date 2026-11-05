@@ -1,5 +1,17 @@
 # @websublime/line-components
 
+## 0.2.5
+
+### Patch Changes
+
+- [#316](https://github.com/websublime/line-ui/pull/316) [`9200079`](https://github.com/websublime/line-ui/commit/9200079739b950bab17ac0c19ed30a339dcc30f0) Thanks [@miguelramos](https://github.com/miguelramos)! - Add `<line-icon>` at `@websublime/line-components/icon` and `setIconRegistry` at the package root: a glyph from a registered icon set, an SVG file or SVG path data, sanitised through the Trusted Types policy `line-icon` and an allowlist, decorative unless labelled, and sized by `--line-icon-size`.
+
+- [#326](https://github.com/websublime/line-ui/pull/326) [`c13a74f`](https://github.com/websublime/line-ui/commit/c13a74f9350bf163f3ac1da29176efcf90349332) Thanks [@miguelramos](https://github.com/miguelramos)! - Add `<line-icon-button>` at `@websublime/line-components/icon-button`, a square button that shows only an icon (slotted, part `icon`), takes its name from the host `aria-label`, is never a form submitter, and takes `variant`, `disabled`, `loading` and `pressed` (toggle, fires `line-change`); the `line` A2UI catalog, `catalog.json` and the frontend tools of `@websublime/line-genui/catalog` gain `IconButton`, which `<line-a2ui-surface>` renders only when the node carries `accessibility.label`.
+
+- Updated dependencies [[`59a2265`](https://github.com/websublime/line-ui/commit/59a22652ef36d38483bcec2638904559701b5e06), [`22e0844`](https://github.com/websublime/line-ui/commit/22e0844e74daa23049b617a7fe7724b6186d2762)]:
+  - @websublime/line-core@0.2.3
+  - @websublime/line-themes@0.2.0
+
 ## 0.2.4
 
 ### Patch Changes
