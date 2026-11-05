@@ -16,6 +16,7 @@ export const ICON_BUTTON_STORIES = {
   'components-icon-button--loading': 2,
   'components-icon-button--toggle-off': 1,
   'components-icon-button--toggle-on': 1,
+  'components-icon-button--styled-states': 8,
 } as const satisfies Record<string, number>;
 
 export type IconButtonStoryId = keyof typeof ICON_BUTTON_STORIES;

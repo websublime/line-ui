@@ -8,6 +8,7 @@ import '@websublime/line-tokens/typography';
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import type { IconButtonVariant } from '@websublime/line-components/icon-button';
 import { html } from 'lit';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 import { registerStoryIcons } from '../agent-ui/story-icons.js';
 import { extractArgTypes } from './manifest-arg-types.js';
 
@@ -16,8 +17,25 @@ import { extractArgTypes } from './manifest-arg-types.js';
 // Elements Manifest that preview.ts registers. The stories import only the token
 // families IconButton uses; the line-tokens barrel carries reset.css, which would
 // restyle the docs page. The Lucide files are self-hosted under public/icons/.
+// The Styled states stylesheet is story-local; the package ships no state style
+// besides the focus ring (spec AM-002).
 
 registerStoryIcons();
+
+/**
+ * The Styled states story's stylesheet, scoped to the story; the docs snippet is the same rules without the scope.
+ * The role aliases come from `line-themes`, which preview.ts loads.
+ */
+const STATE_CSS = `.styled-states line-icon-button:hover::part(root) { background: var(--line-gray-bg-hover); }
+.styled-states line-icon-button[data-active]::part(root) { background: var(--line-gray-bg-active); }
+.styled-states line-icon-button[variant='primary']:hover::part(root) { background: var(--line-accent-solid-hover); }
+.styled-states line-icon-button[variant='primary'][data-active]::part(root) { background: var(--line-accent-text-low); }
+.styled-states line-icon-button[variant='borderless']:hover::part(root) { background: var(--line-accent-bg-hover); }
+.styled-states line-icon-button[variant='borderless'][data-active]::part(root) { background: var(--line-accent-bg-active); }
+.styled-states line-icon-button[data-pressed]::part(root) { background: var(--line-accent-bg-active); color: var(--line-accent-text); }
+.styled-states line-icon-button:state(loading)::part(root) { cursor: progress; }
+.styled-states line-icon-button[data-loading]::part(icon) { display: none; }
+.styled-states line-icon-button[data-disabled]::part(root) { opacity: 0.5; }`;
 
 const DESCRIPTION = `\`<line-icon-button>\` runs an action when the user activates it, and shows only an icon.
 
@@ -31,7 +49,21 @@ const DESCRIPTION = `\`<line-icon-button>\` runs an action when the user activat
 - **Not a form control.** The inner button is always \`type="button"\` and the host is not form-associated, so it never submits or resets a form, and a \`<fieldset disabled>\` ancestor does not disable it. Use \`<line-button type="submit">\` to submit.
 - \`variant\` is \`default\`, \`primary\` or \`borderless\`. \`disabled\` removes it from the tab order. \`loading\` keeps it focusable, sets \`aria-disabled="true"\`, ignores presses and renders the \`loading\` slot; the name stays the \`aria-label\`, so change it while loading if the state should be announced. Hide \`::part(icon)\` under \`[data-loading]\` to keep the box square with a spinner.
 - \`pressed="false"\` or \`pressed="true"\` makes a toggle: each press flips it, sets \`aria-pressed\` and fires \`line-change\` with \`{ value }\`. Keep one label in both states.
-- The box is a square of at least \`--line-icon-button-size\` (default \`var(--line-size-7)\`), and a \`<line-icon>\` at its \`1em\` default follows \`--line-icon-button-font-size\`. The state shows as \`data-*\` attributes and \`:state()\` on the host for themes to style.`;
+- The box is a square of at least \`--line-icon-button-size\` (default \`var(--line-size-7)\`), and a \`<line-icon>\` at its \`1em\` default follows \`--line-icon-button-font-size\`.
+
+### Styling states
+
+The button draws only the focus ring. Hover, active, pressed, loading and disabled carry no style, so a theme or your own CSS styles them on the host and reaches the inner button through \`::part(root)\`:
+
+- \`:hover\` and \`:active\` match the host itself, so there is no \`data-hovered\`.
+- \`[data-active]\`, \`[data-pressed]\`, \`[data-loading]\`, \`[data-disabled]\` and \`[data-focus-visible]\` reflect the button's state, with the same names as \`:state()\`, such as \`:state(loading)\`. \`data-active\` also covers a press by Enter or Space.
+- The \`line-themes\` role aliases give each state a colour step, such as \`--line-gray-bg-hover\`, \`--line-gray-bg-active\` and \`--line-accent-solid-hover\`.
+
+The **Styled states** story uses these rules:
+
+\`\`\`css
+${STATE_CSS.replaceAll('.styled-states ', '')}
+\`\`\``;
 
 interface IconButtonArgs {
   label: string;
@@ -112,4 +144,32 @@ export const ToggleOn: Story = {
     html`<line-icon-button variant=${variant} pressed="true" aria-label=${label}
       ><line-icon library="lucide" name=${icon}></line-icon
     ></line-icon-button>`,
+};
+
+export const StyledStates: Story = {
+  name: 'Styled states',
+  render: () =>
+    html`${unsafeHTML(`<style>${STATE_CSS}</style>`)}
+      <div class="styled-states" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center">
+        <line-icon-button aria-label="Settings"><line-icon library="lucide" name="settings"></line-icon></line-icon-button>
+        <line-icon-button variant="primary" aria-label="Add item"
+          ><line-icon library="lucide" name="plus"></line-icon
+        ></line-icon-button>
+        <line-icon-button variant="borderless" aria-label="Close dialog"
+          ><line-icon library="lucide" name="x"></line-icon
+        ></line-icon-button>
+        <line-icon-button pressed="false" aria-label="Mute"
+          ><line-icon library="lucide" name="volume-x"></line-icon
+        ></line-icon-button>
+        <line-icon-button pressed="true" aria-label="Mute"
+          ><line-icon library="lucide" name="volume-x"></line-icon
+        ></line-icon-button>
+        <line-icon-button loading aria-label="Refreshing"
+          ><line-icon library="lucide" name="refresh-cw"></line-icon
+          ><line-icon slot="loading" library="lucide" name="loader-circle"></line-icon
+        ></line-icon-button>
+        <line-icon-button disabled aria-label="Delete"
+          ><line-icon library="lucide" name="trash-2"></line-icon
+        ></line-icon-button>
+      </div>`,
 };
