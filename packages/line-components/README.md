@@ -7,6 +7,7 @@ that registers one tag. The root entry registers nothing and exports only the ic
 | Subpath | Registers |
 |---------|-----------|
 | `@websublime/line-components/button` | `<line-button>` |
+| `@websublime/line-components/button-group` | `<line-button-group>` |
 | `@websublime/line-components/icon` | `<line-icon>` |
 | `@websublime/line-components/icon-button` | `<line-icon-button>` |
 | `@websublime/line-components/separator` | `<line-separator>` |
@@ -147,3 +148,34 @@ The box is a square of at least `--line-icon-button-size` (default `var(--line-s
 follows `--line-icon-button-font-size`. `::part(root)`, `::part(icon)` and `::part(loading)` reach the inner
 button and the wrappers of its two slots; the state shows as `data-*` attributes and `:state()` on the host.
 A `<fieldset disabled>` ancestor does not disable it, because it is not form-associated; set `disabled` on it.
+
+## ButtonGroup
+
+`<line-button-group>` groups related buttons into one toolbar. The group is one Tab stop, and the arrow keys move
+focus between its buttons. It carries the `toolbar` role on its host, so name it with `aria-label` or
+`aria-labelledby`. It imports no button: the `<line-button>` and `<line-icon-button>` children of its default slot
+are its buttons, and a child with the `hidden` attribute is left out. It writes `tabindex` and
+`data-line-button-group-position` (`first`, `middle`, `last`, `only`) on those children and removes both from a
+child that leaves.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `orientation` | `horizontal` (Left and Right arrows, mirrored right-to-left), `vertical` (Up and Down arrows) | `horizontal` |
+| `loop` | boolean; the arrows wrap from the last button to the first and back | off |
+
+Home and End move to the first and last button, and Tab returns to the button that last had focus. Disabled
+buttons are skipped; loading buttons stay reachable. When the focused button is disabled, hidden or removed, focus
+moves to the next button that is not disabled, else the previous one.
+
+```html
+<line-button-group aria-label="Text formatting">
+  <line-button pressed="false">Bold</line-button>
+  <line-button pressed="false">Italic</line-button>
+  <line-button pressed="false">Underline</line-button>
+</line-button-group>
+```
+
+The group squares the corners between its buttons by writing their `--line-button-radius` and
+`--line-icon-button-radius` tokens; the outer corners take `--line-button-group-radius` (default
+`var(--line-radius-2)`), and `--line-button-group-gap` (default `0`) spaces the buttons. Use a toolbar for three or
+more controls; place fewer side by side with `<line-stack orientation="horizontal">`.
