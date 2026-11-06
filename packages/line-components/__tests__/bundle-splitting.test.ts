@@ -11,8 +11,9 @@
  *   `./a2ui` defines only `line-a2ui-surface` (PRD §7.3; R9 §2.2).
  * - Icon registry slot: importing the root `"."` or `./icon` leaves `globalThis[Symbol.for('line.icon-registry')]`
  *   undefined until the first access through `setIconRegistry` or `LineIcon.registry` (§6.C.3; AM-010).
- * - Isolation scan: an esbuild `--metafile` bundle per subpath holds no other component's module or tag. Modules
- *   under `src/shared/`, emitted to `dist/shared/**` (§6.P.9), may sit in any bundle.
+ * - Isolation scan: an esbuild `--metafile` bundle per subpath holds no other component's module, and no other
+ *   component's tag except the ones its `ALLOWED_TAG_REFERENCES` row names (AM-090). Modules under `src/shared/`,
+ *   emitted to `dist/shared/**` (§6.P.9), may sit in any bundle.
  * - esbuild consumer bundle: one bare-import bundle of every subpath emits no `ignored-bare-import` warning.
  * - `dist/` of `line-components` imports `@websublime/line-core` and `@websublime/line-core/styles` bare.
  * - Undeclared bare specifiers: every bare import in `dist/**\/*.js` of the three packages names a declared
@@ -60,6 +61,15 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './icon': ['line-icon'],
   './icon-button': ['line-icon-button'],
   './button-group': ['line-button-group'],
+};
+
+/**
+ * The tags of other components a subpath's bundle may hold: the slotted items its component spec matches by tag
+ * name. The module check stays strict (§7.5; AM-090). `./button-group` recognises its buttons by tag name and keys
+ * its corner rules on them (`0004-button-group.md` D2, D14).
+ */
+const ALLOWED_TAG_REFERENCES: Readonly<Record<string, readonly string[]>> = {
+  './button-group': ['line-button', 'line-icon-button'],
 };
 
 /** The tags each `line-genui` subpath registers: none for `./catalog`, only the surface for `./a2ui` (§7.5). */
@@ -180,7 +190,7 @@ describe('isolation scan (§7.5)', () => {
       const otherTags = Object.entries(EXPECTED_TAGS)
         .filter(([key]) => key !== subpath)
         .flatMap(([, tags]) => tags)
-        .filter((tag) => tagPattern(tag).test(text));
+        .filter((tag) => !ALLOWED_TAG_REFERENCES[subpath]?.includes(tag) && tagPattern(tag).test(text));
       expect(inputs.some((input) => input.startsWith(own))).toBe(true);
       expect({ foreignModules, otherTags }).toEqual({ foreignModules: [], otherTags: [] });
       for (const tag of EXPECTED_TAGS[subpath] ?? []) expect(text).toMatch(tagPattern(tag));
