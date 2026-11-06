@@ -288,6 +288,23 @@ test.describe('focus-visible (decision D3)', () => {
     expect(await focusVisible(page, 'b2')).toBe(true);
   });
 
+  test('a pointer click moves the remembered button, except in WebKit, where a click focuses nothing (probe P1)', async ({
+    page,
+    browserName,
+  }) => {
+    await mount(page, frame(''));
+    await page.click('#b3');
+    if (browserName === 'webkit') {
+      expect(await focusPath(page)).toBe('body');
+      expect(await stops(page)).toEqual(['b1:0:first', 'b2:-1:middle', 'b3:-1:last']);
+    } else {
+      expect(await focusPath(page)).toBe('b3>button');
+      expect(await stops(page)).toEqual(['b1:-1:first', 'b2:-1:middle', 'b3:0:last']);
+    }
+    await enter(page, browserName);
+    expect(await focusPath(page)).toBe(browserName === 'webkit' ? 'b1>button' : 'b3>button');
+  });
+
   test('the focused button is raised above its neighbours', async ({ page, browserName }) => {
     await mount(page, frame(''));
     await enter(page, browserName);
@@ -358,7 +375,22 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     await page.evaluate(() => document.getElementById('b2')?.setAttribute('hidden', ''));
     await settle(page);
     expect(await focusPath(page)).toBe('b3>button');
+    expect(await focusVisible(page, 'b3')).toBe(true);
     expect(await stops(page)).toEqual(['b1:-1:first', 'b2:null:null', 'b3:0:last']);
+  });
+
+  test('the last button turning hidden hands focus to the previous one, with the ring', async ({
+    page,
+    browserName,
+  }) => {
+    await mount(page, frame(''));
+    await enter(page, browserName);
+    await page.keyboard.press('End');
+    await page.evaluate(() => document.getElementById('b3')?.setAttribute('hidden', ''));
+    await settle(page);
+    expect(await focusPath(page)).toBe('b2>button');
+    expect(await focusVisible(page, 'b2')).toBe(true);
+    expect(await stops(page)).toEqual(['b1:-1:first', 'b2:0:last', 'b3:null:null']);
   });
 
   test('a second refresh before the browser drops focus keeps the recovery (finding F5)', async ({
@@ -470,6 +502,30 @@ test.describe('slotchange discovery and the attributes the group writes (decisio
     expect(await page.evaluate(() => Reflect.get(Reflect.get(window, 'counter'), 'slotchanges'))).toBe(0);
   });
 
+  test('a reconnected group re-reads its buttons, keeps the tab stop and re-arms its observer', async ({
+    page,
+    browserName,
+  }) => {
+    await mount(page, frame(''));
+    await enter(page, browserName);
+    await page.keyboard.press('ArrowRight');
+    await page.evaluate(() => {
+      const group = document.getElementById('g') as HTMLElement;
+      const after = document.getElementById('after') as HTMLElement;
+      group.remove();
+      after.before(group);
+    });
+    await settle(page);
+    expect(await stops(page)).toEqual(['b1:-1:first', 'b2:0:middle', 'b3:-1:last']);
+    await enter(page, browserName);
+    expect(await focusPath(page)).toBe('b2>button');
+    await page.keyboard.press('ArrowRight');
+    expect(await focusPath(page)).toBe('b3>button');
+    await page.evaluate(() => document.getElementById('b1')?.setAttribute('hidden', ''));
+    await settle(page);
+    expect(await stops(page)).toEqual(['b1:null:null', 'b2:-1:first', 'b3:0:last']);
+  });
+
   test('the group itself takes no focus', async ({ page }) => {
     await mount(page, frame(''));
     await page.focus('#before');
@@ -523,6 +579,16 @@ test.describe('corners (decisions D9, D14, D15, D16)', () => {
       i1: '5px 5px 0px 0px',
       b2: '0px 0px 0px 0px',
       i3: '0px 0px 5px 5px',
+    });
+  });
+
+  test('a page rule on the button radius token wins over the group corners (spec probe P8)', async ({ page }) => {
+    await page.addStyleTag({ content: 'line-button { --line-button-radius: 9px; }' });
+    await mount(page, frame(''));
+    expect(await corners(page, ['b1', 'b2', 'b3'])).toEqual({
+      b1: '9px 9px 9px 9px',
+      b2: '9px 9px 9px 9px',
+      b3: '9px 9px 9px 9px',
     });
   });
 
