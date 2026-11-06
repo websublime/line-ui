@@ -96,6 +96,29 @@ function host(page: Page, id: string): Locator {
   return page.locator(`#${id}`);
 }
 
+test.describe('width in a stretching layout (AM-010, AM-011)', () => {
+  test('a default vertical line-stack stretches the root; align="start" keeps the content width', async ({ page }) => {
+    await mount(
+      page,
+      `<line-stack id="stretch" style="inline-size: 300px"><line-button id="wide">Export</line-button></line-stack>
+      <line-stack id="start" align="start" style="inline-size: 300px"><line-button id="narrow">Export</line-button></line-stack>
+      <div><line-button id="alone">Export</line-button></div>`,
+    );
+    await page.evaluate(() => customElements.whenDefined('line-stack'));
+    const widths = await page.evaluate(() =>
+      Object.fromEntries(
+        ['wide', 'narrow', 'alone'].map((id) => {
+          const root = document.getElementById(id)?.shadowRoot?.querySelector('[part="root"]');
+          return [id, root ? Math.round(root.getBoundingClientRect().width) : -1];
+        }),
+      ),
+    );
+    expect(widths.wide).toBe(300);
+    expect(widths.narrow).toBe(widths.alone);
+    expect(widths.narrow).toBeLessThan(300);
+  });
+});
+
 test.describe('keyboard and focus', () => {
   test('Tab reaches an enabled and a loading button and skips a disabled one', async ({ page, browserName }) => {
     await mount(
