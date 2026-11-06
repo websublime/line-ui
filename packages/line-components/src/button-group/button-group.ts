@@ -169,7 +169,7 @@ export class LineButtonGroup extends LineElement {
     if (!slot) return;
     const buttons = slot
       .assignedElements({ flatten: true })
-      .filter((el): el is HTMLElement => el instanceof HTMLElement && BUTTON_TAGS.has(el.localName));
+      .filter((el): el is HTMLElement => BUTTON_TAGS.has(el.localName));
     const items = buttons.filter((el) => !el.hasAttribute('hidden'));
 
     for (const el of this.#items) {
