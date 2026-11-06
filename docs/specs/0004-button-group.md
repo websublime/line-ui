@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `draft` |
+| Status | `proposed` |
 | Phase | `1` |
 | Tier | `Custom` |
 | Tag | `line-button-group` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C6` |
 | Governing sections | Phase 1 spec §4.2, §6.C.0, §6.C.4 (C6 row and notes), §6.C.5 (ButtonGroup), §6.C.6, §6.G.1, §6.G.3, §6.G.4, §7.3, §7.4, §7.5, §7.6, §7.8, §10 SD4, SD10, SD13, SD18, SD31, SD38, SD39, SD98, SD99, §12 AM-002, AM-052, AM-055, AM-058, AM-086; ARCH §5, §8, §12, §13.1, §14.7–§14.9, §17.2–§17.4; PRD §4.1, §5.2, §8; plan §2.2–§2.4, D5 |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Text marked `[PENDING Dn]` depends on Open Question Dn and changes with its answer.
+Text marked `[INFERENCE]` has no probe or source behind it yet.
 
 ---
 
@@ -164,14 +164,14 @@ Button's `root` takes `border-radius: var(--line-button-radius)` (`button.ts:150
 
 #### Description
 
-`<line-button-group>` groups related buttons into one toolbar. The group is one Tab stop, and the arrow keys move focus between its buttons, as the APG Toolbar pattern describes (ARCH §13.1, `docs/ARCHITECTURE.md:589`; PRD §4.1, `docs/PRD.md:246`; plan D5, `docs/plans/01-plan-core-primitives.md:487`). Assistive technology meets it as a `toolbar` [PENDING D1]. It imports no button: it finds the buttons in its default slot through `slotchange` and moves focus through each button host's public focus surface (Phase 1 spec §6.C.5, `:1208`; MANIFESTO Law 4; probe P1, P2) [PENDING D2, D3]. A custom roving-focus machine, built with `createMachine` on `@zag-js/core` 1.47.0 and run through `LineMachineController`, drives it (Phase 1 spec `:1209`; §10 SD10). It is not form-associated, and it is not compound: its buttons act on their own and commit no shared result, so it fires no commit event of its own (ARCH §17.2 C9, `:1571`). It joins the buttons visually by collapsing the corners between them [PENDING D9].
+`<line-button-group>` groups related buttons into one toolbar. The group is one Tab stop, and the arrow keys move focus between its buttons, as the APG Toolbar pattern describes (ARCH §13.1, `docs/ARCHITECTURE.md:589`; PRD §4.1, `docs/PRD.md:246`; plan D5, `docs/plans/01-plan-core-primitives.md:487`). Assistive technology meets it as a `toolbar` (decision D1). It imports no button: it finds the buttons in its default slot through `slotchange` and moves focus through each button host's public focus surface (Phase 1 spec §6.C.5, `:1208`; MANIFESTO Law 4; probe P1, P2; decisions D2 and D3). A custom roving-focus machine, built with `createMachine` on `@zag-js/core` 1.47.0 and run through `LineMachineController`, drives it (Phase 1 spec `:1209`; §10 SD10). It is not form-associated, and it is not compound: its buttons act on their own and commit no shared result, so it fires no commit event of its own (ARCH §17.2 C9, `:1571`). It joins the buttons visually by collapsing the corners between them (decision D9).
 
 #### Use cases
 
 - A formatting toolbar in an editor: bold, italic, underline, alignment.
 - A set of related view actions, such as zoom out, reset and zoom in, or a pager's first, previous, next and last.
-- A vertical tool palette beside a canvas [PENDING D4].
-- A row of icon-only actions on a card or a table row, mixing `line-button` and `line-icon-button` [PENDING D2].
+- A vertical tool palette beside a canvas (decision D4).
+- A row of icon-only actions on a card or a table row, mixing `line-button` and `line-icon-button` (decision D2).
 - Render an agent `ButtonGroup` node from the `line` catalog on `<line-a2ui-surface>` (Phase 1 spec §6.C.4 C6 row, `agentExposed: true`; decision D10).
 
 #### Anti-patterns
@@ -179,31 +179,32 @@ Button's `root` takes `border-radius: var(--line-button-radius)` (`button.ts:150
 - One choice among options, such as a view switcher with one active view. Use RadioGroup or ToggleGroup (Phase 2; ARCH §13.1 ToggleButton bullet); a toolbar of toggle buttons with `pressed` fits only when each toggles on its own.
 - Fewer than three controls. APG says to "use toolbar as a grouping element only if the group contains 3 or more controls"; place two buttons side by side with `<line-stack orientation="horizontal">` (R8 `:67`; decision D8).
 - Buttons that each need their own Tab stop, such as a dialog's OK and Cancel. Use `<line-stack>`; a toolbar takes them out of the Tab order except one.
-- Controls that need the arrow keys the toolbar uses, such as a text field or a slider in a horizontal toolbar. APG advises against it, and line://ui's group handles only buttons [PENDING D2].
+- Controls that need the arrow keys the toolbar uses, such as a text field or a slider in a horizontal toolbar. APG advises against it, and line://ui's group handles only buttons (decision D2).
 - Navigation links. Use a `<nav>` with a list of `<a href>`; a toolbar groups controls, not links.
 - A button that opens a menu, or a menubar. Use Menu or Menubar (Phase 3; ARCH §13.7).
 - A split button. Use SplitButton (Phase 3; ARCH §13.1).
 
 #### User expectations
 
-- Tab moves focus into the group once, onto the first button that is not disabled the first time, and onto the button that last had focus afterwards; Shift+Tab and Tab leave it (APG Toolbar, Keyboard Interaction; probe P2) [PENDING D5].
-- Left Arrow and Right Arrow move between the buttons of a horizontal group, mirrored in a right-to-left page; Up Arrow and Down Arrow do it in a vertical group (APG Toolbar; probe P4) [PENDING D4].
-- Home and End move to the first and last button [PENDING D5].
+- Tab moves focus into the group once, onto the first button that is not disabled the first time, and onto the button that last had focus afterwards; Shift+Tab and Tab leave it (APG Toolbar, Keyboard Interaction; probe P2; decision D5).
+- Left Arrow and Right Arrow move between the buttons of a horizontal group, mirrored in a right-to-left page; Up Arrow and Down Arrow do it in a vertical group (APG Toolbar; probe P4; decision D4).
+- Home and End move to the first and last button (decision D5).
 - Enter and Space activate the focused button as on any button; the group handles neither (probe P4).
-- A disabled button is skipped by the arrow keys; a loading button stays reachable and ignores presses, as it does outside a group (`0002-button.md` User expectations; probe P3) [PENDING D6].
-- A screen reader announces a toolbar with its name and, when vertical, its orientation, then each button with its own name and state [PENDING D1, D7].
+- A disabled button is skipped by the arrow keys; a loading button stays reachable and ignores presses, as it does outside a group (`0002-button.md` User expectations; probe P3; decision D6).
+- When the focused button becomes disabled, focus moves to the group's new active button, the first button that is not disabled (States, `sync`), instead of falling to the top of the page (decision D6).
+- A screen reader announces a toolbar with its name and, when vertical, its orientation, then each button with its own name and state (decisions D1 and D7).
 - In Safari on macOS a mouse click does not focus a button, so it does not move the group's remembered button; Tab and the arrow keys behave as elsewhere (probe P1).
 
 ### Connections
 
 | Component | Relation | Connects through |
 |-----------|----------|------------------|
-| `<line-button>` | child | the default slot; the group recognises it by tag name and never imports it (Phase 1 spec §6.C.5, `:1208`; §6.C.6 "Import no other component", `:1228`; probe P5) [PENDING D2] |
-| `<line-icon-button>` | child | the default slot, as `<line-button>` (probe P1, P5; `0003-icon-button.md` Connections, which deferred this to this spec) [PENDING D2] |
-| `<line-separator>` | child | the default slot; not an item, so the arrow keys pass over it [INFERENCE: not probed with a separator; probe P5 shows non-items stay out of the item list] [PENDING D2] |
+| `<line-button>` | child | the default slot; the group recognises it by tag name and never imports it (Phase 1 spec §6.C.5, `:1208`; §6.C.6 "Import no other component", `:1228`; probe P5; decision D2) |
+| `<line-icon-button>` | child | the default slot, as `<line-button>` (probe P1, P5; `0003-icon-button.md` Connections, which deferred this to this spec; decision D2) |
+| `<line-separator>` | child | the default slot; not an item, so the arrow keys pass over it [INFERENCE: not probed with a separator; probe P5 shows non-items stay out of the item list] (decision D2) |
 | `<line-stack>` | sibling | the alternative for buttons that keep their own Tab stops (Anti-patterns) |
 | native `<form>` | none | not form-associated (ARCH §7 list, `docs/ARCHITECTURE.md:389`, unchanged); slotted `line-button` hosts keep their own form behaviour |
-| `<line-a2ui-surface>` | orchestrator | creates `line-button-group` by tag from a `line` catalog `ButtonGroup` node, puts the `children` in the default slot, and sets `accessibility.label` as the host `aria-label` (ARCH §17.4) [PENDING D7, D10] |
+| `<line-a2ui-surface>` | orchestrator | creates `line-button-group` by tag from a `line` catalog `ButtonGroup` node, puts the `children` in the default slot, and sets `accessibility.label` as the host `aria-label` (ARCH §17.4; decisions D7 and D10) |
 
 ### Variants
 
@@ -211,7 +212,7 @@ Button's `root` takes `border-radius: var(--line-button-radius)` (`button.ts:150
 |-----------|--------|----------|
 | none | — | — |
 
-ButtonGroup has no semantic variant (ARCH §17.2 C6). Each slotted button keeps its own `variant`. `orientation` is a behaviour and layout attribute, not a variant: it changes keys, the ARIA orientation and the flex direction (Props) [PENDING D4].
+ButtonGroup has no semantic variant (ARCH §17.2 C6). Each slotted button keeps its own `variant`. `orientation` is a behaviour and layout attribute, not a variant: it changes keys, the ARIA orientation and the flex direction (Props; decision D4).
 
 ---
 
@@ -219,29 +220,19 @@ ButtonGroup has no semantic variant (ARCH §17.2 C6). Each slotted button keeps 
 
 ### Anatomy
 
-[PENDING D1] Option (a), host internals (recommended):
+Decision D1 places the role on the host.
 
 ```
 <line-button-group>                     LineElement (not FormAssociated); ElementInternals role toolbar,
 │                                       ariaOrientation "vertical" only when vertical; the host is the flex container
 └── #shadow-root
-    └── <slot></slot>                   the items: line-button and line-icon-button hosts [PENDING D2]
-```
-
-Option (b), inner wrapper:
-
-```
-<line-button-group>                     LineElement (not FormAssociated); no role (generic)
-└── #shadow-root
-    └── <div part="root" role="toolbar"   aria-orientation, aria-label copied from the host
-             aria-orientation aria-label>
-        └── <slot></slot>
+    └── <slot></slot>                   the items: line-button and line-icon-button hosts (decision D2)
 ```
 
 - The group renders no button and no focusable element of its own. Focus lives in the slotted buttons' shadow roots (probe P1).
 - The host extends `LineElement` without the `FormAssociated` mixin, so `this[INTERNALS]` is available for the role and for `reflectState` (ARCH §14.8, `:1181`; `packages/line-core/src/line-element.ts:31-36`).
 - The default shadow-root options apply: the group does not set `delegatesFocus`, because it has no focus target of its own; `host.focus()` on the group is a no-op [INFERENCE: not probed on the group host].
-- Under option (a) the host itself is the flex container with a bare slot, as `<line-stack>` and `<line-separator>` are their own boxes (`0018-stack.md` Anatomy, `:73-78`; `packages/line-components/src/separator/separator.ts:81-83`).
+- The host itself is the flex container with a bare slot, and the shadow root holds no wrapper element, as `<line-stack>` and `<line-separator>` are their own boxes (`0018-stack.md` Anatomy, `:73-78`; `packages/line-components/src/separator/separator.ts:81-83`).
 
 ### States
 
@@ -257,7 +248,7 @@ The machine has one finite state. The roving position is context, `activeIndex` 
 
 | Machine member | Shape |
 |---|---|
-| Props | `count: number` (items now); `isSkipped(index): boolean` (`true` for an item the arrows pass over) [PENDING D6]; `loop: boolean` [PENDING D5]; `onMove(index): void` (the host focuses the item and writes the tab stops) |
+| Props | `count: number` (items now); `isSkipped(index): boolean` (`true` for an item the arrows pass over; decision D6); `loop: boolean` (decision D5); `onMove(index): void` (the host focuses the item and writes the tab stops) |
 | Context | `activeIndex: number`; `-1` when no item can take focus |
 | Events | `MOVE { to: 'next' \| 'prev' \| 'first' \| 'last' }` from a handled key; `FOCUS_ITEM { index }` from `focusin` on an item; `SYNC { index }` after `slotchange` or an item `disabled` change, with the index of the element that was active |
 | Actions | `move` (finds the next item `isSkipped` allows, with or without `loop`, sets `activeIndex`, calls `onMove`); `setActive`; `sync` (keeps the active element, or falls back to the first item that is not skipped) |
@@ -268,9 +259,10 @@ The machine has one finite state. The roving position is context, `activeIndex` 
 
 - The group reflects no ARCH §14.8 state. `:focus-within` matches the group host in all three engines while a slotted button has focus (probe P1), and each button reflects its own `data-focus-visible`, `data-disabled` and `data-loading`.
 - **Timing rule.** `send()` runs in a microtask in `@zag-js/vanilla` 1.47.0 (probe P7). The host writes the tab stops in the `move` action's `onMove` callback and in `updated()`, from `context.get('activeIndex')`, and never reads context right after `send()`.
-- **Tab stops.** The active item host carries `tabindex="0"` and every other item host `tabindex="-1"` (probe P2) [PENDING D3]. An element that leaves the slot loses the `tabindex` the group wrote, or it would stay out of the Tab order wherever it moves [INFERENCE: not probed; follows from P2]. The group overwrites an author `tabindex` on an item.
-- **Keyboard moves.** `onMove` focuses the item with `focus({ focusVisible: true })`, so the moved-to button shows its ring in Firefox after a pointer click (probe P1) [PENDING D3].
-- **Discovery.** On `slotchange` the host reads `slot.assignedElements({ flatten: true })`, keeps the items (decision D2), re-observes each item's `disabled` attribute with one `MutationObserver` [PENDING D6], and sends `SYNC` (probe P3, P5).
+- **Tab stops.** The active item host carries `tabindex="0"` and every other item host `tabindex="-1"` (probe P2; decision D3). An element that leaves the slot loses the `tabindex` the group wrote, or it would stay out of the Tab order wherever it moves [INFERENCE: not probed; follows from P2]. The group overwrites an author `tabindex` on an item.
+- **Keyboard moves.** `onMove` focuses the item with `focus({ focusVisible: true })`, so the moved-to button shows its ring in Firefox after a pointer click (probe P1; decision D3).
+- **Discovery.** On `slotchange` the host reads `slot.assignedElements({ flatten: true })`, keeps the items (decision D2), re-observes each item's `disabled` attribute with one `MutationObserver` (decision D6), and sends `SYNC` (probe P3, P5).
+- **Disabled items.** `isSkipped` reads the item's `disabled` attribute; a `loading` item stays in the roving set (decision D6; probe P3). The `MutationObserver` sends `SYNC` on every `disabled` change, which moves the tab stop off a button that turned disabled. When the button that held focus turns disabled, the browser drops focus to `body` in all three engines (probe P3); the host then focuses the new active button (decision D6, sub-choice (i)). How the host knows the disabled button held focus is not probed: a `focusout` on disabling was not observed, so the host records the focused item from `focusin` and checks `document.activeElement` in the observer callback [INFERENCE]. When every item is disabled, `activeIndex` is `-1` and the group has no Tab stop.
 - If the machine fails to start, the controller's fallback leaves the group without roving focus: the host writes no `tabindex`, so every button keeps its own Tab stop and stays operable (MANIFESTO Law 9; probe P2 baseline row) [INFERENCE: not probed with a failing machine].
 - The machine stays local to ButtonGroup. A Phase 2 component that needs roving focus (ToggleGroup, RadioGroup) may move it to `src/shared/`, as Button's machine moved for IconButton (Phase 1 spec §12 AM-002) [INFERENCE].
 
@@ -278,77 +270,80 @@ The machine has one finite state. The roving position is context, `activeIndex` 
 
 | Slot | Kind | Accepts |
 |------|------|---------|
-| `(default)` | `ChildList` | the toolbar's buttons, in order: `<line-button>` and `<line-icon-button>` hosts [PENDING D2]; other content is rendered but takes no part in roving focus |
+| `(default)` | `ChildList` | the toolbar's buttons, in order: `<line-button>` and `<line-icon-button>` hosts (decision D2); other content is rendered but takes no part in roving focus |
 
 ### Parts
 
 | Part | Element | Purpose |
 |------|---------|---------|
-| none under option (a) | — | the host is the flex container; consumers style the host and each button's own parts [PENDING D1] |
-| `root` under option (b) | `<div role="toolbar">` | wraps the default slot; the flex container [PENDING D1] |
+| none | — | the host is the flex container; consumers style the host and each button's own parts (decision D1) |
 
 ### Props
 
+Decisions D4 and D5 set this table.
+
 | Property | Attribute | Type | Default | Reflects | Description |
 |----------|-----------|------|---------|----------|-------------|
-| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | yes | the arrow keys the group handles, the ARIA orientation and the flex direction; an unknown value behaves as `horizontal` (C8) [PENDING D4] |
-| `loop` | `loop` | `boolean` | `false` | yes | wrap from the last button to the first and back [PENDING D5] |
+| `orientation` | `orientation` | `'horizontal' \| 'vertical'` | `'horizontal'` | yes | the arrow keys the group handles, the ARIA orientation and the flex direction; an unknown value behaves as `horizontal` (C8; decision D4) |
+| `loop` | `loop` | `boolean` | `false` | yes | wrap from the last button to the first and back (decision D5) |
 
-- `orientation` reflects as Button's `variant` does: a value the author or code sets is written to the attribute, the default leaves no attribute (Lit `useDefault: true`), and an unknown author value stays as written (`0002-button.md` AM-002) [PENDING D4].
-- No `ariaLabel` property under option (a): the host `aria-label`, `aria-labelledby` and `aria-description` attributes name the internals role directly. Option (b) adds `ariaLabel` and `ariaDescription` properties copied to the wrapper, as IconButton copies them to its inner button (`icon-button.ts:71-72`) [PENDING D1, D7].
+- `orientation` reflects as Button's `variant` does: a value the author or code sets is written to the attribute, the default leaves no attribute (Lit `useDefault: true`), and an unknown author value stays as written (`0002-button.md` AM-002; decision D4).
+- No `ariaLabel` property: the host `aria-label`, `aria-labelledby` and `aria-description` attributes name the internals role directly, so nothing is copied (decisions D1, D7; probe P6).
 - No `disabled`, `variant` or `size` on the group: each button keeps its own.
 
 ### Events
+
+Decision D11 keeps the group without events.
 
 | Event | `detail` type | Fires when |
 |-------|---------------|------------|
 | none | — | — |
 
-- ButtonGroup is not compound and not value-bearing, so C9 names no commit event (ARCH §17.2 C9, `:1571`; plan §2.4, `:173`) [PENDING D11].
+- ButtonGroup is not compound and not value-bearing, so C9 names no commit event (ARCH §17.2 C9, `:1571`; plan §2.4, `:173`).
 - The slotted buttons' `click` and `line-change` events bubble through the group unchanged.
-- The class JSDoc carries no `@fires` [PENDING D11].
+- The class JSDoc carries no `@fires`.
 
 ### CSS custom properties
 
-[PENDING D9] Option (a) (recommended):
+Decision D9 sets these tokens and the corner collapse.
 
 | Property | Default | Used by part |
 |----------|---------|--------------|
 | `--line-button-group-radius` | `var(--line-radius-2)` | the outer corners of the first and last items, written into their radius tokens |
 | `--line-button-group-gap` | `0` | `:host` (`gap`) |
 
-- Under option (a) the group's shadow stylesheet writes `--line-button-radius` and `--line-icon-button-radius` on `::slotted(line-button)` and `::slotted(line-icon-button)`: `0` on every item, the `border-radius` shorthand with `--line-button-group-radius` on the start corners of the first item and the end corners of the last, swapped under `:host(:dir(rtl))`, and the block corners instead of the inline ones while `vertical` (probe P8). A consumer rule on `line-button` in the document still wins over these (probe P8).
+- The group's shadow stylesheet writes `--line-button-radius` and `--line-icon-button-radius` on `::slotted(line-button)` and `::slotted(line-icon-button)`: `0` on every item, the `border-radius` shorthand with `--line-button-group-radius` on the start corners of the first item and the end corners of the last, swapped under `:host(:dir(rtl))`, and the block corners instead of the inline ones while `vertical` (probe P8). A consumer rule on `line-button` in the document still wins over these (probe P8).
 - `::slotted([data-focus-visible])` takes `position: relative` and `z-index: 1`, so the next button does not paint over the focused button's ring (ARCH §14.9; WCAG 2.4.7) [INFERENCE: not probed].
-- `:host` is `display: inline-flex`, `flex-direction: row`, and `column` under `[orientation="vertical"]` [PENDING D4].
+- `:host` is `display: inline-flex`, `flex-direction: row`, and `column` under `[orientation="vertical"]` (decision D4).
 - The group draws no ring of its own: focus always sits on a button, which draws its own (ARCH §14.9).
 
 ### Keyboard
 
 | Key | Action |
 |-----|--------|
-| `Tab` / `Shift+Tab` | moves focus into the group onto the active button, which is the first button not disabled until a button has had focus, and the last focused one after; the next Tab leaves the group (probe P2) [PENDING D5] |
-| `Right Arrow` / `Left Arrow` (horizontal) | next / previous button; mirrored when the group's `direction` is `rtl` (probe P4) [PENDING D4] |
-| `Down Arrow` / `Up Arrow` (vertical) | next / previous button (probe P4) [PENDING D4] |
-| `Home` / `End` | first / last button (probe P4) [PENDING D5] |
+| `Tab` / `Shift+Tab` | moves focus into the group onto the active button, which is the first button not disabled until a button has had focus, and the last focused one after; the next Tab leaves the group (probe P2; decision D5) |
+| `Right Arrow` / `Left Arrow` (horizontal) | next / previous button; mirrored when the group's `direction` is `rtl` (probe P4; decision D4) |
+| `Down Arrow` / `Up Arrow` (vertical) | next / previous button (probe P4; decision D4) |
+| `Home` / `End` | first / last button (probe P4; decision D5) |
 | `Enter` / `Space` | activate the focused button; handled by the button, not the group (probe P4) |
 
 - A handled key calls `preventDefault()`, so the page does not scroll (probe P4). Other keys pass through untouched.
-- At either end without `loop`, the arrow key does nothing [PENDING D5].
-- Disabled buttons are passed over [PENDING D6].
+- At either end without `loop`, the arrow key does nothing (decision D5).
+- Disabled buttons are passed over; loading buttons are not (decision D6).
 
 ### A11y
 
 | Field | Value |
 |-------|-------|
-| Role | `toolbar` (ARCH §13.1; Phase 1 spec §6.C.4 C6 row); on the host through `ElementInternals` under option (a), or on an inner `<div part="root">` under option (b) [PENDING D1] |
-| ARIA attributes | `aria-orientation="vertical"` while vertical, through `ariaOrientation` on the internals (a) or the attribute on the wrapper (b); absent while horizontal, the ARIA default (APG Toolbar) [PENDING D1, D4] |
-| Accessible name | the host `aria-label` or `aria-labelledby` under option (a), where the author attribute names the internals role directly (probe P6); the host `aria-label` copied to the wrapper under option (b) (ARCH §17.2 C5) [PENDING D1, D7] |
-| Focus | none on the group; each slotted button takes focus through its own `delegatesFocus` (probe P1). One Tab stop through a roving host `tabindex` [PENDING D3]; `data-focus-visible` stays on the button (ARCH §14.9) |
+| Role | `toolbar` on the host, set through `this[INTERNALS].role` (ARCH §13.1; Phase 1 spec §6.C.4 C6 row; decision D1). An author `role` attribute on the host wins (HTML §4.13.7.4, R8 §2.3) |
+| ARIA attributes | `ariaOrientation = 'vertical'` on the internals while vertical, `null` while horizontal, the ARIA default for `toolbar` (APG Toolbar; decisions D1, D4); an author `aria-orientation` on the host wins |
+| Accessible name | the host `aria-label` or `aria-labelledby`, which name the internals role on the host directly, including a visible heading by id (probe P6; ARCH §17.2 C5, "the host itself"). Documented as required on markup, with no runtime check; required on the agent path (decision D7) |
+| Focus | none on the group; each slotted button takes focus through its own `delegatesFocus` (probe P1). One Tab stop through a roving host `tabindex` (decision D3); `data-focus-visible` stays on the button (ARCH §14.9) |
 
-- **Internals proof (option (a)).** A role set only through internals needs, in the Browser tier, a Chromium CDP accessibility-tree assertion of role, name and orientation, and an `INTERNALS` read-back of `role` and `ariaOrientation` in chromium, firefox and webkit (Phase 1 spec §6.C.4 notes, `:1180`; §10 SD39; §12 AM-058). The probe ran both (P6) and its results are the expected values. Firefox and WebKit exposure to assistive technology stays unverified; this spec records the gap. A manual screen-reader pass is optional and never blocks the row [PENDING D1].
-- **axe.** axe 4.14.0 reports nothing for an unnamed toolbar in either placement and ignores the internals role (probe P6; Phase 1 spec §7.4). The axe tier still runs over every story and covers each slotted button's own naming rules (`button-name` on the inner buttons) [PENDING D7].
-- **Host.** Under option (b) the host stays a `generic` element that keeps the author's `aria-label`, as Button's host does; Chromium exposes it as a named `generic` (probe P6; R8 `:55`, `:156-159`) [PENDING D1].
-- **Screen-reader check.** Under option (a) Playwright's `ariaSnapshot()` shows no `toolbar` node, so the Browser tier asserts the role through CDP and `INTERNALS`, not through `ariaSnapshot()` (probe P6) [PENDING D1].
+- **Internals proof.** A role set only through internals needs, in the Browser tier, a Chromium CDP accessibility-tree assertion of role, name and orientation, and an `INTERNALS` read-back of `role` and `ariaOrientation` in chromium, firefox and webkit (Phase 1 spec §6.C.4 notes, `:1180`; §10 SD39; §12 AM-058). The probe ran both (P6): the expected values are role `toolbar`, the host name, `ariaOrientation` `vertical` and the Chromium `orientation` `vertical` on a vertical group, and `ariaOrientation` `null` on a horizontal one. The probe set `ariaOrientation = 'horizontal'` explicitly, so what Chromium reports for a horizontal toolbar with `null` internals orientation is not observed [INFERENCE: the ARIA default `horizontal`]. Firefox and WebKit exposure to assistive technology stays unverified; this spec records the gap. A manual screen-reader pass is optional and never blocks the row.
+- **axe.** axe 4.14.0 reports nothing for an unnamed toolbar and ignores the internals role (probe P6; Phase 1 spec §7.4), so a hand-written toolbar without a name has no automated catch; the docs state the requirement (decision D7). The axe tier still runs over every story and covers each slotted button's own naming rules (`button-name` on the inner buttons).
+- **Host.** The host carries the role, so no named `generic` node appears, unlike Button's host (probe P6; R8 `:55`, `:156-159`).
+- **Screen-reader check.** Playwright's `ariaSnapshot()` shows no `toolbar` node, so the Browser tier asserts the role through CDP and `INTERNALS`, not through `ariaSnapshot()` (probe P6).
 
 ### Agent contract
 
@@ -356,13 +351,13 @@ The machine has one finite state. The roving position is context, `activeIndex` 
 
 | Rule | Summary | How this component meets it |
 |------|---------|-----------------------------|
-| C1 | Public inputs are JSON-serialisable attributes or properties | `orientation` is a string enum and `loop` a boolean [PENDING D4, D5] |
+| C1 | Public inputs are JSON-serialisable attributes or properties | `orientation` is a string enum and `loop` a boolean |
 | C2 | Slots carry `@slot` and a single or multiple classification | `@slot` for the default slot; `ChildList` |
-| C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | no events; no unprefixed `input` or `change` [PENDING D11] |
+| C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | no events (decision D11); no unprefixed `input` or `change` |
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated |
-| C5 | The host accepts an accessible name and applies it to the element with the role | the host `aria-label` names the internals role on the host itself (a), or is copied to the inner wrapper (b) [PENDING D1] |
+| C5 | The host accepts an accessible name and applies it to the element with the role | the host `aria-label` or `aria-labelledby` names the internals role on the host itself (decision D1) |
 | C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | no variants |
-| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries every tag for the slot, each part and token; no `@fires`; nothing is deprecated [PENDING D1, D9, D11] |
+| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, `@slot` for the default slot and `@cssprop` for each token; no `@csspart` (no parts), no `@fires` (no events); nothing is deprecated |
 | C8 | Missing or partial props degrade to an empty or neutral state | with no children it renders an empty toolbar and writes no `tabindex`; with no name it is an unnamed toolbar; an unknown `orientation` behaves as `horizontal` and keeps the author's attribute |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound (ARCH §17.2 C9 names ButtonGroup, `:1571`) |
 
@@ -374,25 +369,26 @@ The machine has one finite state. The roving position is context, `activeIndex` 
 
 #### Descriptor fields
 
-[PENDING D7, D10] Option (a) of each (recommended):
+Decisions D5, D7 and D10 set these fields.
 
 | Field | Value |
 |-------|-------|
 | Catalog name | `ButtonGroup` |
 | Tag | `line-button-group` |
 | `load()` subpath | `@websublime/line-components/button-group` |
-| Prop schema | `orientation` (`z.enum(['horizontal', 'vertical'])`, plain `.describe()`, as Stack's `orientation`, `packages/line-genui/src/catalog/descriptors/stack.ts`; an enum stays a literal, Phase 1 spec §6.G.1, `:1326`), `loop` (`DynamicBoolean`) [PENDING D5], the catalog-only `children` (`ChildList`), which the frontend-tool walker leaves out (Phase 1 spec §6.G.3, `:1404`), and `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1, `:1322`) |
+| Prop schema | `orientation` (`z.enum(['horizontal', 'vertical'])`, plain `.describe()`, as Stack's `orientation`, `packages/line-genui/src/catalog/descriptors/stack.ts`; an enum stays a literal, Phase 1 spec §6.G.1, `:1326`), `loop` (`DynamicBoolean`), the catalog-only `children` (`ChildList`), which the frontend-tool walker leaves out (Phase 1 spec §6.G.3, `:1404`), and `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1, `:1322`) |
 | Slot map | `children` → default slot (`''`), as Stack (`stack.ts:30`) |
 | Binding map | `orientation`, `loop` → attribute; no value prop; no commit event (C9) |
 | Action map | none |
-| Accessibility requirements | `requiredName: [{ kind: 'accessibilityLabel' }]`; `hostNaming: { kind: 'always' }` (`packages/line-genui/src/catalog/descriptor.ts:128`, `:142`) [PENDING D7] |
+| Accessibility requirements | `requiredName: [{ kind: 'accessibilityLabel' }]`; `hostNaming: { kind: 'always' }` (`packages/line-genui/src/catalog/descriptor.ts:128`, `:142`) |
 | Agent-facing description | A toolbar that groups three or more related buttons, such as text formatting or zoom controls, into one Tab stop; the user moves between the buttons with the arrow keys. Put Buttons or IconButtons in `children`, in order. It needs `accessibility.label`, the name assistive technology announces for the toolbar; a node without one is not rendered. `orientation` is `horizontal` (default) or `vertical`. Set `loop` to let the arrow keys wrap from the last button to the first. Each button keeps its own action. For buttons that each need their own Tab stop, or for fewer than three, use a Row. |
 | Tool description | A toolbar that groups three or more related buttons, such as text formatting or zoom controls, into one Tab stop; the user moves between the buttons with the arrow keys. The app places the buttons inside it. Set `accessibilityLabel` to the toolbar's name; the app gives the toolbar that name, and a toolbar without it has no name. `orientation` is `horizontal` (default) or `vertical`. Set `loop` to let the arrow keys wrap from the last button to the first. |
 | `agentExposed` | `true` (Phase 1 spec §6.C.4 C6 row) |
 
 - The agent-facing description names `children` (a `ChildList`) and `accessibility.label`, so the descriptor sets a tool description that names neither (Phase 1 spec §6.G.3, `:1423`, `:1435`; §12 AM-086). Both stay under the 1024-character cap (`:1422`).
-- The `ChildList` schema takes any component ids, so an agent can put a non-button child in the group; it renders and takes no part in roving focus (Slots) [INFERENCE: `ChildList` carries no type constraint, as `ComponentId` does not (`0003-icon-button.md` AM-001)] [PENDING D2].
-- With `hostNaming: always` the surface writes `accessibility.label` as the host `aria-label`, which names the toolbar under D1 (a) with no copying (probe P6).
+- The `ChildList` schema takes any component ids, so an agent can put a non-button child in the group; it renders and takes no part in roving focus (Slots) [INFERENCE: `ChildList` carries no type constraint, as `ComponentId` does not (`0003-icon-button.md` AM-001)] (decision D2).
+- With `hostNaming: always` the surface writes `accessibility.label` as the host `aria-label`, which names the toolbar on the host with no copying (decision D1; probe P6).
+- Catalog membership: the `line` catalog only (decision D10). The `basic` map gains no route to `line-button-group` (ARCH §17.3, `:1599-1617`).
 - The descriptor joins the `descriptors` array in catalog-name order (`packages/line-genui/src/catalog/index.ts:100`), and C6 ships it in the same PR (Phase 1 spec §6.C.0 step 3, `:927`).
 
 ### Bundle / entrypoint
@@ -419,7 +415,7 @@ The machine has one finite state. The roving position is context, `activeIndex` 
   <line-button pressed="false">Underline</line-button>
 </line-button-group>
 
-<!-- Icon buttons, named by a visible heading [PENDING D1, D2] -->
+<!-- Icon buttons, named by a visible heading -->
 <h2 id="zoom-label">Zoom</h2>
 <line-button-group aria-labelledby="zoom-label">
   <line-icon-button aria-label="Zoom out"><line-icon library="lucide" name="zoom-out"></line-icon></line-icon-button>
@@ -427,7 +423,7 @@ The machine has one finite state. The roving position is context, `activeIndex` 
   <line-icon-button aria-label="Zoom in"><line-icon library="lucide" name="zoom-in"></line-icon></line-icon-button>
 </line-button-group>
 
-<!-- Vertical, wrapping, with a disabled and a loading button [PENDING D4, D5, D6] -->
+<!-- Vertical, wrapping, with a disabled and a loading button -->
 <line-button-group aria-label="Tools" orientation="vertical" loop>
   <line-button>Select</line-button>
   <line-button disabled>Crop</line-button>
@@ -435,7 +431,7 @@ The machine has one finite state. The roving position is context, `activeIndex` 
 </line-button-group>
 ```
 
-A `line` catalog node set that the surface renders as the first example [PENDING D10]:
+A `line` catalog node set that the surface renders as the first example:
 
 ```json
 [
@@ -452,17 +448,17 @@ A `line` catalog node set that the surface renders as the first example [PENDING
 
 | Tier | Runner | Covers |
 |------|--------|--------|
-| Unit | `bun test` on happy-dom | render with no errors; `orientation` default, converter and reflection, with no host attribute for the default; `loop`; the machine's `move`, `sync` and `setActive` over item counts, skipped items and ends, with and without `loop`, driven through the controller; item discovery from the default slot with the filter of D2; `tabindex` written to items and removed from an item that leaves; internals `role` and `ariaOrientation` read back through `INTERNALS` [PENDING D1]; no `formAssociated` on the class; the token defaults on `:host` [PENDING D9]; the C8 empty render; the machine-failure fallback leaving no `tabindex` |
-| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | every probe row P1–P5 and P8 as an assertion: one Tab stop and Shift+Tab return; the remembered button; arrows, Home and End per orientation, in RTL, with and without `loop`; `preventDefault` on handled keys; Enter and Space still activating; disabled skipped, loading reachable, a button turning disabled, the focused button turning disabled; add, remove, reorder and removal of the focused button; `data-focus-visible` on keyboard moves after a pointer click (`focus({ focusVisible: true })`); `line-icon-button` items [PENDING D2]; corner shapes in LTR, RTL and vertical [PENDING D9]; the internals proof (A11y) (Phase 1 spec §7.8; §10 SD99) |
-| A11y | axe-core | zero violations (MANIFESTO Law 3) in every ButtonGroup story: default, icon buttons, vertical, with a disabled and a loading button (Phase 1 spec §7.4). axe has no toolbar-name rule (probe P6), so the name is proved in the Browser tier: the Chromium CDP assertion of role `toolbar`, name and `orientation`, and the `INTERNALS` read-back in three engines (Phase 1 spec `:1180`; §10 SD39) [PENDING D1, D7] |
+| Unit | `bun test` on happy-dom | render with no errors; `orientation` default, converter and reflection, with no host attribute for the default; `loop`; the machine's `move`, `sync` and `setActive` over item counts, skipped items and ends, with and without `loop`, driven through the controller; item discovery from the default slot with the filter of D2; `tabindex` written to items and removed from an item that leaves; internals `role` and `ariaOrientation` read back through `INTERNALS`; no `formAssociated` on the class; the token defaults on `:host`; the C8 empty render; the machine-failure fallback leaving no `tabindex` |
+| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | every probe row P1–P5 and P8 as an assertion: one Tab stop and Shift+Tab return; the remembered button; arrows, Home and End per orientation, in RTL, with and without `loop`; `preventDefault` on handled keys; Enter and Space still activating; disabled skipped, loading reachable, a button turning disabled, the focused button turning disabled; add, remove, reorder and removal of the focused button; `data-focus-visible` on keyboard moves after a pointer click (`focus({ focusVisible: true })`); `line-icon-button` items; corner shapes in LTR, RTL and vertical; the internals proof (A11y) (Phase 1 spec §7.8; §10 SD99) |
+| A11y | axe-core | zero violations (MANIFESTO Law 3) in every ButtonGroup story: default, icon buttons, vertical, with a disabled and a loading button (Phase 1 spec §7.4). axe has no toolbar-name rule (probe P6), so the name is proved in the Browser tier: the Chromium CDP assertion of role `toolbar`, name and `orientation`, and the `INTERNALS` read-back in three engines (Phase 1 spec `:1180`; §10 SD39) |
 | htmx | — | `n/a`: ButtonGroup is neither value-bearing nor compound (ARCH §17.2 C9, `:1571`; plan §2.4, `docs/plans/01-plan-core-primitives.md:171-174`; Phase 1 spec §6.C.4 C6 row, `:1162`). Its slotted buttons keep their own htmx rows (`0002-button.md`, `0003-icon-button.md` Tests) |
 | Visual | Playwright `button-group.visual.ts` on the `visual` project | every ButtonGroup story, with Linux baselines from a `visual-baselines.yml` run (Phase 1 spec §6.C.6, `:1233`; §10 SD98) |
 | Update rate | `measureHostUpdates` from `@websublime/line-testing/update-rate` on a connected `<line-button-group>` with four buttons, driven by moving `activeIndex` | the rate is recorded in the C6 PR; a rate past the C21 budget, `UPDATE_BUDGET_MS` (1 ms per host update) at `BUDGET_UPDATES`, stops the row and returns it to the orchestrator (`packages/line-testing/src/update-rate.ts:31`, `:50`; Phase 1 spec §6.C.6, `:1232`; §10 SD18; §12 AM-055; pattern of `packages/line-components/__tests__/icon-button.update-rate.test.ts`). The probe saw one host update per machine change (P7) |
-| Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a named `ButtonGroup` node renders `<line-button-group aria-label="…">` with its `line-button` children in the default slot, and Tab then an arrow key move between them; a node with no `accessibility.label` renders the `missing-name` placeholder and raises one `MISSING_ACCESSIBLE_NAME` `line-a2ui-error` [PENDING D7]; the node joins the surface render fixture (`apps/storybook/stories/agent-ui/a2ui-fixtures.ts`) and the surface axe test with zero violations (Phase 1 spec §6.C.6, `:1231`; §6.G.4) |
+| Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a named `ButtonGroup` node renders `<line-button-group aria-label="…">` with its `line-button` children in the default slot, and Tab then an arrow key move between them; a node with no `accessibility.label` renders the `missing-name` placeholder and raises one `MISSING_ACCESSIBLE_NAME` `line-a2ui-error`; the node joins the surface render fixture (`apps/storybook/stories/agent-ui/a2ui-fixtures.ts`) and the surface axe test with zero violations (Phase 1 spec §6.C.6, `:1231`; §6.G.4) |
 | Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the CEM coverage and drift tests pass with the new descriptor (Phase 1 spec §6.G.5); `catalog.json` holds `ButtonGroup` and its inline projection validates (§6.G.2); the `ButtonGroup` tool takes the tool description, stays at or under 1024 characters and passes the backtick guard (§6.G.3, `:1422-1423`, `:1435`) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./button-group` register `line-button-group` only, and the isolation scan finds no Button or IconButton module in its bundle (Phase 1 spec §7.5) |
 
-- PRD §5.2 checklist mapping (`docs/PRD.md:531-540`; Phase 1 spec §6.C.6, `:1222`): (1) render, (2) reactive props, (3) slots, (4) parts [PENDING D1], (5) custom properties and (6) events (none) in the Unit tier; (7) keyboard in the Browser tier (§10 SD99); (8) axe in the A11y tier.
+- PRD §5.2 checklist mapping (`docs/PRD.md:531-540`; Phase 1 spec §6.C.6, `:1222`): (1) render, (2) reactive props, (3) slots, (4) parts (none; the Unit tier checks the shadow root holds only the slot), (5) custom properties and (6) events (none) in the Unit tier; (7) keyboard in the Browser tier (§10 SD99); (8) axe in the A11y tier.
 - The axe and visual tests run against the Storybook stories on port 4320 (Phase 1 spec §6.P.7, §6.P.11); the story list lives in `packages/line-components/__tests__/button-group-stories.ts`. The keyboard and internals tests use fixture pages under `packages/line-components/__tests__/integration/button-group/` that load the built `./button-group`, `./button` and `./icon-button` by package name, served by the existing port-4321 `webServer` (`playwright.config.ts:25`).
 - The C6 PR also fills the ButtonGroup row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1 with a dated check of each column (Web Awesome already declares `wa-button-group`, `0003-icon-button.md` footnote), writes the Storybook docs and adds a changeset (Phase 1 spec §6.C.6, `:1223-1226`).
 
@@ -472,17 +468,19 @@ A `line` catalog node set that the surface renders as the first example [PENDING
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| D1 | Where does the `toolbar` role sit: on the host through `ElementInternals`, or on an inner wrapper in the shadow root? | Miguel | open; recommended (a), host internals |
-| D2 | Which slotted elements count as toolbar items? | Miguel | open; recommended (a), `line-button` and `line-icon-button` by tag name |
-| D3 | How does the group move focus into an item and keep one Tab stop? | Miguel | open; recommended (a), roving `tabindex` on the item host and `host.focus({ focusVisible: true })` |
-| D4 | Does the group take an `orientation`, and which arrow keys does each orientation handle? | Miguel | open; recommended (a), `orientation` `horizontal \| vertical` with the orientation's arrow pair only, mirrored in RTL |
-| D5 | Home and End, wrap at the ends, and the remembered button: which ship? | Miguel | open; recommended (b), Home/End and the remembered button always, wrap opt-in through `loop` |
-| D6 | Are disabled buttons skipped or focusable, and what happens when the focused button turns disabled? | Miguel | open; recommended (a) with sub-choice (i): skip `disabled`, keep `loading`, observe `disabled`, move focus to the new active button |
-| D7 | Is the toolbar name required, and from which sources? | Miguel | open; recommended (a), host `aria-label`/`aria-labelledby` documented on markup, required on the agent path |
-| D8 | What does the group do with fewer than three buttons? | Miguel | open; recommended (a), document it only |
-| D9 | How does the group collapse its buttons' corners, and which `--line-button-group-*` tokens does it expose? | Miguel | open; recommended (a), write the items' radius tokens from `::slotted()` |
-| D10 | Which catalog carries ButtonGroup, and in what shape? | Miguel | open; recommended (a), the `line` catalog only, `children: ChildList` |
-| D11 | Does the group fire any event? | Miguel | open; recommended (a), none |
+| D1 | Where does the `toolbar` role sit: on the host through `ElementInternals`, or on an inner wrapper in the shadow root? | Miguel | resolved: option (a), the `toolbar` role and `ariaOrientation` (vertical only) on the host through `ElementInternals`; author attributes on the host win (Miguel, 2026-11-06) |
+| D2 | Which slotted elements count as toolbar items? | Miguel | resolved: option (a), `line-button` and `line-icon-button` hosts, matched by tag name; other children stay outside roving focus (Miguel, 2026-11-06) |
+| D3 | How does the group move focus into an item and keep one Tab stop? | Miguel | resolved: option (a), roving `tabindex` on the item host, and `item.focus({ focusVisible: true })` on keyboard moves (Miguel, 2026-11-06) |
+| D4 | Does the group take an `orientation`, and which arrow keys does each orientation handle? | Miguel | resolved: option (a), a reflected `orientation` attribute, `horizontal` by default, handling only its own arrow pair, mirrored in RTL, with `aria-orientation` through the internals (Miguel, 2026-11-06) |
+| D5 | Home and End, wrap at the ends, and the remembered button: which ship? | Miguel | resolved: option (b), Home/End and the remembered last-focused button always, wrap only with the `loop` attribute; re-entry sub-choice (i), the last-focused button (Miguel, 2026-11-06) |
+| D6 | Are disabled buttons skipped or focusable, and what happens when the focused button turns disabled? | Miguel | resolved: option (a) with sub-choice (i): skip `disabled`, keep `loading`, a `MutationObserver` on `disabled`, and a focused button that turns disabled moves focus to the new active button (Miguel, 2026-11-06) |
+| D7 | Is the toolbar name required, and from which sources? | Miguel | resolved: option (a), host `aria-label` or `aria-labelledby` documented as required on markup with no runtime check; `requiredName: [{ kind: 'accessibilityLabel' }]` on the agent path (Miguel, 2026-11-06) |
+| D8 | What does the group do with fewer than three buttons? | Miguel | resolved: option (a), documented only; the group stays a toolbar at any count (Miguel, 2026-11-06) |
+| D9 | How does the group collapse its buttons' corners, and which `--line-button-group-*` tokens does it expose? | Miguel | resolved: option (a), the group writes `--line-button-radius` and `--line-icon-button-radius` per position from `::slotted()`, and exposes `--line-button-group-radius` and `--line-button-group-gap` (default `0`) (Miguel, 2026-11-06) |
+| D10 | Which catalog carries ButtonGroup, and in what shape? | Miguel | resolved: option (a), the `line` catalog only, with `children: ChildList`, `orientation` and `loop`, no action and no value prop; the `basic` map is unchanged (Miguel, 2026-11-06) |
+| D11 | Does the group fire any event? | Miguel | resolved: option (a), no events (Miguel, 2026-11-06) |
+
+Miguel decided D1–D11 on 2026-11-06, each on the option the draft recommended. The option tables below stay as the record of what he weighed.
 
 ### D1 — Role placement
 
@@ -490,7 +488,7 @@ Evidence: probe P6 (both placements give Chromium a named, oriented `toolbar` wi
 
 | Option | Placement | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** Host internals | `this[INTERNALS].role = 'toolbar'`; `ariaOrientation = 'vertical'` while vertical; the host is the flex container | No extra node; author `role`, `aria-label`, `aria-labelledby` and `aria-orientation` on the host win and name it natively, including a visible heading through `aria-labelledby` (P6); matches Separator and C5 "the host itself". Needs the Chromium CDP assertion and the three-engine `INTERNALS` read-back; axe and `ariaSnapshot()` cannot see the role (P6), and Firefox and WebKit exposure stays unverified |
+| (a) **Chosen** (Miguel, 2026-11-06). Host internals | `this[INTERNALS].role = 'toolbar'`; `ariaOrientation = 'vertical'` while vertical; the host is the flex container | No extra node; author `role`, `aria-label`, `aria-labelledby` and `aria-orientation` on the host win and name it natively, including a visible heading through `aria-labelledby` (P6); matches Separator and C5 "the host itself". Needs the Chromium CDP assertion and the three-engine `INTERNALS` read-back; axe and `ariaSnapshot()` cannot see the role (P6), and Firefox and WebKit exposure stays unverified |
 | (b) Inner wrapper | `<div part="root" role="toolbar" aria-orientation>` around the slot; host `aria-label` and `aria-description` copied to it | axe and `ariaSnapshot()` see the toolbar (P6); no internals proof needed. Leaves a named `generic` host (P6), an `aria-labelledby` needs element reflection (`ariaLabelledByElements`, P6; R8 `:135-137`), and the wrapper is neither element C5 names, so ARCH §17.2 C5 needs a wording change |
 | (c) Host `role` attribute | the component writes `role="toolbar"` and `aria-orientation` attributes on its own host | axe sees it (R8 `:202`); no wrapper. The component writes attributes the author owns, so it must not overwrite an author `role` and has to track removal; no probe ran on this variant |
 
@@ -500,7 +498,7 @@ Evidence: `line-button` and `line-icon-button` both take focus through `delegate
 
 | Option | Items | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** `line-button` and `line-icon-button` | `localName` is `line-button` or `line-icon-button` | Both proved in three engines (P1, P5); `disabled` and `loading` read from known attributes. Other children stay outside roving focus, so a native button in the group adds a Tab stop (P5), which the Anti-patterns document. Phase 2 and 3 controls (ToggleGroup items, menu triggers) join only by a later amendment |
+| (a) **Chosen** (Miguel, 2026-11-06). `line-button` and `line-icon-button` | `localName` is `line-button` or `line-icon-button` | Both proved in three engines (P1, P5); `disabled` and `loading` read from known attributes. Other children stay outside roving focus, so a native button in the group adds a Tab stop (P5), which the Anti-patterns document. Phase 2 and 3 controls (ToggleGroup items, menu triggers) join only by a later amendment |
 | (b) `line-button` only | `localName` is `line-button` | The literal reading of §6.C.5 ("across `line-button` hosts"). An icon-only action needs `line-button` with an icon and an `aria-label`, and `0003-icon-button.md` Connections expected the group to hold icon buttons |
 | (c) Any focusable child | every assigned element that has a focus target (a native focusable element, or a host with `delegatesFocus`) | Native buttons and future components join with no amendment. Focusability has no reliable public test for a custom element [INFERENCE], disabled state differs per element (`disabled`, `aria-disabled`), and controls that need arrow keys (text fields, sliders) would be swallowed by the toolbar's keys, against APG |
 | (d) (a) plus an author opt-in | (a), plus any child marked by an attribute such as `data-line-item` | Lets consumers add native buttons on purpose. Adds a public marker attribute the group must document and test; the group still cannot read the child's disabled state generically |
@@ -511,7 +509,7 @@ Evidence: P1 (`host.focus()` reaches the inner button in three engines), P2 (hos
 
 | Option | Mechanism | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** Host `tabindex` | `tabindex="0"` on the active item host, `-1` on the rest; keyboard moves call `item.focus({ focusVisible: true })` | Public surface only; no change to Button or IconButton. The group writes `tabindex` on light-DOM elements the author owns: it overwrites an author `tabindex` and must remove its own from an element that leaves |
+| (a) **Chosen** (Miguel, 2026-11-06). Host `tabindex` | `tabindex="0"` on the active item host, `-1` on the rest; keyboard moves call `item.focus({ focusVisible: true })` | Public surface only; no change to Button or IconButton. The group writes `tabindex` on light-DOM elements the author owns: it overwrites an author `tabindex` and must remove its own from an element that leaves |
 | (b) Inner-button `tabindex` | the group finds `item.shadowRoot.querySelector('button')` and writes its `tabindex` | Same Tab result (P2), host attributes untouched. Depends on Button's and IconButton's private anatomy and on open shadow roots; a change inside either component breaks the group silently |
 | (c) A public roving API on the buttons | Button and IconButton gain a property, for example `rovingTabIndex`, that sets the inner button's `tabindex` | Clean contract. Changes two shipped components (`0002-button.md`, `0003-icon-button.md` amendments, C1 and C5 code); the probe shows (a) needs none of it |
 
@@ -521,7 +519,7 @@ Evidence: APG Toolbar: Left/Right in a horizontal toolbar, Up/Down in a vertical
 
 | Option | Shape | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** `orientation`, one arrow pair | reflected `orientation="horizontal \| vertical"`, default `horizontal`; horizontal handles Left/Right (mirrored in RTL), vertical handles Up/Down; the other pair passes through; `ariaOrientation` `vertical` only while vertical | APG's default reading; the free pair stays with any control that needs it. Users who press Down in a horizontal toolbar get nothing |
+| (a) **Chosen** (Miguel, 2026-11-06). `orientation`, one arrow pair | reflected `orientation="horizontal \| vertical"`, default `horizontal`; horizontal handles Left/Right (mirrored in RTL), vertical handles Up/Down; the other pair passes through; `ariaOrientation` `vertical` only while vertical | APG's default reading; the free pair stays with any control that needs it. Users who press Down in a horizontal toolbar get nothing |
 | (b) `orientation`, both pairs | as (a), and the other pair duplicates the orientation's pair | More forgiving keys; APG allows it. Takes the second pair from every slotted control |
 | (c) Horizontal only | no `orientation`; Left/Right only | Smallest surface. No vertical palettes; `aria-orientation` never set |
 
@@ -532,9 +530,9 @@ Evidence: APG Toolbar marks Home/End and wrap optional, and focus on re-entry "o
 | Option | Keys and re-entry | Tradeoff |
 |---|---|---|
 | (a) Fixed, no wrap | Home/End on; no wrap; re-entry on the last focused button | No extra prop. No way to wrap |
-| (b) **Recommended.** (a) plus `loop` | as (a), and a reflected boolean `loop` turns wrap on | Covers both APG readings; one boolean prop in the agent schema |
+| (b) **Chosen** (Miguel, 2026-11-06). (a) plus `loop` | as (a), and a reflected boolean `loop` turns wrap on | Covers both APG readings; one boolean prop in the agent schema |
 | (c) Always wrap | Home/End on; wrap always; re-entry on the last focused button | Matches toolbars that wrap by default [INFERENCE: Radix Toolbar's `loop` default `true`, not checked in this repo]. No way to stop at the ends |
-| Re-entry sub-choice | (i) last focused button (in (a)–(c)); (ii) always the first enabled button | (i) follows the APG option and is what P2 proved; (ii) is simpler to explain but loses the user's place |
+| Re-entry sub-choice | (i) last focused button (in (a)–(c); chosen within (b), Miguel, 2026-11-06); (ii) always the first enabled button | (i) follows the APG option and is what P2 proved; (ii) is simpler to explain but loses the user's place |
 
 ### D6 — Disabled and loading buttons
 
@@ -542,9 +540,9 @@ Evidence: P3. A disabled `line-button` cannot take focus through its public surf
 
 | Option | Behaviour | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** Skip `disabled`, keep `loading` | `isSkipped` is the item's `disabled` attribute; a `MutationObserver` on each item's `disabled` sends `SYNC`; when every item is disabled the group has no Tab stop | Works with Button and IconButton as shipped (P3). A disabled button is not discoverable by keyboard |
+| (a) **Chosen** (Miguel, 2026-11-06). Skip `disabled`, keep `loading` | `isSkipped` is the item's `disabled` attribute; a `MutationObserver` on each item's `disabled` sends `SYNC`; when every item is disabled the group has no Tab stop | Works with Button and IconButton as shipped (P3). A disabled button is not discoverable by keyboard |
 | (b) Disabled stay focusable | the arrows stop on disabled buttons | APG's discoverability case. Impossible with the shipped buttons (P3): Button and IconButton would need a mode that renders `aria-disabled` instead of native `disabled` inside a group, which amends `0002-button.md`, `0003-icon-button.md` and §10 SD35 |
-| Focus-loss sub-choice | (i) **Recommended.** When the focused button turns disabled, focus moves to the new active button; (ii) focus stays where the browser leaves it (`body`) | (i) keeps the keyboard user inside the toolbar; the group moves focus without a user key press. (ii) does nothing, and the user restarts from the top of the page (P3) |
+| Focus-loss sub-choice | (i) **Chosen** (Miguel, 2026-11-06). When the focused button turns disabled, focus moves to the new active button; (ii) focus stays where the browser leaves it (`body`) | (i) keeps the keyboard user inside the toolbar; the group moves focus without a user key press. (ii) does nothing, and the user restarts from the top of the page (P3) |
 
 ### D7 — Toolbar name
 
@@ -552,7 +550,7 @@ Evidence: APG Toolbar: the toolbar is labelled by `aria-labelledby` when a visib
 
 | Option | Markup | Agent path | Tradeoff |
 |---|---|---|---|
-| (a) **Recommended.** Documented on markup, required for agents | host `aria-label` or `aria-labelledby` (under D1 (a)), documented as required; no runtime check | `requiredName: [{ kind: 'accessibilityLabel' }]`, `hostNaming: always` | Every agent toolbar is named; hand-written markup relies on docs, as axe cannot catch it (P6). The tool keeps `accessibilityLabel` optional, as for IconButton (`0003-icon-button.md` Descriptor fields) |
+| (a) **Chosen** (Miguel, 2026-11-06). Documented on markup, required for agents | host `aria-label` or `aria-labelledby` (under D1 (a)), documented as required; no runtime check | `requiredName: [{ kind: 'accessibilityLabel' }]`, `hostNaming: always` | Every agent toolbar is named; hand-written markup relies on docs, as axe cannot catch it (P6). The tool keeps `accessibilityLabel` optional, as for IconButton (`0003-icon-button.md` Descriptor fields) |
 | (b) Optional everywhere | as (a), recommended in docs | `hostNaming: always`, no `requiredName` | No placeholder for an unnamed agent toolbar. A page with several toolbars may announce several unnamed ones |
 | (c) (a) plus a `label` property | a `label` string rendered as the internals `ariaLabel` (or the wrapper `aria-label`) | as (a), or a new `NameSource` kind | A non-ARIA name API. Two attributes name one thing; a `label` source on the agent path needs Phase 1 spec §6.G.1 and §6.G.4 amendments, as `0003-icon-button.md` D1 (c) found |
 
@@ -562,7 +560,7 @@ Evidence: APG Toolbar: "Use toolbar as a grouping element only if the group cont
 
 | Option | Behaviour | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** Document only | the Anti-patterns, the Storybook docs and the agent description say three or more; the group stays a toolbar at any count | Stable semantics; no surprise role changes. Authors and agents can still build a two-button toolbar |
+| (a) **Chosen** (Miguel, 2026-11-06). Document only | the Anti-patterns, the Storybook docs and the agent description say three or more; the group stays a toolbar at any count | Stable semantics; no surprise role changes. Authors and agents can still build a two-button toolbar |
 | (b) Downgrade the role | below three items the role becomes `group` and the arrows stop; at three it becomes `toolbar` again | Follows APG at run time. The role and the key handling flip as buttons come and go, which a screen-reader user hears as a different control |
 | (c) Console warning | (a), plus a `console.warn` below three items | A signal during development. line://ui components log only on machine failure today (`line-machine-controller.ts:101`); a warning per render adds a new convention |
 
@@ -572,7 +570,7 @@ Evidence: P8. Button and IconButton have no border (`reset.button.css`; `button.
 
 | Option | Mechanism | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** Write the items' radius tokens | `--line-button-group-radius` (outer corners) and `--line-button-group-gap` (default `0`); the group writes `--line-button-radius` and `--line-icon-button-radius` per position with the shorthand, swapped in RTL and by orientation; the focused item is raised | Works on the shipped buttons in three engines (P8). Couples the group to two token names and to their use as a `border-radius` shorthand, which `0002-button.md` and `0003-icon-button.md` should then document (a docs-only amendment each). A consumer who sets `--line-button-radius` on every `line-button` overrides the collapse |
+| (a) **Chosen** (Miguel, 2026-11-06). Write the items' radius tokens | `--line-button-group-radius` (outer corners) and `--line-button-group-gap` (default `0`); the group writes `--line-button-radius` and `--line-icon-button-radius` per position with the shorthand, swapped in RTL and by orientation; the focused item is raised | Works on the shipped buttons in three engines (P8). Couples the group to two token names and to their use as a `border-radius` shorthand, which `0002-button.md` and `0003-icon-button.md` should then document (a docs-only amendment each). A consumer who sets `--line-button-radius` on every `line-button` overrides the collapse |
 | (b) Per-corner tokens on the buttons | Button and IconButton gain logical corner tokens (for example `--line-button-radius-start-start`) defaulting to their radius token; the group sets those | Explicit API, no shorthand trick. Changes two shipped components' CSS API (C1 and C5 code, both specs, the CEM) |
 | (c) No collapse in the component | the group lays the buttons out flush (`gap: 0`) and draws nothing else; the docs show consumer `::part(root)` corner rules, which P8 proves | Fully headless. PRD §4.1 and ARCH §13.1 promise "border collapse", so this needs a PRD revision-log entry and an ARCH change |
 
@@ -582,7 +580,7 @@ Evidence: A2UI v0.9.1 has 18 basic types and none is a button group (`packages/l
 
 | Option | Shape | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** `line` catalog only | `ButtonGroup` with `children: ChildList`, `orientation`, `loop` [PENDING D4, D5]; no action, no value prop; the Descriptor fields above | No ARCH, Phase 1 spec or `basic.ts` change. Basic-only agents keep building a Row of Buttons, with no roving focus |
+| (a) **Chosen** (Miguel, 2026-11-06). `line` catalog only | `ButtonGroup` with `children: ChildList`, `orientation`, `loop` (decisions D4 and D5); no action, no value prop; the Descriptor fields above | No ARCH, Phase 1 spec or `basic.ts` change. Basic-only agents keep building a Row of Buttons, with no roving focus |
 | (b) (a) plus a basic route | a basic `Row` whose children all resolve to `Button` renders `line-button-group` | Basic agents get toolbars. Needs an ARCH §17.3 change, a Phase 1 spec §6.G.2 amendment, a child-dependent target, and a rule for children still pending; the tag can switch after first render |
 | (c) Not agent-exposed | `agentExposed: false` with a reason | Contradicts the Phase 1 spec C6 row (`agentExposed: true`, `:1162`) and needs an amendment there |
 
@@ -592,7 +590,7 @@ Evidence: ARCH §17.2 C9 names ButtonGroup as not compound (`:1571`); the button
 
 | Option | Events | Tradeoff |
 |---|---|---|
-| (a) **Recommended.** None | the group fires nothing; `focusin` on the group already tells a consumer which button took focus | Smallest contract; nothing to keep in the CEM drift test |
+| (a) **Chosen** (Miguel, 2026-11-06). None | the group fires nothing; `focusin` on the group already tells a consumer which button took focus | Smallest contract; nothing to keep in the CEM drift test |
 | (b) A position event | `line-active-change` with `{ index: number }` when the roving button changes | Lets a consumer persist the remembered button. A new public event with no recorded need; agents gain nothing, because the surface binds events to actions and the group has none |
 
 ---
