@@ -51,7 +51,7 @@ const pressedConverter: ComplexAttributeConverter<boolean | undefined> = {
  * @csspart icon - Wraps the default slot.
  * @csspart loading - Wraps the `loading` slot; present only while `loading` is on.
  *
- * @cssprop [--line-icon-button-radius=var(--line-radius-2)] - Corner radius of `root`.
+ * @cssprop [--line-icon-button-radius=var(--line-radius-2)] - Corner radius of `root`; any `border-radius` value, the shorthand with several values included, which `<line-button-group>` writes per position.
  * @cssprop [--line-icon-button-bg=var(--line-gray-bg)] - Background of `root`; `primary` uses `var(--line-accent-solid)` and `borderless` uses `transparent`.
  * @cssprop [--line-icon-button-color=var(--line-gray-text)] - Icon colour of `root`; `primary` uses `var(--line-accent-contrast)` and `borderless` uses `var(--line-accent-text)`.
  * @cssprop [--line-icon-button-size=var(--line-size-7)] - Minimum inline and block size of `root`, which makes the square box.
