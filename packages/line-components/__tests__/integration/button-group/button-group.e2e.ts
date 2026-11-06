@@ -221,6 +221,33 @@ test.describe('arrow keys, Home and End (decisions D4, D5)', () => {
     ]);
   });
 
+  test('a key with a modifier moves no focus and is not prevented (decision D18)', async ({ page, browserName }) => {
+    await mount(page, frame(''));
+    await page.evaluate(() => {
+      const prevented: string[] = [];
+      Object.assign(window, { prevented });
+      document.addEventListener('keydown', (event) => {
+        if (event.defaultPrevented) prevented.push(event.key);
+      });
+    });
+    await enter(page, browserName);
+    for (const key of [
+      'Alt+ArrowRight',
+      'Control+ArrowRight',
+      'Meta+ArrowRight',
+      'Shift+ArrowRight',
+      'Control+End',
+      'Shift+Home',
+    ]) {
+      await page.keyboard.press(key);
+      expect(await focusPath(page), key).toBe('b1>button');
+    }
+    expect(await page.evaluate(() => Reflect.get(window, 'prevented'))).toEqual([]);
+    await page.keyboard.press('ArrowRight');
+    expect(await focusPath(page)).toBe('b2>button');
+    expect(await page.evaluate(() => Reflect.get(window, 'prevented'))).toEqual(['ArrowRight']);
+  });
+
   test('Enter and Space still activate the focused button', async ({ page, browserName }) => {
     await mount(page, frame(''));
     await page.evaluate(() => {

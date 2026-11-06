@@ -249,6 +249,8 @@ export class LineButtonGroup extends LineElement {
 
   readonly #onKeyDown = (event: KeyboardEvent): void => {
     if (this.#ctrl.fallback || this.#itemIndex(event) < 0) return;
+    // A key with a modifier is a browser or OS shortcut, such as Alt+Left; the group leaves it alone (decision D18).
+    if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
     const vertical = this.orientation === 'vertical';
     const rtl = this.direction === 'rtl';
     const next = vertical ? 'ArrowDown' : rtl ? 'ArrowLeft' : 'ArrowRight';
