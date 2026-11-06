@@ -85,6 +85,14 @@ export const IconButtons: Story = {
 
 export const Vertical: Story = {
   args: { label: 'Tools', orientation: 'vertical', loop: true },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'A vertical tool palette: Up and Down move between the tools, and `loop` lets Down on the last tool wrap to the first, as a palette the user cycles through does. Each button keeps its content width; the component description shows the rule for one width.',
+      },
+    },
+  },
   render: (args) =>
     group(
       args,
