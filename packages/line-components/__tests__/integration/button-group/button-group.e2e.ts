@@ -157,6 +157,11 @@ test.describe('arrow keys, Home and End (decisions D4, D5)', () => {
     browserName,
   }) => {
     await mount(page, frame('', ITEMS4));
+    await page.evaluate(() => {
+      const prevented: string[] = [];
+      Object.assign(window, { prevented });
+      document.addEventListener('keydown', (event) => prevented.push(`${event.key}:${event.defaultPrevented}`));
+    });
     await enter(page, browserName);
     expect(
       await sequence(page, [
@@ -170,7 +175,21 @@ test.describe('arrow keys, Home and End (decisions D4, D5)', () => {
         'ArrowLeft',
       ]),
     ).toEqual(['b2>button', 'b3>button', 'b3>button', 'b2>button', 'b4>button', 'b4>button', 'b1>button', 'b1>button']);
-    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+    // Handled keys are prevented, so they never scroll the page; ArrowDown passes through to the browser.
+    expect(
+      (await page.evaluate(() => Reflect.get(window, 'prevented') as string[])).filter(
+        (k) => !(k.startsWith('Tab') || k.startsWith('Alt')),
+      ),
+    ).toEqual([
+      'ArrowRight:true',
+      'ArrowRight:true',
+      'ArrowDown:false',
+      'ArrowLeft:true',
+      'End:true',
+      'ArrowRight:true',
+      'Home:true',
+      'ArrowLeft:true',
+    ]);
   });
 
   test('loop wraps at both ends', async ({ page, browserName }) => {
