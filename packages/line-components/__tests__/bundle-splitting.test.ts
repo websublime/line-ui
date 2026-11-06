@@ -173,7 +173,7 @@ describe('isolation scan (§7.5)', () => {
   const prefix = `node_modules/${COMPONENTS}/`;
 
   for (const subpath of Object.keys(EXPECTED_TAGS).filter((key) => key !== '.')) {
-    test(`the ${subpath} bundle holds no other component's module or tag`, async () => {
+    test(`the ${subpath} bundle holds no other component's module, and no other component's tag outside its ALLOWED_TAG_REFERENCES row (AM-090)`, async () => {
       const target = importTarget(components.exports?.[subpath]);
       if (!target) throw new Error(`${subpath} has no import target in the packed exports`);
       const own = `${prefix}${dirname(target.replace(/^\.\//, ''))}/`;
