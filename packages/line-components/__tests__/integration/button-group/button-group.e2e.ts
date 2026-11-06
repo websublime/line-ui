@@ -361,6 +361,23 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     expect(await stops(page)).toEqual(['b1:-1:first', 'b2:null:null', 'b3:0:last']);
   });
 
+  test('a second refresh before the browser drops focus keeps the recovery (finding F5)', async ({
+    page,
+    browserName,
+  }) => {
+    await mount(page, frame('', `${THREE}<line-button id="b4">Strike</line-button>`));
+    await enter(page, browserName);
+    await page.keyboard.press('ArrowRight');
+    await page.evaluate(async () => {
+      document.getElementById('b2')?.setAttribute('disabled', '');
+      // Let the observer, the machine and the host update run, then change another button in the same task.
+      for (let i = 0; i < 10; i++) await Promise.resolve();
+      document.getElementById('b4')?.setAttribute('disabled', '');
+    });
+    await settle(page);
+    expect(await focusPath(page)).toBe('b3>button');
+  });
+
   test('a blur to nowhere keeps the focus where the user put it', async ({ page, browserName }) => {
     await mount(page, frame(''));
     await enter(page, browserName);

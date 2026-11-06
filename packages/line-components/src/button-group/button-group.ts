@@ -192,7 +192,8 @@ export class LineButtonGroup extends LineElement {
     const lost = previous !== null && (kept < 0 || previous.hasAttribute('disabled'));
     const lostFocus = lost && this.#focused === previous;
     const focusInside = this.matches(':focus-within');
-    this.#recoverOnFocusOut = lostFocus && focusInside;
+    // Only set here: a later refresh before the browser drops focus must not cancel the pending recovery.
+    if (lostFocus && focusInside) this.#recoverOnFocusOut = true;
     this.#items = items;
     this.#ctrl.send({ type: 'SYNC', index: kept >= 0 ? kept : this.#activeIndex, focus: lostFocus && !focusInside });
     // The machine applies `SYNC` in a microtask; `updated()` writes the tab stops after it (spec probe P7).
