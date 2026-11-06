@@ -493,7 +493,7 @@ A `line` catalog node set that the surface renders as the first example:
 | D17 | Do the buttons of a vertical group share one width? (found in implementation, 01-C6) | Miguel | resolved: no component rule; the group stays headless, the docs show the consumer `::part(root)` rule, and the Vertical story stays unstyled (Miguel, 2026-11-06; AM-004) |
 | D18 | Does the group handle arrow keys, Home and End pressed with a modifier? (Verify, 01-C6) | Miguel | resolved: no; a key with `altKey`, `ctrlKey`, `metaKey` or `shiftKey` is ignored, with no focus move and no `preventDefault()` (Miguel, 2026-11-06; AM-006) |
 
-Miguel decided D1–D11 on 2026-11-06, each on the option the draft recommended. The option tables below stay as the record of what he weighed. He decided D12–D16 the same day, directly, on the gaps the D1–D11 pass left; they refine D2, D6 and D9 and carry no option table. D17 came from the implementation after approval and lands as AM-004.
+Miguel decided D1–D11 on 2026-11-06, each on the option the draft recommended. The option tables below stay as the record of what he weighed. He decided D12–D16 the same day, directly, on the gaps the D1–D11 pass left; they refine D2, D6 and D9 and carry no option table. D17 came from the implementation after approval and lands as AM-004; D18 came from the Verify gate and lands as AM-006.
 
 ### D1 — Role placement
 
