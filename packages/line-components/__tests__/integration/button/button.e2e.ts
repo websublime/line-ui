@@ -97,17 +97,22 @@ function host(page: Page, id: string): Locator {
 }
 
 test.describe('width in a stretching layout (AM-010, AM-011)', () => {
-  test('a default vertical line-stack stretches the root; align="start" keeps the content width', async ({ page }) => {
+  test('a default vertical line-stack stretches the root of a Button and an IconButton; align="start" keeps their width', async ({
+    page,
+  }) => {
     await mount(
       page,
-      `<line-stack id="stretch" style="inline-size: 300px"><line-button id="wide">Export</line-button></line-stack>
-      <line-stack id="start" align="start" style="inline-size: 300px"><line-button id="narrow">Export</line-button></line-stack>
-      <div><line-button id="alone">Export</line-button></div>`,
+      `<line-stack id="stretch" style="inline-size: 300px"><line-button id="wide">Export</line-button><line-icon-button id="wide-icon" aria-label="More"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 2h12v12H2z" /></svg></line-icon-button></line-stack>
+      <line-stack id="start" align="start" style="inline-size: 300px"><line-button id="narrow">Export</line-button><line-icon-button id="narrow-icon" aria-label="More"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 2h12v12H2z" /></svg></line-icon-button></line-stack>
+      <div><line-button id="alone">Export</line-button></div>
+      <div><line-icon-button id="alone-icon" aria-label="More"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16"><path d="M2 2h12v12H2z" /></svg></line-icon-button></div>`,
     );
-    await page.evaluate(() => customElements.whenDefined('line-stack'));
+    await page.evaluate(() =>
+      Promise.all(['line-stack', 'line-icon-button'].map((tag) => customElements.whenDefined(tag))),
+    );
     const widths = await page.evaluate(() =>
       Object.fromEntries(
-        ['wide', 'narrow', 'alone'].map((id) => {
+        ['wide', 'narrow', 'alone', 'wide-icon', 'narrow-icon', 'alone-icon'].map((id) => {
           const root = document.getElementById(id)?.shadowRoot?.querySelector('[part="root"]');
           return [id, root ? Math.round(root.getBoundingClientRect().width) : -1];
         }),
@@ -116,6 +121,10 @@ test.describe('width in a stretching layout (AM-010, AM-011)', () => {
     expect(widths.wide).toBe(300);
     expect(widths.narrow).toBe(widths.alone);
     expect(widths.narrow).toBeLessThan(300);
+    expect(widths['wide-icon']).toBe(300);
+    // This fixture loads no sizing tokens, so a standalone icon button is as wide as its 16 px icon.
+    expect(widths['narrow-icon']).toBe(widths['alone-icon']);
+    expect(widths['narrow-icon']).toBe(16);
   });
 });
 
