@@ -12,6 +12,7 @@ import {
 } from './basic.js';
 import { commonProp, componentSchema, defineDescriptor, type LineDescriptor } from './descriptor.js';
 import { buttonDescriptor } from './descriptors/button.js';
+import { buttonGroupDescriptor } from './descriptors/button-group.js';
 import { iconDescriptor } from './descriptors/icon.js';
 import { iconButtonDescriptor } from './descriptors/icon-button.js';
 import { separatorDescriptor } from './descriptors/separator.js';
@@ -79,6 +80,7 @@ export {
   BASIC_CATALOG_ID,
   basicImplementations,
   buttonDescriptor,
+  buttonGroupDescriptor,
   commonProp,
   componentSchema,
   defineDescriptor,
@@ -98,6 +100,7 @@ export {
 /** Every component descriptor, in catalog-name order. */
 export const descriptors: readonly LineDescriptor[] = [
   buttonDescriptor,
+  buttonGroupDescriptor,
   iconDescriptor,
   iconButtonDescriptor,
   separatorDescriptor,

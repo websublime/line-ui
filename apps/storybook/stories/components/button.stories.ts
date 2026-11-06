@@ -1,5 +1,7 @@
 import '@websublime/line-components/button';
+import '@websublime/line-components/stack';
 import '@websublime/line-tokens/focus-ring';
+import '@websublime/line-tokens/layouts';
 import '@websublime/line-tokens/radii';
 import '@websublime/line-tokens/sizing';
 import '@websublime/line-tokens/typography';
@@ -155,6 +157,29 @@ export const Form: Story = {
       <output name="result" aria-live="polite"></output>
     </form>`;
   },
+};
+
+export const InAStack: Story = {
+  name: 'In a stack',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          'The inner button fills its host, so a layout that stretches the host stretches the button. A default vertical `<line-stack>` (`align="stretch"`), and the A2UI `Column` that renders as one, show buttons full width; `align="start"` keeps each at its content width.',
+      },
+    },
+  },
+  render: () =>
+    html`<div style="display: flex; gap: 32px; inline-size: 480px">
+      <line-stack gap="2" style="flex: 1">
+        <line-button variant="primary">Save</line-button>
+        <line-button>Save draft</line-button>
+      </line-stack>
+      <line-stack gap="2" align="start" style="flex: 1">
+        <line-button variant="primary">Save</line-button>
+        <line-button>Save draft</line-button>
+      </line-stack>
+    </div>`,
 };
 
 export const StyledStates: Story = {

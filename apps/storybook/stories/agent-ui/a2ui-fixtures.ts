@@ -1,5 +1,6 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
-// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5) through the `line` catalog.
+// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5) and ButtonGroup (C6) through
+// the `line` catalog.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
@@ -51,7 +52,7 @@ export const basicShowcase: A2uiMessage[] = [
   data('/title', showcaseData.title),
 ];
 
-/** The `line` catalog: Stack, Button, Icon, Separator and IconButton under the `line` id. */
+/** The `line` catalog: Stack, Button, Icon, Separator, IconButton and ButtonGroup under the `line` id. */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
   components([
@@ -61,7 +62,7 @@ export const lineShowcase: A2uiMessage[] = [
       orientation: 'horizontal',
       align: 'center',
       gap: '2',
-      children: ['home', 'sep', 'send', 'glyph', 'close'],
+      children: ['home', 'sep', 'send', 'glyph', 'close', 'zoom'],
     },
     {
       id: 'home',
@@ -84,6 +85,37 @@ export const lineShowcase: A2uiMessage[] = [
       action: event('close'),
     },
     { id: 'closeIcon', component: 'Icon', path: 'M6 6 L18 18 M18 6 L6 18' },
+    {
+      id: 'zoom',
+      component: 'ButtonGroup',
+      loop: true,
+      children: ['zoomOut', 'zoomReset', 'zoomIn'],
+      accessibility: { label: 'Zoom' },
+    },
+    {
+      id: 'zoomOut',
+      component: 'IconButton',
+      child: 'zoomOutIcon',
+      accessibility: { label: 'Zoom out' },
+      action: event('zoomOut'),
+    },
+    { id: 'zoomOutIcon', component: 'Icon', path: 'M5 12 L19 12' },
+    {
+      id: 'zoomReset',
+      component: 'IconButton',
+      child: 'zoomResetIcon',
+      accessibility: { label: 'Reset zoom' },
+      action: event('zoomReset'),
+    },
+    { id: 'zoomResetIcon', component: 'Icon', path: 'M6 6 L18 6 L18 18 L6 18 Z' },
+    {
+      id: 'zoomIn',
+      component: 'IconButton',
+      child: 'zoomInIcon',
+      accessibility: { label: 'Zoom in' },
+      action: event('zoomIn'),
+    },
+    { id: 'zoomInIcon', component: 'Icon', path: 'M5 12 L19 12 M12 5 L12 19' },
   ]),
 ];
 

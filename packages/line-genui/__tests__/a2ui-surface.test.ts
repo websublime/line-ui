@@ -716,6 +716,99 @@ describe('IconButton (Phase 1 spec §6.C.5 IconButton; `0003-icon-button.md` Age
   });
 });
 
+describe('ButtonGroup (`0004-button-group.md` Agent contract)', () => {
+  const toolbar = (extra: Message = {}): Message => ({
+    id: 'root',
+    component: 'ButtonGroup',
+    children: ['bold', 'italic', 'underline'],
+    ...extra,
+  });
+  const buttons: Message[] = ['bold', 'italic', 'underline'].map((id) => ({
+    id,
+    component: 'Button',
+    accessibility: { label: id },
+    action: action(id),
+  }));
+
+  test('a node without accessibility.label, or with " ", renders a placeholder and raises MISSING_ACCESSIBLE_NAME', async () => {
+    for (const accessibility of [undefined, { label: ' ' }]) {
+      const { surface, errors } = await render([toolbar(accessibility ? { accessibility } : {}), ...buttons], {
+        catalogId: LINE_CATALOG_ID,
+      });
+      expect(surface.querySelector('line-button-group')).toBeNull();
+      const placeholder = surface.querySelector('[data-line-a2ui-placeholder="missing-name"]') as HTMLElement;
+      expect(placeholder.inert).toBe(true);
+      expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
+      expect(errors[0]?.error.componentId).toBe('root');
+      surface.remove();
+    }
+  });
+
+  // `loop` is checked in the surface axe file in real browsers: happy-dom calls no attributeChangedCallback when
+  // it upgrades an element that already carries the attribute, so the reflected `false` default removes it here.
+  test('a named node renders line-button-group with its aria-label, orientation and the buttons in order', async () => {
+    const { surface, errors } = await render(
+      [toolbar({ orientation: 'vertical', accessibility: { label: 'Text formatting' } }), ...buttons],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const group = surface.querySelector('line-button-group') as HTMLElement & { updateComplete: Promise<unknown> };
+    expect(group.getAttribute('aria-label')).toBe('Text formatting');
+    expect(group.getAttribute('orientation')).toBe('vertical');
+    expect([...group.children].map((child) => `${child.localName}:${child.getAttribute('aria-label')}`)).toEqual([
+      'line-button:bold',
+      'line-button:italic',
+      'line-button:underline',
+    ]);
+  });
+
+  test('the group roves over the surface-created buttons, and each button keeps its own action', async () => {
+    const { surface, actions } = await render([toolbar({ accessibility: { label: 'Formatting' } }), ...buttons], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    await customElements.whenDefined('line-button-group');
+    const group = surface.querySelector('line-button-group') as HTMLElement & { updateComplete: Promise<unknown> };
+    await group.updateComplete;
+    await tick();
+    const stops = () => [...group.children].map((child) => child.getAttribute('tabindex'));
+    expect(stops()).toEqual(['0', '-1', '-1']);
+    const first = group.firstElementChild as HTMLElement;
+    first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, composed: true }));
+    await tick();
+    await group.updateComplete;
+    expect(stops()).toEqual(['-1', '0', '-1']);
+    (group.children[2] as HTMLElement).click();
+    await tick();
+    expect(actions.map((each) => each.action.name)).toEqual(['underline']);
+  });
+
+  test('children take any component; a non-button child renders and is not an item', async () => {
+    const { surface, errors } = await render(
+      [
+        toolbar({ children: ['bold', 'rule', 'italic'], accessibility: { label: 'Formatting' } }),
+        buttons[0] as Message,
+        { id: 'rule', component: 'Separator', orientation: 'vertical' },
+        buttons[1] as Message,
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    await customElements.whenDefined('line-button-group');
+    const group = surface.querySelector('line-button-group') as HTMLElement & { updateComplete: Promise<unknown> };
+    await group.updateComplete;
+    await tick();
+    expect(
+      [...group.children].map((child) => `${child.localName}:${child.getAttribute('data-line-button-group-position')}`),
+    ).toEqual(['line-button:first', 'line-separator:null', 'line-button:last']);
+  });
+
+  test('the basic catalog keeps no route to line-button-group (decision D10)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'ButtonGroup', children: [] }]);
+    expect(surface.querySelector('line-button-group')).toBeNull();
+    expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+  });
+});
+
 describe('lazy loading (§6.G.4; ARCH §17.4; Law 6)', () => {
   test('importing ./a2ui defines only line-a2ui-surface, and a Button loads only line-button', async () => {
     const script = `
