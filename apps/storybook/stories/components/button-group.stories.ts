@@ -36,7 +36,7 @@ const DESCRIPTION = `\`<line-button-group>\` groups related buttons into one too
 - **Keys.** Tab enters on the first enabled button, and later on the one that last had focus. \`orientation="horizontal"\` (the default) takes Left and Right, mirrored right-to-left; \`orientation="vertical"\` takes Up and Down. Home and End jump to the ends, and \`loop\` wraps. Enter and Space belong to the focused button.
 - **Disabled and loading.** The arrows skip a disabled button and keep a loading one. When the focused button is disabled, hidden or removed, focus moves to the next enabled button, else the previous one.
 - **Corners.** The group squares the corners between its buttons through their \`--line-button-radius\` and \`--line-icon-button-radius\` tokens; \`--line-button-group-radius\` sets the outer corners and \`--line-button-group-gap\` the space between buttons (default \`0\`).
-- **Vertical widths.** In a vertical group each button is as wide as its content. For one width, stretch each button's inner button: \`line-button-group[orientation='vertical'] > *::part(root) { inline-size: 100%; }\`.
+- **Vertical widths.** In a vertical group every button is as wide as the widest: the group stretches each button, and each button's inner button fills it.
 - Use a toolbar for three or more controls. Two buttons side by side belong in \`<line-stack orientation="horizontal">\`, and buttons that each need a Tab stop, such as OK and Cancel, too.`;
 
 interface ButtonGroupArgs {
@@ -89,7 +89,7 @@ export const Vertical: Story = {
     docs: {
       description: {
         story:
-          'A vertical tool palette: Up and Down move between the tools, and `loop` lets Down on the last tool wrap to the first, as a palette the user cycles through does. Each button keeps its content width; the component description shows the rule for one width.',
+          'A vertical tool palette: Up and Down move between the tools, and `loop` lets Down on the last tool wrap to the first, as a palette the user cycles through does. Every tool is as wide as the widest.',
       },
     },
   },

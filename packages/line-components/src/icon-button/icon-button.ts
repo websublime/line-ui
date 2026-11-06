@@ -105,6 +105,7 @@ export class LineIconButton extends LineElement {
         display: inline-flex;
         align-items: center;
         justify-content: center;
+        inline-size: 100%;
         min-inline-size: var(--line-icon-button-size);
         min-block-size: var(--line-icon-button-size);
         padding-inline: 0;

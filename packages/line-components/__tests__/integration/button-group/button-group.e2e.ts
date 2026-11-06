@@ -617,6 +617,68 @@ test.describe('corners (decisions D9, D14, D15, D16)', () => {
   });
 });
 
+test.describe('widths (decision D19; 0002-button.md AM-010; 0003-icon-button.md AM-004)', () => {
+  /** The rendered inline size of each item's `root` part, in px. */
+  function rootWidths(page: Page, ids: string[]): Promise<number[]> {
+    return page.evaluate(
+      (ids) =>
+        ids.map((id) => {
+          const root = document.getElementById(id)?.shadowRoot?.querySelector('[part="root"]');
+          return root ? Math.round(root.getBoundingClientRect().width) : -1;
+        }),
+      ids,
+    );
+  }
+
+  test('in a vertical group every root is as wide as the widest', async ({ page }) => {
+    await mount(
+      page,
+      frame(
+        'orientation="vertical"',
+        `<line-button id="b1">Select</line-button><line-button id="b2">Crop</line-button><line-button id="b3">Export</line-button><line-icon-button id="i4" aria-label="More"></line-icon-button>`,
+      ),
+    );
+    const widths = await rootWidths(page, ['b1', 'b2', 'b3', 'i4']);
+    const hosts = await page.evaluate(() =>
+      ['b1', 'b2', 'b3'].map((id) =>
+        Math.round((document.getElementById(id) as Element).getBoundingClientRect().width),
+      ),
+    );
+    expect(new Set(widths).size).toBe(1);
+    expect(widths[0]).toBe(Math.max(...hosts));
+  });
+
+  test('a standalone button and icon button keep their content width', async ({ page }) => {
+    await mount(
+      page,
+      `<div style="display: block"><line-button id="s1">Export</line-button></div><div><line-icon-button id="s2" aria-label="More"></line-icon-button></div>`,
+    );
+    const content = await page.evaluate(() => {
+      const root = document.getElementById('s1')?.shadowRoot?.querySelector('[part="root"]') as HTMLElement;
+      const style = getComputedStyle(root);
+      const range = document.createRange();
+      range.selectNodeContents(document.getElementById('s1') as Node);
+      return Math.round(
+        range.getBoundingClientRect().width +
+          Number.parseFloat(style.paddingLeft) +
+          Number.parseFloat(style.paddingRight),
+      );
+    });
+    const [button, iconButton] = await rootWidths(page, ['s1', 's2']);
+    expect(Math.abs((button ?? 0) - content)).toBeLessThanOrEqual(1);
+    expect(iconButton).toBe(32);
+  });
+
+  test('a consumer width on the host reaches the root', async ({ page }) => {
+    await page.addStyleTag({ content: 'line-button, line-icon-button { inline-size: 200px; }' });
+    await mount(
+      page,
+      `<line-button id="s1">Export</line-button><line-icon-button id="s2" aria-label="More"></line-icon-button>`,
+    );
+    expect(await rootWidths(page, ['s1', 's2'])).toEqual([200, 200]);
+  });
+});
+
 test.describe('internals proof (Phase 1 spec §6.C.4; §10 SD39; decision D1)', () => {
   test('INTERNALS reads back role toolbar, and ariaOrientation vertical only while vertical', async ({ page }) => {
     await mount(

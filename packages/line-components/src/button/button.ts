@@ -145,6 +145,7 @@ export class LineButton extends FormAssociated(LineElement) {
         align-items: center;
         justify-content: center;
         gap: var(--line-button-gap);
+        inline-size: 100%;
         min-block-size: var(--line-button-height);
         padding-inline: var(--line-button-padding-inline);
         border-radius: var(--line-button-radius);
