@@ -1,6 +1,6 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
-// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5) and ButtonGroup (C6) through
-// the `line` catalog.
+// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5), ButtonGroup (C6) and Alert
+// (C7) through the `line` catalog.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
@@ -52,12 +52,16 @@ export const basicShowcase: A2uiMessage[] = [
   data('/title', showcaseData.title),
 ];
 
-/** The `line` catalog: Stack, Button, Icon, Separator, IconButton and ButtonGroup under the `line` id. */
+/**
+ * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup and Alert under the `line` id. The
+ * Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`.
+ */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
   components([
+    { id: 'root', component: 'Stack', gap: '3', children: ['toolbar', 'notice'] },
     {
-      id: 'root',
+      id: 'toolbar',
       component: 'Stack',
       orientation: 'horizontal',
       align: 'center',
@@ -116,6 +120,20 @@ export const lineShowcase: A2uiMessage[] = [
       action: event('zoomIn'),
     },
     { id: 'zoomInIcon', component: 'Icon', path: 'M5 12 L19 12 M12 5 L12 19' },
+    {
+      id: 'notice',
+      component: 'Alert',
+      variant: 'danger',
+      icon: 'noticeIcon',
+      title: 'noticeTitle',
+      children: ['noticeText'],
+      actions: ['noticeRetry'],
+    },
+    { id: 'noticeIcon', component: 'Icon', path: 'M12 2 L22 22 L2 22 Z' },
+    text('noticeTitle', 'Payment failed', { variant: 'h3', catalogId: BASIC_CATALOG_ID }),
+    text('noticeText', 'Check the card number and try again.', { catalogId: BASIC_CATALOG_ID }),
+    { id: 'noticeRetry', component: 'Button', variant: 'primary', child: 'noticeRetryLabel', action: event('retry') },
+    text('noticeRetryLabel', 'Retry', { catalogId: BASIC_CATALOG_ID }),
   ]),
 ];
 

@@ -8,7 +8,8 @@
  * catalog; each agent-exposed C5–C20 row adds its component to the stories' render fixture and to this file
  * (§6.C.6). The List stories also prove axe's list rules: `aria-required-children` on the `role="list"` host and
  * `aria-required-parent` on each item pass. The Line catalog story also shows the IconButton named by its
- * `accessibility.label`, and C6 (ButtonGroup) as a named toolbar with `loop` that roves over its IconButtons.
+ * `accessibility.label`, C6 (ButtonGroup) as a named toolbar with `loop` that roves over its IconButtons, and C7
+ * (Alert) with its four zones filled and no live role.
  *
  * @module __tests__/a11y/a2ui-surface.e2e
  */
@@ -21,7 +22,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 15,
+  'agent-ui-a2ui-surface--line-catalog': 19,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -49,7 +50,9 @@ async function openSurfaceStory(page: Page, id: SurfaceStoryId): Promise<void> {
   const surface = page.locator('#storybook-root line-a2ui-surface');
   await expect(surface.locator('[data-line-a2ui-placeholder="pending"]')).toHaveCount(0);
   await expect(
-    surface.locator(':is(line-button, line-button-group, line-icon, line-icon-button, line-separator, line-stack)'),
+    surface.locator(
+      ':is(line-alert, line-button, line-button-group, line-icon, line-icon-button, line-separator, line-stack)',
+    ),
   ).toHaveCount(SURFACE_STORIES[id]);
   await expect(surface).not.toHaveAttribute('aria-busy', 'true');
 }
@@ -113,4 +116,23 @@ test('the Line catalog story renders the ButtonGroup as a named toolbar that rov
   expect(await stops()).toEqual(['-1:first', '-1:middle', '0:last']);
   const focused = await page.evaluate(() => document.activeElement?.getAttribute('aria-label'));
   expect(focused, browserName).toBe('Zoom in');
+});
+
+test('the Line catalog story renders the Alert with its four zones, its tone and no live role', async ({ page }) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
+  const alert = page.locator('#storybook-root line-a2ui-surface line-alert');
+  await expect(alert).toHaveAttribute('variant', 'danger');
+  const view = await alert.evaluate((el) => ({
+    attributes: el.getAttributeNames().sort(),
+    slotted: [...el.children].map((child) => `${child.localName}:${child.getAttribute('slot')}`),
+    zones: ['icon', 'title', 'description', 'actions'].filter(
+      (zone) => getComputedStyle(el.shadowRoot?.querySelector(`[part="${zone}"]`) as Element).display !== 'none',
+    ),
+  }));
+  expect(view).toEqual({
+    attributes: ['variant'],
+    slotted: ['line-icon:icon', 'h3:title', 'p:null', 'line-button:actions'],
+    zones: ['icon', 'title', 'description', 'actions'],
+  });
+  await expect(alert.locator('line-button').getByRole('button')).toHaveAccessibleName('Retry');
 });
