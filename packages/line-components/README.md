@@ -203,9 +203,10 @@ is empty takes no space.
 </line-alert>
 ```
 
-With `live` off, assistive technology reads the alert in page order. `polite` and `assertive` put the `status` or
-`alert` role on the host through `ElementInternals`, so a screen reader announces the alert when it appears or its
-text changes; set `live` before you insert the alert or change its text. An author `role` or `aria-live` on the
+With `live` off, the host has no role. `polite` and `assertive` put the `status` or `alert` role on the host through
+`ElementInternals`, with the role's live-region properties, from the moment the alert is inserted; how a screen
+reader announces it is not verified by any automated check. Set `live` before you insert the alert or change its
+text. An author `role` or `aria-live` on the
 host wins. Name only a live alert, with `aria-label`, because a host without a role takes no name. State the tone
 in words too, such as "Error: …", because colour alone does not reach every user and forced-colors mode draws
 every variant alike.

@@ -51,7 +51,7 @@ const DESCRIPTION = `\`<line-alert>\` is an inline box that tells the user about
 
 - **Zones.** The \`icon\`, \`title\`, default and \`actions\` slots fill a two-column grid: the icon at the start of the first row, the title above the message beside it, and the actions in a wrapping row below the message. A zone whose slot is empty takes no space, and an alert with no content keeps its padded box. Slotted headings and paragraphs keep their browser margins unless you load \`@websublime/line-tokens/reset\`, which zeroes them inside \`line-alert\`.
 - **Tone.** \`variant\` is \`neutral\` (default), \`info\`, \`success\`, \`warning\` or \`danger\`, and sets the colour tokens from the theme roles. State the tone in words too, in the title or the message, such as "Error: the payment failed", or name the icon with \`aria-label\`. Colour alone does not reach every user, and forced-colors mode draws every variant in the same system colours.
-- **Live role.** By default the alert has no role and assistive technology reads it in page order. \`live="polite"\` gives the host the \`status\` role and \`live="assertive"\` the \`alert\` role, so a screen reader announces the alert when it appears or its text changes. Set \`live\` before you insert the alert or change its text, because switching the role on over text already in place gives no reliable announcement. Use \`assertive\` only for an error the user must hear at once. An author \`role\` or \`aria-live\` on the host wins.
+- **Live role.** By default the host has no role. \`live="polite"\` gives the host the \`status\` role and \`live="assertive"\` the \`alert\` role, with their live-region properties, from the moment the alert is inserted. Screen readers use these to announce a region when it appears or its text changes, but no automated check verifies how a screen reader announces it. Set \`live\` before you insert the alert or change its text, because switching the role on over text already in place may not be announced. Use \`assertive\` only for an error the user must hear at once. An author \`role\` or \`aria-live\` on the host wins.
 - **Naming.** Name only a live alert, with \`aria-label\` on the host. With \`live\` off the host is a \`generic\` element, which takes no name.
 - **Dismiss.** Alert ships no close button. Put one in \`actions\`, remove the alert in its click handler, and move focus to a named target, because focus on a removed button falls to the page body. The **Dismiss recipe** story does this:
 
@@ -70,7 +70,7 @@ interface AlertArgs {
 const alert = ({ variant, live, message }: AlertArgs): TemplateResult =>
   html`<line-alert variant=${variant} live=${live}>${message}</line-alert>`;
 
-/** Replaces the alert in the demo with a fresh copy, which a screen reader announces as a new live region. */
+/** Replaces the alert in the demo with a fresh copy, a newly inserted live region. */
 const insertAgain = (event: Event): void => {
   const current = (event.currentTarget as HTMLElement).closest('line-stack')?.querySelector('line-alert');
   current?.replaceWith(current.cloneNode(true));
@@ -149,7 +149,7 @@ export const LiveAssertive: Story = {
     docs: {
       description: {
         story:
-          '`live="assertive"` puts the `alert` role on the host. A screen reader interrupts to announce it when it is inserted, so keep it for an error the user must hear at once. The button inserts a fresh copy.',
+          '`live="assertive"` puts the `alert` role, an assertive live region, on the host from insertion; keep it for an error the user must hear at once. The button inserts a fresh copy to try with a screen reader.',
       },
     },
   },
@@ -163,7 +163,7 @@ export const LivePolite: Story = {
     docs: {
       description: {
         story:
-          '`live="polite"` puts the `status` role on the host, which a screen reader announces when the user is idle. A live alert may carry a name. The button inserts a fresh copy.',
+          '`live="polite"` puts the `status` role, a polite live region, on the host from insertion. A live alert may carry a name. The button inserts a fresh copy to try with a screen reader.',
       },
     },
   },
