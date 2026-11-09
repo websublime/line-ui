@@ -116,11 +116,6 @@ export class LineButtonGroup extends LineElement {
   #activeIndex = 0;
   /** The item that last took focus, kept while focus is in the group or was lost with the item (decisions D12, D13). */
   #focused: HTMLElement | null = null;
-  /**
-   * Set when the focused item was disabled or hidden while it still held focus: Firefox and WebKit drop that focus
-   * later, with a `focusout` that has no `relatedTarget`, and the group recovers it there (decisions D12, D16).
-   */
-  #recoverOnFocusOut = false;
   /** Watches `disabled` and `hidden` on every button host, which no `slotchange` reports (decisions D6, D16). */
   readonly #observer = new MutationObserver(() => this.#refresh());
 
@@ -190,12 +185,11 @@ export class LineButtonGroup extends LineElement {
     const previous = this.#active;
     const kept = previous ? items.indexOf(previous) : -1;
     const lost = previous !== null && (kept < 0 || previous.hasAttribute('disabled'));
+    // The focused item left, or turned disabled or hidden. The group moves focus at once and does not wait for the
+    // browser to drop it: WebKit on Linux can keep focus on a disabled button indefinitely (spec AM-011).
     const lostFocus = lost && this.#focused === previous;
-    const focusInside = this.matches(':focus-within');
-    // Only set here: a later refresh before the browser drops focus must not cancel the pending recovery.
-    if (lostFocus && focusInside) this.#recoverOnFocusOut = true;
     this.#items = items;
-    this.#ctrl.send({ type: 'SYNC', index: kept >= 0 ? kept : this.#activeIndex, focus: lostFocus && !focusInside });
+    this.#ctrl.send({ type: 'SYNC', index: kept >= 0 ? kept : this.#activeIndex, focus: lostFocus });
     // The machine applies `SYNC` in a microtask; `updated()` writes the tab stops after it (spec probe P7).
     this.requestUpdate();
   }
@@ -220,7 +214,6 @@ export class LineButtonGroup extends LineElement {
     const index = this.#itemIndex(event);
     if (index < 0) return;
     this.#focused = this.#items[index] ?? null;
-    this.#recoverOnFocusOut = false;
     this.#ctrl.send({ type: 'FOCUS_ITEM', index });
     this.#writeTabStops(index);
   };
@@ -232,19 +225,12 @@ export class LineButtonGroup extends LineElement {
       this.#focused = null;
       return;
     }
-    // Focus went nowhere: a blur, or the focused button was removed, disabled or hidden. Keep it only in the
-    // second case, for the recovery; `focusout` on removal fires only in Chromium (spec probe P5).
+    // Focus went nowhere: a blur, or the focused button was removed, disabled or hidden. Forget the item only on a
+    // blur, so a later refresh does not pull focus back; `#refresh()` recovers the other cases (decisions D12, D13).
     const item = this.#focused;
     queueMicrotask(() => {
       if (!item || this.#focused !== item || this.matches(':focus-within')) return;
-      const intact = item.isConnected && !item.hasAttribute('disabled') && !item.hasAttribute('hidden');
-      if (intact) {
-        this.#focused = null;
-      } else if (this.#recoverOnFocusOut) {
-        // `#refresh()` already moved the tab stop; the browser dropped focus only now.
-        this.#recoverOnFocusOut = false;
-        this.#active?.focus({ focusVisible: true } as FocusOptions);
-      }
+      if (item.isConnected && !item.hasAttribute('disabled') && !item.hasAttribute('hidden')) this.#focused = null;
     });
   };
 

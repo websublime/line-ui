@@ -77,6 +77,12 @@ function clickFocuses(browserName: string): boolean {
   return !(browserName === 'webkit' && process.platform === 'darwin');
 }
 
+/**
+ * How long a focus-recovery test waits for its outcome. The group moves focus in the microtasks after the change
+ * (spec AM-011); the wait only absorbs a slow CI runner, and a fixed delay would hide which outcome was awaited.
+ */
+const RECOVERY = { timeout: 5_000 } as const;
+
 /** WebKit on macOS moves Tab focus to text fields only; Option+Tab reaches every focusable element. */
 function tab(browserName: string, shift = false): string {
   const key = shift ? 'Shift+Tab' : 'Tab';
@@ -341,13 +347,13 @@ test.describe('focus-visible (decision D3)', () => {
 });
 
 test.describe('focus recovery (decisions D12, D13, D16)', () => {
-  /** Records the `focusout` events that reach the group with no `relatedTarget`. */
+  /** Records the target of every `focusout` that reaches the group. */
   async function recordFocusOut(page: Page): Promise<void> {
     await page.evaluate(() => {
       const seen: string[] = [];
       Object.assign(window, { focusOuts: seen });
       document.getElementById('g')?.addEventListener('focusout', (event) => {
-        if (!event.relatedTarget) seen.push((event.target as Element).id);
+        seen.push((event.target as Element).id);
       });
     });
   }
@@ -361,11 +367,15 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     await enter(page, browserName);
     await page.keyboard.press('ArrowRight');
     await page.evaluate(() => document.getElementById('b2')?.setAttribute('disabled', ''));
-    await settle(page);
-    expect(await focusPath(page)).toBe('b3>button');
+    await expect.poll(() => focusPath(page), RECOVERY).toBe('b3>button');
     expect(await focusVisible(page, 'b3')).toBe(true);
-    // Every engine fires `focusout` with no `relatedTarget` on the button that turned disabled.
-    expect(await page.evaluate(() => Reflect.get(window, 'focusOuts'))).toEqual(['b2']);
+    // The disabled button loses focus once, whether the browser drops it first or the group moves it (spec AM-011).
+    await expect
+      .poll(
+        () => page.evaluate(() => (Reflect.get(window, 'focusOuts') as string[]).filter((id) => id === 'b2')),
+        RECOVERY,
+      )
+      .toEqual(['b2']);
   });
 
   test('the last button turning disabled hands focus to the previous enabled one', async ({ page, browserName }) => {
@@ -373,8 +383,7 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     await enter(page, browserName);
     await page.keyboard.press('End');
     await page.evaluate(() => document.getElementById('b3')?.setAttribute('disabled', ''));
-    await settle(page);
-    expect(await focusPath(page)).toBe('b2>button');
+    await expect.poll(() => focusPath(page), RECOVERY).toBe('b2>button');
     expect(await stops(page)).toEqual(['b1:-1:first', 'b2:0:middle', 'b3:-1:last']);
   });
 
@@ -400,8 +409,7 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     await enter(page, browserName);
     await page.keyboard.press('ArrowRight');
     await page.evaluate(() => document.getElementById('b2')?.setAttribute('hidden', ''));
-    await settle(page);
-    expect(await focusPath(page)).toBe('b3>button');
+    await expect.poll(() => focusPath(page), RECOVERY).toBe('b3>button');
     expect(await focusVisible(page, 'b3')).toBe(true);
     expect(await stops(page)).toEqual(['b1:-1:first', 'b2:null:null', 'b3:0:last']);
   });
@@ -414,8 +422,7 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     await enter(page, browserName);
     await page.keyboard.press('End');
     await page.evaluate(() => document.getElementById('b3')?.setAttribute('hidden', ''));
-    await settle(page);
-    expect(await focusPath(page)).toBe('b2>button');
+    await expect.poll(() => focusPath(page), RECOVERY).toBe('b2>button');
     expect(await focusVisible(page, 'b2')).toBe(true);
     expect(await stops(page)).toEqual(['b1:-1:first', 'b2:0:last', 'b3:null:null']);
   });
@@ -433,8 +440,7 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
       for (let i = 0; i < 10; i++) await Promise.resolve();
       document.getElementById('b4')?.setAttribute('disabled', '');
     });
-    await settle(page);
-    expect(await focusPath(page)).toBe('b3>button');
+    await expect.poll(() => focusPath(page), RECOVERY).toBe('b3>button');
   });
 
   test('a blur to nowhere keeps the focus where the user put it', async ({ page, browserName }) => {
