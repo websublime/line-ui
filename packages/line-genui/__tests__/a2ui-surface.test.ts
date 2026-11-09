@@ -809,6 +809,74 @@ describe('ButtonGroup (`0004-button-group.md` Agent contract)', () => {
   });
 });
 
+describe('Alert (`0006-alert.md` Agent contract)', () => {
+  const basicText = (id: string, value: string, extra: Message = {}): Message =>
+    text(id, value, { catalogId: BASIC_CATALOG_ID, ...extra });
+  const alert = (extra: Message = {}): Message => ({
+    id: 'root',
+    component: 'Alert',
+    variant: 'danger',
+    icon: 'glyph',
+    title: 'heading',
+    children: ['message'],
+    actions: ['retry'],
+    ...extra,
+  });
+  const parts: Message[] = [
+    { id: 'glyph', component: 'Icon', path: 'M12 2 L22 22 L2 22 Z' },
+    basicText('heading', 'Payment failed', { variant: 'h3' }),
+    basicText('message', 'Check the card number and try again.'),
+    { id: 'retry', component: 'Button', accessibility: { label: 'Retry' }, action: action('retry') },
+  ];
+
+  test('renders line-alert with its variant, and each child prop in its slot, in prop order', async () => {
+    const { surface, errors } = await render([alert(), ...parts], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    const element = surface.querySelector('line-alert') as HTMLElement;
+    expect(element.getAttribute('variant')).toBe('danger');
+    expect([...element.children].map((child) => `${child.localName}:${child.getAttribute('slot')}`)).toEqual([
+      'line-icon:icon',
+      'h3:title',
+      'p:null',
+      'line-button:actions',
+    ]);
+    expect(element.querySelector('h3')?.textContent).toBe('Payment failed');
+  });
+
+  test('sets no live role and no host name; accessibility.label is not applied (decision D7)', async () => {
+    const { surface, errors } = await render(
+      [alert({ accessibility: { label: 'Payment error', description: 'From checkout' } }), ...parts],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const element = surface.querySelector('line-alert') as HTMLElement;
+    expect(
+      ['live', 'role', 'aria-label', 'aria-description', 'aria-live'].filter((name) => element.hasAttribute(name)),
+    ).toEqual([]);
+  });
+
+  test('a node without content renders an empty alert, not a placeholder (C8)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Alert' }], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-alert></line-alert>');
+  });
+
+  test('a node with live or an unknown variant is rejected by the strict schema', async () => {
+    for (const extra of [{ live: 'assertive' }, { variant: 'error' }, { action: action('dismiss') }]) {
+      const { surface, errors } = await render([alert(extra), ...parts], { catalogId: LINE_CATALOG_ID });
+      expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+      expect(surface.querySelector('line-alert')).toBeNull();
+      surface.remove();
+    }
+  });
+
+  test('the basic catalog keeps no route to line-alert (decision D6)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Alert', children: [] }]);
+    expect(surface.querySelector('line-alert')).toBeNull();
+    expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+  });
+});
+
 describe('lazy loading (§6.G.4; ARCH §17.4; Law 6)', () => {
   test('importing ./a2ui defines only line-a2ui-surface, and a Button loads only line-button', async () => {
     const script = `

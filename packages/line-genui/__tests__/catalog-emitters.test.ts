@@ -61,11 +61,11 @@ function ajvWith(catalog: Json): Ajv2020 {
 const document = lineCatalogDocument(descriptors);
 
 /** The catalog names of the agent-exposed descriptors, in catalog-name order. */
-const LINE_COMPONENTS = ['Button', 'ButtonGroup', 'Icon', 'IconButton', 'Separator', 'Stack'];
+const LINE_COMPONENTS = ['Alert', 'Button', 'ButtonGroup', 'Icon', 'IconButton', 'Separator', 'Stack'];
 
 /** A tree of `line` components, as an agent sends it. */
 const components: Json[] = [
-  { id: 'root', component: 'Stack', orientation: 'horizontal', children: ['save', 'rule', 'close', 'zoom'] },
+  { id: 'root', component: 'Stack', orientation: 'horizontal', children: ['save', 'rule', 'close', 'zoom', 'notice'] },
   { id: 'save', component: 'Button', variant: 'primary', child: 'save-icon', action: { event: { name: 'save' } } },
   { id: 'save-icon', component: 'Icon', name: { path: '/icon' } },
   { id: 'rule', component: 'Separator', decorative: true },
@@ -89,6 +89,14 @@ const components: Json[] = [
   { id: 'zoom-in', component: 'Button', child: 'zoom-in-text', action: { event: { name: 'zoomIn' } } },
   { id: 'zoom-in-text', component: 'Icon', name: 'add' },
   { id: 'zoom-out', component: 'IconButton', child: 'close-icon', accessibility: { label: 'Zoom out' } },
+  { id: 'notice', component: 'Alert', variant: 'danger', icon: 'notice-icon', actions: ['notice-retry'] },
+  { id: 'notice-icon', component: 'Icon', name: 'error' },
+  {
+    id: 'notice-retry',
+    component: 'Button',
+    accessibility: { label: 'Retry payment' },
+    action: { event: { name: 'retry' } },
+  },
 ];
 
 /** The stream that renders `components` on a `line` surface. */
@@ -151,6 +159,10 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
     expect(component({ id: 'b', component: 'Button', variant: 'loud' })).toBe(false);
     expect(component({ id: 'g', component: 'ButtonGroup', orientation: 'diagonal' })).toBe(false);
     expect(component({ id: 'g', component: 'ButtonGroup', action: { event: { name: 'x' } } })).toBe(false);
+    expect(component({ id: 'a', component: 'Alert', title: 't', children: ['m'] })).toBe(true);
+    expect(component({ id: 'a', component: 'Alert', variant: 'error' })).toBe(false);
+    expect(component({ id: 'a', component: 'Alert', live: 'assertive' })).toBe(false);
+    expect(component({ id: 'a', component: 'Alert', title: ['t1', 't2'] })).toBe(false);
   });
 
   test('leaves out a descriptor with agentExposed: false', () => {

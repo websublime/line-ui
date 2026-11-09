@@ -1,7 +1,7 @@
 /**
  * The descriptor API of `@websublime/line-genui/catalog` (Phase 1 spec §6.G.1 Acceptance; ledger 01-G1).
  *
- * - The C1–C6 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
+ * - The C1–C7 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
  *   common-type prop as a `$ref` to `common_types.json` and each enum inline, as the component spec tables type
  *   them, and a node that uses the common types parses.
  * - Button's component description and a property description both appear in `Catalog.toJson()`.
@@ -16,6 +16,7 @@ import { describe, expect, test } from 'bun:test';
 import { Catalog } from '@a2ui/web_core/catalog';
 import { z } from 'zod';
 import {
+  alertDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
   defineDescriptor,
@@ -30,10 +31,11 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
 
 /**
  * Each descriptor's own props, as the "Descriptor fields" prop schema of its component spec types them: a common
- * type by its `$defs` name, or `enum` for a literal enum (`0002-button.md`, `0004-button-group.md`, `0014-icon.md`,
- * `0003-icon-button.md`, `0011-separator.md`, `0018-stack.md`).
+ * type by its `$defs` name, or `enum` for a literal enum (`0002-button.md`, `0004-button-group.md`, `0006-alert.md`,
+ * `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`, `0018-stack.md`).
  */
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
+  Alert: { variant: 'enum', icon: 'ComponentId', title: 'ComponentId', children: 'ChildList', actions: 'ChildList' },
   Button: {
     variant: 'enum',
     disabled: 'DynamicBoolean',
@@ -80,8 +82,9 @@ function definition(doc: Json, name: string): { refs: unknown[]; own: Json } {
 }
 
 describe('descriptors compose with the web_core common types (§6.G.1)', () => {
-  test('the catalog holds the six descriptors under their catalog names', () => {
+  test('the catalog holds the seven descriptors under their catalog names', () => {
     expect(Object.keys(catalogJson().components as Json).sort()).toEqual([
+      'Alert',
       'Button',
       'ButtonGroup',
       'Icon',
@@ -195,6 +198,37 @@ describe('the ButtonGroup descriptor (`0004-button-group.md` Descriptor fields)'
   });
 });
 
+describe('the Alert descriptor (`0006-alert.md` Descriptor fields)', () => {
+  test('is agent-exposed, requires no name, never sets the host name and has no action or value', () => {
+    expect(alertDescriptor.agentExposed).toBe(true);
+    expect(alertDescriptor.tag).toBe('line-alert');
+    expect(alertDescriptor.accessibility).toEqual({ hostNaming: { kind: 'never' } });
+    expect(alertDescriptor.slots).toEqual({ icon: 'icon', title: 'title', children: '', actions: 'actions' });
+    expect(alertDescriptor.actions).toEqual({});
+    expect(alertDescriptor.bindings).toEqual({ props: { variant: { kind: 'attribute', name: 'variant' } } });
+  });
+
+  test('the agent-facing and tool descriptions both ask for the tone in words (decision D14)', () => {
+    expect(alertDescriptor.description).toContain('state the tone in words');
+    expect(alertDescriptor.toolDescription).toContain('state the tone in words');
+    expect(alertDescriptor.description).toContain('because colour alone does not reach every user');
+    expect(alertDescriptor.toolDescription).toContain('because colour alone does not reach every user');
+  });
+
+  test('the schema takes the five variants and the child props, and rejects live, an action and a value', () => {
+    for (const variant of ['neutral', 'info', 'success', 'warning', 'danger']) {
+      expect(alertDescriptor.schema.safeParse({ variant }).success).toBe(true);
+    }
+    const node = { icon: 'i', title: 't', children: ['m'], actions: ['retry', 'cancel'], variant: 'danger' };
+    expect(alertDescriptor.schema.parse(node)).toEqual(node);
+    expect(alertDescriptor.schema.safeParse({ children: { componentId: 'line', path: '/lines' } }).success).toBe(true);
+    expect(alertDescriptor.schema.safeParse({ variant: 'error' }).success).toBe(false);
+    for (const extra of [{ live: 'assertive' }, { action: { event: { name: 'x' } } }, { value: 'x' }, { open: true }]) {
+      expect(alertDescriptor.schema.safeParse({ children: [], ...extra }).success).toBe(false);
+    }
+  });
+});
+
 describe('descriptions reach Catalog.toJson() (§6.G.1; R3 §2.4)', () => {
   test("Button's component description and a property description both appear", () => {
     const { own } = definition(catalogJson(), 'Button');
@@ -218,9 +252,9 @@ describe('agentExposed (§6.G.1 Contract)', () => {
     accessibility: { hostNaming: { kind: 'always' } },
   } as const;
 
-  test('defaults to true, as on every C1–C6 descriptor', () => {
+  test('defaults to true, as on every C1–C7 descriptor', () => {
     expect(defineDescriptor(fixture).agentExposed).toBe(true);
-    expect(descriptors.map((d) => d.agentExposed)).toEqual([true, true, true, true, true, true]);
+    expect(descriptors.map((d) => d.agentExposed)).toEqual([true, true, true, true, true, true, true]);
   });
 
   test('false keeps its reason', () => {
@@ -251,6 +285,6 @@ describe('importing @websublime/line-genui/catalog (§6.G.1; plan §7.2)', () =>
       child.exited,
     ]);
     expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
-    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 6 });
+    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 7 });
   });
 });

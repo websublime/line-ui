@@ -61,6 +61,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './icon': ['line-icon'],
   './icon-button': ['line-icon-button'],
   './button-group': ['line-button-group'],
+  './alert': ['line-alert'],
 };
 
 /**

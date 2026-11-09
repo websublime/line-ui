@@ -8,6 +8,7 @@ export default mergeConfig(
     root: import.meta.dirname,
     entries: {
       index: 'src/index.ts',
+      'alert/index': 'src/alert/index.ts',
       'button/index': 'src/button/index.ts',
       'button-group/index': 'src/button-group/index.ts',
       'icon/index': 'src/icon/index.ts',
