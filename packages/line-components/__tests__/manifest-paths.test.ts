@@ -18,7 +18,7 @@ import { join, resolve } from 'node:path';
 
 interface ManifestModule {
   path: string;
-  declarations?: { tagName?: string }[];
+  declarations?: { tagName?: string; members?: { name: string }[] }[];
   exports?: { kind: string }[];
 }
 
@@ -118,5 +118,12 @@ describe('custom-elements.json in the packed tarball', () => {
     );
     expect(alert?.path).toBe('src/alert/alert.ts');
     expect(paths.has('src/alert/alert.ts')).toBe(true);
+  });
+
+  test('line-alert lists no role member: its internals role is no element field', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-alert');
+    expect(declaration?.members?.map((member) => member.name)).not.toContain('role');
   });
 });

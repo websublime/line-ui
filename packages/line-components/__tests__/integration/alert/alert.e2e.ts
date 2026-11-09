@@ -311,6 +311,50 @@ test.describe('with line-tokens and line-themes', () => {
     });
   });
 
+  test('text a wrapper forwards through its own slot shows and hides when it changes in place (AM-005)', async ({
+    page,
+  }) => {
+    const states = await page.evaluate(async () => {
+      if (!customElements.get('line-test-forwarder')) {
+        customElements.define(
+          'line-test-forwarder',
+          class extends HTMLElement {
+            constructor() {
+              super();
+              this.attachShadow({ mode: 'open' }).innerHTML = '<line-alert><slot></slot></line-alert>';
+            }
+          },
+        );
+      }
+      const wrapper = document.createElement('line-test-forwarder');
+      const text = document.createTextNode('');
+      wrapper.append(text);
+      document.querySelector('main')?.replaceChildren(wrapper);
+      const host = wrapper.shadowRoot?.querySelector('line-alert') as HTMLElement & {
+        updateComplete: Promise<unknown>;
+      };
+      const description = () => host.shadowRoot?.querySelector('[part="description"]') as HTMLElement;
+      // One task lets the slots and the mutation observer deliver their microtasks before the update is awaited.
+      const settle = async () => {
+        const task = Promise.withResolvers<void>();
+        setTimeout(task.resolve);
+        await task.promise;
+        await host.updateComplete;
+      };
+      const shown = () => getComputedStyle(description()).display !== 'none';
+      await settle();
+      const empty = shown();
+      text.data = 'Forwarded message.';
+      await settle();
+      const filled = shown();
+      text.data = '';
+      await settle();
+      const cleared = shown();
+      return { empty, filled, cleared };
+    });
+    expect(states).toEqual({ empty: false, filled: true, cleared: false });
+  });
+
   test('consumer CSS on line-alert and ::part() beats the :host rules', async ({ page }) => {
     await mount(
       page,
@@ -565,6 +609,33 @@ test.describe('Chromium accessibility tree (CDP)', () => {
 
     const ariaLiveOff = await tree.of('#aria-live-off');
     expect(liveProperties(ariaLiveOff).live).toBeUndefined();
+  });
+
+  test('text changed in place on a live alert sits under the live node once the update completes (AM-005)', async ({
+    page,
+  }) => {
+    await open(page);
+    await mount(page, '<line-alert id="changed" live="polite"></line-alert>');
+    await page.evaluate(async () => {
+      const host = document.getElementById('changed') as HTMLElement & { updateComplete: Promise<unknown> };
+      const text = document.createTextNode('');
+      host.append(text);
+      const task = Promise.withResolvers<void>();
+      setTimeout(task.resolve);
+      await task.promise;
+      text.data = 'All 12 files uploaded.';
+      const next = Promise.withResolvers<void>();
+      setTimeout(next.resolve);
+      await next.promise;
+      await host.updateComplete;
+    });
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('Accessibility.enable');
+    const tree = await axTree(cdp);
+    const node = await tree.of('#changed');
+    expect(node.role?.value).toBe('status');
+    expect(liveProperties(node)).toEqual({ live: 'polite', atomic: true, relevant: 'additions text' });
+    expect(descendants(tree.nodes, node)).toContain('StaticText:All 12 files uploaded.');
   });
 
   test('an alert inserted after load is a live region at once', async ({ page }) => {

@@ -22,11 +22,6 @@ const liveConverter: ComplexAttributeConverter<AlertLive> = {
   fromAttribute: (value) => (value === 'polite' || value === 'assertive' ? value : 'off'),
 };
 
-/** The internals role of a `live` value; `off` and any unknown value set none (decisions D1, D12). */
-function roleOf(live: AlertLive): 'status' | 'alert' | null {
-  return live === 'polite' ? 'status' : live === 'assertive' ? 'alert' : null;
-}
-
 /** The zones that wrap a slot; `description` wraps the default slot (decision D4). */
 type Zone = 'icon' | 'title' | 'description' | 'actions';
 
@@ -38,10 +33,11 @@ const DEFAULT_SLOT = 'slot:not([name])';
  * focus and never closes itself. A zone whose slot is empty renders no box.
  *
  * `live="polite"` or `live="assertive"` puts the `status` or `alert` role on the host through `ElementInternals`,
- * so assistive technology announces the alert when it appears or its text changes. Set `live` before the alert is
- * inserted or its text changes. An author `role` or `aria-live` on the host wins. Name only a live alert, because
- * with `live="off"` the host is `generic`, which takes no name. State the tone in words too, such as "Payment
- * failed", because colour alone does not reach every user.
+ * with the role's live-region properties, from the moment the host is inserted. How a screen reader announces it is
+ * not verified by any automated check. Set `live` before the alert is inserted or its text changes. An author `role`
+ * or `aria-live` on the host wins. Name only a live alert, because with `live="off"` the host is `generic`, which
+ * takes no name. State the tone in words too, such as "Payment failed", because colour alone does not reach every
+ * user.
  *
  * @summary An inline message box with a tone, an optional icon, title and actions, and an opt-in live role.
  *
@@ -169,20 +165,20 @@ export class LineAlert extends LineElement {
   /** Whether each zone's slot holds content; an empty zone renders `hidden` (decision D11). */
   readonly #filled: Record<Zone, boolean> = { icon: false, title: false, description: false, actions: false };
 
-  /** Re-reads the default slot when a text node of the host changes in place, which fires no `slotchange` (spec AM-001). */
-  readonly #textObserver = new MutationObserver((records) => {
-    if (records.some((record) => record.target.parentNode === this)) {
-      this.#readZone(this.renderRoot.querySelector<HTMLSlotElement>(DEFAULT_SLOT));
-    }
+  /**
+   * Re-reads the default slot when one of its text nodes changes in place, including text a wrapper forwards through
+   * its own slot. Chromium and Firefox fire no `slotchange` for such a change (spec AM-001, AM-003, AM-005).
+   */
+  readonly #textObserver = new MutationObserver(() => {
+    this.#readZone(this.renderRoot.querySelector<HTMLSlotElement>(DEFAULT_SLOT));
   });
 
   constructor() {
     super();
     // `useDefault` keeps this initial value out of the attribute, so an unknown author value stays (C8).
     this.variant = 'neutral';
-    // Through a local, so the manifest analyser does not list `role` as a field of the element.
-    const internals = this[INTERNALS];
-    internals.role = roleOf(this.#live);
+    // A method call, because the manifest analyser lists every `x.name =` statement of a constructor as a field.
+    this.#writeRole(this.#live);
   }
 
   /**
@@ -199,14 +195,13 @@ export class LineAlert extends LineElement {
     const old = this.#live;
     this.#live = value;
     // The role changes before the next update, so an inserted host has it at once (decision D8).
-    this[INTERNALS].role = roleOf(value);
+    this.#writeRole(value);
     this.requestUpdate('live', old);
   }
 
   override connectedCallback(): void {
     super.connectedCallback();
-    this.#textObserver.observe(this, { characterData: true, subtree: true });
-    // Text may have changed in place while the observer was off.
+    // Text may have changed in place while the observer was off; the read also restarts the observer.
     if (this.hasUpdated) this.#readZone(this.renderRoot.querySelector<HTMLSlotElement>(DEFAULT_SLOT));
   }
 
@@ -215,16 +210,29 @@ export class LineAlert extends LineElement {
     this.#textObserver.disconnect();
   }
 
+  /** Writes the internals role of `live`; `off` and any unknown value set none (decisions D1, D2, D12). */
+  #writeRole(live: AlertLive): void {
+    this[INTERNALS].role = live === 'polite' ? 'status' : live === 'assertive' ? 'alert' : null;
+  }
+
   #readZone(slot: HTMLSlotElement | null): void {
     if (!slot) return;
     const zone: Zone = slot.name === '' ? 'description' : (slot.name as Zone);
+    const nodes = slot.assignedNodes({ flatten: true });
+    // Watches the default slot's current text nodes, forwarded ones included (spec AM-005).
+    if (zone === 'description') {
+      this.#textObserver.disconnect();
+      if (this.isConnected) {
+        for (const node of nodes) {
+          if (node.nodeType === Node.TEXT_NODE) this.#textObserver.observe(node, { characterData: true });
+        }
+      }
+    }
     // A slot holds content when it holds an element, or text other than whitespace (decision D11).
-    const filled = slot
-      .assignedNodes({ flatten: true })
-      .some(
-        (node) =>
-          node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent?.trim() !== ''),
-      );
+    const filled = nodes.some(
+      (node) =>
+        node.nodeType === Node.ELEMENT_NODE || (node.nodeType === Node.TEXT_NODE && node.textContent?.trim() !== ''),
+    );
     if (this.#filled[zone] === filled) return;
     this.#filled[zone] = filled;
     this.requestUpdate();
