@@ -103,4 +103,12 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(iconButton?.path).toBe('src/icon-button/icon-button.ts');
     expect(paths.has('src/icon-button/icon-button.ts')).toBe(true);
   });
+
+  test('line-button-group resolves to src/button-group/button-group.ts', () => {
+    const buttonGroup = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-button-group'),
+    );
+    expect(buttonGroup?.path).toBe('src/button-group/button-group.ts');
+    expect(paths.has('src/button-group/button-group.ts')).toBe(true);
+  });
 });
