@@ -69,6 +69,14 @@ function focusPath(page: Page): Promise<string> {
   });
 }
 
+/**
+ * Whether a pointer click focuses a button: WebKit on macOS focuses nothing on click, while WebKit on Linux, Chromium
+ * and Firefox focus the clicked button (spec AM-009).
+ */
+function clickFocuses(browserName: string): boolean {
+  return !(browserName === 'webkit' && process.platform === 'darwin');
+}
+
 /** WebKit on macOS moves Tab focus to text fields only; Option+Tab reaches every focusable element. */
 function tab(browserName: string, shift = false): string {
   const key = shift ? 'Shift+Tab' : 'Tab';
@@ -297,7 +305,7 @@ test.describe('focus-visible (decision D3)', () => {
     page,
     browserName,
   }) => {
-    test.skip(browserName === 'webkit', 'WebKit on macOS does not focus a button on click (spec probe P1)');
+    test.skip(!clickFocuses(browserName), 'WebKit on macOS does not focus a button on click (spec probe P1, AM-009)');
     await mount(page, frame(''));
     await page.click('#b1');
     expect(await focusPath(page)).toBe('b1>button');
@@ -307,13 +315,13 @@ test.describe('focus-visible (decision D3)', () => {
     expect(await focusVisible(page, 'b2')).toBe(true);
   });
 
-  test('a pointer click moves the remembered button, except in WebKit, where a click focuses nothing (probe P1)', async ({
+  test('a pointer click moves the remembered button, except in WebKit on macOS, where a click focuses nothing (probe P1, AM-009)', async ({
     page,
     browserName,
   }) => {
     await mount(page, frame(''));
     await page.click('#b3');
-    if (browserName === 'webkit') {
+    if (!clickFocuses(browserName)) {
       expect(await focusPath(page)).toBe('body');
       expect(await stops(page)).toEqual(['b1:0:first', 'b2:-1:middle', 'b3:-1:last']);
     } else {
@@ -321,7 +329,7 @@ test.describe('focus-visible (decision D3)', () => {
       expect(await stops(page)).toEqual(['b1:-1:first', 'b2:-1:middle', 'b3:0:last']);
     }
     await enter(page, browserName);
-    expect(await focusPath(page)).toBe(browserName === 'webkit' ? 'b1>button' : 'b3>button');
+    expect(await focusPath(page)).toBe(clickFocuses(browserName) ? 'b3>button' : 'b1>button');
   });
 
   test('the focused button is raised above its neighbours', async ({ page, browserName }) => {
