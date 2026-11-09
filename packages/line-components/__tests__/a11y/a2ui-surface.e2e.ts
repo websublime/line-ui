@@ -9,7 +9,7 @@
  * (§6.C.6). The List stories also prove axe's list rules: `aria-required-children` on the `role="list"` host and
  * `aria-required-parent` on each item pass. The Line catalog story also shows the IconButton named by its
  * `accessibility.label`, C6 (ButtonGroup) as a named toolbar with `loop` that roves over its IconButtons, and C7
- * (Alert) with its four zones filled and no live role.
+ * (Alert) with its five zones filled, no live role, and a dismiss IconButton that hides it.
  *
  * @module __tests__/a11y/a2ui-surface.e2e
  */
@@ -22,7 +22,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 19,
+  'agent-ui-a2ui-surface--line-catalog': 21,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -118,21 +118,29 @@ test('the Line catalog story renders the ButtonGroup as a named toolbar that rov
   expect(focused, browserName).toBe('Zoom in');
 });
 
-test('the Line catalog story renders the Alert with its four zones, its tone and no live role', async ({ page }) => {
+test('the Line catalog story renders the Alert with its five zones, its tone and no live role', async ({ page }) => {
   await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
   const alert = page.locator('#storybook-root line-a2ui-surface line-alert');
   await expect(alert).toHaveAttribute('variant', 'danger');
   const view = await alert.evaluate((el) => ({
     attributes: el.getAttributeNames().sort(),
     slotted: [...el.children].map((child) => `${child.localName}:${child.getAttribute('slot')}`),
-    zones: ['icon', 'title', 'description', 'actions'].filter(
+    zones: ['icon', 'title', 'description', 'actions', 'dismiss'].filter(
       (zone) => getComputedStyle(el.shadowRoot?.querySelector(`[part="${zone}"]`) as Element).display !== 'none',
     ),
   }));
   expect(view).toEqual({
     attributes: ['variant'],
-    slotted: ['line-icon:icon', 'h3:title', 'p:null', 'line-button:actions'],
-    zones: ['icon', 'title', 'description', 'actions'],
+    slotted: ['line-icon:icon', 'h3:title', 'p:null', 'line-button:actions', 'line-icon-button:dismiss'],
+    zones: ['icon', 'title', 'description', 'actions', 'dismiss'],
   });
   await expect(alert.locator('line-button').getByRole('button')).toHaveAccessibleName('Retry');
+});
+
+test('the Line catalog Alert hides itself when its dismiss IconButton is activated (AM-006)', async ({ page }) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
+  const alert = page.locator('#storybook-root line-a2ui-surface line-alert');
+  await alert.locator('line-icon-button[aria-label="Dismiss"]').click();
+  await expect(alert).toHaveAttribute('hidden', '');
+  await expect(alert).toBeHidden();
 });

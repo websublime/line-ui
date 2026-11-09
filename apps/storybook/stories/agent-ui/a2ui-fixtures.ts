@@ -128,12 +128,22 @@ export const lineShowcase: A2uiMessage[] = [
       title: 'noticeTitle',
       children: ['noticeText'],
       actions: ['noticeRetry'],
+      dismiss: 'noticeDismiss',
     },
     { id: 'noticeIcon', component: 'Icon', path: 'M12 2 L22 22 L2 22 Z' },
     text('noticeTitle', 'Payment failed', { variant: 'h3', catalogId: BASIC_CATALOG_ID }),
     text('noticeText', 'Check the card number and try again.', { catalogId: BASIC_CATALOG_ID }),
     { id: 'noticeRetry', component: 'Button', variant: 'primary', child: 'noticeRetryLabel', action: event('retry') },
     text('noticeRetryLabel', 'Retry', { catalogId: BASIC_CATALOG_ID }),
+    {
+      id: 'noticeDismiss',
+      component: 'IconButton',
+      variant: 'borderless',
+      child: 'noticeDismissIcon',
+      accessibility: { label: 'Dismiss' },
+      action: event('dismissNotice'),
+    },
+    { id: 'noticeDismissIcon', component: 'Icon', path: 'M6 6 L18 18 M18 6 L6 18' },
   ]),
 ];
 
