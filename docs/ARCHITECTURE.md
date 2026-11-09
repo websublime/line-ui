@@ -12,6 +12,8 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.25 (2026-11-09)** — Aligned with component spec `0006-alert.md` AM-006 (ledger row `01-C7`, decision by Miguel on 2026-11-09). The change is minimal: one §5 entry.
+  - §5 (CSS Parts Naming Convention) adds `::part(dismiss)`, the wrapper of a consumer-supplied dismiss control, which `<line-alert>` exposes around its `dismiss` slot. It sits beside `::part(close)`, the close button a component renders itself (spec `0006-alert.md` AM-006, sub-decision S9).
 - **v0.8.24 (2026-11-09)** — Aligned with component spec `0006-alert.md` (ledger row `01-C7`, decision by Miguel on 2026-11-09). The change is minimal: one §5 entry.
   - §5 (CSS Parts Naming Convention) adds `::part(actions)`, the wrapper of a component's action controls, which `<line-alert>` exposes around its `actions` slot (spec `0006-alert.md` Parts, decision D4).
 - **v0.8.23 (2026-11-05)** — Factual correction from component specs `0002-button.md` AM-008 and `0003-icon-button.md` AM-002 (ledger row `01-C5`; the probe ran in chromium, firefox and webkit). The change is minimal: one §14.2 table row, and one §14.8 paragraph, table row and note.
@@ -305,6 +307,7 @@ Because `accent` and `gray` namespaces are independent, multiple colour contexts
 ::part(title)       /* Title */
 ::part(description) /* Description */
 ::part(close)       /* Close button */
+::part(dismiss)     /* Dismiss control wrapper (e.g., alert dismiss slot) */
 ::part(icon)        /* Icon */
 ::part(indicator)   /* State indicator */
 ::part(separator)   /* Separator */

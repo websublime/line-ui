@@ -159,8 +159,8 @@ All three placements give Chromium the same live region over the slotted text. T
 | Component | Relation | Connects through |
 |-----------|----------|------------------|
 | `<line-icon>` | child | the `icon` slot; Alert never imports it (MANIFESTO Law 4, `docs/MANIFESTO.md:45`; Phase 1 spec §6.C.6) |
-| `<line-button>`, `<line-icon-button>`, native `<button>`, `<a>` | child | the `actions` slot, where the consumer wires each follow-up action, and the `dismiss` slot, which takes one dismiss control whose glyph and name the consumer supplies (D4; AM-006). `@websublime/line-tokens/reset` category 6 resets bare slotted `<button>` elements inside `line-alert` (ARCH §14.10, `docs/ARCHITECTURE.md:1290`; `packages/line-tokens/src/reset.css:105`) |
-| headings, `<p>`, lists | child | the `title` and default slots; reset category 4 zeroes their margins inside `line-alert` (ARCH `:1288`; `reset.css:73-84`) |
+| `<line-button>`, `<line-icon-button>`, native `<button>`, `<a>` | child | the `actions` slot, where the consumer wires each follow-up action, and the `dismiss` slot, which takes one dismiss control whose glyph and name the consumer supplies (D4; AM-006). `@websublime/line-tokens/reset` category 6 resets bare slotted `<button>` elements inside `line-alert` (ARCH §14.10, `docs/ARCHITECTURE.md:1293`; `packages/line-tokens/src/reset.css:105`) |
+| headings, `<p>`, lists | child | the `title` and default slots; reset category 4 zeroes their margins inside `line-alert` (ARCH `:1291`; `reset.css:73-84`) |
 | `<line-stack>` | parent | the Stack default slot; Stack `gap` spaces alerts in a column |
 | `<line-a2ui-surface>` | orchestrator | creates `line-alert` by tag for a `line` catalog `Alert` node and wires its `icon`, `title`, `children` and `actions` props into the slots (ARCH §17.4; D6) |
 
@@ -174,7 +174,7 @@ All three placements give Chromium the same live region over the slotted text. T
 | | `warning` | something needs attention before it becomes a problem |
 | | `danger` | an error or a failed action |
 
-- `variant` is a C6 semantic variant. It changes only the defaults of `--line-alert-*` tokens on `:host` and adds no other CSS rule (ARCH §17.2 C6, `docs/ARCHITECTURE.md:1571`). It sets no role, no icon and no text (D1, D3).
+- `variant` is a C6 semantic variant. It changes only the defaults of `--line-alert-*` tokens on `:host` and adds no other CSS rule (ARCH §17.2 C6, `docs/ARCHITECTURE.md:1574`). It sets no role, no icon and no text (D1, D3).
 - The values follow the line://ui semantic role names `success`, `warning`, `danger` and `info` (PRD §9.3 `SEMANTIC_MAP`, `docs/PRD.md:1329-1334`), and `neutral` maps to the `gray` role.
 
 ---
@@ -195,7 +195,7 @@ All three placements give Chromium the same live region over the slotted text. T
         └── <div part="actions">      wraps <slot name="actions">; column 2, row 2, a wrapping row
 ```
 
-- All five zones are slots, because the consumer decides their content and behaviour (ARCH §3, `docs/ARCHITECTURE.md:214-221`; D4; AM-006). The `dismiss` slot is a named slot, so `slotchange` and `firstUpdated` keep its state, as for `icon`, `title` and `actions`.
+- All five zones are slots, because the consumer decides their content and behaviour (ARCH §3, `docs/ARCHITECTURE.md:216-223`; D4; AM-006). The `dismiss` slot is a named slot, so `slotchange` and `firstUpdated` keep its state, as for `icon`, `title` and `actions`.
 - A zone whose slot is empty renders no box (D11). The component keeps one private Lit state per slot, set from each slot's `slotchange` and once in `firstUpdated`, because happy-dom delivers the first `slotchange` before the listener exists (`packages/line-components/src/button-group/button-group.ts:263-266`). Chromium and Firefox fire no `slotchange` when an assigned `Text` node's data changes in place, as the DOM Standard says, and WebKit fires one (AM-003). A `MutationObserver` therefore watches every `Text` node in the default slot's flattened assigned nodes (`characterData: true`), so text a wrapper forwards through its own `<slot>` counts too, and re-reads the default slot's state on a change in every engine. Each read of the default slot re-observes its current `Text` nodes; the observer starts with the first read, stops in `disconnectedCallback` and restarts on reconnection (AM-001, AM-005). The named slots need no observer, because only elements reach them and any element counts as content. A slot is empty when its assigned nodes hold no element and no text other than whitespace. While a slot is empty its wrapper renders with the `hidden` attribute, which `commonReset` turns into `display: none` (`packages/line-core/src/styles/reset.common.css:35-38`). The state is not reflected on the host.
 - An alert with every slot empty keeps its padded `root` box, the neutral C8 state (D11).
 - No inner native element exists, so no `button` reset applies (D5; AM-006).
@@ -250,7 +250,7 @@ Alert has no finite states and no state flags, so it writes no `data-*` attribut
 | `actions` | `<div>` | the actions zone |
 | `dismiss` | `<div>` | the dismiss zone (AM-006) |
 
-- All seven names come from the ARCH §5 vocabulary (`docs/ARCHITECTURE.md:301-323`). ARCH v0.8.24 adds `actions` with this spec (D4), and ARCH v0.8.25 adds `dismiss` beside `close` (AM-006).
+- All seven names come from the ARCH §5 vocabulary (`docs/ARCHITECTURE.md:303-325`). ARCH v0.8.24 adds `actions` with this spec (D4), and ARCH v0.8.25 adds `dismiss` beside `close` (AM-006).
 
 ### Props
 
@@ -300,7 +300,7 @@ Alert has no finite states and no state flags, so it writes no `data-*` attribut
 
 The tokens and their defaults follow D3 and D9.
 
-**Variant defaults** (C6; ARCH `:1571`)
+**Variant defaults** (C6; ARCH `:1574`)
 
 | `variant` | `--line-alert-bg` | `--line-alert-color` | `--line-alert-border-color` | `--line-alert-icon-color` |
 |---|---|---|---|---|
@@ -310,7 +310,7 @@ The tokens and their defaults follow D3 and D9.
 | `warning` | `var(--line-warning-bg)` | `var(--line-warning-text)` | `var(--line-warning-border)` | `var(--line-warning-text-low)` |
 | `danger` | `var(--line-danger-bg)` | `var(--line-danger-text)` | `var(--line-danger-border)` | `var(--line-danger-text-low)` |
 
-- The aliases are the PRD §9 Radix steps: `-bg` step 3, `-border` step 7, `-text-low` step 11, `-text` step 12 (ARCH §4, `docs/ARCHITECTURE.md:238`; `packages/line-themes/src/aliases.css:21-28`, `:65`).
+- The aliases are the PRD §9 Radix steps: `-bg` step 3, `-border` step 7, `-text-low` step 11, `-text` step 12 (ARCH §4, `docs/ARCHITECTURE.md:240`; `packages/line-themes/src/aliases.css:21-28`, `:65`).
 - The `root` border stays when the background is dropped. In forced-colors mode the UA replaces the background with `Canvas` and keeps a solid border in the text colour, so the box stays visible (CSS Color Adjust 1 §3.1; `0011-separator.md` Drawing). The chromium Browser tier proves it with an opaque theme background; Chromium keeps the authored alpha, so a transparent background stays transparent (AM-004).
 - The rules set border longhands, not the shorthand, so an invalid `var()` cannot reset `border-style` to `none` (`0011-separator.md` Drawing).
 - The tokens carry no fallbacks (D9). Without `line-themes` the colour tokens are invalid at computed-value time, so `root` has a transparent background, its border takes `currentColor`, the initial value of `border-color`, and the text inherits its colour, which stays readable (C8; AM-002).
@@ -337,7 +337,7 @@ Alert takes no focus and handles no key. Slotted buttons and links keep their ow
 - **Tone beyond colour.** WCAG 2.1 SC 1.4.1 forbids colour as the only carrier of meaning, and forced-colors mode removes the variant colours. The docs ask authors to state the tone in the title or message, such as "Payment failed", or to name the icon with `aria-label`; the agent-facing and tool descriptions ask the same (D14). `<line-icon>` is decorative unless named (`0014-icon.md` D1).
 - **Placement.** Phase 1 spec §10 SD31 puts interactive roles on inner native elements. Alert is not interactive, so D2 places the live role on the host through internals, as Separator and ButtonGroup do (`0011-separator.md` D1; `0004-button-group.md` D1).
 - **Engine support.** `ElementInternals.role` ships in Chrome 103, Firefox 119 and Safari 16.4 (R8 `:106`). Probe P1 read the role back in all three engines.
-- **Live regions inside a surface.** `<line-a2ui-surface>` keeps one polite live region and sets `aria-busy="true"` on itself while a batch settles (ARCH §17.4, `docs/ARCHITECTURE.md:1637`; `packages/line-genui/src/a2ui/surface.ts:43-47`, `:272`). An agent cannot set `live` (D7), so a surface-rendered Alert adds no second region. A consumer who writes `live` on an Alert inside a surface by hand adds one, and ARIA lets assistive technology ignore changes under `aria-busy` until it clears (R8 `:78`).
+- **Live regions inside a surface.** `<line-a2ui-surface>` keeps one polite live region and sets `aria-busy="true"` on itself while a batch settles (ARCH §17.4, `docs/ARCHITECTURE.md:1640`; `packages/line-genui/src/a2ui/surface.ts:43-47`, `:272`). An agent cannot set `live` (D7), so a surface-rendered Alert adds no second region. A consumer who writes `live` on an Alert inside a surface by hand adds one, and ARIA lets assistive technology ignore changes under `aria-busy` until it clears (R8 `:78`).
 
 **What axe proves here (R8 §2.4)**
 
@@ -408,7 +408,7 @@ Alert takes no focus and handles no key. Slotted buttons and links keep their ow
 - The agent-facing description names the `ComponentId` and `ChildList` props `children`, `title`, `icon`, `actions` and `dismiss`, which the frontend tool leaves out (`packages/line-genui/src/catalog/tools.ts:98`). The descriptor therefore sets the tool description, which names none of them (Phase 1 spec §6.G.1, §6.G.3, AM-086). The agent-facing description is 845 characters and the tool description 757, both under the 1024 cap (AM-006). Each carries the D14 sentence asking for the tone in words.
 - The frontend tool carries no message text, as Button's tool carries no label (`packages/line-genui/src/catalog/descriptors/button.ts:9-12`). The app supplies the content and any dismiss button.
 - An Alert the surface rendered and that hid itself after a dismiss stays hidden when the agent sends its node again, because the surface binds no `hidden` (AM-006).
-- No A2UI v0.9 `basic` type maps to Alert. The basic catalog holds `AudioPlayer`, `Button`, `Card`, `CheckBox`, `ChoicePicker`, `Column`, `DateTimeInput`, `Divider`, `Icon`, `Image`, `List`, `Modal`, `Row`, `Slider`, `Tabs`, `Text`, `TextField` and `Video` (`node_modules/.bun/@a2ui+web_core@0.14.0/node_modules/@a2ui/web_core/src/v0_9/schemas/catalogs/basic/catalog.json`, `components`; the v1_0 file lists the same 18). ARCH §17.3 maps `Card` to `<line-card>` in Phase 5 (`docs/ARCHITECTURE.md:1619`), so the `basic` map is unchanged (D6).
+- No A2UI v0.9 `basic` type maps to Alert. The basic catalog holds `AudioPlayer`, `Button`, `Card`, `CheckBox`, `ChoicePicker`, `Column`, `DateTimeInput`, `Divider`, `Icon`, `Image`, `List`, `Modal`, `Row`, `Slider`, `Tabs`, `Text`, `TextField` and `Video` (`node_modules/.bun/@a2ui+web_core@0.14.0/node_modules/@a2ui/web_core/src/v0_9/schemas/catalogs/basic/catalog.json`, `components`; the v1_0 file lists the same 18). ARCH §17.3 maps `Card` to `<line-card>` in Phase 5 (`docs/ARCHITECTURE.md:1622`), so the `basic` map is unchanged (D6).
 - C7 ships its descriptor in the same PR and adds Alert to the `<line-a2ui-surface>` render fixture and the surface axe test (Phase 1 spec §6.C.0 step 5, `:922`; §6.C.6).
 
 ### Bundle / entrypoint
@@ -416,9 +416,9 @@ Alert takes no focus and handles no key. Slotted buttons and links keep their ow
 | Field | Value |
 |-------|-------|
 | Subpath | `@websublime/line-components/alert` |
-| Kind | `independent` (ARCH §12, `docs/ARCHITECTURE.md:576`; Phase 1 spec §4.2, `:295`) |
+| Kind | `independent` (ARCH §12, `docs/ARCHITECTURE.md:579`; Phase 1 spec §4.2, `:295`) |
 | Registers | `line-alert` |
-| Reset modules | `commonReset` (ARCH §14.7, `docs/ARCHITECTURE.md:1157`; D5) |
+| Reset modules | `commonReset` (ARCH §14.7, `docs/ARCHITECTURE.md:1160`; D5) |
 
 - Files: `src/alert/alert.ts` (class and `customElements.define`), `src/alert/alert.types.ts`, `src/alert/index.ts`.
 - `package.json` gains the `./alert` export, and the Vite build gains the `alert/index` entry (`packages/line-components/vite.config.mjs`).
@@ -531,9 +531,9 @@ Evidence:
 - The PRD calls Alert "Inline persistent feedback" (`docs/PRD.md:248`). R8 Q8 lists three options: always `alert`, a variant that switches to `status`, or no live role for static content (`:341-342`).
 - Probe P4 shows Chromium exposes a host present at load exactly like an inserted one; neither CDP nor axe shows an announcement. In a client-rendered app every alert is inserted after load [INFERENCE], so an always-live `alert` speaks on every route change and re-render.
 - Probe P1 shows `alert` and `status` both expose their implicit live values on a slotting host, and probe P3 shows an author `role` or `aria-live` overrides any internals default.
-- C6 lets a variant change only the defaults of the component's own tokens and add no other rule (ARCH `:1571`), so a role tied to `variant` goes beyond C6.
+- C6 lets a variant change only the defaults of the component's own tokens and add no other rule (ARCH `:1574`), so a role tied to `variant` goes beyond C6.
 - Precedents: Fluent `<fluent-message-bar>` sets `elementInternals.role = 'status'` always; Spectrum `<sp-alert-banner>` renders `role="alert"` on a shadow element always; Web Awesome `<wa-callout>` sets no role (competitive analysis footnote `[^4.1-alert]`). GOV.UK's notification banner uses `role="region"` with `aria-labelledby` for standing notices and `role="alert"` only for the outcome of something the user just did (https://design-system.service.gov.uk/components/notification-banner/, read 2026-11-09).
-- `<line-a2ui-surface>` already keeps one polite live region per surface (ARCH `:1637`; D7).
+- `<line-a2ui-surface>` already keeps one polite live region per surface (ARCH `:1640`; D7).
 - `Element.ariaNotify()` is outside "latest 2 stable" because Safari 26 lacks it (R8 `:94-95`), so it is not an option here.
 
 | Option | What it decides | Tradeoff |
@@ -546,7 +546,7 @@ Evidence:
 
 ### D2 — Role placement
 
-Evidence: probe P1 and P2 (all placements give the same live region over the slotted text in Chromium); probe P2 (an inner role plus a host `aria-label` leaves a named `generic` host and an unnamed region); probe P3 (author attributes on the host win over an internals default; axe sees none of the variants' roles). C5 applies the name to "the element that carries the role, which is either the host itself or the inner focusable element" (ARCH `:1570`). Separator and ButtonGroup chose host internals (`0011-separator.md` D1; `0004-button-group.md` D1); Fluent `<fluent-message-bar>` sets its role through `elementInternals`; Spectrum `<sp-alert-banner>` puts `role="alert"` on a shadow `<div class="body">` (`[^4.1-alert]`).
+Evidence: probe P1 and P2 (all placements give the same live region over the slotted text in Chromium); probe P2 (an inner role plus a host `aria-label` leaves a named `generic` host and an unnamed region); probe P3 (author attributes on the host win over an internals default; axe sees none of the variants' roles). C5 applies the name to "the element that carries the role, which is either the host itself or the inner focusable element" (ARCH `:1573`). Separator and ButtonGroup chose host internals (`0011-separator.md` D1; `0004-button-group.md` D1); Fluent `<fluent-message-bar>` sets its role through `elementInternals`; Spectrum `<sp-alert-banner>` puts `role="alert"` on a shadow `<div class="body">` (`[^4.1-alert]`).
 
 | Option | Placement | Tradeoff |
 |---|---|---|
@@ -556,7 +556,7 @@ Evidence: probe P1 and P2 (all placements give the same live region over the slo
 
 ### D3 — Variant attribute and values
 
-Evidence: Button's tone attribute is `variant` (`packages/line-components/src/button/button.ts:95`; ARCH §4 example, `docs/ARCHITECTURE.md:250`). The line://ui semantic roles are `success`, `warning`, `danger` and `info` (PRD `SEMANTIC_MAP`, `docs/PRD.md:1329-1334`), with role aliases such as `--line-danger-bg` (`packages/line-themes/src/aliases.css`). C6 limits a variant to the defaults of `--line-alert-*` tokens (ARCH `:1571`). Precedents: Web Awesome `variant` `brand | neutral | success | warning | danger`; Fluent `intent` `success | warning | error | info`; Spectrum `variant` `neutral | info | negative` (`[^4.1-alert]`). Button's default value is `default` (`button.types.ts`).
+Evidence: Button's tone attribute is `variant` (`packages/line-components/src/button/button.ts:95`; ARCH §4 example, `docs/ARCHITECTURE.md:252`). The line://ui semantic roles are `success`, `warning`, `danger` and `info` (PRD `SEMANTIC_MAP`, `docs/PRD.md:1329-1334`), with role aliases such as `--line-danger-bg` (`packages/line-themes/src/aliases.css`). C6 limits a variant to the defaults of `--line-alert-*` tokens (ARCH `:1574`). Precedents: Web Awesome `variant` `brand | neutral | success | warning | danger`; Fluent `intent` `success | warning | error | info`; Spectrum `variant` `neutral | info | negative` (`[^4.1-alert]`). Button's default value is `default` (`button.types.ts`).
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -567,7 +567,7 @@ Evidence: Button's tone attribute is `variant` (`packages/line-components/src/bu
 
 ### D4 — Anatomy
 
-Evidence: ARCH §3 makes consumer-controlled zones slots (`docs/ARCHITECTURE.md:214-221`); MANIFESTO Law 4 says "slots over props for content" (`docs/MANIFESTO.md:45`); Law 1 wants a part on every styleable zone. Before v0.8.24, ARCH §5 listed `root`, `content`, `title`, `description` and `icon`, and no `actions` (`:301-321`); `svg`, `overflow` and `loading` joined that list with their components (Phase 1 spec). Fluent slots `icon`, default, `actions` and `dismiss`; Spectrum slots default and `action`; Web Awesome slots default and `icon` with parts `icon` and `message` (`[^4.1-alert]`). An `aria-labelledby` from a shadow element cannot reach a light-DOM title by id (R8 `:130-137`); `alert` and `status` need no name (probe P1). The surface wires a child prop into a named slot by setting `slot` (`packages/line-genui/src/a2ui/projection.ts:468-473`).
+Evidence: ARCH §3 makes consumer-controlled zones slots (`docs/ARCHITECTURE.md:216-223`); MANIFESTO Law 4 says "slots over props for content" (`docs/MANIFESTO.md:45`); Law 1 wants a part on every styleable zone. Before v0.8.24, ARCH §5 listed `root`, `content`, `title`, `description` and `icon`, and no `actions` (`:301-321`); `svg`, `overflow` and `loading` joined that list with their components (Phase 1 spec). Fluent slots `icon`, default, `actions` and `dismiss`; Spectrum slots default and `action`; Web Awesome slots default and `icon` with parts `icon` and `message` (`[^4.1-alert]`). An `aria-labelledby` from a shadow element cannot reach a light-DOM title by id (R8 `:130-137`); `alert` and `status` need no name (probe P1). The surface wires a child prop into a named slot by setting `slot` (`packages/line-genui/src/a2ui/projection.ts:468-473`).
 
 | Option | Anatomy | Tradeoff |
 |---|---|---|
@@ -577,7 +577,7 @@ Evidence: ARCH §3 makes consumer-controlled zones slots (`docs/ARCHITECTURE.md:
 
 ### D5 — Dismiss
 
-Evidence: MANIFESTO Out of Scope puts "Close" and "Dismiss" labels on the consumer (`docs/MANIFESTO.md:66`); Law 4 bars Alert from importing `<line-icon>`, so a built-in close glyph needs a slot or CSS. ARCH §14.7 maps Alert to `common` only (`:1157`), and ARCH §14.10 already lists `line-alert` for slotted button resets (`:1290`). A Static component has no machine (ARCH §8). APG: alerts must not move focus (R8 `:68`). Precedents: Spectrum renders an internal close button with `dismissible`, handles `Escape` and fires a cancelable `close`; Fluent has a `dismiss` slot and fires `dismiss` without hiding itself; Web Awesome has no dismiss (`[^4.1-alert]`).
+Evidence: MANIFESTO Out of Scope puts "Close" and "Dismiss" labels on the consumer (`docs/MANIFESTO.md:66`); Law 4 bars Alert from importing `<line-icon>`, so a built-in close glyph needs a slot or CSS. ARCH §14.7 maps Alert to `common` only (`:1160`), and ARCH §14.10 already lists `line-alert` for slotted button resets (`:1290`). A Static component has no machine (ARCH §8). APG: alerts must not move focus (R8 `:68`). Precedents: Spectrum renders an internal close button with `dismissible`, handles `Escape` and fires a cancelable `close`; Fluent has a `dismiss` slot and fires `dismiss` without hiding itself; Web Awesome has no dismiss (`[^4.1-alert]`).
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -587,7 +587,7 @@ Evidence: MANIFESTO Out of Scope puts "Close" and "Dismiss" labels on the consum
 
 ### D6 — Catalogs
 
-Evidence: the A2UI v0.9 `basic` catalog has 18 types and none is an alert (`node_modules/.bun/@a2ui+web_core@0.14.0/node_modules/@a2ui/web_core/src/v0_9/schemas/catalogs/basic/catalog.json`; the v1_0 catalog lists the same 18). The closest, `Card`, maps to `<line-card>` in Phase 5 (ARCH `:1619`). `packages/line-genui/src/catalog/basic.ts` maps 10 of the 18 in Phase 1. The frontend tool leaves out `ComponentId` and `ChildList` props (`tools.ts:98`).
+Evidence: the A2UI v0.9 `basic` catalog has 18 types and none is an alert (`node_modules/.bun/@a2ui+web_core@0.14.0/node_modules/@a2ui/web_core/src/v0_9/schemas/catalogs/basic/catalog.json`; the v1_0 catalog lists the same 18). The closest, `Card`, maps to `<line-card>` in Phase 5 (ARCH `:1622`). `packages/line-genui/src/catalog/basic.ts` maps 10 of the 18 in Phase 1. The frontend tool leaves out `ComponentId` and `ChildList` props (`tools.ts:98`).
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -597,7 +597,7 @@ Evidence: the A2UI v0.9 `basic` catalog has 18 types and none is an alert (`node
 
 ### D7 — Live role on the agent path
 
-Evidence: ARCH §17.4 gives each surface one polite live region and sets `aria-busy` during batches (`docs/ARCHITECTURE.md:1637`; `surface.ts:43-47`, `:272`). ARIA lets assistive technology ignore changes under `aria-busy` until it clears (R8 `:78`). A host without a live role is `generic`, so `hostNaming` must not set a name on it (R8 `:55`; `packages/line-genui/src/catalog/descriptor.ts:142-146`). This question applies when D1 is (b), (c) or (d).
+Evidence: ARCH §17.4 gives each surface one polite live region and sets `aria-busy` during batches (`docs/ARCHITECTURE.md:1640`; `surface.ts:43-47`, `:272`). ARIA lets assistive technology ignore changes under `aria-busy` until it clears (R8 `:78`). A host without a live role is `generic`, so `hostNaming` must not set a name on it (R8 `:55`; `packages/line-genui/src/catalog/descriptor.ts:142-146`). This question applies when D1 is (b), (c) or (d).
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -615,7 +615,7 @@ Evidence: probe P4 (a `willUpdate` write leaves the host role-less from `append(
 
 ### D9 — Tokens
 
-Evidence: C6 and PRD v0.8.28 let a variant set the defaults of its component's tokens (ARCH `:1571`; `docs/PRD.md:15`); Button's default tokens use the `gray` role aliases (`button.ts:117`). Separator draws with border longhands for forced colors (`0011-separator.md` Drawing). Radix step semantics put backgrounds at step 3, borders at step 7 and text at steps 11 and 12 (ARCH `:238`). Contrast of steps 11 and 12 over step 3 is not measured here [INFERENCE: the Radix steps are designed for it].
+Evidence: C6 and PRD v0.8.28 let a variant set the defaults of its component's tokens (ARCH `:1574`; `docs/PRD.md:15`); Button's default tokens use the `gray` role aliases (`button.ts:117`). Separator draws with border longhands for forced colors (`0011-separator.md` Drawing). Radix step semantics put backgrounds at step 3, borders at step 7 and text at steps 11 and 12 (ARCH `:240`). Contrast of steps 11 and 12 over step 3 is not measured here [INFERENCE: the Radix steps are designed for it].
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -664,7 +664,7 @@ Evidence: a host without `live` is `generic`, and ARIA prohibits a name on `gene
 
 ### D14 — Tone beyond colour
 
-Evidence: WCAG 2.1 SC 1.4.1 (Use of Color) forbids colour as the only means of conveying information. In forced-colors mode every variant draws in the same system colours (CSS Color Adjust 1 §3.1) [INFERENCE: not probed for Alert]. `<line-icon>` is decorative unless named (`0014-icon.md` D1), so a slotted icon carries no tone to assistive technology on its own. MANIFESTO puts component strings on the consumer (`docs/MANIFESTO.md:66`), so Alert cannot add words such as "Error". C6 limits `variant` to token defaults (ARCH `:1571`).
+Evidence: WCAG 2.1 SC 1.4.1 (Use of Color) forbids colour as the only means of conveying information. In forced-colors mode every variant draws in the same system colours (CSS Color Adjust 1 §3.1) [INFERENCE: not probed for Alert]. `<line-icon>` is decorative unless named (`0014-icon.md` D1), so a slotted icon carries no tone to assistive technology on its own. MANIFESTO puts component strings on the consumer (`docs/MANIFESTO.md:66`), so Alert cannot add words such as "Error". C6 limits `variant` to token defaults (ARCH `:1574`).
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -705,4 +705,5 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | AM-003 | 2026-11-09 | ledger 01-C7 (factual correction, implement) | Part B Anatomy, the D11 bullet: Chromium and Firefox fire no `slotchange` for an in-place `Text` data change, and WebKit fires one; the `MutationObserver` re-reads the default slot in every engine. Tests, the Browser row: no `slotchange` between the in-place changes in chromium and firefox, one per change in webkit. AM-001 stands | AM-001 said `slotchange` never fires for an in-place `Text` data change, from the DOM Standard and a happy-dom probe. The Browser tier found WebKit 27.2 firing one per change. The observer is still needed for Chromium and Firefox, and in WebKit both paths read the same state, so the component does not change | Probe 2026-11-09 with Playwright 1.64.0 on macOS 27.2 (`temp/`, deleted after the run): a `Text` node assigned to a default slot, its data changed `''` → text → other text → `''` → whitespace. chromium 156.0.8078.4 and firefox 157.0 fired 0 `slotchange` per change, webkit 27.2 fired 1 per change; a change to text inside a slotted element fired none in all three. The Browser-tier test `integration/alert/alert.e2e.ts` asserts the same counts |
 | AM-004 | 2026-11-09 | ledger 01-C7 (factual correction, implement) | Part B CSS custom properties, the forced-colors bullet: the `[INFERENCE: not probed for Alert]` marker goes, because the chromium Browser tier proves the border, and the bullet adds that Chromium keeps the authored alpha of a transparent background. A11y, the Accessibility tree list: a Result entry records the CDP and `INTERNALS` outcomes, as the Tests row "the result recorded there before merge" asks | The Browser tier ran in chromium, firefox and webkit. The forced-colors test first failed on a transparent background, which Chromium forces to `Canvas` with alpha 0; with an opaque theme background the root draws `Canvas` with a solid border in the forced text colour | `packages/line-components/__tests__/integration/alert/alert.e2e.ts`: 48 passed, 6 skipped (CDP outside chromium) in chromium 156.0.8078.4, firefox 157.0 and webkit 27.2 on macOS 27.2, and 480 passed with `--repeat-each 10` |
 | AM-005 | 2026-11-09 | ledger 01-C7 (decision — Miguel, 2026-11-09 (Verify gate finding, refines the AM-001 mechanism)) | Part B Anatomy, the D11 bullet: the `MutationObserver` watches every `Text` node in the default slot's flattened assigned nodes with `characterData: true` and re-observes them after each read of the default slot; it no longer observes the host subtree. A11y, the Accessibility tree Result: the in-place text check under a live node. Tests, the Browser row: the forwarded-slot case in three engines and the chromium accessibility-tree check after an in-place change. Open Questions, the D9 resolution points to AM-002, as D11 points to AM-001. Miguel's AM-001 decision stands | The reviewer found that a wrapper component which forwards its own `<slot>` into `line-alert` keeps its text in its own light DOM, outside the alert's subtree, so the host-subtree observer never saw an in-place change there, and Chromium and Firefox fire no `slotchange` for it (AM-003). Watching the flattened assigned `Text` nodes covers the host's own text and forwarded text alike. Text inside a slotted element cannot change the D11 empty state, because the element alone counts as content, so the subtree observation adds nothing. The reviewer also found the docs claiming announcements that no check observes; the accessibility-tree check proves what Chromium exposes after the change, and announcements stay unverified (probe, "What automation cannot observe") | DOM Standard §4.2.2.3, "find flattened slottables" (https://dom.spec.whatwg.org/, read 2026-11-09); Verify gate iteration 1 (harness `reviewer`, 2026-11-09), finding on `packages/line-components/src/alert/alert.ts:173-176`; the Browser-tier tests in `packages/line-components/__tests__/integration/alert/alert.e2e.ts` |
-| AM-006 | 2026-11-09 | ledger 01-C7 (decision — Miguel, 2026-11-09) | D5 option (a) is superseded by option (c) of the D5 table, a `dismiss` slot plus event, which Miguel's follow-up on PR #328 calls (B). Part A Description, User expectations and Connections; Part B Anatomy (a fifth zone, `part="dismiss"`; the host `hidden` bullet), Layout (a third grid column, the dismiss zone in row 1), Slots, Parts, Events (`line-dismiss`), Keyboard, A11y (focus after a dismiss, the control inside a live region), Agent contract (C3, C7, C8, C9, prop schema, slot map, action map, both descriptions), Markup examples, Tests (Unit, Browser, htmx) and the D16 story list; the D5 and D16 resolutions point here. Sub-decisions: S1 (a) any `click` whose composed path passes through the `dismiss` slot dismisses unless it was already cancelled, so the bundle matches no tag; S2 (b) `detail: {}` typed `LineAlertDismissDetail`, bubbling, cancelable, `composed: false`; S3 dispatch first, then set `hidden` only if the event was not cancelled, and the Unit row allows the `hidden` host attribute; a framework re-render can clear it, which the docs say; S4 (a) the descriptor gains a `dismiss` slot prop (`ComponentId`) and no Alert action; S5 (a) a third grid column in row 1 at the block start (orchestrator default); S6 (a) the Dismiss recipe story keeps its name and id (orchestrator default); S7 (a) the docs say the dismiss control's name is part of a live region's contents (orchestrator default); S8 (a) htmx stays `n/a` with an updated reason (orchestrator default); S9 (a) the part is `dismiss`, which ARCH v0.8.25 adds to §5 beside `close`. No inner native element, the reset stays `commonReset`, and the `--line-alert-*` tokens are unchanged. Auto-dismiss with a progress bar stays out of Alert and belongs to Toast (PRD §4.3, Phase 3) | Miguel's follow-up decision on PR #328: the component owns the dismiss event and the self-hide, and the consumer owns the glyph and the name (MANIFESTO Out of Scope, `docs/MANIFESTO.md:66`). Timed dismissal belongs to Toast. S1–S4 and S9 are Miguel's answers; S5–S8 are orchestrator defaults he did not object to | Miguel, 2026-11-09, relayed by the orchestrator; D5 option table, row (c); Fluent `<fluent-message-bar>` `dismiss` slot and `dismiss` event, Spectrum `<sp-alert-banner>` cancelable `close` (competitive footnote `[^4.1-alert]`); ARCH §5 `::part(close)` (`docs/ARCHITECTURE.md:307`) |
+| AM-006 | 2026-11-09 | ledger 01-C7 (decision — Miguel, 2026-11-09) | D5 option (a) is superseded by option (c) of the D5 table, a `dismiss` slot plus event, which Miguel's follow-up on PR #328 calls (B). Part A Description, User expectations and Connections; Part B Anatomy (a fifth zone, `part="dismiss"`; the host `hidden` bullet), Layout (a third grid column, the dismiss zone in row 1), Slots, Parts, Events (`line-dismiss`), Keyboard, A11y (focus after a dismiss, the control inside a live region), Agent contract (C3, C7, C8, C9, prop schema, slot map, action map, both descriptions), Markup examples, Tests (Unit, Browser, htmx) and the D16 story list; the D5 and D16 resolutions point here. Sub-decisions: S1 (a) any `click` whose composed path passes through the `dismiss` slot dismisses unless it was already cancelled, so the bundle matches no tag; S2 (b) `detail: {}` typed `LineAlertDismissDetail`, bubbling, cancelable, `composed: false`; S3 dispatch first, then set `hidden` only if the event was not cancelled, and the Unit row allows the `hidden` host attribute; a framework re-render can clear it, which the docs say; S4 (a) the descriptor gains a `dismiss` slot prop (`ComponentId`) and no Alert action; S5 (a) a third grid column in row 1 at the block start (orchestrator default); S6 (a) the Dismiss recipe story keeps its name and id (orchestrator default); S7 (a) the docs say the dismiss control's name is part of a live region's contents (orchestrator default); S8 (a) htmx stays `n/a` with an updated reason (orchestrator default); S9 (a) the part is `dismiss`, which ARCH v0.8.25 adds to §5 beside `close`. No inner native element, the reset stays `commonReset`, and the `--line-alert-*` tokens are unchanged. Auto-dismiss with a progress bar stays out of Alert and belongs to Toast (PRD §4.3, Phase 3) | Miguel's follow-up decision on PR #328: the component owns the dismiss event and the self-hide, and the consumer owns the glyph and the name (MANIFESTO Out of Scope, `docs/MANIFESTO.md:66`). Timed dismissal belongs to Toast. S1–S4 and S9 are Miguel's answers; S5–S8 are orchestrator defaults he did not object to | Miguel, 2026-11-09, relayed by the orchestrator; D5 option table, row (c); Fluent `<fluent-message-bar>` `dismiss` slot and `dismiss` event, Spectrum `<sp-alert-banner>` cancelable `close` (competitive footnote `[^4.1-alert]`); ARCH §5 `::part(close)` (`docs/ARCHITECTURE.md:309`) |
+| AM-007 | 2026-11-09 | ledger 01-C7 (factual correction, implement) | Every `docs/ARCHITECTURE.md` line locator in this spec moves to ARCH v0.8.25: by 2 for lines up to `::part(close)` and by 3 after it, such as `:1571` → `:1574` and `:1157` → `:1160`; the §5 vocabulary range reads `:303-325`. Amendment rows other than AM-006 keep their locators as record | ARCH v0.8.25 adds two revision-note lines and the §5 `::part(dismiss)` line (AM-006, S9) | `docs/ARCHITECTURE.md` at the commit that adds v0.8.25: `::part(root)` at `:303`, `::part(close)` at `:309`, `::part(dismiss)` at `:310`, `::part(actions)` at `:325`, §14.7 Alert row at `:1160`, §17.2 C6 at `:1574` |
