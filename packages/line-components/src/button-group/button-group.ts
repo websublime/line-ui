@@ -186,8 +186,11 @@ export class LineButtonGroup extends LineElement {
     const kept = previous ? items.indexOf(previous) : -1;
     const lost = previous !== null && (kept < 0 || previous.hasAttribute('disabled'));
     // The focused item left, or turned disabled or hidden. The group moves focus at once and does not wait for the
-    // browser to drop it: WebKit on Linux can keep focus on a disabled button indefinitely (spec AM-011).
-    const lostFocus = lost && this.#focused === previous;
+    // browser to drop it: WebKit on Linux can keep focus on a disabled button indefinitely (spec AM-011). It moves
+    // focus only while that item still holds it or focus has left the group, so focus on another element inside the
+    // group, such as a native button, stays where the user put it (spec AM-012).
+    const lostFocus =
+      lost && this.#focused === previous && (previous.matches(':focus-within') || !this.matches(':focus-within'));
     this.#items = items;
     this.#ctrl.send({ type: 'SYNC', index: kept >= 0 ? kept : this.#activeIndex, focus: lostFocus });
     // The machine applies `SYNC` in a microtask; `updated()` writes the tab stops after it (spec probe P7).

@@ -370,12 +370,10 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     await expect.poll(() => focusPath(page), RECOVERY).toBe('b3>button');
     expect(await focusVisible(page, 'b3')).toBe(true);
     // The disabled button loses focus once, whether the browser drops it first or the group moves it (spec AM-011).
-    await expect
-      .poll(
-        () => page.evaluate(() => (Reflect.get(window, 'focusOuts') as string[]).filter((id) => id === 'b2')),
-        RECOVERY,
-      )
-      .toEqual(['b2']);
+    // Read once after the focus poll, so a second focusout fails the test.
+    expect(
+      await page.evaluate(() => (Reflect.get(window, 'focusOuts') as string[]).filter((id) => id === 'b2')),
+    ).toEqual(['b2']);
   });
 
   test('the last button turning disabled hands focus to the previous enabled one', async ({ page, browserName }) => {
@@ -442,6 +440,30 @@ test.describe('focus recovery (decisions D12, D13, D16)', () => {
     });
     await expect.poll(() => focusPath(page), RECOVERY).toBe('b3>button');
   });
+
+  for (const change of ['disabled', 'hidden', 'removed'] as const) {
+    test(`focus on a native button inside the group stays when the remembered button is ${change} (spec AM-012)`, async ({
+      page,
+      browserName,
+    }) => {
+      await mount(page, frame('', `${THREE}<button id="n4">Native</button>`));
+      await enter(page, browserName);
+      await page.keyboard.press(tab(browserName));
+      expect(await focusPath(page)).toBe('n4');
+      await page.evaluate((change) => {
+        const b1 = document.getElementById('b1') as HTMLElement;
+        if (change === 'removed') b1.remove();
+        else b1.setAttribute(change, '');
+      }, change);
+      await settle(page);
+      await settle(page);
+      expect(await focusPath(page)).toBe('n4');
+      // Only the tab stop moves: to b2, the next button the arrows reach.
+      expect((await stops(page)).filter((stop) => stop.includes(':0:'))).toEqual([
+        change === 'disabled' ? 'b2:0:middle' : 'b2:0:first',
+      ]);
+    });
+  }
 
   test('a blur to nowhere keeps the focus where the user put it', async ({ page, browserName }) => {
     await mount(page, frame(''));
