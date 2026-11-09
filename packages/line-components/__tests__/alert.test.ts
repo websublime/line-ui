@@ -15,7 +15,7 @@ import { INTERNALS } from '@websublime/line-core';
 import type { TemplateResult } from 'lit';
 import { LineAlert } from '../src/alert/index.js';
 
-const ZONES = ['icon', 'title', 'description', 'actions'] as const;
+const ZONES = ['icon', 'title', 'description', 'actions', 'dismiss'] as const;
 
 function roleOf(el: LineAlert): string | null {
   const internals = Reflect.get(el, INTERNALS) as { role?: string | null } | undefined;
@@ -221,7 +221,12 @@ describe('<line-alert> shadow tree (decision D4)', () => {
     const root = part(el, 'root');
     expect(el.shadowRoot?.children.length).toBe(1);
     expect(root.parentNode).toBe(el.shadowRoot);
-    expect([...root.children].map((child) => child.getAttribute('part'))).toEqual(['icon', 'content', 'actions']);
+    expect([...root.children].map((child) => child.getAttribute('part'))).toEqual([
+      'icon',
+      'content',
+      'dismiss',
+      'actions',
+    ]);
     expect([...part(el, 'content').children].map((child) => child.getAttribute('part'))).toEqual([
       'title',
       'description',
@@ -231,8 +236,8 @@ describe('<line-alert> shadow tree (decision D4)', () => {
       expect(children.length).toBe(1);
       return (children[0] as HTMLSlotElement).localName === 'slot' ? (children[0] as HTMLSlotElement).name : null;
     });
-    expect(slots).toEqual(['icon', 'title', '', 'actions']);
-    for (const name of ['root', 'icon', 'content', 'title', 'description', 'actions']) {
+    expect(slots).toEqual(['icon', 'title', '', 'actions', 'dismiss']);
+    for (const name of ['root', 'icon', 'content', 'title', 'description', 'actions', 'dismiss']) {
       expect(part(el, name).localName).toBe('div');
     }
   });
@@ -263,6 +268,7 @@ describe('<line-alert> empty zones (decision D11)', () => {
       <h3 slot="title">Payment failed</h3>
       Check the card number.
       <button slot="actions">Retry</button>
+      <button slot="dismiss" aria-label="Dismiss">x</button>
     </line-alert>`);
     expect(shown(el)).toEqual([...ZONES]);
   });
@@ -340,5 +346,83 @@ describe('<line-alert> text changed in place (spec AM-001)', () => {
     text.data = '';
     await settle(el);
     expect(shown(el)).toEqual([]);
+  });
+});
+
+// happy-dom leaves the assigned slot out of a slotted node's event path, so these tests click the `dismiss` slot
+// itself; the browser tier clicks the slotted control.
+describe('<line-alert> dismiss (spec AM-006)', () => {
+  /** A click as it reaches the `dismiss` slot from its slotted control. */
+  function clickSlot(el: LineAlert, init: { cancelled?: boolean } = {}): void {
+    const slot = el.shadowRoot?.querySelector('slot[name="dismiss"]') as HTMLSlotElement;
+    const click = new MouseEvent('click', { bubbles: true, composed: true, cancelable: true });
+    if (init.cancelled) click.preventDefault();
+    slot.dispatchEvent(click);
+  }
+
+  async function dismissible(): Promise<{ el: LineAlert; button: HTMLButtonElement }> {
+    const el = await mountMarkup(
+      '<line-alert>Saved.<button slot="dismiss" aria-label="Dismiss">x</button><button slot="actions">Undo</button></line-alert>',
+    );
+    return { el, button: el.querySelector('[slot="dismiss"]') as HTMLButtonElement };
+  }
+
+  test('the dismiss zone shows while its slot holds a control', async () => {
+    const { el, button } = await dismissible();
+    expect(shown(el)).toContain('dismiss');
+    button.remove();
+    await settle(el);
+    expect(shown(el)).not.toContain('dismiss');
+  });
+
+  test('a click in the dismiss slot fires line-dismiss with {} (bubbling, cancelable, not composed), then hides', async () => {
+    const { el, button } = await dismissible();
+    const events: CustomEvent[] = [];
+    let hiddenDuringDispatch: boolean | undefined;
+    document.addEventListener('line-dismiss', (event) => {
+      events.push(event as CustomEvent);
+      hiddenDuringDispatch = el.hidden;
+    });
+    clickSlot(el);
+    expect(button.isConnected).toBe(true);
+    expect(events.length).toBe(1);
+    const [event] = events;
+    expect([event?.detail, event?.bubbles, event?.cancelable, event?.composed, event?.target]).toEqual([
+      {},
+      true,
+      true,
+      false,
+      el,
+    ]);
+    expect(hiddenDuringDispatch).toBe(false);
+    expect(el.hidden).toBe(true);
+    expect(el.hasAttribute('hidden')).toBe(true);
+  });
+
+  test('a cancelled line-dismiss leaves the alert shown', async () => {
+    const { el, button } = await dismissible();
+    el.addEventListener('line-dismiss', (event) => event.preventDefault());
+    clickSlot(el);
+    expect(button.isConnected).toBe(true);
+    expect(el.hasAttribute('hidden')).toBe(false);
+  });
+
+  test('a click outside the dismiss slot, or a click already cancelled, does not dismiss', async () => {
+    const { el } = await dismissible();
+    let fired = 0;
+    el.addEventListener('line-dismiss', () => {
+      fired += 1;
+    });
+    (el.querySelector('[slot="actions"]') as HTMLButtonElement).click();
+    el.click();
+    clickSlot(el, { cancelled: true });
+    expect(fired).toBe(0);
+    expect(el.hasAttribute('hidden')).toBe(false);
+  });
+
+  test('an alert without a dismiss control writes no hidden attribute', async () => {
+    const el = await mountMarkup('<line-alert>Saved.</line-alert>');
+    el.click();
+    expect(el.getAttributeNames()).toEqual([]);
   });
 });

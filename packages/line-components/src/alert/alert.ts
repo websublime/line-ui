@@ -8,7 +8,7 @@ import {
   type PropertyValues,
   type TemplateResult,
 } from 'lit';
-import type { AlertLive, AlertVariant } from './alert.types.js';
+import type { AlertLive, AlertVariant, LineAlertDismissDetail } from './alert.types.js';
 
 const VARIANTS: readonly AlertVariant[] = ['neutral', 'info', 'success', 'warning', 'danger'];
 
@@ -22,15 +22,20 @@ const liveConverter: ComplexAttributeConverter<AlertLive> = {
   fromAttribute: (value) => (value === 'polite' || value === 'assertive' ? value : 'off'),
 };
 
-/** The zones that wrap a slot; `description` wraps the default slot (decision D4). */
-type Zone = 'icon' | 'title' | 'description' | 'actions';
+/** The zones that wrap a slot; `description` wraps the default slot (decision D4; spec AM-006). */
+type Zone = 'icon' | 'title' | 'description' | 'actions' | 'dismiss';
 
 const DEFAULT_SLOT = 'slot:not([name])';
 
 /**
  * `<line-alert>` is an inline box that tells the user about the state of something on the page. The consumer
- * supplies its icon, title, message and actions through slots, and `variant` colours it by meaning. It takes no
- * focus and never closes itself. A zone whose slot is empty renders no box.
+ * supplies its icon, title, message, actions and dismiss control through slots, and `variant` colours it by meaning.
+ * It takes no focus. A zone whose slot is empty renders no box.
+ *
+ * A click on the control in the `dismiss` slot fires `line-dismiss`; unless a listener cancels it, the alert then
+ * sets `hidden` on itself. Move focus in the `line-dismiss` handler, because focus on the hidden control falls to the
+ * page body. A framework that re-renders the host from its own state can clear `hidden`, so keep the visibility in
+ * that state.
  *
  * `live="polite"` or `live="assertive"` puts the `status` or `alert` role on the host through `ElementInternals`,
  * with the role's live-region properties, from the moment the host is inserted. How a screen reader announces it is
@@ -45,6 +50,7 @@ const DEFAULT_SLOT = 'slot:not([name])';
  * @slot title - A short heading; the consumer picks the element and heading level, such as `<h3 slot="title">`.
  * @slot - The message: text, paragraphs, lists or links.
  * @slot actions - Buttons or links for follow-up actions, in a wrapping row below the message.
+ * @slot dismiss - One dismiss control, such as a `<line-icon-button aria-label="Dismiss notice">`; the consumer picks its glyph and name.
  *
  * @csspart root - The box: background, border, radius, padding and the grid of the zones.
  * @csspart icon - Wraps the `icon` slot and sets the icon colour; hidden while the slot is empty.
@@ -52,6 +58,7 @@ const DEFAULT_SLOT = 'slot:not([name])';
  * @csspart title - Wraps the `title` slot; hidden while the slot is empty.
  * @csspart description - Wraps the default slot; hidden while it holds no element and no text other than whitespace.
  * @csspart actions - Wraps the `actions` slot; a wrapping row, hidden while the slot is empty.
+ * @csspart dismiss - Wraps the `dismiss` slot at the block start and inline end of the first row; hidden while the slot is empty.
  *
  * @cssprop [--line-alert-bg=var(--line-gray-bg)] - Background of `root`; `info`, `success`, `warning` and `danger` use their role, such as `var(--line-danger-bg)`.
  * @cssprop [--line-alert-color=var(--line-gray-text)] - Text colour of `root`; each variant uses its role, such as `var(--line-danger-text)`.
@@ -60,7 +67,9 @@ const DEFAULT_SLOT = 'slot:not([name])';
  * @cssprop [--line-alert-border-width=var(--line-border-1)] - Border width of `root`.
  * @cssprop [--line-alert-radius=var(--line-radius-2)] - Corner radius of `root`.
  * @cssprop [--line-alert-padding=var(--line-size-3)] - Padding of `root`.
- * @cssprop [--line-alert-gap=var(--line-size-2)] - Space between the zones: between the rows of `root`, after the icon, between the title and the message, and between the actions.
+ * @cssprop [--line-alert-gap=var(--line-size-2)] - Space between the zones: between the rows of `root`, after the icon, before the dismiss zone, between the title and the message, and between the actions.
+ *
+ * @fires {CustomEvent<LineAlertDismissDetail>} line-dismiss - A click in the `dismiss` slot; `detail` is `{}`. Bubbles, cancelable, not composed. Unless it is cancelled, the alert then sets `hidden` on itself.
  */
 export class LineAlert extends LineElement {
   static override properties: PropertyDeclarations = {
@@ -119,7 +128,7 @@ export class LineAlert extends LineElement {
 
       [part='root'] {
         display: grid;
-        grid-template-columns: auto minmax(0, 1fr);
+        grid-template-columns: auto minmax(0, 1fr) auto;
         column-gap: 0;
         row-gap: var(--line-alert-gap);
         padding: var(--line-alert-padding);
@@ -154,6 +163,13 @@ export class LineAlert extends LineElement {
         flex-wrap: wrap;
         gap: var(--line-alert-gap);
       }
+
+      [part='dismiss'] {
+        grid-column: 3;
+        grid-row: 1;
+        align-self: start;
+        margin-inline-start: var(--line-alert-gap);
+      }
     `,
   ];
 
@@ -163,7 +179,13 @@ export class LineAlert extends LineElement {
   #live: AlertLive = 'off';
 
   /** Whether each zone's slot holds content; an empty zone renders `hidden` (decision D11). */
-  readonly #filled: Record<Zone, boolean> = { icon: false, title: false, description: false, actions: false };
+  readonly #filled: Record<Zone, boolean> = {
+    icon: false,
+    title: false,
+    description: false,
+    actions: false,
+    dismiss: false,
+  };
 
   /**
    * Re-reads the default slot when one of its text nodes changes in place, including text a wrapper forwards through
@@ -238,6 +260,18 @@ export class LineAlert extends LineElement {
     this.requestUpdate();
   }
 
+  /** A click in the `dismiss` slot fires `line-dismiss`, then hides the alert unless the event was cancelled (spec AM-006). */
+  readonly #onDismissClick = (event: Event): void => {
+    if (event.defaultPrevented) return;
+    const dismiss = new CustomEvent<LineAlertDismissDetail>('line-dismiss', {
+      detail: {},
+      bubbles: true,
+      cancelable: true,
+      composed: false,
+    });
+    if (this.dispatchEvent(dismiss)) this.hidden = true;
+  };
+
   readonly #onSlotChange = (event: Event): void => {
     this.#readZone(event.currentTarget as HTMLSlotElement);
   };
@@ -250,7 +284,7 @@ export class LineAlert extends LineElement {
 
   override render(): TemplateResult {
     const filled = this.#filled;
-    return html`<div part="root"><div part="icon" ?hidden=${!filled.icon}><slot name="icon" @slotchange=${this.#onSlotChange}></slot></div><div part="content"><div part="title" ?hidden=${!filled.title}><slot name="title" @slotchange=${this.#onSlotChange}></slot></div><div part="description" ?hidden=${!filled.description}><slot @slotchange=${this.#onSlotChange}></slot></div></div><div part="actions" ?hidden=${!filled.actions}><slot name="actions" @slotchange=${this.#onSlotChange}></slot></div></div>`;
+    return html`<div part="root"><div part="icon" ?hidden=${!filled.icon}><slot name="icon" @slotchange=${this.#onSlotChange}></slot></div><div part="content"><div part="title" ?hidden=${!filled.title}><slot name="title" @slotchange=${this.#onSlotChange}></slot></div><div part="description" ?hidden=${!filled.description}><slot @slotchange=${this.#onSlotChange}></slot></div></div><div part="dismiss" ?hidden=${!filled.dismiss}><slot name="dismiss" @slotchange=${this.#onSlotChange} @click=${this.#onDismissClick}></slot></div><div part="actions" ?hidden=${!filled.actions}><slot name="actions" @slotchange=${this.#onSlotChange}></slot></div></div>`;
   }
 }
 

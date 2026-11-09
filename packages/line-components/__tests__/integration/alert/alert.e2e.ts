@@ -82,7 +82,7 @@ function computed(
 function shownZones(page: Page, selector = 'line-alert'): Promise<string[]> {
   return page.evaluate((sel) => {
     const host = document.querySelector(`main ${sel}`) as HTMLElement;
-    return ['icon', 'title', 'description', 'actions'].filter(
+    return ['icon', 'title', 'description', 'actions', 'dismiss'].filter(
       (zone) => getComputedStyle(host.shadowRoot?.querySelector(`[part="${zone}"]`) as Element).display !== 'none',
     );
   }, selector);
@@ -415,8 +415,8 @@ test.describe('with line-tokens and line-themes', () => {
     expect(host).toEqual({ tabIndex: -1, focused: 'undo' });
   });
 
-  for (const via of ['click', 'keyboard'] as const) {
-    test(`the Dismiss recipe removes the alert and moves focus to the named heading (${via})`, async ({
+  for (const via of ['click', 'Enter', ' '] as const) {
+    test(`the Dismiss recipe: line-dismiss, the alert hides, the handler moves focus (${via === ' ' ? 'Space' : via}) (AM-006)`, async ({
       page,
       browserName,
     }) => {
@@ -425,13 +425,22 @@ test.describe('with line-tokens and line-themes', () => {
         `<h2 id="notices" tabindex="-1">Notices</h2>
         <line-alert id="features" variant="info">
           New features are available.
-          <line-icon-button slot="actions" id="dismiss" aria-label="Dismiss notice"></line-icon-button>
+          <line-icon-button slot="dismiss" id="dismiss" aria-label="Dismiss notice"></line-icon-button>
         </line-alert>`,
       );
       await page.evaluate(() => {
         const notice = document.getElementById('features') as HTMLElement;
-        notice.querySelector('[slot="actions"]')?.addEventListener('click', () => {
-          notice.remove();
+        notice.dataset.dismissals = '0';
+        notice.addEventListener('line-dismiss', (event) => {
+          const detail = (event as CustomEvent).detail;
+          notice.dataset.dismissals = String(Number(notice.dataset.dismissals) + 1);
+          notice.dataset.event = JSON.stringify([
+            detail,
+            event.bubbles,
+            event.cancelable,
+            event.composed,
+            notice.hidden,
+          ]);
           (document.getElementById('notices') as HTMLElement).focus();
         });
       });
@@ -441,12 +450,108 @@ test.describe('with line-tokens and line-themes', () => {
         await page.locator('#notices').focus();
         await page.keyboard.press(tab(browserName));
         await expect(page.locator('#dismiss')).toBeFocused();
-        await page.keyboard.press('Enter');
+        await page.keyboard.press(via);
       }
-      await expect(page.locator('#features')).toHaveCount(0);
+      const notice = page.locator('#features');
+      await expect(notice).toHaveAttribute('hidden', '');
+      await expect(notice).toBeHidden();
+      await expect(notice).toHaveAttribute('data-dismissals', '1');
+      await expect(notice).toHaveAttribute('data-event', JSON.stringify([{}, true, true, false, false]));
       await expect(page.locator('#notices')).toBeFocused();
     });
   }
+
+  test('a cancelled line-dismiss keeps the alert shown (AM-006)', async ({ page }) => {
+    await mount(
+      page,
+      '<line-alert id="a">Saved.<button slot="dismiss" id="x" aria-label="Dismiss">x</button></line-alert>',
+    );
+    await page.evaluate(() => {
+      document.getElementById('a')?.addEventListener('line-dismiss', (event) => event.preventDefault());
+    });
+    await page.locator('#x').click();
+    await expect(page.locator('#a')).toBeVisible();
+    await expect(page.locator('#a')).not.toHaveAttribute('hidden');
+  });
+
+  test('a disabled line-icon-button in the dismiss slot does not dismiss (AM-006)', async ({ page }) => {
+    await mount(
+      page,
+      '<line-alert id="a">Saved.<line-icon-button slot="dismiss" id="x" aria-label="Dismiss" disabled></line-icon-button></line-alert>',
+    );
+    const fired = await page.evaluate(() => {
+      const alert = document.getElementById('a') as HTMLElement;
+      let count = 0;
+      alert.addEventListener('line-dismiss', () => {
+        count += 1;
+      });
+      (document.getElementById('x') as HTMLElement).click();
+      return count;
+    });
+    await page.locator('#x').click({ force: true });
+    expect(fired).toBe(0);
+    await expect(page.locator('#a')).toBeVisible();
+  });
+
+  test('a click outside the dismiss slot does not dismiss (AM-006)', async ({ page }) => {
+    await mount(
+      page,
+      '<line-alert id="a">Saved.<button slot="actions" id="undo">Undo</button><button slot="dismiss" aria-label="Dismiss">x</button></line-alert>',
+    );
+    await page.locator('#undo').click();
+    await page.locator('#a').click({ position: { x: 5, y: 5 } });
+    await expect(page.locator('#a')).toBeVisible();
+  });
+
+  test('a dismissed alert inserted again without hidden shows and dismisses again (AM-006)', async ({ page }) => {
+    await mount(
+      page,
+      '<line-alert id="a">Saved.<button slot="dismiss" id="x" aria-label="Dismiss">x</button></line-alert>',
+    );
+    await page.locator('#x').click();
+    await expect(page.locator('#a')).toBeHidden();
+    await page.evaluate(async () => {
+      const alert = document.getElementById('a') as HTMLElement & { updateComplete: Promise<unknown> };
+      alert.remove();
+      alert.removeAttribute('hidden');
+      document.querySelector('main')?.append(alert);
+      await alert.updateComplete;
+    });
+    await expect(page.locator('#a')).toBeVisible();
+    expect(await shownZones(page, '#a')).toEqual(['description', 'dismiss']);
+    await page.locator('#x').click();
+    await expect(page.locator('#a')).toBeHidden();
+  });
+
+  test('the dismiss zone sits at the block start and inline end of row 1, mirrored under dir="rtl" (AM-006)', async ({
+    page,
+  }) => {
+    const markup = FILLED.replace(
+      '<button slot="actions"',
+      '<button slot="dismiss" aria-label="Dismiss" style="inline-size: 24px; block-size: 24px"></button><button slot="actions"',
+    );
+    await mount(page, markup);
+    let [root, content, actions, dismiss] = await Promise.all(
+      ['root', 'content', 'actions', 'dismiss'].map((part) => box(page, part)),
+    );
+    expectNear(dismiss.right, root.right - INSET, 'dismiss at the inline end');
+    expectNear(dismiss.top, root.top + INSET, 'dismiss at the block start');
+    expectNear(content.right, dismiss.left - GAP, 'content before the gap and the dismiss zone');
+    expectNear(actions.right, content.right, 'actions stay in the content column');
+    expectNear(actions.top, content.bottom + GAP, 'actions in row 2');
+
+    await mount(page, `<div dir="rtl">${markup}</div>`);
+    [root, content, actions, dismiss] = await Promise.all(
+      ['root', 'content', 'actions', 'dismiss'].map((part) => box(page, part)),
+    );
+    expectNear(dismiss.left, root.left + INSET, 'dismiss at the inline end, on the left');
+    expectNear(dismiss.top, root.top + INSET, 'dismiss at the block start');
+    expectNear(content.left, dismiss.right + GAP, 'content after the dismiss zone and the gap');
+
+    await mount(page, FILLED);
+    expect(await shownZones(page)).not.toContain('dismiss');
+    expectNear((await box(page, 'content')).right, (await box(page, 'root')).right - INSET, 'no dismiss, no gap');
+  });
 
   test('the internals hold the role of each live value; it is there synchronously after append() and a set', async ({
     page,
@@ -571,7 +676,8 @@ test.describe('Chromium accessibility tree (CDP)', () => {
       <line-alert id="polite" live="polite">${content}</line-alert>
       <line-alert id="named" live="assertive" aria-label="Payment error">Text</line-alert>
       <line-alert id="role-none" live="assertive" role="none">Text</line-alert>
-      <line-alert id="aria-live-off" live="assertive" aria-live="off">Text</line-alert>`,
+      <line-alert id="aria-live-off" live="assertive" aria-live="off">Text</line-alert>
+      <line-alert id="dismissible" live="assertive">${content}<button slot="dismiss" aria-label="Dismiss notice">x</button></line-alert>`,
     );
     const cdp = await page.context().newCDPSession(page);
     await cdp.send('Accessibility.enable');
@@ -606,6 +712,16 @@ test.describe('Chromium accessibility tree (CDP)', () => {
     const roleNone = await tree.of('#role-none');
     expect(['alert', 'status']).not.toContain(roleNone.role?.value);
     expect(liveProperties(roleNone)).toEqual({});
+
+    // A dismiss control leaves the region as it is, and sits inside it (AM-006).
+    const dismissible = await tree.of('#dismissible');
+    expect(dismissible.role?.value).toBe('alert');
+    expect(liveProperties(dismissible)).toEqual(liveProperties(assertive));
+    const inside = descendants(tree.nodes, dismissible);
+    const base = descendants(tree.nodes, assertive);
+    expect(base.filter((n) => !inside.includes(n))).toEqual([]);
+    expect(inside.filter((n) => !(base.includes(n) || /Dismiss notice|:x$/.test(n)))).toEqual([]);
+    expect(inside).toContain('button:Dismiss notice');
 
     const ariaLiveOff = await tree.of('#aria-live-off');
     expect(liveProperties(ariaLiveOff).live).toBeUndefined();
