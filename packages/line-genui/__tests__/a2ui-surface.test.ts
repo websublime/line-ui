@@ -820,6 +820,7 @@ describe('Alert (`0006-alert.md` Agent contract)', () => {
     title: 'heading',
     children: ['message'],
     actions: ['retry'],
+    dismiss: 'close',
     ...extra,
   });
   const parts: Message[] = [
@@ -827,6 +828,14 @@ describe('Alert (`0006-alert.md` Agent contract)', () => {
     basicText('heading', 'Payment failed', { variant: 'h3' }),
     basicText('message', 'Check the card number and try again.'),
     { id: 'retry', component: 'Button', accessibility: { label: 'Retry' }, action: action('retry') },
+    {
+      id: 'close',
+      component: 'IconButton',
+      child: 'closeGlyph',
+      accessibility: { label: 'Dismiss' },
+      action: action('dismissed'),
+    },
+    { id: 'closeGlyph', component: 'Icon', path: 'M6 6 L18 18 M18 6 L6 18' },
   ];
 
   test('renders line-alert with its variant, and each child prop in its slot, in prop order', async () => {
@@ -839,6 +848,7 @@ describe('Alert (`0006-alert.md` Agent contract)', () => {
       'h3:title',
       'p:null',
       'line-button:actions',
+      'line-icon-button:dismiss',
     ]);
     expect(element.querySelector('h3')?.textContent).toBe('Payment failed');
   });

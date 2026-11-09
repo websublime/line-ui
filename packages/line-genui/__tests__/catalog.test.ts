@@ -35,7 +35,14 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
  * `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`, `0018-stack.md`).
  */
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
-  Alert: { variant: 'enum', icon: 'ComponentId', title: 'ComponentId', children: 'ChildList', actions: 'ChildList' },
+  Alert: {
+    variant: 'enum',
+    icon: 'ComponentId',
+    title: 'ComponentId',
+    children: 'ChildList',
+    actions: 'ChildList',
+    dismiss: 'ComponentId',
+  },
   Button: {
     variant: 'enum',
     disabled: 'DynamicBoolean',
@@ -203,7 +210,13 @@ describe('the Alert descriptor (`0006-alert.md` Descriptor fields)', () => {
     expect(alertDescriptor.agentExposed).toBe(true);
     expect(alertDescriptor.tag).toBe('line-alert');
     expect(alertDescriptor.accessibility).toEqual({ hostNaming: { kind: 'never' } });
-    expect(alertDescriptor.slots).toEqual({ icon: 'icon', title: 'title', children: '', actions: 'actions' });
+    expect(alertDescriptor.slots).toEqual({
+      icon: 'icon',
+      title: 'title',
+      children: '',
+      actions: 'actions',
+      dismiss: 'dismiss',
+    });
     expect(alertDescriptor.actions).toEqual({});
     expect(alertDescriptor.bindings).toEqual({ props: { variant: { kind: 'attribute', name: 'variant' } } });
   });
@@ -219,7 +232,7 @@ describe('the Alert descriptor (`0006-alert.md` Descriptor fields)', () => {
     for (const variant of ['neutral', 'info', 'success', 'warning', 'danger']) {
       expect(alertDescriptor.schema.safeParse({ variant }).success).toBe(true);
     }
-    const node = { icon: 'i', title: 't', children: ['m'], actions: ['retry', 'cancel'], variant: 'danger' };
+    const node = { icon: 'i', title: 't', children: ['m'], actions: ['retry'], dismiss: 'close', variant: 'danger' };
     expect(alertDescriptor.schema.parse(node)).toEqual(node);
     expect(alertDescriptor.schema.safeParse({ children: { componentId: 'line', path: '/lines' } }).success).toBe(true);
     expect(alertDescriptor.schema.safeParse({ variant: 'error' }).success).toBe(false);

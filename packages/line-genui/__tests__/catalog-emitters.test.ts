@@ -89,7 +89,15 @@ const components: Json[] = [
   { id: 'zoom-in', component: 'Button', child: 'zoom-in-text', action: { event: { name: 'zoomIn' } } },
   { id: 'zoom-in-text', component: 'Icon', name: 'add' },
   { id: 'zoom-out', component: 'IconButton', child: 'close-icon', accessibility: { label: 'Zoom out' } },
-  { id: 'notice', component: 'Alert', variant: 'danger', icon: 'notice-icon', actions: ['notice-retry'] },
+  {
+    id: 'notice',
+    component: 'Alert',
+    variant: 'danger',
+    icon: 'notice-icon',
+    actions: ['notice-retry'],
+    dismiss: 'notice-dismiss',
+  },
+  { id: 'notice-dismiss', component: 'IconButton', child: 'close-icon', accessibility: { label: 'Dismiss' } },
   { id: 'notice-icon', component: 'Icon', name: 'error' },
   {
     id: 'notice-retry',

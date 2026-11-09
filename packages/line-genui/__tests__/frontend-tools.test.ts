@@ -335,7 +335,7 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
     for (const provider of TOOL_PROVIDERS) {
       const lacked = (descriptor: LineDescriptor) =>
         lackedNames(descriptor.description, descriptor, tool(provider, descriptor.name));
-      expect(lacked(alertDescriptor)).toEqual(['children', 'title', 'icon', 'actions', 'title']);
+      expect(lacked(alertDescriptor)).toEqual(['children', 'title', 'icon', 'actions', 'dismiss', 'title', 'dismiss']);
       expect(lacked(buttonDescriptor)).toEqual(['child', 'accessibility.label']);
       expect(lacked(buttonGroupDescriptor)).toEqual(['children', 'accessibility.label']);
       expect(lacked(iconButtonDescriptor)).toEqual(['child', 'accessibility.label']);
