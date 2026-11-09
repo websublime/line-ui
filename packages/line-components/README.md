@@ -221,7 +221,10 @@ from the `line-themes` role aliases, such as `var(--line-danger-bg)`; `neutral` 
 its zones. Load `@websublime/line-tokens/reset` to zero the margins of slotted headings and paragraphs.
 
 A click on the control in the `dismiss` slot fires `line-dismiss` (`detail` `{}`, bubbling, cancelable, not
-composed). Unless a listener calls `preventDefault()`, the alert then sets `hidden` on itself. You pick the glyph and
+composed). Unless a listener calls `preventDefault()` on it, the alert then sets `hidden` on itself. A click that is
+already cancelled when it reaches the `dismiss` slot, by the control, inside it or in a capture listener, does not
+dismiss; a bubble listener on the host or the document, such as React's root-delegated `onClick`, runs too late, so
+cancel `line-dismiss` to keep the alert shown. You pick the glyph and
 the accessible name. Move focus in the handler to a named target, such as the section heading with `tabindex="-1"`,
 because focus on the hidden control falls to the page body. A framework that re-renders the host from its own state
 can clear `hidden`, so keep the visibility in that state. In a live alert the control's name is part of the live
