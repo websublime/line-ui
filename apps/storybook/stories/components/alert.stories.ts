@@ -26,19 +26,17 @@ registerStoryIcons();
 const DISMISS_CODE = `<h2 id="notices" tabindex="-1">Notices</h2>
 <line-alert id="features" variant="info">
   New features are available.
-  <line-icon-button slot="actions" aria-label="Dismiss notice">
+  <line-icon-button slot="dismiss" aria-label="Dismiss notice">
     <line-icon library="lucide" name="x"></line-icon>
   </line-icon-button>
 </line-alert>
 <script type="module">
-  const notice = document.getElementById('features');
-  notice.querySelector('[slot="actions"]').addEventListener('click', () => {
-    notice.remove();
+  document.getElementById('features').addEventListener('line-dismiss', () => {
     document.getElementById('notices').focus();
   });
 </script>`;
 
-const DESCRIPTION = `\`<line-alert>\` is an inline box that tells the user about the state of something on the page: a saved change, a warning before an action, a failed payment, a piece of context. It stays until your code removes it and takes no focus.
+const DESCRIPTION = `\`<line-alert>\` is an inline box that tells the user about the state of something on the page: a saved change, a warning before an action, a failed payment, a piece of context. It stays until your code removes it or the user activates its dismiss control, and it takes no focus.
 
 \`\`\`html
 <line-alert variant="danger">
@@ -49,11 +47,11 @@ const DESCRIPTION = `\`<line-alert>\` is an inline box that tells the user about
 </line-alert>
 \`\`\`
 
-- **Zones.** The \`icon\`, \`title\`, default and \`actions\` slots fill a two-column grid: the icon at the start of the first row, the title above the message beside it, and the actions in a wrapping row below the message. A zone whose slot is empty takes no space, and an alert with no content keeps its padded box. Slotted headings and paragraphs keep their browser margins unless you load \`@websublime/line-tokens/reset\`, which zeroes them inside \`line-alert\`.
+- **Zones.** The \`icon\`, \`title\`, default, \`actions\` and \`dismiss\` slots fill a three-column grid: the icon at the start of the first row, the title above the message beside it, the dismiss control at the end of the first row, and the actions in a wrapping row below the message. A zone whose slot is empty takes no space, and an alert with no content keeps its padded box. Slotted headings and paragraphs keep their browser margins unless you load \`@websublime/line-tokens/reset\`, which zeroes them inside \`line-alert\`.
 - **Tone.** \`variant\` is \`neutral\` (default), \`info\`, \`success\`, \`warning\` or \`danger\`, and sets the colour tokens from the theme roles. State the tone in words too, in the title or the message, such as "Error: the payment failed", or name the icon with \`aria-label\`. Colour alone does not reach every user, and forced-colors mode draws every variant in the same system colours.
 - **Live role.** By default the host has no role. \`live="polite"\` gives the host the \`status\` role and \`live="assertive"\` the \`alert\` role, with their live-region properties, from the moment the alert is inserted. Screen readers use these to announce a region when it appears or its text changes, but no automated check verifies how a screen reader announces it. Set \`live\` before you insert the alert or change its text, because switching the role on over text already in place may not be announced. Use \`assertive\` only for an error the user must hear at once. An author \`role\` or \`aria-live\` on the host wins.
 - **Naming.** Name only a live alert, with \`aria-label\` on the host. With \`live\` off the host is a \`generic\` element, which takes no name.
-- **Dismiss.** Alert ships no close button. Put one in \`actions\`, remove the alert in its click handler, and move focus to a named target, because focus on a removed button falls to the page body. The **Dismiss recipe** story does this:
+- **Dismiss.** Put a dismiss control in the \`dismiss\` slot, such as a \`<line-icon-button>\` with your own glyph and \`aria-label\`; it sits at the top inline-end corner. A click on it fires \`line-dismiss\` (\`detail\` \`{}\`, bubbling, cancelable), and unless you call \`preventDefault()\` the alert sets \`hidden\` on itself. Move focus to a named target in the handler, because focus on the hidden control falls to the page body. A framework that re-renders the host from its state can clear \`hidden\`, so keep the visibility in that state. In a live alert the control's name is part of the live region. The **Dismiss recipe** story does this:
 
 \`\`\`html
 ${DISMISS_CODE}
@@ -173,9 +171,8 @@ export const LivePolite: Story = {
     ),
 };
 
-/** Removes the alert that holds the clicked button and moves focus to the section heading. */
-const dismiss = (event: Event): void => {
-  (event.currentTarget as HTMLElement).closest('line-alert')?.remove();
+/** Moves focus to the section heading once the alert dismisses itself. */
+const focusNotices = (): void => {
   document.getElementById('notices')?.focus();
 };
 
@@ -185,16 +182,16 @@ export const DismissRecipe: Story = {
     docs: {
       description: {
         story:
-          'Alert has no close button of its own. This recipe puts a dismiss button in `actions`, removes the alert on click and moves focus to the section heading, which carries `tabindex="-1"`.',
+          'The dismiss button sits in the `dismiss` slot. A click fires `line-dismiss` and the alert hides itself; the handler moves focus to the section heading, which carries `tabindex="-1"`.',
       },
       source: { code: DISMISS_CODE },
     },
   },
   render: () =>
     html`<h2 id="notices" tabindex="-1">Notices</h2>
-      <line-alert id="features" variant="info">
+      <line-alert id="features" variant="info" @line-dismiss=${focusNotices}>
         New features are available.
-        <line-icon-button slot="actions" aria-label="Dismiss notice" @click=${dismiss}>
+        <line-icon-button slot="dismiss" aria-label="Dismiss notice">
           <line-icon library="lucide" name="x"></line-icon>
         </line-icon-button>
       </line-alert>`,
