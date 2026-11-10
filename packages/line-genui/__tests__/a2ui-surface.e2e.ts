@@ -381,7 +381,7 @@ test.describe('rendering (§6.G.4; plan §7.2)', () => {
 
   test('the Placeholders story raises errors that validate against client_to_server.json', async ({ page }) => {
     await page.goto('/iframe.html?id=agent-ui-a2ui-surface--placeholders&viewMode=story');
-    await expect(page.locator('line-a2ui-surface [data-line-a2ui-placeholder]')).toHaveCount(2);
+    await expect(page.locator('line-a2ui-surface [data-line-a2ui-placeholder]')).toHaveCount(3);
     await freshSurface(page, 'errors');
     await feed(page, [
       create('errors'),

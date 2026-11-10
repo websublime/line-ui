@@ -10,7 +10,9 @@
  * `aria-required-parent` on each item pass. The Line catalog story also shows the IconButton named by its
  * `accessibility.label`, C6 (ButtonGroup) as a named toolbar with `loop` that roves over its IconButtons, C7
  * (Alert) with its five zones filled, no live role, and a dismiss IconButton that hides it, and C8 (Chip) with its
- * `label` text in the default slot and a `pressed` bound to the data model.
+ * `label` text in the default slot and a `pressed` bound to the data model, and C9 (Badge) as a count bound to the
+ * data model and a dot named by its `accessibility.label`. The Placeholders story adds a C9 Badge with no name, which
+ * renders the `missing-name` placeholder (`0007-badge.md` F10).
  *
  * @module __tests__/a11y/a2ui-surface.e2e
  */
@@ -23,7 +25,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 24,
+  'agent-ui-a2ui-surface--line-catalog': 26,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -52,7 +54,7 @@ async function openSurfaceStory(page: Page, id: SurfaceStoryId): Promise<void> {
   await expect(surface.locator('[data-line-a2ui-placeholder="pending"]')).toHaveCount(0);
   await expect(
     surface.locator(
-      ':is(line-alert, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
+      ':is(line-alert, line-badge, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
     ),
   ).toHaveCount(SURFACE_STORIES[id]);
   await expect(surface).not.toHaveAttribute('aria-busy', 'true');
@@ -164,4 +166,44 @@ test('the Line catalog story renders each Chip from its label and its bound pres
   await freeShipping.click();
   await expect(freeShipping.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
   await expect(inStock.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
+});
+
+test('the Line catalog story renders a Badge count from its bound label and a dot named by accessibility.label', async ({
+  page,
+}) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
+  const badges = page.locator('#storybook-root line-a2ui-surface line-badge');
+  await expect(badges).toHaveCount(2);
+  const count = badges.first();
+  const dot = badges.nth(1);
+  await expect(count).toHaveText('24');
+  await expect(count).toHaveAttribute('variant', 'info');
+  await expect(count).not.toHaveAttribute('data-empty');
+  await expect(dot).toHaveAttribute('variant', 'success');
+  await expect(dot).toHaveAttribute('aria-label', 'New arrivals');
+  await expect(dot).toHaveAttribute('data-empty', '');
+  const internals = await badges.evaluateAll((elements) =>
+    elements.map((element) => {
+      // Storybook bundles line-core, so the test walks the prototype chain for the `line.internals` accessor.
+      let symbol: symbol | undefined;
+      for (let proto = Object.getPrototypeOf(element); proto && !symbol; proto = Object.getPrototypeOf(proto)) {
+        symbol = Object.getOwnPropertySymbols(proto).find((each) => each.description === 'line.internals');
+      }
+      const values = symbol ? (Reflect.get(element, symbol) as ElementInternals) : undefined;
+      return { role: values?.role ?? null, ariaHidden: values?.ariaHidden ?? null };
+    }),
+  );
+  expect(internals).toEqual([
+    { role: null, ariaHidden: null },
+    { role: 'img', ariaHidden: null },
+  ]);
+});
+
+test('the Placeholders story renders a nameless Badge as a missing-name placeholder, not a line-badge (F10)', async ({
+  page,
+}) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--placeholders');
+  const surface = page.locator('#storybook-root line-a2ui-surface');
+  await expect(surface.locator('line-badge')).toHaveCount(0);
+  await expect(surface.locator('[data-line-a2ui-placeholder="missing-name"]')).toHaveCount(2);
 });

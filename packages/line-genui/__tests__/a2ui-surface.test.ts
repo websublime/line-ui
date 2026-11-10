@@ -16,9 +16,10 @@
  */
 
 import { afterEach, beforeAll, describe, expect, test } from 'bun:test';
+import { INTERNALS } from '@websublime/line-core';
 import { a2uiIconMap } from '@websublime/line-icons/a2ui';
 import { LineA2uiSurface } from '../src/a2ui/index.js';
-import { BASIC_CATALOG_ID, chipDescriptor, LINE_CATALOG_ID } from '../src/catalog/index.js';
+import { BASIC_CATALOG_ID, badgeDescriptor, chipDescriptor, LINE_CATALOG_ID } from '../src/catalog/index.js';
 import {
   action,
   checkClientMessage,
@@ -1016,6 +1017,121 @@ describe('Chip (`0008-chip.md` Agent contract; §6.G.4; §12 AM-092)', () => {
   test('the basic catalog keeps no route to line-chip (decision D1)', async () => {
     const { surface, errors } = await render([chip()]);
     expect(surface.querySelector('line-chip')).toBeNull();
+    expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+  });
+});
+
+describe('Badge (`0007-badge.md` Agent contract; §6.G.4; §12 AM-092)', () => {
+  type Badge = HTMLElement & { variant: string; updateComplete: Promise<unknown> };
+  const badge = (extra: Message = {}): Message => ({ id: 'root', component: 'Badge', label: '5', ...extra });
+  const semantics = (host: Element) => {
+    const internals = Reflect.get(host, INTERNALS) as { role?: string | null; ariaHidden?: string | null };
+    return { role: internals.role ?? null, ariaHidden: internals.ariaHidden ?? null };
+  };
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so the badge is
+  // defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => badgeDescriptor.load());
+
+  test('renders line-badge with its label text in the default slot and its variant attribute (F9)', async () => {
+    const { surface, errors } = await render([badge({ variant: 'danger' })], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    const host = surface.querySelector('line-badge') as Badge;
+    await host.updateComplete;
+    expect(host.getAttribute('variant')).toBe('danger');
+    expect(host.variant).toBe('danger');
+    expect([...host.childNodes].map((node) => [node.nodeType, node.textContent])).toEqual([[Node.TEXT_NODE, '5']]);
+    expect(host.hasAttribute('data-empty')).toBe(false);
+    expect(semantics(host)).toEqual({ role: null, ariaHidden: null });
+  });
+
+  test('a bound label rewrites the same text node, and the element stays', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(
+      create(LINE_CATALOG_ID),
+      components([badge({ label: { path: '/inbox/unread' } })]),
+      data('/inbox/unread', '5'),
+    );
+    const host = surface.querySelector('line-badge') as Badge;
+    const node = host.firstChild;
+    expect(host.textContent).toBe('5');
+    await feed(data('/inbox/unread', '99+'));
+    expect(surface.querySelector('line-badge')).toBe(host);
+    expect(host.firstChild).toBe(node);
+    expect(host.textContent).toBe('99+');
+    expect(errors).toEqual([]);
+  });
+
+  test('an empty label with accessibility.label renders a dot whose host carries that aria-label (F4, F10)', async () => {
+    const { surface, errors } = await render([badge({ label: '', accessibility: { label: 'New messages' } })], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    expect(errors).toEqual([]);
+    const host = surface.querySelector('line-badge') as Badge;
+    await host.updateComplete;
+    expect(host.getAttribute('aria-label')).toBe('New messages');
+    expect(host.textContent).toBe('');
+    expect(semantics(host)).toEqual({ role: 'img', ariaHidden: null });
+  });
+
+  test('a node with no label and accessibility.label renders a dot named by its host aria-label', async () => {
+    const { surface, errors } = await render(
+      [{ id: 'root', component: 'Badge', variant: 'success', accessibility: { label: 'Online' } }],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-badge variant="success" aria-label="Online" data-empty=""></line-badge>');
+  });
+
+  test('accessibility.label on a count names the host, which becomes an img (F5)', async () => {
+    const { surface } = await render([badge({ accessibility: { label: '5 unread messages' } })], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    const host = surface.querySelector('line-badge') as Badge;
+    await host.updateComplete;
+    expect(host.getAttribute('aria-label')).toBe('5 unread messages');
+    expect(host.textContent).toBe('5');
+    expect(semantics(host)).toEqual({ role: 'img', ariaHidden: null });
+  });
+
+  test('neither a non-blank label nor accessibility.label renders a placeholder and raises MISSING_ACCESSIBLE_NAME (F10)', async () => {
+    for (const node of [badge({ label: '' }), badge({ label: '  ' }), { id: 'root', component: 'Badge' }]) {
+      const { surface, errors } = await render([node], { catalogId: LINE_CATALOG_ID });
+      expect(surface.querySelector('line-badge')).toBeNull();
+      const placeholder = surface.querySelector('[data-line-a2ui-placeholder="missing-name"]') as HTMLElement;
+      expect(placeholder.inert).toBe(true);
+      expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
+      expect(errors[0]?.error.componentId).toBe('root');
+      surface.remove();
+    }
+  });
+
+  test('a label bound to a path the model does not hold yet keeps the node hidden without an error', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(create(LINE_CATALOG_ID), components([badge({ label: { path: '/count' } })]));
+    expect((surface.querySelector('[data-line-a2ui-placeholder="pending"]') as HTMLElement).hidden).toBe(true);
+    expect(errors).toEqual([]);
+    await feed(data('/count', '3'));
+    expect(surface.querySelector('line-badge')?.textContent).toBe('3');
+  });
+
+  test('a node with child, action, count or an unknown variant is rejected by the strict schema', async () => {
+    for (const node of [
+      badge({ child: 'text' }),
+      badge({ action: action('open') }),
+      badge({ count: 5 }),
+      badge({ variant: 'accent' }),
+    ]) {
+      const { surface, errors } = await render([node], { catalogId: LINE_CATALOG_ID });
+      expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+      expect(surface.querySelector('line-badge')).toBeNull();
+      surface.remove();
+    }
+  });
+
+  test('the basic catalog keeps no route to line-badge (decision D1)', async () => {
+    const { surface, errors } = await render([badge()]);
+    expect(surface.querySelector('line-badge')).toBeNull();
     expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
   });
 });

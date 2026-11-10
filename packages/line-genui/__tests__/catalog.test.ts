@@ -1,7 +1,7 @@
 /**
  * The descriptor API of `@websublime/line-genui/catalog` (Phase 1 spec §6.G.1 Acceptance; ledger 01-G1).
  *
- * - The C1–C8 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
+ * - The C1–C9 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
  *   common-type prop as a `$ref` to `common_types.json` and each enum inline, as the component spec tables type
  *   them, and a node that uses the common types parses.
  * - Button's component description and a property description both appear in `Catalog.toJson()`.
@@ -19,6 +19,7 @@ import { Catalog } from '@a2ui/web_core/catalog';
 import { z } from 'zod';
 import {
   alertDescriptor,
+  badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
   chipDescriptor,
@@ -35,7 +36,7 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
 /**
  * Each descriptor's own props, as the "Descriptor fields" prop schema of its component spec types them: a common
  * type by its `$defs` name, or `enum` for a literal enum (`0002-button.md`, `0004-button-group.md`, `0006-alert.md`,
- * `0008-chip.md`, `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`, `0018-stack.md`).
+ * `0007-badge.md`, `0008-chip.md`, `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`, `0018-stack.md`).
  */
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   Alert: {
@@ -46,6 +47,7 @@ const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     actions: 'ChildList',
     dismiss: 'ComponentId',
   },
+  Badge: { label: 'DynamicString', variant: 'enum' },
   Button: {
     variant: 'enum',
     disabled: 'DynamicBoolean',
@@ -93,9 +95,10 @@ function definition(doc: Json, name: string): { refs: unknown[]; own: Json } {
 }
 
 describe('descriptors compose with the web_core common types (§6.G.1)', () => {
-  test('the catalog holds the eight descriptors under their catalog names', () => {
+  test('the catalog holds the nine descriptors under their catalog names', () => {
     expect(Object.keys(catalogJson().components as Json).sort()).toEqual([
       'Alert',
+      'Badge',
       'Button',
       'ButtonGroup',
       'Chip',
@@ -247,6 +250,51 @@ describe('the Alert descriptor (`0006-alert.md` Descriptor fields)', () => {
   });
 });
 
+describe('the Badge descriptor (`0007-badge.md` Descriptor fields)', () => {
+  test('is agent-exposed, has no slot map and no action, binds label as text and variant as an attribute, and has no value', () => {
+    expect(badgeDescriptor.agentExposed).toBe(true);
+    expect(badgeDescriptor.tag).toBe('line-badge');
+    expect(badgeDescriptor.slots).toEqual({});
+    expect(badgeDescriptor.actions).toEqual({});
+    expect(badgeDescriptor.bindings).toEqual({
+      props: {
+        label: { kind: 'text' },
+        variant: { kind: 'attribute', name: 'variant' },
+      },
+    });
+  });
+
+  test('takes its name from label or accessibility.label, and always sets the host name (decision F10)', () => {
+    expect(badgeDescriptor.accessibility).toEqual({
+      requiredName: [{ kind: 'textProp', prop: 'label' }, { kind: 'accessibilityLabel' }],
+      hostNaming: { kind: 'always' },
+    });
+  });
+
+  test('its 756-character description names accessibility.label and its 755-character tool description accessibilityLabel', () => {
+    expect(Array.from(badgeDescriptor.description).length).toBe(756);
+    expect(Array.from(badgeDescriptor.toolDescription ?? '').length).toBe(755);
+    expect(badgeDescriptor.toolDescription).toBe(
+      badgeDescriptor.description.replace('`accessibility.label`', '`accessibilityLabel`'),
+    );
+    expect(badgeDescriptor.toolDescription).not.toContain('accessibility.label');
+    expect(badgeDescriptor.description).toContain('because colour alone does not reach every user');
+  });
+
+  test('the schema takes an optional label, a bound label and the five variants, and rejects child, action and count', () => {
+    for (const variant of ['neutral', 'info', 'success', 'warning', 'danger']) {
+      expect(badgeDescriptor.schema.safeParse({ label: '5', variant }).success).toBe(true);
+    }
+    expect(badgeDescriptor.schema.safeParse({}).success).toBe(true);
+    const node = { label: { path: '/inbox/unread' }, variant: 'danger' };
+    expect(badgeDescriptor.schema.parse(node)).toEqual(node);
+    expect(badgeDescriptor.schema.safeParse({ label: 'x', variant: 'accent' }).success).toBe(false);
+    for (const extra of [{ child: 'text' }, { action: { event: { name: 'x' } } }, { count: 5 }, { max: 99 }]) {
+      expect(badgeDescriptor.schema.safeParse({ label: 'x', ...extra }).success).toBe(false);
+    }
+  });
+});
+
 describe('the Chip descriptor (`0008-chip.md` Descriptor fields)', () => {
   test('is agent-exposed, has no slot map and no action, and binds label as text and pressed as its value', () => {
     expect(chipDescriptor.agentExposed).toBe(true);
@@ -308,7 +356,7 @@ describe('text bindings and textProp name sources (§6.G.1, §6.G.4; §12 AM-092
 
   test('a descriptor with a text binding has no slot map', () => {
     const withText = descriptors.filter((descriptor) => textProps(descriptor).length > 0);
-    expect(withText.map((descriptor) => descriptor.name)).toEqual(['Chip']);
+    expect(withText.map((descriptor) => descriptor.name)).toEqual(['Badge', 'Chip']);
     for (const descriptor of withText) expect(descriptor.slots).toEqual({});
   });
 
@@ -318,7 +366,7 @@ describe('text bindings and textProp name sources (§6.G.1, §6.G.4; §12 AM-092
         source.kind === 'textProp' ? [{ name: descriptor.name, prop: source.prop, text: textProps(descriptor) }] : [],
       ),
     );
-    expect(sources.map(({ name, prop }) => `${name}.${prop}`)).toEqual(['Chip.label']);
+    expect(sources.map(({ name, prop }) => `${name}.${prop}`)).toEqual(['Badge.label', 'Chip.label']);
     for (const { prop, text } of sources) expect(text).toContain(prop);
   });
 });
@@ -346,9 +394,9 @@ describe('agentExposed (§6.G.1 Contract)', () => {
     accessibility: { hostNaming: { kind: 'always' } },
   } as const;
 
-  test('defaults to true, as on every C1–C8 descriptor', () => {
+  test('defaults to true, as on every C1–C9 descriptor', () => {
     expect(defineDescriptor(fixture).agentExposed).toBe(true);
-    expect(descriptors.map((d) => d.agentExposed)).toEqual([true, true, true, true, true, true, true, true]);
+    expect(descriptors.map((d) => d.agentExposed)).toEqual([true, true, true, true, true, true, true, true, true]);
   });
 
   test('false keeps its reason', () => {
@@ -379,6 +427,6 @@ describe('importing @websublime/line-genui/catalog (§6.G.1; plan §7.2)', () =>
       child.exited,
     ]);
     expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
-    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 8 });
+    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 9 });
   });
 });

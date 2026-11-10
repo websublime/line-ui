@@ -15,6 +15,7 @@ import { encode } from 'gpt-tokenizer/encoding/o200k_base';
 import { z } from 'zod';
 import {
   alertDescriptor,
+  badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
   chipDescriptor,
@@ -101,6 +102,7 @@ describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)',
     for (const provider of TOOL_PROVIDERS) {
       expect(tools(provider).map((each) => each.name)).toEqual([
         'Alert',
+        'Badge',
         'Button',
         'ButtonGroup',
         'Chip',
@@ -172,6 +174,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
     for (const provider of TOOL_PROVIDERS) {
       const names = (name: string) => Object.keys(tool(provider, name).parameters.properties);
       expect(names('Alert')).toEqual(['variant']);
+      expect(names('Badge')).toEqual(['label', 'variant', ...ACCESSIBILITY]);
       expect(names('Button')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('ButtonGroup')).toEqual(['orientation', 'loop', ...ACCESSIBILITY]);
       expect(names('Chip')).toEqual(['label', 'variant', 'pressed', 'disabled', ...ACCESSIBILITY]);
@@ -193,10 +196,25 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   );
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Icon and Stack neither',
+    '%s: the Badge tool takes its tool description, an optional label string and the five variants',
+    (provider) => {
+      const { description, parameters } = tool(provider, 'Badge');
+      expect(description).toBe(badgeDescriptor.toolDescription);
+      expect(description).toContain('`accessibilityLabel`');
+      const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
+      expect(parameters.properties.label?.type).toEqual(optionalString);
+      expect(parameters.properties.variant?.enum).toEqual(
+        expect.arrayContaining(['neutral', 'info', 'success', 'warning', 'danger']),
+      );
+      if (provider !== 'openai') expect(parameters.required ?? []).not.toContain('label');
+    },
+  );
+
+  test.each([...TOOL_PROVIDERS])(
+    '%s: Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Icon and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
-      for (const name of ['Button', 'ButtonGroup', 'Chip', 'IconButton', 'Separator']) {
+      for (const name of ['Badge', 'Button', 'ButtonGroup', 'Chip', 'IconButton', 'Separator']) {
         const { properties, required } = tool(provider, name).parameters;
         expect(properties.accessibility).toBeUndefined();
         expect(ACCESSIBILITY.map((parameter) => properties[parameter]?.type)).toEqual([optionalString, optionalString]);

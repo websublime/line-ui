@@ -1,6 +1,6 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
-// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5), ButtonGroup (C6), Alert (C7)
-// and Chip (C8) through the `line` catalog.
+// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5), ButtonGroup (C6), Alert (C7),
+// Chip (C8) and Badge (C9) through the `line` catalog.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
@@ -53,9 +53,10 @@ export const basicShowcase: A2uiMessage[] = [
 ];
 
 /**
- * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip and Alert under the `line` id. The
- * Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip takes its text
- * from `label` and binds `pressed` to the data model.
+ * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge and Alert under the `line`
+ * id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip takes its
+ * text from `label` and binds `pressed` to the data model. One Badge binds its count `label` to the data model, and a
+ * dot Badge with no `label` is named by its `accessibility.label`.
  */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
@@ -151,7 +152,7 @@ export const lineShowcase: A2uiMessage[] = [
       orientation: 'horizontal',
       align: 'center',
       gap: '2',
-      children: ['inStock', 'freeShipping'],
+      children: ['inStock', 'freeShipping', 'results', 'fresh'],
     },
     { id: 'inStock', component: 'Chip', label: 'In stock', pressed: { path: '/filters/inStock' } },
     {
@@ -161,8 +162,10 @@ export const lineShowcase: A2uiMessage[] = [
       variant: 'primary',
       pressed: { path: '/filters/freeShipping' },
     },
+    { id: 'results', component: 'Badge', label: { path: '/filters/results' }, variant: 'info' },
+    { id: 'fresh', component: 'Badge', variant: 'success', accessibility: { label: 'New arrivals' } },
   ]),
-  data('/filters', { inStock: true, freeShipping: false }),
+  data('/filters', { inStock: true, freeShipping: false, results: '24' }),
 ];
 
 /** An A2UI List whose items render as `line-stack` and as other elements. */
@@ -195,15 +198,19 @@ export const mixedListShowcase: A2uiMessage[] = [
   ]),
 ];
 
-/** An unmapped basic type and a Button without a name: two inert placeholders and two `line-a2ui-error`s. */
+/**
+ * An unmapped basic type, a Button without a name and a `line` catalog Badge with neither `label` nor
+ * `accessibility.label`: three inert placeholders and three `line-a2ui-error`s.
+ */
 export const errorShowcase: A2uiMessage[] = [
   create(BASIC_CATALOG_ID),
   components([
-    { id: 'root', component: 'Column', children: ['kept', 'field', 'unnamed'] },
-    text('kept', 'This text renders; the two placeholders after it do not.'),
+    { id: 'root', component: 'Column', children: ['kept', 'field', 'unnamed', 'dot'] },
+    text('kept', 'This text renders; the three placeholders after it do not.'),
     { id: 'field', component: 'TextField', label: 'Name' },
     { id: 'unnamed', component: 'Button', child: 'blank', action: event('x') },
     text('blank', ' '),
+    { id: 'dot', component: 'Badge', catalogId: LINE_CATALOG_ID, variant: 'danger' },
   ]),
 ];
 

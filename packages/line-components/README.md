@@ -231,6 +231,41 @@ because focus on the hidden control falls to the page body. A framework that re-
 can clear `hidden`, so keep the visibility in that state. In a live alert the control's name is part of the live
 region.
 
+## Badge
+
+`<line-badge>` is a small, non-interactive status marker: a count such as "5", a short label such as "Beta", or a
+dot. Write the count or the label as text in the default slot; a badge whose slot holds no element and no text other
+than whitespace draws as a dot and reflects `data-empty` and `:state(empty)` on the host. The badge formats no
+number, so write a capped count yourself, such as "99+". It takes no focus and handles no key.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `variant` | `neutral`, `info`, `success`, `warning`, `danger` | `neutral` |
+| `aria-label`, `aria-labelledby` | name the badge, which then has the `img` role | none |
+
+```html
+<line-button>Inbox <line-badge slot="suffix" variant="danger">5</line-badge></line-button>
+<line-badge variant="info">Beta</line-badge>
+<line-badge variant="success" aria-label="Online"></line-badge>
+<line-badge aria-live="polite">3</line-badge>
+```
+
+A count or a label has no role: it is read as text where it sits, and inside a button or link it joins that
+control's name, such as "Inbox 5". A dot is hidden from assistive technology. A non-blank `aria-label` or an
+`aria-labelledby` on the host gives any badge the `img` role with that name, through `ElementInternals`, so an author
+`role` or `aria-hidden` on the host wins. Name a dot whose meaning nothing nearby states, and state a tone in words
+too, because colour alone does not reach every user. The badge announces nothing when its text changes; for a count
+that must be heard, set `aria-live="polite"` on the host before the count changes. The badge stays inline: place it
+over another element through that component's slot, such as Button's `suffix`, or with your own CSS.
+
+`variant` sets `--line-badge-bg` and `--line-badge-color`, the soft fill and text of a count or a label, and
+`--line-badge-dot-color`, the solid fill of a dot, from the `line-themes` role aliases, such as `var(--line-danger-bg)`,
+`var(--line-danger-text)` and `var(--line-danger-solid)`; `neutral` uses the `gray` role. Without `line-themes`
+a count keeps a transparent fill and the inherited text colour, and a dot draws in `currentColor`.
+`--line-badge-radius`, `--line-badge-height`, `--line-badge-padding-inline`, `--line-badge-font-size`,
+`--line-badge-font-weight` and `--line-badge-dot-size` default to `--line-radius-round`, `--line-size-4`,
+`--line-size-1`, `--line-font-size-0`, `--line-font-weight-5` and `--line-size-2`. `::part(root)` reaches the box.
+
 ## Chip
 
 `<line-chip>` is a compact toggle button for a category, a filter or a selection. Each press turns it on or off. It

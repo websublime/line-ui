@@ -22,6 +22,9 @@ interface ManifestModule {
     tagName?: string;
     members?: { name: string; privacy?: string; inheritedFrom?: { name: string } }[];
     events?: { name: string }[];
+    slots?: { name: string }[];
+    cssParts?: { name: string }[];
+    cssProperties?: { name: string }[];
   }[];
   exports?: { kind: string }[];
 }
@@ -159,5 +162,31 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(fields).toEqual(['variant', 'pressed', 'disabled', 'ariaLabel', 'ariaDescription']);
     expect(members.map((member) => member.name)).not.toContain('focusVisible');
     expect(declaration?.events?.map((event) => event.name)).toEqual(['line-change']);
+  });
+
+  test('line-badge resolves to src/badge/badge.ts', () => {
+    const badge = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-badge'),
+    );
+    expect(badge?.path).toBe('src/badge/badge.ts');
+    expect(paths.has('src/badge/badge.ts')).toBe(true);
+  });
+
+  test('line-badge declares variant as its only public field, no internals member and no event', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-badge');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual(['variant']);
+    const names = members.map((member) => member.name);
+    expect(names).not.toContain('role');
+    expect(names).not.toContain('ariaHidden');
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root']);
+    expect(declaration?.cssProperties).toHaveLength(9);
   });
 });
