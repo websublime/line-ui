@@ -8,8 +8,9 @@
  * catalog; each agent-exposed C5–C20 row adds its component to the stories' render fixture and to this file
  * (§6.C.6). The List stories also prove axe's list rules: `aria-required-children` on the `role="list"` host and
  * `aria-required-parent` on each item pass. The Line catalog story also shows the IconButton named by its
- * `accessibility.label`, C6 (ButtonGroup) as a named toolbar with `loop` that roves over its IconButtons, and C7
- * (Alert) with its five zones filled, no live role, and a dismiss IconButton that hides it.
+ * `accessibility.label`, C6 (ButtonGroup) as a named toolbar with `loop` that roves over its IconButtons, C7
+ * (Alert) with its five zones filled, no live role, and a dismiss IconButton that hides it, and C8 (Chip) with its
+ * `label` text in the default slot and a `pressed` bound to the data model.
  *
  * @module __tests__/a11y/a2ui-surface.e2e
  */
@@ -22,7 +23,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 21,
+  'agent-ui-a2ui-surface--line-catalog': 24,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -51,7 +52,7 @@ async function openSurfaceStory(page: Page, id: SurfaceStoryId): Promise<void> {
   await expect(surface.locator('[data-line-a2ui-placeholder="pending"]')).toHaveCount(0);
   await expect(
     surface.locator(
-      ':is(line-alert, line-button, line-button-group, line-icon, line-icon-button, line-separator, line-stack)',
+      ':is(line-alert, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
     ),
   ).toHaveCount(SURFACE_STORIES[id]);
   await expect(surface).not.toHaveAttribute('aria-busy', 'true');
@@ -143,4 +144,24 @@ test('the Line catalog Alert hides itself when its dismiss IconButton is activat
   await alert.locator('line-icon-button[aria-label="Dismiss"]').click();
   await expect(alert).toHaveAttribute('hidden', '');
   await expect(alert).toBeHidden();
+});
+
+test('the Line catalog story renders each Chip from its label and its bound pressed, and a press flips it', async ({
+  page,
+}) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
+  const chips = page.locator('#storybook-root line-a2ui-surface line-chip');
+  await expect(chips).toHaveCount(2);
+  const inStock = chips.first();
+  const freeShipping = chips.nth(1);
+  await expect(inStock).toHaveText('In stock');
+  await expect(inStock.getByRole('button')).toHaveAccessibleName('In stock');
+  await expect(inStock.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
+  await expect(freeShipping).toHaveAttribute('variant', 'primary');
+  await expect(freeShipping.getByRole('button')).toHaveAccessibleName('Free shipping');
+  await expect(freeShipping.getByRole('button')).toHaveAttribute('aria-pressed', 'false');
+
+  await freeShipping.click();
+  await expect(freeShipping.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
+  await expect(inStock.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
 });
