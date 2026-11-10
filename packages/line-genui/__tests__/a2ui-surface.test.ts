@@ -920,6 +920,16 @@ describe('Chip (`0008-chip.md` Agent contract; §6.G.4; §12 AM-092)', () => {
     expect(errors).toEqual([]);
   });
 
+  test('a bound label with markup renders as plain text, as Text does without markdownRenderer', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(create(LINE_CATALOG_ID), components([chip({ label: { path: '/label' } })]), data('/label', '<b>x</b>'));
+    const host = surface.querySelector('line-chip') as Chip;
+    expect(errors).toEqual([]);
+    expect(host.querySelector('b')).toBeNull();
+    expect(host.textContent).toBe('<b>x</b>');
+    expect(host.innerHTML).toBe('&lt;b&gt;x&lt;/b&gt;');
+  });
+
   test('the label text names the inner button, and accessibility.label wins as the host aria-label', async () => {
     const { surface } = await render([chip({ accessibility: { label: 'In-stock items', description: 'Filter' } })], {
       catalogId: LINE_CATALOG_ID,
