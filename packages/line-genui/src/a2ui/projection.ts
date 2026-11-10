@@ -184,11 +184,13 @@ function childText(node: ComponentNode): string | undefined {
 }
 
 /**
- * The string of a text-binding prop, the "textProp" name source; `undefined` while the prop is bound and its value
- * is `undefined`, such as a path the data model does not hold yet (§6.G.4 Accessibility; `0008-chip.md` AM-001).
+ * The string of a text-binding prop, the "textProp" name source; `undefined` while the prop is bound to a path and
+ * its value is `undefined`, such as a path the data model does not hold yet (§6.G.4 Accessibility; `0008-chip.md`
+ * AM-001). `web_core` gives an omitted optional prop a read-only binding of `undefined`, which is no pending binding,
+ * so it counts as an empty string (`0007-badge.md` F10).
  */
 function boundText(value: unknown): string | undefined {
-  return value instanceof ResolvedBinding && value.value === undefined ? undefined : text(unwrap(value));
+  return value instanceof WritableBinding && value.value === undefined ? undefined : text(unwrap(value));
 }
 
 /** One node's projection. */

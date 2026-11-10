@@ -18,6 +18,7 @@
 import { describe, expect, test } from 'bun:test';
 import componentsManifest from '@websublime/line-components/custom-elements.json' with { type: 'json' };
 import {
+  badgeDescriptor,
   buttonDescriptor,
   chipDescriptor,
   commonProp,
@@ -71,8 +72,8 @@ describe('CEM drift: descriptors against the built line-components manifest (§6
   });
 
   test('a descriptor whose tag the manifest lacks fails', () => {
-    const badge = variant({ ...buttonDescriptor, name: 'Badge', tag: 'line-badge' }, {});
-    expect(driftViolations([badge], manifest)).toEqual([{ tag: 'line-badge', kind: 'element', name: 'line-badge' }]);
+    const avatar = variant({ ...buttonDescriptor, name: 'Avatar', tag: 'line-avatar' }, {});
+    expect(driftViolations([avatar], manifest)).toEqual([{ tag: 'line-avatar', kind: 'element', name: 'line-avatar' }]);
   });
 });
 
@@ -177,6 +178,19 @@ describe('CEM drift: text bindings (§6.G.5; §12 AM-092)', () => {
     expect(chipDescriptor.bindings.props.label).toEqual({ kind: 'text' });
     expect(declaredNames('line-chip')).not.toContain('label');
     expect(driftViolations([chipDescriptor], manifest)).toEqual([]);
+  });
+
+  test("Badge's label text binding is skipped and its variant attribute is checked (§6.G.5; AM-092)", () => {
+    expect(badgeDescriptor.bindings.props.label).toEqual({ kind: 'text' });
+    expect(declaredNames('line-badge')).not.toContain('label');
+    expect(declaredNames('line-badge')).toContain('variant');
+    expect(driftViolations([badgeDescriptor], manifest)).toEqual([]);
+    const tone = variant(badgeDescriptor, {
+      bindings: { props: { label: { kind: 'text' }, variant: { kind: 'attribute', name: 'tone' } } },
+    });
+    expect(driftViolations([tone], manifest)).toEqual([
+      { tag: 'line-badge', prop: 'variant', kind: 'attribute', name: 'tone' },
+    ]);
   });
 });
 
