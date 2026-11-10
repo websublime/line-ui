@@ -68,6 +68,10 @@ the heavier one, and a class only ever moves up mid-task.
   states the old fact in one commit. It is done only when a grep for the old framing returns **zero live
   hits**. Live excludes amendment tables, revision logs, retrospectives, research notes, the ledger's `AM`
   column, and git history; those keep the old name as record.
+- **Line locators follow the lines.** A change to ARCHITECTURE or the PRD that moves lines realigns, in the
+  same PR, every live `docs/ARCHITECTURE.md:N` and `docs/PRD.md:N` locator into the moved lines, resolved by
+  the text it cites. Live is as in the checklist above; the ledger and `docs/context/` also keep theirs as
+  record. Each spec it touches gets one `AM-nnn` row.
 - **Genuine forks go to Miguel** through the question tool (the harness's ask/AskUser tool). Defaults you can
   pick yourself, you pick and you say which you picked. Each option names the concrete thing it decides.
 
