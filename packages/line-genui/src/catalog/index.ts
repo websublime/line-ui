@@ -14,6 +14,7 @@ import { commonProp, componentSchema, defineDescriptor, type LineDescriptor } fr
 import { alertDescriptor } from './descriptors/alert.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { buttonGroupDescriptor } from './descriptors/button-group.js';
+import { chipDescriptor } from './descriptors/chip.js';
 import { iconDescriptor } from './descriptors/icon.js';
 import { iconButtonDescriptor } from './descriptors/icon-button.js';
 import { separatorDescriptor } from './descriptors/separator.js';
@@ -57,6 +58,7 @@ export type {
   NameSource,
   SlotMap,
   SurfaceLookup,
+  TextBinding,
 } from './descriptor.js';
 export type {
   BasicImplementation,
@@ -83,6 +85,7 @@ export {
   basicImplementations,
   buttonDescriptor,
   buttonGroupDescriptor,
+  chipDescriptor,
   commonProp,
   componentSchema,
   defineDescriptor,
@@ -104,6 +107,7 @@ export const descriptors: readonly LineDescriptor[] = [
   alertDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
+  chipDescriptor,
   iconDescriptor,
   iconButtonDescriptor,
   separatorDescriptor,

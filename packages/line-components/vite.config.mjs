@@ -11,6 +11,7 @@ export default mergeConfig(
       'alert/index': 'src/alert/index.ts',
       'button/index': 'src/button/index.ts',
       'button-group/index': 'src/button-group/index.ts',
+      'chip/index': 'src/chip/index.ts',
       'icon/index': 'src/icon/index.ts',
       'icon-button/index': 'src/icon-button/index.ts',
       'separator/index': 'src/separator/index.ts',

@@ -15,10 +15,10 @@
  * @module __tests__/a2ui-surface
  */
 
-import { afterEach, describe, expect, test } from 'bun:test';
+import { afterEach, beforeAll, describe, expect, test } from 'bun:test';
 import { a2uiIconMap } from '@websublime/line-icons/a2ui';
 import { LineA2uiSurface } from '../src/a2ui/index.js';
-import { BASIC_CATALOG_ID, LINE_CATALOG_ID } from '../src/catalog/index.js';
+import { BASIC_CATALOG_ID, chipDescriptor, LINE_CATALOG_ID } from '../src/catalog/index.js';
 import {
   action,
   checkClientMessage,
@@ -883,6 +883,139 @@ describe('Alert (`0006-alert.md` Agent contract)', () => {
   test('the basic catalog keeps no route to line-alert (decision D6)', async () => {
     const { surface, errors } = await render([{ id: 'root', component: 'Alert', children: [] }]);
     expect(surface.querySelector('line-alert')).toBeNull();
+    expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+  });
+});
+
+describe('Chip (`0008-chip.md` Agent contract; §6.G.4; §12 AM-092)', () => {
+  type Chip = HTMLElement & { pressed: boolean; updateComplete: Promise<unknown> };
+  const chip = (extra: Message = {}): Message => ({ id: 'root', component: 'Chip', label: 'In stock', ...extra });
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so the chip is
+  // defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => chipDescriptor.load());
+
+  test('renders line-chip with its label text in the default slot and its variant and disabled attributes', async () => {
+    const { surface, errors } = await render([chip({ variant: 'primary', disabled: true })], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    expect(errors).toEqual([]);
+    const host = surface.querySelector('line-chip') as Chip;
+    expect([host.getAttribute('variant'), host.getAttribute('disabled')]).toEqual(['primary', '']);
+    expect([...host.childNodes].map((node) => [node.nodeType, node.textContent])).toEqual([
+      [Node.TEXT_NODE, 'In stock'],
+    ]);
+  });
+
+  test('a bound label rewrites the same text node, and the element stays', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(create(LINE_CATALOG_ID), components([chip({ label: { path: '/label' } })]), data('/label', 'In stock'));
+    const host = surface.querySelector('line-chip') as Chip;
+    const node = host.firstChild;
+    expect(host.textContent).toBe('In stock');
+    await feed(data('/label', 'Free shipping'));
+    expect(surface.querySelector('line-chip')).toBe(host);
+    expect(host.firstChild).toBe(node);
+    expect(host.textContent).toBe('Free shipping');
+    expect(errors).toEqual([]);
+  });
+
+  test('a bound label with markup renders as plain text, as Text does without markdownRenderer', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(create(LINE_CATALOG_ID), components([chip({ label: { path: '/label' } })]), data('/label', '<b>x</b>'));
+    const host = surface.querySelector('line-chip') as Chip;
+    expect(errors).toEqual([]);
+    expect(host.querySelector('b')).toBeNull();
+    expect(host.textContent).toBe('<b>x</b>');
+    expect(host.innerHTML).toBe('&lt;b&gt;x&lt;/b&gt;');
+  });
+
+  test('the label text names the inner button, and accessibility.label wins as the host aria-label', async () => {
+    const { surface } = await render([chip({ accessibility: { label: 'In-stock items', description: 'Filter' } })], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    await customElements.whenDefined('line-chip');
+    const host = surface.querySelector('line-chip') as Chip;
+    await host.updateComplete;
+    expect(host.getAttribute('aria-label')).toBe('In-stock items');
+    expect(host.getAttribute('aria-description')).toBe('Filter');
+    const inner = host.shadowRoot?.querySelector('button');
+    expect(inner?.getAttribute('aria-label')).toBe('In-stock items');
+    const slot = host.shadowRoot?.querySelector<HTMLSlotElement>('[part="label"] > slot:not([name])');
+    expect(slot?.assignedNodes().map((each) => each.textContent)).toEqual(['In stock']);
+  });
+
+  test('a blank label without accessibility.label renders a placeholder and raises MISSING_ACCESSIBLE_NAME', async () => {
+    for (const label of ['', '  ']) {
+      const { surface, errors } = await render([chip({ label })], { catalogId: LINE_CATALOG_ID });
+      expect(surface.querySelector('line-chip')).toBeNull();
+      const placeholder = surface.querySelector('[data-line-a2ui-placeholder="missing-name"]') as HTMLElement;
+      expect(placeholder.inert).toBe(true);
+      expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
+      expect(errors[0]?.error.componentId).toBe('root');
+      surface.remove();
+    }
+  });
+
+  test('a blank label with accessibility.label renders an empty chip named by its host aria-label', async () => {
+    const { surface, errors } = await render([chip({ label: '', accessibility: { label: 'In stock' } })], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-chip aria-label="In stock"></line-chip>');
+  });
+
+  test('a label bound to a path the model does not hold yet keeps the node hidden without an error (AM-001)', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(create(LINE_CATALOG_ID), components([chip({ label: { path: '/label' } })]));
+    const pending = surface.querySelector('[data-line-a2ui-placeholder="pending"]') as HTMLElement;
+    expect(pending.hidden).toBe(true);
+    expect(surface.querySelector('line-chip')).toBeNull();
+    expect(errors).toEqual([]);
+    await feed(data('/label', 'In stock'));
+    expect(surface.querySelector('[data-line-a2ui-placeholder]')).toBeNull();
+    expect(surface.querySelector('line-chip')?.textContent).toBe('In stock');
+    await feed(data('/label', ' '));
+    expect(surface.querySelector('line-chip')).toBeNull();
+    expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
+  });
+
+  test('a bound pressed follows a user click through line-change', async () => {
+    const { feed, surface, session } = mount();
+    await feed(
+      message({ createSurface: { surfaceId: SURFACE, catalogId: LINE_CATALOG_ID, sendDataModel: true } }),
+      components([chip({ pressed: { path: '/filters/inStock' } })]),
+      data('/filters/inStock', false),
+    );
+    await customElements.whenDefined('line-chip');
+    const host = surface.querySelector('line-chip') as Chip;
+    await host.updateComplete;
+    expect(host.pressed).toBe(false);
+    host.click();
+    await tick();
+    expect(host.pressed).toBe(true);
+    expect(session.dataModel(SURFACE)).toMatchObject({ surfaces: { [SURFACE]: { filters: { inStock: true } } } });
+    await feed(data('/filters/inStock', false));
+    expect(host.pressed).toBe(false);
+  });
+
+  test('a node without label, or with child, action or an unknown variant, is rejected by the strict schema', async () => {
+    for (const node of [
+      { id: 'root', component: 'Chip', accessibility: { label: 'In stock' } },
+      chip({ child: 'text' }),
+      chip({ action: action('toggle') }),
+      chip({ variant: 'borderless' }),
+    ]) {
+      const { surface, errors } = await render([node], { catalogId: LINE_CATALOG_ID });
+      expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+      expect(surface.querySelector('line-chip')).toBeNull();
+      surface.remove();
+    }
+  });
+
+  test('the basic catalog keeps no route to line-chip (decision D1)', async () => {
+    const { surface, errors } = await render([chip()]);
+    expect(surface.querySelector('line-chip')).toBeNull();
     expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
   });
 });

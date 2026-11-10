@@ -61,11 +61,16 @@ function ajvWith(catalog: Json): Ajv2020 {
 const document = lineCatalogDocument(descriptors);
 
 /** The catalog names of the agent-exposed descriptors, in catalog-name order. */
-const LINE_COMPONENTS = ['Alert', 'Button', 'ButtonGroup', 'Icon', 'IconButton', 'Separator', 'Stack'];
+const LINE_COMPONENTS = ['Alert', 'Button', 'ButtonGroup', 'Chip', 'Icon', 'IconButton', 'Separator', 'Stack'];
 
 /** A tree of `line` components, as an agent sends it. */
 const components: Json[] = [
-  { id: 'root', component: 'Stack', orientation: 'horizontal', children: ['save', 'rule', 'close', 'zoom', 'notice'] },
+  {
+    id: 'root',
+    component: 'Stack',
+    orientation: 'horizontal',
+    children: ['save', 'rule', 'close', 'zoom', 'notice', 'in-stock'],
+  },
   { id: 'save', component: 'Button', variant: 'primary', child: 'save-icon', action: { event: { name: 'save' } } },
   { id: 'save-icon', component: 'Icon', name: { path: '/icon' } },
   { id: 'rule', component: 'Separator', decorative: true },
@@ -105,6 +110,7 @@ const components: Json[] = [
     accessibility: { label: 'Retry payment' },
     action: { event: { name: 'retry' } },
   },
+  { id: 'in-stock', component: 'Chip', label: 'In stock', variant: 'primary', pressed: { path: '/filters/inStock' } },
 ];
 
 /** The stream that renders `components` on a `line` surface. */
@@ -171,6 +177,11 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
     expect(component({ id: 'a', component: 'Alert', variant: 'error' })).toBe(false);
     expect(component({ id: 'a', component: 'Alert', live: 'assertive' })).toBe(false);
     expect(component({ id: 'a', component: 'Alert', title: ['t1', 't2'] })).toBe(false);
+    expect(component({ id: 'c', component: 'Chip', label: { path: '/label' }, disabled: true })).toBe(true);
+    expect(component({ id: 'c', component: 'Chip', pressed: true })).toBe(false);
+    expect(component({ id: 'c', component: 'Chip', label: 'x', variant: 'borderless' })).toBe(false);
+    expect(component({ id: 'c', component: 'Chip', label: 'x', child: 'text' })).toBe(false);
+    expect(component({ id: 'c', component: 'Chip', label: 'x', action: { event: { name: 'x' } } })).toBe(false);
   });
 
   test('leaves out a descriptor with agentExposed: false', () => {

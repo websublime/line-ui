@@ -35,6 +35,10 @@
       "types": "./dist/button-group/index.d.ts",
       "import": "./dist/button-group/index.js"
     },
+    "./chip": {
+      "types": "./dist/chip/index.d.ts",
+      "import": "./dist/chip/index.js"
+    },
     "./icon": {
       "types": "./dist/icon/index.d.ts",
       "import": "./dist/icon/index.js"
@@ -58,6 +62,7 @@
     "@websublime/line-tokens": "workspace:^",
     "@websublime/line-utils": "workspace:^",
     "@zag-js/core": "^1.47.0",
+    "@zag-js/toggle": "^1.47.0",
     "lit": "^3.3.3"
   },
   "devDependencies": {

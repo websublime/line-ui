@@ -98,12 +98,13 @@ function publicNames(element: ManifestDeclaration): Record<NameKind, ReadonlySet
 
 /**
  * Every name the binding, slot and action maps of `descriptor` hold, never one from the prop schema. A surface
- * lookup contributes the members it sets, not its surface property (§12 AM-072).
+ * lookup contributes the members it sets, not its surface property (§12 AM-072), and a text binding names no member
+ * (§12 AM-092).
  */
 function namedItems(descriptor: LineDescriptor): NamedItem[] {
   const { tag, bindings, slots, actions } = descriptor;
   const members = Object.entries(bindings.props).flatMap(([prop, binding]): NamedItem[] => {
-    if (binding === undefined) return [];
+    if (binding === undefined || binding.kind === 'text') return [];
     const targets = binding.kind === 'surfaceLookup' ? binding.sets : [binding];
     return targets.map(({ kind, name }) => ({ tag, prop, kind, name }));
   });
