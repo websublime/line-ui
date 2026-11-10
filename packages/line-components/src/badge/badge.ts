@@ -47,8 +47,9 @@ const holdsContent = (nodes: Iterable<Node>): boolean => {
  *
  * @csspart root - The box: fill, radius, padding and text; the dot while the slot is empty.
  *
- * @cssprop [--line-badge-bg=var(--line-gray-solid)] - Fill of `root`; `info`, `success`, `warning` and `danger` use their role, such as `var(--line-danger-solid)`. An unthemed dot falls back to `currentColor`.
- * @cssprop [--line-badge-color=var(--line-gray-contrast)] - Text colour of `root`; each variant uses its role, such as `var(--line-danger-contrast)`.
+ * @cssprop [--line-badge-bg=var(--line-gray-bg)] - Fill of `root` while it holds text; `info`, `success`, `warning` and `danger` use their role, such as `var(--line-danger-bg)`.
+ * @cssprop [--line-badge-color=var(--line-gray-text)] - Text colour of `root`; each variant uses its role, such as `var(--line-danger-text)`.
+ * @cssprop [--line-badge-dot-color=var(--line-gray-solid)] - Fill of the dot; each variant uses its role, such as `var(--line-danger-solid)`. An unthemed dot falls back to `currentColor`.
  * @cssprop [--line-badge-radius=var(--line-radius-round)] - Corner radius of `root`.
  * @cssprop [--line-badge-height=var(--line-size-4)] - Minimum block and inline size of `root`, so one character draws a circle.
  * @cssprop [--line-badge-padding-inline=var(--line-size-1)] - Inline padding of `root`.
@@ -65,8 +66,9 @@ export class LineBadge extends LineElement {
     commonReset,
     css`
       :host {
-        --line-badge-bg: var(--line-gray-solid);
-        --line-badge-color: var(--line-gray-contrast);
+        --line-badge-bg: var(--line-gray-bg);
+        --line-badge-color: var(--line-gray-text);
+        --line-badge-dot-color: var(--line-gray-solid);
         --line-badge-radius: var(--line-radius-round);
         --line-badge-height: var(--line-size-4);
         --line-badge-padding-inline: var(--line-size-1);
@@ -82,23 +84,27 @@ export class LineBadge extends LineElement {
       }
 
       :host([variant='info']) {
-        --line-badge-bg: var(--line-info-solid);
-        --line-badge-color: var(--line-info-contrast);
+        --line-badge-bg: var(--line-info-bg);
+        --line-badge-color: var(--line-info-text);
+        --line-badge-dot-color: var(--line-info-solid);
       }
 
       :host([variant='success']) {
-        --line-badge-bg: var(--line-success-solid);
-        --line-badge-color: var(--line-success-contrast);
+        --line-badge-bg: var(--line-success-bg);
+        --line-badge-color: var(--line-success-text);
+        --line-badge-dot-color: var(--line-success-solid);
       }
 
       :host([variant='warning']) {
-        --line-badge-bg: var(--line-warning-solid);
-        --line-badge-color: var(--line-warning-contrast);
+        --line-badge-bg: var(--line-warning-bg);
+        --line-badge-color: var(--line-warning-text);
+        --line-badge-dot-color: var(--line-warning-solid);
       }
 
       :host([variant='danger']) {
-        --line-badge-bg: var(--line-danger-solid);
-        --line-badge-color: var(--line-danger-contrast);
+        --line-badge-bg: var(--line-danger-bg);
+        --line-badge-color: var(--line-danger-text);
+        --line-badge-dot-color: var(--line-danger-solid);
       }
 
       [part='root'] {
@@ -122,7 +128,7 @@ export class LineBadge extends LineElement {
         block-size: var(--line-badge-dot-size);
         inline-size: var(--line-badge-dot-size);
         padding: 0;
-        background-color: var(--line-badge-bg, currentColor);
+        background-color: var(--line-badge-dot-color, currentColor);
       }
     `,
   ];

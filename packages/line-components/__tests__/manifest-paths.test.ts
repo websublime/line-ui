@@ -187,6 +187,6 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.events ?? []).toEqual([]);
     expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
     expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root']);
-    expect(declaration?.cssProperties).toHaveLength(8);
+    expect(declaration?.cssProperties).toHaveLength(9);
   });
 });

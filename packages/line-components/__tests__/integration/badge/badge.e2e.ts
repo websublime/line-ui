@@ -87,16 +87,14 @@ function tab(browserName: string): string {
 /** Every palette step the badge reads, each its own colour, so a wrong step or role shows (0011-separator.md AM-001). */
 const ROLES = { gray: 10, info: 20, success: 30, warning: 40, danger: 50 } as const;
 const PALETTE = { gray: ['sand', 'slate'], info: ['blue'], success: ['green'], warning: ['amber'], danger: ['red'] };
-const SOLID = 9;
-const CONTRAST = 99;
+const STEPS = { bg: 3, solid: 9, text: 12 } as const;
 const rgb = (role: keyof typeof ROLES, step: number) => `rgb(${ROLES[role]}, ${step}, 99)`;
 
 const PALETTE_STYLE = `<style>html { ${Object.entries(PALETTE)
   .flatMap(([role, hues]) =>
-    hues.flatMap((hue) => [
-      `--line-${hue}-${SOLID}: ${rgb(role as keyof typeof ROLES, SOLID)};`,
-      `--line-${hue}-contrast: ${rgb(role as keyof typeof ROLES, CONTRAST)};`,
-    ]),
+    hues.flatMap((hue) =>
+      Object.values(STEPS).map((step) => `--line-${hue}-${step}: ${rgb(role as keyof typeof ROLES, step)};`),
+    ),
   )
   .join(' ')} }</style>`;
 
@@ -113,7 +111,7 @@ test.describe('with line-tokens and line-themes', () => {
     await open(page);
   });
 
-  test('each variant takes its solid role fill and contrast text; a missing or unknown variant takes gray', async ({
+  test('a text badge takes the soft fill and text, a dot its solid step; a missing or unknown variant takes gray (AM-001)', async ({
     page,
   }) => {
     // `line-colors` is not a `line-components` dependency, so the page sets the palette steps the role aliases read
@@ -137,9 +135,9 @@ test.describe('with line-tokens and line-themes', () => {
     );
     for (const [id, , role] of cases) {
       const root = await computed(page, ['background-color', 'color'], 'root', `#${id}`);
-      expect({ id, ...root }).toEqual({ id, 'background-color': rgb(role, SOLID), color: rgb(role, CONTRAST) });
+      expect({ id, ...root }).toEqual({ id, 'background-color': rgb(role, STEPS.bg), color: rgb(role, STEPS.text) });
       const dot = await computed(page, ['background-color'], 'root', `#dot-${id}`);
-      expect({ id, ...dot }).toEqual({ id, 'background-color': rgb(role, SOLID) });
+      expect({ id, ...dot }).toEqual({ id, 'background-color': rgb(role, STEPS.solid) });
     }
   });
 
