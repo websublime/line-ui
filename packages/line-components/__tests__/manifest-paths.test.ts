@@ -126,4 +126,13 @@ describe('custom-elements.json in the packed tarball', () => {
       .find((each) => each.tagName === 'line-alert');
     expect(declaration?.members?.map((member) => member.name)).not.toContain('role');
   });
+
+  test('line-button-group lists no role member: its internals role is no element field', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-button-group');
+    const names = declaration?.members?.map((member) => member.name);
+    expect(names).not.toContain('role');
+    expect(names).not.toContain('ariaOrientation');
+  });
 });

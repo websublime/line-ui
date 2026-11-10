@@ -99,11 +99,11 @@ Every custom property that line://ui authors starts with `--line-`. The prefix k
 
 ## Cascade strategy
 
-Every rule of `line-tokens`, `line-colors` and `line-themes` sits inside one cascade layer named `line`, and that includes every rule of `reset.css`. Inside the layer, every selector uses `:where()`, so it has zero specificity.
+Every rule of `line-tokens`, `line-colors` and `line-themes` sits inside one cascade layer named `line`, and that includes every rule of `reset.css`. Inside the layer, every selector uses `:where()`, so it has zero specificity. The one exception is the `body` rule of the MCP Apps host bridge `line-themes/hosts/mcp-apps.css`.
 
 - `line-tokens` declares its tokens in `:where(html)`. `shadows.css` declares its shadow tokens in `:where(html, [data-accent], [data-gray])`, so each theming scope tints its shadows with its own gray role.
 - `line-colors` declares the palettes in `:where(html)`.
-- `line-themes` declares the role maps in `:where([data-accent="X"])` and `:where([data-gray="Y"])`, the defaults and the auto-pairs in `defaults.css`, the semantic roles in `:where(html)` and the aliases in `:where(html, [data-accent], [data-gray])`.
+- `line-themes` declares the role maps in `:where([data-accent="X"])` and `:where([data-gray="Y"])`, the defaults and the auto-pairs in `defaults.css`, the semantic roles in `:where(html)` and the aliases in `:where(html, [data-accent], [data-gray])`. The MCP Apps host bridge declares its aliases in `:where(html)` and its primitives and `--line-focus-ring` on `body`, still inside the layer.
 
 The browser compares cascade layers before it compares specificity and source order. A rule of yours outside `@layer` beats every rule in `line`, whatever its selector and wherever it loads. A `:where(html)` rule that loads before the packages still wins.
 

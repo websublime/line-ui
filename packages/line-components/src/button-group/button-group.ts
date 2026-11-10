@@ -141,7 +141,7 @@ export class LineButtonGroup extends LineElement {
     // `useDefault` keeps this initial value out of the attribute, so an unknown author value stays (C8).
     this.orientation = 'horizontal';
     this.loop = false;
-    this[INTERNALS].role = 'toolbar';
+    this.#writeRole();
     this.addEventListener('keydown', this.#onKeyDown);
     this.addEventListener('focusin', this.#onFocusIn);
     this.addEventListener('focusout', this.#onFocusOut);
@@ -195,6 +195,19 @@ export class LineButtonGroup extends LineElement {
     this.#ctrl.send({ type: 'SYNC', index: kept >= 0 ? kept : this.#activeIndex, focus: lostFocus });
     // The machine applies `SYNC` in a microtask; `updated()` writes the tab stops after it (spec probe P7).
     this.requestUpdate();
+  }
+
+  /**
+   * The `toolbar` role through `ElementInternals` (decision D1). A private method, so the manifest analyser lists no
+   * `role` field on the element.
+   */
+  #writeRole(): void {
+    this[INTERNALS].role = 'toolbar';
+  }
+
+  /** `ariaOrientation` through `ElementInternals`: `vertical` when vertical, else `null` (the toolbar default). */
+  #writeOrientation(): void {
+    this[INTERNALS].ariaOrientation = this.orientation === 'vertical' ? 'vertical' : null;
   }
 
   /** `tabindex="0"` on the item at `index`, `-1` on the others (decision D3); none while the machine has failed. */
@@ -257,7 +270,7 @@ export class LineButtonGroup extends LineElement {
 
   protected override willUpdate(changed: PropertyValues<this>): void {
     super.willUpdate(changed);
-    this[INTERNALS].ariaOrientation = this.orientation === 'vertical' ? 'vertical' : null;
+    this.#writeOrientation();
   }
 
   protected override firstUpdated(changed: PropertyValues<this>): void {
