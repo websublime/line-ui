@@ -79,6 +79,8 @@ Three tiers of components:
 
 Components require a spec in `docs/specs/` before implementation — see [`COMPONENT-SPEC-TEMPLATE.md`](./docs/specs/COMPONENT-SPEC-TEMPLATE.md).
 
+Participation is governed by the [Code of Conduct](./CODE_OF_CONDUCT.md).
+
 ```bash
 git clone https://github.com/websublime/line-ui.git
 cd line-ui
