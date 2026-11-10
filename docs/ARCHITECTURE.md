@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-11-05
+**Date:** 2026-11-09
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -12,6 +12,10 @@ This document captures the **cross-cutting architectural decisions** that apply 
 
 ## Revision Notes
 
+- **v0.8.25 (2026-11-09)** — Aligned with component spec `0006-alert.md` AM-006 (ledger row `01-C7`, decision by Miguel on 2026-11-09). The change is minimal: one §5 entry.
+  - §5 (CSS Parts Naming Convention) adds `::part(dismiss)`, the wrapper of a consumer-supplied dismiss control, which `<line-alert>` exposes around its `dismiss` slot. It sits beside `::part(close)`, the close button a component renders itself (spec `0006-alert.md` AM-006, sub-decision S9).
+- **v0.8.24 (2026-11-09)** — Aligned with component spec `0006-alert.md` (ledger row `01-C7`, decision by Miguel on 2026-11-09). The change is minimal: one §5 entry.
+  - §5 (CSS Parts Naming Convention) adds `::part(actions)`, the wrapper of a component's action controls, which `<line-alert>` exposes around its `actions` slot (spec `0006-alert.md` Parts, decision D4).
 - **v0.8.23 (2026-11-05)** — Factual correction from component specs `0002-button.md` AM-008 and `0003-icon-button.md` AM-002 (ledger row `01-C5`; the probe ran in chromium, firefox and webkit). The change is minimal: one §14.2 table row, and one §14.8 paragraph, table row and note.
   - §14.2 (Three Layers of Neutralisation) no longer says native pseudo-classes don't work on custom elements: the State reflection row says which ones fall short on the host (§14.8).
   - §14.8 (State Reflection) no longer says native pseudo-classes don't work on custom elements. On the Button and IconButton hosts, `:hover`, `:active` and `:focus` match as on any element, and `:disabled` matches the disabled form-associated `line-button`; `:focus-visible` does not match the host when focus sits on an element in its shadow root, so `data-focus-visible` carries it. The `hovered` row says Button and IconButton reflect no `hovered` state, because `:hover` on the host already works, and a note lists what matches (`packages/line-components/__tests__/integration/state-styling/state-styling.e2e.ts`).
@@ -303,6 +307,7 @@ Because `accent` and `gray` namespaces are independent, multiple colour contexts
 ::part(title)       /* Title */
 ::part(description) /* Description */
 ::part(close)       /* Close button */
+::part(dismiss)     /* Dismiss control wrapper (e.g., alert dismiss slot) */
 ::part(icon)        /* Icon */
 ::part(indicator)   /* State indicator */
 ::part(separator)   /* Separator */
@@ -317,6 +322,7 @@ Because `accent` and `gray` namespaces are independent, multiple colour contexts
 ::part(loading)     /* Loading content wrapper (e.g., button spinner and text) */
 ::part(svg)         /* Root <svg> of an injected graphic (e.g., an icon glyph) */
 ::part(overflow)    /* Overflow indicator (e.g., avatar group +N) */
+::part(actions)     /* Actions wrapper (e.g., alert follow-up buttons) */
 ```
 
 Short, semantic names reused across components. A developer who learns the parts of one component already knows others.

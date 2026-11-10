@@ -11,6 +11,7 @@ import {
   type TargetAttributes,
 } from './basic.js';
 import { commonProp, componentSchema, defineDescriptor, type LineDescriptor } from './descriptor.js';
+import { alertDescriptor } from './descriptors/alert.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { buttonGroupDescriptor } from './descriptors/button-group.js';
 import { iconDescriptor } from './descriptors/icon.js';
@@ -77,6 +78,7 @@ export type {
 };
 export {
   ADVERTISED_VERSIONS,
+  alertDescriptor,
   BASIC_CATALOG_ID,
   basicImplementations,
   buttonDescriptor,
@@ -99,6 +101,7 @@ export {
 
 /** Every component descriptor, in catalog-name order. */
 export const descriptors: readonly LineDescriptor[] = [
+  alertDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
   iconDescriptor,

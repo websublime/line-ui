@@ -6,6 +6,7 @@ that registers one tag. The root entry registers nothing and exports only the ic
 
 | Subpath | Registers |
 |---------|-----------|
+| `@websublime/line-components/alert` | `<line-alert>` |
 | `@websublime/line-components/button` | `<line-button>` |
 | `@websublime/line-components/button-group` | `<line-button-group>` |
 | `@websublime/line-components/icon` | `<line-icon>` |
@@ -179,3 +180,52 @@ The group squares the corners between its buttons by writing their `--line-butto
 `--line-icon-button-radius` tokens; the outer corners take `--line-button-group-radius` (default
 `var(--line-radius-2)`), and `--line-button-group-gap` (default `0`) spaces the buttons. Use a toolbar for three or
 more controls; place fewer side by side with `<line-stack orientation="horizontal">`.
+
+## Alert
+
+`<line-alert>` is an inline box that tells the user about the state of something on the page, such as a saved
+change, a warning or a failed payment. It stays until your code removes it or the user activates its dismiss
+control, and it takes no focus. The `icon`, `title`, default, `actions` and `dismiss` slots take your content: the
+icon sits at the start of the first row, the title above the message beside it, the dismiss control at the end of
+the first row, and the actions in a wrapping row below the message. A zone whose slot is empty takes no space.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `variant` | `neutral`, `info`, `success`, `warning`, `danger` | `neutral` |
+| `live` | `off`, `polite` (the `status` role), `assertive` (the `alert` role) | `off` |
+
+```html
+<line-alert variant="danger" live="assertive">
+  <line-icon slot="icon" library="lucide" name="circle-alert"></line-icon>
+  <h3 slot="title">Payment failed</h3>
+  <p>Check the card number and try again.</p>
+  <line-button slot="actions" variant="primary">Retry</line-button>
+  <line-icon-button slot="dismiss" aria-label="Dismiss">
+    <line-icon library="lucide" name="x"></line-icon>
+  </line-icon-button>
+</line-alert>
+```
+
+With `live` off, the host has no role. `polite` and `assertive` put the `status` or `alert` role on the host through
+`ElementInternals`, with the role's live-region properties, from the moment the alert is inserted; how a screen
+reader announces it is not verified by any automated check. Set `live` before you insert the alert or change its
+text. An author `role` or `aria-live` on the host wins. Name only a live alert, with `aria-label`, because a host without a role takes no name. State the tone
+in words too, such as "Error: …", because colour alone does not reach every user and forced-colors mode draws
+every variant alike.
+
+`variant` sets `--line-alert-bg`, `--line-alert-color`, `--line-alert-border-color` and `--line-alert-icon-color`
+from the `line-themes` role aliases, such as `var(--line-danger-bg)`; `neutral` uses the `gray` role.
+`--line-alert-border-width`, `--line-alert-radius`, `--line-alert-padding` and `--line-alert-gap` default to
+`--line-border-1`, `--line-radius-2`, `--line-size-3` and `--line-size-2`. `::part(root)`, `::part(icon)`,
+`::part(content)`, `::part(title)`, `::part(description)`, `::part(actions)` and `::part(dismiss)` reach the box and
+its zones. Load `@websublime/line-tokens/reset` to zero the margins of slotted headings and paragraphs.
+
+A click on the control in the `dismiss` slot fires `line-dismiss` (`detail` `{}`, bubbling, cancelable, not
+composed). Unless a listener calls `preventDefault()` on it, the alert then sets `hidden` on itself. A click that is
+already cancelled when it reaches the `dismiss` slot, by the control, inside it or in a capture listener, does not
+dismiss; a bubble listener on the host or the document, such as React's root-delegated `onClick`, runs too late, so
+cancel `line-dismiss` to keep the alert shown. You pick the glyph and
+the accessible name. Move focus in the handler to a named target, such as the section heading with `tabindex="-1"`,
+because focus on the hidden control falls to the page body. A framework that re-renders the host from its own state
+can clear `hidden`, so keep the visibility in that state. In a live alert the control's name is part of the live
+region.

@@ -14,6 +14,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import { encode } from 'gpt-tokenizer/encoding/o200k_base';
 import { z } from 'zod';
 import {
+  alertDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
   commonProp,
@@ -98,6 +99,7 @@ describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)',
   test('one tool per agent-exposed descriptor, {name, description, parameters}', () => {
     for (const provider of TOOL_PROVIDERS) {
       expect(tools(provider).map((each) => each.name)).toEqual([
+        'Alert',
         'Button',
         'ButtonGroup',
         'Icon',
@@ -167,6 +169,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   test('each tool carries its literal props, without ComponentId, ChildList or Action props', () => {
     for (const provider of TOOL_PROVIDERS) {
       const names = (name: string) => Object.keys(tool(provider, name).parameters.properties);
+      expect(names('Alert')).toEqual(['variant']);
       expect(names('Button')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('ButtonGroup')).toEqual(['orientation', 'loop', ...ACCESSIBILITY]);
       expect(names('Icon')).toEqual(['name', 'mirror', 'path']);
@@ -177,7 +180,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   });
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Button, ButtonGroup, IconButton and Separator take the optional accessibility strings, Icon and Stack neither',
+    '%s: Button, ButtonGroup, IconButton and Separator take the optional accessibility strings, Alert, Icon and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
       for (const name of ['Button', 'ButtonGroup', 'IconButton', 'Separator']) {
@@ -187,7 +190,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
         if (provider !== 'openai')
           expect(ACCESSIBILITY.filter((parameter) => required?.includes(parameter))).toEqual([]);
       }
-      for (const name of ['Icon', 'Stack']) {
+      for (const name of ['Alert', 'Icon', 'Stack']) {
         const { properties } = tool(provider, name).parameters;
         expect(['accessibility', ...ACCESSIBILITY].filter((parameter) => parameter in properties)).toEqual([]);
       }
@@ -328,10 +331,11 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
     expect(lackedNames(each.description, descriptorNamed(name), each)).toEqual([]);
   });
 
-  test('the guard fails on the agent-facing descriptions the five tool descriptions replace', () => {
+  test('the guard fails on the agent-facing descriptions the six tool descriptions replace', () => {
     for (const provider of TOOL_PROVIDERS) {
       const lacked = (descriptor: LineDescriptor) =>
         lackedNames(descriptor.description, descriptor, tool(provider, descriptor.name));
+      expect(lacked(alertDescriptor)).toEqual(['children', 'title', 'icon', 'actions', 'dismiss', 'title', 'dismiss']);
       expect(lacked(buttonDescriptor)).toEqual(['child', 'accessibility.label']);
       expect(lacked(buttonGroupDescriptor)).toEqual(['children', 'accessibility.label']);
       expect(lacked(iconButtonDescriptor)).toEqual(['child', 'accessibility.label']);
@@ -340,8 +344,9 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
     }
   });
 
-  test('Button, ButtonGroup, IconButton, Separator and Stack emit their toolDescription in place of their description', () => {
+  test('Alert, Button, ButtonGroup, IconButton, Separator and Stack emit their toolDescription in place of their description', () => {
     for (const descriptor of [
+      alertDescriptor,
       buttonDescriptor,
       buttonGroupDescriptor,
       iconButtonDescriptor,
