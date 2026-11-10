@@ -9,6 +9,7 @@ that registers one tag. The root entry registers nothing and exports only the ic
 | `@websublime/line-components/alert` | `<line-alert>` |
 | `@websublime/line-components/button` | `<line-button>` |
 | `@websublime/line-components/button-group` | `<line-button-group>` |
+| `@websublime/line-components/chip` | `<line-chip>` |
 | `@websublime/line-components/icon` | `<line-icon>` |
 | `@websublime/line-components/icon-button` | `<line-icon-button>` |
 | `@websublime/line-components/separator` | `<line-separator>` |
@@ -229,3 +230,48 @@ the accessible name. Move focus in the handler to a named target, such as the se
 because focus on the hidden control falls to the page body. A framework that re-renders the host from its own state
 can clear `hidden`, so keep the visibility in that state. In a live alert the control's name is part of the live
 region.
+
+## Chip
+
+`<line-chip>` is a compact toggle button for a category, a filter or a selection. Each press turns it on or off. It
+renders a native `<button type="button" aria-pressed>` inside its shadow root, so it never submits or resets a form,
+and it is not form-associated. The slotted text names it.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `pressed` | boolean; present is on, absent or `"false"` is off | off |
+| `variant` | `default`, `primary` | `default` |
+| `disabled` | boolean; removes the chip from the tab order and blocks presses | off |
+| `aria-label`, `aria-description` | copied to the inner button | none |
+
+```html
+<line-stack orientation="horizontal" wrap role="group" aria-label="Filters">
+  <line-chip pressed>In stock</line-chip>
+  <line-chip>
+    <line-icon slot="indicator" library="lucide" name="check"></line-icon>
+    Free shipping
+  </line-chip>
+  <line-chip variant="primary">Unread <span slot="suffix">12</span></line-chip>
+</line-stack>
+```
+
+Each press by pointer, Enter or Space flips `pressed` and then fires `line-change` (`detail` `{ value }`, the new
+state, bubbling, not composed). Setting `pressed` from code fires nothing, and a `click` listener that calls
+`preventDefault()` cancels the flip. While `disabled`, no `click` reaches your listeners. Several chips each toggle
+on their own; wrap a set in an element with `role="group"` and an `aria-label`, because Chip has no group role.
+
+The `prefix` slot takes a leading icon, the default slot the label, and the `suffix` slot a count or an icon, never a
+remove button or another control. The `indicator` slot takes a pressed mark, such as a check icon, and renders only
+while the chip is on. The name is the slotted content in that tree order, so a count in `suffix` joins it; a
+decorative `<line-icon>` adds nothing, and the host `aria-label` replaces the whole name.
+
+With `line-themes` loaded, an off chip takes the `gray` role and a pressed chip the soft `accent` role; a `primary`
+chip is an accent outline when off and solid accent when pressed. The four rows set `--line-chip-bg`,
+`--line-chip-color` and `--line-chip-border-color`. `--line-chip-radius`, `--line-chip-border-width`,
+`--line-chip-height`, `--line-chip-padding-inline`, `--line-chip-gap`, `--line-chip-font-size`,
+`--line-chip-font-weight` and `--line-chip-focus-ring` default to `--line-radius-round`, `--line-border-1`,
+`--line-size-6`, `--line-size-3`, `--line-size-1`, `--line-font-size-1`, `--line-font-weight-5` and the focus ring.
+Set a colour token under a state selector, such as `line-chip[data-pressed]`, because a token set on `line-chip`
+alone applies to every state. `::part(root)`, `::part(indicator)` and `::part(label)` reach the inner button and the
+wrappers of the indicator and the label; the state shows as `data-pressed`, `data-disabled` and
+`data-focus-visible` and the matching `:state()` on the host. A `<fieldset disabled>` ancestor does not disable it.
