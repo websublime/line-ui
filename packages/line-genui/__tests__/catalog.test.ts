@@ -1,10 +1,12 @@
 /**
  * The descriptor API of `@websublime/line-genui/catalog` (Phase 1 spec §6.G.1 Acceptance; ledger 01-G1).
  *
- * - The C1–C7 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
+ * - The C1–C8 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
  *   common-type prop as a `$ref` to `common_types.json` and each enum inline, as the component spec tables type
  *   them, and a node that uses the common types parses.
  * - Button's component description and a property description both appear in `Catalog.toJson()`.
+ * - A text binding and a `textProp` name source go together: a descriptor with a text binding has no slot map, and
+ *   each `textProp` source names a prop with a text binding (§12 AM-092).
  * - Importing `@websublime/line-genui/catalog` defines no element. The import runs in a fresh Bun process, so no
  *   module this test run loaded earlier hides a definition. It resolves the built `dist/`, so it needs
  *   `bun run build` first, as the CI unit tier has.
@@ -19,6 +21,7 @@ import {
   alertDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
+  chipDescriptor,
   defineDescriptor,
   descriptors,
   iconButtonDescriptor,
@@ -32,7 +35,7 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
 /**
  * Each descriptor's own props, as the "Descriptor fields" prop schema of its component spec types them: a common
  * type by its `$defs` name, or `enum` for a literal enum (`0002-button.md`, `0004-button-group.md`, `0006-alert.md`,
- * `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`, `0018-stack.md`).
+ * `0008-chip.md`, `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`, `0018-stack.md`).
  */
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   Alert: {
@@ -52,6 +55,7 @@ const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     action: 'Action',
   },
   ButtonGroup: { orientation: 'enum', loop: 'DynamicBoolean', children: 'ChildList' },
+  Chip: { label: 'DynamicString', variant: 'enum', pressed: 'DynamicBoolean', disabled: 'DynamicBoolean' },
   Icon: { name: 'DynamicString', mirror: 'DynamicBoolean', path: 'DynamicString' },
   IconButton: {
     variant: 'enum',
@@ -89,11 +93,12 @@ function definition(doc: Json, name: string): { refs: unknown[]; own: Json } {
 }
 
 describe('descriptors compose with the web_core common types (§6.G.1)', () => {
-  test('the catalog holds the seven descriptors under their catalog names', () => {
+  test('the catalog holds the eight descriptors under their catalog names', () => {
     expect(Object.keys(catalogJson().components as Json).sort()).toEqual([
       'Alert',
       'Button',
       'ButtonGroup',
+      'Chip',
       'Icon',
       'IconButton',
       'Separator',
@@ -242,6 +247,82 @@ describe('the Alert descriptor (`0006-alert.md` Descriptor fields)', () => {
   });
 });
 
+describe('the Chip descriptor (`0008-chip.md` Descriptor fields)', () => {
+  test('is agent-exposed, has no slot map and no action, and binds label as text and pressed as its value', () => {
+    expect(chipDescriptor.agentExposed).toBe(true);
+    expect(chipDescriptor.tag).toBe('line-chip');
+    expect(chipDescriptor.slots).toEqual({});
+    expect(chipDescriptor.actions).toEqual({});
+    expect(chipDescriptor.bindings).toEqual({
+      props: {
+        label: { kind: 'text' },
+        variant: { kind: 'attribute', name: 'variant' },
+        pressed: { kind: 'property', name: 'pressed' },
+        disabled: { kind: 'attribute', name: 'disabled' },
+      },
+      value: { prop: 'pressed', commitEvent: 'line-change' },
+    });
+  });
+
+  test('takes its name from label or accessibility.label, and always sets the host name', () => {
+    expect(chipDescriptor.accessibility).toEqual({
+      requiredName: [{ kind: 'textProp', prop: 'label' }, { kind: 'accessibilityLabel' }],
+      hostNaming: { kind: 'always' },
+    });
+  });
+
+  test('sets no tool description; its 725-character description names only the tool parameters', () => {
+    expect(Object.hasOwn(chipDescriptor, 'toolDescription')).toBe(false);
+    expect(Array.from(chipDescriptor.description).length).toBe(725);
+    const named = Array.from(chipDescriptor.description.matchAll(/`([^`]+)`/g), (match) => match[1]);
+    expect([...new Set(named)]).toEqual([
+      'label',
+      'pressed',
+      'true',
+      'false',
+      'line-change',
+      'variant',
+      'primary',
+      'default',
+      'disabled',
+    ]);
+  });
+
+  test('the schema requires label, takes a bound label and the two variants, and rejects child, action and value', () => {
+    for (const variant of ['default', 'primary']) {
+      expect(chipDescriptor.schema.safeParse({ label: 'In stock', variant }).success).toBe(true);
+    }
+    const node = { label: { path: '/label' }, pressed: { path: '/on' }, disabled: false };
+    expect(chipDescriptor.schema.parse(node)).toEqual(node);
+    expect(chipDescriptor.schema.safeParse({ pressed: true }).success).toBe(false);
+    expect(chipDescriptor.schema.safeParse({ label: 'x', variant: 'borderless' }).success).toBe(false);
+    for (const extra of [{ child: 'text' }, { action: { event: { name: 'x' } } }, { value: true }, { loading: true }]) {
+      expect(chipDescriptor.schema.safeParse({ label: 'x', ...extra }).success).toBe(false);
+    }
+  });
+});
+
+describe('text bindings and textProp name sources (§6.G.1, §6.G.4; §12 AM-092)', () => {
+  const textProps = (descriptor: (typeof descriptors)[number]) =>
+    Object.entries(descriptor.bindings.props).flatMap(([prop, binding]) => (binding?.kind === 'text' ? [prop] : []));
+
+  test('a descriptor with a text binding has no slot map', () => {
+    const withText = descriptors.filter((descriptor) => textProps(descriptor).length > 0);
+    expect(withText.map((descriptor) => descriptor.name)).toEqual(['Chip']);
+    for (const descriptor of withText) expect(descriptor.slots).toEqual({});
+  });
+
+  test('each textProp name source names a prop with a text binding', () => {
+    const sources = descriptors.flatMap((descriptor) =>
+      (descriptor.accessibility.requiredName ?? []).flatMap((source) =>
+        source.kind === 'textProp' ? [{ name: descriptor.name, prop: source.prop, text: textProps(descriptor) }] : [],
+      ),
+    );
+    expect(sources.map(({ name, prop }) => `${name}.${prop}`)).toEqual(['Chip.label']);
+    for (const { prop, text } of sources) expect(text).toContain(prop);
+  });
+});
+
 describe('descriptions reach Catalog.toJson() (§6.G.1; R3 §2.4)', () => {
   test("Button's component description and a property description both appear", () => {
     const { own } = definition(catalogJson(), 'Button');
@@ -265,9 +346,9 @@ describe('agentExposed (§6.G.1 Contract)', () => {
     accessibility: { hostNaming: { kind: 'always' } },
   } as const;
 
-  test('defaults to true, as on every C1–C7 descriptor', () => {
+  test('defaults to true, as on every C1–C8 descriptor', () => {
     expect(defineDescriptor(fixture).agentExposed).toBe(true);
-    expect(descriptors.map((d) => d.agentExposed)).toEqual([true, true, true, true, true, true, true]);
+    expect(descriptors.map((d) => d.agentExposed)).toEqual([true, true, true, true, true, true, true, true]);
   });
 
   test('false keeps its reason', () => {
@@ -298,6 +379,6 @@ describe('importing @websublime/line-genui/catalog (§6.G.1; plan §7.2)', () =>
       child.exited,
     ]);
     expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
-    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 7 });
+    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 8 });
   });
 });

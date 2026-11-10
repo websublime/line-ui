@@ -35,6 +35,10 @@
       "types": "./dist/button-group/index.d.ts",
       "import": "./dist/button-group/index.js"
     },
+    "./chip": {
+      "types": "./dist/chip/index.d.ts",
+      "import": "./dist/chip/index.js"
+    },
     "./icon": {
       "types": "./dist/icon/index.d.ts",
       "import": "./dist/icon/index.js"

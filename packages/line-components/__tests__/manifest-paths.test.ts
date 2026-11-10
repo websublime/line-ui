@@ -18,7 +18,11 @@ import { join, resolve } from 'node:path';
 
 interface ManifestModule {
   path: string;
-  declarations?: { tagName?: string; members?: { name: string }[] }[];
+  declarations?: {
+    tagName?: string;
+    members?: { name: string; privacy?: string; inheritedFrom?: { name: string } }[];
+    events?: { name: string }[];
+  }[];
   exports?: { kind: string }[];
 }
 
@@ -134,5 +138,26 @@ describe('custom-elements.json in the packed tarball', () => {
     const names = declaration?.members?.map((member) => member.name);
     expect(names).not.toContain('role');
     expect(names).not.toContain('ariaOrientation');
+  });
+
+  test('line-chip resolves to src/chip/chip.ts', () => {
+    const chip = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-chip'),
+    );
+    expect(chip?.path).toBe('src/chip/chip.ts');
+    expect(paths.has('src/chip/chip.ts')).toBe(true);
+  });
+
+  test('line-chip declares its five public fields, the line-change event and no focus-visible field', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-chip');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual(['variant', 'pressed', 'disabled', 'ariaLabel', 'ariaDescription']);
+    expect(members.map((member) => member.name)).not.toContain('focusVisible');
+    expect(declaration?.events?.map((event) => event.name)).toEqual(['line-change']);
   });
 });

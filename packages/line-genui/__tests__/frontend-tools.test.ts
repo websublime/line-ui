@@ -17,6 +17,7 @@ import {
   alertDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
+  chipDescriptor,
   commonProp,
   type DescriptorInit,
   defineDescriptor,
@@ -102,6 +103,7 @@ describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)',
         'Alert',
         'Button',
         'ButtonGroup',
+        'Chip',
         'Icon',
         'IconButton',
         'Separator',
@@ -172,6 +174,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
       expect(names('Alert')).toEqual(['variant']);
       expect(names('Button')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('ButtonGroup')).toEqual(['orientation', 'loop', ...ACCESSIBILITY]);
+      expect(names('Chip')).toEqual(['label', 'variant', 'pressed', 'disabled', ...ACCESSIBILITY]);
       expect(names('Icon')).toEqual(['name', 'mirror', 'path']);
       expect(names('IconButton')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('Separator')).toEqual(['orientation', 'decorative', ...ACCESSIBILITY]);
@@ -180,10 +183,20 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   });
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Button, ButtonGroup, IconButton and Separator take the optional accessibility strings, Alert, Icon and Stack neither',
+    '%s: the Chip tool requires its label string and takes its description',
+    (provider) => {
+      const { description, parameters } = tool(provider, 'Chip');
+      expect(description).toBe(chipDescriptor.description);
+      expect(parameters.properties.label?.type).toBe('string');
+      expect(parameters.required).toContain('label');
+    },
+  );
+
+  test.each([...TOOL_PROVIDERS])(
+    '%s: Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Icon and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
-      for (const name of ['Button', 'ButtonGroup', 'IconButton', 'Separator']) {
+      for (const name of ['Button', 'ButtonGroup', 'Chip', 'IconButton', 'Separator']) {
         const { properties, required } = tool(provider, name).parameters;
         expect(properties.accessibility).toBeUndefined();
         expect(ACCESSIBILITY.map((parameter) => properties[parameter]?.type)).toEqual([optionalString, optionalString]);

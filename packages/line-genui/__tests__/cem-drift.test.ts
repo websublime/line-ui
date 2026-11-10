@@ -19,6 +19,7 @@ import { describe, expect, test } from 'bun:test';
 import componentsManifest from '@websublime/line-components/custom-elements.json' with { type: 'json' };
 import {
   buttonDescriptor,
+  chipDescriptor,
   commonProp,
   defineDescriptor,
   descriptors,
@@ -70,8 +71,8 @@ describe('CEM drift: descriptors against the built line-components manifest (§6
   });
 
   test('a descriptor whose tag the manifest lacks fails', () => {
-    const chip = variant({ ...buttonDescriptor, name: 'Chip', tag: 'line-chip' }, {});
-    expect(driftViolations([chip], manifest)).toEqual([{ tag: 'line-chip', kind: 'element', name: 'line-chip' }]);
+    const badge = variant({ ...buttonDescriptor, name: 'Badge', tag: 'line-badge' }, {});
+    expect(driftViolations([badge], manifest)).toEqual([{ tag: 'line-badge', kind: 'element', name: 'line-badge' }]);
   });
 });
 
@@ -170,6 +171,12 @@ describe('CEM drift: text bindings (§6.G.5; §12 AM-092)', () => {
     expect(driftViolations([button], manifest)).toEqual([
       { tag: 'line-button', prop: 'variant', kind: 'attribute', name: 'tone' },
     ]);
+  });
+
+  test("Chip's label text binding passes, though line-chip declares no label member (§6.G.5 Acceptance)", () => {
+    expect(chipDescriptor.bindings.props.label).toEqual({ kind: 'text' });
+    expect(declaredNames('line-chip')).not.toContain('label');
+    expect(driftViolations([chipDescriptor], manifest)).toEqual([]);
   });
 });
 
