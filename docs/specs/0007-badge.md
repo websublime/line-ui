@@ -121,7 +121,7 @@ The count of the plain, internals `status` and internals `ariaLive` hosts change
 
 #### Description
 
-`<line-badge>` is a small, non-interactive status marker: a count such as "5", a short label such as "Beta", or a dot with no text (PRD §4.1, `docs/PRD.md:251`). The consumer writes the count or the label as text in its default slot, and a badge with an empty slot draws as a dot (F1). The component does not cap or format numbers; a consumer who wants "99+" writes "99+" (F3). It has no role, so assistive technology reads its text in place and as part of the name of a control around it (R8 `:70`; probe P1). A dot is hidden from assistive technology unless the host carries an `aria-label`, which makes it an `img` with that name, as Icon does (F4; `0014-icon.md` decision D1). A `variant` gives it the tone of one of the theme's semantic roles, the same five tones Alert uses (F6), drawn as a solid fill (F7). It sits inline where the consumer puts it; overlapping the corner of an avatar or an icon is the job of that component's slot or of consumer CSS (F8). It holds no state, takes no focus and fires no event (ARCH §8, `docs/ARCHITECTURE.md:410`).
+`<line-badge>` is a small, non-interactive status marker: a count such as "5", a short label such as "Beta", or a dot with no text (PRD §4.1, `docs/PRD.md:251`). The consumer writes the count or the label as text in its default slot, and a badge with an empty slot draws as a dot (F1). The component does not cap or format numbers; a consumer who wants "99+" writes "99+" (F3). It has no role, so assistive technology reads its text in place and as part of the name of a control around it (R8 `:70`; probe P1). A dot is hidden from assistive technology unless the host carries an `aria-label`, which makes it an `img` with that name, as Icon does (F4; `0014-icon.md` decision D1). A `variant` gives it the tone of one of the theme's semantic roles, the same five tones Alert uses (F6), drawn as a soft fill for a count or a label and a solid fill for a dot (F7, AM-001). It sits inline where the consumer puts it; overlapping the corner of an avatar or an icon is the job of that component's slot or of consumer CSS (F8). It holds no state, takes no focus and fires no event (ARCH §8, `docs/ARCHITECTURE.md:410`).
 
 #### Use cases
 
@@ -254,8 +254,9 @@ Badge holds no value and no interactive element, so it fires nothing and is neit
 
 | Property | Default | Used by part |
 |----------|---------|--------------|
-| `--line-badge-bg` | `var(--line-gray-solid)`, per variant (table below) | `root` |
-| `--line-badge-color` | `var(--line-gray-contrast)`, per variant (table below) | `root` |
+| `--line-badge-bg` | `var(--line-gray-bg)`, per variant (table below) | `root` while it holds text |
+| `--line-badge-color` | `var(--line-gray-text)`, per variant (table below) | `root` while it holds text |
+| `--line-badge-dot-color` | `var(--line-gray-solid)`, per variant (table below) | `root` while `empty` |
 | `--line-badge-radius` | `var(--line-radius-round)` | `root` |
 | `--line-badge-height` | `var(--line-size-4)` | `root` (`min-block-size` and `min-inline-size`, so one character draws a circle) |
 | `--line-badge-padding-inline` | `var(--line-size-1)` | `root` |
@@ -265,18 +266,18 @@ Badge holds no value and no interactive element, so it fires nothing and is neit
 
 **Variant defaults** (C6; F6, F7)
 
-| `variant` | `--line-badge-bg` | `--line-badge-color` |
-|---|---|---|
-| `neutral`, missing or unknown | `var(--line-gray-solid)` | `var(--line-gray-contrast)` |
-| `info` | `var(--line-info-solid)` | `var(--line-info-contrast)` |
-| `success` | `var(--line-success-solid)` | `var(--line-success-contrast)` |
-| `warning` | `var(--line-warning-solid)` | `var(--line-warning-contrast)` |
-| `danger` | `var(--line-danger-solid)` | `var(--line-danger-contrast)` |
+| `variant` | `--line-badge-bg` | `--line-badge-color` | `--line-badge-dot-color` |
+|---|---|---|---|
+| `neutral`, missing or unknown | `var(--line-gray-bg)` | `var(--line-gray-text)` | `var(--line-gray-solid)` |
+| `info` | `var(--line-info-bg)` | `var(--line-info-text)` | `var(--line-info-solid)` |
+| `success` | `var(--line-success-bg)` | `var(--line-success-text)` | `var(--line-success-solid)` |
+| `warning` | `var(--line-warning-bg)` | `var(--line-warning-text)` | `var(--line-warning-solid)` |
+| `danger` | `var(--line-danger-bg)` | `var(--line-danger-text)` | `var(--line-danger-solid)` |
 
-- `-solid` is Radix step 9 (`packages/line-themes/src/aliases.css:25`, `:36`, `:47`, `:58`, `:69`). `--line-{role}-contrast` is part of the numeric API, not an alias (`aliases.css:4-5`): the semantic roles declare it at the root (`packages/line-themes/src/semantics.css:29`, `:56`, `:83`, `:110`) and each gray palette declares `--line-gray-contrast` (`packages/line-themes/src/gray/slate.css:28`). Button `primary` pairs `-solid` with `-contrast` the same way (`0002-button.md` CSS custom properties).
-- `:host([variant="…"])` rules redeclare only the two colour tokens and add no other rule (ARCH `:1577`).
+- A count or a label takes the soft steps, `-bg` (Radix step 3) under `-text` (step 12), as Alert does (`0006-alert.md` CSS custom properties; `packages/line-themes/src/aliases.css:7-72`), because 12px text needs 4.5:1 and the step-9 `-solid` with `-contrast` pair guarantees only 3:1 (AM-001). A dot holds no text, so it takes `-solid` (step 9; `aliases.css:25`, `:36`, `:47`, `:58`, `:69`), non-text UI held to 3:1 by WCAG 1.4.11. No border token: the soft fill draws no border (AM-001).
+- `:host([variant="…"])` rules redeclare only the three colour tokens and add no other rule (ARCH `:1577`).
 - The other defaults are D8: `--line-radius-round` is `1e5px` (`packages/line-tokens/src/radii.css:15`), `--line-size-4` is `1.25rem`, `--line-size-1` `0.25rem` and `--line-size-2` `0.5rem` (`packages/line-tokens/src/sizing.css:10-13`), `--line-font-size-0` is `0.75rem` (`packages/line-tokens/src/typography.css:30`) and `--line-font-weight-5` is `500` (`typography.css:23`).
-- Without `line-themes` the colour tokens are invalid at computed-value time, so a count or label keeps a transparent background and inherits its text colour, which stays readable (`0006-alert.md` AM-002). The dot draws with `background-color: var(--line-badge-bg, currentColor)`, so an unthemed dot still shows in the text colour, as Separator falls back to `currentColor` (`separator.ts:36`; D8) [INFERENCE: that a custom property holding an undefined `var()` makes the outer fallback apply is not probed].
+- Without `line-themes` the colour tokens are invalid at computed-value time, so a count or label keeps a transparent background and inherits its text colour, which stays readable (`0006-alert.md` AM-002). The dot draws with `background-color: var(--line-badge-dot-color, currentColor)`, so an unthemed dot still shows in the text colour, as Separator falls back to `currentColor` (`separator.ts:36`; D8) [INFERENCE: that a custom property holding an undefined `var()` makes the outer fallback apply is not probed].
 - In forced-colors mode every tone draws in the same system colours, so the tone has to reach users in words too (`0006-alert.md` CSS custom properties).
 
 ### Keyboard
@@ -315,7 +316,7 @@ Badge takes no focus and handles no key. Keyboard navigation is tested in the Br
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated (Phase 1 spec §6.C.4 C9 row) |
 | C5 | The host accepts an accessible name and applies it to the element with the role | the host accepts `aria-label` and `aria-description`; the `img` role sits on the host, so the name applies there directly (F4, F5) |
 | C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `variant` is `neutral`, `info`, `success`, `warning` or `danger`; a value the author or code sets is reflected and the default leaves no attribute; each value redeclares only `--line-badge-bg` and `--line-badge-color` on `:host` (F6, F7) |
-| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, one `@slot`, one `@csspart`, eight `@cssprop`; no event and nothing deprecated |
+| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, one `@slot`, one `@csspart`, nine `@cssprop`; no event and nothing deprecated |
 | C8 | Missing or partial props degrade to an empty or neutral state | with no attributes and no content it renders a neutral dot hidden from assistive technology; an unknown `variant` behaves as `neutral` and keeps the author's attribute |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound: no value prop and no interactive element |
 
@@ -445,7 +446,7 @@ A `line` catalog node the surface renders as the second example, with the count 
 | F4 | What is a dot badge's accessible name? | Miguel | resolved: option (a), Icon parity: hidden through internals unless the host has `aria-label` or `aria-labelledby`, then internals role `img` with that name (Miguel, 2026-11-10) |
 | F5 | What does a host `aria-label` do on a badge that holds text? | Miguel | resolved: option (a), the same `img` rule as F4 (Miguel, 2026-11-10) |
 | F6 | Which tones does Badge have, under which attribute? | Miguel | resolved: option (a), `variant="neutral \| info \| success \| warning \| danger"`, `neutral` → gray (Miguel, 2026-11-10) |
-| F7 | Which fill does each tone draw? | Miguel | resolved: option (a), solid fill, `--line-<role>-solid` with `-contrast` text (Miguel, 2026-11-10) |
+| F7 | Which fill does each tone draw? | Miguel | resolved: a solid dot, `--line-<role>-solid`, and Alert's soft fill for a count or a label, `--line-<role>-bg` under `--line-<role>-text` (Miguel, 2026-11-10, AM-001; first resolved as option (a), solid with `-contrast` text, which fails 4.5:1 at 12px) |
 | F8 | How does a badge sit over the corner of an avatar or an icon? | Miguel | resolved: option (c), the anchor component's slot or consumer CSS; Badge stays inline, with no positioning (Miguel, 2026-11-10) |
 | F9 | Which props does the descriptor expose to agents, and how does the agent's text reach the badge? | Miguel | resolved: option (a), `label` through the text binding into the default slot (Chip's pattern) and `variant` (Miguel, 2026-11-10) |
 | F10 | Does the agent path require an accessible name? | Miguel | resolved: option (b), a non-blank `label` or `accessibility.label` (`requiredName`), else the placeholder and `line-a2ui-error` (Miguel, 2026-11-10) |
@@ -462,7 +463,7 @@ A `line` catalog node the surface renders as the second example, with the count 
 | D5 | Reset modules: `commonReset` only | ARCH §14.7, `:1163` |
 | D6 | `variant` uses Alert's converter pattern with `useDefault: true`: unknown → `neutral`, the attribute keeps the author's value | `alert.ts:16-18`, `:76`; Button AM-002 (`0002-button.md`) |
 | D7 | Internals written in the constructor and synchronously on a change of `aria-label`, `aria-labelledby` (observed attributes) or the slot's emptiness; a trimmed-blank `aria-label` counts as absent | Alert D8 (`0006-alert.md`); Icon default F10 (`0014-icon.md`) |
-| D8 | The eight `--line-badge-*` tokens of the CSS custom properties table; the dot falls back to `currentColor` | Pill sizing on the token scale; Separator's `currentColor` fallback (`separator.ts:36`); unlike Alert D9, which carries no fallback, because an unthemed dot with a transparent fill would vanish |
+| D8 | The nine `--line-badge-*` tokens of the CSS custom properties table; the dot falls back to `currentColor` | Pill sizing on the token scale; Separator's `currentColor` fallback (`separator.ts:36`); unlike Alert D9, which carries no fallback, because an unthemed dot with a transparent fill would vanish |
 | D9 | No `max`, no number formatting and no `Intl` in the component | Follows F3 (a); MANIFESTO Out of Scope, component strings are the consumer's (`docs/MANIFESTO.md:66`) |
 | D10 | Catalog name `Badge`, `agentExposed: true` | PRD row name; Phase 1 spec C9 row |
 | D11 | Stories: Label, Count, Count in a button, Overflow, Dot decorative, Dot named, Named count, Tones (one per `variant`), Live count recipe, Custom tokens. Avatar and Visually Hidden examples join once rows 01-C10 and 01-C12 land | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0006-alert.md` D16) |
@@ -592,3 +593,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
+| AM-001 | 2026-11-10 | ledger 01-C9 (decision — Miguel chose a solid dot and a soft fill for text badges over soft everywhere and over a solid fill on a darker step with new on-colour tokens, 2026-11-10) | Part A Description; Part B CSS custom properties table (`--line-badge-bg` and `--line-badge-color` default to `var(--line-<role>-bg)` and `var(--line-<role>-text)`, new `--line-badge-dot-color` defaulting to `var(--line-<role>-solid)`), the Variant defaults table, the fill and fallback bullets, C7 (nine `@cssprop`), D8 (nine tokens) and F7's Resolution. No border token | The step-9 `-solid` with `-contrast` pair guarantees only 3:1 (Phase 00 AM-014; `scripts/validate-contrast.mjs:18-24`), so 12px text on it fails axe `color-contrast` (4.5:1, Phase 1 spec §7.4, MANIFESTO Law 3). A dot holds no text and stays solid, as non-text UI held to 3:1 (WCAG 1.4.11) | axe 4.14 `color-contrast` on the C9 stories in `storybook-static`, chromium, 12px white text: gray-9 `#8b8d98` 3.3:1, blue-9 `#0090ff` 3.26:1, green-9 `#30a46c` 3.15:1, red-9 `#e5484d` 3.91:1, each against 4.5:1; warning (amber-9 with dark contrast) passes. The same stories fail in firefox and webkit |
