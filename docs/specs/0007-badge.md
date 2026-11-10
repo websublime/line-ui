@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` (draft for Miguel's approval, 2026-11-10; PRD §8.2, `docs/PRD.md:1207`) |
+| Status | `approved` (Miguel, 2026-11-10) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C9 row, `docs/specs/01-spec-core-primitives.md:1165`; PRD §4.1, `docs/PRD.md:251`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-badge` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C9` (`docs/plans/01-tasks-core-primitives.md:55`) |
 | Governing sections | Phase 1 spec §4 (file classes `:134-154`; `:248`, `:297`), §6.C.0, §6.C.4 (C9 row and notes), §6.C.6, §6.G.1, §6.G.3, §6.G.4 (Accessibility), §6.G.5, §7.4, §7.8, §10 SD12, SD34, SD37, SD38, SD39, SD98, SD99, §12 AM-058, AM-067, AM-086, AM-092; ARCH (v0.8.26) §2, §3, §5, §8, §12, §13.2, §14.3, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8, §9.3; MANIFESTO Laws 1–4, 9, Out of Scope; R8 §2.2 |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. This is a draft. Open Questions F1–F11 are open and carry a recommended option each; Part B is written on those recommendations and marks each dependent statement with its question, so a different choice changes only the marked text. The orchestrator defaults D1–D14 stand unless Miguel objects.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F11 on 2026-11-10 and approved the spec the same day; Part B states those decisions. The orchestrator defaults D1–D14 stand as drafted (Miguel, 2026-11-10).
 
 ---
 
@@ -205,7 +205,7 @@ The count of the plain, internals `status` and internals `ariaLive` hosts change
 |------|--------|-----------------|
 | `empty` (F1) | the default slot holds no element and no non-whitespace text | `data-empty`, `:state(empty)` through `reflectState` (`line-element.ts:46-53`; ARCH §14.8, `docs/ARCHITECTURE.md:1228`) |
 
-- `empty` is the CSS hook that draws the dot. ARCH §14.8 lists `empty` among the reflected states (`:1228`). It is the first flag a Static component reflects; Alert and Icon reflect none (`0006-alert.md` States; `0014-icon.md` default F9). F1 decides whether it exists.
+- `empty` is the CSS hook that draws the dot. ARCH §14.8 lists `empty` among the reflected states (`:1228`). It is the first flag a Static component reflects; Alert and Icon reflect none (`0006-alert.md` States; `0014-icon.md` default F9). It exists because of F1 (b).
 
 ### Slots
 
@@ -439,19 +439,19 @@ A `line` catalog node the surface renders as the second example, with the count 
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | How does a badge become a count, a dot or a label? | Miguel | open; recommended (b), inferred from the slot content |
-| F2 | Is a count announced, in place and when it changes, and who makes it a live region? (Phase 1 spec C9 row, "Count announcement") | Miguel | open; recommended (c), no component live semantics, a documented author `aria-live` recipe |
-| F3 | Who caps and formats a large count, such as "99+"? | Miguel | open; recommended (a), the consumer writes the text |
-| F4 | What is a dot badge's accessible name? | Miguel | open; recommended (a), Icon parity: hidden unless the host has `aria-label`, then `img` |
-| F5 | What does a host `aria-label` do on a badge that holds text? | Miguel | open; recommended (a), the same `img` rule as F4 |
-| F6 | Which tones does Badge have, under which attribute? | Miguel | open; recommended (a), Alert's five tones under `variant` |
-| F7 | Which fill does each tone draw? | Miguel | open; recommended (a), solid (`-solid` / `-contrast`) |
-| F8 | How does a badge sit over the corner of an avatar or an icon? | Miguel | open; recommended (c), the anchor component's slot or consumer CSS; Badge stays inline |
-| F9 | Which props does the descriptor expose to agents, and how does the agent's text reach the badge? | Miguel | open; recommended (a), `label` through the text binding and `variant` |
-| F10 | Does the agent path require an accessible name? | Miguel | open; recommended (b), a non-blank `label` or `accessibility.label` |
-| F11 | Does the htmx Tests row run? | Miguel | open; recommended (a), `n/a` |
+| F1 | How does a badge become a count, a dot or a label? | Miguel | resolved: option (b), inferred from the slot content; an empty slot draws a dot, reflected as `data-empty` and `:state(empty)` (Miguel, 2026-11-10) |
+| F2 | Is a count announced, in place and when it changes, and who makes it a live region? (Phase 1 spec C9 row, "Count announcement") | Miguel | resolved: option (c), no component live semantics; the docs tell authors to put `aria-live="polite"` on the badge (Miguel, 2026-11-10) |
+| F3 | Who caps and formats a large count, such as "99+"? | Miguel | resolved: option (a), the consumer writes the text, such as "99+"; no number formatting (Miguel, 2026-11-10) |
+| F4 | What is a dot badge's accessible name? | Miguel | resolved: option (a), Icon parity: hidden through internals unless the host has `aria-label` or `aria-labelledby`, then internals role `img` with that name (Miguel, 2026-11-10) |
+| F5 | What does a host `aria-label` do on a badge that holds text? | Miguel | resolved: option (a), the same `img` rule as F4 (Miguel, 2026-11-10) |
+| F6 | Which tones does Badge have, under which attribute? | Miguel | resolved: option (a), `variant="neutral \| info \| success \| warning \| danger"`, `neutral` → gray (Miguel, 2026-11-10) |
+| F7 | Which fill does each tone draw? | Miguel | resolved: option (a), solid fill, `--line-<role>-solid` with `-contrast` text (Miguel, 2026-11-10) |
+| F8 | How does a badge sit over the corner of an avatar or an icon? | Miguel | resolved: option (c), the anchor component's slot or consumer CSS; Badge stays inline, with no positioning (Miguel, 2026-11-10) |
+| F9 | Which props does the descriptor expose to agents, and how does the agent's text reach the badge? | Miguel | resolved: option (a), `label` through the text binding into the default slot (Chip's pattern) and `variant` (Miguel, 2026-11-10) |
+| F10 | Does the agent path require an accessible name? | Miguel | resolved: option (b), a non-blank `label` or `accessibility.label` (`requiredName`), else the placeholder and `line-a2ui-error` (Miguel, 2026-11-10) |
+| F11 | Does the htmx Tests row run? | Miguel | resolved: option (a), `n/a` (Miguel, 2026-11-10) |
 
-**Orchestrator defaults** (stand unless Miguel objects)
+**Orchestrator defaults** (Miguel left D1–D14 as drafted, 2026-11-10)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -469,6 +469,8 @@ A `line` catalog node the surface renders as the second example, with the count 
 | D12 | The C9 PR also fills the Badge row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs, reports the gzipped size and adds a changeset | Phase 1 spec §6.C.6, `:1223-1227`; plan §2.3, `docs/plans/01-plan-core-primitives.md:168` |
 | D13 | The Browser tier proves the internals semantics with a Chromium CDP assertion and an `INTERNALS` read-back in three engines, not with Playwright `ariaSnapshot()` | Phase 1 spec §6.C.4 notes, `:1180`; probe P2 shows `ariaSnapshot()` reads no internals |
 | D14 | The class JSDoc tells authors to state a badge's meaning in words, to name a dot that carries meaning, and to set `aria-live` before a count changes | Alert's JSDoc pattern (`alert.ts:40-46`); WCAG 1.4.1; F2, F4 |
+
+Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option tables below stay as the record of what he weighed.
 
 ### F1 — Count, dot or label
 
