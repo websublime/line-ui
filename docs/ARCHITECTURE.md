@@ -13,7 +13,7 @@ This document captures the **cross-cutting architectural decisions** that apply 
 ## Revision Notes
 
 - **v0.8.26 (2026-11-10)** — Aligned with Phase 1 spec AM-092 and AM-093 (ledger row `01-C8`, decisions by Miguel on 2026-11-10). The change is minimal: one §14.9 sentence and two §17.3 sentences.
-  - §14.9 (Focus Management) says the machine or the component determines when focus is visible. A pre-built machine such as `@zag-js/toggle` tracks no focus, so `<line-chip>` reflects `focus-visible` from its inner button itself (Phase 1 spec AM-093; spec `0008-chip.md` F9).
+  - §14.9 (Focus Management) says the machine or the component determines when focus is visible, and the §14.4 `reset.common.css` comment says the machine or the component drives `data-focus-visible`. A pre-built machine such as `@zag-js/toggle` tracks no focus, so `<line-chip>` reflects `focus-visible` from its inner button itself (Phase 1 spec AM-093; spec `0008-chip.md` F9).
   - §17.3 (Descriptors and catalogs) adds a text binding, which writes a prop's string as the host's text content so it lands in the default slot, and says the drift test skips it, because it names no manifest member (Phase 1 spec AM-092; spec `0008-chip.md` F6).
 - **v0.8.25 (2026-11-09)** — Aligned with component spec `0006-alert.md` AM-006 (ledger row `01-C7`, decision by Miguel on 2026-11-09). The change is minimal: one §5 entry.
   - §5 (CSS Parts Naming Convention) adds `::part(dismiss)`, the wrapper of a consumer-supplied dismiss control, which `<line-alert>` exposes around its `dismiss` slot. It sits beside `::part(close)`, the close button a component renders itself (spec `0006-alert.md` AM-006, sub-decision S9).
@@ -702,7 +702,7 @@ The minimum shared baseline. Every component declares it; `LineElement` does not
 }
 
 /* Focus — removed from all internal elements.
- * Machine drives data-focus-visible on host.
+ * The machine or the component drives data-focus-visible on host.
  * Consumer/theme styles focus via ::part() or --line-focus-ring-* */
 *:focus {
   outline: none;

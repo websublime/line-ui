@@ -6,7 +6,7 @@
 }
 
 /* Focus — removed from all internal elements.
- * Machine drives data-focus-visible on host.
+ * The machine or the component drives data-focus-visible on host.
  * Consumer/theme styles focus via ::part() or --line-focus-ring-* */
 *:focus {
   outline: none;

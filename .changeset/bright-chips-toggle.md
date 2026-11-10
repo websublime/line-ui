@@ -1,5 +1,6 @@
 ---
 "@websublime/line-components": patch
+"@websublime/line-core": patch
 "@websublime/line-genui": minor
 ---
 
