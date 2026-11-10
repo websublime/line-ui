@@ -100,8 +100,17 @@ export interface SurfaceLookup<P extends string> {
   readonly skippedWhen: readonly P[];
 }
 
-/** Where the surface writes a prop: an element attribute or property, or a surface lookup. */
-export type Binding<P extends string> = ElementMember | SurfaceLookup<P>;
+/**
+ * A text binding: the surface writes the prop's resolved string as the host's text content, so it lands in the
+ * default slot, as Chip `label` does. It names no element member, so the drift test skips it, and a descriptor with
+ * one has no slot map (§6.G.1 Fields, §6.G.5; §12 AM-092).
+ */
+export interface TextBinding {
+  readonly kind: 'text';
+}
+
+/** Where the surface writes a prop: an element attribute or property, a surface lookup, or the host's text. */
+export type Binding<P extends string> = ElementMember | SurfaceLookup<P> | TextBinding;
 
 /** The binding map: each bound prop's target, and the value prop with its commit event (ARCH §17.2 rule C9). */
 export interface BindingMap<P extends string> {
@@ -122,11 +131,13 @@ export type ActionMap<P extends string> = {
 };
 
 /**
- * A source of a required accessible name: the text of the component a child prop names, or an A2UI
- * `accessibility.label` that is non-empty after trimming whitespace (§6.G.4 Accessibility).
+ * A source of a required accessible name: the text of the component a child prop names, the string of a
+ * text-binding prop, or an A2UI `accessibility.label`. Each counts when non-empty after trimming whitespace
+ * (§6.G.4 Accessibility; §12 AM-092).
  */
 export type NameSource<P extends string> =
   | { readonly kind: 'childText'; readonly prop: P }
+  | { readonly kind: 'textProp'; readonly prop: P }
   | { readonly kind: 'accessibilityLabel' };
 
 /**

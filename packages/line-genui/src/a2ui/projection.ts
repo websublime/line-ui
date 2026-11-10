@@ -157,6 +157,14 @@ function setProperty(element: Element, name: string, value: unknown): void {
   if (target[name] !== value) target[name] = value;
 }
 
+/** Sets an element's text content, updating its only Text node in place. */
+function setText(element: Element, value: string): void {
+  const only = element.firstChild;
+  if (only && only === element.lastChild && only.nodeType === Node.TEXT_NODE) {
+    if ((only as Text).data !== value) (only as Text).data = value;
+  } else element.textContent = value;
+}
+
 /** The text of a node's Text descendants, the "child text" name source; `undefined` while one is pending. */
 function childText(node: ComponentNode): string | undefined {
   if (node.state === 'pending') return undefined;
@@ -173,6 +181,14 @@ function childText(node: ComponentNode): string | undefined {
     }
   }
   return result;
+}
+
+/**
+ * The string of a text-binding prop, the "textProp" name source; `undefined` while the prop is bound and its value
+ * is `undefined`, such as a path the data model does not hold yet (§6.G.4 Accessibility; `0008-chip.md` AM-001).
+ */
+function boundText(value: unknown): string | undefined {
+  return value instanceof ResolvedBinding && value.value === undefined ? undefined : text(unwrap(value));
 }
 
 /** One node's projection. */
@@ -372,7 +388,9 @@ export class Projection {
       const texts =
         source.kind === 'accessibilityLabel'
           ? [text(unwrap(accessibility.label))]
-          : childNodes(props[source.prop]).map(childText);
+          : source.kind === 'textProp'
+            ? [boundText(props[source.prop])]
+            : childNodes(props[source.prop]).map(childText);
       if (texts.some((own) => own !== undefined && own.trim() !== '')) return 'named';
       pending ||= texts.includes(undefined);
     }
@@ -406,10 +424,7 @@ export class Projection {
           : `markdownRenderer returned a value that is not a Node for Text '${id}'.`,
       );
     }
-    const only = element.firstChild;
-    if (only && only === element.lastChild && only.nodeType === Node.TEXT_NODE) {
-      if ((only as Text).data !== value) (only as Text).data = value;
-    } else element.textContent = value;
+    setText(element, value);
   }
 
   #native(element: Element, target: Extract<BasicTarget, { kind: 'native' }>, props: Record<string, unknown>): void {
@@ -426,7 +441,10 @@ export class Projection {
     setAttribute(element, 'aria-description', label(accessibility.description));
   }
 
-  /** Applies the node's bound props, the target's fixed attributes and the host naming to the element. */
+  /**
+   * Applies the node's bound props, the target's fixed attributes and the host naming to the element. A text
+   * binding writes the prop's string as the host's text content, which lands in the default slot (§12 AM-092).
+   */
   #bind(
     view: View,
     element: Element,
@@ -438,7 +456,12 @@ export class Projection {
     const owned = lookupOwned(descriptor);
     if (owned.size > 0) this.#icon(view, element, own, basicType !== undefined);
     for (const [prop, binding] of Object.entries(descriptor.bindings.props)) {
-      if (!binding || binding.kind === 'surfaceLookup' || owned.has(prop) || owned.has(binding.name)) continue;
+      if (!binding || binding.kind === 'surfaceLookup' || owned.has(prop)) continue;
+      if (binding.kind === 'text') {
+        setText(element, text(unwrap(own[prop])));
+        continue;
+      }
+      if (owned.has(binding.name)) continue;
       if (binding.kind === 'attribute') setAttribute(element, binding.name, unwrap(own[prop]));
       else setProperty(element, binding.name, unwrap(own[prop]));
     }
@@ -453,7 +476,7 @@ export class Projection {
     }
     const commit = descriptor.bindings.value;
     const member = commit ? descriptor.bindings.props[commit.prop] : undefined;
-    if (commit && member && member.kind !== 'surfaceLookup') {
+    if (commit && (member?.kind === 'attribute' || member?.kind === 'property')) {
       this.#onCommit(element, commit.commitEvent, member, props[commit.prop]);
     }
   }

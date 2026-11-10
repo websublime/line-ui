@@ -57,6 +57,7 @@ export type {
   NameSource,
   SlotMap,
   SurfaceLookup,
+  TextBinding,
 } from './descriptor.js';
 export type {
   BasicImplementation,

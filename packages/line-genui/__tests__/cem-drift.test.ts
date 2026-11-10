@@ -5,7 +5,8 @@
  *   `custom-elements.json` lacks. The names come from the binding, slot and action maps, not the prop schema.
  * - An action-map event marked native passes only when it is a known DOM event; any other event must be a
  *   `@fires` event of the element.
- * - A surface lookup, such as Icon `name` → `iconMap`, is checked through the members it sets.
+ * - A surface lookup, such as Icon `name` → `iconMap`, is checked through the members it sets; a text binding names
+ *   no member and is skipped.
  * - The §7.3 content rules decide which manifest members count as public API.
  *
  * The manifest is the file the `line-components` build emits, reached by package name, so it needs
@@ -151,6 +152,23 @@ describe('CEM drift: surface lookups (§12 AM-071, AM-072)', () => {
     });
     expect(driftViolations([icon], manifest)).toEqual([
       { tag: 'line-icon', prop: 'name', kind: 'attribute', name: 'size' },
+    ]);
+  });
+});
+
+describe('CEM drift: text bindings (§6.G.5; §12 AM-092)', () => {
+  test('a text binding names no member, so it passes though the element declares no member of its prop name', () => {
+    expect(declaredNames('line-button')).not.toContain('child');
+    const button = variant(buttonDescriptor, { bindings: { props: { child: { kind: 'text' } } } });
+    expect(driftViolations([button], manifest)).toEqual([]);
+  });
+
+  test('the other entries of a map with a text binding are still checked', () => {
+    const button = variant(buttonDescriptor, {
+      bindings: { props: { child: { kind: 'text' }, variant: { kind: 'attribute', name: 'tone' } } },
+    });
+    expect(driftViolations([button], manifest)).toEqual([
+      { tag: 'line-button', prop: 'variant', kind: 'attribute', name: 'tone' },
     ]);
   });
 });
