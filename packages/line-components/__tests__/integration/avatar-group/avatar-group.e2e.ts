@@ -271,31 +271,55 @@ test.describe('pointer and the native popover (F1; probe P1; D21)', () => {
     expect(await groupState(page)).toMatchObject(COLLAPSED);
   });
 
-  test('the panel sits under "+N" from its implicit anchor, at inline-start in LTR and in an RTL document (D9)', async ({
-    page,
-  }) => {
-    // The logical position-area keywords resolve against the containing block, the root's for a top-layer popover, so
-    // the RTL case sets dir on <html> (spec AM-004).
-    for (const dir of ['ltr', 'rtl'] as const) {
-      await page.evaluate((value) => {
-        document.documentElement.dir = value;
-      }, dir);
-      await mount(page, frame('max="3"'));
-      await page.locator('#g [part="overflow"]').click();
-      await settle(page);
-      const boxes = await page.locator('#g').evaluate((host) => {
-        const shadow = host.shadowRoot as ShadowRoot;
-        const button = (shadow.querySelector('[part="overflow"]') as HTMLElement).getBoundingClientRect();
-        const panel = (shadow.querySelector('[part="content"]') as HTMLElement).getBoundingClientRect();
-        return { button, panel };
-      });
-      expectNear(boxes.panel.top, boxes.button.bottom + GAP, `${dir} panel top`);
-      if (dir === 'ltr') expectNear(boxes.panel.left, boxes.button.left, 'ltr panel inline-start');
-      else expectNear(boxes.panel.right, boxes.button.right, 'rtl panel inline-start');
-      await page.mouse.click(4, 4);
-      await settle(page);
-    }
-  });
+  for (const [root, group] of [
+    ['ltr', 'ltr'],
+    ['rtl', 'rtl'],
+    ['ltr', 'rtl'],
+    ['rtl', 'ltr'],
+  ] as const) {
+    test(`the panel sits under "+N" at the group's inline-start and flips at the edges: page ${root}, group ${group} (D9; AM-006)`, async ({
+      page,
+    }) => {
+      const layouts = {
+        mid: 'padding: 24px 300px 300px',
+        inlineEdge: 'display: flex; justify-content: flex-end; padding: 24px 4px 300px',
+        blockEdge: 'padding: 640px 300px 0',
+      };
+      await page.evaluate((dir) => {
+        document.documentElement.dir = dir;
+        document.body.style.margin = '0';
+      }, root);
+      for (const [layout, style] of Object.entries(layouts)) {
+        await mount(
+          page,
+          `<div dir="${group}" style="${style}"><line-avatar-group id="g" aria-label="Team" max="1">${people(7)}</line-avatar-group></div>`,
+        );
+        await page.locator('#g [part="overflow"]').click();
+        await settle(page);
+        const box = await page.locator('#g').evaluate((host) => {
+          const shadow = host.shadowRoot as ShadowRoot;
+          const button = (shadow.querySelector('[part="overflow"]') as HTMLElement).getBoundingClientRect();
+          const panel = (shadow.querySelector('[part="content"]') as HTMLElement).getBoundingClientRect();
+          return {
+            below: panel.top - button.bottom,
+            above: button.top - panel.bottom,
+            left: panel.left - button.left,
+            right: panel.right - button.right,
+            inView: panel.left >= 0 && panel.right <= innerWidth && panel.top >= 0 && panel.bottom <= innerHeight,
+          };
+        });
+        const label = `${root}/${group} ${layout}`;
+        expect(box.inView, `${label} in view`).toBe(true);
+        expectNear(layout === 'blockEdge' ? box.above : box.below, GAP, `${label} block offset`);
+        // At the inline edge the panel flips to the other side of "+N" (position-try-fallbacks: flip-inline).
+        const startAligned = (group === 'ltr') !== (layout === 'inlineEdge');
+        if (startAligned) expectNear(box.left, 0, `${label} left edges`);
+        else expectNear(box.right, 0, `${label} right edges`);
+        await page.mouse.click(4, 4);
+        await settle(page);
+      }
+    });
+  }
 
   test('another auto popover closes the panel and the flags follow', async ({ page }) => {
     await mount(page, `${frame('max="3"')}<div id="other" popover="auto">Other</div>`);
