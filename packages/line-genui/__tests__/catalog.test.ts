@@ -1,7 +1,7 @@
 /**
  * The descriptor API of `@websublime/line-genui/catalog` (Phase 1 spec §6.G.1 Acceptance; ledger 01-G1).
  *
- * - The C1–C10 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
+ * - The C1–C11 descriptors compose with the `web_core` common types: a `Catalog` built from them writes each
  *   common-type prop as a `$ref` to `common_types.json` and each enum inline, as the component spec tables type
  *   them, and a node that uses the common types parses.
  * - Button's component description and a property description both appear in `Catalog.toJson()`.
@@ -20,6 +20,7 @@ import { z } from 'zod';
 import {
   alertDescriptor,
   avatarDescriptor,
+  avatarGroupDescriptor,
   badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
@@ -37,7 +38,7 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
 /**
  * Each descriptor's own props, as the "Descriptor fields" prop schema of its component spec types them: a common
  * type by its `$defs` name, or `enum` for a literal enum (`0002-button.md`, `0004-button-group.md`, `0006-alert.md`,
- * `0009-avatar.md`, `0007-badge.md`, `0008-chip.md`, `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`,
+ * `0009-avatar.md`, `0010-avatar-group.md`, `0007-badge.md`, `0008-chip.md`, `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`,
  * `0018-stack.md`).
  */
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
@@ -50,6 +51,13 @@ const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     dismiss: 'ComponentId',
   },
   Avatar: { src: 'DynamicString', name: 'DynamicString', status: 'ComponentId' },
+  AvatarGroup: {
+    children: 'ChildList',
+    max: 'DynamicNumber',
+    size: 'enum',
+    spacing: 'enum',
+    overflowLabel: 'DynamicString',
+  },
   Badge: { label: 'DynamicString', variant: 'enum' },
   Button: {
     variant: 'enum',
@@ -98,10 +106,11 @@ function definition(doc: Json, name: string): { refs: unknown[]; own: Json } {
 }
 
 describe('descriptors compose with the web_core common types (§6.G.1)', () => {
-  test('the catalog holds the ten descriptors under their catalog names', () => {
+  test('the catalog holds the eleven descriptors under their catalog names', () => {
     expect(Object.keys(catalogJson().components as Json).sort()).toEqual([
       'Alert',
       'Avatar',
+      'AvatarGroup',
       'Badge',
       'Button',
       'ButtonGroup',
@@ -291,6 +300,52 @@ describe('the Avatar descriptor (`0009-avatar.md` Descriptor fields)', () => {
   });
 });
 
+describe('the AvatarGroup descriptor (`0010-avatar-group.md` Descriptor fields)', () => {
+  test('is agent-exposed, slots children, binds max, size, spacing and overflowLabel as attributes, and has no value', () => {
+    expect(avatarGroupDescriptor.agentExposed).toBe(true);
+    expect(avatarGroupDescriptor.tag).toBe('line-avatar-group');
+    expect(avatarGroupDescriptor.slots).toEqual({ children: '' });
+    expect(avatarGroupDescriptor.actions).toEqual({});
+    expect(avatarGroupDescriptor.bindings).toEqual({
+      props: {
+        max: { kind: 'attribute', name: 'max' },
+        size: { kind: 'attribute', name: 'size' },
+        spacing: { kind: 'attribute', name: 'spacing' },
+        overflowLabel: { kind: 'attribute', name: 'overflow-label' },
+      },
+    });
+  });
+
+  test('requires no name and always sets the host name (decision F10)', () => {
+    expect(avatarGroupDescriptor.accessibility).toEqual({ hostNaming: { kind: 'always' } });
+  });
+
+  test('its 854-character description names children and accessibility.label; its 856-character tool description neither', () => {
+    expect(Array.from(avatarGroupDescriptor.description).length).toBe(854);
+    expect(Array.from(avatarGroupDescriptor.toolDescription ?? '').length).toBe(856);
+    expect(avatarGroupDescriptor.description).toContain('`children`');
+    expect(avatarGroupDescriptor.description).toContain('`accessibility.label`');
+    expect(avatarGroupDescriptor.toolDescription).not.toContain('children');
+    expect(avatarGroupDescriptor.toolDescription).not.toContain('accessibility.');
+    expect(avatarGroupDescriptor.toolDescription).toContain('`accessibilityLabel`');
+  });
+
+  test('the schema takes optional children, max, size, spacing and overflowLabel, and rejects other steps and props', () => {
+    expect(avatarGroupDescriptor.schema.safeParse({}).success).toBe(true);
+    const node = {
+      children: ['ana', 'rui'],
+      max: { path: '/team/max' },
+      size: '5',
+      spacing: '0',
+      overflowLabel: '+{count} more members',
+    };
+    expect(avatarGroupDescriptor.schema.parse(node)).toEqual(node);
+    for (const extra of [{ size: '0' }, { spacing: '4' }, { max: 'three' }, { expanded: true }, { open: true }]) {
+      expect(avatarGroupDescriptor.schema.safeParse({ ...extra }).success).toBe(false);
+    }
+  });
+});
+
 describe('the Badge descriptor (`0007-badge.md` Descriptor fields)', () => {
   test('is agent-exposed, has no slot map and no action, binds label as text and variant as an attribute, and has no value', () => {
     expect(badgeDescriptor.agentExposed).toBe(true);
@@ -435,10 +490,10 @@ describe('agentExposed (§6.G.1 Contract)', () => {
     accessibility: { hostNaming: { kind: 'always' } },
   } as const;
 
-  test('defaults to true, as on every C1–C10 descriptor', () => {
+  test('defaults to true, as on every C1–C11 descriptor', () => {
     expect(defineDescriptor(fixture).agentExposed).toBe(true);
     expect(descriptors.every((d) => d.agentExposed)).toBe(true);
-    expect(descriptors).toHaveLength(10);
+    expect(descriptors).toHaveLength(11);
   });
 
   test('false keeps its reason', () => {
@@ -469,6 +524,6 @@ describe('importing @websublime/line-genui/catalog (§6.G.1; plan §7.2)', () =>
       child.exited,
     ]);
     expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
-    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 10 });
+    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 11 });
   });
 });

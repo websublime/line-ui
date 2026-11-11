@@ -19,6 +19,7 @@ import { describe, expect, test } from 'bun:test';
 import componentsManifest from '@websublime/line-components/custom-elements.json' with { type: 'json' };
 import {
   avatarDescriptor,
+  avatarGroupDescriptor,
   badgeDescriptor,
   buttonDescriptor,
   chipDescriptor,
@@ -73,9 +74,20 @@ describe('CEM drift: descriptors against the built line-components manifest (§6
   });
 
   test('a descriptor whose tag the manifest lacks fails', () => {
-    const group = variant({ ...buttonDescriptor, name: 'AvatarGroup', tag: 'line-avatar-group' }, {});
-    expect(driftViolations([group], manifest)).toEqual([
-      { tag: 'line-avatar-group', kind: 'element', name: 'line-avatar-group' },
+    const kbd = variant({ ...buttonDescriptor, name: 'Kbd', tag: 'line-kbd' }, {});
+    expect(driftViolations([kbd], manifest)).toEqual([{ tag: 'line-kbd', kind: 'element', name: 'line-kbd' }]);
+  });
+
+  test("AvatarGroup's attribute bindings and default slot pass, and a renamed attribute fails (`0010-avatar-group.md`)", () => {
+    expect(declaredNames('line-avatar-group')).toEqual(
+      expect.arrayContaining(['max', 'size', 'spacing', 'overflow-label']),
+    );
+    expect(driftViolations([avatarGroupDescriptor], manifest)).toEqual([]);
+    const renamed = variant(avatarGroupDescriptor, {
+      bindings: { props: { overflowLabel: { kind: 'attribute', name: 'overflow-name' } } },
+    });
+    expect(driftViolations([renamed], manifest)).toEqual([
+      { tag: 'line-avatar-group', prop: 'overflowLabel', kind: 'attribute', name: 'overflow-name' },
     ]);
   });
 });
