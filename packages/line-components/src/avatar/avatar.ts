@@ -122,6 +122,7 @@ export class LineAvatar extends LineElement {
 
       [part='image'],
       slot:not([name])::slotted(*) {
+        display: block;
         object-fit: var(--line-avatar-fit, cover);
       }
 
@@ -237,9 +238,9 @@ export class LineAvatar extends LineElement {
     this.#readMedia(event.currentTarget as HTMLSlotElement);
   };
 
-  /** Custom media is any element assigned to the default slot; the slot's own `<img>` fallback content is not. */
+  /** Custom media is any element assigned to the default slot; text, whitespace included, is not. */
   #readMedia(slot: HTMLSlotElement): void {
-    const media = slot.assignedElements({ flatten: true }).some((element) => element.getRootNode() !== this.renderRoot);
+    const media = slot.assignedElements({ flatten: true }).length > 0;
     if (media === this.#media) return;
     this.#media = media;
     this.requestUpdate();
@@ -259,14 +260,17 @@ export class LineAvatar extends LineElement {
     const src = this.#media ? '' : this.#tracked;
     const shows = this.#media || this.#status === 'loaded' ? 'image' : 'fallback';
     const lang = this.closest('[lang]')?.getAttribute('lang') ?? undefined;
+    // The image is a sibling of the default slot, not its fallback content: whitespace in the light DOM is assigned
+    // to the default slot and would keep fallback content from rendering (spec 0009-avatar.md AM-001).
     return html`<span
         part="root"
         role=${named ? 'img' : nothing}
         aria-label=${named ? label : nothing}
         aria-description=${description || nothing}
         data-shows=${shows}
-        ><slot @slotchange=${this.#onMediaChange}
-          >${src ? html`<img part="image" alt="" src=${src} @load=${this.#onLoad} @error=${this.#onError} />` : nothing}</slot
+        >${src ? html`<img part="image" alt="" src=${src} @load=${this.#onLoad} @error=${this.#onError} />` : nothing}<slot
+          @slotchange=${this.#onMediaChange}
+        ></slot
         ><span part="fallback" aria-hidden=${named ? nothing : 'true'}
           ><slot name="fallback">${initialsOf(this.name ?? '', lang)}</slot></span
         ></span

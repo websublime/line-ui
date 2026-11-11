@@ -113,6 +113,26 @@ describe('<line-avatar> defaults and shadow tree', () => {
     expect(part(el, 'fallback')?.querySelector('slot')?.name).toBe('fallback');
   });
 
+  test('with src, the image is a child of root beside the default slot, not its fallback content (AM-001)', async () => {
+    const el = await mountMarkup('<line-avatar src="https://example.test/a.jpg"></line-avatar>');
+    const root = part(el, 'root') as HTMLElement;
+    expect([...root.children].map((child) => child.getAttribute('part') ?? child.localName)).toEqual([
+      'image',
+      'slot',
+      'fallback',
+    ]);
+  });
+
+  test('whitespace and a status marker in the light DOM leave the src image in place (AM-001)', async () => {
+    const el = await mountMarkup(`<line-avatar src="https://example.test/a.jpg" name="Ana">
+        <span slot="status"></span>
+      </line-avatar>`);
+    const image = part(el, 'image') as HTMLImageElement;
+    expect(image.parentElement).toBe(part(el, 'root'));
+    await fire(el, 'load');
+    expect(shows(el)).toBe('image');
+  });
+
   test('takes no focus and does not delegate it', async () => {
     const el = await mount();
     expect(el.hasAttribute('tabindex')).toBe(false);
