@@ -1,6 +1,7 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
-// Button, Icon, Separator and Stack (C1–C4) through both catalogs, and IconButton (C5), ButtonGroup (C6), Alert (C7),
-// Chip (C8) and Badge (C9) through the `line` catalog.
+// Button, Icon, Separator and Stack (C1–C4) through both catalogs, IconButton (C5), ButtonGroup (C6), Alert (C7),
+// Chip (C8), Badge (C9) and Avatar (C10) through the `line` catalog, and a basic `Image` with `variant: "avatar"`
+// (C10) through its own `catalogId`.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
@@ -53,10 +54,11 @@ export const basicShowcase: A2uiMessage[] = [
 ];
 
 /**
- * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge and Alert under the `line`
- * id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip takes its
- * text from `label` and binds `pressed` to the data model. One Badge binds its count `label` to the data model, and a
- * dot Badge with no `label` is named by its `accessibility.label`.
+ * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge, Avatar and Alert under the
+ * `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
+ * takes its text from `label` and binds `pressed` to the data model. One Badge binds its count `label` to the data
+ * model, and a dot Badge with no `label` is named by its `accessibility.label`. One Avatar binds its `src` and `name`
+ * and holds a presence Badge in `status`; a basic `Image` with `variant: "avatar"` renders the second `line-avatar`.
  */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
@@ -152,7 +154,7 @@ export const lineShowcase: A2uiMessage[] = [
       orientation: 'horizontal',
       align: 'center',
       gap: '2',
-      children: ['inStock', 'freeShipping', 'results', 'fresh'],
+      children: ['inStock', 'freeShipping', 'results', 'fresh', 'me', 'teammate'],
     },
     { id: 'inStock', component: 'Chip', label: 'In stock', pressed: { path: '/filters/inStock' } },
     {
@@ -164,8 +166,19 @@ export const lineShowcase: A2uiMessage[] = [
     },
     { id: 'results', component: 'Badge', label: { path: '/filters/results' }, variant: 'info' },
     { id: 'fresh', component: 'Badge', variant: 'success', accessibility: { label: 'New arrivals' } },
+    { id: 'me', component: 'Avatar', src: { path: '/user/photo' }, name: { path: '/user/name' }, status: 'presence' },
+    { id: 'presence', component: 'Badge', variant: 'success', accessibility: { label: 'Online' } },
+    {
+      id: 'teammate',
+      component: 'Image',
+      catalogId: BASIC_CATALOG_ID,
+      url: 'avatars/rui.svg',
+      description: 'Rui Costa',
+      variant: 'avatar',
+    },
   ]),
   data('/filters', { inStock: true, freeShipping: false, results: '24' }),
+  data('/user', { photo: 'avatars/ana.svg', name: 'Ana Silva' }),
 ];
 
 /** An A2UI List whose items render as `line-stack` and as other elements. */

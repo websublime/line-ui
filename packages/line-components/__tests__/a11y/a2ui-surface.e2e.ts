@@ -11,8 +11,9 @@
  * `accessibility.label`, C6 (ButtonGroup) as a named toolbar with `loop` that roves over its IconButtons, C7
  * (Alert) with its five zones filled, no live role, and a dismiss IconButton that hides it, and C8 (Chip) with its
  * `label` text in the default slot and a `pressed` bound to the data model, and C9 (Badge) as a count bound to the
- * data model and a dot named by its `accessibility.label`. The Placeholders story adds a C9 Badge with no name, which
- * renders the `missing-name` placeholder (`0007-badge.md` F10).
+ * data model and a dot named by its `accessibility.label`, and C10 (Avatar) as a `line` Avatar with a bound `src` and
+ * `name` and a presence Badge in `status`, beside a basic `Image` with `variant: "avatar"`. The Placeholders story
+ * adds a C9 Badge with no name, which renders the `missing-name` placeholder (`0007-badge.md` F10).
  *
  * @module __tests__/a11y/a2ui-surface.e2e
  */
@@ -25,7 +26,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 26,
+  'agent-ui-a2ui-surface--line-catalog': 29,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -54,7 +55,7 @@ async function openSurfaceStory(page: Page, id: SurfaceStoryId): Promise<void> {
   await expect(surface.locator('[data-line-a2ui-placeholder="pending"]')).toHaveCount(0);
   await expect(
     surface.locator(
-      ':is(line-alert, line-badge, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
+      ':is(line-alert, line-avatar, line-badge, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
     ),
   ).toHaveCount(SURFACE_STORIES[id]);
   await expect(surface).not.toHaveAttribute('aria-busy', 'true');
@@ -172,7 +173,7 @@ test('the Line catalog story renders a Badge count from its bound label and a do
   page,
 }) => {
   await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
-  const badges = page.locator('#storybook-root line-a2ui-surface line-badge');
+  const badges = page.locator('#storybook-root line-a2ui-surface line-stack > line-badge');
   await expect(badges).toHaveCount(2);
   const count = badges.first();
   const dot = badges.nth(1);
@@ -197,6 +198,30 @@ test('the Line catalog story renders a Badge count from its bound label and a do
     { role: null, ariaHidden: null },
     { role: 'img', ariaHidden: null },
   ]);
+});
+
+test('the Line catalog story renders a line Avatar with a presence Badge and a basic avatar Image (0009-avatar.md)', async ({
+  page,
+}) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
+  const avatars = page.locator('#storybook-root line-a2ui-surface line-avatar');
+  await expect(avatars).toHaveCount(2);
+  const me = avatars.first();
+  const teammate = avatars.nth(1);
+  await expect(me).toHaveAttribute('src', 'http://127.0.0.1:4320/avatars/ana.svg');
+  await expect(me).toHaveAttribute('name', 'Ana Silva');
+  await expect(me.locator('line-badge')).toHaveAttribute('slot', 'status');
+  await expect(teammate).toHaveAttribute('src', 'http://127.0.0.1:4320/avatars/rui.svg');
+  await expect(teammate).toHaveAttribute('name', 'Rui Costa');
+  // Playwright's CSS engine pierces shadow roots, so the light DOM is counted with querySelectorAll instead.
+  const lightImages = await page
+    .locator('#storybook-root line-a2ui-surface')
+    .evaluate((surface) => surface.querySelectorAll('img').length);
+  expect(lightImages).toBe(0);
+  await expect(me).not.toHaveAttribute('data-loading');
+  await expect(me).not.toHaveAttribute('data-error');
+  await expect(me).toMatchAriaSnapshot('- img "Ana Silva"');
+  await expect(teammate).toMatchAriaSnapshot('- img "Rui Costa"');
 });
 
 test('the Placeholders story renders a nameless Badge as a missing-name placeholder, not a line-badge (F10)', async ({
