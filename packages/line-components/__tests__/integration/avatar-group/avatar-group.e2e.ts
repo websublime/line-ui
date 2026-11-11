@@ -321,6 +321,32 @@ test.describe('pointer and the native popover (F1; probe P1; D21)', () => {
     });
   }
 
+  test('two groups on one page each anchor their own panel to their own "+N" (AM-006)', async ({ page }) => {
+    await mount(
+      page,
+      `<div style="padding: 24px 160px 240px; display: flex; gap: 240px">
+        <line-avatar-group id="g1" aria-label="First" max="2">${people(4)}</line-avatar-group>
+        <line-avatar-group id="g2" aria-label="Second" max="1">${people(4, false, 5)}</line-avatar-group>
+      </div>`,
+    );
+    for (const id of ['g1', 'g2']) {
+      await page.locator(`#${id} [part="overflow"]`).click();
+      await settle(page);
+      const box = await page.locator(`#${id}`).evaluate((host) => {
+        const shadow = host.shadowRoot as ShadowRoot;
+        const button = (shadow.querySelector('[part="overflow"]') as HTMLElement).getBoundingClientRect();
+        const panel = shadow.querySelector('[part="content"]') as HTMLElement;
+        const rect = panel.getBoundingClientRect();
+        return { open: panel.matches(':popover-open'), below: rect.top - button.bottom, left: rect.left - button.left };
+      });
+      expect(box.open, `#${id} open`).toBe(true);
+      expectNear(box.below, GAP, `#${id} block offset`);
+      expectNear(box.left, 0, `#${id} inline-start edges`);
+      await page.mouse.click(4, 4);
+      await settle(page);
+    }
+  });
+
   test('another auto popover closes the panel and the flags follow', async ({ page }) => {
     await mount(page, `${frame('max="3"')}<div id="other" popover="auto">Other</div>`);
     await page.locator('#g [part="overflow"]').click();
