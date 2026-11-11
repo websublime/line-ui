@@ -2,6 +2,7 @@
 // catalog emitters and the `basic` implementation map (§6.G.2), and the frontend-tool emitter (§6.G.3).
 import {
   BASIC_CATALOG_ID,
+  type BasicComponentTarget,
   type BasicImplementation,
   type BasicImplementationMap,
   type BasicTarget,
@@ -12,6 +13,7 @@ import {
 } from './basic.js';
 import { commonProp, componentSchema, defineDescriptor, type LineDescriptor } from './descriptor.js';
 import { alertDescriptor } from './descriptors/alert.js';
+import { avatarDescriptor } from './descriptors/avatar.js';
 import { badgeDescriptor } from './descriptors/badge.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { buttonGroupDescriptor } from './descriptors/button-group.js';
@@ -60,8 +62,11 @@ export type {
   SlotMap,
   SurfaceLookup,
   TextBinding,
+  UrlBinding,
+  UrlBindingUse,
 } from './descriptor.js';
 export type {
+  BasicComponentTarget,
   BasicImplementation,
   BasicImplementationMap,
   BasicTarget,
@@ -82,6 +87,7 @@ export type {
 export {
   ADVERTISED_VERSIONS,
   alertDescriptor,
+  avatarDescriptor,
   BASIC_CATALOG_ID,
   badgeDescriptor,
   basicImplementations,
@@ -107,6 +113,7 @@ export {
 /** Every component descriptor, in catalog-name order. */
 export const descriptors: readonly LineDescriptor[] = [
   alertDescriptor,
+  avatarDescriptor,
   badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,

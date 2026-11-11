@@ -23,6 +23,7 @@ import {
   VideoApi,
 } from '@a2ui/web_core/v0_9';
 import type { LineDescriptor } from './descriptor.js';
+import { avatarDescriptor } from './descriptors/avatar.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { iconDescriptor } from './descriptors/icon.js';
 import { separatorDescriptor } from './descriptors/separator.js';
@@ -53,13 +54,21 @@ export type BasicTextVariant = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'caption' | 'b
 /** Fixed attributes a target element takes for its basic type, such as `controls` on `<audio>`. */
 export type TargetAttributes = Readonly<Record<string, string>>;
 
+/** A line://ui component target: `descriptor` gives its tag, `load()` and accessibility requirements. */
+export interface BasicComponentTarget {
+  readonly kind: 'component';
+  readonly descriptor: LineDescriptor;
+  readonly attributes: TargetAttributes;
+}
+
 /**
  * Where the surface renders a basic type.
  *
  * - `native`: a native media element. `url` names the use the URL policy checks its URL under (§6.G.4 URLs).
+ *   `byVariant` routes a node whose `variant` is one of its keys to a component instead, as `Image` with
+ *   `variant: "avatar"` renders `<line-avatar>` (§6.C.4 notes; §12 AM-021).
  * - `text`: a native text element chosen by `variant`, or `inButton` when the Text is a Button's child (§10 SD59).
- * - `component`: the line://ui component of `descriptor`, which gives its tag, `load()` and accessibility
- *   requirements, with `attributes` set on top of those the node's props bind.
+ * - `component`: the line://ui component of `descriptor`, with `attributes` set on top of those the node's props bind.
  */
 export type BasicTarget =
   | {
@@ -67,13 +76,14 @@ export type BasicTarget =
       readonly tag: 'img' | 'video' | 'audio';
       readonly url: 'image' | 'video' | 'audio';
       readonly attributes: TargetAttributes;
+      readonly byVariant?: Readonly<Record<string, BasicComponentTarget>>;
     }
   | {
       readonly kind: 'text';
       readonly tagByVariant: Readonly<Record<BasicTextVariant, 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'small' | 'p'>>;
       readonly inButton: 'span';
     }
-  | { readonly kind: 'component'; readonly descriptor: LineDescriptor; readonly attributes: TargetAttributes };
+  | BasicComponentTarget;
 
 /** One basic type's implementation: its `web_core` v0.9 `ComponentApi` and its line://ui target. */
 export interface BasicImplementation {
@@ -99,8 +109,17 @@ const IMPLEMENTATIONS: Record<BasicTypeName, BasicImplementation> = {
       inButton: 'span',
     },
   },
-  // Every `variant` renders `<img>` until C10 routes `variant: "avatar"` to `<line-avatar>` (§6.G.2; AM-021).
-  Image: { api: ImageApi, target: { kind: 'native', tag: 'img', url: 'image', attributes: NONE } },
+  // `variant: "avatar"` renders `<line-avatar>`, every other variant `<img>` (§6.C.4 notes; §12 AM-021).
+  Image: {
+    api: ImageApi,
+    target: {
+      kind: 'native',
+      tag: 'img',
+      url: 'image',
+      attributes: NONE,
+      byVariant: { avatar: { kind: 'component', descriptor: avatarDescriptor, attributes: NONE } },
+    },
+  },
   Icon: { api: IconApi, target: { kind: 'component', descriptor: iconDescriptor, attributes: NONE } },
   Video: { api: VideoApi, target: { kind: 'native', tag: 'video', url: 'video', attributes: NONE } },
   AudioPlayer: {
@@ -125,10 +144,14 @@ const IMPLEMENTATIONS: Record<BasicTypeName, BasicImplementation> = {
   },
 };
 
-/** Freezes a target with its attribute or variant table; the descriptor stays as it is. */
+/** Freezes a target with its attribute, variant or route table; the descriptor stays as it is. */
 function freezeTarget(target: BasicTarget): BasicTarget {
   if (target.kind === 'text') Object.freeze(target.tagByVariant);
   else Object.freeze(target.attributes);
+  if (target.kind === 'native' && target.byVariant) {
+    for (const routed of Object.values(target.byVariant)) Object.freeze(routed);
+    Object.freeze(target.byVariant);
+  }
   return Object.freeze(target);
 }
 

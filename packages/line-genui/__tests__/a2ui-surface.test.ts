@@ -19,7 +19,13 @@ import { afterEach, beforeAll, describe, expect, test } from 'bun:test';
 import { INTERNALS } from '@websublime/line-core';
 import { a2uiIconMap } from '@websublime/line-icons/a2ui';
 import { LineA2uiSurface } from '../src/a2ui/index.js';
-import { BASIC_CATALOG_ID, badgeDescriptor, chipDescriptor, LINE_CATALOG_ID } from '../src/catalog/index.js';
+import {
+  avatarDescriptor,
+  BASIC_CATALOG_ID,
+  badgeDescriptor,
+  chipDescriptor,
+  LINE_CATALOG_ID,
+} from '../src/catalog/index.js';
 import {
   action,
   checkClientMessage,
@@ -1133,6 +1139,214 @@ describe('Badge (`0007-badge.md` Agent contract; §6.G.4; §12 AM-092)', () => {
     const { surface, errors } = await render([badge()]);
     expect(surface.querySelector('line-badge')).toBeNull();
     expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+  });
+});
+
+describe('Avatar (`0009-avatar.md` Agent contract; §6.G.4; §12 AM-021, AM-094)', () => {
+  type Avatar = HTMLElement & { src: string; name: string; updateComplete: Promise<unknown> };
+  const avatar = (extra: Message = {}): Message => ({
+    id: 'root',
+    component: 'Avatar',
+    src: 'https://example.com/ana.png',
+    name: 'Ana Silva',
+    ...extra,
+  });
+  const rootOf = (host: Element) => host.shadowRoot?.querySelector('[part="root"]') as HTMLElement;
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so the avatar is
+  // defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => avatarDescriptor.load());
+
+  test('renders line-avatar with src from an allowed URL and name, an img named by it (F9, F10)', async () => {
+    const { surface, errors } = await render([avatar()], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    const host = surface.querySelector('line-avatar') as Avatar;
+    await host.updateComplete;
+    expect(host.getAttribute('src')).toBe('https://example.com/ana.png');
+    expect(host.getAttribute('name')).toBe('Ana Silva');
+    expect(rootOf(host).getAttribute('role')).toBe('img');
+    expect(rootOf(host).getAttribute('aria-label')).toBe('Ana Silva');
+  });
+
+  test('a bound name and src update the same element', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(
+      create(LINE_CATALOG_ID),
+      components([avatar({ src: { path: '/user/photo' }, name: { path: '/user/name' } })]),
+      data('/user', { photo: 'https://example.com/a.png', name: 'Ana Silva' }),
+    );
+    const host = surface.querySelector('line-avatar') as Avatar;
+    expect(host.getAttribute('name')).toBe('Ana Silva');
+    await feed(data('/user', { photo: 'https://example.com/b.png', name: 'Rui Costa' }));
+    expect(surface.querySelector('line-avatar')).toBe(host);
+    expect(host.getAttribute('src')).toBe('https://example.com/b.png');
+    expect(host.getAttribute('name')).toBe('Rui Costa');
+    for (const rejected of ['javascript:alert(1)', 'data:image/png;base64,AAAA']) {
+      await feed(data('/user/photo', rejected));
+      expect(surface.querySelector('line-avatar')).toBe(host);
+      expect(host.hasAttribute('src')).toBe(false);
+    }
+    await feed(data('/user/photo', 'https://example.com/c.png'));
+    expect(host.getAttribute('src')).toBe('https://example.com/c.png');
+    expect(errors).toEqual([]);
+  });
+
+  test('a disallowed scheme, data: or a blank URL leaves no src (AM-094)', async () => {
+    for (const src of ['data:image/png;base64,AAAA', 'javascript:alert(1)', 'ftp://example.com/a.png', '  ']) {
+      const { surface, errors } = await render([avatar({ src })], { catalogId: LINE_CATALOG_ID });
+      expect(errors).toEqual([]);
+      const host = surface.querySelector('line-avatar') as Avatar;
+      expect(host.hasAttribute('src')).toBe(false);
+      surface.remove();
+    }
+  });
+
+  test('urlPolicy rejects a URL with use image, a throwing policy rejects every URL, and a new policy re-projects', async () => {
+    const { surface } = await render([avatar()], { catalogId: LINE_CATALOG_ID });
+    const host = surface.querySelector('line-avatar') as Avatar;
+    const uses: string[] = [];
+    surface.urlPolicy = (url, use) => {
+      uses.push(use);
+      return !url.pathname.endsWith('ana.png');
+    };
+    expect(host.hasAttribute('src')).toBe(false);
+    expect(uses).toEqual(['image']);
+    surface.urlPolicy = () => true;
+    expect(host.getAttribute('src')).toBe('https://example.com/ana.png');
+    surface.urlPolicy = () => {
+      throw new Error('policy failed');
+    };
+    expect(host.hasAttribute('src')).toBe(false);
+  });
+
+  test('a status child renders in the status slot (F9)', async () => {
+    const { surface, errors } = await render(
+      [
+        avatar({ status: 'presence' }),
+        { id: 'presence', component: 'Badge', variant: 'success', accessibility: { label: 'Online' } },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const status = surface.querySelector('line-avatar > line-badge') as HTMLElement;
+    expect(status.getAttribute('slot')).toBe('status');
+    expect(status.getAttribute('aria-label')).toBe('Online');
+  });
+
+  test('accessibility.label and .description reach the host, which the avatar copies to root', async () => {
+    const { surface } = await render(
+      [avatar({ accessibility: { label: 'Ana Silva, team lead', description: 'Online' } })],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    const host = surface.querySelector('line-avatar') as Avatar;
+    await host.updateComplete;
+    expect(host.getAttribute('aria-label')).toBe('Ana Silva, team lead');
+    expect(host.getAttribute('aria-description')).toBe('Online');
+    expect(rootOf(host).getAttribute('aria-label')).toBe('Ana Silva, team lead');
+  });
+
+  test('a node with no name renders a decorative avatar and raises nothing (F11)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Avatar' }], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    const host = surface.querySelector('line-avatar') as Avatar;
+    await host.updateComplete;
+    expect(host.hasAttribute('name')).toBe(false);
+    expect(rootOf(host).hasAttribute('role')).toBe(false);
+  });
+
+  test('a node with size, shape or fallback is rejected by the strict schema', async () => {
+    for (const node of [avatar({ size: 'lg' }), avatar({ shape: 'square' }), avatar({ fallback: 'x' })]) {
+      const { surface, errors } = await render([node], { catalogId: LINE_CATALOG_ID });
+      expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+      expect(surface.querySelector('line-avatar')).toBeNull();
+      surface.remove();
+    }
+  });
+
+  test('a basic Image with variant avatar renders line-avatar: url → src, description → name, fit ignored (F11; AM-021)', async () => {
+    const { surface, errors } = await render([
+      {
+        id: 'root',
+        component: 'Image',
+        url: 'https://example.com/ana.png',
+        description: 'Ana Silva',
+        fit: 'contain',
+        variant: 'avatar',
+      },
+    ]);
+    expect(errors).toEqual([]);
+    const host = surface.querySelector('line-avatar') as Avatar;
+    await host.updateComplete;
+    expect(surface.querySelector('img')).toBeNull();
+    expect(host.getAttribute('src')).toBe('https://example.com/ana.png');
+    expect(host.getAttribute('name')).toBe('Ana Silva');
+    for (const attribute of ['fit', 'variant', 'description', 'url']) expect(host.hasAttribute(attribute)).toBe(false);
+    expect(rootOf(host).getAttribute('aria-label')).toBe('Ana Silva');
+  });
+
+  test('a basic avatar Image keeps a data: URL out and, with no description, renders decorative', async () => {
+    const { surface, errors } = await render([
+      { id: 'root', component: 'Image', url: 'data:image/png;base64,AAAA', variant: 'avatar' },
+    ]);
+    expect(errors).toEqual([]);
+    const host = surface.querySelector('line-avatar') as Avatar;
+    await host.updateComplete;
+    expect(host.hasAttribute('src')).toBe(false);
+    expect(host.hasAttribute('name')).toBe(false);
+    expect(rootOf(host).hasAttribute('role')).toBe(false);
+  });
+
+  test('a basic avatar Image runs urlPolicy with use image, and a new policy re-projects it (AM-094)', async () => {
+    const { surface, errors } = await render([
+      { id: 'root', component: 'Image', url: 'https://example.com/ana.png', description: 'Ana', variant: 'avatar' },
+    ]);
+    const host = surface.querySelector('line-avatar') as Avatar;
+    expect(host.getAttribute('src')).toBe('https://example.com/ana.png');
+    const uses: string[] = [];
+    surface.urlPolicy = (url, use) => {
+      uses.push(use);
+      return !url.pathname.endsWith('ana.png');
+    };
+    expect(surface.querySelector('line-avatar')).toBe(host);
+    expect(host.hasAttribute('src')).toBe(false);
+    expect(uses).toEqual(['image']);
+    surface.urlPolicy = () => {
+      throw new Error('policy failed');
+    };
+    expect(host.hasAttribute('src')).toBe(false);
+    surface.urlPolicy = () => true;
+    expect(host.getAttribute('src')).toBe('https://example.com/ana.png');
+    expect(errors).toEqual([]);
+  });
+
+  test('every other Image variant, and a missing one, still renders <img>', async () => {
+    for (const variant of [undefined, 'mediumFeature', 'icon', 'header']) {
+      const node: Message = { id: 'root', component: 'Image', url: 'https://example.com/a.png', description: 'A' };
+      if (variant) node.variant = variant;
+      const { surface } = await render([node]);
+      expect(surface.querySelector('line-avatar')).toBeNull();
+      expect(surface.querySelector('img')?.getAttribute('src')).toBe('https://example.com/a.png');
+      surface.remove();
+    }
+  });
+
+  test('an Image whose variant changes swaps between <img> and line-avatar', async () => {
+    const { feed, surface, errors } = mount();
+    const image = (variant: string): Message => ({
+      id: 'root',
+      component: 'Image',
+      url: 'https://example.com/a.png',
+      description: 'Ana',
+      variant,
+    });
+    await feed(create(), components([image('mediumFeature')]));
+    expect(surface.firstElementChild?.localName).toBe('img');
+    await feed(components([image('avatar')]));
+    expect(surface.firstElementChild?.localName).toBe('line-avatar');
+    expect(surface.firstElementChild?.getAttribute('name')).toBe('Ana');
+    await feed(components([image('largeFeature')]));
+    expect(surface.firstElementChild?.localName).toBe('img');
+    expect(errors).toEqual([]);
   });
 });
 

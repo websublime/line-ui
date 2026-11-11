@@ -6,7 +6,7 @@
  * - An action-map event marked native passes only when it is a known DOM event; any other event must be a
  *   `@fires` event of the element.
  * - A surface lookup, such as Icon `name` → `iconMap`, is checked through the members it sets; a text binding names
- *   no member and is skipped.
+ *   no member and is skipped; a URL binding is checked through the attribute it sets.
  * - The §7.3 content rules decide which manifest members count as public API.
  *
  * The manifest is the file the `line-components` build emits, reached by package name, so it needs
@@ -18,6 +18,7 @@
 import { describe, expect, test } from 'bun:test';
 import componentsManifest from '@websublime/line-components/custom-elements.json' with { type: 'json' };
 import {
+  avatarDescriptor,
   badgeDescriptor,
   buttonDescriptor,
   chipDescriptor,
@@ -72,8 +73,10 @@ describe('CEM drift: descriptors against the built line-components manifest (§6
   });
 
   test('a descriptor whose tag the manifest lacks fails', () => {
-    const avatar = variant({ ...buttonDescriptor, name: 'Avatar', tag: 'line-avatar' }, {});
-    expect(driftViolations([avatar], manifest)).toEqual([{ tag: 'line-avatar', kind: 'element', name: 'line-avatar' }]);
+    const group = variant({ ...buttonDescriptor, name: 'AvatarGroup', tag: 'line-avatar-group' }, {});
+    expect(driftViolations([group], manifest)).toEqual([
+      { tag: 'line-avatar-group', kind: 'element', name: 'line-avatar-group' },
+    ]);
   });
 });
 
@@ -190,6 +193,36 @@ describe('CEM drift: text bindings (§6.G.5; §12 AM-092)', () => {
     });
     expect(driftViolations([tone], manifest)).toEqual([
       { tag: 'line-badge', prop: 'variant', kind: 'attribute', name: 'tone' },
+    ]);
+  });
+});
+
+describe('CEM drift: URL bindings (§6.G.5; §12 AM-094)', () => {
+  test('a URL binding is checked through the attribute it sets', () => {
+    const declared = variant(buttonDescriptor, {
+      bindings: { props: { variant: { kind: 'url', use: 'image', name: 'variant' } } },
+    });
+    expect(driftViolations([declared], manifest)).toEqual([]);
+    const missing = variant(buttonDescriptor, {
+      bindings: { props: { variant: { kind: 'url', use: 'image', name: 'src' } } },
+    });
+    expect(declaredNames('line-button')).not.toContain('src');
+    expect(driftViolations([missing], manifest)).toEqual([
+      { tag: 'line-button', prop: 'variant', kind: 'attribute', name: 'src' },
+    ]);
+  });
+
+  test("Avatar's src URL binding and name attribute pass, and its status slot is checked (§6.G.5 Acceptance)", () => {
+    expect(avatarDescriptor.bindings.props.src).toEqual({ kind: 'url', use: 'image', name: 'src' });
+    expect(declaredNames('line-avatar')).toEqual(expect.arrayContaining(['src', 'name']));
+    expect(driftViolations([avatarDescriptor], manifest)).toEqual([]);
+    const renamed = variant(avatarDescriptor, {
+      bindings: { props: { src: { kind: 'url', use: 'image', name: 'image' } } },
+      slots: { status: 'presence' },
+    });
+    expect(driftViolations([renamed], manifest)).toEqual([
+      { tag: 'line-avatar', prop: 'src', kind: 'attribute', name: 'image' },
+      { tag: 'line-avatar', prop: 'status', kind: 'slot', name: 'presence' },
     ]);
   });
 });
