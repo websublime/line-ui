@@ -41,7 +41,7 @@ await buttonDescriptor.load(); // defines <line-button>
 | `defineDescriptor(init)` | Builds a descriptor from its fields and its own props; `agentExposed` defaults to `true` |
 | `componentSchema(description, props)` | The strict prop schema: `props` plus the A2UI `accessibility` object, described and annotated with the `ComponentCommon` mixin |
 | `commonProp(type, description)` | A common-type prop (`DynamicString`, `DynamicBoolean`, `DynamicNumber`, `ComponentId`, `ChildList`, `Action`) whose description reaches `toJson()` beside a `$ref`; describe an enum or another plain prop with `.describe()` |
-| `LineDescriptor` and the field types | The descriptor type, its binding (attribute, property, surface lookup or text), slot and action maps, and its accessibility requirements. A text binding (`{ kind: 'text' }`) writes the prop's string as the host's text content, so it lands in the default slot; a descriptor with one has no slot map |
+| `LineDescriptor` and the field types | The descriptor type, its binding (attribute, property, surface lookup, text or URL), slot and action maps, and its accessibility requirements. A text binding (`{ kind: 'text' }`) writes the prop's string as the host's text content, so it lands in the default slot; a descriptor with one has no slot map. A URL binding (`{ kind: 'url', use, name }`) sets the attribute `name` only to a URL the surface's URL policy allows for `use` (`image`, `video` or `audio`), and removes it otherwise |
 
 ## The `line` catalog (`./catalog`, `./catalog.json`)
 

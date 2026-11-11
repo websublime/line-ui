@@ -60,6 +60,8 @@ export type {
   SlotMap,
   SurfaceLookup,
   TextBinding,
+  UrlBinding,
+  UrlBindingUse,
 } from './descriptor.js';
 export type {
   BasicImplementation,

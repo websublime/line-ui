@@ -445,7 +445,9 @@ export class Projection {
 
   /**
    * Applies the node's bound props, the target's fixed attributes and the host naming to the element. A text
-   * binding writes the prop's string as the host's text content, which lands in the default slot (§12 AM-092).
+   * binding writes the prop's string as the host's text content, which lands in the default slot (§12 AM-092); a URL
+   * binding sets its attribute only to a URL the policy allows, and reads the policy inside the effect, so a new
+   * policy re-projects the node (§12 AM-094).
    */
   #bind(
     view: View,
@@ -461,6 +463,11 @@ export class Projection {
       if (!binding || binding.kind === 'surfaceLookup' || owned.has(prop)) continue;
       if (binding.kind === 'text') {
         setText(element, text(unwrap(own[prop])));
+        continue;
+      }
+      if (binding.kind === 'url') {
+        const url = allowedUrl(unwrap(own[prop]), binding.use, document.baseURI, getValue(this.urlPolicy));
+        setAttribute(element, binding.name, url?.href);
         continue;
       }
       if (owned.has(binding.name)) continue;

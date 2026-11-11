@@ -109,8 +109,25 @@ export interface TextBinding {
   readonly kind: 'text';
 }
 
-/** Where the surface writes a prop: an element attribute or property, a surface lookup, or the host's text. */
-export type Binding<P extends string> = ElementMember | SurfaceLookup<P> | TextBinding;
+/** The uses a URL binding passes to the surface's URL policy: the media an element loads from the URL. */
+export type UrlBindingUse = 'image' | 'video' | 'audio';
+
+/**
+ * A URL binding: the surface runs the prop's resolved string through its URL policy for `use`, resolved against the
+ * document base, and sets the attribute `name` to the allowed URL or removes it, as Avatar `src` does. The drift test
+ * checks the attribute `name` (§6.G.1 Fields, §6.G.4 URLs, §6.G.5; §12 AM-094).
+ */
+export interface UrlBinding {
+  readonly kind: 'url';
+  readonly use: UrlBindingUse;
+  readonly name: string;
+}
+
+/**
+ * Where the surface writes a prop: an element attribute or property, a surface lookup, the host's text, or an
+ * attribute behind the URL policy.
+ */
+export type Binding<P extends string> = ElementMember | SurfaceLookup<P> | TextBinding | UrlBinding;
 
 /** The binding map: each bound prop's target, and the value prop with its commit event (ARCH §17.2 rule C9). */
 export interface BindingMap<P extends string> {
