@@ -262,8 +262,8 @@ An `<img alt="">` in an open shadow root went through the steps below; the log r
 └── #shadow-root
     ├── <span part="root" role="img"            the frame: radius, fill, ring, clip; role and aria-label only while named (F2, F3)
     │         aria-label="…">
-    │   ├── <slot>                               custom media (F1); its fallback content is the image below
-    │   │   └── <img part="image" alt="">        rendered while `src` is set; visible only after `load` (F5, D5)
+    │   ├── <img part="image" alt="">            rendered while `src` is set and no custom media is slotted; visible only after `load` (F5, D5; AM-001)
+    │   ├── <slot>                               custom media (F1)
     │   └── <span part="fallback">               visible while no image shows; aria-hidden="true" while decorative (F3)
     │       └── <slot name="fallback">           consumer fallback; its fallback content is the computed initials (F4)
     └── <slot name="status">                     presence marker over the inline-end, block-end corner (F6)
@@ -274,7 +274,7 @@ An `<img alt="">` in an open shadow root went through the steps below; the log r
 - `root` is a one-cell grid. The image, the custom media and the fallback all sit in that cell; the inactive one is hidden with `visibility: hidden`, so a lazy image keeps loading (probe P4; D5). `root` clips with `overflow: hidden` and `border-radius`, and draws the ring as `box-shadow`, which the clip does not cut.
 - The `status` slot sits outside `root`, so the clip leaves the marker whole and the marker's name stays outside the `img` role (probe P1; F2, F6).
 - The host extends `LineElement` (`packages/line-core/src/line-element.ts:31-36`) without the `FormAssociated` mixin. `:host { display: inline-block; position: relative }` and `:host([hidden]) { display: none }`, because `display` on `:host` beats the UA `[hidden]` rule (`0007-badge.md` D3).
-- The default slot holds custom media when it has an element assigned. Then the internal `<img>` is not rendered, `src` is ignored and the fallback stays hidden (F1).
+- The default slot holds custom media when it has an element assigned. Then the internal `<img>` is not rendered, `src` is ignored and the fallback stays hidden (F1). Text assigned to the default slot, whitespace included, is not custom media, and the `<img>` is a sibling of the slot, not its fallback content, so whitespace between the host's tags never hides it (AM-001).
 
 ### States
 
@@ -747,4 +747,8 @@ Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option t
 
 ## Amendments
 
-PROCESS §3 requires that any change to this spec after approval lands as a row here, in the same commit as the change. The spec has no amendment yet.
+PROCESS §3 requires that any change to this spec after approval lands as a row here, in the same commit as the change.
+
+| ID | Date | Trigger | Change | Reason | Evidence |
+|---|---|---|---|---|---|
+| AM-001 | 2026-11-11 | ledger 01-C10 (factual correction, implement) | Part B Anatomy: the internal `<img part="image">` is a child of `root` beside the default slot, rendered only while `src` is set and no custom media is slotted; it is no longer the default slot's fallback content. The custom-media bullet says text assigned to the default slot, whitespace included, is not custom media. F1 (a) holds unchanged | A slot renders its fallback content only while nothing is assigned to it, and whitespace text between the host's tags is assigned to the default slot. With the image as fallback content, an avatar written with a status marker on its own line, `<line-avatar src name>⏎<line-badge slot="status">…`, drew no picture | The Status and In a link stories on `storybook-static` drew an empty frame in chromium while `root` read `data-shows="image"`, and the `<img>` had no box (`getBoundingClientRect` 0×0, empty computed style); the HTML slot assignment rule assigns every child node without a `slot` attribute, text included, to the default slot. `packages/line-components/__tests__/avatar.test.ts`, the whitespace and status-marker case |
