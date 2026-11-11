@@ -38,7 +38,7 @@ const DESCRIPTION = `\`<line-avatar-group>\` shows a row of overlapping avatars,
 - **Spreading.** While a mouse or pen pointer rests on the group, or keyboard focus is within it, the avatars spread apart so each face shows whole, and \`data-expanded\` with \`:state(expanded)\` is set. They spread toward inline-start, so "+N" stays under the pointer. Escape stacks them again until the pointer and focus have both left. A touch tap never spreads them by itself; the stack is spread while the panel is open.
 - **Leave room before it.** The spread avatars overlap the content before the group by up to (avatars in the stack) × (overlap + gap), 36px with the defaults and \`max="3"\`, and an ancestor with \`overflow: hidden\` clips them. Leave that space at the group's inline-start, or cap the stack with \`max\`.
 - **Size and spacing.** \`size\` from \`1\` to \`5\` sets the avatars and "+N" to \`--line-size-5\`…\`-9\`; \`spacing\` from \`0\` to \`3\` sets the overlap to \`0px\`, \`--line-size-1\`, \`-2\` or \`-3\`. The group sets \`--line-avatar-size\` and a 2px \`--line-avatar-ring-width\` on its host, and the avatars inherit them through any wrapper. Write a zero overlap or gap token as \`0px\`.
-- **Panel position.** The panel opens under "+N", at its inline-start; it mirrors in a document whose \`<html>\` is right-to-left.
+- **Panel position.** The panel opens under "+N" at the group's inline-start and follows the group's direction, also inside a subtree whose direction differs from the page's; near a viewport edge it moves above "+N" or to its other side.
 - Use \`<line-avatar>\` alone for one person, and \`<line-stack orientation="horizontal">\` for pictures that must not overlap.`;
 
 interface AvatarGroupArgs {

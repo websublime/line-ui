@@ -191,6 +191,7 @@ export class LineAvatarGroup extends LineElement {
       [part='root'] {
         display: inline-flex;
         position: relative;
+        anchor-name: --line-avatar-group-trigger;
         border-radius: var(--line-avatar-radius, var(--line-radius-round));
       }
 
@@ -214,12 +215,17 @@ export class LineAvatarGroup extends LineElement {
         box-shadow: 0 0 0 var(--line-avatar-ring-width, 0px) var(--line-avatar-ring-color, var(--line-gray-1, Canvas));
       }
 
-      /* The UA centres a popover; the panel sits under "+N" through its implicit anchor instead (D9). */
+      /*
+       * The UA centres a popover; the panel sits under "+N" at the host's inline-start instead, through anchor()
+       * insets keyed by the host's direction, which hold in a subtree of the other direction (D9; AM-006).
+       */
       [part='content'] {
+        position-anchor: --line-avatar-group-trigger;
         margin: 0;
         margin-block-start: var(--line-avatar-group-content-offset);
         inset: auto;
-        position-area: block-end span-inline-end;
+        top: anchor(bottom);
+        left: anchor(left);
         position-try-fallbacks: flip-block, flip-inline;
         max-inline-size: var(--line-avatar-group-content-max-inline-size);
         padding: var(--line-avatar-group-content-padding);
@@ -227,6 +233,11 @@ export class LineAvatarGroup extends LineElement {
         border-radius: var(--line-avatar-group-content-radius);
         background-color: var(--line-avatar-group-content-bg);
         box-shadow: var(--line-avatar-group-content-shadow);
+      }
+
+      :host(:dir(rtl)) [part='content'] {
+        left: auto;
+        right: anchor(right);
       }
 
       /* Only while open: an author display would override the UA rule that hides a closed popover. */

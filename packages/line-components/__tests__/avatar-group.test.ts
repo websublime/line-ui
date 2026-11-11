@@ -504,6 +504,13 @@ describe('<line-avatar-group> custom properties (D10)', () => {
     expect(sheet).toContain(
       ":host([data-focus-visible]) [part='root'] { outline: var(--line-avatar-group-focus-ring); }",
     );
+    expect(sheet).toContain('anchor-name: --line-avatar-group-trigger;');
+    expect(sheet).toContain('position-anchor: --line-avatar-group-trigger;');
+    expect(sheet).toContain(
+      'top: anchor(bottom); left: anchor(left); position-try-fallbacks: flip-block, flip-inline;',
+    );
+    expect(sheet).toContain(":host(:dir(rtl)) [part='content'] { left: auto; right: anchor(right); }");
+    expect(sheet).not.toContain('position-area');
   });
 });
 

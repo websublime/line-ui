@@ -340,7 +340,8 @@ pen pointer rests on the group, or keyboard focus is within it, the avatars spre
 stays put; Escape stacks them again until the pointer and focus have both left, and a touch tap never spreads them by
 itself. The spread avatars overlap the content before the group by up to (avatars in the stack) × (overlap + gap),
 36px with the defaults and `max="3"`, so leave that space at its inline-start or cap the stack with `max`. The panel
-opens under "+N" at its inline-start and mirrors in a document whose `<html>` is right-to-left. `data-expanded`,
+opens under "+N" at the group's inline-start and follows the group's direction, also inside a subtree whose
+direction differs from the page's; near a viewport edge it moves above "+N" or to its other side. `data-expanded`,
 `data-open` and `data-focus-visible`, with `:state(expanded)`, `:state(open)` and `:state(focus-visible)`, follow the
 stack, the panel and the keyboard focus on "+N". It fires no event.
 
