@@ -236,12 +236,12 @@ test.describe('with line-tokens and line-themes', () => {
     expect(values.shadow).toBe(`${GRAY_STEPS[1]} 0px 0px 0px 0px`);
   });
 
-  test('a container sets size, ring and status visibility by inheritance, through a link (contract G1–G4)', async ({
+  test('a container sets size, ring width and colour and status visibility by inheritance, through a link (contract G1–G4)', async ({
     page,
   }) => {
     await mount(
       page,
-      `<div style="--line-avatar-size: 48px; --line-avatar-ring-width: 2px; --line-avatar-status-visibility: hidden">
+      `<div style="--line-avatar-size: 48px; --line-avatar-ring-width: 2px; --line-avatar-ring-color: rgb(1, 2, 3); --line-avatar-status-visibility: hidden">
          <a href="#a"><line-avatar id="a" name="Ana Silva">
            <line-badge id="s" slot="status" variant="success" aria-label="Online"></line-badge></line-avatar></a>
        </div>`,
@@ -257,10 +257,27 @@ test.describe('with line-tokens and line-themes', () => {
       };
     });
     expectNear(values.width, 48, 'inherited size');
-    expect(values.shadow).toMatch(/ 0px 0px 0px 2px$/);
+    expect(values.shadow).toBe('rgb(1, 2, 3) 0px 0px 0px 2px');
     expect(values.status).toBe('hidden');
     expect(values.display).toBe('inline-block');
     await expect(page.locator('a')).toMatchAriaSnapshot('- link "Ana Silva"');
+  });
+
+  test('hidden hides the host and leaves its box and its name out (contract G5)', async ({ page }) => {
+    await mount(
+      page,
+      `<div id="row"><line-avatar id="shown" name="Ana Silva"></line-avatar><line-avatar id="gone" name="Rui Costa" hidden></line-avatar></div>`,
+    );
+    const gone = await page.locator('#gone').evaluate((host) => {
+      const box = host.getBoundingClientRect();
+      return { display: getComputedStyle(host).display, width: box.width, height: box.height };
+    });
+    expect(gone).toEqual({ display: 'none', width: 0, height: 0 });
+    const snapshot = await page.locator('#row').ariaSnapshot();
+    expect(snapshot).toContain('img "Ana Silva"');
+    expect(snapshot).not.toContain('Rui Costa');
+    await page.locator('#gone').evaluate((host) => host.removeAttribute('hidden'));
+    await expect(page.locator('#gone')).toHaveCSS('display', 'inline-block');
   });
 
   for (const dir of ['ltr', 'rtl'] as const) {
