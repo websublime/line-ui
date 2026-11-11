@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` (2026-11-11). Miguel decided F1–F11 on 2026-11-11; approval follows the review gate |
+| Status | `proposed` (2026-11-11). Miguel decided F1–F13 and F15 on 2026-11-11; F14 waits for him; approval follows the review gate |
 | Phase | `1` |
 | Tier | `Custom` (Phase 1 spec §6.C.4 C11 row, `docs/specs/01-spec-core-primitives.md:1167`; PRD §4.1, `docs/PRD.md:254`; ARCH §8, `docs/ARCHITECTURE.md:409`; ARCH §13.2, `docs/ARCHITECTURE.md:606`) |
 | Tag | `line-avatar-group` |
@@ -10,15 +10,15 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C11 row) |
 | PRD catalogue entry | PRD §4.1, `AvatarGroup` row (`docs/PRD.md:254`) |
 | Ledger row | `01-C11` (`docs/plans/01-tasks-core-primitives.md:57`) |
-| Governing sections | Phase 1 spec §4.2 (`:250`, `:261-269`, `:299`), §6.C.0, §6.C.4 (C11 row `:1167`, notes `:1147-1153`, `:1180-1181`), §6.C.6 (`:1218-1233`), §6.C.7 (`:1242-1272`), §6.G.1–§6.G.5, §7.4, §7.5, §10 SD4, SD10, SD18, SD21, SD31 (as amended by AM-095), SD34, SD37, SD38, SD39, SD84, SD98, SD99, §12 AM-058, AM-090, AM-095; ARCH (v0.8.27) §3, §5, §8, §12, §13.2, §14.7–§14.9, §17.2–§17.4; PRD §4.1, §4.3, §5.2, §8; MANIFESTO Laws 3–9, Out of Scope; R7 §2.4, §4, §6 OQ5; R8 §2.2, §3, §6 Q10; R9 §2.1; `0009-avatar.md` contract G1–G8, F7, F12 |
+| Governing sections | Phase 1 spec §4.2 (`:250`, `:261-269`, `:299`), §6.C.0, §6.C.4 (C11 row `:1167`, notes `:1147-1153`, `:1180-1181`), §6.C.6 (`:1218-1233`), §6.C.7 (`:1242-1272`), §6.G.1–§6.G.5, §7.4, §7.5, §10 SD4, SD10, SD18, SD21, SD31 (as amended by AM-095), SD34, SD37, SD38, SD39, SD84, SD98, SD99, §12 AM-058, AM-090, AM-095; ARCH (v0.8.27) §3, §5, §8, §12, §13.2, §14.7–§14.9, §17.2–§17.4; PRD §4.1, §4.3, §5.2, §8; MANIFESTO Laws 3–9, Out of Scope; R7 §2.4, §4, §6 OQ5; R8 §2.2, §3, §6 Q10; R9 §2.1; `0009-avatar.md` contract G1–G8 (G1 and G8 as amended by its AM-004), F7, F12 |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F11 on 2026-11-11, each on the option the draft recommended; Part B states those decisions. The orchestrator defaults D1–D19 stand as drafted (Miguel, 2026-11-11). F7 (a) departs from the old wording of Phase 1 spec §10 SD31, which Phase 1 spec AM-095 amends.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F11 on 2026-11-11, each on the option the draft recommended, and, after review gate round 1, F12, F13 and F15 the same day; F14, the layout that keeps "+N" under the pointer, waits for him. Part B states those decisions. The orchestrator defaults D1–D19 stand as drafted (Miguel, 2026-11-11), with the review-gate edits and the new D20–D26 that the orchestrator directed. F7 (a) departs from the old wording of Phase 1 spec §10 SD31, which Phase 1 spec AM-095 amends.
 
 ---
 
 ## Probes
 
-Throwaway probes ran on 2026-11-11 to inform F1–F4, F6 and F7 and defaults D4, D6–D9, D13 and D16. Their code lived in `packages/line-components/temp/c11-probe/`, which `.gitignore` ignores through its `temp` entry, and was deleted after the run. Nothing of it is committed.
+Throwaway probes ran on 2026-11-11 to inform F1–F4, F6, F7 and F14 and defaults D4, D6–D9, D13 and D16. Their code lived in `packages/line-components/temp/c11-probe/` and, for P9, `packages/line-components/temp/c11-probe2/`, which `.gitignore` ignores through its `temp` entry, and was deleted after each run. Nothing of it is committed.
 
 ### Setup
 
@@ -43,6 +43,8 @@ Throwaway probes ran on 2026-11-11 to inform F1–F4, F6 and F7 and defaults D4,
 | 7 | `node v.mjs` printing `browser.version()` per engine | 0 | the versions above |
 | 8 | `node cls.mjs` (Chromium only) | 0 | P6 |
 | 9 | `rm -rf packages/line-components/temp/c11-probe`, after rows 3–7 and again after row 8; `git status --short` | 0 | deleted; the tree is clean |
+| 10 | `bunx playwright test -c packages/line-components/temp/c11-probe2/playwright.config.ts` (review gate round 1) | 0 | 15 passed (19.4 s); P9 |
+| 11 | `rm -rf packages/line-components/temp`; `git status --short` | 0 | deleted; the tree is clean |
 
 WebKit on macOS moved Tab focus with Alt+Tab, as the existing Browser tier does. "Same" in a column means the result of the chromium column.
 
@@ -155,6 +157,10 @@ A page held two rows of three 32 px circles overlapping by 8 px, each followed b
 | `HTMLSlotElement.assign` | a function; `assignedElements()` returns the assigned nodes |
 | `assignedSlot` of a manually assigned node | `null` |
 | `showPopover` on a `popover` element | `undefined`; no `toggle` event |
+| `ToggleEvent` | not defined (review gate round 1, supervisor lens's throwaway probe; deleted) |
+| `matches(':popover-open')` | `false`, without throwing (same probe) |
+
+- The unit tier can open no panel and can build no `ToggleEvent`, so it dispatches a plain `Event('toggle')` with a `newState` field, which the host reads as it reads `ToggleEvent.newState` (D22). The D8 fallback reads `:popover-open` and is tested in the Browser tier only.
 
 ### P8 — `@zag-js/popover` 1.47.0
 
@@ -165,6 +171,33 @@ A page held two rows of three 32 px circles overlapping by 8 px, each followed b
 | Minified, gzipped: `machine`, `connect` and `VanillaMachine` | 29,921 B |
 | Minified, gzipped: `createMachine` and `VanillaMachine` | 5,628 B |
 | Difference | 24,293 B, which matches R7's "about 24 KB" (`docs/research/01-research-zag-machines.md:276-277`) |
+
+### P9 — Keeping "+N" under the pointer (review gate round 1)
+
+The review gate found that the expansion of D4, as drafted, moves "+N" from under a pointer that enters straight onto it. P9 measured that layout and the candidates that keep "+N" in place.
+
+`<probe-layout>` was a plain `HTMLElement` with a manually assigned shadow root: five children, `max` 3, one `item` wrapper and slot per stack child, a `+2` `<button popovertarget>` and a `popover="auto"` panel holding the rest. Circles were 32 px with a 2 px ring, the collapsed overlap 8 px, the expanded gap 4 px, the transition 100 ms; the host set `data-expanded` on a `pointerenter` that was not touch. The pointer moved from (0, 0) straight onto the centre of "+N" in one step, waited 400 ms, then pressed and released at the same point. Positions are `getBoundingClientRect` x in CSS px; the element under the pointer is `shadowRoot.elementFromPoint`. Layout shift is a Chromium `PerformanceObserver` on `layout-shift`.
+
+| Layout | What it does |
+|---|---|
+| A, as drafted | the stack sits at the host's inline-start; `margin-inline-start` goes from −8 px to +4 px on each wrapper after the first and on "+N"; the host grows toward inline-end |
+| B, A anchored by the consumer | A inside a 500 px flex container with `justify-content: flex-end`, so the host's inline-end edge is fixed by the page |
+| C, "+N" first | A with `order: -1` on "+N", so "+N" sits at inline-start and the avatars after it grow toward inline-end |
+| D, nested translate | the wrappers nest, `[[[a1] a2] a3] +N`, each with the static rule `:host([data-expanded]) .n { translate: -12px 0 }` (mirrored under `:dir(rtl)`), so avatar k moves (4 − k) × 12 px toward inline-start and no box changes size |
+
+| Layout | "+N" x, collapsed → expanded | Host x and width | First avatar x | Under the pointer after expansion | Click opens the panel | Chromium layout shift |
+|---|---|---|---|---|---|---|
+| A | 159.53 → 195.53 (+36) | 87.53, 104 → 140 | 87.53 → 87.53 | avatar 3 (`span#k3`) in chromium and webkit, its wrapper in firefox | **no**, in all three | three entries, 0.0001–0.0004, `hadRecentInput: true` |
+| B | 508 → 508 (0) | 436 → 400, 104 → 140 | 436 → 400 | "+N" | yes, in all three | four entries, 0–0.0001, `hadRecentInput: true` |
+| C | 87.53 → 87.53 (0) | 87.53, 104 → 140 | 111.53 → 123.53 | "+N" | yes, in all three | four entries, 0.0001–0.0003, `hadRecentInput: true` |
+| D | 219.06 → 219.06 (0) | 147.06, 104 → 104 | 147.06 → 111.06 | "+N" | yes, in all three | none |
+| D, `dir="rtl"` | 1102.69 → 1102.69 (0) | 1102.69, 104 → 104 | 1174.69 → 1210.69 | "+N" | yes, in all three | none |
+
+- The numbers were the same in chromium, firefox and webkit to 0.02 px; the table shows chromium's.
+- A moves "+N" by 3 × (8 + 4) = 36 px, wider than the 32 px button, so a pointer that enters on "+N" ends over avatar 3 and its click does not open the panel.
+- B keeps "+N" fixed only because the page anchors the group's inline-end; the component cannot require it.
+- C keeps "+N" fixed at the cost of the count coming before the faces, against the target visual's trailing "+3".
+- D keeps "+N" fixed with no layout change at all; the spread avatars overlap 36 px of the content before the group, and an ancestor with `overflow: hidden` would clip them [INFERENCE: clipping not probed].
 
 ### What the probes settle
 
@@ -178,6 +211,7 @@ A page held two rows of three 32 px circles overlapping by 8 px, each followed b
 - `delegatesFocus` would move focus to the overflow button when a user clicks an avatar in Chromium and Firefox (P4; D6).
 - A touch tap fires `pointerenter` and `pointerleave` and leaves `:hover` stuck in two engines (P5; F2).
 - The `@zag-js/popover` route costs 24.3 KB gzipped (P8; F1).
+- Only a layout that keeps "+N" in place lets a pointer that enters on "+N" open the panel with one click; the drafted layout fails in all three engines (P9; F14).
 
 ### What automation cannot observe
 
@@ -214,12 +248,13 @@ A page held two rows of three 32 px circles overlapping by 8 px, each followed b
 #### User expectations
 
 - The avatars overlap to save space and are separated by a thin ring in the page colour (`0009-avatar.md` G3; D10).
-- Moving the mouse onto the group, or tabbing into it, spreads the avatars apart; moving away, or tabbing out, stacks them again; Escape stacks them at once (F2).
-- A touch tap on an avatar does not spread the stack; a tap on "+N" opens the panel (probe P5; F2).
+- Moving the mouse onto the group, or moving keyboard focus into it, spreads the avatars apart; moving away, or tabbing out, stacks them again; Escape stacks them at once, and they stay stacked until the pointer and focus have left (F2, F13; D25).
+- A touch tap, on an avatar, an avatar link or "+N", spreads nothing by itself; a tap on "+N" opens the panel, and the stack is spread while the panel is open (probe P5; F2, F13; D2).
+- A pointer that enters straight onto "+N" can open the panel with one click; "+N" does not move away while the stack spreads (probe P9; F14, pending).
 - "+N" is one button: Enter, Space or a click opens the panel with the remaining avatars, and Escape, a click outside or a second press closes it (probe P1; F1).
 - After Escape closes the panel, focus is back on "+N" (D7).
 - A screen reader announces a group named by the consumer, the visible avatars by their names, and a "+N" button that is collapsed or expanded, with the consumer's wording if given (F6, F7).
-- Consumer CSS on `line-avatar-group`, its tokens, `::part(overflow)` and `::part(content)` overrides every visual default (ARCH §4).
+- Consumer CSS on `line-avatar-group`, its tokens, `::part(root)`, `::part(overflow)` and `::part(content)` overrides every visual default (ARCH §4).
 
 ### Connections
 
@@ -246,27 +281,30 @@ A page held two rows of three 32 px circles overlapping by 8 px, each followed b
 
 ### Anatomy
 
-Decisions F1, F3, F4 and F6 shape this tree.
+Decisions F1, F3, F4, F6 and F15 shape this tree.
 
 ```
 <line-avatar-group>                      LineElement (not FormAssociated); ElementInternals role "group" (F6);
 │                                        shadowRootOptions.slotAssignment = 'manual' (F4); the host is the flex row
 └── #shadow-root
-    ├── <slot>                           the stack: the first `max` element children, assigned by the group (F4)
-    ├── <button part="overflow"          rendered only while some children are past `max` (D3, D5);
-    │           type="button"             popovertarget="content", aria-expanded, aria-controls="content" (D8)
-    │           popovertarget="content">
-    │   └── "+N"                         N formatted for the host's language (D15)
+    ├── <span class="item">              one per child in the stack: the first `max` children without `hidden` (D20)
+    │   └── <slot>                       that child alone, assigned by the group (F4)
+    ├── <span part="root">               wraps the "+N" control and carries its focus ring (F15);
+    │   │                                rendered while some child is past `max`, or while the panel is open (D3, D21)
+    │   └── <button part="overflow"      type="button", popovertarget="content", aria-expanded, aria-controls="content" (D8)
+    │       └── "+N"                     N formatted for the host's language (D15)
     └── <div part="content" id="content" the overflow panel, in the top layer while open (F1; D9)
              popover="auto">
         └── <slot>                       the children past `max`, assigned by the group (F3)
 ```
 
-- The zones follow ARCH §13.2 (`docs/ARCHITECTURE.md:606`). The parts take their names from ARCH §5: `overflow`, "Overflow indicator (e.g., avatar group +N)" (`:327`), and `content`, "Content area" (`:308`). The overflow button and the panel are internal parts because the machine coordinates them; the avatars are a slot because the consumer decides them (ARCH §3, `:219-226`).
+- The zones follow ARCH §13.2 (`docs/ARCHITECTURE.md:606`). The parts take their names from ARCH §5: `root`, "Main container" (`:306`), here the container of the "+N" control; `overflow`, "Overflow indicator (e.g., avatar group +N)" (`:327`); and `content`, "Content area" (`:308`). The overflow control and the panel are internal parts because the machine coordinates them; the avatars are slotted because the consumer decides them (ARCH §3, `:219-226`).
 - The host extends `LineElement` (`packages/line-core/src/line-element.ts:31-36`) without the `FormAssociated` mixin, so `this[INTERNALS]` carries the role and `reflectState` the flags (ARCH §14.8, `:1190`). `:host { display: inline-flex; align-items: center }` and `:host([hidden]) { display: none }`, because `display` on `:host` beats the UA `[hidden]` rule (`0007-badge.md` D3).
-- The shadow root uses manual slot assignment (F4). The group assigns each element child to the stack slot or the panel slot in `updated()`; it writes no attribute on any child, and a child's own `slot` attribute has no effect (probe P2). Text children are never assigned and never render.
+- The shadow root uses manual slot assignment (F4). The group renders one `item` wrapper with its own slot per child in the stack, and assigns each child to its wrapper's slot or to the panel slot in `updated()` (D20). It writes no attribute on any child, and a child's own `slot` attribute has no effect (probe P2). Text children are never assigned and never render.
+- The `item` wrappers carry only the overlap and the expansion and paint nothing, so they expose no part; the avatar in each is the consumer's own element (D20).
 - The shadow root does not delegate focus (D6).
 - The overflow button is a native `<button>` (Phase 1 spec §10 SD31, `:2378`, as amended by §12 AM-095; §6.C.4 C11 row), so the group takes the `common` and `button` reset modules (ARCH §14.7, `:1162`; §10 SD84, `:2431`). It takes its name from `overflow-label`, not from the host `aria-label` (F7; AM-095).
+- How the stack spreads while "+N" stays under the pointer is open: F14 waits for Miguel (probe P9; D4).
 
 ### States
 
@@ -276,23 +314,25 @@ Decisions F1, F3, F4 and F6 shape this tree.
 
 | State | Entered on | Left on | Host reflection |
 |-------|------------|---------|-----------------|
-| `collapsed` | start; `HOVER.END` or `FOCUS.OUT` from `expanded` when the other source is also gone; `DISMISS` from `expanded`; `OPEN.CHANGE { open: false }` from `overflow_open` with neither source | `HOVER.START` or `FOCUS.IN` while not dismissed; `OPEN.CHANGE { open: true }` | none |
-| `expanded` | `HOVER.START` (mouse or pen) or `FOCUS.IN` from `collapsed` while not dismissed; `OPEN.CHANGE { open: false }` from `overflow_open` while a source remains | `HOVER.END` and `FOCUS.OUT` (both gone); `DISMISS`; `OPEN.CHANGE { open: true }` | `data-expanded`, `:state(expanded)` (ARCH §14.8, `:1232`) |
-| `overflow_open` | `OPEN.CHANGE { open: true }` from `collapsed` or `expanded` | `OPEN.CHANGE { open: false }` | `data-expanded`, `:state(expanded)` and `data-open`, `:state(open)` (`:1236`; D2) |
+| `collapsed` | start; `SETTLE` in `expanded` while no source remains or `dismissed` is set; `HOVER.END` or `FOCUS.OUT` in `expanded` that leaves no source; `DISMISS` in `expanded` | `HOVER.START` or `FOCUS.IN` while not dismissed; `OPEN.CHANGE { open: true }` | none |
+| `expanded` | `HOVER.START` or `FOCUS.IN` in `collapsed` while not dismissed; `OPEN.CHANGE { open: true }` in `collapsed`, on its way to `overflow_open`; `OPEN.CHANGE { open: false }` in `overflow_open` | `HOVER.END` or `FOCUS.OUT` that leaves no source; `DISMISS`; `SETTLE` while no source remains or `dismissed` is set; `OPEN.CHANGE { open: true }` | `data-expanded`, `:state(expanded)` (ARCH §14.8, `:1232`) |
+| `overflow_open` | `OPEN.CHANGE { open: true }` in `expanded` | `OPEN.CHANGE { open: false }` | `data-expanded`, `:state(expanded)` and `data-open`, `:state(open)` (`:1236`; D2) |
 
 | Machine member | Shape |
 |---|---|
-| Props | `restoreFocus(): void`, which the host passes as a live prop and which focuses the overflow button (D7) |
-| Context | `hovered: boolean`, `focused: boolean` (focus within the host, the panel included), `dismissed: boolean`, `focusVisible: boolean` |
-| Events | `HOVER.START` and `HOVER.END` from `pointerenter` and `pointerleave` on the host whose `pointerType` is `mouse` or `pen` (F2; probe P5); `FOCUS.IN` and `FOCUS.OUT` from `focusin` and `focusout` on the host, `FOCUS.OUT` only when `relatedTarget` is outside the host; `DISMISS` from Escape while the panel is closed (F2); `OPEN.CHANGE { open, focusInside }` from the panel's `toggle` event, `focusInside` being whether focus was inside the panel at the `beforetoggle` event that preceded a close (D7); `FOCUS.VISIBLE { visible }` from the overflow button's `focus` and `blur` |
-| Actions | `setHovered`, `setFocused`, `setDismissed` (cleared when both sources are gone), `restore` (calls `restoreFocus` on `OPEN.CHANGE { open: false, focusInside: true }`), `setFocusVisible` |
-| Guards | `notDismissed`; `hasSource` (`hovered` or `focused`) |
+| Props | `overflowCount: number`, the number of children past `max`, `0` when none (D23); `restoreFocus(): void`, which focuses the overflow button (D7). The host passes both through its live props function |
+| Context | `hovered: boolean` (a mouse or pen pointer is on the host); `focused: boolean` (keyboard focus is within the host, the panel and slotted children included; F13); `dismissed: boolean` (D25); `focusVisible: boolean` (the overflow button has keyboard focus) |
+| Events | `HOVER.START` and `HOVER.END` from `pointerenter` and `pointerleave` on the host whose `pointerType` is `mouse` or `pen` (F2; probe P5); `FOCUS.IN` from a `focusin` on the host whose focused element, the first entry of `event.composedPath()`, matches `:focus-visible` (F13); `FOCUS.OUT` from a `focusout` whose `relatedTarget` is outside the host and its panel; `DISMISS` from Escape on the host while the panel is closed (F2; D25); `OPEN.CHANGE { open, focusInside }` from the panel's `toggle` event, with `open` read from `ToggleEvent.newState` (D22) and `focusInside` recorded at the `beforetoggle` that preceded a close (D7); `SETTLE`, which the machine sends itself; `FOCUS.VISIBLE { visible }` from the overflow button's `focus` and `blur` |
+| Actions | `setHovered`, `clearHovered`, `setFocused`, `clearFocused`, `setDismissed`, `clearDismissed` (on `HOVER.END` and `FOCUS.OUT`; D25), `forward` (sends the `OPEN.CHANGE` it handled again), `settle` (sends `SETTLE`), `restore` (calls `restoreFocus` when `focusInside` is `true`), `setFocusVisible` |
+| Guards | `notDismissed`; `noSource` (neither `hovered` nor `focused`); `settles` (`noSource` or `dismissed`); `hasOverflow` (`overflowCount > 0`) |
 
-- `collapsed ↔ expanded ↔ overflow_open` follows ARCH §13.2. The panel can also open straight from `collapsed`, after a touch tap, which expands nothing (F2); the `expanded` flag stays on in `overflow_open`, so the stack is spread whenever the panel is open (D2).
-- **The platform opens and closes the panel.** `popovertarget` opens it on a click, Enter or Space, and Escape, a click outside, a second press or another `auto` popover closes it (probe P1). The machine mirrors the panel's `toggle` events into `overflow_open` and sends nothing to the panel (F1).
+- **Strict chain.** The machine moves only between neighbours of ARCH §13.2's chain, `collapsed ↔ expanded ↔ overflow_open` (`docs/ARCHITECTURE.md:606`; F12). `OPEN.CHANGE { open: true }` in `collapsed` moves to `expanded`, and its `forward` action sends the same event again, which moves `expanded` to `overflow_open`. `OPEN.CHANGE { open: false }` in `overflow_open` moves to `expanded` with the `restore` and `settle` actions, and `SETTLE` then moves to `collapsed` when `settles` holds. One platform event therefore passes through `expanded` in two transitions. `@zag-js/vanilla` 1.47.0 queues each `send()` in a microtask (`0004-button-group.md` probe P7), so the intermediate `expanded` lasts one microtask [INFERENCE: whether Lit renders between the two steps is not probed; the flags end in the right state either way].
+- **Opening.** `OPEN.CHANGE { open: true }` is taken only while `hasOverflow` holds, so an event that arrives after the last overflowed child left changes nothing.
+- **The platform opens and closes the panel.** `popovertarget` opens it on a click, Enter or Space, and Escape, a click outside, a second press or another `auto` popover closes it (probe P1). The machine follows the panel's `toggle` events. The one call the host makes on the panel is `hidePopover()` in `updated()`, when the panel is open and no child is past `max` any more (D21).
 - **Pointer over the open panel.** In `overflow_open`, `HOVER.END` only clears `hovered`, so moving the pointer onto the top-layer panel never collapses the group, whatever the engine reports (probe P1).
-- **Timing.** `send()` runs in a microtask in `@zag-js/vanilla` 1.47.0 (`0004-button-group.md` probe P7). The host reads the state in `update()` and never right after `send()`.
-- **Fallback.** If the machine fails to start, the controller's fallback leaves the group collapsed with no hover expansion; the overflow button and the panel still work, because the platform runs them (MANIFESTO Law 9, `docs/MANIFESTO.md:55`; F1). The host then writes `aria-expanded` from the panel's `:popover-open` itself (D8).
+- **Touch.** A touch pointer sends no `HOVER.*`, and a tap that focuses the overflow button or an avatar link does not match `:focus-visible`, so it sends no `FOCUS.IN` (F2, F13). A tap on "+N" opens the panel through `collapsed → expanded → overflow_open`, so the stack is spread while the panel is open (D2).
+- **Timing.** The host reads the state in `update()` and never right after `send()`.
+- **Fallback.** If the machine fails to start, the controller's fallback leaves the group collapsed with no expansion; the overflow button and the panel still work, because the platform runs them (MANIFESTO Law 9, `docs/MANIFESTO.md:55`; F1). The host then writes `aria-expanded` from the panel's `:popover-open` itself (D8).
 
 | Flag | Source | Host reflection |
 |------|--------|-----------------|
@@ -306,16 +346,17 @@ Decisions F1, F3, F4 and F6 shape this tree.
 |------|------|---------|
 | `(default)` | `ChildList` | the avatars, in order: `<line-avatar>` elements, or one wrapper element per avatar such as `<a href><line-avatar></a>`. Every element child without `hidden` counts as one avatar (F5; D14). The first `max` show in the stack, the rest in the panel (F3, F4) |
 
-- The panel slot is internal and has no name; a child never targets it with a `slot` attribute (F4).
+- Under manual assignment the public default slot is a set of internal slots: one per `item` wrapper and one in the panel (D20). They have no names; a child never targets them with a `slot` attribute (F4).
 
 ### Parts
 
 | Part | Element | Purpose |
 |------|---------|---------|
-| `overflow` | `<button>` | the "+N" control: an avatar-sized circle with the count, the focus ring and the panel trigger |
+| `root` | `<span>` | the container of the "+N" control: its box, radius and default focus ring under `[data-focus-visible]` (F15) |
+| `overflow` | `<button>` | the "+N" control: an avatar-sized circle with the count and the panel trigger |
 | `content` | `<div popover="auto">` | the panel that holds the avatars past `max`: box, background, border, shadow and position |
 
-- No `root` part: the host is the flex row, as ButtonGroup's host is (`0004-button-group.md` Anatomy).
+- ARCH §14.9 says "Each interactive component draws a default ring on `::part(root)` under `[data-focus-visible]`" (`docs/ARCHITECTURE.md:1250`). The group's only interactive element is the "+N" control, so `root` wraps that control and not the stack; the host stays the flex row, as ButtonGroup's host is (`0004-button-group.md` Anatomy; F15).
 
 ### Props
 
@@ -324,7 +365,7 @@ Decisions F1, F3, F4 and F6 shape this tree.
 | `max` | `max` | `number \| undefined` | `undefined` | no | how many avatars show in the stack; the rest go to the panel. Missing, not an integer, or below 1 means no limit (D3) |
 | `size` | `size` | `'1' \| '2' \| '3' \| '4' \| '5' \| undefined` | `undefined` | yes | the avatar size step: `--line-size-5`, `-6`, `-7`, `-8` or `-9`; missing or unknown leaves `--line-avatar-size` undeclared, so the avatars keep their own default or an inherited value (F8) |
 | `spacing` | `spacing` | `'0' \| '1' \| '2' \| '3' \| undefined` | `undefined` | yes | the overlap step of the collapsed stack: `0`, `--line-size-1`, `-2` or `-3`; missing or unknown keeps the `--line-avatar-group-overlap` default, `--line-size-2` (F8) |
-| `overflowLabel` | `overflow-label` | `string` | `''` | no | the overflow button's accessible name, with `{count}` replaced by the formatted count, such as `"+{count} more members"`; blank means the visible "+N" is the name (F7) |
+| `overflowLabel` | `overflow-label` | `string` | `''` | no | the overflow button's accessible name, with every `{count}` replaced by the formatted count, such as `"+{count} more members"`; a label without `{count}` follows the visible "+N" and a space; blank means the visible "+N" is the name (F7; D24) |
 
 - `size` and `spacing` follow Stack's `gap`: the converter returns `undefined` for an unknown value, and the attribute keeps what the author wrote (`packages/line-components/src/stack/stack.ts:24-27`).
 - The host `aria-label`, `aria-labelledby` and `aria-description` attributes name the internals role directly, so nothing is copied (F6; `0004-button-group.md` decision D1).
@@ -344,10 +385,10 @@ Decisions F1, F3, F4 and F6 shape this tree.
 
 | Property | Default | Used by part |
 |----------|---------|--------------|
-| `--line-avatar-group-overlap` | `var(--line-size-2)`; `spacing` steps `0`, `var(--line-size-1)`, `var(--line-size-2)`, `var(--line-size-3)` | stack slot `::slotted(*)` after the first, and `overflow` (`margin-inline-start: calc(-1 * …)`) while collapsed |
-| `--line-avatar-group-gap` | `var(--line-size-1)` | the same, as a positive `margin-inline-start` while expanded |
-| `--line-avatar-group-duration` | `var(--line-motion-fast)` | the `margin-inline-start` transition; `0s` under `prefers-reduced-motion: reduce` |
-| `--line-avatar-group-focus-ring` | `var(--line-focus-ring, 2px solid currentColor)` | `overflow`, as `outline` under `:host([data-focus-visible])` (ARCH §14.9, `:1250`) |
+| `--line-avatar-group-overlap` | `var(--line-size-2)`; `spacing` steps `0`, `var(--line-size-1)`, `var(--line-size-2)`, `var(--line-size-3)` | each `item` wrapper after the first, and `root`, while collapsed (D20) |
+| `--line-avatar-group-gap` | `var(--line-size-1)` | the space between the avatars while expanded; how it is applied waits for F14 |
+| `--line-avatar-group-duration` | `var(--line-motion-fast)` | the expansion transition; `0s` under `prefers-reduced-motion: reduce` |
+| `--line-avatar-group-focus-ring` | `var(--line-focus-ring, 2px solid currentColor)` | `root`, as `outline` under `:host([data-focus-visible])` (ARCH §14.9, `:1250`; F15) |
 | `--line-avatar-group-content-bg` | `var(--line-gray-1, Canvas)` | `content` |
 | `--line-avatar-group-content-border-color` | `var(--line-gray-border)` | `content` |
 | `--line-avatar-group-content-border-width` | `var(--line-border-1)` | `content` |
@@ -355,7 +396,7 @@ Decisions F1, F3, F4 and F6 shape this tree.
 | `--line-avatar-group-content-shadow` | `var(--line-shadow-3)` | `content` |
 | `--line-avatar-group-content-padding` | `var(--line-size-2)` | `content` |
 | `--line-avatar-group-content-gap` | `var(--line-size-1)` | `content` (`gap` between the panel's avatars, which wrap) |
-| `--line-avatar-group-content-offset` | `var(--line-size-1)` | `content` (`margin-block-start` from the overflow button) |
+| `--line-avatar-group-content-offset` | `var(--line-size-1)` | `content` (`margin-block-start` from the overflow control) |
 | `--line-avatar-group-content-max-inline-size` | `var(--line-size-xs)` | `content` |
 
 **Avatar tokens the group sets** (`0009-avatar.md` G2, G3; F8)
@@ -365,10 +406,11 @@ Decisions F1, F3, F4 and F6 shape this tree.
 | `--line-avatar-ring-width` | `:host` | `var(--line-border-2)` (2px), the gap ring of the target visual |
 | `--line-avatar-size` | `:host([size='1'…'5'])` only | `var(--line-size-5)`, `-6`, `-7`, `-8`, `-9` |
 
-- The group declares its own tokens on `:host` and redeclares `--line-avatar-group-overlap` per `spacing` step, as Stack does for `gap` (`stack.ts:54`, `:112-125`). The Avatar tokens are declared on `:host` so they reach avatars through any wrapper by inheritance, and a document rule on `line-avatar` or `line-avatar-group` still wins (`0009-avatar.md` probe P5).
-- The overflow button reads the Avatar tokens with the Avatar defaults as fallbacks, so it matches an avatar: `inline-size` and `block-size` `var(--line-avatar-size, var(--line-size-7))`, `border-radius` `var(--line-avatar-radius, var(--line-radius-round))`, `background-color` `var(--line-avatar-bg, var(--line-gray-bg))`, `color` `var(--line-avatar-color, var(--line-gray-text))`, `font-size` `var(--line-avatar-font-size, calc(var(--line-avatar-size, var(--line-size-7)) * 0.4))`, `font-weight` `var(--line-avatar-font-weight, var(--line-font-weight-5))`, and the ring `box-shadow` of `0009-avatar.md` G3 (`packages/line-components/src/avatar/avatar.ts:110`; G6).
+- The group declares its own tokens on `:host` and redeclares `--line-avatar-group-overlap` per `spacing` step, as Stack does for `gap` (`stack.ts:54`, `:112-125`). The Avatar tokens are declared on `:host` so they reach avatars through the `item` wrappers and any consumer wrapper by inheritance, and a document rule on `line-avatar` or `line-avatar-group` still wins (`0009-avatar.md` probe P5).
+- The collapsed overlap is `margin-inline-start: calc(-1 * var(--line-avatar-group-overlap))` on `.item + .item` and `.item + [part='root']`. A `hidden` child gets no wrapper (D14), so the first wrapper always holds the first visible avatar (D20).
+- `root` is `display: inline-flex` with the avatar's radius, `border-radius: var(--line-avatar-radius, var(--line-radius-round))`, so its outline follows the circle. The overflow button fills `root` and reads the Avatar tokens with the Avatar defaults as fallbacks, so it matches an avatar: `inline-size` and `block-size` `var(--line-avatar-size, var(--line-size-7))`, `border-radius` as `root`, `background-color` `var(--line-avatar-bg, var(--line-gray-bg))`, `color` `var(--line-avatar-color, var(--line-gray-text))`, `font-size` `var(--line-avatar-font-size, calc(var(--line-avatar-size, var(--line-size-7)) * 0.4))`, `font-weight` `var(--line-avatar-font-weight, var(--line-font-weight-5))`, and the ring `box-shadow` of `0009-avatar.md` G3 (`packages/line-components/src/avatar/avatar.ts:110`; G6).
 - Later children paint over earlier ones in DOM order; the ring separates them. `line-avatar` is `position: relative` (`avatar.ts:93`), so a consumer can reorder the stack with `z-index` on its own children.
-- The panel lays its avatars out with `display: flex; flex-wrap: wrap` and no overlap (`::slotted(*)` of the panel slot has `margin: 0`).
+- The panel lays its avatars out with `display: flex; flex-wrap: wrap` and no overlap.
 - The panel is positioned through its implicit anchor with `position-area: block-end span-inline-end`, logical, so it mirrors under `dir="rtl"` [INFERENCE: RTL not probed], and `position-try-fallbacks: flip-block, flip-inline` [INFERENCE: fallbacks not probed] (probe P1; D9). `margin: 0; inset: auto` cancels the UA popover centring (probe P1 style).
 - The group sets nothing on `--line-avatar-status-visibility` (F9).
 - Token sources: `--line-size-1`…`-9` (`packages/line-tokens/src/sizing.css:10-18`), `--line-size-xs` (`:32`), `--line-border-1` and `-2` (`border-width.css`, `:10` for `-2`), `--line-radius-2` (`radii.css:10`), `--line-shadow-3` (`shadows.css:114`), `--line-motion-fast` (`motion.css:10`), `--line-gray-border` (`packages/line-themes/src/aliases.css:24`). Without `line-themes` the colour tokens are invalid at computed-value time, so the panel takes `Canvas` from its fallback only where one is given (`0006-alert.md` AM-002).
@@ -377,9 +419,9 @@ Decisions F1, F3, F4 and F6 shape this tree.
 
 | Key | Action |
 |-----|--------|
-| `Tab` / `Shift+Tab` | moves focus to or from the overflow button and any focusable child, such as an avatar link; focus entering the group expands it (F2). While the panel is open, Tab from the overflow button enters the panel (probe P1) |
+| `Tab` / `Shift+Tab` | moves focus to or from the overflow button and any focusable child, such as an avatar link; keyboard focus entering the group expands it (F13). While the panel is open, Tab from the overflow button enters the panel (probe P1) |
 | `Enter` / `Space` | on the overflow button, opens or closes the panel (native `popovertarget`; probe P1) |
-| `Escape` | panel open: closes it, and focus returns to the overflow button (probe P1; D7). Panel closed and the stack expanded: collapses it until the pointer leaves and focus leaves the group (F2) |
+| `Escape` | panel open: the platform closes it, and focus returns to the overflow button (probe P1; D7). Panel closed and the stack expanded: collapses it and sets `dismissed` (F2; D25) |
 
 - The group adds no arrow-key handling and no roving focus: its only control is the overflow button, and avatar links keep their own Tab stops.
 - The group handles Escape on its host only when nothing inside it called `preventDefault()` [INFERENCE: lets a focusable child own Escape].
@@ -391,7 +433,7 @@ Decisions F1, F3, F4 and F6 shape this tree.
 | Role | `group` on the host through `this[INTERNALS].role` (F6; R8 `docs/research/01-research-accessibility.md:72`). An author `role` attribute on the host wins (`0004-button-group.md` A11y) |
 | ARIA attributes | on the overflow button: `aria-expanded` `true` or `false` from the machine (D8), `aria-controls="content"`, and `aria-label` while `overflow-label` is set (F7). On the panel: none (D9) |
 | Accessible name | the group: the host `aria-label` or `aria-labelledby`, which name the internals role directly (F6). The overflow button: the visible "+N", or the `overflow-label` template with `{count}` filled in (F7; Phase 1 spec §10 SD31 as amended by §12 AM-095) |
-| Focus | the host is not focusable and does not delegate focus (D6). The overflow button is one Tab stop; `data-focus-visible` on the host while it has keyboard focus (ARCH §14.9) |
+| Focus | the host is not focusable and does not delegate focus (D6). The overflow button is one Tab stop; `data-focus-visible` on the host while it has keyboard focus, with the default ring drawn on `::part(root)` (ARCH §14.9, `:1250`; F15) |
 
 - **Disclosure.** The overflow button follows the APG Disclosure pattern that R8 names: a `button` with `aria-expanded`, `aria-controls` optional, Enter and Space toggling; "APG has no non-modal popover pattern" (R8 `:72`). The panel is not a dialog and traps nothing; it follows the button in the Tab order (probe P1).
 - **Overflow avatars.** While the panel is closed the avatars past `max` are unrendered and absent from the accessibility tree; while open they follow the button (probe P2).
@@ -413,7 +455,7 @@ Decisions F1, F3, F4 and F6 shape this tree.
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated (Phase 1 spec §6.C.4 C11 row) |
 | C5 | The host accepts an accessible name and applies it to the element with the role | the group's role is on the host, which the host `aria-label` or `aria-labelledby` names directly (F6). The overflow button takes its name from its text or the documented label property `overflow-label` (F7; Phase 1 spec §10 SD31 as amended by §12 AM-095) |
 | C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | no variants; `size` and `spacing` are scale steps (Variants; F8) |
-| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | `@summary`, one `@slot`, two `@csspart`, thirteen `@cssprop`; no event and nothing deprecated |
+| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | `@summary`, one `@slot`, three `@csspart` (`root`, `overflow`, `content`), thirteen `@cssprop`; no event and nothing deprecated |
 | C8 | Missing or partial props degrade to an empty or neutral state | with no children it renders an empty, unnamed group with no overflow button; with no `max` every avatar shows; unknown `size` and `spacing` keep the defaults; a blank `overflow-label` leaves the visible "+N" as the name |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound (ARCH §17.2 C9, `docs/ARCHITECTURE.md:1580`) |
 
@@ -530,12 +572,12 @@ A `line` catalog node set the surface renders as the first example, shortened to
 
 | Tier | Runner | Covers |
 |------|--------|--------|
-| Unit | `bun test` on happy-dom | render with no errors; the stack and panel assignment for `max` over child counts, read through `assignedElements()` because happy-dom leaves `assignedSlot` `null` on manual assignment (probe P7); reassignment on append, remove and reorder through the `MutationObserver` (D13); a `hidden` child skipped (D14); no overflow button while every child shows; the "+N" text and the `overflow-label` template, blank label, `{count}` absent and repeated (F7; D15); `max`, `size` and `spacing` converters, unknown values, and reflection; the machine's transitions driven through the controller with dispatched `pointerenter`, `pointerleave` (mouse, pen and touch), `focusin`, `focusout`, Escape and synthetic `toggle` events, including `HOVER.END` ignored in `overflow_open`, the dismissed flag and its reset; the flags `expanded`, `open` and `focus-visible`; `aria-expanded` and `aria-controls` on the button; internals `role` `group` through `INTERNALS`; no `formAssociated`; the C8 empty render; the machine-failure fallback (no expansion, the button still rendered) |
-| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | opening and closing the panel by click, Enter, Space, Escape, an outside click and a second press, with the focus results of probe P1 and focus back on the button after Escape from inside the panel in all three engines (D7); Tab order from the button into the panel; the panel under the button by its implicit anchor, in LTR and RTL; a second `auto` popover closing the panel; hover expansion and collapse with the mouse, focus expansion with Tab, Escape dismissal, no expansion on a touch tap (probe P5), and the group staying expanded while the pointer is on the open panel (probe P1); computed overlap and gap per `spacing`, size per `size`, through a wrapping link; the ring width on avatars; `ariaSnapshot()` of the visible avatars, the button with `[expanded]` and the panel avatars while open; a Chromium CDP assertion of `group` with its name and the button's `expanded`; the `INTERNALS` read-back of `role` in three engines (A11y; Phase 1 spec `:1180`); Tab skipping the host itself (Phase 1 spec §10 SD99) |
-| A11y | axe-core | zero violations (MANIFESTO Law 3) in every AvatarGroup story of D18, with the panel closed and with it open (Phase 1 spec §7.4) |
+| Unit | `bun test` on happy-dom | render with no errors; the stack wrappers and panel assignment for `max` over child counts, read through `assignedElements()` because happy-dom leaves `assignedSlot` `null` on manual assignment (probe P7); children read before the first render; reassignment on append, remove and reorder, and on a child's `hidden` turning on or off, through the `MutationObserver`, which disconnects on `disconnectedCallback` and reconnects on `connectedCallback` (D13); a `hidden` child skipped, the first one included, so the first wrapper holds the first visible avatar (D14, D20); no `root` part while every child shows; the panel kept while open after the count drops to `max`, and `hidePopover()` called in `updated()`, through a spy because happy-dom has no popover API (D21; probe P7); the "+N" text and the `overflow-label` template: blank, with one `{count}`, with two `{count}` both replaced, and without `{count}`, which gives "+N" and a space before the label (F7; D15, D24); `max`, `size` and `spacing` converters, unknown values, and reflection; the machine's transitions driven through the controller with dispatched `pointerenter` and `pointerleave` (mouse, pen and touch), `focusin` from an element that matches `:focus-visible` and one that does not, `focusout`, Escape and plain `toggle` events carrying `newState` (probe P7; D22): the chain `collapsed → expanded → overflow_open` on one open and back on one close with no source (F12), `HOVER.END` ignored in `overflow_open`, `hasOverflow` blocking a stale open, and `dismissed` set by Escape, kept across an open and a close of the panel, and cleared by the next pointer leave or blur (D25); the flags `expanded`, `open` and `focus-visible`; `aria-expanded` and `aria-controls` on the button; internals `role` `group` through `INTERNALS`; no `formAssociated`; the C8 empty render; the machine-failure fallback (no expansion, the button still rendered) |
+| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | opening and closing the panel by click, Enter, Space, Escape, an outside click and a second press, with the focus results of probe P1, and focus back on the button after Escape from a slotted avatar link inside the panel, in all three engines (D7); Tab order from the button into the panel; the panel under the button by its implicit anchor, in LTR and RTL; a second `auto` popover closing the panel; a child removed while the panel is open closing it and clearing `data-open` (D21); the D8 fallback with a machine that fails to start, `aria-expanded` from `:popover-open` (probe P7); hover expansion and collapse with the mouse, keyboard-focus expansion with Tab, Escape dismissal; with `hasTouch`, a tap on "+N" and a tap on an avatar link each leaving the stack collapsed until the panel opens (F13; probe P5); the group staying expanded while the pointer is on the open panel (probe P1); a pointer that enters straight onto "+N" and clicks opens the panel, with "+N" at the same position before and after expansion (probe P9; F14); computed overlap and gap per `spacing`, size per `size`, through a wrapping link and with a `hidden` first child (D20); the ring width on avatars; the default focus ring on `::part(root)` under `[data-focus-visible]` (F15); `ariaSnapshot()` of the visible avatars, the button with `[expanded]` and the panel avatars while open; a Chromium CDP assertion of `group` with its name and the button's `expanded`; the `INTERNALS` read-back of `role` in three engines (A11y; Phase 1 spec `:1180`); Tab skipping the host itself (Phase 1 spec §10 SD99) |
+| A11y | axe-core | zero violations (MANIFESTO Law 3) in every AvatarGroup story of D18, with the panel closed and, for the Open story, with it open; the test hovers or clicks as D26 says before it calls `expectNoAxeViolations` (Phase 1 spec §7.4) |
 | htmx | — | `n/a`: AvatarGroup is neither value-bearing, because its descriptor binding map names no value prop, nor compound, as ARCH §17.2 C9 states by name (`docs/ARCHITECTURE.md:1580`; plan §2.4, `docs/plans/01-plan-core-primitives.md:172-175`; Phase 1 spec §6.C.4 C11 row, `:1167`; F11) |
-| Visual | Playwright `avatar-group.visual.ts` on the `visual` project | every AvatarGroup story with Linux baselines from a `visual-baselines.yml` run, collapsed, and the Expanded and Open stories in their state (Phase 1 spec §6.C.6, `:1233`; §10 SD98, `:2445`) |
-| Update rate | `measureHostUpdates` from `@websublime/line-testing/update-rate` on a connected `<line-avatar-group>` with five avatars, driven by toggling `max` between 2 and 3, the host property that changes the assignment | the rate is recorded in the C11 PR; a rate past `UPDATE_BUDGET_MS` (1 ms per host update) at `BUDGET_UPDATES` stops the row and returns it to the orchestrator (`packages/line-testing/src/update-rate.ts:31`, `:50`; Phase 1 spec §6.C.6, `:1232`; §6.C.7; §10 SD18) |
+| Visual | Playwright `avatar-group.visual.ts` on the `visual` project | every AvatarGroup story with Linux baselines from a `visual-baselines.yml` run, collapsed, and the Expanded and Open stories in their state through the `ready` hook of `expectStoryScreenshot` (D26; Phase 1 spec §6.C.6, `:1233`; §10 SD98, `:2445`) |
+| Update rate | `measureHostUpdates` from `@websublime/line-testing/update-rate` on a connected `<line-avatar-group>` with five avatars, with `mutate: (i) => { el.max = i % 2 === 0 ? 2 : 3 }`, which changes the machine prop `overflowCount` between 3 and 2, and `readProp: () => prop?.('overflowCount')`, the `prop` reader captured by wrapping `avatarGroupMachine.initialState`, as `button-group.update-rate.test.ts` does (D23; `packages/line-testing/src/update-rate.ts:93-95`) | the rate is recorded in the C11 PR; a rate past `UPDATE_BUDGET_MS` (1 ms per host update) at `BUDGET_UPDATES` stops the row and returns it to the orchestrator (`update-rate.ts:31`, `:50`; Phase 1 spec §6.C.6, `:1232`; §6.C.7; §10 SD18) |
 | Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | an `AvatarGroup` node renders `<line-avatar-group>` with its `line-avatar` children in the default slot, `max`, `size`, `spacing` and `overflow-label` as attributes and `accessibility.label` as `aria-label`; a child that arrives later is counted (D13); a node with no name renders and raises nothing (F10); the node joins the surface render fixture and the surface axe test (Phase 1 spec §6.C.6, `:1231`) |
 | Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the CEM coverage and drift tests pass with the new descriptor (Phase 1 spec §6.G.5, `:1607`); `catalog.json` holds `AvatarGroup` and its inline projection validates (§6.G.2); the `AvatarGroup` tool takes the tool description, stays at or under 1024 characters, passes the backtick guard and carries `max`, `size`, `spacing`, `overflowLabel`, `accessibilityLabel` and `accessibilityDescription` (§6.G.3, `:1422-1423`, `:1435`) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./avatar-group` register `line-avatar-group` only, and the isolation scan finds no Avatar module and no other component's tag in its bundle (Phase 1 spec §7.5) |
@@ -551,7 +593,7 @@ A `line` catalog node set the surface renders as the first example, shortened to
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
 | F1 | How does the "+N" button open its overflow popover (R7 §6 OQ5)? | Miguel | resolved: option (c), the native `popover` attribute opened by `popovertarget`, with the custom machine following the panel's `toggle` events, CSS anchor positioning from the implicit anchor, and focus restored by the component (Miguel, 2026-11-11) |
-| F2 | What expands the stack, and how does expansion meet WCAG 1.4.13 (R8 §6 Q10)? | Miguel | resolved: option (a), mouse or pen hover and focus within the group expand it, Escape collapses it until pointer and focus have left, and touch never expands it; a touch tap on "+N" opens the panel straight from `collapsed` (Miguel, 2026-11-11) |
+| F2 | What expands the stack, and how does expansion meet WCAG 1.4.13 (R8 §6 Q10)? | Miguel | resolved: option (a), mouse or pen hover and focus within the group expand it, Escape collapses it until pointer and focus have left, and touch never expands it (Miguel, 2026-11-11). F12 and F13 refine it |
 | F3 | What does the overflow popover show, given that the avatars live in the consumer's light DOM? | Miguel | resolved: option (a), the avatars past `max` themselves, assigned to an internal slot inside the panel (Miguel, 2026-11-11) |
 | F4 | How are avatars past `max` kept out of the stack? | Miguel | resolved: option (a), manual slot assignment, with no attribute written on any child (Miguel, 2026-11-11) |
 | F5 | Which children count as avatars? | Miguel | resolved: option (a), every element child without `hidden`, a wrapper such as a link included; no tag is matched (Miguel, 2026-11-11) |
@@ -561,32 +603,43 @@ A `line` catalog node set the surface renders as the first example, shortened to
 | F9 | Does the group hide presence markers in the collapsed stack (`0009-avatar.md` G4)? | Miguel | resolved: option (a), no; the group never sets `--line-avatar-status-visibility`, which stays the consumer's (Miguel, 2026-11-11) |
 | F10 | Which catalog carries AvatarGroup, with which props, and does it require a name? | Miguel | resolved: option (a), the `line` catalog only, with `children`, `max`, `size`, `spacing` and `overflowLabel`, `hostNaming: always`, no `requiredName` and no `basic` route (Miguel, 2026-11-11) |
 | F11 | Does the htmx Tests row run? | Miguel | resolved: option (a), `n/a` (Miguel, 2026-11-11) |
+| F12 | How does the machine move through ARCH §13.2's chain `collapsed ↔ expanded ↔ overflow_open` when the panel opens or closes with neither hover nor focus on the group? (review gate round 1) | Miguel | resolved: option (a), strict chain: the machine passes through `expanded` on the same platform event, `collapsed → expanded → overflow_open` on an open and the reverse on a close; ARCH unchanged, no AM (Miguel, 2026-11-11) |
+| F13 | Which focus expands the stack? (review gate round 1) | Miguel | resolved: option (a), only keyboard focus: `FOCUS.IN` is sent only for a focused element that matches `:focus-visible`; the Browser tier taps "+N" and an avatar link and asserts that the stack stays collapsed (Miguel, 2026-11-11) |
+| F14 | Which layout keeps "+N" under a pointer that enters on it while the stack expands? (review gate round 1) | Miguel | open; recommended (d), nested translate toward inline-start (probe P9). D4 waits for it |
+| F15 | Where does the default focus ring of the "+N" control sit, given ARCH §14.9's `::part(root)`? (review gate round 1) | Miguel | resolved: option (b), a `root` part wraps the "+N" button and carries the default ring under `[data-focus-visible]`, so ARCH §14.9 holds literally (Miguel, 2026-11-11) |
 
-**Orchestrator defaults** (Miguel left D1–D19 as drafted, 2026-11-11)
+**Orchestrator defaults** (Miguel left D1–D19 as drafted, 2026-11-11; review gate round 1 edited D2–D5, D7, D8 and D13 and added D20–D26, as the orchestrator directed)
 
 | # | Default | Basis |
 |---|---------|-------|
 | D1 | A custom `createMachine` on `@zag-js/core` 1.47.0 in `src/avatar-group/avatar-group-machine.ts`, run through `LineMachineController`, local to AvatarGroup, with the States section's members | ARCH §8, §13.2; Phase 1 spec C11 row; ButtonGroup's local machine (`packages/line-components/src/button-group/button-group-machine.ts`) |
-| D2 | Flags through `reflectState`: `expanded` in `expanded` and `overflow_open`, `open` in `overflow_open`, `focus-visible` while the overflow button has keyboard focus; `collapsed` has no flag | ARCH §14.8 `expanded` and `open` rows (`docs/ARCHITECTURE.md:1232`, `:1236`); ARCH §14.9 (`:1250`); keeps the stack spread while the panel is open (probe P1) |
-| D3 | `max` is the number of avatars in the stack, the overflow button excluded; with N children and N > `max`, the stack shows `max` and the button shows N − `max`; with N ≤ `max`, or `max` missing, not an integer or below 1, every child shows and no button or panel renders | C8 (`docs/ARCHITECTURE.md:1579`); ARCH §13.2 gives `max` with no rule. MUI counts the "+N" inside `max` (R7 `docs/research/01-research-zag-machines.md:201`); excluding it keeps `max` the number of faces |
-| D4 | Expansion changes spacing only: the stack's `margin-inline-start` goes from `calc(-1 * var(--line-avatar-group-overlap))` to `var(--line-avatar-group-gap)` with a `--line-avatar-group-duration` transition, `0s` under `prefers-reduced-motion: reduce`; which avatars show never changes, so "+N" stays under the pointer | ARCH §13.2 keeps `overflow_open` reachable from `expanded`; probe P6: Chromium records the hover shift with `hadRecentInput: true`; transforms would need a per-avatar index the group cannot set without styling the children |
-| D5 | The overflow button renders only while some child is past `max`, reads the Avatar tokens with Avatar's fallbacks, and takes the stack overlap | `0009-avatar.md` G6 (`:474`); ARCH §5 `overflow` (`docs/ARCHITECTURE.md:327`) |
+| D2 | Flags through `reflectState`: `expanded` in `expanded` and `overflow_open`, `open` in `overflow_open`, `focus-visible` while the overflow button has keyboard focus; `collapsed` has no flag. The stack is therefore spread whenever the panel is open, after a touch tap too; F2's "touch never expands" means that no touch hover or touch focus expands it (F13) | ARCH §14.8 `expanded` and `open` rows (`docs/ARCHITECTURE.md:1232`, `:1236`); ARCH §14.9 (`:1250`); the strict chain passes through `expanded` (F12); keeps the stack spread while the pointer is on the open panel (probe P1) |
+| D3 | `max` is the number of avatars in the stack, the overflow control excluded; with N children and N > `max`, the stack shows `max` and the button shows N − `max`; with N ≤ `max`, or `max` missing, not an integer or below 1, every child shows and no control or panel renders, except while the panel is open (D21) | C8 (`docs/ARCHITECTURE.md:1579`); ARCH §13.2 gives `max` with no rule; excluding the control keeps `max` the number of faces shown [INFERENCE: no library precedent checked; R7 `:201` lists MUI's `max` without saying whether it counts the surplus avatar] |
+| D4 | Expansion changes spacing only, from `--line-avatar-group-overlap` to `--line-avatar-group-gap`, with a `--line-avatar-group-duration` transition, `0s` under `prefers-reduced-motion: reduce`; which avatars show never changes. **The layout that does it is pending F14**, which Miguel decides from probe P9: the drafted margin layout moves "+N" 36 px, out from under the pointer | Probe P9; probe P6 (Chromium records a margin shift with `hadRecentInput: true`) |
+| D5 | The overflow control renders while some child is past `max` or the panel is open (D21), reads the Avatar tokens with Avatar's fallbacks, and takes the stack overlap | `0009-avatar.md` G6 (`:474`); ARCH §5 `overflow` (`docs/ARCHITECTURE.md:327`) |
 | D6 | No `delegatesFocus`; `host.focus()` does nothing | Probe P4: with `delegatesFocus`, a click on an avatar moves focus to the inner button in chromium and firefox |
-| D7 | The host records, on the panel's `beforetoggle` event towards `closed`, whether focus is inside the panel; on the `toggle` that follows, the machine's `restore` action focuses the overflow button with `focus({ focusVisible: true })` if it was. A close by an outside click or by the button itself leaves focus where the browser put it | Probe P1: Escape from inside the panel leaves focus on `body` in Chromium and on the trigger in Firefox and WebKit; an outside click leaves it on `body` in all three. `beforetoggle` runs before the browser moves focus [INFERENCE: its timing was not probed]; `0004-button-group.md` P1 for `focusVisible` |
-| D8 | The overflow button carries `aria-expanded` from the machine (`true` in `overflow_open`), or from `:popover-open` in the fallback, and `aria-controls="content"` | R8 `:72` requires `aria-expanded`; probe P1: only Chromium derives it from `popovertarget`, and the snapshot shows none |
+| D7 | Focus is inside the panel when the active element, `document.activeElement` read through the host's shadow root, is one of the panel slot's `assignedElements()` or a descendant of one. The host records it on the panel's `beforetoggle` event towards `closed`; on the `toggle` that follows, the machine's `restore` action focuses the overflow button with `focus({ focusVisible: true })` if it was. A close by an outside click or by the button itself leaves focus where the browser put it | Probe P1: Escape from inside the panel left focus on `body` in Chromium and on the trigger in Firefox and WebKit, with the focus on a link in the panel's own shadow content; an outside click leaves it on `body` in all three. The panel holds only slotted children, so `panel.contains()` and `shadowRoot.activeElement` miss them [INFERENCE: Firefox and WebKit return focus only from shadow-including descendants of the panel, so for a slotted link they may drop it as Chromium does; not probed, and D7 covers both]. `beforetoggle` runs before the browser moves focus [INFERENCE: its timing was not probed]; `0004-button-group.md` P1 for `focusVisible` |
+| D8 | The overflow button carries `aria-expanded` from the machine (`true` in `overflow_open`), or from `:popover-open` in the fallback, and `aria-controls="content"`. The fallback is tested in the Browser tier only, because happy-dom's `:popover-open` is always `false` (probe P7) | R8 `:72` requires `aria-expanded`; probe P1: only Chromium derives it from `popovertarget`, and the snapshot shows none |
 | D9 | The panel is `<div part="content" id="content" popover="auto">` with no role; it is positioned from the implicit anchor with `position-area: block-end span-inline-end` and `position-try-fallbacks: flip-block, flip-inline` | Probe P1: implicit anchoring in three engines; Chromium exposes the panel as `group ""`; R8 `:72`: no non-modal popover pattern, Disclosure for the control |
 | D10 | The thirteen `--line-avatar-group-*` tokens of the CSS custom properties table, and `--line-avatar-ring-width: var(--line-border-2)` on `:host` | Target visual's gap ring; `0009-avatar.md` G2, G3; Stack's token-per-step pattern (`stack.ts`) |
 | D11 | Reset modules `commonReset` and `buttonReset` | ARCH §14.7 (`:1162`); Phase 1 spec §10 SD84 |
 | D12 | No events and no `open` or `expanded` property; not form-associated | ARCH §17.2 C9 (`:1580`); Phase 1 spec C11 row |
-| D13 | The group reads its element children in `firstUpdated()` and on every `MutationObserver` record for `childList` and the children's `hidden` attribute, and assigns the slots in `updated()` | Probe P2: manual assignment fires no `slotchange` on append; MANIFESTO Law 5 (`docs/MANIFESTO.md:47`): assignment in the render cycle, no attribute written |
+| D13 | The group reads its element children before the first render, in `connectedCallback`, which manual assignment allows because no slot is involved, and again on every record of one `MutationObserver`. The observer watches the host with `{ childList: true, subtree: false }` and each element child with `{ attributes: true, attributeFilter: ['hidden'] }`, and is disconnected and re-registered after each read, as ButtonGroup's `#observer` is (`packages/line-components/src/button-group/button-group.ts:120`, `:176-178`). It connects in `connectedCallback` and disconnects in `disconnectedCallback`. The slots are assigned in `updated()` | Probe P2: manual assignment fires no `slotchange` on append; `0009-avatar.md` G8 as amended by AM-004; MANIFESTO Law 5 (`docs/MANIFESTO.md:47`): assignment in the render cycle, no attribute written |
 | D14 | A child with the `hidden` attribute is not counted and not assigned | `0004-button-group.md` decision D16; the surface keeps a pending child hidden (ARCH §17.4, `:1638`) |
 | D15 | The count is formatted with `Intl.NumberFormat` for the nearest `lang` of the host, else the document's, in the visible "+N" and in `{count}` | `0009-avatar.md` D9 reads the same `lang` for initials; MANIFESTO Out of Scope leaves wording, not numerals, to the consumer (`docs/MANIFESTO.md:66`) |
 | D16 | The Browser tier proves the group role with a Chromium CDP assertion and an `INTERNALS` read-back, and the button and avatars with `ariaSnapshot()` in three engines | Phase 1 spec `:1180`; probes P1–P3 |
 | D17 | Catalog name `AvatarGroup`, `agentExposed: true` | PRD row name; Phase 1 spec C11 row |
 | D18 | Stories: Default (five, `max="3"`), No overflow, Overflow label, Sizes, Spacing, Links, With status, Expanded, Open, Custom tokens; local images as Avatar's stories use | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0009-avatar.md` D12) |
 | D19 | The C11 PR also adds an AvatarGroup row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, which has none yet, writes the Storybook docs, reports the gzipped size, records the update rate, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6 (`:1223-1227`, `:1232`); PROCESS §6 |
+| D20 | The stack renders one `<span class="item">` per child in it, each holding one manually assigned slot. The collapsed overlap is `margin-inline-start: calc(-1 * var(--line-avatar-group-overlap))` on `.item + .item` and `.item + [part='root']`. A `hidden` child gets no wrapper (D14), so the first wrapper always holds the first visible avatar | `::slotted(*)` cannot tell the first assigned child from a `hidden` first child under manual assignment (review gate round 1); probe P9 ran every layout on such wrappers; `0009-avatar.md` G1 as amended by AM-004 |
+| D21 | While the panel is open and the count drops to `max` or below, the panel and the overflow control stay rendered, and `updated()` closes the panel with `hidePopover()`; the `toggle` that follows moves the machine out of `overflow_open`, and the next render removes both | Removing a showing popover hides it without `beforetoggle` or `toggle` [INFERENCE: HTML spec, not probed], which would leave `data-open` on |
+| D22 | `OPEN.CHANGE` reads `open` from the `toggle` event's `newState` (`ToggleEvent.newState`), never from `:popover-open` | Probe P7: happy-dom has no `ToggleEvent` and its `:popover-open` is always `false`, so the unit tier dispatches a plain `toggle` event with `newState` |
+| D23 | The machine takes the host-driven prop `overflowCount` (children past `max`, `0` when none) and reads it in the `hasOverflow` guard of `OPEN.CHANGE { open: true }`; the update-rate test drives it through `max` and reads it with `prop('overflowCount')` | `measureHostUpdates` needs a `mutate` that changes a host property feeding the machine props and a `readProp` that reads one (`packages/line-testing/src/update-rate.ts:93-95`) |
+| D24 | The `overflow-label` template replaces every `{count}`. A non-blank label without `{count}` names the button with the visible "+N", a space, then the label, such as "+3 more members" | Probe P3: a name that contains the visible "+3" passes `label-content-name-mismatch` and one without it fails |
+| D25 | `dismissed` is set by Escape while the stack is expanded and the panel closed, which collapses the stack. It clears on the next `HOVER.END` or `FOCUS.OUT` out of the group; opening and closing the panel does not clear it. After a close, the machine goes `overflow_open → expanded`, then to `collapsed` when `dismissed` is set or no source remains, else stays `expanded` | WCAG 1.4.13 "dismissible" (F2) |
+| D26 | The Expanded and Open stories reach their state in the visual tier through the `ready` hook of `expectStoryScreenshot` (`packages/line-components/__tests__/visual/story.ts:28`, `:41`): it hovers the host for Expanded and clicks "+N" for Open, then moves the pointer onto the panel. The axe test does the same before `expectNoAxeViolations` | No property sets either state (D12) |
 
-Miguel decided F1–F11 on 2026-11-11, each on the option the draft recommended, and left D1–D19 as drafted. The option tables below stay as the record of what he weighed.
+Miguel decided F1–F11 on 2026-11-11, each on the option the draft recommended, and left D1–D19 as drafted. After review gate round 1 he decided F12, F13 and F15 the same day; F14 is open. The option tables below stay as the record of what he weighed.
 
 ### F1 — Overflow popover mechanism
 
@@ -598,7 +651,7 @@ Miguel decided F1–F11 on 2026-11-11, each on the option the draft recommended,
 | (b) A second controller on `@zag-js/popover` | a second `LineMachineController` runs Zag's popover machine beside the custom one, sharing `ids` and `getRootNode` (R7 `:228-229`) | Proven positioning, dismissal and focus logic. +24.3 KB gzipped and ten packages (P8); a new `line-components` dependency, which needs a Phase 1 spec AM (decision) to the §4.2 dependency set and a `security-reviewer` pass (PROCESS §5); Phase 3 Popover's machine arrives in Phase 1 |
 | (c) **Recommended.** Native `popover` | `<div part="content" popover="auto">` in the shadow root, opened by `popovertarget` on the overflow button; the custom machine mirrors the panel's `toggle` events; CSS anchor positioning from the implicit anchor; the component restores focus (D7) and writes `aria-expanded` (D8) | No dependency; the top layer escapes clipping and `z-index`; Escape and light dismiss are native, and the panel works when the machine fails (Law 9). Opening it closes any other open `auto` popover on the page (P1); Chromium's focus loss needs D7; opening is testable only in the Browser tier (P7) |
 
-None of the options contradicts ARCH §13.2 or the Phase 1 spec, except that (b) needs the Phase 1 spec AM named in its row.
+None of the options contradicts ARCH §13.2 or the Phase 1 spec, except that (b) needs the Phase 1 spec AM named in its row. Review gate round 1 added one call from the host to the panel, `hidePopover()` when the overflow empties while the panel is open (D21), so "sends nothing to the panel" in the (c) row holds for the machine only; the row stays as the record of what Miguel weighed.
 
 ### F2 — Hover and focus expansion
 
@@ -610,7 +663,7 @@ None of the options contradicts ARCH §13.2 or the Phase 1 spec, except that (b)
 | (b) Hover only | mouse or pen hover expands; focus does not | Simplest. Keyboard users never see the spread stack, which R8 Q10 flags; the face-revealing effect becomes pointer-only |
 | (c) Activation only | no hover expansion; the stack spreads only while the panel is open | Nothing appears on hover, so 1.4.13 never applies. Contradicts ARCH §13.2 "Hover expands" and PRD §4.1 "Expands on hover": a PRD revision-log entry and an ARCH change, and a Phase 1 spec AM with trigger `decision` |
 
-Under (a) and (b), a touch tap on "+N" opens the panel straight from `collapsed`. ARCH §13.2 draws the states as a chain, `collapsed ↔ expanded ↔ overflow_open`; this spec reads the chain as the state set, and keeps the `expanded` flag on in `overflow_open` (D2), so no ARCH change follows. Miguel accepted this reading with F2 (a) on 2026-11-11.
+Review gate round 1 refined (a). A touch tap on "+N" opens the panel through `expanded` (F12), so the stack is spread while the panel is open (D2); and only keyboard focus expands the stack (F13), so a tap that focuses "+N" or an avatar link expands nothing.
 
 ### F3 — What the overflow popover shows
 
@@ -656,7 +709,7 @@ Under (a) and (b), a touch tap on "+N" opens the panel straight from `collapsed`
 
 ### F7 — The "+N" button's accessible name
 
-**Evidence.** R8 says strings such as "Show more" for the AvatarGroup overflow "must come from the consumer through slots or attributes" (`docs/research/01-research-accessibility.md:286-287`; MANIFESTO Out of Scope, `docs/MANIFESTO.md:66`). Probe P3: a name that omits the visible "+3", such as "Show all members", fails axe `label-content-name-mismatch` (WCAG 2.5.3), while "+3 more members" passes. The count changes at run time, so a consumer cannot write a fixed name. Phase 1 spec §10 SD31 reads "An inner native `<button>` with host `aria-label` copied, for Button, IconButton, Chip and the AvatarGroup "+N" control" (`docs/specs/01-spec-core-primitives.md:2378`); the host `aria-label` names the group under F6 (a) and (b), so copying it to the button would give the button the group's name.
+**Evidence.** R8 says strings such as "Show more" for the AvatarGroup overflow "must come from the consumer through slots or attributes" (`docs/research/01-research-accessibility.md:286-287`; MANIFESTO Out of Scope, `docs/MANIFESTO.md:66`). Probe P3: a name that omits the visible "+3", such as "Show all members", fails axe `label-content-name-mismatch` (WCAG 2.5.3), while "+3 more members" passes. The count changes at run time, so a consumer cannot write a fixed name. Phase 1 spec §10 SD31 read, before AM-095, "An inner native `<button>` with host `aria-label` copied, for Button, IconButton, Chip and the AvatarGroup "+N" control" (`docs/specs/01-spec-core-primitives.md:2378`); the host `aria-label` names the group under F6 (a) and (b), so copying it to the button would have given the button the group's name.
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -705,6 +758,46 @@ Under (a) and (b), a touch tap on "+N" opens the panel straight from `collapsed`
 |---|---|---|
 | (a) **Recommended.** `n/a` | the Tests row says `n/a` with that reason | Confirms the C11 row. A server-swapped avatar is a child added at run time, which the Unit and Surface tiers cover (D13) |
 | (b) Run part (d) only | the harness swaps server avatars into the group under htmx 2 and 4 | Proves htmx swaps reach manual assignment. Runs a row the template reserves for value-bearing and compound components |
+
+### F12 — State chain (review gate round 1)
+
+**Evidence.** ARCH §13.2 draws AvatarGroup's states as `collapsed ↔ expanded ↔ overflow_open` (`docs/ARCHITECTURE.md:606`). Under F2 (a) the panel can open with neither hover nor focus on the group, after a touch tap on "+N", and close in the same situation, so the draft went straight from `collapsed` to `overflow_open` and back, reading the chain as a set of states. The review gate found that reading attributed to Miguel without a record.
+
+| Option | What it decides | Consequence |
+|---|---|---|
+| (a) **Chosen** (Miguel, 2026-11-11). Strict chain | the machine moves only between neighbours; one open passes `collapsed → expanded → overflow_open` and one close the reverse, each step a transition of its own (States, "Strict chain") | ARCH unchanged and no AM. One platform event becomes two machine transitions, a microtask apart |
+| (b) The chain as a set of states | `collapsed ↔ overflow_open` allowed directly | One transition per event. Departs from ARCH §13.2 as drawn, so it would need an ARCH change and a Phase 1 spec AM with trigger `decision` |
+
+### F13 — Which focus expands (review gate round 1)
+
+**Evidence.** The draft sent `FOCUS.IN` on any `focusin`. A pointer click focuses the overflow button in Chromium and Firefox (probe P1) [INFERENCE: a touch tap does the same; P5 tapped only an avatar], and an avatar link takes focus on a tap, so a tap expanded the stack and, after a second tap closed the panel, left it spread until blur, against F2's "touch never expands".
+
+| Option | What it decides | Consequence |
+|---|---|---|
+| (a) **Chosen** (Miguel, 2026-11-11). Keyboard focus only | `FOCUS.IN` only when the focused element matches `:focus-visible`; the Browser tier taps "+N" and an avatar link and asserts that the stack stays collapsed | Mouse and touch focus expand nothing; keyboard users keep the expansion. A pointer click on "+N" opens the panel through `expanded` anyway (F12) |
+| (b) Any focus, touch excepted | `FOCUS.IN` on any `focusin` unless the last pointer was touch | Mouse focus also expands. Needs a pointer-type memory across events |
+
+### F14 — Keeping "+N" under the pointer (review gate round 1)
+
+**Evidence.** Probe P9. The drafted layout A moves "+N" 36 px toward inline-end while the stack expands, wider than its own 32 px box, so a pointer that enters on "+N" ends over avatar 3 and its click does not open the panel, in chromium, firefox and webkit. Layouts B, C and D keep "+N" at the same position to 0.02 px in all three engines, and the click opens the panel. Only D changes no layout box and records no layout shift in Chromium. ARCH §13.2 says "Hover expands" and "click on overflow opens popover" (`docs/ARCHITECTURE.md:606`); the target visual ends the stack with "+3".
+
+| Option | What it decides | Consequence |
+|---|---|---|
+| (a) Margins, as drafted (P9 layout A) | `margin-inline-start` from overlap to gap on each wrapper after the first and on `root`; the host grows toward inline-end | Simplest CSS. "+N" slides out from under the pointer, and a direct click misses it (P9) |
+| (b) A, anchored by the page (P9 layout B) | as (a), and the docs ask consumers to place the group against its container's inline-end | "+N" stays put where the page anchors it (P9). The component cannot enforce it; a group in running text or at inline-start keeps the (a) problem |
+| (c) "+N" first (P9 layout C) | `order: -1` on `root`, so "+N" leads and the avatars after it grow toward inline-end | "+N" stays put in every placement (P9). The count comes before the faces, against the target visual's trailing "+3"; the host still grows and shifts what follows |
+| (d) **Recommended.** Nested translate toward inline-start (P9 layout D) | the `item` wrappers nest, each level holding the earlier avatars, and while expanded each level moves by `translate` one step (`overlap + gap`) toward inline-start, mirrored under `:dir(rtl)`; static CSS, no per-avatar index | "+N" and the host box stay put, no layout shift, the trailing "+N" of the target visual holds, and RTL works (P9). The spread avatars overlap up to `max` × step of the content before the group (36 px at `max` 3), and an ancestor with `overflow: hidden` clips them [INFERENCE: not probed]; the wrapper nesting is `max` levels deep, which D20 then describes |
+
+None of the options contradicts ARCH §13.2 or the Phase 1 spec. D4 and D20 take the chosen layout once Miguel decides.
+
+### F15 — Focus ring placement (review gate round 1)
+
+**Evidence.** ARCH §14.9 says "Each interactive component draws a default ring on `::part(root)` under `[data-focus-visible]`" (`docs/ARCHITECTURE.md:1250`). The draft had no `root` part and drew the ring on `::part(overflow)`.
+
+| Option | What it decides | Consequence |
+|---|---|---|
+| (a) Ring on `overflow`, departure recorded | no `root` part; the spec records why the ring sits on `overflow` | No extra element. ARCH §14.9 holds only with a recorded exception, or with an ARCH wording change |
+| (b) **Chosen** (Miguel, 2026-11-11). A `root` part around the "+N" button | `<span part="root">` wraps the button and carries the default ring under `:host([data-focus-visible])` | ARCH §14.9 holds literally. One more part, and the overlap applies to `root` |
 
 ---
 
