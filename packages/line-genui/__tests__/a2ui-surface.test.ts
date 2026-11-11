@@ -1181,6 +1181,13 @@ describe('Avatar (`0009-avatar.md` Agent contract; §6.G.4; §12 AM-021, AM-094)
     expect(surface.querySelector('line-avatar')).toBe(host);
     expect(host.getAttribute('src')).toBe('https://example.com/b.png');
     expect(host.getAttribute('name')).toBe('Rui Costa');
+    for (const rejected of ['javascript:alert(1)', 'data:image/png;base64,AAAA']) {
+      await feed(data('/user/photo', rejected));
+      expect(surface.querySelector('line-avatar')).toBe(host);
+      expect(host.hasAttribute('src')).toBe(false);
+    }
+    await feed(data('/user/photo', 'https://example.com/c.png'));
+    expect(host.getAttribute('src')).toBe('https://example.com/c.png');
     expect(errors).toEqual([]);
   });
 
@@ -1287,6 +1294,29 @@ describe('Avatar (`0009-avatar.md` Agent contract; §6.G.4; §12 AM-021, AM-094)
     expect(host.hasAttribute('src')).toBe(false);
     expect(host.hasAttribute('name')).toBe(false);
     expect(rootOf(host).hasAttribute('role')).toBe(false);
+  });
+
+  test('a basic avatar Image runs urlPolicy with use image, and a new policy re-projects it (AM-094)', async () => {
+    const { surface, errors } = await render([
+      { id: 'root', component: 'Image', url: 'https://example.com/ana.png', description: 'Ana', variant: 'avatar' },
+    ]);
+    const host = surface.querySelector('line-avatar') as Avatar;
+    expect(host.getAttribute('src')).toBe('https://example.com/ana.png');
+    const uses: string[] = [];
+    surface.urlPolicy = (url, use) => {
+      uses.push(use);
+      return !url.pathname.endsWith('ana.png');
+    };
+    expect(surface.querySelector('line-avatar')).toBe(host);
+    expect(host.hasAttribute('src')).toBe(false);
+    expect(uses).toEqual(['image']);
+    surface.urlPolicy = () => {
+      throw new Error('policy failed');
+    };
+    expect(host.hasAttribute('src')).toBe(false);
+    surface.urlPolicy = () => true;
+    expect(host.getAttribute('src')).toBe('https://example.com/ana.png');
+    expect(errors).toEqual([]);
   });
 
   test('every other Image variant, and a missing one, still renders <img>', async () => {
