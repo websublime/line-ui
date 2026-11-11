@@ -12,7 +12,9 @@
  * (Alert) with its five zones filled, no live role, and a dismiss IconButton that hides it, and C8 (Chip) with its
  * `label` text in the default slot and a `pressed` bound to the data model, and C9 (Badge) as a count bound to the
  * data model and a dot named by its `accessibility.label`, and C10 (Avatar) as a `line` Avatar with a bound `src` and
- * `name` and a presence Badge in `status`, beside a basic `Image` with `variant: "avatar"`. The Placeholders story
+ * `name` and a presence Badge in `status`, beside a basic `Image` with `variant: "avatar"`, and C11 (AvatarGroup) as a
+ * named group of three Avatars with `max` 2 and an `overflowLabel`, checked with its panel closed and open. The
+ * Placeholders story
  * adds a C9 Badge with no name, which renders the `missing-name` placeholder (`0007-badge.md` F10).
  *
  * @module __tests__/a11y/a2ui-surface.e2e
@@ -26,7 +28,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 29,
+  'agent-ui-a2ui-surface--line-catalog': 33,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -55,7 +57,7 @@ async function openSurfaceStory(page: Page, id: SurfaceStoryId): Promise<void> {
   await expect(surface.locator('[data-line-a2ui-placeholder="pending"]')).toHaveCount(0);
   await expect(
     surface.locator(
-      ':is(line-alert, line-avatar, line-badge, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
+      ':is(line-alert, line-avatar, line-avatar-group, line-badge, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
     ),
   ).toHaveCount(SURFACE_STORIES[id]);
   await expect(surface).not.toHaveAttribute('aria-busy', 'true');
@@ -204,7 +206,7 @@ test('the Line catalog story renders a line Avatar with a presence Badge and a b
   page,
 }) => {
   await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
-  const avatars = page.locator('#storybook-root line-a2ui-surface line-avatar');
+  const avatars = page.locator('#storybook-root line-a2ui-surface line-stack > line-avatar');
   await expect(avatars).toHaveCount(2);
   const me = avatars.first();
   const teammate = avatars.nth(1);
@@ -222,6 +224,32 @@ test('the Line catalog story renders a line Avatar with a presence Badge and a b
   await expect(me).not.toHaveAttribute('data-error');
   await expect(me).toMatchAriaSnapshot('- img "Ana Silva"');
   await expect(teammate).toMatchAriaSnapshot('- img "Rui Costa"');
+});
+
+test('the Line catalog story renders a named AvatarGroup whose "+1" opens a panel with no axe violation (0010-avatar-group.md)', async ({
+  page,
+}) => {
+  await openSurfaceStory(page, 'agent-ui-a2ui-surface--line-catalog');
+  const group = page.locator('#storybook-root line-a2ui-surface line-avatar-group');
+  await expect(group).toHaveCount(1);
+  await expect(group).toHaveAttribute('aria-label', 'Project members');
+  await expect(group).toHaveAttribute('max', '2');
+  await expect(group).toHaveAttribute('overflow-label', '+{count} more members');
+  await expect(group.locator('line-avatar')).toHaveCount(3);
+  await expect(group).toMatchAriaSnapshot(`
+    - img "Ana Silva"
+    - img "Rui Costa"
+    - button "+1 more members" [expanded=false]
+  `);
+  await group.locator('[part="overflow"]').click();
+  await expect(group).toHaveAttribute('data-open', '');
+  await expect(group).toMatchAriaSnapshot(`
+    - img "Ana Silva"
+    - img "Rui Costa"
+    - button "+1 more members" [expanded]
+    - img "Marta Sousa"
+  `);
+  await expectNoAxeViolations(axe(page).include('#storybook-root'));
 });
 
 test('the Placeholders story renders a nameless Badge as a missing-name placeholder, not a line-badge (F10)', async ({
