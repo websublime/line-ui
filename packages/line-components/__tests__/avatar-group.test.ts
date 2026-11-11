@@ -285,8 +285,8 @@ describe('<line-avatar-group> stack, levels and panel assignment (F3, F4; D3, D1
         seen.push(this.shadowRoot?.querySelectorAll('.item').length ?? -1);
       }
     }
-    customElements.define('probe-avatar-group', Probe);
-    const el = document.createElement('probe-avatar-group') as Probe;
+    customElements.define('line-test-avatar-group-probe', Probe);
+    const el = document.createElement('line-test-avatar-group-probe') as Probe;
     el.max = 2;
     el.append(...Array.from({ length: 4 }, () => document.createElement('line-avatar')));
     document.body.append(el);
