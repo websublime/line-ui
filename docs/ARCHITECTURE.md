@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-11-10
+**Date:** 2026-11-11
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -11,7 +11,7 @@ This document captures the **cross-cutting architectural decisions** that apply 
 ---
 
 ## Revision Notes
-
+- **v0.8.27 (2026-11-11)** — Aligned with Phase 1 spec AM-094 (ledger row `01-C10`, decision by Miguel on 2026-11-11). The change is minimal: two §17.3 sentences. §17.3 (Descriptors and catalogs) adds a URL binding, which runs a prop's URL through the surface's URL policy before it sets an attribute, such as Avatar `src`, and says the drift test checks the attribute it sets (Phase 1 spec AM-094; spec `0009-avatar.md` F10).
 - **v0.8.26 (2026-11-10)** — Aligned with Phase 1 spec AM-092 and AM-093 (ledger row `01-C8`, decisions by Miguel on 2026-11-10). The change is minimal: one §14.9 sentence and two §17.3 sentences.
   - §14.9 (Focus Management) says the machine or the component determines when focus is visible, and the §14.4 `reset.common.css` comment says the machine or the component drives `data-focus-visible`. A pre-built machine such as `@zag-js/toggle` tracks no focus, so `<line-chip>` reflects `focus-visible` from its inner button itself (Phase 1 spec AM-093; spec `0008-chip.md` F9).
   - §17.3 (Descriptors and catalogs) adds a text binding, which writes a prop's string as the host's text content so it lands in the default slot, and says the drift test skips it, because it names no manifest member (Phase 1 spec AM-092; spec `0008-chip.md` F6).
@@ -1585,14 +1585,14 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
 - A descriptor holds these fields:
   - the catalog name, the tag, and `load()`, which imports the component subpath;
   - the prop schema and the slot map;
-  - the binding map (prop → property or attribute, a surface lookup such as Icon `name` → `iconMap` (Phase 1 spec AM-071), or a text binding, which writes the prop's string as the host's text content, such as Chip `label` (Phase 1 spec AM-092); the value prop; the commit event that §17.2 rule C9 names);
+  - the binding map (prop → property or attribute, a surface lookup such as Icon `name` → `iconMap` (Phase 1 spec AM-071), a text binding, which writes the prop's string as the host's text content, such as Chip `label` (Phase 1 spec AM-092), or a URL binding, which runs the prop's URL through the surface's URL policy and sets the attribute only to an allowed URL, such as Avatar `src` (Phase 1 spec AM-094); the value prop; the commit event that §17.2 rule C9 names);
   - the action map (prop → DOM event);
   - the accessibility requirements and the agent-facing description;
   - an optional tool description, which a descriptor sets when its agent-facing description names props the frontend tool lacks (Phase 1 spec AM-086);
   - the `agentExposed` flag, which defaults to `true`.
 - Descriptors are written on the Zod 3 API and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings) in the catalogs. Only the Zod 3 API composes with those schemas.
 - The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no ARIA metadata. Form association appears in it only as the inherited static member `formAssociated`.
-- A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26). An action-map event that the descriptor marks native, such as `click`, is a DOM event the manifest does not list, so the test checks it against a fixed list of DOM event names instead (Phase 1 spec AM-067, AM-070). For a surface-lookup binding, such as Icon `name` → `iconMap`, the test checks the members the entry sets (`library`, `name`, `weight`, `mirror`) and not the surface key (Phase 1 spec AM-072). A text binding names no manifest member, so the test skips it (Phase 1 spec AM-092).
+- A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26). An action-map event that the descriptor marks native, such as `click`, is a DOM event the manifest does not list, so the test checks it against a fixed list of DOM event names instead (Phase 1 spec AM-067, AM-070). For a surface-lookup binding, such as Icon `name` → `iconMap`, the test checks the members the entry sets (`library`, `name`, `weight`, `mirror`) and not the surface key (Phase 1 spec AM-072). A text binding names no manifest member, so the test skips it (Phase 1 spec AM-092). A URL binding is checked through the attribute it sets, such as `src` (Phase 1 spec AM-094).
 - A coverage test fails when a `@websublime/line-components` component in the CEM has no descriptor. `<line-a2ui-surface>` lives in `line-genui`, so the test does not cover it.
 - Every component keeps a descriptor. A component that makes no sense to an agent carries `agentExposed: false` with a reason, and the emitters leave flagged descriptors out of the catalogs and the frontend-tool schemas.
 - The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). A tool's `description` is the descriptor's tool description when it has one and its agent-facing description otherwise (Phase 1 spec AM-086). An A2UI v1.0 emitter follows when v1.0 is final.

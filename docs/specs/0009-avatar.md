@@ -10,7 +10,7 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C10 row) |
 | PRD catalogue entry | PRD §4.1, `Avatar` row (`docs/PRD.md:253`) |
 | Ledger row | `01-C10` (`docs/plans/01-tasks-core-primitives.md:56`) |
-| Governing sections | Phase 1 spec §4 (`:249`, `:298`), §6.C.0, §6.C.4 (C10 row `:1166`, notes `:1178-1183`), §6.C.6 (`:1218-1233`), §6.G.1–§6.G.5, §7.4, §7.8, §10 SD4, SD12, SD31, SD34, SD37, SD38, SD39, SD57, SD98, SD99, §12 AM-021, AM-058, AM-092, AM-094; ARCH (v0.8.26) §3, §5, §8, §12, §13.2, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8; MANIFESTO Laws 1–5, 9, Out of Scope; R7 §2.4, §6 OQ6; R8 §2.2; R9 §2.1 |
+| Governing sections | Phase 1 spec §4 (`:249`, `:298`), §6.C.0, §6.C.4 (C10 row `:1166`, notes `:1178-1183`), §6.C.6 (`:1218-1233`), §6.G.1–§6.G.5, §7.4, §7.8, §10 SD4, SD12, SD31, SD34, SD37, SD38, SD39, SD57, SD98, SD99, §12 AM-021, AM-058, AM-092, AM-094; ARCH (v0.8.27) §3, §5, §8, §12, §13.2, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8; MANIFESTO Laws 1–5, 9, Out of Scope; R7 §2.4, §6 OQ6; R8 §2.2; R9 §2.1 |
 
 Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F13 on 2026-11-11 and approved the spec the same day; Part B states those decisions. The orchestrator defaults D1–D17 stand as drafted (Miguel, 2026-11-11).
 
