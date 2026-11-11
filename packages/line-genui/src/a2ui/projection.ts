@@ -64,6 +64,8 @@ const LINE_DESCRIPTORS: ReadonlyMap<string, LineDescriptor> = new Map(
 const BASIC_PROP_NAMES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   List: { direction: 'orientation' },
   Divider: { axis: 'orientation' },
+  // An avatar Image: `url` is Avatar `src`, `description` its `name`; `fit` binds nothing (`0009-avatar.md` F11).
+  Image: { url: 'src', description: 'name' },
 };
 
 /** A basic node's props under the descriptor's names, such as List `direction` as Stack `orientation`. */
@@ -345,15 +347,22 @@ export class Projection {
       this.#renderComponent(view, target, props);
       return;
     }
+    const variant = text(props.variant);
     let element: Element;
     if (target.kind === 'text') {
-      const variant = text(props.variant);
       const tag = view.context.inButton
         ? target.inButton
         : (target.tagByVariant[variant as keyof typeof target.tagByVariant] ?? target.tagByVariant.body);
       element = this.#element(view, tag);
       this.#text(view, element, text(unwrap(props.text)));
     } else {
+      // A native target may route a variant to a component, as `Image` with `variant: "avatar"` (§12 AM-021).
+      const routed =
+        target.byVariant && Object.hasOwn(target.byVariant, variant) ? target.byVariant[variant] : undefined;
+      if (routed) {
+        this.#renderComponent(view, { ...routed, basicType: view.node.type }, props);
+        return;
+      }
       element = this.#element(view, target.tag);
       this.#native(element, target, props);
     }

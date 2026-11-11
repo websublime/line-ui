@@ -7,6 +7,8 @@ that registers one tag. The root entry registers nothing and exports only the ic
 | Subpath | Registers |
 |---------|-----------|
 | `@websublime/line-components/alert` | `<line-alert>` |
+| `@websublime/line-components/avatar` | `<line-avatar>` |
+| `@websublime/line-components/badge` | `<line-badge>` |
 | `@websublime/line-components/button` | `<line-button>` |
 | `@websublime/line-components/button-group` | `<line-button-group>` |
 | `@websublime/line-components/chip` | `<line-chip>` |
@@ -265,6 +267,47 @@ a count keeps a transparent fill and the inherited text colour, and a dot draws 
 `--line-badge-radius`, `--line-badge-height`, `--line-badge-padding-inline`, `--line-badge-font-size`,
 `--line-badge-font-weight` and `--line-badge-dot-size` default to `--line-radius-round`, `--line-size-4`,
 `--line-size-1`, `--line-font-size-0`, `--line-font-weight-5` and `--line-size-2`. `::part(root)` reaches the box.
+
+## Avatar
+
+`<line-avatar>` is a small picture that stands for a person or an organisation: a photo, a logo, or the initials of
+a name. Set `src` to the image URL and `name` to the name. The image shows once it has loaded; while it loads, when it
+fails and when there is none, the fallback shows: the `fallback` slot, or the initials of `name`, the first character
+of the first and the last word, uppercased for the nearest `lang`. For `srcset`, `<picture>`, lazy loading or an
+inline SVG logo, put that element in the default slot; it replaces the `src` image and is not tracked. A `status`
+slot places one presence marker over the inline-end, block-end corner. The avatar takes no focus and fires no event.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `src` | an image URL; blank means no image | none |
+| `name` | the accessible name and the source of the initials | none |
+| `aria-label`, `aria-description` | a spoken name in place of `name`, and a description | none |
+
+```html
+<line-avatar src="/people/ana.jpg" name="Ana Silva"></line-avatar>
+<line-avatar name="Ana Silva"></line-avatar>
+<a href="/me">
+  <line-avatar src="/people/ana.jpg" name="Ana Silva">
+    <line-badge slot="status" variant="success" aria-label="Online"></line-badge>
+  </line-avatar>
+</a>
+```
+
+The avatar is one image to assistive technology: its `root` part carries the `img` role, named by the host
+`aria-label` or else by `name`, and the picture and the initials stay presentational under it. An avatar with no name
+is decorative and silent, so leave `name` empty only when the name is written beside it. Give custom media
+`alt=""`. The status marker sits outside the image and names itself, so a link around the example above is named
+"Ana Silva Online". `aria-labelledby` on the host is not supported. `data-loading` and `data-error`, with
+`:state(loading)` and `:state(error)`, follow the `src` image.
+
+Every `--line-avatar-*` token is read with its default as a fallback and none is declared on the host, so a
+container sets them by inheritance: `--line-avatar-size` (`--line-size-7`), `--line-avatar-radius`
+(`--line-radius-round`), `--line-avatar-bg` (`--line-gray-bg`), `--line-avatar-color` (`--line-gray-text`),
+`--line-avatar-font-size` (40% of the size), `--line-avatar-font-weight` (`--line-font-weight-5`),
+`--line-avatar-fit` (`cover`), `--line-avatar-ring-width` (`0px`), `--line-avatar-ring-color`
+(`--line-gray-1`, or `Canvas` without `line-themes`), `--line-avatar-status-inset` (`0`) and
+`--line-avatar-status-visibility` (`visible`). `::part(root)`, `::part(image)` and `::part(fallback)` reach the frame,
+the picture and the fallback box.
 
 ## Chip
 

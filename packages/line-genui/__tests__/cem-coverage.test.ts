@@ -30,10 +30,10 @@ describe('descriptor coverage of the built line-components manifest (§6.G.5)', 
   });
 
   test('an element added to the manifest without a descriptor fails', () => {
-    const avatar = { kind: 'class', name: 'LineAvatar', tagName: 'line-avatar' };
+    const group = { kind: 'class', name: 'LineAvatarGroup', tagName: 'line-avatar-group' };
     const grown: Manifest = {
-      modules: [...manifest.modules, { path: 'src/avatar/avatar.ts', declarations: [avatar] }],
+      modules: [...manifest.modules, { path: 'src/avatar-group/avatar-group.ts', declarations: [group] }],
     };
-    expect(coverageViolations(descriptors, grown)).toEqual(['line-avatar']);
+    expect(coverageViolations(descriptors, grown)).toEqual(['line-avatar-group']);
   });
 });

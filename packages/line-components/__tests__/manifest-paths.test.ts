@@ -189,4 +189,27 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root']);
     expect(declaration?.cssProperties).toHaveLength(9);
   });
+
+  test('line-avatar resolves to src/avatar/avatar.ts', () => {
+    const avatar = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-avatar'),
+    );
+    expect(avatar?.path).toBe('src/avatar/avatar.ts');
+    expect(paths.has('src/avatar/avatar.ts')).toBe(true);
+  });
+
+  test('line-avatar declares src and name as its only public fields, three slots, three parts, eleven tokens and no event', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-avatar');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual(['src', 'name']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['', 'fallback', 'status']);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root', 'image', 'fallback']);
+    expect(declaration?.cssProperties).toHaveLength(11);
+  });
 });

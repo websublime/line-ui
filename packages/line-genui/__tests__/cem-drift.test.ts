@@ -18,6 +18,7 @@
 import { describe, expect, test } from 'bun:test';
 import componentsManifest from '@websublime/line-components/custom-elements.json' with { type: 'json' };
 import {
+  avatarDescriptor,
   badgeDescriptor,
   buttonDescriptor,
   chipDescriptor,
@@ -72,8 +73,10 @@ describe('CEM drift: descriptors against the built line-components manifest (§6
   });
 
   test('a descriptor whose tag the manifest lacks fails', () => {
-    const avatar = variant({ ...buttonDescriptor, name: 'Avatar', tag: 'line-avatar' }, {});
-    expect(driftViolations([avatar], manifest)).toEqual([{ tag: 'line-avatar', kind: 'element', name: 'line-avatar' }]);
+    const group = variant({ ...buttonDescriptor, name: 'AvatarGroup', tag: 'line-avatar-group' }, {});
+    expect(driftViolations([group], manifest)).toEqual([
+      { tag: 'line-avatar-group', kind: 'element', name: 'line-avatar-group' },
+    ]);
   });
 });
 
@@ -206,6 +209,20 @@ describe('CEM drift: URL bindings (§6.G.5; §12 AM-094)', () => {
     expect(declaredNames('line-button')).not.toContain('src');
     expect(driftViolations([missing], manifest)).toEqual([
       { tag: 'line-button', prop: 'variant', kind: 'attribute', name: 'src' },
+    ]);
+  });
+
+  test("Avatar's src URL binding and name attribute pass, and its status slot is checked (§6.G.5 Acceptance)", () => {
+    expect(avatarDescriptor.bindings.props.src).toEqual({ kind: 'url', use: 'image', name: 'src' });
+    expect(declaredNames('line-avatar')).toEqual(expect.arrayContaining(['src', 'name']));
+    expect(driftViolations([avatarDescriptor], manifest)).toEqual([]);
+    const renamed = variant(avatarDescriptor, {
+      bindings: { props: { src: { kind: 'url', use: 'image', name: 'image' } } },
+      slots: { status: 'presence' },
+    });
+    expect(driftViolations([renamed], manifest)).toEqual([
+      { tag: 'line-avatar', prop: 'src', kind: 'attribute', name: 'image' },
+      { tag: 'line-avatar', prop: 'status', kind: 'slot', name: 'presence' },
     ]);
   });
 });

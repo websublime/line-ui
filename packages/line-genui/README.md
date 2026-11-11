@@ -36,7 +36,7 @@ await buttonDescriptor.load(); // defines <line-button>
 
 | Export | What it is |
 | --- | --- |
-| `alertDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `separatorDescriptor`, `stackDescriptor` | The descriptors of Alert, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Separator and Stack |
+| `alertDescriptor`, `avatarDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `separatorDescriptor`, `stackDescriptor` | The descriptors of Alert, Avatar, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Separator and Stack |
 | `descriptors` | Every descriptor above |
 | `defineDescriptor(init)` | Builds a descriptor from its fields and its own props; `agentExposed` defaults to `true` |
 | `componentSchema(description, props)` | The strict prop schema: `props` plus the A2UI `accessibility` object, described and annotated with the `ComponentCommon` mixin |
@@ -69,7 +69,7 @@ lineCapabilities(catalog, { basic: true }); // also lists the A2UI basic catalog
 | `BASIC_CATALOG_ID` | `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, the only v0.9 basic catalog id `web_core` 0.14.0 knows |
 | `basicImplementations(catalogId)` | The `basic` implementation map for `BASIC_CATALOG_ID`, and `undefined` for any other id |
 | `CatalogJson`, `InlineCatalog`, `LineCapabilities`, `LineCapabilitiesOptions`, `VersionCapabilities` | The types of the documents and capabilities above |
-| `BasicImplementationMap`, `BasicImplementation`, `BasicTarget`, `BasicTypeName`, `BasicTextVariant`, `TargetAttributes` | The types of the `basic` map |
+| `BasicImplementationMap`, `BasicImplementation`, `BasicTarget`, `BasicComponentTarget`, `BasicTypeName`, `BasicTextVariant`, `TargetAttributes` | The types of the `basic` map |
 
 ### The `basic` implementation map
 
@@ -78,7 +78,7 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 | Basic type | Target |
 | --- | --- |
 | Text | `{ kind: 'text' }`: `<h1>`–`<h5>`, `<small>` for `caption`, `<p>` for `body`, by `variant`; `<span>` inside a Button |
-| Image | `{ kind: 'native' }`: `<img>` for every `variant`, behind the URL policy for `image` |
+| Image | `{ kind: 'native' }`: `<img>`, behind the URL policy for `image`; `byVariant` routes `variant: "avatar"` to the Avatar descriptor, `<line-avatar>`, with `url` as `src` behind the same policy and `description` as `name`; `fit` is ignored |
 | Video, AudioPlayer | `{ kind: 'native' }`: `<video>`, and `<audio controls>`, behind the URL policy for `video` and `audio` |
 | Icon | `{ kind: 'component' }`: the Icon descriptor, `<line-icon>` |
 | Row, Column, List | `{ kind: 'component' }`: the Stack descriptor, `<line-stack>`, with `orientation="horizontal"`, `orientation="vertical"` and `role="list"` |
@@ -89,7 +89,7 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 
 In the controlled tier the agent picks a component and fills its props through a tool call, and your app renders the call. `frontendTools(descriptors, provider)` emits one tool, `{ name, description, parameters }`, for each descriptor with `agentExposed: true`, and none for a descriptor with `agentExposed: false`. `name` is the catalog name, such as `Button`, and matches `^[a-zA-Z0-9_-]{1,64}$`. `parameters` is flat and literal: no `$ref`, `oneOf`, `allOf`, recursion, open map, A2UI common type or data binding; its `properties` object has a null prototype.
 
-`description` is the descriptor's `toolDescription` when it sets one, and its agent-facing description otherwise, at most 1024 characters either way. A tool description names no parameter the tool lacks. Alert, Badge, Button, ButtonGroup, IconButton, Separator and Stack set one, because their agent-facing descriptions, which the `line` catalog keeps, name props the tool leaves out (Alert `children`, `title`, `icon`, `actions` and `dismiss`, Button and IconButton `child`, ButtonGroup and Stack `children`) or the `accessibility` object, which the tool flattens (Badge, Button, ButtonGroup, IconButton, Separator). Chip and Icon set none, so their tools take their agent-facing descriptions. An empty or whitespace-only `toolDescription` is a descriptor error: the emitter throws and does not fall back to the agent-facing description.
+`description` is the descriptor's `toolDescription` when it sets one, and its agent-facing description otherwise, at most 1024 characters either way. A tool description names no parameter the tool lacks. Alert, Avatar, Badge, Button, ButtonGroup, IconButton, Separator and Stack set one, because their agent-facing descriptions, which the `line` catalog keeps, name props the tool leaves out (Alert `children`, `title`, `icon`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child`, ButtonGroup and Stack `children`) or the `accessibility` object, which the tool flattens (Badge, Button, ButtonGroup, IconButton, Separator). Chip and Icon set none, so their tools take their agent-facing descriptions. An empty or whitespace-only `toolDescription` is a descriptor error: the emitter throws and does not fall back to the agent-facing description.
 
 ```ts
 import { descriptors, frontendTools } from '@websublime/line-genui/catalog';
@@ -121,8 +121,8 @@ Each descriptor prop becomes a parameter as follows.
 | --- | --- |
 | `DynamicString`, `DynamicBoolean`, `DynamicNumber` | `string`, `boolean`, `number`, with the prop's description |
 | `z.enum` | A string enum, with the prop's description |
-| `ComponentId`, `ChildList`, `Action` (Alert `icon`, `title`, `children`, `actions` and `dismiss`, Button and IconButton `child` and `action`, ButtonGroup and Stack `children`) | None: they carry tree structure and actions, not literal values |
-| `accessibility` | `accessibilityLabel` and `accessibilityDescription`, optional strings, on Badge, Button, ButtonGroup, Chip, IconButton and Separator; Alert, Icon and Stack take neither |
+| `ComponentId`, `ChildList`, `Action` (Alert `icon`, `title`, `children`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child` and `action`, ButtonGroup and Stack `children`) | None: they carry tree structure and actions, not literal values |
+| `accessibility` | `accessibilityLabel` and `accessibilityDescription`, optional strings, on Avatar, Badge, Button, ButtonGroup, Chip, IconButton and Separator; Alert, Icon and Stack take neither |
 
 The provider decides how an optional parameter is written.
 
@@ -136,7 +136,7 @@ Anthropic caps one request at 20 strict tools, 24 optional parameters and 16 uni
 
 ### Rendering a tool call
 
-Your app renders the call: it creates the tool's element (`descriptor.tag`, after `await descriptor.load()`) and writes each argument as the descriptor's binding map says (`descriptor.bindings.props`); a text binding, such as Badge or Chip `label`, sets the argument as the element's text content. Skip a `null` argument, which OpenAI sends for an unset optional parameter and Gemini may send. Apply `accessibilityLabel` and `accessibilityDescription` as `<line-a2ui-surface>` applies `accessibility.label` and `accessibility.description`, with the same exceptions:
+Your app renders the call: it creates the tool's element (`descriptor.tag`, after `await descriptor.load()`) and writes each argument as the descriptor's binding map says (`descriptor.bindings.props`); a text binding, such as Badge or Chip `label`, sets the argument as the element's text content, and a URL binding, such as Avatar `src`, sets the attribute only after your own URL policy allows the URL, because the surface's policy does not run on a tool call. Skip a `null` argument, which OpenAI sends for an unset optional parameter and Gemini may send. Apply `accessibilityLabel` and `accessibilityDescription` as `<line-a2ui-surface>` applies `accessibility.label` and `accessibility.description`, with the same exceptions:
 
 - Set `accessibilityLabel` as the host `aria-label` and `accessibilityDescription` as the host `aria-description`.
 - A value that is empty after trimming whitespace sets nothing.

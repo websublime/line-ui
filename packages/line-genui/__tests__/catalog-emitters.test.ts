@@ -20,6 +20,7 @@ import addFormats from 'ajv-formats';
 import { z } from 'zod';
 import {
   ADVERTISED_VERSIONS,
+  avatarDescriptor,
   BASIC_CATALOG_ID,
   basicImplementations,
   buttonDescriptor,
@@ -61,7 +62,18 @@ function ajvWith(catalog: Json): Ajv2020 {
 const document = lineCatalogDocument(descriptors);
 
 /** The catalog names of the agent-exposed descriptors, in catalog-name order. */
-const LINE_COMPONENTS = ['Alert', 'Badge', 'Button', 'ButtonGroup', 'Chip', 'Icon', 'IconButton', 'Separator', 'Stack'];
+const LINE_COMPONENTS = [
+  'Alert',
+  'Avatar',
+  'Badge',
+  'Button',
+  'ButtonGroup',
+  'Chip',
+  'Icon',
+  'IconButton',
+  'Separator',
+  'Stack',
+];
 
 /** A tree of `line` components, as an agent sends it. */
 const components: Json[] = [
@@ -69,7 +81,7 @@ const components: Json[] = [
     id: 'root',
     component: 'Stack',
     orientation: 'horizontal',
-    children: ['save', 'rule', 'close', 'zoom', 'notice', 'in-stock', 'unread'],
+    children: ['save', 'rule', 'close', 'zoom', 'notice', 'in-stock', 'unread', 'me'],
   },
   { id: 'save', component: 'Button', variant: 'primary', child: 'save-icon', action: { event: { name: 'save' } } },
   { id: 'save-icon', component: 'Icon', name: { path: '/icon' } },
@@ -112,6 +124,8 @@ const components: Json[] = [
   },
   { id: 'in-stock', component: 'Chip', label: 'In stock', variant: 'primary', pressed: { path: '/filters/inStock' } },
   { id: 'unread', component: 'Badge', label: { path: '/inbox/unread' }, variant: 'danger' },
+  { id: 'me', component: 'Avatar', src: { path: '/user/photo' }, name: { path: '/user/name' }, status: 'presence' },
+  { id: 'presence', component: 'Badge', variant: 'success', accessibility: { label: 'Online' } },
 ];
 
 /** The stream that renders `components` on a `line` surface. */
@@ -188,6 +202,12 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
     expect(component({ id: 'b', component: 'Badge', label: 'x', variant: 'accent' })).toBe(false);
     expect(component({ id: 'b', component: 'Badge', label: 'x', child: 'text' })).toBe(false);
     expect(component({ id: 'b', component: 'Badge', label: 'x', count: 5 })).toBe(false);
+    expect(component({ id: 'p', component: 'Avatar' })).toBe(true);
+    expect(component({ id: 'p', component: 'Avatar', src: 'https://example.com/a.png', name: 'Ana' })).toBe(true);
+    expect(component({ id: 'p', component: 'Avatar', name: { path: '/user/name' }, status: 'dot' })).toBe(true);
+    expect(component({ id: 'p', component: 'Avatar', name: 'Ana', size: 'lg' })).toBe(false);
+    expect(component({ id: 'p', component: 'Avatar', name: 'Ana', shape: 'square' })).toBe(false);
+    expect(component({ id: 'p', component: 'Avatar', name: 'Ana', fallback: 'icon' })).toBe(false);
   });
 
   test('leaves out a descriptor with agentExposed: false', () => {
@@ -283,10 +303,17 @@ describe('the basic implementation map (§6.G.2; §10 SD43)', () => {
     expect(basicImplementations(LINE_CATALOG_ID)).toBeUndefined();
   });
 
-  test('maps every Image variant to a native <img>, and each type to its ARCH §17.3 target', () => {
+  test('maps Image to a native <img> with an avatar route to <line-avatar>, and each type to its ARCH §17.3 target', () => {
     const map = basicImplementations(BASIC_CATALOG_ID);
     if (!map) throw new Error('no map under the v0_9 basic id');
-    expect(map.Image.target).toEqual({ kind: 'native', tag: 'img', url: 'image', attributes: {} });
+    expect(map.Image.target).toEqual({
+      kind: 'native',
+      tag: 'img',
+      url: 'image',
+      attributes: {},
+      byVariant: { avatar: { kind: 'component', descriptor: avatarDescriptor, attributes: {} } },
+    });
+    expect(Object.isFrozen(map.Image.target.kind === 'native' ? map.Image.target.byVariant : undefined)).toBe(true);
     expect(map.Video.target).toEqual({ kind: 'native', tag: 'video', url: 'video', attributes: {} });
     expect(map.AudioPlayer.target).toEqual({
       kind: 'native',
