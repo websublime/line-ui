@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` (2026-11-11). Miguel decided every fork, F1–F15, on 2026-11-11; approval follows the review gate |
+| Status | `approved` (Miguel, 2026-11-11) |
 | Phase | `1` |
 | Tier | `Custom` (Phase 1 spec §6.C.4 C11 row, `docs/specs/01-spec-core-primitives.md:1167`; PRD §4.1, `docs/PRD.md:254`; ARCH §8, `docs/ARCHITECTURE.md:409`; ARCH §13.2, `docs/ARCHITECTURE.md:606`) |
 | Tag | `line-avatar-group` |
