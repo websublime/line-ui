@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` |
+| Status | `approved` (Miguel, 2026-11-11) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C10 row, `docs/specs/01-spec-core-primitives.md:1166`; PRD §4.1, `docs/PRD.md:253`; ARCH §8, `docs/ARCHITECTURE.md:410`; ARCH §13.2, `docs/ARCHITECTURE.md:605`) |
 | Tag | `line-avatar` |
@@ -10,9 +10,9 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C10 row) |
 | PRD catalogue entry | PRD §4.1, `Avatar` row (`docs/PRD.md:253`) |
 | Ledger row | `01-C10` (`docs/plans/01-tasks-core-primitives.md:56`) |
-| Governing sections | Phase 1 spec §4 (`:249`, `:298`), §6.C.0, §6.C.4 (C10 row `:1166`, notes `:1178-1183`), §6.C.6 (`:1218-1233`), §6.G.1–§6.G.5, §7.4, §7.8, §10 SD4, SD12, SD31, SD34, SD37, SD38, SD39, SD57, SD98, SD99, §12 AM-021, AM-058, AM-092; ARCH (v0.8.26) §3, §5, §8, §12, §13.2, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8; MANIFESTO Laws 1–5, 9, Out of Scope; R7 §2.4, §6 OQ6; R8 §2.2; R9 §2.1 |
+| Governing sections | Phase 1 spec §4 (`:249`, `:298`), §6.C.0, §6.C.4 (C10 row `:1166`, notes `:1178-1183`), §6.C.6 (`:1218-1233`), §6.G.1–§6.G.5, §7.4, §7.8, §10 SD4, SD12, SD31, SD34, SD37, SD38, SD39, SD57, SD98, SD99, §12 AM-021, AM-058, AM-092, AM-094; ARCH (v0.8.26) §3, §5, §8, §12, §13.2, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8; MANIFESTO Laws 1–5, 9, Out of Scope; R7 §2.4, §6 OQ6; R8 §2.2; R9 §2.1 |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Open Questions F1–F13 are open and wait for Miguel. Part B states the recommended option of each one, marked with its F number, so the spec reads as one design; a different choice changes the sections that cite it. Defaults D1–D17 are orchestrator picks, stated as picked.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F13 on 2026-11-11 and approved the spec the same day; Part B states those decisions. The orchestrator defaults D1–D17 stand as drafted (Miguel, 2026-11-11).
 
 ---
 
@@ -442,7 +442,7 @@ Avatar takes no focus and handles no key. The Browser tier proves only that Tab 
 - A new binding kind joins `Binding` in `packages/line-genui/src/catalog/descriptor.ts:112-113`: `{ kind: 'url'; use: UrlUse; name: string }`. The surface resolves the prop through `allowedUrl(value, use, document.baseURI, urlPolicy)` (`packages/line-genui/src/a2ui/url-policy.ts:31-46`) and sets the attribute `name` to the resolved `href`, or removes it when the policy rejects the URL. Today `#bind` sets attributes with no policy (`projection.ts:450-472`), and only native targets go through `allowedUrl` (`:432-444`).
 - The default policy applies: `https:`, `http:`, `mailto:`, `tel:`, never `data:` (`url-policy.ts:20`; Phase 1 spec §6.G.4, `:1499-1504`; §10 SD57). A rejected URL leaves no `src`, so the avatar shows its fallback (C8).
 - The binding reads the surface's `urlPolicy` signal inside the node's effect, as `#native` does, so a new policy re-projects the node [INFERENCE: follows from `projection.ts:433` reading `getValue(this.urlPolicy)` inside the effect].
-- The change needs a Phase 1 spec `AM-nnn` with trigger `decision`, landed before the code on the C10 branch. It edits §6.G.1 Fields (the Binding map row, `:1312`), §6.G.4 URLs (the binding kind covers a component's URL prop), §6.G.5 (the drift test checks the URL binding's member) and the ARCH §17.3 binding sentence (`docs/ARCHITECTURE.md:1588`), as AM-092 did for the text binding.
+- Phase 1 spec AM-094 records the binding kind, with trigger `decision`, in its own commit before the code on the C10 branch. It edits §6.G.1 Fields (the Binding map row), §6.G.4 URLs (the binding kind covers a component's URL prop), §6.G.5 (the drift test checks the URL binding's member) and the ARCH §17.3 binding sentence, as AM-092 did for the text binding.
 
 #### Basic `Image` `variant: "avatar"` route (F11)
 
@@ -577,21 +577,21 @@ A basic catalog node the surface renders as `<line-avatar src="https://example.c
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | Where does the image come from, and what does the default slot hold? | Miguel | open |
-| F2 | Which element carries the `img` role and the accessible name? | Miguel | open |
-| F3 | How does an avatar become decorative? | Miguel | open |
-| F4 | Who produces the initials? | Miguel | open |
-| F5 | Does Avatar reflect its load state, and as which flags? | Miguel | open |
-| F6 | What does the `status` slot accept, how is it named, and does it get a wrapper part? | Miguel | open |
-| F7 | Is size a reflected enum or only a custom property? | Miguel | open |
-| F8 | Is the shape a C6 variant? | Miguel | open |
-| F9 | Which props and slots does the descriptor expose to agents? | Miguel | open |
-| F10 | How does an agent's image URL reach `<line-avatar>` behind the URL policy? | Miguel | open |
-| F11 | How does a basic `Image` with `variant: "avatar"` map, and does an agent avatar require a name? | Miguel | open |
-| F12 | What contract does row 01-C11 AvatarGroup rely on? | Miguel | open |
-| F13 | Does the htmx Tests row run? | Miguel | open |
+| F1 | Where does the image come from, and what does the default slot hold? | Miguel | resolved: option (a), `src` renders an internal `<img part="image">` and the default slot takes custom media that replaces it, with no load tracking (Miguel, 2026-11-11) |
+| F2 | Which element carries the `img` role and the accessible name? | Miguel | resolved: option (b), `role="img"` and `aria-label` on the shadow `root`, named by the host `aria-label`, else `name`, with the `status` slot outside `root` (Miguel, 2026-11-11) |
+| F3 | How does an avatar become decorative? | Miguel | resolved: option (a), implicit, Icon and Badge parity: an avatar with no name is decorative (Miguel, 2026-11-11) |
+| F4 | Who produces the initials? | Miguel | resolved: option (b), computed from `name` by the D9 rule while the `fallback` slot is empty; slotted content wins (Miguel, 2026-11-11) |
+| F5 | Does Avatar reflect its load state, and as which flags? | Miguel | resolved: option (a), `loading` and `error` as `data-*` and `:state()` (Miguel, 2026-11-11) |
+| F6 | What does the `status` slot accept, how is it named, and does it get a wrapper part? | Miguel | resolved: option (a), any element, positioned by `::slotted([slot="status"])`, naming itself; no wrapper part (Miguel, 2026-11-11) |
+| F7 | Is size a reflected enum or only a custom property? | Miguel | resolved: option (a), the `--line-avatar-size` token only, read with a fallback and never declared on `:host` (Miguel, 2026-11-11) |
+| F8 | Is the shape a C6 variant? | Miguel | resolved: option (b), the `--line-avatar-radius` token only (Miguel, 2026-11-11) |
+| F9 | Which props and slots does the descriptor expose to agents? | Miguel | resolved: option (a), `src`, `name` and a `status` child into the `status` slot (Miguel, 2026-11-11) |
+| F10 | How does an agent's image URL reach `<line-avatar>` behind the URL policy? | Miguel | resolved: option (a), a URL binding kind `{ kind: 'url', use: 'image', name: 'src' }` that the surface runs through its URL policy (Miguel, 2026-11-11; Phase 1 spec AM-094) |
+| F11 | How does a basic `Image` with `variant: "avatar"` map, and does an agent avatar require a name? | Miguel | resolved: option (a), `url` → `src`, `description` → `name`, `fit` ignored, no `requiredName`; a nameless node renders decorative (Miguel, 2026-11-11) |
+| F12 | What contract does row 01-C11 AvatarGroup rely on? | Miguel | resolved: option (a), inherited tokens, contract G1–G8 (Miguel, 2026-11-11) |
+| F13 | Does the htmx Tests row run? | Miguel | resolved: option (a), `n/a` (Miguel, 2026-11-11) |
 
-**Orchestrator defaults**
+**Orchestrator defaults** (Miguel left D1–D17 as drafted, 2026-11-11)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -603,7 +603,7 @@ A basic catalog node the surface renders as `<line-avatar src="https://example.c
 | D6 | Each `src` change sets `loading` and records the URL; `load` and `error` count only for the recorded URL; a blank or removed `src` removes the `<img>` `src` and clears both flags without waiting for an event; `complete` is never read | Probe P4: one event per set `src`, none on removal, `error` on `""`, Firefox `complete` `false` for a cached image |
 | D7 | Flags reflected through `reflectState` once connected, as Badge does; no `line-load` or `line-error` event | `line-element.ts:46-53`; `badge.ts:204-205`; F5 |
 | D8 | The eleven `--line-avatar-*` tokens of the CSS custom properties table, read with fallbacks and never declared on `:host` | Probe P5; F12 contract G2 |
-| D9 | The initials rule splits the trimmed `name` on whitespace, takes the first grapheme (`Intl.Segmenter`, granularity `grapheme`) of the first word and, when there are two or more words, of the last word, and uppercases them with `toLocaleUpperCase(lang)`, where `lang` is the nearest `lang` attribute of the host or the document's; a blank `name` gives nothing | Probe P6; applies only under F4 (b) |
+| D9 | The initials rule splits the trimmed `name` on whitespace, takes the first grapheme (`Intl.Segmenter`, granularity `grapheme`) of the first word and, when there are two or more words, of the last word, and uppercases them with `toLocaleUpperCase(lang)`, where `lang` is the nearest `lang` attribute of the host or the document's; a blank `name` gives nothing | Probe P6; F4 (b) |
 | D10 | The name is the trimmed host `aria-label`, else the trimmed `name`; `aria-description` is copied to `root` only while named; `aria-labelledby` on the host is not supported, because an id reference cannot cross into the shadow root, and the JSDoc says so | ARCH §17.2 C5, `:1576`; Badge D7 trimming rule (`0007-badge.md`) |
 | D11 | Catalog name `Avatar`, `agentExposed: true` | PRD row name; Phase 1 spec C10 row |
 | D12 | Stories: Photo, Initials, Error fallback, Loading (a never-resolving image), Decorative beside a name, Fallback slot, Custom media (`<picture>` and inline SVG), Status, In a link, Spoken name override, Custom tokens, Ring and size from a container. Images are local Storybook static files | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0007-badge.md` D11) |
@@ -612,6 +612,8 @@ A basic catalog node the surface renders as `<line-avatar src="https://example.c
 | D15 | The component applies no URL policy to hand-written `src`; only the surface does | Phase 1 spec §6.G.4, `:1499-1504`, places the policy on the surface; MANIFESTO Law 9 |
 | D16 | No `loading`, `srcset`, `sizes`, `crossorigin` or `referrerpolicy` prop; consumers who need them use custom media in the default slot | F1 (a); C1 keeps the prop schema small |
 | D17 | The C10 PR also fills the Avatar row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs, reports the gzipped size, updates the `basic.ts` Image comment, lands the F10 Phase 1 spec AM before its code, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1223-1227`; PROCESS §3, §6 |
+
+Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option tables below stay as the record of what he weighed.
 
 ### F1 — Image source and the default slot
 
