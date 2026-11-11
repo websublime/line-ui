@@ -615,7 +615,7 @@ A `line` catalog node set the surface renders as the first example, shortened to
 | F14 | Which layout keeps "+N" under a pointer that enters on it while the stack expands? (review gate round 1) | Miguel | resolved: option (d), nested `level` wrappers that `translate` toward inline-start while expanded, mirrored under `:dir(rtl)`; "+N" and the host box stay put, and the spread avatars may overlap the content before the group (Miguel, 2026-11-11) |
 | F15 | Where does the default focus ring of the "+N" control sit, given ARCH §14.9's `::part(root)`? (review gate round 1) | Miguel | resolved: option (b), a `root` part wraps the "+N" button and carries the default ring under `[data-focus-visible]`, so ARCH §14.9 holds literally (Miguel, 2026-11-11) |
 
-**Orchestrator defaults** (Miguel left D1–D19 as drafted, 2026-11-11; review gate round 1 edited D2–D5, D7, D8 and D13 and added D20–D26, as the orchestrator directed)
+**Orchestrator defaults** (Miguel left D1–D19 as drafted, 2026-11-11; review gate round 1 edited D2–D5, D7, D8 and D13 and added D20–D26, as the orchestrator directed; review gate round 2 edited D3, D5, D7, D20, D21 and D25 and added D27, D25 and D27 on Miguel's answers of 2026-11-11)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -647,7 +647,7 @@ A `line` catalog node set the surface renders as the first example, shortened to
 | D26 | The Expanded and Open stories reach their state in the visual tier through the `ready` hook of `expectStoryScreenshot` (`packages/line-components/__tests__/visual/story.ts:28`, `:41`): it hovers the host for Expanded and clicks "+N" for Open, then moves the pointer onto the panel. The axe test does the same before `expectNoAxeViolations` | No property sets either state (D12) |
 | D27 | `focus-visible` is a host field, `#focusVisible`, set from the overflow button's `focus` when the button matches `:focus-visible` and cleared on `blur`, and reflected through `reflectState` in `update()`, as Chip does (`packages/line-components/src/chip/chip.ts:162`, `:231`, `:244`). It is not machine context, so `data-focus-visible` and the default ring on `::part(root)` hold when the machine fails to start. The `FOCUS.IN` gate of F13 still reads `:focus-visible` on the focused element | Decided by Miguel on 2026-11-11 at review gate round 2; Phase 1 spec §12 AM-093 (ARCH §14.9: "the machine or the component determines when focus is visible"); MANIFESTO Law 9; WCAG 2.4.7, because `reset.common.css` removes the outline of internal elements |
 
-Miguel decided F1–F11 on 2026-11-11, each on the option the draft recommended, and left D1–D19 as drafted. After review gate round 1 he decided F12–F15 the same day. The option tables below stay as the record of what he weighed.
+Miguel decided F1–F11 on 2026-11-11, each on the option the draft recommended, and left D1–D19 as drafted. After review gate round 1 he decided F12–F15 the same day, and after review gate round 2 he answered for D25 and D27. The option tables below stay as the record of what he weighed.
 
 ### F1 — Overflow popover mechanism
 
