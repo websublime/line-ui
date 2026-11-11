@@ -71,7 +71,7 @@ function trimmed(value: string | null | undefined): string {
  * @cssprop [--line-avatar-radius=var(--line-radius-round)] - Corner radius of `root`.
  * @cssprop [--line-avatar-bg=var(--line-gray-bg)] - Fill of `root`, behind the fallback and transparent images.
  * @cssprop [--line-avatar-color=var(--line-gray-text)] - Text colour of the fallback.
- * @cssprop [--line-avatar-font-size=calc(var(--line-avatar-size) * 0.4)] - Font size of the fallback.
+ * @cssprop [--line-avatar-font-size=calc(var(--line-avatar-size, var(--line-size-7)) * 0.4)] - Font size of the fallback.
  * @cssprop [--line-avatar-font-weight=var(--line-font-weight-5)] - Font weight of the fallback.
  * @cssprop [--line-avatar-fit=cover] - `object-fit` of the image.
  * @cssprop [--line-avatar-ring-width=0px] - Spread of the ring drawn around `root`, such as the gap between stacked avatars.
