@@ -313,6 +313,35 @@ describe('<line-avatar> initials (decision F4; D9)', () => {
     expect(initials(el)).toBe('İI');
   });
 
+  test('the lang of an element around an enclosing shadow host picks the casing', async () => {
+    const outer = document.createElement('div');
+    outer.lang = 'tr';
+    const host = document.createElement('div');
+    outer.append(host);
+    const shadow = host.attachShadow({ mode: 'open' });
+    shadow.innerHTML = '<line-avatar name="ilker ışık"></line-avatar>';
+    document.body.append(outer);
+    const el = shadow.querySelector('line-avatar') as LineAvatar;
+    await settle(el);
+    expect(initials(el)).toBe('İI');
+  });
+
+  test('inside a shadow root with no lang above it, the document lang picks the casing', async () => {
+    const previous = document.documentElement.lang;
+    document.documentElement.lang = 'tr';
+    try {
+      const host = document.createElement('div');
+      const shadow = host.attachShadow({ mode: 'open' });
+      shadow.innerHTML = '<line-avatar name="ilker ışık"></line-avatar>';
+      document.body.append(host);
+      const el = shadow.querySelector('line-avatar') as LineAvatar;
+      await settle(el);
+      expect(initials(el)).toBe('İI');
+    } finally {
+      document.documentElement.lang = previous;
+    }
+  });
+
   test('a changed name renders new initials', async () => {
     const el = await mountMarkup('<line-avatar name="Ana Silva"></line-avatar>');
     el.name = 'Rui Costa';

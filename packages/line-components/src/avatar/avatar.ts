@@ -213,6 +213,17 @@ export class LineAvatar extends LineElement {
     this.reflectState('error', this.#status === 'error');
   }
 
+  /** The nearest `lang` of the host, across enclosing shadow roots, else the document's (D9). */
+  #language(): string | undefined {
+    for (let element: Element | null = this; element; ) {
+      const owner = element.closest('[lang]');
+      if (owner) return owner.getAttribute('lang') || undefined;
+      const root = element.getRootNode();
+      element = root instanceof ShadowRoot ? root.host : null;
+    }
+    return document.documentElement.lang || undefined;
+  }
+
   protected override willUpdate(changed: PropertyValues<this>): void {
     super.willUpdate(changed);
     const src = this.#media ? '' : this.#source();
@@ -265,7 +276,7 @@ export class LineAvatar extends LineElement {
     const description = named ? trimmed(this.getAttribute('aria-description')) : '';
     const src = this.#media ? '' : this.#tracked;
     const shows = this.#media || this.#status === 'loaded' ? 'image' : 'fallback';
-    const lang = this.closest('[lang]')?.getAttribute('lang') ?? undefined;
+    const lang = this.#language();
     // The image is a sibling of the default slot, not its fallback content: whitespace in the light DOM is assigned
     // to the default slot and would keep fallback content from rendering (spec 0009-avatar.md AM-001).
     return html`<span
