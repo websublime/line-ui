@@ -1,0 +1,6 @@
+---
+"@websublime/line-components": patch
+"@websublime/line-genui": minor
+---
+
+Add `<line-avatar-group>` at `@websublime/line-components/avatar-group`, a row of overlapping avatars named by its host `aria-label` or `aria-labelledby` (a `group` role). Every element child without `hidden` counts as one avatar; `max` keeps the first avatars in the stack and moves the rest into a native `popover` panel that a "+N" `<button>` opens, with focus back on "+N" after Escape, and `overflow-label` names "+N" from a template such as `"+{count} more members"`. The stack spreads toward inline-start on mouse or pen hover and on keyboard focus, never on touch, Escape dismisses the spread until the pointer and focus have both left, and "+N" stays under the pointer. `size` (`1`–`5`) and `spacing` (`0`–`3`) step the avatar size and the overlap, the group sets the avatar size and a 2px ring on its host for the avatars to inherit, and `data-expanded`, `data-open` and `data-focus-visible` reflect its state; it never imports or writes on its avatars. The `line` A2UI catalog, `catalog.json` and the frontend tools of `@websublime/line-genui/catalog` gain `AvatarGroup`, with `children`, `max`, `size`, `spacing` and `overflowLabel`.
