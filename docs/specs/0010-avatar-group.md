@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed`: DRAFT (2026-11-11). Forks F1–F11 are open and wait for Miguel; only Miguel approves |
+| Status | `proposed` (2026-11-11). Miguel decided F1–F11 on 2026-11-11; approval follows the review gate |
 | Phase | `1` |
 | Tier | `Custom` (Phase 1 spec §6.C.4 C11 row, `docs/specs/01-spec-core-primitives.md:1167`; PRD §4.1, `docs/PRD.md:254`; ARCH §8, `docs/ARCHITECTURE.md:409`; ARCH §13.2, `docs/ARCHITECTURE.md:606`) |
 | Tag | `line-avatar-group` |
@@ -10,9 +10,9 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C11 row) |
 | PRD catalogue entry | PRD §4.1, `AvatarGroup` row (`docs/PRD.md:254`) |
 | Ledger row | `01-C11` (`docs/plans/01-tasks-core-primitives.md:57`) |
-| Governing sections | Phase 1 spec §4.2 (`:250`, `:261-269`, `:299`), §6.C.0, §6.C.4 (C11 row `:1167`, notes `:1147-1153`, `:1180-1181`), §6.C.6 (`:1218-1233`), §6.C.7 (`:1242-1272`), §6.G.1–§6.G.5, §7.4, §7.5, §10 SD4, SD10, SD18, SD21, SD31, SD34, SD37, SD38, SD39, SD84, SD98, SD99, §12 AM-058, AM-090; ARCH (v0.8.27) §3, §5, §8, §12, §13.2, §14.7–§14.9, §17.2–§17.4; PRD §4.1, §4.3, §5.2, §8; MANIFESTO Laws 3–9, Out of Scope; R7 §2.4, §4, §6 OQ5; R8 §2.2, §3, §6 Q10; R9 §2.1; `0009-avatar.md` contract G1–G8, F7, F12 |
+| Governing sections | Phase 1 spec §4.2 (`:250`, `:261-269`, `:299`), §6.C.0, §6.C.4 (C11 row `:1167`, notes `:1147-1153`, `:1180-1181`), §6.C.6 (`:1218-1233`), §6.C.7 (`:1242-1272`), §6.G.1–§6.G.5, §7.4, §7.5, §10 SD4, SD10, SD18, SD21, SD31 (as amended by AM-095), SD34, SD37, SD38, SD39, SD84, SD98, SD99, §12 AM-058, AM-090, AM-095; ARCH (v0.8.27) §3, §5, §8, §12, §13.2, §14.7–§14.9, §17.2–§17.4; PRD §4.1, §4.3, §5.2, §8; MANIFESTO Laws 3–9, Out of Scope; R7 §2.4, §4, §6 OQ5; R8 §2.2, §3, §6 Q10; R9 §2.1; `0009-avatar.md` contract G1–G8, F7, F12 |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Forks F1–F11 under Open Questions are open. Part B states the recommended option of each and cites the fork, so a different decision rewrites the sentences that cite it. The orchestrator defaults D1–D19 are drafted for Miguel to keep or change.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F11 on 2026-11-11, each on the option the draft recommended; Part B states those decisions. The orchestrator defaults D1–D19 stand as drafted (Miguel, 2026-11-11). F7 (a) departs from the old wording of Phase 1 spec §10 SD31, which Phase 1 spec AM-095 amends.
 
 ---
 
@@ -246,7 +246,7 @@ A page held two rows of three 32 px circles overlapping by 8 px, each followed b
 
 ### Anatomy
 
-Recommended options F1, F3, F4 and F6 shape this tree.
+Decisions F1, F3, F4 and F6 shape this tree.
 
 ```
 <line-avatar-group>                      LineElement (not FormAssociated); ElementInternals role "group" (F6);
@@ -266,7 +266,7 @@ Recommended options F1, F3, F4 and F6 shape this tree.
 - The host extends `LineElement` (`packages/line-core/src/line-element.ts:31-36`) without the `FormAssociated` mixin, so `this[INTERNALS]` carries the role and `reflectState` the flags (ARCH §14.8, `:1190`). `:host { display: inline-flex; align-items: center }` and `:host([hidden]) { display: none }`, because `display` on `:host` beats the UA `[hidden]` rule (`0007-badge.md` D3).
 - The shadow root uses manual slot assignment (F4). The group assigns each element child to the stack slot or the panel slot in `updated()`; it writes no attribute on any child, and a child's own `slot` attribute has no effect (probe P2). Text children are never assigned and never render.
 - The shadow root does not delegate focus (D6).
-- The overflow button is a native `<button>` (Phase 1 spec §10 SD31, `:2378`; §6.C.4 C11 row), so the group takes the `common` and `button` reset modules (ARCH §14.7, `:1162`; §10 SD84, `:2431`).
+- The overflow button is a native `<button>` (Phase 1 spec §10 SD31, `:2378`, as amended by §12 AM-095; §6.C.4 C11 row), so the group takes the `common` and `button` reset modules (ARCH §14.7, `:1162`; §10 SD84, `:2431`). It takes its name from `overflow-label`, not from the host `aria-label` (F7; AM-095).
 
 ### States
 
@@ -390,7 +390,7 @@ Recommended options F1, F3, F4 and F6 shape this tree.
 |-------|-------|
 | Role | `group` on the host through `this[INTERNALS].role` (F6; R8 `docs/research/01-research-accessibility.md:72`). An author `role` attribute on the host wins (`0004-button-group.md` A11y) |
 | ARIA attributes | on the overflow button: `aria-expanded` `true` or `false` from the machine (D8), `aria-controls="content"`, and `aria-label` while `overflow-label` is set (F7). On the panel: none (D9) |
-| Accessible name | the group: the host `aria-label` or `aria-labelledby`, which name the internals role directly (F6). The overflow button: the visible "+N", or the `overflow-label` template with `{count}` filled in (F7) |
+| Accessible name | the group: the host `aria-label` or `aria-labelledby`, which name the internals role directly (F6). The overflow button: the visible "+N", or the `overflow-label` template with `{count}` filled in (F7; Phase 1 spec §10 SD31 as amended by §12 AM-095) |
 | Focus | the host is not focusable and does not delegate focus (D6). The overflow button is one Tab stop; `data-focus-visible` on the host while it has keyboard focus (ARCH §14.9) |
 
 - **Disclosure.** The overflow button follows the APG Disclosure pattern that R8 names: a `button` with `aria-expanded`, `aria-controls` optional, Enter and Space toggling; "APG has no non-modal popover pattern" (R8 `:72`). The panel is not a dialog and traps nothing; it follows the button in the Tab order (probe P1).
@@ -411,7 +411,7 @@ Recommended options F1, F3, F4 and F6 shape this tree.
 | C2 | Slots carry `@slot` and a single or multiple classification | one `@slot` for the default slot, `ChildList` (Slots) |
 | C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | fires no event, so no `@fires`; not value-bearing |
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated (Phase 1 spec §6.C.4 C11 row) |
-| C5 | The host accepts an accessible name and applies it to the element with the role | the group's role is on the host, which the host `aria-label` or `aria-labelledby` names directly (F6). The overflow button takes its name from its text or the documented label property `overflow-label` (F7) |
+| C5 | The host accepts an accessible name and applies it to the element with the role | the group's role is on the host, which the host `aria-label` or `aria-labelledby` names directly (F6). The overflow button takes its name from its text or the documented label property `overflow-label` (F7; Phase 1 spec §10 SD31 as amended by §12 AM-095) |
 | C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | no variants; `size` and `spacing` are scale steps (Variants; F8) |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | `@summary`, one `@slot`, two `@csspart`, thirteen `@cssprop`; no event and nothing deprecated |
 | C8 | Missing or partial props degrade to an empty or neutral state | with no children it renders an empty, unnamed group with no overflow button; with no `max` every avatar shows; unknown `size` and `spacing` keep the defaults; a blank `overflow-label` leaves the visible "+N" as the name |
@@ -425,7 +425,7 @@ Recommended options F1, F3, F4 and F6 shape this tree.
 
 #### Descriptor fields
 
-Recommended F7, F8 and F10 set these fields.
+Decisions F7, F8 and F10 set these fields.
 
 | Field | Value |
 |-------|-------|
@@ -550,19 +550,19 @@ A `line` catalog node set the surface renders as the first example, shortened to
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | How does the "+N" button open its overflow popover (R7 §6 OQ5)? | Miguel | open; recommended (c), the native `popover` attribute with `popovertarget`, mirrored by the custom machine |
-| F2 | What expands the stack, and how does expansion meet WCAG 1.4.13 (R8 §6 Q10)? | Miguel | open; recommended (a), mouse or pen hover and focus within the group, Escape dismisses, touch never expands |
-| F3 | What does the overflow popover show, given that the avatars live in the consumer's light DOM? | Miguel | open; recommended (a), the avatars past `max` themselves, assigned to a slot inside the panel |
-| F4 | How are avatars past `max` kept out of the stack? | Miguel | open; recommended (a), manual slot assignment |
-| F5 | Which children count as avatars? | Miguel | open; recommended (a), every element child |
-| F6 | Which role does the group carry: `group` or `list`/`listitem`? | Miguel | open; recommended (a), `group` on the host through `ElementInternals` |
-| F7 | Where does the "+N" button's accessible name come from? | Miguel | open; recommended (a), an `overflow-label` template with `{count}`, the visible "+N" when blank; needs a Phase 1 spec AM (decision) on SD31's wording |
-| F8 | What shape do `size` and `spacing` take? | Miguel | open; recommended (a), reflected step enums on token scales, Stack `gap` style |
-| F9 | Does the group hide presence markers in the collapsed stack (`0009-avatar.md` G4)? | Miguel | open; recommended (a), no; the token stays the consumer's |
-| F10 | Which catalog carries AvatarGroup, with which props, and does it require a name? | Miguel | open; recommended (a), the `line` catalog only, `children`, `max`, `size`, `spacing`, `overflowLabel`, no required name, no `basic` route |
-| F11 | Does the htmx Tests row run? | Miguel | open; recommended (a), `n/a` |
+| F1 | How does the "+N" button open its overflow popover (R7 §6 OQ5)? | Miguel | resolved: option (c), the native `popover` attribute opened by `popovertarget`, with the custom machine following the panel's `toggle` events, CSS anchor positioning from the implicit anchor, and focus restored by the component (Miguel, 2026-11-11) |
+| F2 | What expands the stack, and how does expansion meet WCAG 1.4.13 (R8 §6 Q10)? | Miguel | resolved: option (a), mouse or pen hover and focus within the group expand it, Escape collapses it until pointer and focus have left, and touch never expands it; a touch tap on "+N" opens the panel straight from `collapsed` (Miguel, 2026-11-11) |
+| F3 | What does the overflow popover show, given that the avatars live in the consumer's light DOM? | Miguel | resolved: option (a), the avatars past `max` themselves, assigned to an internal slot inside the panel (Miguel, 2026-11-11) |
+| F4 | How are avatars past `max` kept out of the stack? | Miguel | resolved: option (a), manual slot assignment, with no attribute written on any child (Miguel, 2026-11-11) |
+| F5 | Which children count as avatars? | Miguel | resolved: option (a), every element child without `hidden`, a wrapper such as a link included; no tag is matched (Miguel, 2026-11-11) |
+| F6 | Which role does the group carry: `group` or `list`/`listitem`? | Miguel | resolved: option (a), `group` on the host through `ElementInternals`, named by the host `aria-label` or `aria-labelledby` (Miguel, 2026-11-11) |
+| F7 | Where does the "+N" button's accessible name come from? | Miguel | resolved: option (a), the `overflow-label` template with `{count}` replaced by the formatted count, and the visible "+N" when blank (Miguel, 2026-11-11; Phase 1 spec AM-095 amends §10 SD31) |
+| F8 | What shape do `size` and `spacing` take? | Miguel | resolved: option (a), reflected step enums on token scales, `size` `1`–`5` and `spacing` `0`–`3`, Stack `gap` style (Miguel, 2026-11-11) |
+| F9 | Does the group hide presence markers in the collapsed stack (`0009-avatar.md` G4)? | Miguel | resolved: option (a), no; the group never sets `--line-avatar-status-visibility`, which stays the consumer's (Miguel, 2026-11-11) |
+| F10 | Which catalog carries AvatarGroup, with which props, and does it require a name? | Miguel | resolved: option (a), the `line` catalog only, with `children`, `max`, `size`, `spacing` and `overflowLabel`, `hostNaming: always`, no `requiredName` and no `basic` route (Miguel, 2026-11-11) |
+| F11 | Does the htmx Tests row run? | Miguel | resolved: option (a), `n/a` (Miguel, 2026-11-11) |
 
-**Orchestrator defaults** (drafted for Miguel to keep or change)
+**Orchestrator defaults** (Miguel left D1–D19 as drafted, 2026-11-11)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -586,6 +586,8 @@ A `line` catalog node set the surface renders as the first example, shortened to
 | D18 | Stories: Default (five, `max="3"`), No overflow, Overflow label, Sizes, Spacing, Links, With status, Expanded, Open, Custom tokens; local images as Avatar's stories use | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0009-avatar.md` D12) |
 | D19 | The C11 PR also adds an AvatarGroup row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, which has none yet, writes the Storybook docs, reports the gzipped size, records the update rate, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6 (`:1223-1227`, `:1232`); PROCESS §6 |
 
+Miguel decided F1–F11 on 2026-11-11, each on the option the draft recommended, and left D1–D19 as drafted. The option tables below stay as the record of what he weighed.
+
 ### F1 — Overflow popover mechanism
 
 **Evidence.** ARCH §13.2 says "click on overflow opens popover" (`docs/ARCHITECTURE.md:606`). R7 OQ5 names the three options and the evidence that decides them: the R9 size budget against about 24 KB, keyboard and touch equivalents, and the Phase 3 Popover order (`docs/research/01-research-zag-machines.md:309`). R7 says the popover "needs positioning, dismissal and focus return; Zag puts those in `@zag-js/popover`" (`:217`), that PRD places Popover in Phase 3 (`:225-227`; PRD §4.3, `docs/PRD.md:296`; §7.5, `:979`), and that embedding it adds about 24 KB (`:276-277`). Probe P8 measures 24,293 B gzipped and ten pinned packages. Phase 1 spec §4.2 lists the `line-components` dependencies at phase exit without `@zag-js/popover` (`:261-269`), and SD21 measures the size target with Zag external, so the size report would not show the cost. Probe P1 shows the native popover inside a shadow root opening from `popovertarget`, dismissing on Escape and outside click, ordering the panel after the trigger and anchoring it in all three engines; Chromium drops focus to `body` on Escape from inside, and opening any other `auto` popover closes it. Probe P7 shows happy-dom has no popover API. MANIFESTO Law 9 asks for a working fallback when a machine fails (`docs/MANIFESTO.md:55`).
@@ -608,7 +610,7 @@ None of the options contradicts ARCH §13.2 or the Phase 1 spec, except that (b)
 | (b) Hover only | mouse or pen hover expands; focus does not | Simplest. Keyboard users never see the spread stack, which R8 Q10 flags; the face-revealing effect becomes pointer-only |
 | (c) Activation only | no hover expansion; the stack spreads only while the panel is open | Nothing appears on hover, so 1.4.13 never applies. Contradicts ARCH §13.2 "Hover expands" and PRD §4.1 "Expands on hover": a PRD revision-log entry and an ARCH change, and a Phase 1 spec AM with trigger `decision` |
 
-Under (a) and (b), a touch tap on "+N" opens the panel straight from `collapsed`. ARCH §13.2 draws the states as a chain, `collapsed ↔ expanded ↔ overflow_open`; this spec reads the chain as the state set, and keeps the `expanded` flag on in `overflow_open` (D2), so no ARCH change follows [INFERENCE: Miguel may read the chain as the only allowed transitions, which would make a touch tap expand first].
+Under (a) and (b), a touch tap on "+N" opens the panel straight from `collapsed`. ARCH §13.2 draws the states as a chain, `collapsed ↔ expanded ↔ overflow_open`; this spec reads the chain as the state set, and keeps the `expanded` flag on in `overflow_open` (D2), so no ARCH change follows. Miguel accepted this reading with F2 (a) on 2026-11-11.
 
 ### F3 — What the overflow popover shows
 
