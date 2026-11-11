@@ -221,6 +221,30 @@ describe('<line-avatar> image and load flags (decisions F1, F5; D6)', () => {
     expect(flags(el)).toEqual({ loading: false, error: false });
     expect(shows(el)).toBe('image');
   });
+
+  test('a status reached while detached is reflected on reattach', async () => {
+    const el = await mountMarkup('<line-avatar src="https://example.test/a.jpg"></line-avatar>');
+    const parent = el.parentNode as Node;
+    el.remove();
+    part(el, 'image')?.dispatchEvent(new Event('error'));
+    await el.updateComplete;
+    parent.appendChild(el);
+    await settle(el);
+    expect(flags(el)).toEqual({ loading: false, error: true });
+    el.remove();
+    el.src = 'https://example.test/b.jpg';
+    await el.updateComplete;
+    parent.appendChild(el);
+    await settle(el);
+    expect(flags(el)).toEqual({ loading: true, error: false });
+    el.remove();
+    part(el, 'image')?.dispatchEvent(new Event('load'));
+    await el.updateComplete;
+    parent.appendChild(el);
+    await settle(el);
+    expect(flags(el)).toEqual({ loading: false, error: false });
+    expect(shows(el)).toBe('image');
+  });
 });
 
 describe('<line-avatar> custom media (decision F1)', () => {

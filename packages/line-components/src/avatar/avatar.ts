@@ -187,6 +187,8 @@ export class LineAvatar extends LineElement {
     super.connectedCallback();
     // Before the first render the light DOM stands in for the default slot.
     if (!this.hasUpdated) this.#media = [...this.children].some((child) => !child.hasAttribute('slot'));
+    // A status set while detached was not reflected; write it now.
+    else this.#reflect();
   }
 
   override attributeChangedCallback(name: string, old: string | null, value: string | null): void {
@@ -202,9 +204,13 @@ export class LineAvatar extends LineElement {
 
   #setStatus(status: ImageStatus): void {
     this.#status = status;
-    if (!this.isConnected) return;
-    this.reflectState('loading', status === 'loading');
-    this.reflectState('error', status === 'error');
+    if (this.isConnected) this.#reflect();
+  }
+
+  /** Writes the status as the `loading` and `error` flags (decision F5). */
+  #reflect(): void {
+    this.reflectState('loading', this.#status === 'loading');
+    this.reflectState('error', this.#status === 'error');
   }
 
   protected override willUpdate(changed: PropertyValues<this>): void {
