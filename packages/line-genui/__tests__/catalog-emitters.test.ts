@@ -65,6 +65,7 @@ const document = lineCatalogDocument(descriptors);
 const LINE_COMPONENTS = [
   'Alert',
   'Avatar',
+  'AvatarGroup',
   'Badge',
   'Button',
   'ButtonGroup',
@@ -81,7 +82,7 @@ const components: Json[] = [
     id: 'root',
     component: 'Stack',
     orientation: 'horizontal',
-    children: ['save', 'rule', 'close', 'zoom', 'notice', 'in-stock', 'unread', 'me'],
+    children: ['save', 'rule', 'close', 'zoom', 'notice', 'in-stock', 'unread', 'me', 'team'],
   },
   { id: 'save', component: 'Button', variant: 'primary', child: 'save-icon', action: { event: { name: 'save' } } },
   { id: 'save-icon', component: 'Icon', name: { path: '/icon' } },
@@ -126,6 +127,17 @@ const components: Json[] = [
   { id: 'unread', component: 'Badge', label: { path: '/inbox/unread' }, variant: 'danger' },
   { id: 'me', component: 'Avatar', src: { path: '/user/photo' }, name: { path: '/user/name' }, status: 'presence' },
   { id: 'presence', component: 'Badge', variant: 'success', accessibility: { label: 'Online' } },
+  {
+    id: 'team',
+    component: 'AvatarGroup',
+    children: ['me', 'rui'],
+    max: { path: '/team/max' },
+    size: '2',
+    spacing: '1',
+    overflowLabel: '+{count} more members',
+    accessibility: { label: 'Project members' },
+  },
+  { id: 'rui', component: 'Avatar', name: 'Rui Costa' },
 ];
 
 /** The stream that renders `components` on a `line` surface. */
@@ -208,6 +220,12 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
     expect(component({ id: 'p', component: 'Avatar', name: 'Ana', size: 'lg' })).toBe(false);
     expect(component({ id: 'p', component: 'Avatar', name: 'Ana', shape: 'square' })).toBe(false);
     expect(component({ id: 'p', component: 'Avatar', name: 'Ana', fallback: 'icon' })).toBe(false);
+    expect(component({ id: 't', component: 'AvatarGroup' })).toBe(true);
+    expect(component({ id: 't', component: 'AvatarGroup', children: ['a'], max: 3, spacing: '0' })).toBe(true);
+    expect(component({ id: 't', component: 'AvatarGroup', size: '6' })).toBe(false);
+    expect(component({ id: 't', component: 'AvatarGroup', spacing: '4' })).toBe(false);
+    expect(component({ id: 't', component: 'AvatarGroup', max: 'three' })).toBe(false);
+    expect(component({ id: 't', component: 'AvatarGroup', expanded: true })).toBe(false);
   });
 
   test('leaves out a descriptor with agentExposed: false', () => {

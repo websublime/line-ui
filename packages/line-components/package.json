@@ -31,6 +31,10 @@
       "types": "./dist/avatar/index.d.ts",
       "import": "./dist/avatar/index.js"
     },
+    "./avatar-group": {
+      "types": "./dist/avatar-group/index.d.ts",
+      "import": "./dist/avatar-group/index.js"
+    },
     "./badge": {
       "types": "./dist/badge/index.d.ts",
       "import": "./dist/badge/index.js"

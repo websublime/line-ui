@@ -8,6 +8,7 @@ that registers one tag. The root entry registers nothing and exports only the ic
 |---------|-----------|
 | `@websublime/line-components/alert` | `<line-alert>` |
 | `@websublime/line-components/avatar` | `<line-avatar>` |
+| `@websublime/line-components/avatar-group` | `<line-avatar-group>` |
 | `@websublime/line-components/badge` | `<line-badge>` |
 | `@websublime/line-components/button` | `<line-button>` |
 | `@websublime/line-components/button-group` | `<line-button-group>` |
@@ -308,6 +309,49 @@ container sets them by inheritance: `--line-avatar-size` (`--line-size-7`), `--l
 (`--line-gray-1`, or `Canvas` without `line-themes`), `--line-avatar-status-inset` (`0`) and
 `--line-avatar-status-visibility` (`visible`). `::part(root)`, `::part(image)` and `::part(fallback)` reach the frame,
 the picture and the fallback box.
+
+## AvatarGroup
+
+`<line-avatar-group>` shows a row of overlapping avatars, such as the members of a project, and ends it with a "+N"
+button when there are more than `max`. Every element child without `hidden` counts as one avatar: a `<line-avatar>`,
+or a link around one. The first `max` show in the stack and the rest move into a panel, a native `popover` that "+N"
+opens; Escape, a click outside or a second press closes it, and after Escape focus returns to "+N". The group never
+imports Avatar and never writes on its children: it places each one by manual slot assignment, so a child's `slot`
+attribute has no effect.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `max` | an integer of 1 or more; how many avatars show in the stack | none: every avatar shows |
+| `size` | `1`–`5`: the avatars and "+N" take `--line-size-5`…`-9` | none: the avatars' own size |
+| `spacing` | `0`–`3`: the overlap is `0px`, `--line-size-1`, `-2` or `-3` | none: `--line-size-2` |
+| `overflow-label` | the "+N" name, with every `{count}` replaced by the number; a label without `{count}` follows the "+N" | none: "+N" is the name |
+
+```html
+<line-avatar-group aria-label="Project members" max="3" overflow-label="+{count} more members">
+  <line-avatar src="/people/ana.jpg" name="Ana Silva"></line-avatar>
+  <line-avatar src="/people/rui.jpg" name="Rui Costa"></line-avatar>
+  <line-avatar name="Marta Sousa"></line-avatar>
+  <line-avatar src="/people/joao.jpg" name="João Lima"></line-avatar>
+</line-avatar-group>
+```
+
+The group carries the `group` role on its host, so name it with `aria-label` or `aria-labelledby`. While a mouse or
+pen pointer rests on the group, or keyboard focus is within it, the avatars spread apart toward inline-start and "+N"
+stays put; Escape stacks them again until the pointer and focus have both left, and a touch tap never spreads them by
+itself. The spread avatars overlap the content before the group by up to (avatars in the stack) × (overlap + gap),
+36px with the defaults and `max="3"`, so leave that space at its inline-start or cap the stack with `max`. The panel
+opens under "+N" at the group's inline-start and follows the group's direction, also inside a subtree whose
+direction differs from the page's; near a viewport edge it moves above "+N" or to its other side. `data-expanded`,
+`data-open` and `data-focus-visible`, with `:state(expanded)`, `:state(open)` and `:state(focus-visible)`, follow the
+stack, the panel and the keyboard focus on "+N". It fires no event.
+
+The group sets `--line-avatar-ring-width` (`--line-border-2`) and, with `size`, `--line-avatar-size` on its host, and
+the avatars inherit them through any wrapper; "+N" reads the Avatar tokens, so it matches an avatar. Its own tokens
+are `--line-avatar-group-overlap` (`--line-size-2`), `--line-avatar-group-gap` (`--line-size-1`, the spread gap),
+`--line-avatar-group-duration` (`--line-motion-fast`, `0s` under reduced motion), `--line-avatar-group-focus-ring`,
+and `--line-avatar-group-content-bg`, `-border-color`, `-border-width`, `-radius`, `-shadow`, `-padding`, `-gap`,
+`-offset` and `-max-inline-size` for the panel. Write a zero overlap or gap as `0px`. `::part(root)`,
+`::part(overflow)` and `::part(content)` reach the "+N" wrapper with its focus ring, the "+N" button and the panel.
 
 ## Chip
 

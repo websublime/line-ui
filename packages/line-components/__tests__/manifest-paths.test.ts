@@ -212,4 +212,27 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root', 'image', 'fallback']);
     expect(declaration?.cssProperties).toHaveLength(11);
   });
+
+  test('line-avatar-group resolves to src/avatar-group/avatar-group.ts', () => {
+    const group = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-avatar-group'),
+    );
+    expect(group?.path).toBe('src/avatar-group/avatar-group.ts');
+    expect(paths.has('src/avatar-group/avatar-group.ts')).toBe(true);
+  });
+
+  test('line-avatar-group declares max, size, spacing and overflowLabel, one slot, three parts, thirteen tokens and no event', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-avatar-group');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual(['max', 'size', 'spacing', 'overflowLabel']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root', 'overflow', 'content']);
+    expect(declaration?.cssProperties).toHaveLength(13);
+  });
 });

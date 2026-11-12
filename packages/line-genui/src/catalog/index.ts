@@ -14,6 +14,7 @@ import {
 import { commonProp, componentSchema, defineDescriptor, type LineDescriptor } from './descriptor.js';
 import { alertDescriptor } from './descriptors/alert.js';
 import { avatarDescriptor } from './descriptors/avatar.js';
+import { avatarGroupDescriptor } from './descriptors/avatar-group.js';
 import { badgeDescriptor } from './descriptors/badge.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { buttonGroupDescriptor } from './descriptors/button-group.js';
@@ -88,6 +89,7 @@ export {
   ADVERTISED_VERSIONS,
   alertDescriptor,
   avatarDescriptor,
+  avatarGroupDescriptor,
   BASIC_CATALOG_ID,
   badgeDescriptor,
   basicImplementations,
@@ -114,6 +116,7 @@ export {
 export const descriptors: readonly LineDescriptor[] = [
   alertDescriptor,
   avatarDescriptor,
+  avatarGroupDescriptor,
   badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,

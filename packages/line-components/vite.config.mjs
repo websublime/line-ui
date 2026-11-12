@@ -10,6 +10,7 @@ export default mergeConfig(
       index: 'src/index.ts',
       'alert/index': 'src/alert/index.ts',
       'avatar/index': 'src/avatar/index.ts',
+      'avatar-group/index': 'src/avatar-group/index.ts',
       'badge/index': 'src/badge/index.ts',
       'button/index': 'src/button/index.ts',
       'button-group/index': 'src/button-group/index.ts',

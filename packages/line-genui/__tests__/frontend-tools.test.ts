@@ -16,6 +16,7 @@ import { z } from 'zod';
 import {
   alertDescriptor,
   avatarDescriptor,
+  avatarGroupDescriptor,
   badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
@@ -104,6 +105,7 @@ describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)',
       expect(tools(provider).map((each) => each.name)).toEqual([
         'Alert',
         'Avatar',
+        'AvatarGroup',
         'Badge',
         'Button',
         'ButtonGroup',
@@ -177,6 +179,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
       const names = (name: string) => Object.keys(tool(provider, name).parameters.properties);
       expect(names('Alert')).toEqual(['variant']);
       expect(names('Avatar')).toEqual(['src', 'name', ...ACCESSIBILITY]);
+      expect(names('AvatarGroup')).toEqual(['max', 'size', 'spacing', 'overflowLabel', ...ACCESSIBILITY]);
       expect(names('Badge')).toEqual(['label', 'variant', ...ACCESSIBILITY]);
       expect(names('Button')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('ButtonGroup')).toEqual(['orientation', 'loop', ...ACCESSIBILITY]);
@@ -212,6 +215,22 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
     },
   );
   test.each([...TOOL_PROVIDERS])(
+    '%s: the AvatarGroup tool takes its tool description, max, the size and spacing steps and overflowLabel, and no children',
+    (provider) => {
+      const { description, parameters } = tool(provider, 'AvatarGroup');
+      expect(description).toBe(avatarGroupDescriptor.toolDescription);
+      expect(Array.from(description).length).toBeLessThanOrEqual(1024);
+      expect(description).not.toContain('children');
+      const optional = (type: string) => (provider === 'openai' ? [type, 'null'] : type);
+      expect(parameters.properties.max?.type).toEqual(optional('number'));
+      expect(parameters.properties.overflowLabel?.type).toEqual(optional('string'));
+      expect(parameters.properties.size?.enum).toEqual(expect.arrayContaining(['1', '2', '3', '4', '5']));
+      expect(parameters.properties.spacing?.enum).toEqual(expect.arrayContaining(['0', '1', '2', '3']));
+      expect(parameters.properties.children).toBeUndefined();
+      if (provider !== 'openai') expect(parameters.required ?? []).toEqual([]);
+    },
+  );
+  test.each([...TOOL_PROVIDERS])(
     '%s: the Badge tool takes its tool description, an optional label string and the five variants',
     (provider) => {
       const { description, parameters } = tool(provider, 'Badge');
@@ -227,10 +246,19 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   );
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Avatar, Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Icon and Stack neither',
+    '%s: Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Icon and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
-      for (const name of ['Avatar', 'Badge', 'Button', 'ButtonGroup', 'Chip', 'IconButton', 'Separator']) {
+      for (const name of [
+        'Avatar',
+        'AvatarGroup',
+        'Badge',
+        'Button',
+        'ButtonGroup',
+        'Chip',
+        'IconButton',
+        'Separator',
+      ]) {
         const { properties, required } = tool(provider, name).parameters;
         expect(properties.accessibility).toBeUndefined();
         expect(ACCESSIBILITY.map((parameter) => properties[parameter]?.type)).toEqual([optionalString, optionalString]);

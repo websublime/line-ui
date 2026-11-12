@@ -36,7 +36,7 @@ await buttonDescriptor.load(); // defines <line-button>
 
 | Export | What it is |
 | --- | --- |
-| `alertDescriptor`, `avatarDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `separatorDescriptor`, `stackDescriptor` | The descriptors of Alert, Avatar, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Separator and Stack |
+| `alertDescriptor`, `avatarDescriptor`, `avatarGroupDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `separatorDescriptor`, `stackDescriptor` | The descriptors of Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Separator and Stack |
 | `descriptors` | Every descriptor above |
 | `defineDescriptor(init)` | Builds a descriptor from its fields and its own props; `agentExposed` defaults to `true` |
 | `componentSchema(description, props)` | The strict prop schema: `props` plus the A2UI `accessibility` object, described and annotated with the `ComponentCommon` mixin |
@@ -89,7 +89,7 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 
 In the controlled tier the agent picks a component and fills its props through a tool call, and your app renders the call. `frontendTools(descriptors, provider)` emits one tool, `{ name, description, parameters }`, for each descriptor with `agentExposed: true`, and none for a descriptor with `agentExposed: false`. `name` is the catalog name, such as `Button`, and matches `^[a-zA-Z0-9_-]{1,64}$`. `parameters` is flat and literal: no `$ref`, `oneOf`, `allOf`, recursion, open map, A2UI common type or data binding; its `properties` object has a null prototype.
 
-`description` is the descriptor's `toolDescription` when it sets one, and its agent-facing description otherwise, at most 1024 characters either way. A tool description names no parameter the tool lacks. Alert, Avatar, Badge, Button, ButtonGroup, IconButton, Separator and Stack set one, because their agent-facing descriptions, which the `line` catalog keeps, name props the tool leaves out (Alert `children`, `title`, `icon`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child`, ButtonGroup and Stack `children`) or the `accessibility` object, which the tool flattens (Badge, Button, ButtonGroup, IconButton, Separator). Chip and Icon set none, so their tools take their agent-facing descriptions. An empty or whitespace-only `toolDescription` is a descriptor error: the emitter throws and does not fall back to the agent-facing description.
+`description` is the descriptor's `toolDescription` when it sets one, and its agent-facing description otherwise, at most 1024 characters either way. A tool description names no parameter the tool lacks. Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, IconButton, Separator and Stack set one, because their agent-facing descriptions, which the `line` catalog keeps, name props the tool leaves out (Alert `children`, `title`, `icon`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child`, AvatarGroup, ButtonGroup and Stack `children`) or the `accessibility` object, which the tool flattens (AvatarGroup, Badge, Button, ButtonGroup, IconButton, Separator). Chip and Icon set none, so their tools take their agent-facing descriptions. An empty or whitespace-only `toolDescription` is a descriptor error: the emitter throws and does not fall back to the agent-facing description.
 
 ```ts
 import { descriptors, frontendTools } from '@websublime/line-genui/catalog';
@@ -121,8 +121,8 @@ Each descriptor prop becomes a parameter as follows.
 | --- | --- |
 | `DynamicString`, `DynamicBoolean`, `DynamicNumber` | `string`, `boolean`, `number`, with the prop's description |
 | `z.enum` | A string enum, with the prop's description |
-| `ComponentId`, `ChildList`, `Action` (Alert `icon`, `title`, `children`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child` and `action`, ButtonGroup and Stack `children`) | None: they carry tree structure and actions, not literal values |
-| `accessibility` | `accessibilityLabel` and `accessibilityDescription`, optional strings, on Avatar, Badge, Button, ButtonGroup, Chip, IconButton and Separator; Alert, Icon and Stack take neither |
+| `ComponentId`, `ChildList`, `Action` (Alert `icon`, `title`, `children`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child` and `action`, AvatarGroup, ButtonGroup and Stack `children`) | None: they carry tree structure and actions, not literal values |
+| `accessibility` | `accessibilityLabel` and `accessibilityDescription`, optional strings, on Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator; Alert, Icon and Stack take neither |
 
 The provider decides how an optional parameter is written.
 

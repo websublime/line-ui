@@ -21,6 +21,7 @@ import { a2uiIconMap } from '@websublime/line-icons/a2ui';
 import { LineA2uiSurface } from '../src/a2ui/index.js';
 import {
   avatarDescriptor,
+  avatarGroupDescriptor,
   BASIC_CATALOG_ID,
   badgeDescriptor,
   chipDescriptor,
@@ -1347,6 +1348,102 @@ describe('Avatar (`0009-avatar.md` Agent contract; §6.G.4; §12 AM-021, AM-094)
     await feed(components([image('largeFeature')]));
     expect(surface.firstElementChild?.localName).toBe('img');
     expect(errors).toEqual([]);
+  });
+});
+
+describe('AvatarGroup (`0010-avatar-group.md` Agent contract; §6.G.4)', () => {
+  type Group = HTMLElement & { updateComplete: Promise<unknown> };
+  const team = (extra: Message = {}): Message => ({
+    id: 'root',
+    component: 'AvatarGroup',
+    children: ['ana', 'rui', 'marta'],
+    ...extra,
+  });
+  const people: Message[] = [
+    { id: 'ana', component: 'Avatar', name: 'Ana Silva' },
+    { id: 'rui', component: 'Avatar', name: 'Rui Costa' },
+    { id: 'marta', component: 'Avatar', name: 'Marta Sousa' },
+  ];
+  const overflow = (group: Element) => group.shadowRoot?.querySelector('[part="overflow"]') ?? null;
+
+  /** Waits for the group to read its children, which its MutationObserver reports in a microtask (D13). */
+  async function settled(group: Group): Promise<void> {
+    await tick();
+    await group.updateComplete;
+  }
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so both elements
+  // are defined before the surface creates them; a browser upgrade reads them.
+  beforeAll(() => Promise.all([avatarDescriptor.load(), avatarGroupDescriptor.load()]));
+
+  test('renders line-avatar-group with its avatars in the default slot and every prop as an attribute (F10)', async () => {
+    const { surface, errors } = await render(
+      [
+        team({
+          max: 2,
+          size: '4',
+          spacing: '1',
+          overflowLabel: '+{count} more members',
+          accessibility: { label: 'Project members' },
+        }),
+        ...people,
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const group = surface.querySelector('line-avatar-group') as Group;
+    await settled(group);
+    expect(group.getAttribute('max')).toBe('2');
+    expect(group.getAttribute('size')).toBe('4');
+    expect(group.getAttribute('spacing')).toBe('1');
+    expect(group.getAttribute('overflow-label')).toBe('+{count} more members');
+    expect(group.getAttribute('aria-label')).toBe('Project members');
+    expect(Reflect.get(group, INTERNALS)?.role).toBe('group');
+    expect([...group.children].map((child) => `${child.localName}:${child.getAttribute('slot')}`)).toEqual([
+      'line-avatar:null',
+      'line-avatar:null',
+      'line-avatar:null',
+    ]);
+    expect(overflow(group)?.textContent).toBe('+1');
+    expect(overflow(group)?.getAttribute('aria-label')).toBe('+1 more members');
+  });
+
+  test('a child that arrives later is counted, and a bound max follows the data model (D13)', async () => {
+    const { feed, surface, errors } = mount();
+    await feed(create(LINE_CATALOG_ID), components([team({ max: { path: '/team/max' } }), ...people.slice(0, 2)]));
+    await feed(data('/team/max', 2));
+    const group = surface.querySelector('line-avatar-group') as Group;
+    await settled(group);
+    expect(group.querySelector('[data-line-a2ui-placeholder="pending"]')).not.toBeNull();
+    expect(overflow(group)).toBeNull();
+    await feed(components([people[2] as Message]));
+    await settled(group);
+    expect(surface.querySelector('line-avatar-group')).toBe(group);
+    expect(overflow(group)?.textContent).toBe('+1');
+    await feed(data('/team/max', 1));
+    await settled(group);
+    expect(group.getAttribute('max')).toBe('1');
+    expect(overflow(group)?.textContent).toBe('+2');
+    expect(errors).toEqual([]);
+  });
+
+  test('a node with no name renders an unnamed group and raises nothing (F10)', async () => {
+    const { surface, errors } = await render([team(), ...people], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    const group = surface.querySelector('line-avatar-group') as Group;
+    await settled(group);
+    expect(group.hasAttribute('aria-label')).toBe(false);
+    expect(surface.querySelector('[data-line-a2ui-placeholder]')).toBeNull();
+    expect(overflow(group)).toBeNull();
+  });
+
+  test('a node with an unknown size or spacing step is rejected by the strict schema', async () => {
+    for (const node of [team({ size: '6' }), team({ spacing: '4' }), team({ expanded: true })]) {
+      const { surface, errors } = await render([node, ...people], { catalogId: LINE_CATALOG_ID });
+      expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+      expect(surface.querySelector('line-avatar-group')).toBeNull();
+      surface.remove();
+    }
   });
 });
 
