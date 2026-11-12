@@ -36,7 +36,7 @@ await buttonDescriptor.load(); // defines <line-button>
 
 | Export | What it is |
 | --- | --- |
-| `alertDescriptor`, `avatarDescriptor`, `avatarGroupDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `separatorDescriptor`, `stackDescriptor`, `visuallyHiddenDescriptor` | The descriptors of Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Separator, Stack and VisuallyHidden; VisuallyHidden is `agentExposed: false`, so the catalogs and tools leave it out |
+| `alertDescriptor`, `avatarDescriptor`, `avatarGroupDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `portalDescriptor`, `separatorDescriptor`, `stackDescriptor`, `visuallyHiddenDescriptor` | The descriptors of Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Portal, Separator, Stack and VisuallyHidden; Portal and VisuallyHidden are `agentExposed: false`, so the catalogs and tools leave them out |
 | `descriptors` | Every descriptor above |
 | `defineDescriptor(init)` | Builds a descriptor from its fields and its own props; `agentExposed` defaults to `true` |
 | `componentSchema(description, props)` | The strict prop schema: `props` plus the A2UI `accessibility` object, described and annotated with the `ComponentCommon` mixin |

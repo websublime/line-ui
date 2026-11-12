@@ -18,6 +18,7 @@ that registers one tag. The root entry registers nothing and exports only the ic
 | `@websublime/line-components/separator` | `<line-separator>` |
 | `@websublime/line-components/stack` | `<line-stack>` |
 | `@websublime/line-components/visually-hidden` | `<line-visually-hidden>` |
+| `@websublime/line-components/portal` | `<line-portal>` |
 
 ```js
 import '@websublime/line-components/button';
@@ -433,5 +434,60 @@ line-visually-hidden:not(:defined):not(:focus-within) {
   overflow: hidden;
   clip-path: inset(50%);
   white-space: nowrap;
+}
+```
+
+## Portal
+
+`<line-portal>` shows its content in the browser top layer, above `overflow` clipping, transformed ancestors and
+stacking contexts. Nothing moves: the content stays where it is in the DOM, so it keeps its theme, direction, language
+and inherited custom properties, its events bubble through the host to its ancestors, a form control in it still
+submits with its form, and focus order and reading order follow the markup. Keep the Portal next to its trigger. It
+has one part, `root`, the top-layer box; one boolean, `disabled`; one method, `bringToFront()`; no tokens and no
+events.
+
+```html
+<div class="card" style="overflow: hidden">
+  <button type="button" class="trigger">Options</button>
+  <line-portal class="menu">
+    <ul>
+      <li><a href="/rename">Rename</a></li>
+    </ul>
+  </line-portal>
+</div>
+```
+
+The box sits at the logical start corner of the viewport, where an unplaced box covers the page and takes its clicks.
+Place it through `::part(root):popover-open`, for example under its trigger with CSS anchor positioning:
+
+```css
+.trigger {
+  anchor-name: --menu;
+}
+line-portal.menu::part(root):popover-open {
+  position-anchor: --menu;
+  inset: auto;
+  inset-block-start: anchor(end);
+  inset-inline-start: anchor(start);
+}
+```
+
+`disabled` renders the content in place, in the flow of the host's parent, without the top layer; placement rules on
+`:popover-open` never reach it. The host takes `hidden`.
+
+Top-layer boxes stack in the order they were shown, so a modal dialog opened after the Portal paints above it. Call
+`bringToFront()` after every `showModal()`, including each reopening of the same dialog. The call is synchronous and
+does nothing before the first update, while an update that clears `disabled` is pending, while `disabled`, or while
+disconnected. A Portal outside the open modal dialog then paints above its backdrop, but its content stays inert. The
+call raises only its own box: raise nested portals outer first, then inner, and after clearing `disabled` on the
+outer Portal, `await outer.updateComplete` before raising the inner one.
+
+Give the host no `aria-label`, because it has no role a name could attach to. No check reads the Firefox or WebKit
+accessibility tree, and no screen reader was run on top-layer content. The content shows in place, clipped by its
+ancestors, until the module runs; to hide it before then, add this rule to the page:
+
+```css
+line-portal:not(:defined) {
+  display: none;
 }
 ```

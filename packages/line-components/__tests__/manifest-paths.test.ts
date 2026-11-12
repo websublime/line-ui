@@ -20,7 +20,14 @@ interface ManifestModule {
   path: string;
   declarations?: {
     tagName?: string;
-    members?: { name: string; privacy?: string; inheritedFrom?: { name: string } }[];
+    members?: {
+      name: string;
+      kind?: string;
+      static?: boolean;
+      privacy?: string;
+      description?: string;
+      inheritedFrom?: { name: string };
+    }[];
     events?: { name: string }[];
     slots?: { name: string }[];
     cssParts?: { name: string }[];
@@ -257,5 +264,41 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
     expect(declaration?.cssParts ?? []).toEqual([]);
     expect(declaration?.cssProperties ?? []).toEqual([]);
+  });
+
+  test('line-portal resolves to src/portal/portal.ts', () => {
+    const portal = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-portal'),
+    );
+    expect(portal?.path).toBe('src/portal/portal.ts');
+    expect(paths.has('src/portal/portal.ts')).toBe(true);
+  });
+
+  test('line-portal declares the public field disabled, no event, one default slot, the root part and no token', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-portal');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual(['disabled']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root']);
+    expect(declaration?.cssProperties ?? []).toEqual([]);
+  });
+
+  test('line-portal declares the own method bringToFront with no privacy and a description (0013-portal.md C7)', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-portal');
+    const method = declaration?.members?.find(
+      (member) => member.name === 'bringToFront' && member.inheritedFrom === undefined,
+    );
+    expect(method?.kind).toBe('method');
+    expect(method?.static ?? false).toBe(false);
+    expect(method && 'privacy' in method).toBe(false);
+    expect(method?.description).toStartWith('Shows the box again');
   });
 });

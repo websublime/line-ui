@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>line-portal pre-upgrade fixture (spec 0013-portal.md)</title>
+    <style>
+      /* The consumer rule of spec 0013-portal.md Consumer styling (D8). */
+      line-portal:not(:defined) {
+        display: none;
+      }
+      #trap {
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(0);
+        inline-size: 200px;
+        block-size: 40px;
+      }
+      #p::part(root):popover-open {
+        inset-block-start: 100px;
+        inset-inline-start: 300px;
+      }
+    </style>
+    <script type="module">
+      // The component module loads only when the test calls this, so the content can be measured undefined first.
+      window.lineLoad = () => import('./pre-upgrade.ts');
+    </script>
+  </head>
+  <body>
+    <main>
+      <div id="trap"><line-portal id="p"><button type="button" id="inner">Inner</button></line-portal></div>
+    </main>
+  </body>
+</html>
