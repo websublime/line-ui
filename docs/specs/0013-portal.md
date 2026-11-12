@@ -281,7 +281,7 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 - A menu, a list of options or a tooltip whose container clips it with `overflow: hidden` or traps it under a transform (P1).
 - Content that must paint above a sibling with a higher `z-index`, such as a fixed header (P1).
 - A floating panel inside a form whose fields still submit with the form (P3).
-- A panel anchored to a trigger with CSS anchor positioning, which all three engines support (P11) [INFERENCE: anchoring a top-layer box to a trigger was not probed].
+- A panel anchored to a trigger with CSS anchor positioning, which all three engines support (P11); the Browser tier places the box under its trigger with the documented rule (AM-002).
 
 #### Anti-patterns
 
@@ -362,7 +362,7 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 ```
 
 - `display: contents` gives the host no box, so a flex or grid parent sees no item, and `:host([hidden])` keeps `hidden` working, because a `display` on `:host` beats the UA `[hidden]` rule (P12; `0012-visually-hidden.md` P7).
-- A `disabled` root generates no box, so its content joins the line or the flex row of the host's parent, inside a paragraph too. The reset and the start-corner placement never reach it, and consumer placement rules target `::part(root):popover-open`, so they never reach it either (Consumer styling) [INFERENCE: P11 removed `popover` under probe CSS that kept the box fixed; the Browser tier asserts the in-flow result].
+- A `disabled` root generates no box, so its content joins the line or the flex row of the host's parent, inside a paragraph too. The reset and the start-corner placement never reach it, and consumer placement rules target `::part(root):popover-open`, so they never reach it either (Consumer styling). The Browser tier asserts the in-flow result in a flex row and in a paragraph (AM-002).
 - `commonReset` stays in `static styles`, because ARCH §14.7 maps every Static component to it (`docs/ARCHITECTURE.md:1163`) (D5).
 - The host extends `LineElement` without the `FormAssociated` mixin and writes no internals value (D2).
 
@@ -376,7 +376,7 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 |-------|------------|---------|-----------------|
 | none | — | — | — |
 
-- Whether the box is in the top layer is the native `:popover-open` on `::part(root)`, so a consumer styles it as `line-portal::part(root):popover-open` [INFERENCE: the pseudo-class through `::part()` was not probed]. `disabled` reflects as an attribute.
+- Whether the box is in the top layer is the native `:popover-open` on `::part(root)`, so a consumer styles it as `line-portal::part(root):popover-open`; every placement rule of the Browser tier matches through it (AM-002). `disabled` reflects as an attribute.
 
 ### Slots
 
@@ -397,8 +397,8 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 | `disabled` | `disabled` | `boolean` | `false` | yes | renders the content in place, without the top layer (F4 (b)) |
 
 - `bringToFront(): void` acts synchronously, in the method. It calls `hidePopover()` on the root only when the root matches `:popover-open`, then `showPopover()`, so the box paints above every top-layer box shown before the call, such as a modal dialog opened after the Portal connected (P8; F7 (b)). It does nothing when no root is rendered yet, because the pending first update shows the box; when the root has no `popover` attribute, because an update that clears `disabled` is pending and that update shows the box; when the host is `disabled`; or when it is disconnected. The D7 guards apply, so `showPopover()` never runs on a root without `popover`, where browsers throw `NotSupportedError` (Miguel, review gate round 2, 2026-11-12). The calls change the box's top-layer state and add or move no node, so the method meets MANIFESTO Law 5 outside the reactive cycle, as `updated()` does inside it (F1 (c); Miguel, review gate round 1, 2026-11-12).
-- A modal dialog stacks above every box shown before it, so the consumer calls `bringToFront()` after every `showModal()`, including each reopening of the same dialog. On a Portal outside the open modal dialog the call also paints the box above the dialog's backdrop, but the content stays inert, because a modal dialog makes everything outside it inert [INFERENCE: P8 probed a Portal inside the dialog only; the Browser tier asserts the outside case with `:popover-open` and a screenshot pixel, because hit testing skips inert content].
-- Nested portals. `bringToFront()` raises only the Portal's own root. `outer.bringToFront()`, or clearing `disabled` on an outer Portal, shows the outer box again above an inner one, which then covers the inner content where the boxes overlap, so the consumer calls `outer.bringToFront()` and then `inner.bringToFront()`. After clearing `disabled` on the outer Portal, the consumer first awaits `outer.updateComplete`, because the update that shows the outer box would otherwise land on top of the inner one after `inner.bringToFront()` [INFERENCE: nesting was not probed; it follows from show order (P11), and the Browser tier asserts it].
+- A modal dialog stacks above every box shown before it, so the consumer calls `bringToFront()` after every `showModal()`, including each reopening of the same dialog. On a Portal outside the open modal dialog the call also paints the box above the dialog's backdrop, but the content stays inert, because a modal dialog makes everything outside it inert. P8 probed a Portal inside the dialog; the Browser tier asserts the outside case with `:popover-open`, a screenshot pixel and focus, because hit testing skips inert content (AM-002).
+- Nested portals. `bringToFront()` raises only the Portal's own root. `outer.bringToFront()`, or clearing `disabled` on an outer Portal, shows the outer box again above an inner one, which then covers the inner content where the boxes overlap, so the consumer calls `outer.bringToFront()` and then `inner.bringToFront()`. After clearing `disabled` on the outer Portal, the consumer first awaits `outer.updateComplete`, because the update that shows the outer box would otherwise land on top of the inner one after `inner.bringToFront()`. Nesting follows from show order (P11), and the Browser tier asserts it (AM-002).
 - The host takes the global `hidden` attribute, which hides the content (P11, P12).
 
 ### Events
@@ -437,7 +437,7 @@ line-portal:not(:defined) {
 
 - These rules live in the outer tree. Outer `::part()` declarations beat the component's own rule, as P1 placed `pm-top::part(root)` at 300 × 100 px.
 - Placement rules target `:popover-open`, so they never reach a `disabled` root, which renders in place (F4 (b); D4).
-- P11 checked support for `anchor-name` and `position-anchor`. The anchored example itself was not probed [INFERENCE]; the Browser tier runs it.
+- P11 checked support for `anchor-name` and `position-anchor`. The Browser tier runs the anchored example (AM-002).
 
 ### Keyboard
 
@@ -475,7 +475,7 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 | C5 | The host accepts an accessible name and applies it to the element with the role | no element carries a role; the docs advise against a host `aria-label`, which would name a `generic` (R8 `docs/research/01-research-accessibility.md:55`) |
 | C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | no variants |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, one `@slot` and `@csspart root`; the method `bringToFront()`, written without a `public` modifier, carries its own JSDoc, which the manifest shows as the method's description (D14); no `@cssprop` or `@fires`; nothing is deprecated |
-| C8 | Missing or partial props degrade to an empty or neutral state | with no content the root is an empty open box with no border, padding or background [INFERENCE: an empty host was not probed; the Browser tier asserts a 0 × 0 root that takes no hit at the start corner] |
+| C8 | Missing or partial props degrade to an empty or neutral state | with no content the root is an empty open box with no border, padding or background; the Browser tier measures a 0 × 0 root that takes no hit at the start corner (AM-002) |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound |
 
 #### Inputs outside the prop schema (C1)
@@ -749,3 +749,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
 | AM-001 | 2026-11-12 | ledger 01-C13 (factual correction, approval) | The Status field (`:5`) reads `` `approved` (Miguel, 2026-11-12) `` and the header paragraph (`:15`) says that the spec passed its review gate and that Miguel approved it on 2026-11-12, in place of saying that it stays `proposed` | Miguel approved the spec after review gate round 3, and the header still described the draft state | `docs/context/01-c13.md`, "Review gate (docs), round 3, 2026-11-12": "Miguel approved `0013-portal.md` on 2026-11-12." |
+| AM-002 | 2026-11-12 | ledger 01-C13 (factual correction — the C13 Browser tier passed with the shipped `<line-portal>`, as Tests requires) | Lifts seven `[INFERENCE]` marks that the Browser tier now backs and cites this AM in their place: the anchored use case (`:284`), the `disabled` in-flow result (`:365`), `:popover-open` through `::part()` (`:379`), the Portal outside the open modal dialog (`:400`), nested portals (`:401`), the anchored example (`:440`) and C8, the empty host (`:478`). The surface marks (`:258`, `:306`, `:518`) and the Visual row mark (`:590`) stay | Each mark named the Browser tier as the check that would settle it | `packages/line-components/__tests__/integration/portal/portal.e2e.ts` on 2026-11-12, on this branch, in chromium, firefox and webkit with `--repeat-each 2`: 158 passed and 4 skipped, the skips being the Chromium CDP test outside chromium. The cases: the documented anchor rule puts the root's block-start edge at the trigger's block-end and its inline-start edge at the trigger's inline-start within 1 px; a `disabled` host's root has no `popover`, computes `display: contents` and no `position: fixed`, and a following neighbour's offset equals its offset without the Portal in a flex row and in a `<p>`; every fixture placement rule targets `#id::part(root):popover-open`, and the outside-modal pixel reads the colour that rule sets; after `showModal()` and `bringToFront()` the outside Portal's root matches `:popover-open`, a 1 × 1 screenshot clip inside it decodes to `rgb(0, 128, 0)`, the box colour, not the `rgb(255, 0, 0)` backdrop, and its button takes no focus; with overlapping nested boxes, `outer.bringToFront()` alone makes `elementFromPoint` at the inner content return the outer host, outer then inner returns the inner content, and so does clearing the outer `disabled`, `await outer.updateComplete` and `inner.bringToFront()`; an empty host's root measures 0 × 0 and `elementFromPoint(0, 0)` returns neither the root nor the host |
