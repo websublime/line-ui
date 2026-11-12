@@ -21,6 +21,7 @@ import { buttonGroupDescriptor } from './descriptors/button-group.js';
 import { chipDescriptor } from './descriptors/chip.js';
 import { iconDescriptor } from './descriptors/icon.js';
 import { iconButtonDescriptor } from './descriptors/icon-button.js';
+import { portalDescriptor } from './descriptors/portal.js';
 import { separatorDescriptor } from './descriptors/separator.js';
 import { stackDescriptor } from './descriptors/stack.js';
 import { visuallyHiddenDescriptor } from './descriptors/visually-hidden.js';
@@ -108,6 +109,7 @@ export {
   lineCapabilities,
   lineCatalog,
   lineCatalogDocument,
+  portalDescriptor,
   separatorDescriptor,
   stackDescriptor,
   TOOL_PROVIDERS,
@@ -125,6 +127,7 @@ export const descriptors: readonly LineDescriptor[] = [
   chipDescriptor,
   iconDescriptor,
   iconButtonDescriptor,
+  portalDescriptor,
   separatorDescriptor,
   stackDescriptor,
   visuallyHiddenDescriptor,

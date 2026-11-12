@@ -70,6 +70,10 @@
     "./visually-hidden": {
       "types": "./dist/visually-hidden/index.d.ts",
       "import": "./dist/visually-hidden/index.js"
+    },
+    "./portal": {
+      "types": "./dist/portal/index.d.ts",
+      "import": "./dist/portal/index.js"
     }
   },
   "dependencies": {

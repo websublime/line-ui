@@ -20,6 +20,7 @@ export default mergeConfig(
       'separator/index': 'src/separator/index.ts',
       'stack/index': 'src/stack/index.ts',
       'visually-hidden/index': 'src/visually-hidden/index.ts',
+      'portal/index': 'src/portal/index.ts',
     },
   }),
   {
