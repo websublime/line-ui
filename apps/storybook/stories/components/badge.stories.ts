@@ -1,6 +1,7 @@
 import '@websublime/line-components/badge';
 import '@websublime/line-components/button';
 import '@websublime/line-components/stack';
+import '@websublime/line-components/visually-hidden';
 import '@websublime/line-tokens/border-width';
 import '@websublime/line-tokens/focus-ring';
 import '@websublime/line-tokens/layouts';
@@ -16,7 +17,7 @@ import { extractArgTypes } from './manifest-arg-types.js';
 // <line-badge> stories (spec 0007-badge.md, decision D11). The autodocs page reads the attributes, slots, parts and
 // custom properties from the shipped Custom Elements Manifest that preview.ts registers. The stories import only the
 // token families Badge and the slotted button use; the line-tokens barrel carries reset.css, which would restyle the
-// docs page. Avatar and Visually Hidden examples join once rows 01-C10 and 01-C12 land.
+// docs page.
 
 const DESCRIPTION = `\`<line-badge>\` is a small, non-interactive status marker: a count such as "5", a short label such as "Beta", or a dot. It takes no focus and handles no key.
 
@@ -29,7 +30,7 @@ const DESCRIPTION = `\`<line-badge>\` is a small, non-interactive status marker:
 - **Count, label or dot.** Write the count or the label as text in the default slot. A badge whose slot holds no element and no text other than whitespace draws as a dot, and reflects \`data-empty\` and \`:state(empty)\` on the host.
 - **Overflow.** The badge shows exactly the text you write and formats no number. For a capped count, write the cap yourself, such as "99+".
 - **Tone.** \`variant\` is \`neutral\` (default), \`info\`, \`success\`, \`warning\` or \`danger\`, and colours the badge from the theme role: a count or a label takes the soft fill and text, as Alert does, and a dot the solid step. State the meaning in words too, in the badge or nearby, or name a dot. Colour alone does not reach every user, and forced-colors mode draws every tone in the same system colours.
-- **Reading.** A count or a label is read as text where it sits, and inside a button or link it joins that control's name, such as "Inbox 5". To add words for assistive technology, put visually hidden text in the slot, such as \`5<span class="visually-hidden"> unread messages</span>\`.
+- **Reading.** A count or a label is read as text where it sits, and inside a button or link it joins that control's name, such as "Inbox 5". To add words for assistive technology, put \`<line-visually-hidden>\` in the slot, such as \`5<line-visually-hidden> unread messages</line-visually-hidden>\`.
 - **Naming.** A dot is hidden from assistive technology. When a dot carries meaning that nothing nearby states, name it with \`aria-label\` or \`aria-labelledby\` on the host; the badge then becomes an image with that name. The same attributes name a count or a label as a whole, such as \`aria-label="5 unread messages"\`. An author \`role\` or \`aria-hidden\` on the host wins.
 - **Announcing a change.** A badge announces nothing when its text changes. For a count that must be heard, set \`aria-live="polite"\` on the host before the count changes; the count stays in the name of a button around it.
 - **Placement.** The badge stays inline where you put it. To place it over the corner of another element, use that component's slot, such as Button's \`suffix\`, or your own CSS with \`position: relative\` on the anchor.
@@ -75,6 +76,20 @@ export const CountInAButton: Story = {
     },
   },
   render: () => html`<line-button>Inbox <line-badge slot="suffix" variant="danger">5</line-badge></line-button>`,
+};
+
+export const CountWithHiddenWords: Story = {
+  name: 'Count with hidden words',
+  parameters: {
+    docs: {
+      description: {
+        story:
+          '`<line-visually-hidden>` in the badge adds words that only assistive technology reads; the button is named "Inbox 5 unread messages".',
+      },
+    },
+  },
+  render: () =>
+    html`<button type="button">Inbox <line-badge>5<line-visually-hidden> unread messages</line-visually-hidden></line-badge></button>`,
 };
 
 export const Overflow: Story = {
