@@ -10,7 +10,7 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C12 row) |
 | PRD catalogue entry | PRD §4.1, `Visually Hidden` row (`docs/PRD.md:256`) |
 | Ledger row | `01-C12` (`docs/plans/01-tasks-core-primitives.md:58`) |
-| Governing sections | Phase 1 spec §4.2 (`:251`, `:300`), §6.C.0 (`:908-931`), §6.C.4 (C12 row `:1168`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1338`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4, §7.6, §7.8, §10 SD12, SD34, SD38 (`:2385`), SD39, SD98, SD99; ARCH (v0.8.27) §3, §4, §5, §8, §12, §14.6–§14.9, §17.2–§17.4, §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §8; MANIFESTO Laws 1–6, 9; R8 `docs/research/01-research-accessibility.md:74`; R7 `docs/research/01-research-zag-machines.md:79`; `0007-badge.md` (`:155`, `:216`, `:411`, `:469`) |
+| Governing sections | Phase 1 spec §4.2 (`:251`, `:300`), §6.C.0 (`:908-931`), §6.C.4 (C12 row `:1168`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1338`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4, §7.6, §7.8, §10 SD12, SD34, SD38 (`:2385`), SD39, SD98, SD99, §12 AM-096; ARCH (v0.8.27) §3, §4, §5, §8, §12, §14.6–§14.9, §17.2–§17.4, §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §8; MANIFESTO Laws 1–6, 9; R8 `docs/research/01-research-accessibility.md:74`; R7 `docs/research/01-research-zag-machines.md:79`; `0007-badge.md` (`:155`, `:216`, `:411`, `:469`; AM-003) |
 
 Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F6 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D15 stand as drafted (Miguel, 2026-11-12). The spec stays `proposed` until the review gate passes and Miguel approves it.
 
@@ -456,7 +456,7 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 - The coverage test needs the descriptor, because `line-visually-hidden` enters the manifest (`packages/line-genui/__tests__/cem-coverage.test.ts:21-24`). The drift test checks its default slot against the manifest.
 - Two `catalog.test.ts` expectations change with a twelfth descriptor (D9). The raw catalog of every descriptor gains `VisuallyHidden` (`packages/line-genui/__tests__/catalog.test.ts:109-123`), and the exposure test expects twelve descriptors with `VisuallyHidden` the one `agentExposed: false` (`:493-497`).
 - C12 adds no surface render-fixture entry and no surface axe case, because §6.C.6 asks that only of agent-exposed rows (Phase 1 spec `:1231`).
-- Probes P2 and P6 give the reason row evidence. Hidden words join the name of the control around them in all three engines, so an agent could make a control's spoken name differ from its visible label. Phase 1 spec `:1338` still marks the reason `[INFERENCE]`.
+- Probes P2 and P6 give the reason row evidence. Hidden words join the name of the control around them in all three engines, so an agent could make a control's spoken name differ from its visible label. Phase 1 spec AM-096 cites them and lifts the `[INFERENCE]` that row `:1338` carried.
 
 ### Bundle / entrypoint
 
