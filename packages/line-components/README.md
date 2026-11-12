@@ -17,6 +17,7 @@ that registers one tag. The root entry registers nothing and exports only the ic
 | `@websublime/line-components/icon-button` | `<line-icon-button>` |
 | `@websublime/line-components/separator` | `<line-separator>` |
 | `@websublime/line-components/stack` | `<line-stack>` |
+| `@websublime/line-components/visually-hidden` | `<line-visually-hidden>` |
 
 ```js
 import '@websublime/line-components/button';
@@ -397,3 +398,40 @@ Set a colour token under a state selector, such as `line-chip[data-pressed]`, be
 alone applies to every state. `::part(root)`, `::part(indicator)` and `::part(label)` reach the inner button and the
 wrappers of the indicator and the label; the state shows as `data-pressed`, `data-disabled` and
 `data-focus-visible` and the matching `:state()` on the host. A `<fieldset disabled>` ancestor does not disable it.
+
+## Visually Hidden
+
+`<line-visually-hidden>` holds content that assistive technology reads and the screen does not show. The content
+stays in the accessibility tree, is read where it sits, and joins the name of a link, a button or a heading around
+it. The host draws nothing and takes no space in a block, flex or grid parent. It has no attributes, parts, tokens or
+events; style it directly with `line-visually-hidden { … }`.
+
+```html
+<a href="/pricing">Read more<line-visually-hidden> about pricing</line-visually-hidden></a>
+<button type="button">
+  Inbox <line-badge>5<line-visually-hidden> unread messages</line-visually-hidden></line-badge>
+</button>
+<line-visually-hidden class="skip"><a href="#main">Skip to main content</a></line-visually-hidden>
+```
+
+While focus is inside the host, the content shows, so a skip link appears when a keyboard user reaches it. Place it
+with your own CSS on `line-visually-hidden:focus-within`. Put hidden words after a control's visible words, so the
+name starts with what users see. Use `hidden` on the host to remove the words for everyone, not `aria-hidden`,
+because Chromium keeps an `aria-hidden` host's words in the name of a control around it. Give the host no
+`aria-label`, because it has no role a name could attach to. It announces nothing when its content changes.
+
+The hiding rule sits on `:host` with normal declarations, so your CSS on the host can show the words, such as at a
+breakpoint. The words show until the module runs; to hide them before then, add this rule to the page:
+
+```css
+line-visually-hidden:not(:defined):not(:focus-within) {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+```
