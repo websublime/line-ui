@@ -17,7 +17,7 @@ const DESCRIPTION = `\`<line-visually-hidden>\` holds content that assistive tec
 - **Reading.** The content is read where it sits, and inside a link, a button or a heading it joins that element's name, such as "Read more about pricing".
 - **Order.** Put the hidden words after a control's visible words, so the control's name starts with what users see and speech-input users can say it.
 - **Focus.** While focus is inside, the content shows, so a skip link appears when a keyboard user reaches it. Place the shown content with consumer CSS on \`line-visually-hidden:focus-within\`.
-- **Removing content.** Use \`hidden\` on the host to remove the words for everyone. Do not use \`aria-hidden\`: Chromium keeps the words in the name of a control around them.
+- **Removing content.** Use \`hidden\` on the host to remove the words for everyone. Do not use \`aria-hidden\`, because Chromium keeps the words in the name of a control around them.
 - **Naming.** Do not put \`aria-label\` on the host. It has no role a name could attach to. To name a line component, use its own \`aria-label\`.
 - **Announcing.** Visually Hidden announces nothing when its content changes. Use Alert or a live region for a message that must be heard.
 - **Before the upgrade.** The words show until the module runs. To hide them before then, add this rule to the page:
