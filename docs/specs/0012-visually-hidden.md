@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` (draft, 2026-11-12) |
+| Status | `approved` (Miguel, 2026-11-12) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C12 row, `docs/specs/01-spec-core-primitives.md:1168`; PRD §4.1, `docs/PRD.md:256`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-visually-hidden` |
