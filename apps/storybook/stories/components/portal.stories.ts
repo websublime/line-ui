@@ -135,7 +135,8 @@ export const InAModalDialog: Story = {
   parameters: {
     docs: {
       description: {
-        story: '"Open settings" calls `showModal()` and then `bringToFront()`, so the hint paints above the dialog.',
+        story:
+          '"Open settings" calls `showModal()` and then `bringToFront()`, so the hint paints above the dialog, beside its Theme label and clear of the Close button.',
       },
     },
   },
@@ -148,8 +149,9 @@ export const InAModalDialog: Story = {
         line-portal.dialog-hint::part(root):popover-open {
           position-anchor: --portal-story-dialog;
           inset: auto;
-          inset-block-start: anchor(end);
-          inset-inline-start: anchor(start);
+          inset-block-start: anchor(start);
+          inset-inline-start: anchor(end);
+          margin-inline-start: var(--line-size-5);
         }
       </style>
       <button
