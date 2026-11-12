@@ -52,14 +52,16 @@ The main page of P1–P4 holds a white `#cover` (`position: fixed`, 280–520 ×
 | 2 | `bun build entry.ts --outfile bundle.js --target browser --format esm --define 'process.env.NODE_ENV="production"'` in the probe folder | 0 | one 26.43 KB module with the probe hosts and Lit |
 | 3 | `bun build surface-entry.ts --outdir surface --splitting --target browser --format esm --define 'process.env.NODE_ENV="production"'`, `surface-entry.ts` importing `../../../line-genui/dist/a2ui/index.js` | 0 | a 0.88 MB entry and 17 chunks |
 | 4 | `bunx playwright test -c packages/line-components/temp/c13-probe/playwright.config.ts`, with `portal.probe.ts` the only probe file then | 0 | 60 passed (24.1 s); P1–P8 |
-| 5 | the same config with `htmx.probe surface.probe` | cancelled | the four `line-probe-top` htmx tests ran to the 60 s timeout in chromium; the run was stopped and its records discarded |
-| 6 | the same config with `htmx.probe --project chromium -g line-probe-top --timeout 15000` | 1 | 4 failed; Playwright waited on the harness `Load` button because the probe's `<input>` inside the top-layer box "intercepts pointer events" (P9, P11) |
+| 5 | the same config with `htmx.probe surface.probe`, output redirected to a log and followed by `echo EXIT=$?` | none produced: the job was cancelled before the `echo` ran | the four `line-probe-top` htmx tests ran to the 60 s timeout in chromium; the run was stopped and its records discarded |
+| 6 | the same config with `htmx.probe --project chromium -g line-probe-top --timeout 15000` | not recorded (piped through `tail`) | 4 failed; Playwright waited on the harness `Load` button because the probe's `<input>` inside the top-layer box "intercepts pointer events" (P9, P11) |
 | 7 | the same config with `htmx.probe surface.probe top.probe`, after a consumer rule placed `line-probe-top::part(root)` at 300 × 100 px | 0 | 54 passed (1.8 min); P9–P11 |
 | 8 | the same config with `footprint.probe` | 0 | 3 passed; P12 |
-| 9 | the same config with `debug.probe`, a trace of the records the surface's `MutationObserver` options see; first one variant, then three (control, moved in the same task, moved 50 ms before), then once more with `--project chromium -g control` and the setup batch's errors | 0 | 3 passed, 9 passed, 1 passed; P10 |
-| 10 | `bun test ./packages/line-components/temp/c13-probe/happy.test.ts` | 0 | 2 pass; P13 |
-| 11 | `node packages/line-components/temp/c13-probe/v.mjs`, which launched each engine and printed `browser.version()` | 0 | the engine versions of this table |
-| 12 | `rm -rf packages/line-components/temp/c13-probe packages/line-components/test-results && rmdir packages/line-components/temp`; `git status --short` | 0 | deleted; the tree is clean |
+| 9 | the same config with `debug.probe`, a trace of the records the surface's `MutationObserver` options see, one variant (the moved node) | 0 | 3 passed; P10 |
+| 10 | the same config with `debug.probe`, after the trace was split into three variants (control, moved in the same task as the batch, moved 50 ms before it) | 0 | 9 passed; P10 |
+| 11 | the same config with `debug.probe --project chromium -g control`, after the trace also recorded the setup batch's errors | 0 | 1 passed; P10 setup note |
+| 12 | `bun test ./packages/line-components/temp/c13-probe/happy.test.ts` | 0 | 2 pass; P13 |
+| 13 | `node packages/line-components/temp/c13-probe/v.mjs`, which launched each engine and printed `browser.version()` | not recorded (other commands followed it in the same call) | the engine versions of this table |
+| 14 | `rm -rf packages/line-components/temp/c13-probe packages/line-components/test-results && rmdir packages/line-components/temp`; `git status --short` | 0 | deleted; the tree is clean |
 
 WebKit on macOS moved Tab focus with Alt+Tab, as the existing Browser tier does. "Same" in a column means the result of the chromium column. Every result below was the same in chromium, firefox and webkit unless a column says otherwise.
 
@@ -186,7 +188,7 @@ The P1 page loaded with the definitions held back, measured, then defined the ho
 
 - M1 moved the swapped children inside the upgrade, before htmx processed the swapped fragment, so htmx never saw the button. M2 moved them a microtask later: htmx 4 had processed them by then and htmx 2 had not [INFERENCE: the order of htmx's processing step and Lit's update is read from the result, not traced].
 - In the top layer, swapped content is ordinary slotted DOM, and the form keeps its value.
-- Run 5–6 of the Setup table: with no placement rule, the top-layer box sat at its static position over the harness `Load` button and took its pointer events in chromium.
+- Runs 5 and 6 of the Setup table: with no placement rule, the top-layer box sat at its static position over the harness `Load` button and took its pointer events in chromium.
 
 ### P10 — The A2UI surface
 
@@ -321,14 +323,14 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 ```
 <line-portal>                         LineElement; :host { display: contents } (D3)
 └── #shadow-root
-    └── <div part="root" popover="manual">   in the top layer while connected (F1 (c)); no popover attribute while disabled (F4 (b))
+    └── <div part="root" popover="manual">   in the top layer while connected (F1 (c)); no popover attribute and display: contents while disabled (F4 (b))
         └── <slot>
 ```
 
 - One part, `root`, the box that paints in the top layer. Consumer CSS places and styles it (MANIFESTO Law 1; ARCH §5 `root`).
-- `updated()` calls `showPopover()` on the root while the host is connected, is not `disabled`, and the root is closed, and only where `showPopover` is a function (D7). `showPopover()` changes the box's top-layer state and adds no node, so the shadow tree stays Lit's template (MANIFESTO Law 5; F1 (c)).
+- `updated()` calls `showPopover()` on the root while the host is connected, is not `disabled`, and the root is closed, and only where `showPopover` is a function (D7). `showPopover()` changes the box's top-layer state and adds or moves no node, so the shadow tree stays Lit's template (MANIFESTO Law 5; F1 (c)). The same holds for the `hidePopover()` and `showPopover()` calls of `bringToFront()`, which run in the method, outside the reactive cycle (Props).
 - `connectedCallback` calls `requestUpdate()`, so a reconnected host shows its box again (P5 L2, L5).
-- The stylesheet resets the UA popover box and places it at the logical start corner (D4):
+- While the root carries `popover`, the stylesheet resets the UA popover box and places it at the logical start corner. Without `popover`, while `disabled`, the root is `display: contents`, so the content lays out where the host sits (D4; F4 (b)):
 
 ```css
 :host {
@@ -339,7 +341,7 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
   display: none;
 }
 
-[part='root'] {
+[part='root'][popover] {
   position: fixed;
   inset: auto;
   inset-block-start: 0;
@@ -353,9 +355,14 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
   inline-size: auto;
   block-size: auto;
 }
+
+[part='root']:not([popover]) {
+  display: contents;
+}
 ```
 
 - `display: contents` gives the host no box, so a flex or grid parent sees no item, and `:host([hidden])` keeps `hidden` working, because a `display` on `:host` beats the UA `[hidden]` rule (P12; `0012-visually-hidden.md` P7).
+- A `disabled` root generates no box, so its content joins the line or the flex row of the host's parent, inside a paragraph too. The reset and the start-corner placement never reach it, and consumer placement rules target `::part(root):popover-open`, so they never reach it either (Consumer styling) [INFERENCE: P11 removed `popover` under probe CSS that kept the box fixed; the Browser tier asserts the in-flow result].
 - `commonReset` stays in `static styles`, because ARCH §14.7 maps every Static component to it (`docs/ARCHITECTURE.md:1163`) (D5).
 - The host extends `LineElement` without the `FormAssociated` mixin and writes no internals value (D2).
 
@@ -389,7 +396,9 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 |----------|-----------|------|---------|----------|-------------|
 | `disabled` | `disabled` | `boolean` | `false` | yes | renders the content in place, without the top layer (F4 (b)) |
 
-- `bringToFront(): void` hides and shows the root, so it paints above every top-layer box shown before the call, such as a modal dialog opened after the Portal connected (P8; F7 (b)). It does nothing while the host is disconnected or `disabled`.
+- `bringToFront(): void` acts synchronously, in the method. It calls `hidePopover()` on the root only when the root matches `:popover-open`, then `showPopover()`, so the box paints above every top-layer box shown before the call, such as a modal dialog opened after the Portal connected (P8; F7 (b)). It does nothing when no root is rendered yet, because the pending first update shows the box; when the host is `disabled`; or when it is disconnected. The D7 guards apply. The calls change the box's top-layer state and add or move no node, so the method meets MANIFESTO Law 5 outside the reactive cycle, as `updated()` does inside it (F1 (c); Miguel, review gate round 1, 2026-11-12).
+- A modal dialog stacks above every box shown before it, so the consumer calls `bringToFront()` after every `showModal()`, including each reopening of the same dialog. On a Portal outside the open modal dialog the call also paints the box above the dialog's backdrop, but the content stays inert, because a modal dialog makes everything outside it inert [INFERENCE: P8 probed a Portal inside the dialog only; the Browser tier asserts the outside case].
+- Nested portals. `bringToFront()` raises only the Portal's own root. `outer.bringToFront()`, or clearing `disabled` on an outer Portal, shows the outer box again above an inner one, which then hides the inner content, so the consumer calls `outer.bringToFront()` and then `inner.bringToFront()` [INFERENCE: nesting was not probed; it follows from show order (P11), and the Browser tier asserts it].
 - The host takes the global `hidden` attribute, which hides the content (P11, P12).
 
 ### Events
@@ -413,7 +422,7 @@ Portal holds no value and no interactive element, so it fires nothing and is nei
 .trigger {
   anchor-name: --menu;
 }
-line-portal.menu::part(root) {
+line-portal.menu::part(root):popover-open {
   position-anchor: --menu;
   inset: auto;
   inset-block-start: anchor(end);
@@ -427,7 +436,8 @@ line-portal:not(:defined) {
 ```
 
 - These rules live in the outer tree. Outer `::part()` declarations beat the component's own rule, as P1 placed `pm-top::part(root)` at 300 × 100 px.
-- P11 checked support for `anchor-name` and `position-anchor`. The anchored example itself was not probed [INFERENCE].
+- Placement rules target `:popover-open`, so they never reach a `disabled` root, which renders in place (F4 (b); D4).
+- P11 checked support for `anchor-name` and `position-anchor`. The anchored example itself was not probed [INFERENCE]; the Browser tier runs it.
 
 ### Keyboard
 
@@ -464,8 +474,8 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated |
 | C5 | The host accepts an accessible name and applies it to the element with the role | no element carries a role; the docs advise against a host `aria-label`, which would name a `generic` (R8 `docs/research/01-research-accessibility.md:55`) |
 | C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | no variants |
-| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, one `@slot` and `@csspart root`; no `@cssprop` or `@fires`; nothing is deprecated |
-| C8 | Missing or partial props degrade to an empty or neutral state | with no content the root is an empty open box with no border, padding or background [INFERENCE: an empty host was not probed; the Browser tier asserts a 0 × 0 box] |
+| C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, one `@slot` and `@csspart root`; the public method `bringToFront()` carries its own JSDoc, which the manifest shows as the method's description (D14); no `@cssprop` or `@fires`; nothing is deprecated |
+| C8 | Missing or partial props degrade to an empty or neutral state | with no content the root is an empty open box with no border, padding or background [INFERENCE: an empty host was not probed; the Browser tier asserts a 0 × 0 root that takes no hit at the start corner] |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound |
 
 #### Inputs outside the prop schema (C1)
@@ -496,12 +506,14 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 - The `line` catalog emitter and the frontend-tool emitter skip the descriptor (`packages/line-genui/src/catalog/line.ts:85`; `tools.ts:299`). Acceptance follows Phase 1 spec `:1183`: `Portal` is not a key of `components` in the built `catalog.json`, and `frontendTools(descriptors, provider)` returns no tool named `Portal` for any provider.
 - The surface builds its `line` descriptor map from exposed descriptors only (`packages/line-genui/src/a2ui/projection.ts:60`), and the session registers `lineCatalog(descriptors)` (`session.ts:186`). A `line` node of type `Portal` therefore renders the inert `unknown-type` placeholder and raises one `UNKNOWN_COMPONENT_TYPE` `line-a2ui-error`, as the VisuallyHidden case does (`packages/line-genui/__tests__/a2ui-surface.test.ts:209-214`), and `./portal` never loads.
 - The coverage test needs the descriptor, because `line-portal` enters the manifest (`packages/line-genui/__tests__/cem-coverage.test.ts`). The drift test checks its default slot against the manifest.
-- Four genui test expectations change with a thirteenth descriptor (D10).
-  - `PROP_TYPES` gains `Portal: { children: 'ChildList' }` (`packages/line-genui/__tests__/catalog.test.ts:45-92`).
+- Six genui test expectations change with a thirteenth descriptor (D10).
+  - `PROP_TYPES` gains `Portal: { children: 'ChildList' }` (`packages/line-genui/__tests__/catalog.test.ts:45-92`), and its doc comment adds `0013-portal.md` to its list of specs (`:40-43`).
   - The raw catalog of every descriptor gains `Portal`, and the test title at `:111` says thirteen descriptors.
-  - The exposure test expects `[portalDescriptor, visuallyHiddenDescriptor]` as the descriptors with `agentExposed: false` (`:499`), and its title at `:496` names both.
+  - The exposure test expects `toHaveLength(13)` (`:498`, was 12) and `[portalDescriptor, visuallyHiddenDescriptor]` as the descriptors with `agentExposed: false` (`:499`), and its title at `:496` names both.
+  - A Portal test beside the VisuallyHidden reason test (`:501`) asserts `agentExposed: false` and the F9 reason.
   - The import test expects `descriptors: 13` (`:537`).
-  - The tool-description loop already takes exposed descriptors only (`packages/line-genui/__tests__/frontend-tools.test.ts:356`).
+  - A "no provider emits a Portal tool" test sits beside the VisuallyHidden one (`packages/line-genui/__tests__/frontend-tools.test.ts:310`).
+  - The tool-description loop needs no change, because it already takes exposed descriptors only (`frontend-tools.test.ts:356`).
 - C13 adds no surface render-fixture entry and no surface axe case, because §6.C.6 asks that only of agent-exposed rows (Phase 1 spec `:1231`).
 - Phase 1 spec AM-097 (decision, Miguel 2026-11-12, F1 (c) and F9 (b)) replaced the reason row (`:1336`) and the C13 row's `agentExposed` cell (`:1169`) with the top-layer reason. P1 shows the box painting above a sibling outside its container, and P9 shows it taking the clicks of a button it covers. The content never leaves the host's light DOM (P3), so it never leaves a surface [INFERENCE: the surface was not probed with a top-layer host; P10 probed a relocation].
 
@@ -540,37 +552,55 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
   <button type="submit">Save</button>
 </form>
 
-<!-- Inside a modal dialog: bring the box to the front after showModal() -->
+<!-- Inside a modal dialog: bring the box to the front after every showModal() -->
+<button type="button" id="open-settings">Settings</button>
 <dialog id="settings">
+  <p class="hint-anchor">Theme</p>
   <line-portal id="hint" class="hint">Changes apply on save.</line-portal>
 </dialog>
 <script type="module">
-  const dialog = document.getElementById('settings');
-  dialog.showModal();
-  document.getElementById('hint').bringToFront();
+  document.getElementById('open-settings').addEventListener('click', () => {
+    document.getElementById('settings').showModal();
+    document.getElementById('hint').bringToFront();
+  });
 </script>
 
-<!-- In place, without the top layer -->
-<line-portal disabled>Shown where it is written</line-portal>
+<!-- Nested portals: raise the outer box, then the inner one -->
+<line-portal id="outer" class="panel">
+  Panel
+  <line-portal id="inner" class="tip">Tip</line-portal>
+</line-portal>
+<script type="module">
+  document.getElementById('outer').bringToFront();
+  document.getElementById('inner').bringToFront();
+</script>
+
+<!-- In place, without the top layer: the words stay in the sentence -->
+<p>Read <line-portal disabled>the words written here</line-portal> in line.</p>
 ```
 
 ### Tests
 
 | Tier | Runner | Covers |
 |------|--------|--------|
-| Unit | `bun test` on happy-dom | registers `line-portal` with its class; the shadow root holds one `div[part="root"][popover="manual"]` with one `<slot>`; `disabled` reflects and removes the `popover` attribute; no throw on connect, update or `bringToFront()` where `showPopover` is missing, as in happy-dom (P13; D7); slot assignment of text and elements; no `data-*` or internals value written (the fake internals read back `null`); no event of any kind; C8 with no content; `packages/line-components/__tests__/manifest-paths.test.ts` on the packed tarball, as Visually Hidden's case does (`:239-250`): `line-portal` resolves to `src/portal/portal.ts`, declares `disabled` and no other public field, no event, slots `['']`, `cssParts` `['root']` and no `cssProperties` |
-| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | on a fixture page with the P1 trap: the content is hit at its centre above a transformed `overflow: hidden` ancestor and a `z-index` sibling (P1); inside the trap's `dir="rtl"`, `lang` and `data-accent` scopes the content matches `:dir(rtl)` and `:lang()` and resolves an inherited custom property (P2); a click on the content reaches the host and its ancestors, and a control in the slot keeps `form` and submits its value (P3); Tab from the control before the host reaches the content next, and `ariaSnapshot()` lists the content between its neighbours, with a Chromium CDP walk of the same order (P4; D13); removing and appending the host closes and shows the box again, and a child added later shows (P5); a `disabled` host renders the content inside the trap, and clearing `disabled` shows the box again (P11); a host inside a modal dialog keeps its content focusable, and after `bringToFront()` the content is hit and takes a real pointer click (P8); a later host paints above an earlier one (P11); `hidden` on the host and a `display: none` ancestor render nothing (P11, P12); the host adds no offset in a flex row with `gap` (P12); with no placement rule the box sits at the logical start corner in LTR and RTL (P11); a page scroll leaves the box at its viewport point (P11); the documented `:not(:defined)` rule hides the content before the upgrade (P6; D8) |
-| A11y | axe-core | zero violations (MANIFESTO Law 3) in every story of D11 (Phase 1 spec §7.4) |
+| Unit | `bun test` on happy-dom, `packages/line-components/__tests__/portal.test.ts` | registers `line-portal` with its class; the shadow root holds one `div[part="root"][popover="manual"]` with one `<slot>`; `disabled` reflects and removes the `popover` attribute; no throw on connect, update, or `bringToFront()` before the first update, while `disabled`, while disconnected, and where `showPopover` is missing, as in happy-dom (P13; D7); slot assignment of text and elements; no `data-*` or internals value written (the fake internals read back `null`); no event of any kind; C8 with no content; `packages/line-components/__tests__/manifest-paths.test.ts` on the packed tarball, as Visually Hidden's case does (`:239-260`): `line-portal` resolves to `src/portal/portal.ts`; its public own members, which the filter at `:252-254` keeps whatever their kind, are exactly `disabled` (kind `field`) and `bringToFront` (kind `method`, with a description from its JSDoc), the first public method in the `line-components` manifest; no event; slots `['']`; `cssParts` `['root']`; no `cssProperties` |
+| Browser | Playwright `packages/line-components/__tests__/integration/portal/portal.e2e.ts` on chromium, firefox and webkit, over the fixture pages `integration/portal/index.html` and `pre-upgrade.html` with `fixture.ts` | on the P1 trap: the content is hit at its centre above a transformed `overflow: hidden` ancestor and a `z-index` sibling (P1); inside the trap's `dir="rtl"`, `lang` and `data-accent` scopes the content matches `:dir(rtl)` and `:lang()` and resolves an inherited custom property (P2); a click on the content reaches the host and its ancestors, and a control in the slot keeps `form` and submits its value (P3); Tab from the control before the host reaches the content next, and `ariaSnapshot()` lists the content between its neighbours, with a Chromium CDP walk of the same order (P4; D13); removing and appending the host closes and shows the box again, and a child added later shows (P5); in a container with no transform, a `disabled` host's root has no `popover`, computes `display: contents` and no `position: fixed`, and a following neighbour's offset equals its offset with the same content written without the Portal, inside a flex row and inside a `<p>` (F4 (b)); clearing `disabled` shows the box again (P11); an empty host's root measures 0 × 0, and `elementFromPoint` at the logical start corner hits neither the root nor the host (C8); a host inside a modal dialog keeps its content focusable, and after `bringToFront()` the content is hit and takes a real pointer click, again after the dialog closes and reopens (P8); a Portal outside the open modal dialog paints above the backdrop after `bringToFront()` and its content cannot take focus; `bringToFront()` on a `disabled` host leaves the root closed and the content in flow, on a disconnected host leaves the root closed, and on a host appended in the same task, before its first update, throws nothing and the box is open after `updateComplete`; nested portals: after `outer.bringToFront()` alone the outer box covers the inner content, and after `outer.bringToFront()` then `inner.bringToFront()` the inner content is hit; a later host paints above an earlier one (P11); `hidden` on the host and a `display: none` ancestor render nothing (P11, P12); the host adds no offset in a flex row with `gap` (P12); with no placement rule the box sits at the logical start corner in LTR and RTL (P11); the documented anchor-positioning rule puts the box's block-start edge at the trigger's block-end and its inline-start edge at the trigger's inline-start; a page scroll leaves an unanchored box at its viewport point (P11); the documented `:not(:defined)` rule hides the content before the upgrade, on `pre-upgrade.html` (P6; D8) |
+| A11y | axe-core, `packages/line-components/__tests__/a11y/portal.e2e.ts` | zero violations (MANIFESTO Law 3) in every story of D11, the dialog story with its dialog open and the hint raised (Phase 1 spec §7.4). It calls `readyPortalStory(page, id)` before the axe check, as `a11y/visually-hidden.e2e.ts:33` does |
 | htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `n/a`. Portal is neither value-bearing, because its descriptor binding map names no value prop, nor compound, because it holds no interactive element of its own (ARCH §17.2 C3, C9). Its content stays in the host's light DOM, so swapped content is ordinary slotted DOM, which the Unit tier's slot test covers. P9 ran the harness's slot-swap check on a top-layer probe host and it passed on htmx 2 and 4 in three engines. This confirms the Phase 1 spec's "`n/a` expected" (§6.C.4 C13 row; §10 SD34, `:2381`; F8 (a)) |
-| Visual | Playwright `portal.visual.ts` on the `visual` project | every story of D11 with Linux baselines from a `visual-baselines.yml` run (Phase 1 spec §6.C.6, `:1233`; §10 SD98). `expectStoryScreenshot` takes a full-page screenshot (`packages/line-components/__tests__/visual/story.ts:42`), which shows the top layer [INFERENCE: P1–P12 used hit tests, not screenshots] |
-| Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the coverage and drift tests pass with the new descriptor (§6.G.5); the built `catalog.json` holds no `Portal` key, and `LINE_COMPONENTS` stays unchanged; no provider's tools include `Portal` (`frontend-tools.test.ts`); `PROP_TYPES`, the raw-catalog list, the exposure test and the descriptor count change as the Agent contract says; the descriptor keeps `agentExposed: false` and its reason (Phase 1 spec `:1183`; D10) |
+| Visual | Playwright `packages/line-components/__tests__/visual/portal.visual.ts` on the `visual` project | every story of D11, with `readyPortalStory(page, id)` as the caller-supplied `ready` option of `expectStoryScreenshot` (`visual/story.ts:28`, `:41`), as `visual/visually-hidden.visual.ts:18` does, with Linux baselines from a `visual-baselines.yml` run (Phase 1 spec §6.C.6, `:1233`; §10 SD98). `expectStoryScreenshot` takes a full-page screenshot (`packages/line-components/__tests__/visual/story.ts:42`), which shows the top layer [INFERENCE: P1–P12 used hit tests, not screenshots] |
+| Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the coverage and drift tests pass with the new descriptor (§6.G.5); the built `catalog.json` holds no `Portal` key, and `LINE_COMPONENTS` stays unchanged; no provider's tools include `Portal` (`frontend-tools.test.ts:310`); `PROP_TYPES` and its doc comment, the raw-catalog list, the exposure test (`toHaveLength(13)`), the reason test and the descriptor count change as the Agent contract says; the descriptor keeps `agentExposed: false` and its reason (Phase 1 spec `:1183`; D10) |
 | Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts` | a `line` node of type `Portal` renders one inert `unknown-type` placeholder, raises one `UNKNOWN_COMPONENT_TYPE` error and creates no `line-portal` (D10) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./portal` register `line-portal` only, through its new `EXPECTED_TAGS` row, and the isolation scan finds no other component's module or tag in its bundle (Phase 1 spec §7.5; `bundle-splitting.test.ts:69`) |
 
 - PRD §5.2 checklist mapping (`docs/PRD.md:534`; Phase 1 spec §6.C.6, `:1222`). Render, slots, the `root` part and events (none fired) run in the Unit tier; the reactive prop `disabled` runs in the Unit tier for its attribute and in the Browser tier for its rendering; custom properties have nothing to test; keyboard (Tab order) runs in the Browser tier and axe in the A11y tier.
 - §6.C.6 obligations. Storybook docs, the changeset, the CEM JSDoc, the `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` row and the size report land as D12 says. No other component is imported (Bundle). The Agent contract is filled above. The htmx row is `n/a` with its reason. The surface fixture and surface axe obligations do not apply to an `agentExposed: false` row (`:1231`). No update-rate measurement, because Portal is not a machine row (`:1232`). The visual tier is the row above (`:1233`).
 - Phase 1 spec `:1183`: the catalog and tools row proves that the descriptor's catalog name is not a key of `components` in the built `catalog.json`, and that the G3 emitter, run over the built descriptor set, emits no tool for it.
-- The axe and visual tests run against the Storybook stories on port 4320, with the story list in `packages/line-components/__tests__/portal-stories.ts`, as `visually-hidden-stories.ts` does. The layout, focus, dialog and pre-upgrade tests use fixture pages under `packages/line-components/__tests__/integration/portal/`, served by the existing port-4321 `webServer` (`playwright.config.ts:23-28`).
+- The axe and visual tests run against the Storybook stories on port 4320. The layout, focus, dialog, nesting and pre-upgrade tests use the fixture pages under `packages/line-components/__tests__/integration/portal/`, served by the existing port-4321 `webServer` (`playwright.config.ts:23-28`, at the repository root).
+- `packages/line-components/__tests__/portal-stories.ts` exports `PORTAL_STORIES` and `readyPortalStory(page, id)`, as `visually-hidden-stories.ts` exports `VISUALLY_HIDDEN_STORIES` and `readyVisuallyHiddenStory` (`:12`, `:26`).
+  - The story ids are `components-portal--escapes-a-clipping-card`, `--keeps-its-form`, `--in-a-modal-dialog` and `--disabled` (D11).
+  - `readyPortalStory` waits for every `line-portal` to update and, outside the `--disabled` story, for its root to match `:popover-open`.
+  - For `--in-a-modal-dialog` it then clicks the story's "Open settings" button, which calls `showModal()` and then `bringToFront()`, and asserts that the dialog is open and that the hint content is hit at its centre.
+  - `__tests__/a11y/portal.e2e.ts` calls it before the axe check, because the axe tier opens stories itself and runs no `ready` hook; `__tests__/visual/portal.visual.ts` passes it as the `ready` option (`visual/story.ts:28`, `:41`).
 
 ---
 
@@ -584,7 +614,7 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 | F4 | Does Portal have an inline mode? | Miguel | resolved: option (b), a reflected boolean `disabled` (Miguel, 2026-11-12) |
 | F5 | What does Portal do and say about events from its content? | Miguel | resolved: option (a), native bubbling through the host, stated in the docs (Miguel, 2026-11-12) |
 | F6 | What are the focus order and the reading order of the content? | Miguel | resolved: option (a), DOM order (Miguel, 2026-11-12) |
-| F7 | How does a Portal get above a top-layer box shown after it, such as a modal dialog? | Miguel | resolved: option (b), a public `bringToFront()` method (Miguel, 2026-11-12) |
+| F7 | How does a Portal get above a top-layer box shown after it, such as a modal dialog? | Miguel | resolved: option (b), a public `bringToFront()` method (Miguel, 2026-11-12); at review gate round 1 Miguel made it synchronous in the method, with no-ops before the first update, while `disabled` and while disconnected (F7 record) |
 | F8 | Is the htmx row `n/a`? | Miguel | resolved: option (a), `n/a` confirmed (Miguel, 2026-11-12) |
 | F9 | Which reason does `agentExposed: false` record? | Miguel | resolved: option (b), the top-layer reason (Miguel, 2026-11-12); Phase 1 spec §12 AM-097 |
 
@@ -595,17 +625,17 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 | D1 | Static, with no machine and no events; neither value-bearing nor form-associated | ARCH §8, `:410`; Phase 1 spec §6.C.4 C13 row, `:1169`; R7 `:76`, `:80` (Ark UI's Portal has no machine) |
 | D2 | No role, no internals value, no ARIA attribute written | R8 `:75` |
 | D3 | `:host { display: contents }` and `:host([hidden]) { display: none }` | Probe P12: no flex footprint, the box stays in the top layer, `hidden` still hides |
-| D4 | The root resets the UA popover box (margin, padding, border, background, colour, overflow, size) and sits at `inset-block-start: 0; inset-inline-start: 0`; the consumer places it through `::part(root)`, and the docs say an unplaced box covers the page at that corner | Probe P11: UA centring, border and padding; reset box at the logical start corner in LTR and RTL. Probe P9: an unplaced box took a button's clicks. MANIFESTO Principle 1 (zero visual opinion) |
+| D4 | While it carries `popover`, the root resets the UA popover box (margin, padding, border, background, colour, overflow, size) and sits at `inset-block-start: 0; inset-inline-start: 0`, through `[part='root'][popover]`; without `popover` (`disabled`) it is `display: contents`; the consumer places the box through `::part(root):popover-open`, and the docs and the README say an unplaced box covers the page at that corner | Probe P11: UA centring, border and padding; reset box at the logical start corner in LTR and RTL. Probe P9: an unplaced box took a button's clicks. MANIFESTO Principle 1 (zero visual opinion) |
 | D5 | `commonReset` is the only reset module | ARCH §14.7, `:1163` |
 | D6 | No focus on the host, no key handling, no `delegatesFocus`, no `tabindex` | R8 `:75` Keyboard "None" |
-| D7 | `showPopover()` and `hidePopover()` run only where they are functions, while the host is connected, not `disabled`, and the root's open state needs the change; nothing throws without the Popover API | Probe P13: happy-dom has no `showPopover`; MANIFESTO Law 9 |
+| D7 | `showPopover()` and `hidePopover()` run only where they are functions, while the host is connected, not `disabled`, and the root's open state needs the change, in `updated()` and in `bringToFront()`; nothing throws without the Popover API, and there is no in-browser fallback | Probe P13: happy-dom has no `showPopover`; the existing guard `this.#panel()?.hidePopover?.()` in AvatarGroup's `updated()` (`packages/line-components/src/avatar-group/avatar-group.ts:471`); PRD browser support "Chrome, Firefox, Safari — latest 2 stable versions" (`docs/PRD.md:160`), whose current engines all have the Popover API (P11), so only non-browser DOMs such as happy-dom lack it; MANIFESTO Law 9 |
 | D8 | Pre-upgrade content is the consumer's: the docs and the class JSDoc give `line-portal:not(:defined) { display: none; }` | Probe P6; `0012-visually-hidden.md` F3 (a), the documented consumer rule Miguel chose for the same case |
 | D9 | Catalog name `Portal`; prop schema `children` (`ChildList`) with slot map `children` → `''`; no `disabled` in the schema; `hostNaming: never`; no `requiredName`; no tool description; `agentExposed: false` with the F9 reason | PRD row name; §6.G.1 "Every component MUST keep a descriptor" (`:1329`); Stack's `children` pattern (`packages/line-genui/src/catalog/descriptors/stack.ts`); `0012-visually-hidden.md` D8 |
-| D10 | The genui tests change as the Agent contract and Tests rows say, and C13 adds no surface fixture or surface axe entry | Phase 1 spec `:1183`, `:1231`; `catalog.test.ts:45-92`, `:111`, `:496-499`, `:537`; `frontend-tools.test.ts:356` |
-| D11 | `apps/storybook/stories/components/portal.stories.ts` with `title: 'Components/Portal'` and `tags: ['autodocs']`, whose `DESCRIPTION` carries the D8 rule and the D4 placement advice. Stories: Escapes a clipping card (the first markup example, placed with anchor positioning), Keeps its form (the second), In a modal dialog (the third, with `bringToFront()` in the story's play-free setup), Disabled (in place). Story ids `components-portal--escapes-a-clipping-card`, `--keeps-its-form`, `--in-a-modal-dialog`, `--disabled` | `0012-visually-hidden.md` D11 pattern; `avatar-group.stories.ts:70` |
-| D12 | The C13 PR also adds a Portal row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, writes the Storybook docs, adds a `## Portal` section to `packages/line-components/README.md` after `## Visually Hidden` (`:402`), adds `portalDescriptor` to the export table of `packages/line-genui/README.md:39`, reports the gzipped size against the < 5 KB soft target, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1223-1227`; §7.6; PROCESS §6 |
+| D10 | The genui tests change as the Agent contract and Tests rows say, and C13 adds no surface fixture or surface axe entry | Phase 1 spec `:1183`, `:1231`; `catalog.test.ts:40-43`, `:45-92`, `:111`, `:496-501`, `:537`; `frontend-tools.test.ts:310`, `:356` |
+| D11 | `apps/storybook/stories/components/portal.stories.ts` with `title: 'Components/Portal'` and `tags: ['autodocs']`, whose `DESCRIPTION` carries the D8 rule, the D4 placement advice and the D14 `bringToFront()` points. The meta sets `parameters: { docs: { story: { inline: false, height: '320px' } } }`, so the docs page renders each story in its own iframe of fixed height and no box paints over the docs page or another story. Each story places its box next to its own trigger with a story-unique anchor name on `::part(root):popover-open`. Stories: Escapes a clipping card (the first markup example, under its Options trigger), Keeps its form (the second, next to its Save button), In a modal dialog (the third: an "Open settings" button whose click calls `showModal()` and then `bringToFront()`, with the hint next to its label), Disabled (in place inside a sentence). Story ids `components-portal--escapes-a-clipping-card`, `--keeps-its-form`, `--in-a-modal-dialog`, `--disabled` | `0012-visually-hidden.md` D11 pattern; `avatar-group.stories.ts:70`; Storybook addon-docs 10.6.2 `story.inline` and `story.height` (`node_modules/@storybook/addon-docs/dist/blocks.d.ts:283-284`) |
+| D12 | The C13 PR also adds a Portal row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, writes the Storybook docs, adds a `## Portal` section to `packages/line-components/README.md` after `## Visually Hidden` (`:402`) that carries the D14 points, adds `portalDescriptor` to the export table of `packages/line-genui/README.md:39`, reports the gzipped size against the < 5 KB soft target, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1223-1227`; §7.6; PROCESS §6 |
 | D13 | The Browser tier proves order with `ariaSnapshot()` in three engines and a Chromium CDP walk, and runs no `INTERNALS` read-back | Phase 1 spec `:1180` applies to internals roles, and Portal sets none (D2); probe P4 |
-| D14 | The class JSDoc says what the component is for, that the content stays in place for focus, reading order, events and forms, that the consumer places `::part(root)` (with the anchor example), the pre-upgrade rule, `disabled`, `bringToFront()` after `showModal()`, and not to put `aria-label` on the host | probes P1–P4, P6, P8, P11; `0012-visually-hidden.md` D14 |
+| D14 | The class JSDoc says what the component is for, that the content stays in place for focus, reading order, events and forms, that the consumer places `::part(root):popover-open` (with the anchor example), the pre-upgrade rule, and `disabled`. It says to call `bringToFront()` after every `showModal()`, that the call is synchronous and does nothing before the first update, while `disabled` or while disconnected, that a Portal outside the open modal paints above its backdrop with inert content, and that nested portals are raised outer first, then inner. It says not to put `aria-label` on the host. `bringToFront()` carries its own JSDoc (C7) | probes P1–P4, P6, P8, P11; `0012-visually-hidden.md` D14 |
 | D15 | The component observes no mutation and moves no node; it adds no `MutationObserver` | F1 (c); probes P5, P7 (what a move needs) |
 | D16 | No CSS custom properties and no variants | No visual surface; ARCH §17.2 C6 |
 | D17 | The docs name Firefox and WebKit accessibility-tree exposure and screen-reader speech of top-layer content as unverified | Phase 1 spec `:1180`; §12 AM-058; What automation cannot observe |
@@ -614,13 +644,13 @@ Miguel decided F1–F9 on 2026-11-12, each on the option the draft recommended, 
 
 ### F1 — Mechanism, and MANIFESTO Law 5
 
-**Evidence.** Law 5 reads "State machines own logic. Lit owns DOM. CSS owns visuals. … no DOM mutation outside Lit's reactive cycle" (`docs/MANIFESTO.md:47`). Phase 1 spec §6.G.4 scopes the "Lit owns DOM" clause to `line-components` components, and adds that no code other than the surface's reconciler mutates the surface's DOM (`:1469`; AM-002). P1 shows that a move (M1, M2) and the top layer (M3) escape clipping, a transform and a stacking context, and that `position: fixed` on the host (M4) escapes none of them under a transformed ancestor. P5 and P7 show what a move costs under Law 5. M1 is DOM calls end to end. M2 lets Lit insert the nodes, yet it needs one container per host in the target, because Lit owns everything from its marker to the end of the container and a shared target lost another host's node and a foreign node. It also needs a DOM call to return the nodes on disconnect, because `render(nothing)` detaches them. P2–P4, P8, P9 and P10 show what any move loses. M3 keeps the shadow tree as Lit's template and calls `showPopover()`, which changes the box's top-layer state and adds or moves no node. R8 assumes a relocation (`:75`), as did the Phase 1 spec reason row (`:1336`) and C13 row (`:1169`) before AM-097, and the PRD §4.1 row before v0.8.33, whose wording the top layer met as rendering, not as DOM placement. Ark UI's Portal is React `createPortal` into a `container` ref, else the environment root node when it is a shadow root, else `document.body`, and a `disabled` flag renders in place (R7 `:80`; `chakra-ui/ark` `packages/react/src/components/portal/portal.tsx` on `main`, 2026-11-12). React keeps events and context on its own component tree, which a DOM move does not replicate (P2, P3).
+**Evidence.** Law 5 reads "State machines own logic. Lit owns DOM. CSS owns visuals. … no DOM mutation outside Lit's reactive cycle" (`docs/MANIFESTO.md:47`). Phase 1 spec §6.G.4 scopes the "Lit owns DOM" clause to `line-components` components, and adds that no code other than the surface's reconciler mutates the surface's DOM (`:1469`; AM-002). P1 shows that a move (M1, M2) and the top layer (M3) escape clipping, a transform and a stacking context, and that `position: fixed` on the host (M4) escapes none of them under a transformed ancestor. P5 and P7 show what a move costs under Law 5. M1 is DOM calls end to end. M2 lets Lit insert the nodes, yet it needs one container per host in the target, because Lit owns everything from its marker to the end of the container and a shared target lost another host's node and a foreign node. It also needs a DOM call to return the nodes on disconnect, because `render(nothing)` detaches them. P2–P4, P8, P9 and P10 show what any move loses. M3 keeps the shadow tree as Lit's template and calls `showPopover()`, which changes the box's top-layer state and adds or moves no node. R8 assumes a relocation (`:75`), as did the Phase 1 spec reason row (`:1336`) and C13 row (`:1169`) before AM-097, and the PRD §4.1 row before v0.8.33, whose wording the top layer met as rendering, not as DOM placement. Ark UI's Portal is React `createPortal` into a `container` ref, else the environment root node when it is a shadow root, else `document.body`, and a `disabled` flag renders in place (R7 `:80`; `chakra-ui/ark` `packages/react/src/components/portal/portal.tsx` on `main`, 2026-11-12). React keeps events and context on its own component tree, which a DOM move does not replicate (P2, P3) [INFERENCE: the React half is neither probed nor cited].
 
 | Option | What it decides | Law 5 | Consequence |
 |---|---|---|---|
 | (a) Imperative move | the host appends a wrapper to the target and moves its child nodes into it in `connectedCallback`, through a `MutationObserver` for later children, and back in `disconnectedCallback` (M1) | violates: every move is a DOM call outside Lit's render | Escapes (P1). Loses context, events, form ownership, DOM order and modal usability (P2–P4, P8); breaks the htmx harness, swapped `hx-*` content and form posts (P9); leaves the surface's `aria-busy`, live region and focus rule (P10) |
 | (b) Lit `render()` into the target | `updated()` renders the child nodes into a per-host container through Lit (M2) | violates in part: Lit moves the nodes, but the per-host container's insertion and the nodes' return on disconnect are DOM calls outside Lit's render (P5, P7) | As (a), and every child custom element connects, disconnects and connects again on the first move (P4); htmx 2 misses swapped `hx-*` content (P9) |
-| (c) **Recommended.** Top layer, no move | the shadow root holds `<div part="root" popover="manual"><slot>` and `updated()` shows it (M3) | complies: the DOM is Lit's template; `showPopover()` changes top-layer state and adds or moves no node | Escapes (P1) and keeps context, events, the form, DOM order and htmx paths (P2–P4, P9), and the content stays in the host, so in the surface [INFERENCE: the surface was not probed with a top-layer host]. Nothing moves, so content cannot go to another container (F2). Top-layer boxes stack by show order, so a box shown before a modal dialog sits under it (P8; F7). The PRD wording holds as "renders outside", and the Phase 1 spec reason row changes (F9) |
+| (c) **Recommended.** Top layer, no move | the shadow root holds `<div part="root" popover="manual"><slot>` and `updated()` shows it (M3) | complies: the DOM is Lit's template; `showPopover()` changes top-layer state and adds or moves no node | Escapes (P1) and keeps context, events, the form, DOM order and htmx paths (P2–P4, P9), and the content stays in the host, so in the surface [INFERENCE: the surface was not probed with a top-layer host]. Nothing moves, so content cannot go to another container (F2). Top-layer boxes stack by show order, so a box shown before a modal dialog sits under it (P8; F7). The PRD wording holds as "renders outside" (superseded: PRD v0.8.33 revised the row), and the Phase 1 spec reason row changes (F9) |
 | (d) `position: fixed` on the host | `:host { position: fixed }` over a slot (M4) | complies | Does not escape a transformed ancestor or its `overflow` (P1); not a portal |
 | (e) (c) by default, (b) with a `target` | the top layer unless the consumer names a target, then a Lit move | violates in part when a target is set, as (b) | Two behaviours under one tag, with every (b) cost on the target path |
 
@@ -686,6 +716,8 @@ The recommendation rests on Law 5, which outranks the PRD, R8 and the Phase 1 sp
 | (a) Connect order only | the box is shown on connect and after a reconnect | A Portal in a dialog's static markup sits under the dialog when it opens; the consumer must reconnect it |
 | (b) **Recommended.** `bringToFront()` | a public method that hides and shows the root | The consumer calls it after `showModal()` (Markup examples). One method outside the descriptor |
 | (c) Automatic | the host listens document-wide for `toggle` events and shows itself again | No consumer step; a global listener and ordering logic in a Static component, and a Portal could jump above a dialog it does not belong to |
+
+**Review gate round 1 (Miguel, 2026-11-12).** `bringToFront()` acts synchronously in the method. It calls `hidePopover()` only when the root matches `:popover-open`, then `showPopover()`. It does nothing when no root is rendered yet, because the pending first update shows the box, when the host is `disabled`, or when it is disconnected. MANIFESTO Law 5 holds, because the call changes top-layer state and adds or moves no node. The consumer calls it after every `showModal()`; on a Portal outside the open modal dialog the box paints above the backdrop but its content stays inert. Props and D14 state this.
 
 ### F8 — htmx row
 
