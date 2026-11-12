@@ -4,11 +4,11 @@
 |-------|-------|
 | Status | `approved` (Miguel, 2026-11-12) |
 | Phase | `1` |
-| Tier | `Static` (Phase 1 spec §6.C.4 C12 row, `docs/specs/01-spec-core-primitives.md:1168`; PRD §4.1, `docs/PRD.md:256`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
+| Tier | `Static` (Phase 1 spec §6.C.4 C12 row, `docs/specs/01-spec-core-primitives.md:1168`; PRD §4.1, `docs/PRD.md:257`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-visually-hidden` |
 | Entrypoint | `@websublime/line-components/visually-hidden` (Phase 1 spec §4.2, `:251`, `:300`; §10 SD12, `:2359`) |
 | Form-associated | `no` (Phase 1 spec §6.C.4 C12 row) |
-| PRD catalogue entry | PRD §4.1, `Visually Hidden` row (`docs/PRD.md:256`) |
+| PRD catalogue entry | PRD §4.1, `Visually Hidden` row (`docs/PRD.md:257`) |
 | Ledger row | `01-C12` (`docs/plans/01-tasks-core-primitives.md:58`) |
 | Governing sections | Phase 1 spec §4.2 (`:251`, `:300`), §6.C.0 (`:908-931`), §6.C.4 (C12 row `:1168`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1338`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4, §7.6, §7.8, §10 SD12, SD34, SD38 (`:2385`), SD39, SD98, SD99, §12 AM-096; ARCH (v0.8.27) §3, §4, §5, §8, §12, §14.6–§14.9, §17.2–§17.4, §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §8; MANIFESTO Laws 1–6, 9, 10; R8 `docs/research/01-research-accessibility.md:74`; R7 `docs/research/01-research-zag-machines.md:79`; `0007-badge.md` (`:155`, `:216`, `:411`, `:469`; AM-003) |
 
@@ -219,7 +219,7 @@ The page loaded the built `./badge` and `./button` bundle.
 
 #### Description
 
-`<line-visually-hidden>` holds content that assistive technology reads and the screen does not show (PRD §4.1, `docs/PRD.md:256`). The consumer writes the content in its default slot. The content stays in the accessibility tree, is read in place, and joins the name of a link, a button or a heading around it (R8 `:74`; probes P2, P6). The host draws nothing and takes no space, so the layout around it does not change, in a block, flex or grid parent alike (P1; F1). While focus sits inside it, the content shows, so a skip link appears when a keyboard user reaches it (P4; F2). It has no props, no parts, no tokens and no events. It is not offered to agents (Phase 1 spec §10 SD38).
+`<line-visually-hidden>` holds content that assistive technology reads and the screen does not show (PRD §4.1, `docs/PRD.md:257`). The consumer writes the content in its default slot. The content stays in the accessibility tree, is read in place, and joins the name of a link, a button or a heading around it (R8 `:74`; probes P2, P6). The host draws nothing and takes no space, so the layout around it does not change, in a block, flex or grid parent alike (P1; F1). While focus sits inside it, the content shows, so a skip link appears when a keyboard user reaches it (P4; F2). It has no props, no parts, no tokens and no events. It is not offered to agents (Phase 1 spec §10 SD38).
 
 #### Use cases
 
@@ -515,7 +515,7 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts` | a `line` node of type `VisuallyHidden` renders one inert `unknown-type` placeholder, raises one `UNKNOWN_COMPONENT_TYPE` error and creates no `line-visually-hidden` (D9) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./visually-hidden` register `line-visually-hidden` only, through its new `EXPECTED_TAGS` row, and the isolation scan finds no other component's module or tag in its bundle (Phase 1 spec §7.5; `bundle-splitting.test.ts:56-69`) |
 
-- PRD §5.2 checklist mapping (`docs/PRD.md:514`; Phase 1 spec §6.C.6, `:1222`). Render, slots and events (none fired) run in the Unit tier. Reactive props, parts and custom properties have nothing to test. Keyboard runs in the Browser tier and axe in the A11y tier.
+- PRD §5.2 checklist mapping (`docs/PRD.md:515`; Phase 1 spec §6.C.6, `:1222`). Render, slots and events (none fired) run in the Unit tier. Reactive props, parts and custom properties have nothing to test. Keyboard runs in the Browser tier and axe in the A11y tier.
 - F4 (a) adds the Badge story "Count with hidden words", id `components-badge--count-with-hidden-words`, whose markup is the "Inbox" button of Markup examples (`:490-492`), so the Badge axe and visual tests cover it with one new baseline. `0007-badge.md` AM-003 records it.
   - `apps/storybook/stories/components/badge.stories.ts` gains the story and `import '@websublime/line-components/visually-hidden'`. Its header comment drops the deferral of the Avatar and Visually Hidden examples (`:16-19`), and its description names `<line-visually-hidden>` in place of `<span class="visually-hidden">` (`:32`).
   - `packages/line-components/__tests__/badge-stories.ts` gains the story id, and `waitForBadgeStory` adds `line-visually-hidden` to the elements it awaits, which today are `line-badge, line-button, line-stack` (`:34`).
@@ -636,3 +636,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
 | AM-001 | 2026-11-12 | ledger 01-C12 (factual correction, approval) | The header paragraph (`:15`) says that the spec passed its review gate and that Miguel approved it on 2026-11-12, in place of saying that it stays `proposed` | The approval commit set the Status field to `approved` and left the header paragraph describing the draft state | Commit `36a6e84` (`docs(spec): approve 0012-visually-hidden`) sets `:5` to `` `approved` (Miguel, 2026-11-12) `` |
+| AM-002 | 2026-11-12 | ledger 01-C13 (decision — Miguel, 2026-11-12: PRD v0.8.33, Phase 1 spec AM-097; factual realignment) | Locators only, no design change. PRD: §4.1 Visually Hidden row `:257` (was `:256`), three times; §5.2 heading `:515` (was `:514`). Amendment rows keep their locators as record | PRD v0.8.33 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.33) at `080cfde`; Phase 1 spec §12 AM-097 |
