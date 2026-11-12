@@ -2,17 +2,17 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` (draft; Open Questions F1–F9 open) |
+| Status | `proposed` |
 | Phase | `1` |
-| Tier | `Static` (Phase 1 spec §6.C.4 C13 row, `docs/specs/01-spec-core-primitives.md:1169`; PRD §4.1, `docs/PRD.md:257`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
+| Tier | `Static` (Phase 1 spec §6.C.4 C13 row, `docs/specs/01-spec-core-primitives.md:1169`; PRD §4.1, `docs/PRD.md:258`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-portal` |
 | Entrypoint | `@websublime/line-components/portal` (Phase 1 spec §4.2, `:252`, `:301`; §10 SD12, `:2359`) |
 | Form-associated | `no` (Phase 1 spec §6.C.4 C13 row) |
-| PRD catalogue entry | PRD §4.1, `Portal` row (`docs/PRD.md:257`) |
+| PRD catalogue entry | PRD §4.1, `Portal` row (`docs/PRD.md:258`; revised by PRD v0.8.33) |
 | Ledger row | `01-C13` (`docs/plans/01-tasks-core-primitives.md:59`) |
-| Governing sections | Phase 1 spec §4.2 (`:252`, `:301`), §6.C.0 (`:908-931`), §6.C.4 (C13 row `:1169`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1336`), §6.G.2, §6.G.3, §6.G.4 (Law 5 reading `:1469`, `aria-busy` `:1475`, live region `:1520-1521`, focus rule `:1525-1527`), §6.G.5, §7.4, §7.5, §7.6, §7.8, §10 SD12, SD34 (`:2381`), SD38 (`:2385`), SD39, SD98, SD99, §12 AM-002, AM-058, AM-096; ARCH (v0.8.27) §3, §4, §5, §8, §12 (`:548`, `./popover` `:577`), §14.6–§14.9, §17.2–§17.4 (Law 5 paragraph `:1648`), §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §7.5 (`:1000`), §8; MANIFESTO Laws 1–6, 9, 10; R8 `docs/research/01-research-accessibility.md:75`; R7 `docs/research/01-research-zag-machines.md:76-80`; R2 `docs/research/01-research-projection-technique.md:175`, `:246` |
+| Governing sections | Phase 1 spec §4.2 (`:252`, `:301`), §6.C.0 (`:908-931`), §6.C.4 (C13 row `:1169`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1336`), §6.G.2, §6.G.3, §6.G.4 (Law 5 reading `:1469`, `aria-busy` `:1475`, live region `:1520-1521`, focus rule `:1525-1527`), §6.G.5, §7.4, §7.5, §7.6, §7.8, §10 SD12, SD34 (`:2381`), SD38 (`:2385`), SD39, SD98, SD99, §12 AM-002, AM-058, AM-096, AM-097; ARCH (v0.8.27) §3, §4, §5, §8, §12 (`:548`, `./popover` `:577`), §14.6–§14.9, §17.2–§17.4 (Law 5 paragraph `:1648`), §17.9 (`:1697`); PRD (v0.8.33) §4.1, §5.2, §7.5 (`:1001`), §8; MANIFESTO Laws 1–6, 9, 10; R8 `docs/research/01-research-accessibility.md:75`; R7 `docs/research/01-research-zag-machines.md:76-80`; R2 `docs/research/01-research-projection-technique.md:175`, `:246` |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. This is a draft. Open Questions F1–F9 wait for Miguel, and the orchestrator defaults D1–D17 stand unless he changes them. Part A and Part B state the recommended option of every fork; a different decision rewrites the sections it names.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F9 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D17 stand as drafted (Miguel, 2026-11-12). F1 (c) revised the PRD §4.1 Portal row (PRD v0.8.33), and F1 (c) with F9 (b) amended the Phase 1 spec C13 row and Portal reason row (Phase 1 spec §12 AM-097). The spec stays `proposed` until its review gate passes and Miguel approves it.
 
 ---
 
@@ -80,7 +80,7 @@ The probe took the `Inner` button's box and asked `document.elementFromPoint` fo
 
 ### P2 — Inherited context
 
-Read on `#content` after the move, with the M1 and M2 hosts run once without and once with `copy-context`.
+Read on `#content` once each host had run, with the M1 and M2 hosts run once without and once with `copy-context`.
 
 | Host | `--line-probe` (inline on the trap) | Theme stand-in (`data-accent` scope) | `:dir(rtl)` | `:lang(pt)` |
 |---|---|---|---|---|
@@ -102,7 +102,7 @@ Listeners on the host, the trap, `#app` and `document` recorded a click on `Inne
 | `pm-top` | host, trap, `#app`, `document` | `inner > content > SLOT > DIV > #document-fragment > host` | `f` | yes |
 | `pm-fixed` | host, trap, `#app`, `document` | through the slot and the host | `f` | yes |
 
-- Events from moved nodes never reach the host or its ancestors. A control moved out of its `<form>` leaves the form, so its value no longer submits.
+- Events from the nodes M1 and M2 relocated never reach the host or its ancestors. A control they took out of its `<form>` leaves the form, so its value no longer submits.
 - In the top layer the event path is the DOM path, and the control stays in its form.
 
 ### P4 — Focus order, reading order and the children's lifecycle
@@ -190,7 +190,7 @@ The P1 page loaded with the definitions held back, measured, then defined the ho
 
 ### P10 — The A2UI surface
 
-The surface rendered `Column[Text "Alpha", Row p[Button b]]` from the basic catalog, with b's label bound to `/label`, then the probe appended the rendered `line-button` to `<body>`, as a portal that moves its child would. Each step ran on a fresh page, once without the move (control) and once with it.
+The surface rendered `Column[Text "Alpha", Row p[Button b]]` from the basic catalog, with b's label bound to `/label`, then the probe appended the rendered `line-button` to `<body>`, as a portal that relocates its child would. Each step ran on a fresh page, once without the move (control) and once with it.
 
 | Step | Control | Moved |
 |---|---|---|
@@ -251,12 +251,12 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 
 ### What the probes settle
 
-- Every option that moves nodes needs DOM mutation outside Lit's render: an imperative move (M1), or with Lit (M2) one container per host and the return of the nodes on disconnect (P5, P7). The top layer moves nothing and needs only Lit's template and a `showPopover()` call (P1; F1).
+- Every option that relocates nodes needs DOM mutation outside Lit's render: an imperative move (M1), or with Lit (M2) one container per host and the return of the nodes on disconnect (P5, P7). The top layer moves nothing and needs only Lit's template and a `showPopover()` call (P1; F1).
 - A move escapes clipping and stacking (P1) and loses inherited context (P2), the event path and form ownership (P3), the Tab and reading order (P4), and usability inside a modal dialog (P8). It breaks the htmx harness and form posts (P9) and leaves the surface's `aria-busy`, live region and focus rule (P10; F1, F9).
 - The top layer escapes the same ancestors (P1) and keeps context, events, the form, DOM order and htmx paths (P1–P4, P9). Its content stays in the host's light DOM (P3), so it stays in a surface [INFERENCE: not probed with the surface]. It stacks by show order, so a box shown before a modal dialog opened sits under it (P8, P11; F7).
 - A top-layer box needs a placement: its UA position is the viewport centre with a border, and with a reset and no placement it covers page content and takes its clicks (P9, P11; D4).
 - `display: contents` on the host removes its flex footprint and keeps the box in the top layer, and `hidden` still hides it with a `[hidden]` rule (P12; D3).
-- The `[INFERENCE on the escape]` of Phase 1 spec `:1336` holds for a moving portal in part. The node escapes `aria-busy`, the live region and the focus rule, and outlives `deleteSurface`. It stays under the `instanceId` reconciliation, which pulls it back (P10; F9).
+- The `[INFERENCE on the escape]` that Phase 1 spec `:1336` carried before AM-097 held for a relocating portal in part. The node escapes `aria-busy`, the live region and the focus rule, and outlives `deleteSurface`. It stays under the `instanceId` reconciliation, which pulls it back (P10; F9).
 
 ### What automation cannot observe
 
@@ -272,7 +272,7 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 
 #### Description
 
-`<line-portal>` renders its content outside the box of its DOM parent, so the content escapes `overflow` clipping, transformed ancestors and stacking contexts (PRD §4.1, `docs/PRD.md:257`; P1). The consumer writes the content in its default slot. The content stays where it is in the DOM and paints in the browser's top layer, above the rest of the page (F1 (c)). It therefore keeps everything it inherits, its events still reach the host and its ancestors, a form control still belongs to its form, and Tab order and reading order follow the markup (P2–P4). The consumer places the box through `::part(root)` (D4). It has one boolean, `disabled`, which renders the content in place (F4), and one method, `bringToFront()`, which puts the box above top-layer boxes shown after it (F7). It fires no events. It is not offered to agents (Phase 1 spec §10 SD38; F9).
+`<line-portal>` shows its content in the browser top layer, above clipping and stacking contexts, while the content keeps its DOM position (PRD §4.1, `docs/PRD.md:258`). The content escapes `overflow` clipping, transformed ancestors and stacking contexts (P1). The consumer writes the content in its default slot. The content stays where it is in the DOM and paints in the browser's top layer, above the rest of the page (F1 (c)). It therefore keeps everything it inherits, its events still reach the host and its ancestors, a form control still belongs to its form, and Tab order and reading order follow the markup (P2–P4). The consumer places the box through `::part(root)` (D4). It has one boolean, `disabled`, which renders the content in place (F4), and one method, `bringToFront()`, which puts the box above top-layer boxes shown after it (F7). It fires no events. It is not offered to agents (Phase 1 spec §10 SD38; F9).
 
 #### Use cases
 
@@ -283,8 +283,8 @@ A 300 px flex row with `gap: 10px` held `A`, the host and `B`.
 
 #### Anti-patterns
 
-- Moving content to another region of the page, such as a sidebar outlet. The Portal renders in place and paints on top; it does not move nodes (F1 (c), F2 (a)).
-- A modal dialog. Use the native `<dialog>` with `showModal()`, or `<line-dialog>` when Phase 3 ships it (PRD §7.5, `docs/PRD.md:979`).
+- Moving content to another region of the page, such as a sidebar outlet. The Portal paints its content on top and keeps it at its DOM position (F1 (c), F2 (a)).
+- A modal dialog. Use the native `<dialog>` with `showModal()`, or `<line-dialog>` when Phase 3 ships it (PRD §7.5, `docs/PRD.md:980`).
 - Announcing a message. The Portal announces nothing; use `<line-alert>` or a live region (`0006-alert.md`).
 - Leaving the box unplaced. Without a `::part(root)` rule it sits at the viewport's start corner and covers the page there (P9, P11; D4).
 
@@ -503,7 +503,7 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
   - The import test expects `descriptors: 13` (`:537`).
   - The tool-description loop already takes exposed descriptors only (`packages/line-genui/__tests__/frontend-tools.test.ts:356`).
 - C13 adds no surface render-fixture entry and no surface axe case, because §6.C.6 asks that only of agent-exposed rows (Phase 1 spec `:1231`).
-- Under F1 (c) the reason row `:1336` no longer describes the component, because the content never leaves the host's light DOM (P3) and so never leaves a surface [INFERENCE: the surface was not probed with a top-layer host; P10 probed a move]. F9 (b) replaces it with the top-layer reason. P1 shows the box painting above a sibling outside its container, and P9 shows it taking the clicks of a button it covers. The replacement is a design choice, so it lands as a Phase 1 spec AM row with trigger `decision` before the code (PROCESS §3).
+- Phase 1 spec AM-097 (decision, Miguel 2026-11-12, F1 (c) and F9 (b)) replaced the reason row (`:1336`) and the C13 row's `agentExposed` cell (`:1169`) with the top-layer reason. P1 shows the box painting above a sibling outside its container, and P9 shows it taking the clicks of a button it covers. The content never leaves the host's light DOM (P3), so it never leaves a surface [INFERENCE: the surface was not probed with a top-layer host; P10 probed a relocation].
 
 ### Bundle / entrypoint
 
@@ -567,7 +567,7 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 | Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts` | a `line` node of type `Portal` renders one inert `unknown-type` placeholder, raises one `UNKNOWN_COMPONENT_TYPE` error and creates no `line-portal` (D10) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./portal` register `line-portal` only, through its new `EXPECTED_TAGS` row, and the isolation scan finds no other component's module or tag in its bundle (Phase 1 spec §7.5; `bundle-splitting.test.ts:69`) |
 
-- PRD §5.2 checklist mapping (`docs/PRD.md:533`; Phase 1 spec §6.C.6, `:1222`). Render, slots, the `root` part and events (none fired) run in the Unit tier; the reactive prop `disabled` runs in the Unit tier for its attribute and in the Browser tier for its rendering; custom properties have nothing to test; keyboard (Tab order) runs in the Browser tier and axe in the A11y tier.
+- PRD §5.2 checklist mapping (`docs/PRD.md:534`; Phase 1 spec §6.C.6, `:1222`). Render, slots, the `root` part and events (none fired) run in the Unit tier; the reactive prop `disabled` runs in the Unit tier for its attribute and in the Browser tier for its rendering; custom properties have nothing to test; keyboard (Tab order) runs in the Browser tier and axe in the A11y tier.
 - §6.C.6 obligations. Storybook docs, the changeset, the CEM JSDoc, the `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` row and the size report land as D12 says. No other component is imported (Bundle). The Agent contract is filled above. The htmx row is `n/a` with its reason. The surface fixture and surface axe obligations do not apply to an `agentExposed: false` row (`:1231`). No update-rate measurement, because Portal is not a machine row (`:1232`). The visual tier is the row above (`:1233`).
 - Phase 1 spec `:1183`: the catalog and tools row proves that the descriptor's catalog name is not a key of `components` in the built `catalog.json`, and that the G3 emitter, run over the built descriptor set, emits no tool for it.
 - The axe and visual tests run against the Storybook stories on port 4320, with the story list in `packages/line-components/__tests__/portal-stories.ts`, as `visually-hidden-stories.ts` does. The layout, focus, dialog and pre-upgrade tests use fixture pages under `packages/line-components/__tests__/integration/portal/`, served by the existing port-4321 `webServer` (`playwright.config.ts:23-28`).
@@ -578,17 +578,17 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | How does Portal render its content outside its parent's box, and how does each way stand against MANIFESTO Law 5? | Miguel | open; recommended (c), the top layer without a move |
-| F2 | Where does the content go, and what happens when the target is missing? | Miguel | open; recommended (a), no target, following F1 (c) |
-| F3 | How does the content keep the theme, `dir` and `lang` of its place in the page? | Miguel | open; recommended (a), native inheritance, following F1 (c) |
-| F4 | Does Portal have an inline mode? | Miguel | open; recommended (b), a reflected boolean `disabled` |
-| F5 | What does Portal do and say about events from its content? | Miguel | open; recommended (a), native bubbling through the host, stated in the docs |
-| F6 | What are the focus order and the reading order of the content? | Miguel | open; recommended (a), DOM order, following F1 (c) |
-| F7 | How does a Portal get above a top-layer box shown after it, such as a modal dialog? | Miguel | open; recommended (b), a public `bringToFront()` method |
-| F8 | Is the htmx row `n/a`? | Miguel | open; recommended (a), `n/a` confirmed |
-| F9 | Which reason does `agentExposed: false` record? | Miguel | open; recommended (b), the top-layer reason, through a Phase 1 spec AM row with trigger `decision` |
+| F1 | How does Portal render its content outside its parent's box, and how does each way stand against MANIFESTO Law 5? | Miguel | resolved: option (c), the top layer through `popover="manual"`, with no node relocated (Miguel, 2026-11-12); PRD v0.8.33 §4.1 |
+| F2 | Where does the content go, and what happens when the target is missing? | Miguel | resolved: option (a), no target (Miguel, 2026-11-12) |
+| F3 | How does the content keep the theme, `dir` and `lang` of its place in the page? | Miguel | resolved: option (a), native inheritance (Miguel, 2026-11-12) |
+| F4 | Does Portal have an inline mode? | Miguel | resolved: option (b), a reflected boolean `disabled` (Miguel, 2026-11-12) |
+| F5 | What does Portal do and say about events from its content? | Miguel | resolved: option (a), native bubbling through the host, stated in the docs (Miguel, 2026-11-12) |
+| F6 | What are the focus order and the reading order of the content? | Miguel | resolved: option (a), DOM order (Miguel, 2026-11-12) |
+| F7 | How does a Portal get above a top-layer box shown after it, such as a modal dialog? | Miguel | resolved: option (b), a public `bringToFront()` method (Miguel, 2026-11-12) |
+| F8 | Is the htmx row `n/a`? | Miguel | resolved: option (a), `n/a` confirmed (Miguel, 2026-11-12) |
+| F9 | Which reason does `agentExposed: false` record? | Miguel | resolved: option (b), the top-layer reason (Miguel, 2026-11-12); Phase 1 spec §12 AM-097 |
 
-**Orchestrator defaults**
+**Orchestrator defaults** (Miguel left D1–D17 as drafted, 2026-11-12)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -610,9 +610,11 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 | D16 | No CSS custom properties and no variants | No visual surface; ARCH §17.2 C6 |
 | D17 | The docs name Firefox and WebKit accessibility-tree exposure and screen-reader speech of top-layer content as unverified | Phase 1 spec `:1180`; §12 AM-058; What automation cannot observe |
 
+Miguel decided F1–F9 on 2026-11-12, each on the option the draft recommended, and left D1–D17 as drafted. The option tables below stay as the record of what he weighed.
+
 ### F1 — Mechanism, and MANIFESTO Law 5
 
-**Evidence.** Law 5 reads "State machines own logic. Lit owns DOM. CSS owns visuals. … no DOM mutation outside Lit's reactive cycle" (`docs/MANIFESTO.md:47`). Phase 1 spec §6.G.4 scopes the "Lit owns DOM" clause to `line-components` components, and adds that no code other than the surface's reconciler mutates the surface's DOM (`:1469`; AM-002). P1 shows that a move (M1, M2) and the top layer (M3) escape clipping, a transform and a stacking context, and that `position: fixed` on the host (M4) escapes none of them under a transformed ancestor. P5 and P7 show what a move costs under Law 5. M1 is DOM calls end to end. M2 lets Lit insert the nodes, yet it needs one container per host in the target, because Lit owns everything from its marker to the end of the container and a shared target lost another host's node and a foreign node. It also needs a DOM call to return the nodes on disconnect, because `render(nothing)` detaches them. P2–P4, P8, P9 and P10 show what any move loses. M3 keeps the shadow tree as Lit's template and calls `showPopover()`, which changes the box's top-layer state and adds or moves no node. R8 assumes a move (`:75`), as do the Phase 1 spec reason row (`:1336`) and C13 row (`:1169`). The PRD row says "Renders child content outside its DOM parent" (`docs/PRD.md:257`), which the top layer meets as rendering, not as DOM placement. Ark UI's Portal is React `createPortal` into a `container` ref, else the environment root node when it is a shadow root, else `document.body`, and a `disabled` flag renders in place (R7 `:80`; `chakra-ui/ark` `packages/react/src/components/portal/portal.tsx` on `main`, 2026-11-12). React keeps events and context on its own component tree, which a DOM move does not replicate (P2, P3).
+**Evidence.** Law 5 reads "State machines own logic. Lit owns DOM. CSS owns visuals. … no DOM mutation outside Lit's reactive cycle" (`docs/MANIFESTO.md:47`). Phase 1 spec §6.G.4 scopes the "Lit owns DOM" clause to `line-components` components, and adds that no code other than the surface's reconciler mutates the surface's DOM (`:1469`; AM-002). P1 shows that a move (M1, M2) and the top layer (M3) escape clipping, a transform and a stacking context, and that `position: fixed` on the host (M4) escapes none of them under a transformed ancestor. P5 and P7 show what a move costs under Law 5. M1 is DOM calls end to end. M2 lets Lit insert the nodes, yet it needs one container per host in the target, because Lit owns everything from its marker to the end of the container and a shared target lost another host's node and a foreign node. It also needs a DOM call to return the nodes on disconnect, because `render(nothing)` detaches them. P2–P4, P8, P9 and P10 show what any move loses. M3 keeps the shadow tree as Lit's template and calls `showPopover()`, which changes the box's top-layer state and adds or moves no node. R8 assumes a relocation (`:75`), as did the Phase 1 spec reason row (`:1336`) and C13 row (`:1169`) before AM-097, and the PRD §4.1 row before v0.8.33, whose wording the top layer met as rendering, not as DOM placement. Ark UI's Portal is React `createPortal` into a `container` ref, else the environment root node when it is a shadow root, else `document.body`, and a `disabled` flag renders in place (R7 `:80`; `chakra-ui/ark` `packages/react/src/components/portal/portal.tsx` on `main`, 2026-11-12). React keeps events and context on its own component tree, which a DOM move does not replicate (P2, P3).
 
 | Option | What it decides | Law 5 | Consequence |
 |---|---|---|---|
@@ -622,7 +624,7 @@ The host takes no focus and handles no key (R8 `:75`). Focusable content keeps i
 | (d) `position: fixed` on the host | `:host { position: fixed }` over a slot (M4) | complies | Does not escape a transformed ancestor or its `overflow` (P1); not a portal |
 | (e) (c) by default, (b) with a `target` | the top layer unless the consumer names a target, then a Lit move | violates in part when a target is set, as (b) | Two behaviours under one tag, with every (b) cost on the target path |
 
-The recommendation rests on Law 5, which outranks the PRD, R8 and the Phase 1 spec (PROCESS §1), and on P2–P4 and P8–P10. Option (c) is a design change against the Phase 1 spec's reading of Portal, so a decision on it lands as the F9 AM row.
+The recommendation rests on Law 5, which outranks the PRD, R8 and the Phase 1 spec (PROCESS §1), and on P2–P4 and P8–P10. Option (c) changed the Phase 1 spec's reading of Portal, so the decision landed as PRD v0.8.33 and Phase 1 spec AM-097.
 
 ### F2 — Target
 
@@ -696,18 +698,15 @@ The recommendation rests on Law 5, which outranks the PRD, R8 and the Phase 1 sp
 
 ### F9 — The `agentExposed: false` reason
 
-**Evidence.** Phase 1 spec `:1336` gives "It moves nodes out of the surface, so they escape the `instanceId` reconciliation, the focus rule, the live region and `aria-busy`", marked `[INFERENCE on the escape]`, and `:1169` marks the reconciliation part `[INFERENCE: not in R8]`. P10 backs the escape from `aria-busy`, the live region and the focus rule, adds that the node outlives `deleteSurface`, and refutes the reconciliation part: the projection keeps updating the node and the reconciler pulls it back. Under F1 (c) the content stays in the host's light DOM (P3), so nothing leaves the surface and that reason does not describe the component [INFERENCE: the surface was not probed with a top-layer host]. P1 shows a top-layer box painting above a sibling outside its container, and P9 shows it taking another button's clicks.
+**Evidence.** Before AM-097, Phase 1 spec `:1336` gave a relocation reason, that nodes leaving the surface escape its `instanceId` reconciliation, focus rule, live region and `aria-busy`, marked `[INFERENCE on the escape]`, and `:1169` marked the reconciliation part `[INFERENCE: not in R8]`. P10 backs the escape from `aria-busy`, the live region and the focus rule, adds that the node outlives `deleteSurface`, and refutes the reconciliation part: the projection keeps updating the node and the reconciler pulls it back. Under F1 (c) the content stays in the host's light DOM (P3), so nothing leaves the surface and that reason does not describe the component [INFERENCE: the surface was not probed with a top-layer host]. P1 shows a top-layer box painting above a sibling outside its container, and P9 shows it taking another button's clicks.
 
 | Option | What it decides | Consequence |
 |---|---|---|
-| (a) Keep the move reason, corrected | under F1 (a) or (b): a factual AM row lifts the inference with P10 and corrects the reconciliation clause | The text in the Agent-contract proposal below (AM text A) |
-| (b) **Recommended.** Top-layer reason | under F1 (c): `agentHiddenReason` "It paints its content above the whole page, outside the surface, so an untrusted agent could cover the host's own UI.", through a Phase 1 spec AM row with trigger `decision` that replaces the reason row and the C13 row cell | The text below (AM text B). SD38 and ARCH §17.9 stay as they are, because Portal stays `false` |
+| (a) Keep the move reason, corrected | under F1 (a) or (b): a factual AM row lifts the inference with P10 and corrects the reconciliation clause | A factual AM row citing P10 |
+| (b) **Recommended.** Top-layer reason | under F1 (c): `agentHiddenReason` "It paints its content above the whole page, outside the surface, so an untrusted agent could cover the host's own UI.", through a Phase 1 spec AM row with trigger `decision` that replaces the reason row and the C13 row cell | Landed as Phase 1 spec AM-097. SD38 and ARCH §17.9 stay as they are, because Portal stays `false` |
 | (c) Expose Portal | under F1 (c), `agentExposed: true` | Agent content could cover host UI (P1, P9); SD38 and ARCH §17.9 change |
 
-Proposed Phase 1 spec AM text, for the orchestrator to land in its own `docs(spec)` commit after Miguel decides:
-
-- **AM text A (F1 (a) or (b); trigger: factual correction, component spec draft).** Two edits, no design change. (1) The Status line names AM-001–AM-097. (2) §6.G.1, the Portal row of the `agentExposed: false` table (`:1336`): Reason "It moves nodes out of the surface, so they leave its `aria-busy`, its live-region record of changes and its focus rule, and outlive `deleteSurface`; the reconciler still owns them and pulls them back on the next update of their parent"; Source "R8 §2.2; ARCH §17.4; `0013-portal.md` probe P10". The C13 row (`:1169`) drops `[INFERENCE: not in R8]` and cites P10. Each row is replaced in place.
-- **AM text B (F1 (c); trigger: decision, Miguel, component spec `0013-portal.md` F1 (c), F9 (b)).** Three edits. (1) The Status line names AM-001–AM-097. (2) §6.G.1, the Portal row (`:1336`): Reason "It paints its content above the whole page, outside the surface, so an untrusted agent could cover the host's own UI"; Source "ARCH §17.4 Theme row; `0013-portal.md` probes P1, P9". (3) §6.C.4 C13 row (`:1169`): `agentExposed` cell "`false`: agent content would paint above the host's UI (§10 SD38; `0013-portal.md` F9)", and "The component spec still settles" cell "Focus and reading order: DOM order, because nothing moves (`0013-portal.md` F1 (c), F6)". Each row is replaced in place. R8 `:75` stays as research record.
+Phase 1 spec AM-097 landed option (b) on 2026-11-12, in the PRD v0.8.33 commit. It rewrote the C13 row's `agentExposed` and "still settles" cells (`:1169`) and the Portal reason row (`:1336`), citing probes P1 and P9.
 
 ---
 
