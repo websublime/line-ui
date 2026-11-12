@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` |
+| Status | `approved` (Miguel, 2026-11-12) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C13 row, `docs/specs/01-spec-core-primitives.md:1169`; PRD §4.1, `docs/PRD.md:258`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-portal` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C13` (`docs/plans/01-tasks-core-primitives.md:59`) |
 | Governing sections | Phase 1 spec §4.2 (`:252`, `:301`), §6.C.0 (`:908-931`), §6.C.4 (C13 row `:1169`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1336`), §6.G.2, §6.G.3, §6.G.4 (Law 5 reading `:1469`, `aria-busy` `:1475`, live region `:1520-1521`, focus rule `:1525-1527`), §6.G.5, §7.4, §7.5, §7.6, §7.8, §10 SD12, SD34 (`:2381`), SD38 (`:2385`), SD39, SD98, SD99, §12 AM-002, AM-058, AM-096, AM-097; ARCH (v0.8.27) §3, §4, §5, §8, §12 (`:548`, `./popover` `:577`), §14.6–§14.9, §17.2–§17.4 (Law 5 paragraph `:1648`), §17.9 (`:1697`); PRD (v0.8.33) §4.1, §5.2, §7.5 (`:1001`), §8; MANIFESTO Laws 1–6, 9, 10; R8 `docs/research/01-research-accessibility.md:75`; R7 `docs/research/01-research-zag-machines.md:76-80`; R2 `docs/research/01-research-projection-technique.md:175`, `:246` |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F9 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D17 stand as drafted (Miguel, 2026-11-12). F1 (c) revised the PRD §4.1 Portal row (PRD v0.8.33), and F1 (c) with F9 (b) amended the Phase 1 spec C13 row and Portal reason row (Phase 1 spec §12 AM-097). The spec stays `proposed` until its review gate passes and Miguel approves it.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F9 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D17 stand as drafted (Miguel, 2026-11-12). F1 (c) revised the PRD §4.1 Portal row (PRD v0.8.33), and F1 (c) with F9 (b) amended the Phase 1 spec C13 row and Portal reason row (Phase 1 spec §12 AM-097). The spec passed its three-round review gate, and Miguel approved it on 2026-11-12.
 
 ---
 
@@ -748,3 +748,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
+| AM-001 | 2026-11-12 | ledger 01-C13 (factual correction, approval) | The Status field (`:5`) reads `` `approved` (Miguel, 2026-11-12) `` and the header paragraph (`:15`) says that the spec passed its review gate and that Miguel approved it on 2026-11-12, in place of saying that it stays `proposed` | Miguel approved the spec after review gate round 3, and the header still described the draft state | `docs/context/01-c13.md`, "Review gate (docs), round 3, 2026-11-12": "Miguel approved `0013-portal.md` on 2026-11-12." |
