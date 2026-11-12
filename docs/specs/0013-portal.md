@@ -219,7 +219,7 @@ The surface rendered `Column[Text "Alpha", Row p[Button b]]` from the basic cata
 | host inside a `display: none` ancestor | not rendered; `checkVisibility()` false |
 | host with `hidden` | not rendered; `checkVisibility()` false |
 | two hosts, the second shown later, overlapping | the second paints on top |
-| `popover` attribute removed from an open box | the box closes and the content renders as an ordinary box |
+| `popover` attribute removed from an open box | the box closes and the content renders as an ordinary box; the probe's reset kept `position: fixed` on the root, so P11 did not measure in-flow placement (Anatomy; Browser tier) |
 | page scrolled by 500 px | the box stays at its viewport point; the host's own box moves to −460 |
 | `CSS.supports('anchor-name: --a') && CSS.supports('position-anchor: --a')` | true |
 | `typeof HTMLElement.prototype.showPopover` | `function` |
@@ -679,7 +679,7 @@ The recommendation rests on Law 5, which outranks the PRD, R8 and the Phase 1 sp
 
 ### F4 — Inline mode
 
-**Evidence.** P11: removing the `popover` attribute closes the box and the content renders as an ordinary box. Ark UI's Portal has `disabled`, which renders the children in place (`portal.tsx`). A disabled host still keeps its content in place in the DOM, so nothing else changes.
+**Evidence.** P11: removing the `popover` attribute closes the box and the content renders as an ordinary box, under probe CSS that kept the root `position: fixed`, so in-flow placement needs the scoped rules of Anatomy. Ark UI's Portal has `disabled`, which renders the children in place (`portal.tsx`). A disabled host still keeps its content in place in the DOM, so nothing else changes.
 
 | Option | What it decides | Consequence |
 |---|---|---|
