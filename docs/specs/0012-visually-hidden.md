@@ -10,7 +10,7 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C12 row) |
 | PRD catalogue entry | PRD §4.1, `Visually Hidden` row (`docs/PRD.md:256`) |
 | Ledger row | `01-C12` (`docs/plans/01-tasks-core-primitives.md:58`) |
-| Governing sections | Phase 1 spec §4.2 (`:251`, `:300`), §6.C.0 (`:908-931`), §6.C.4 (C12 row `:1168`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1338`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4, §7.6, §7.8, §10 SD12, SD34, SD38 (`:2385`), SD39, SD98, SD99, §12 AM-096; ARCH (v0.8.27) §3, §4, §5, §8, §12, §14.6–§14.9, §17.2–§17.4, §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §8; MANIFESTO Laws 1–6, 9; R8 `docs/research/01-research-accessibility.md:74`; R7 `docs/research/01-research-zag-machines.md:79`; `0007-badge.md` (`:155`, `:216`, `:411`, `:469`; AM-003) |
+| Governing sections | Phase 1 spec §4.2 (`:251`, `:300`), §6.C.0 (`:908-931`), §6.C.4 (C12 row `:1168`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1338`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4, §7.6, §7.8, §10 SD12, SD34, SD38 (`:2385`), SD39, SD98, SD99, §12 AM-096; ARCH (v0.8.27) §3, §4, §5, §8, §12, §14.6–§14.9, §17.2–§17.4, §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §8; MANIFESTO Laws 1–6, 9, 10; R8 `docs/research/01-research-accessibility.md:74`; R7 `docs/research/01-research-zag-machines.md:79`; `0007-badge.md` (`:155`, `:216`, `:411`, `:469`; AM-003) |
 
 Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F6 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D15 stand as drafted (Miguel, 2026-11-12). The spec stays `proposed` until the review gate passes and Miguel approves it.
 
@@ -250,7 +250,7 @@ The page loaded the built `./badge` and `./button` bundle.
 | Component | Relation | Connects through |
 |-----------|----------|------------------|
 | `<line-badge>` | parent | the Badge default slot, such as `5<line-visually-hidden> unread messages</line-visually-hidden>`; the words join the name of a button around the badge (P6; `0007-badge.md:214-216`; F4) |
-| `<line-button>` | parent | the Button default or `suffix` slot; the words join the inner button's name (P6 b4) |
+| `<line-button>` | parent | the Button default or `suffix` slot; the words join the inner button's name, as P6 b4 showed for `suffix` [INFERENCE: default slot not probed; the Browser tier covers both slots] |
 | native `<a>`, `<button>`, `<h1>`–`<h6>` | parent | light DOM; the words join the element's name from content (P2) |
 | any container | parent | light DOM; Visually Hidden imports no other component (MANIFESTO Law 4; Phase 1 spec §6.C.6, `:1228`) |
 | `<line-a2ui-surface>` | none | `agentExposed: false`; a `line` node of type `VisuallyHidden` renders the surface's unknown-type placeholder (Agent contract) |
@@ -308,7 +308,7 @@ The page loaded the built `./badge` and `./button` bundle.
 |-------|------------|---------|-----------------|
 | none | — | — | — |
 
-- Visually Hidden reflects no flag. Whether focus is inside is the native `:focus-within`, which matches the host, so a consumer styles the revealed state with `line-visually-hidden:focus-within` (ARCH §14.8, `docs/ARCHITECTURE.md:1172`; P4; D7).
+- Visually Hidden reflects no flag. Whether focus is inside is the native `:focus-within`, which matches the host in all three engines (P4), so a consumer styles the revealed state with `line-visually-hidden:focus-within` (D7). ARCH §14.8 says the same of `:focus` (`docs/ARCHITECTURE.md:1172`).
 
 ### Slots
 
@@ -381,11 +381,13 @@ line-visually-hidden:not(:defined):not(:focus-within) {
     block-size: auto;
     overflow: visible;
     clip-path: none;
+    white-space: inherit;
   }
 }
 ```
 
 - These rules live in the outer tree. Normal outer declarations on the host beat the component's `:host` rule (P7; `stack.e2e.ts:153-169`).
+- The breakpoint rule resets `white-space`, so shown words wrap with their parent. P7's override rule left `nowrap` in place [INFERENCE: wrapping of shown words not probed].
 - P5 probed the `:not(:defined)` rule as R alone. The `:not(:focus-within)` and the insets follow the component rule [INFERENCE: not probed in that rule].
 
 ### Keyboard
@@ -425,7 +427,7 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | C5 | The host accepts an accessible name and applies it to the element with the role | no element carries a role, and the content is the name it contributes; the docs advise against a host `aria-label` (Props) |
 | C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | no variants |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary` and one `@slot`; no `@csspart`, `@cssprop` or `@fires`, because there are none; nothing is deprecated |
-| C8 | Missing or partial props degrade to an empty or neutral state | with no content it renders an empty 1 × 1 host that adds nothing to the tree or the layout |
+| C8 | Missing or partial props degrade to an empty or neutral state | with no content it renders an empty 1 × 1 host that adds nothing to the layout (P1) and no named node or text to the tree [INFERENCE: an empty host was not probed; the Browser tier asserts it through Chromium CDP] |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound |
 
 #### Inputs outside the prop schema (C1)
@@ -441,7 +443,7 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | Catalog name | `VisuallyHidden` (D8) |
 | Tag | `line-visually-hidden` |
 | `load()` subpath | `@websublime/line-components/visually-hidden` |
-| Prop schema | `children` (`ChildList`, through `commonProp`, optional), plus `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1) |
+| Prop schema | `children` (`ChildList`, through `commonProp` with the description "The child components, in order.", as Stack's, optional), plus `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1) |
 | Slot map | `children` → the default slot (`''`) |
 | Binding map | none; no value prop; no commit event |
 | Action map | none |
@@ -454,7 +456,12 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 - The `line` catalog emitter and the frontend-tool emitter skip the descriptor (`packages/line-genui/src/catalog/line.ts:84-85`; `tools.ts:298-299`). Acceptance follows Phase 1 spec `:1183`. `VisuallyHidden` is not a key of `components` in the built `catalog.json`, and `frontendTools(descriptors, provider)` returns no tool named `VisuallyHidden` for any provider.
 - The surface builds its `line` descriptor map from exposed descriptors only (`packages/line-genui/src/a2ui/projection.ts:59-61`), and the session registers `lineCatalog(descriptors)` (`session.ts:186`). A `line` node of type `VisuallyHidden` therefore renders the inert `unknown-type` placeholder and raises one `UNKNOWN_COMPONENT_TYPE` `line-a2ui-error`, as an unmapped basic type does (`packages/line-genui/__tests__/a2ui-surface.test.ts:152-163`), and `./visually-hidden` never loads.
 - The coverage test needs the descriptor, because `line-visually-hidden` enters the manifest (`packages/line-genui/__tests__/cem-coverage.test.ts:21-24`). The drift test checks its default slot against the manifest.
-- Two `catalog.test.ts` expectations change with a twelfth descriptor (D9). The raw catalog of every descriptor gains `VisuallyHidden` (`packages/line-genui/__tests__/catalog.test.ts:109-123`), and the exposure test expects twelve descriptors with `VisuallyHidden` the one `agentExposed: false` (`:493-497`).
+- Five genui test expectations change with a twelfth descriptor (D9).
+  - `PROP_TYPES` gains `VisuallyHidden: { children: 'ChildList' }` (`packages/line-genui/__tests__/catalog.test.ts:38-90`).
+  - The raw catalog of every descriptor gains `VisuallyHidden`, and the test title at `:109` says twelve descriptors (`:109-123`).
+  - The exposure test expects twelve descriptors, with `VisuallyHidden` the one `agentExposed: false` (`:493-497`).
+  - The import test expects `descriptors: 12` (`:527`).
+  - The tool-description test runs every descriptor through `tool()`, which throws `no VisuallyHidden tool for <provider>` (`packages/line-genui/__tests__/frontend-tools.test.ts:49-52`), so its loop takes the `agentExposed` descriptors only (`:347-353`).
 - C12 adds no surface render-fixture entry and no surface axe case, because §6.C.6 asks that only of agent-exposed rows (Phase 1 spec `:1231`).
 - Probes P2 and P6 give the reason row evidence. Hidden words join the name of the control around them in all three engines, so an agent could make a control's spoken name differ from its visible label. Phase 1 spec AM-096 cites them and lifts the `[INFERENCE]` that row `:1338` carried.
 
@@ -467,9 +474,10 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | Registers | `line-visually-hidden` |
 | Reset modules | `commonReset` only (ARCH §14.7, `docs/ARCHITECTURE.md:1163`; D4) |
 
-- The files are `src/visually-hidden/visually-hidden.ts`, with the class and `customElements.define`, and `src/visually-hidden/index.ts`. There is no `.types.ts`, because there are no props; Avatar has none either (`packages/line-components/src/avatar/`).
+- The files are `src/visually-hidden/visually-hidden.ts`, with the class `LineVisuallyHidden` and `customElements.define`, and `src/visually-hidden/index.ts`. There is no `.types.ts`, because there are no props; Avatar has none either (`packages/line-components/src/avatar/`).
 - `package.json` gains the `./visually-hidden` export (Phase 1 spec §4.2, `:251`), and the Vite build gains the `visually-hidden/index` entry after `stack/index` (`packages/line-components/vite.config.mjs:21`). No new dependency.
-- `line-genui` gains `src/catalog/descriptors/visually-hidden.ts` and the descriptor in the `descriptors` array in catalog-name order, after `stackDescriptor` (`packages/line-genui/src/catalog/index.ts:116-128`).
+- `packages/line-components/__tests__/bundle-splitting.test.ts` gains the `EXPECTED_TAGS` row `'./visually-hidden': ['line-visually-hidden']` (`:56-69`), as C9 and C10 did (`0010-avatar-group.md:529`). It needs no `ALLOWED_TAG_REFERENCES` row (`:76-78`), because the component matches no other tag.
+- `line-genui` gains `src/catalog/descriptors/visually-hidden.ts` with `visuallyHiddenDescriptor`. `src/catalog/index.ts` imports it after `stackDescriptor` (`:25`), adds it to the named exports (`:88-113`) and to the `descriptors` array in catalog-name order (`:116-128`).
 - Visually Hidden imports no other component (MANIFESTO Law 4; Phase 1 spec §6.C.6, `:1228`).
 
 ### Markup examples
@@ -498,20 +506,26 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 
 | Tier | Runner | Covers |
 |------|--------|--------|
-| Unit | `bun test` on happy-dom | registers `line-visually-hidden` with its class; the shadow root holds one `<slot>` and nothing else, and no element carries `part`; the host's computed `position` is `absolute` while nothing has focus (P8); slot assignment of text and elements; no attribute, `data-*` or internals value written (the fake internals read back `null`); no event of any kind; C8 with no content; `packages/line-components/__tests__/manifest-paths.test.ts` on the packed tarball |
-| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | a 1 × 1 host whose parent box, sibling offsets and screenshot match the same parent without it, in block, `flex` with `gap`, `grid` with `gap` and `inline-flex` parents (P1); no scrollable overflow in a positioned `overflow: auto` container at block-end and after a filled line, LTR and RTL, and in the document after a `100vh` block, LTR and RTL (P3); names through `ariaSnapshot()` for a native button, a native link, a heading and `<line-button>` in three engines, and a Chromium CDP assertion of the same names (P2; D13); Tab reaches a slotted link and reveals it with a box larger than 1 × 1, and a second Tab hides it again; script focus reveals; Tab skips an empty host (Phase 1 spec §10 SD99) (P4); `hidden` removes the words from the button's name (P7); the consumer `:not(:defined)` rule hides the words before the module loads on a fixture page that imports it late (P5; F3); consumer CSS on the host shows the content (P7; F6); the Badge case in a native button and in `<line-button>` (P6; F4) |
+| Unit | `bun test` on happy-dom | registers `line-visually-hidden` with its class; the shadow root holds one `<slot>` and nothing else, and no element carries `part`; the host's computed `position` is `absolute` while nothing has focus (P8); slot assignment of text and elements; no attribute, `data-*` or internals value written (the fake internals read back `null`); no event of any kind; C8 with no content; `packages/line-components/__tests__/manifest-paths.test.ts` on the packed tarball, as Badge's case does (`:167-191`). The test asserts that `line-visually-hidden` resolves to `src/visually-hidden/visually-hidden.ts`, declares no own public field and no event, and has slots `['']`, no `cssParts` and no `cssProperties` |
+| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | a 1 × 1 host whose parent box, sibling offsets and screenshot match the same parent without it, in block, `flex` with `gap`, `grid` with `gap` and `inline-flex` parents (P1); no scrollable overflow in a positioned `overflow: auto` container at block-end and after a filled line, LTR and RTL, and in the document after a `100vh` block, LTR and RTL (P3); names through `ariaSnapshot()` for a native button, a native link, a heading, and `<line-button>` with the hidden words in its default slot and in `suffix`, in three engines, and a Chromium CDP assertion of the same names (P2; D13); Tab reaches a slotted link and reveals it with a box larger than 1 × 1, and a second Tab hides it again; script focus reveals; Tab skips an empty host (Phase 1 spec §10 SD99) (P4); `hidden` removes the words from the button's name (P7); the consumer `:not(:defined)` rule hides the words before the module loads on a fixture page that imports it late (P5; F3); consumer CSS on the host shows the content (P7; F6); the Badge case, with the shipped `<line-visually-hidden>` inside `<line-badge>` in a native `<button>` and in `<line-button>`, named "Inbox 5 unread messages" through `ariaSnapshot()` in three engines and Chromium CDP; its pass lets the implement PR lift the `0007-badge.md:216` mark through a further `0007-badge.md` AM (P6; F4); a Chromium CDP assertion that an empty host adds no named node and no text to its parent's tree (C8) |
 | A11y | axe-core | zero violations (MANIFESTO Law 3) in every story of D11, the focused Skip link included (Phase 1 spec §7.4). axe cannot see an invisible focused child (P4), so the Browser tier carries the reveal proof |
 | htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `n/a`. Visually Hidden is neither value-bearing, because its descriptor binding map names no value prop, nor compound, because it holds no interactive element of its own (ARCH §17.2 C3, C9). Server content swapped into its slot is ordinary DOM, which the Unit tier's slot test covers. This confirms the Phase 1 spec's "`n/a` expected" (§6.C.4 C12 row; §10 SD34, `:2381`; D10) |
 | Visual | Playwright `visually-hidden.visual.ts` on the `visual` project | every story of D11 with Linux baselines from a `visual-baselines.yml` run, so a regression that shows hidden words or moves the layout changes a baseline (Phase 1 spec §6.C.6, `:1233`; §10 SD98) |
-| Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the coverage and drift tests pass with the new descriptor (§6.G.5); the built `catalog.json` has no `VisuallyHidden` key (`catalog-emitters.test.ts:150-153`); no provider's tools include `VisuallyHidden` (`frontend-tools.test.ts`); the descriptor keeps `agentExposed: false` and its reason (`catalog.test.ts:493-501`) (Phase 1 spec `:1183`; D9) |
+| Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the coverage and drift tests pass with the new descriptor (§6.G.5); the built `catalog.json` equals the emitted document (`catalog-emitters.test.ts:150-153`), whose `components` keys equal `LINE_COMPONENTS` (`:162`), which stays unchanged and holds no `VisuallyHidden` (`:65-77`); no provider's tools include `VisuallyHidden` (`frontend-tools.test.ts`), and the tool-description loop takes exposed descriptors only (`:347-353`); `PROP_TYPES`, the raw-catalog list and the descriptor counts change as the Agent contract says (`catalog.test.ts:38-90`, `:109-123`, `:493-497`, `:527`); the descriptor keeps `agentExposed: false` and its reason (`:493-501`) (Phase 1 spec `:1183`; D9) |
 | Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts` | a `line` node of type `VisuallyHidden` renders one inert `unknown-type` placeholder, raises one `UNKNOWN_COMPONENT_TYPE` error and creates no `line-visually-hidden` (D9) |
-| Packaging | `bun test` on the packed tarball | the registration harness sees `./visually-hidden` register `line-visually-hidden` only, and the isolation scan finds no other component's module in its bundle (Phase 1 spec §7.5) |
+| Packaging | `bun test` on the packed tarball | the registration harness sees `./visually-hidden` register `line-visually-hidden` only, through its new `EXPECTED_TAGS` row, and the isolation scan finds no other component's module or tag in its bundle (Phase 1 spec §7.5; `bundle-splitting.test.ts:56-69`) |
 
 - PRD §5.2 checklist mapping (`docs/PRD.md:514`; Phase 1 spec §6.C.6, `:1222`). Render, slots and events (none fired) run in the Unit tier. Reactive props, parts and custom properties have nothing to test. Keyboard runs in the Browser tier and axe in the A11y tier.
-- F4 (a) adds the Badge story "Count with hidden words", `5<line-visually-hidden> unread messages</line-visually-hidden>` inside a native button, to `apps/storybook/stories/components/badge.stories.ts` and `packages/line-components/__tests__/badge-stories.ts`, so the Badge axe and visual tests cover it with one new baseline. The Badge story description names `<line-visually-hidden>` in place of `<span class="visually-hidden">` (`badge.stories.ts:32`). `0007-badge.md` AM-003 records both.
+- F4 (a) adds the Badge story "Count with hidden words", `5<line-visually-hidden> unread messages</line-visually-hidden>` inside a native button, so the Badge axe and visual tests cover it with one new baseline. `0007-badge.md` AM-003 records it.
+  - `apps/storybook/stories/components/badge.stories.ts` gains the story and `import '@websublime/line-components/visually-hidden'`. Its header comment drops the deferral of the Avatar and Visually Hidden examples (`:16-19`), and its description names `<line-visually-hidden>` in place of `<span class="visually-hidden">` (`:32`).
+  - `packages/line-components/__tests__/badge-stories.ts` gains the story id, and `waitForBadgeStory` adds `line-visually-hidden` to the elements it awaits, which today are `line-badge, line-button, line-stack` (`:34`).
 - No update-rate measurement, because Visually Hidden is not a machine row (Phase 1 spec §6.C.6, `:1232`).
-- The axe and visual tests run against the Storybook stories on port 4320, with the story list in `packages/line-components/__tests__/visually-hidden-stories.ts`, as `badge-stories.ts` does for Badge. The layout, focus and pre-upgrade tests use fixture pages under `packages/line-components/__tests__/integration/visually-hidden/`, served by the existing port-4321 `webServer` (`playwright.config.ts:22-26`).
-- The visual and axe tests reach the focused Skip link through the `ready` hook of `expectStoryScreenshot` (`packages/line-components/__tests__/visual/story.ts:28`, `:41`), which presses Tab, as AvatarGroup D26 does for its Expanded and Open stories (`0010-avatar-group.md`).
+- The axe and visual tests run against the Storybook stories on port 4320, with the story list in `packages/line-components/__tests__/visually-hidden-stories.ts`, as `badge-stories.ts` does for Badge. The layout, focus and pre-upgrade tests use fixture pages under `packages/line-components/__tests__/integration/visually-hidden/`, served by the existing port-4321 `webServer` (`playwright.config.ts:23-28`).
+- `packages/line-components/__tests__/visually-hidden-stories.ts` exports `VISUALLY_HIDDEN_STORIES` and `readyVisuallyHiddenStory(page, id)`, as `avatar-group-stories.ts` exports `readyAvatarGroupStory` (`:48`).
+  - The story ids are `components-visually-hidden--in-a-link`, `--in-a-button`, `--section-heading`, `--skip-link` and `--skip-link-focused`.
+  - `readyVisuallyHiddenStory` waits for every `line-visually-hidden` to update. For `--skip-link-focused` it then presses Tab, Alt+Tab in webkit, and asserts that the skip link has focus and that its host's box is larger than 1 × 1.
+  - `__tests__/a11y/visually-hidden.e2e.ts` calls it before the axe check, as `a11y/avatar-group.e2e.ts:33` does, because the axe tier opens stories itself and runs no `ready` hook.
+  - `__tests__/visual/visually-hidden.visual.ts` passes it as the caller-supplied `ready` option of `expectStoryScreenshot` (`visual/story.ts:28`, `:41`), as `visual/avatar-group.visual.ts:18` does.
 
 ---
 
@@ -522,7 +536,7 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | F1 | Does the hiding rule live on `:host` over a bare slot or on an inner wrapper, and does a `::part()` exist? | Miguel | resolved: option (a), the rule on `:host` over a bare slot and no part (Miguel, 2026-11-12) |
 | F2 | Does content inside show while it has focus, and through which API? | Miguel | resolved: option (b), content shows whenever focus is inside, through `:host(:not(:focus-within))`, with no attribute (Miguel, 2026-11-12) |
 | F3 | Who hides the words before the element upgrades? | Miguel | resolved: option (a), a consumer `:not(:defined)` rule that the docs and the class JSDoc give (Miguel, 2026-11-12) |
-| F4 | Which PR adds the Badge example and lifts the two `0007-badge.md` inferences that P6 confirms? | Miguel | resolved: option (a), in this PR. `0007-badge.md` AM-003 lifts both inferences and restates D11, and C12 adds the Badge story "Count with hidden words" and fixes the Badge story description (Miguel, 2026-11-12) |
+| F4 | Which PR adds the Badge example and settles the two `0007-badge.md` inferences that P6 informs? | Miguel | resolved: option (a), in this PR. `0007-badge.md` AM-003 lifts the `:155` inference, narrows the `:216` mark to the shipped element, which the C12 Browser tier proves, and restates D11; C12 adds the Badge story "Count with hidden words" and fixes the Badge story description (Miguel, 2026-11-12) |
 | F5 | Which CSS recipe hides the host? | Miguel | resolved: option (d), the `surface.css` recipe plus `inset-block-start: 0; inset-inline-start: 0` (Miguel, 2026-11-12) |
 | F6 | Can consumer CSS override the hiding rule? | Miguel | resolved: option (a), normal declarations that consumer CSS can override (Miguel, 2026-11-12) |
 
@@ -536,12 +550,12 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | D4 | `commonReset` is the only reset module | ARCH §14.7, `:1163`. ARCH §14.6 lets a component that renders nothing omit it (`docs/ARCHITECTURE.md:1138`); Separator kept it under the same row (`0011-separator.md` Anatomy) |
 | D5 | No CSS custom properties and no variants | No visual surface; ARCH §17.2 C6 |
 | D6 | No focus on the host, no key handling, no `delegatesFocus`, no `tabindex` | R8 `:74` Keyboard "None" |
-| D7 | No reflected state for the revealed host; consumers use the native `:focus-within` | ARCH §14.8 says `:focus` and its kin match the host natively (`docs/ARCHITECTURE.md:1172`); probe P4 |
+| D7 | No reflected state for the revealed host; consumers use the native `:focus-within` | Probe P4 shows `:focus-within` matching the host in all three engines; ARCH §14.8 says `:focus` matches the host natively (`docs/ARCHITECTURE.md:1172`) |
 | D8 | Catalog name `VisuallyHidden`; prop schema `children` (`ChildList`) with slot map `children` → `''`; `hostNaming: never`; no `requiredName`; no tool description; `agentExposed: false` with the reason text of Phase 1 spec `:1338` | PRD row name without the space, as ARCH §8 writes it (`:410`); §6.G.1 "Every component MUST keep a descriptor"; Stack's `children` pattern (`packages/line-genui/src/catalog/descriptors/stack.ts:28-30`) |
-| D9 | The genui tests change as the Tests rows say, and C12 adds no surface fixture or surface axe entry | Phase 1 spec `:1183`, `:1231`; `catalog.test.ts:109-123`, `:493-497` |
+| D9 | The genui tests change as the Agent contract and Tests rows say, and C12 adds no surface fixture or surface axe entry | Phase 1 spec `:1183`, `:1231`; `catalog.test.ts:38-90`, `:109-123`, `:493-497`, `:527`; `frontend-tools.test.ts:347-353` |
 | D10 | htmx row `n/a` | Phase 1 spec §10 SD34; ARCH §17.2 C3, C9 |
-| D11 | Stories: In a link, In a button, Section heading, Skip link, and Skip link focused, which the axe and visual tests reach by Tab through the `ready` hook. The Badge example is the Badge story "Count with hidden words" (F4 (a)), and the docs page shows the F3 consumer rule in text | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0007-badge.md` D11) |
-| D12 | The C12 PR also adds a Visually Hidden row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, which has none yet, writes the Storybook docs, reports the gzipped size against the < 5 KB soft target, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1223-1227`; §7.6; PROCESS §6 |
+| D11 | `apps/storybook/stories/components/visually-hidden.stories.ts`, with `tags: ['autodocs']` and a `DESCRIPTION` that carries the F3 consumer rule and the D14 advice, as `badge.stories.ts:21`, `:48-49` do. Stories, each a self-contained snippet: In a link, `<a href="#pricing">Read more<line-visually-hidden> about pricing</line-visually-hidden></a>`; In a button, a native `<button type="button">` with the visible text "Delete" and the hidden words " draft Quarterly report"; Section heading, `<h2><line-visually-hidden>Account settings</line-visually-hidden></h2>` over a paragraph; Skip link, `<line-visually-hidden class="skip"><a href="#main">Skip to main content</a></line-visually-hidden>` before `<main id="main" tabindex="-1">`, with the Consumer styling `.skip:focus-within` rule in a story `<style>`; Skip link focused, the same markup, which `readyVisuallyHiddenStory` focuses. The Badge example is the Badge story "Count with hidden words" (F4 (a)) | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0007-badge.md` D11) |
+| D12 | The C12 PR also adds a Visually Hidden row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, which has none yet, writes the Storybook docs, adds a `## Visually Hidden` section to `packages/line-components/README.md` beside the other components' sections, adds `visuallyHiddenDescriptor` to the export table of `packages/line-genui/README.md:39`, reports the gzipped size against the < 5 KB soft target, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1223-1227`; §7.6; PROCESS §6 |
 | D13 | The Browser tier proves names with `ariaSnapshot()` in three engines and a Chromium CDP assertion, and runs no `INTERNALS` read-back | Phase 1 spec `:1180` applies to internals roles, and Visually Hidden sets none (D2); probe P2 |
 | D14 | The class JSDoc says what the component is for, that focused content shows, how to hide the words before the upgrade, to use `hidden` and not `aria-hidden` to remove the words, not to put `aria-label` on the host, and to put hidden words after a control's visible words | Badge's JSDoc pattern (`0007-badge.md` D14); probes P4, P5, P7; WCAG 2.5.3 |
 | D15 | The component does not import `@zag-js/dom-query`'s `visuallyHiddenStyle` | R7 `:79`; MANIFESTO Law 5; probe P3 (RTL overflow) |
@@ -556,7 +570,7 @@ Miguel decided F1–F6 on 2026-11-12, each on the option the draft recommended, 
 |---|---|---|
 | (a) **Recommended.** `:host` and a bare slot | the rule sits on `:host`; the shadow tree holds only `<slot>`; no part | Zero footprint in every parent (P1). The host is the one styleable zone, as on Separator. Consumer CSS on the host can override the rule (F6) |
 | (b) Inner wrapper with a part | `<span part="root"><slot></span>` carries the rule; the host stays inline | A `::part(root)` exists, though it styles a zone nobody sees. The host takes a gap and a grid cell in flex and grid parents (P1), which breaks the "no footprint" expectation |
-| (c) Both | the rule on `:host`, plus `<span part="root">` around the slot for the revealed state | Zero footprint, and Law 1 holds in its literal form. One more element, and a part whose styles apply only while focus is inside, which `line-visually-hidden:focus-within` on the host already covers |
+| (c) Both | the rule on `:host`, plus `<span part="root">` around the slot for the revealed state | Zero footprint. It adds a part for the revealed state, which the host already covers. One more element, and a part whose styles apply only while focus is inside, which `line-visually-hidden:focus-within` on the host already covers |
 
 ### F2 — Focus reveal
 
@@ -582,13 +596,15 @@ Miguel decided F1–F6 on 2026-11-12, each on the option the draft recommended, 
 
 ### F4 — Badge follow-ups
 
-**Evidence.** Probe P6 confirms `0007-badge.md:216` with the built `<line-badge>` and a probe host. The hidden words join a native button's name in all three engines and in Chromium's tree, and they do not change the badge's box. It also confirms `0007-badge.md:155`, whose `[INFERENCE]` says Badge text in `<line-button>` was probed with a native button only, because `<line-button>Inbox <line-badge slot="suffix">5</line-badge></line-button>` is `button "Inbox 5"`. `0007-badge.md:411` and D11 (`:469`) defer Visually Hidden examples to row 01-C12, and the Badge stories say so (`apps/storybook/stories/components/badge.stories.ts:19`). The Badge story description recommends `<span class="visually-hidden">` (`badge.stories.ts:32`), a class no line package ships. Row 01-C10 left Avatar examples out of the Badge stories and showed the badge in Avatar's own stories instead (`apps/storybook/stories/components/avatar.stories.ts:120-122`), so the Avatar half of D11 is already stale.
+**Evidence.** Probe P6 tests `0007-badge.md:216` with the built `<line-badge>` and a probe host that carries R on `:host`, without the decided insets and focus rule, so it does not test the shipped element. The hidden words join a native button's name in all three engines and in Chromium's tree, and they do not change the badge's box. It does confirm `0007-badge.md:155`, whose `[INFERENCE]` says Badge text in `<line-button>` was probed with a native button only. That case needs no hidden element, and the built `<line-button>Inbox <line-badge slot="suffix">5</line-badge></line-button>` is `button "Inbox 5"`. `0007-badge.md:411` and D11 (`:469`) defer Visually Hidden examples to row 01-C12, and the Badge stories say so (`apps/storybook/stories/components/badge.stories.ts:19`). The Badge story description recommends `<span class="visually-hidden">` (`badge.stories.ts:32`), a class no line package ships. Row 01-C10 left Avatar examples out of the Badge stories and showed the badge in Avatar's own stories instead (`apps/storybook/stories/components/avatar.stories.ts:120-122`), so the Avatar half of D11 is already stale.
 
 | Option | What it decides | Consequence |
 |---|---|---|
 | (a) **Recommended.** In this PR | a `docs(spec): AM-003` row in `0007-badge.md` lifts the `:155` and `:216` inferences with P6 and restates D11 for both halves; the Badge story description names `<line-visually-hidden>`; Badge gains a "Count with hidden words" story with its axe run and visual baseline | Lands what D11 deferred to this row and removes the non-existent class from the docs. The PR touches a `done` row's spec and stories, and one Badge baseline joins the C12 baseline run |
 | (b) In this PR, C10's pattern | the same AM row; the Badge description names `<line-visually-hidden>`; the badge example is a Visually Hidden story, not a Badge story | Same evidence and one less Badge baseline. The Badge docs page shows the recipe only in text |
 | (c) New ledger row | a stream C row after C12 merges carries the AM row and the story changes; this PR touches no Badge file | Keeps this PR to one component. The Badge docs keep recommending a class nobody ships until that row lands |
+
+Review gate round 1 found that P6 tested a probe host, not the shipped element. AM-003 therefore lifts the `:155` inference, which P6 tested with built components only, and narrows the `:216` mark until the C12 Browser tier proves the Badge case with the shipped `<line-visually-hidden>`; a further `0007-badge.md` AM lifts it then. The (a) row stays as the record of what Miguel weighed.
 
 ### F5 — CSS recipe
 
