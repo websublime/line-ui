@@ -12,7 +12,7 @@
 | Ledger row | `01-C12` (`docs/plans/01-tasks-core-primitives.md:58`) |
 | Governing sections | Phase 1 spec §4.2 (`:251`, `:300`), §6.C.0 (`:908-931`), §6.C.4 (C12 row `:1168`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1338`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4, §7.6, §7.8, §10 SD12, SD34, SD38 (`:2385`), SD39, SD98, SD99; ARCH (v0.8.27) §3, §4, §5, §8, §12, §14.6–§14.9, §17.2–§17.4, §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §8; MANIFESTO Laws 1–6, 9; R8 `docs/research/01-research-accessibility.md:74`; R7 `docs/research/01-research-zag-machines.md:79`; `0007-badge.md` (`:155`, `:216`, `:411`, `:469`) |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. This is a draft. Open Questions F1–F6 wait for Miguel, and Part B is written on the option each one recommends, marked with its F number. The orchestrator defaults D1–D15 are proposed with the draft.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F6 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D15 stand as drafted (Miguel, 2026-11-12). The spec stays `proposed` until the review gate passes and Miguel approves it.
 
 ---
 
@@ -262,7 +262,7 @@ The page loaded the built `./badge` and `./button` bundle.
 | none | — | — |
 
 - Visually Hidden has no C6 semantic variant. It draws nothing, so it has no tokens a variant could change (ARCH §17.2 C6, `docs/ARCHITECTURE.md:1577`).
-- F2 (c) would add a boolean attribute that changes a rule, not a token default. That attribute is not a C6 variant.
+- Focus reveal needs no attribute, because the rule keys on `:focus-within` alone (F2 (b)).
 
 ---
 
@@ -508,6 +508,7 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./visually-hidden` register `line-visually-hidden` only, and the isolation scan finds no other component's module in its bundle (Phase 1 spec §7.5) |
 
 - PRD §5.2 checklist mapping (`docs/PRD.md:514`; Phase 1 spec §6.C.6, `:1222`). Render, slots and events (none fired) run in the Unit tier. Reactive props, parts and custom properties have nothing to test. Keyboard runs in the Browser tier and axe in the A11y tier.
+- F4 (a) adds the Badge story "Count with hidden words", `5<line-visually-hidden> unread messages</line-visually-hidden>` inside a native button, to `apps/storybook/stories/components/badge.stories.ts` and `packages/line-components/__tests__/badge-stories.ts`, so the Badge axe and visual tests cover it with one new baseline. The Badge story description names `<line-visually-hidden>` in place of `<span class="visually-hidden">` (`badge.stories.ts:32`). `0007-badge.md` AM-003 records both.
 - No update-rate measurement, because Visually Hidden is not a machine row (Phase 1 spec §6.C.6, `:1232`).
 - The axe and visual tests run against the Storybook stories on port 4320, with the story list in `packages/line-components/__tests__/visually-hidden-stories.ts`, as `badge-stories.ts` does for Badge. The layout, focus and pre-upgrade tests use fixture pages under `packages/line-components/__tests__/integration/visually-hidden/`, served by the existing port-4321 `webServer` (`playwright.config.ts:22-26`).
 - The visual and axe tests reach the focused Skip link through the `ready` hook of `expectStoryScreenshot` (`packages/line-components/__tests__/visual/story.ts:28`, `:41`), which presses Tab, as AvatarGroup D26 does for its Expanded and Open stories (`0010-avatar-group.md`).
@@ -518,14 +519,14 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | Does the hiding rule live on `:host` over a bare slot or on an inner wrapper, and does a `::part()` exist? | Miguel | open; the draft recommends option (a), the rule on `:host` and no part |
-| F2 | Does content inside show while it has focus, and through which API? | Miguel | open; the draft recommends option (b), always, through `:host(:not(:focus-within))`, with no attribute |
-| F3 | Who hides the words before the element upgrades? | Miguel | open; the draft recommends option (a), a documented consumer `:not(:defined)` rule |
-| F4 | Which PR adds the Badge example and lifts the two `0007-badge.md` inferences that P6 confirms? | Miguel | open; the draft recommends option (a), in this PR |
-| F5 | Which CSS recipe hides the host? | Miguel | open; the draft recommends option (d), the `surface.css` recipe plus logical insets |
-| F6 | Can consumer CSS override the hiding rule? | Miguel | open; the draft recommends option (a), normal declarations that consumer CSS can override |
+| F1 | Does the hiding rule live on `:host` over a bare slot or on an inner wrapper, and does a `::part()` exist? | Miguel | resolved: option (a), the rule on `:host` over a bare slot and no part (Miguel, 2026-11-12) |
+| F2 | Does content inside show while it has focus, and through which API? | Miguel | resolved: option (b), content shows whenever focus is inside, through `:host(:not(:focus-within))`, with no attribute (Miguel, 2026-11-12) |
+| F3 | Who hides the words before the element upgrades? | Miguel | resolved: option (a), a consumer `:not(:defined)` rule that the docs and the class JSDoc give (Miguel, 2026-11-12) |
+| F4 | Which PR adds the Badge example and lifts the two `0007-badge.md` inferences that P6 confirms? | Miguel | resolved: option (a), in this PR. `0007-badge.md` AM-003 lifts both inferences and restates D11, and C12 adds the Badge story "Count with hidden words" and fixes the Badge story description (Miguel, 2026-11-12) |
+| F5 | Which CSS recipe hides the host? | Miguel | resolved: option (d), the `surface.css` recipe plus `inset-block-start: 0; inset-inline-start: 0` (Miguel, 2026-11-12) |
+| F6 | Can consumer CSS override the hiding rule? | Miguel | resolved: option (a), normal declarations that consumer CSS can override (Miguel, 2026-11-12) |
 
-**Orchestrator defaults** (proposed with the draft)
+**Orchestrator defaults** (Miguel left D1–D15 as drafted, 2026-11-12)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -539,11 +540,13 @@ The host takes no focus and handles no key (R8 `:74`). Focusable content inside 
 | D8 | Catalog name `VisuallyHidden`; prop schema `children` (`ChildList`) with slot map `children` → `''`; `hostNaming: never`; no `requiredName`; no tool description; `agentExposed: false` with the reason text of Phase 1 spec `:1338` | PRD row name without the space, as ARCH §8 writes it (`:410`); §6.G.1 "Every component MUST keep a descriptor"; Stack's `children` pattern (`packages/line-genui/src/catalog/descriptors/stack.ts:28-30`) |
 | D9 | The genui tests change as the Tests rows say, and C12 adds no surface fixture or surface axe entry | Phase 1 spec `:1183`, `:1231`; `catalog.test.ts:109-123`, `:493-497` |
 | D10 | htmx row `n/a` | Phase 1 spec §10 SD34; ARCH §17.2 C3, C9 |
-| D11 | Stories: In a link, In a button, Section heading, Skip link, and Skip link focused, which the axe and visual tests reach by Tab through the `ready` hook. The Badge example lands per F4, and the docs page shows the F3 consumer rule in text | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0007-badge.md` D11) |
+| D11 | Stories: In a link, In a button, Section heading, Skip link, and Skip link focused, which the axe and visual tests reach by Tab through the `ready` hook. The Badge example is the Badge story "Count with hidden words" (F4 (a)), and the docs page shows the F3 consumer rule in text | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0007-badge.md` D11) |
 | D12 | The C12 PR also adds a Visually Hidden row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, which has none yet, writes the Storybook docs, reports the gzipped size against the < 5 KB soft target, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1223-1227`; §7.6; PROCESS §6 |
 | D13 | The Browser tier proves names with `ariaSnapshot()` in three engines and a Chromium CDP assertion, and runs no `INTERNALS` read-back | Phase 1 spec `:1180` applies to internals roles, and Visually Hidden sets none (D2); probe P2 |
 | D14 | The class JSDoc says what the component is for, that focused content shows, how to hide the words before the upgrade, to use `hidden` and not `aria-hidden` to remove the words, not to put `aria-label` on the host, and to put hidden words after a control's visible words | Badge's JSDoc pattern (`0007-badge.md` D14); probes P4, P5, P7; WCAG 2.5.3 |
 | D15 | The component does not import `@zag-js/dom-query`'s `visuallyHiddenStyle` | R7 `:79`; MANIFESTO Law 5; probe P3 (RTL overflow) |
+
+Miguel decided F1–F6 on 2026-11-12, each on the option the draft recommended, and left D1–D15 as drafted. The option tables below stay as the record of what he weighed.
 
 ### F1 — Placement of the hiding rule
 
