@@ -14,7 +14,7 @@ import { css, html, type TemplateResult } from 'lit';
  * Put hidden words after a control's visible words, as in "Read more about
  * pricing", so the control's name starts with what users see. To remove the
  * words for everyone, use `hidden`, not `aria-hidden`. Do not put
- * `aria-label` on the host: it has no role a name could attach to.
+ * `aria-label` on the host, because it has no role a name could attach to.
  *
  * The words show until the module runs. To hide them before the upgrade, add
  * this rule to the page:
