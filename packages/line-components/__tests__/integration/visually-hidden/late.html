@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>line-visually-hidden late-load fixture (spec 0012-visually-hidden.md)</title>
+    <style>
+      /* The consumer rule of spec 0012-visually-hidden.md Consumer styling (F3), scoped to #ruled. */
+      #ruled line-visually-hidden:not(:defined):not(:focus-within) {
+        position: absolute;
+        inset-block-start: 0;
+        inset-inline-start: 0;
+        inline-size: 1px;
+        block-size: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+      }
+    </style>
+    <script type="module">
+      // The component module loads only when the test calls this, so its words can be measured undefined first.
+      window.lineLoad = () => import('./late.ts');
+    </script>
+  </head>
+  <body>
+    <main>
+      <div id="ruled"><button type="button" id="with-rule">Inbox<line-visually-hidden> 5 unread messages</line-visually-hidden></button></div>
+      <div id="bare"><button type="button" id="without-rule">Inbox<line-visually-hidden> 5 unread messages</line-visually-hidden></button></div>
+    </main>
+  </body>
+</html>

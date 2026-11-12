@@ -235,4 +235,27 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root', 'overflow', 'content']);
     expect(declaration?.cssProperties).toHaveLength(13);
   });
+
+  test('line-visually-hidden resolves to src/visually-hidden/visually-hidden.ts', () => {
+    const hidden = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-visually-hidden'),
+    );
+    expect(hidden?.path).toBe('src/visually-hidden/visually-hidden.ts');
+    expect(paths.has('src/visually-hidden/visually-hidden.ts')).toBe(true);
+  });
+
+  test('line-visually-hidden declares no public field, no event, one default slot, no part and no token', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-visually-hidden');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual([]);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts ?? []).toEqual([]);
+    expect(declaration?.cssProperties ?? []).toEqual([]);
+  });
 });

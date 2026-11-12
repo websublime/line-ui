@@ -31,6 +31,7 @@ import {
   iconDescriptor,
   separatorDescriptor,
   stackDescriptor,
+  visuallyHiddenDescriptor,
 } from '../src/catalog/index.js';
 
 const COMMON_TYPES = 'common_types.json#/$defs/';
@@ -39,7 +40,7 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
  * Each descriptor's own props, as the "Descriptor fields" prop schema of its component spec types them: a common
  * type by its `$defs` name, or `enum` for a literal enum (`0002-button.md`, `0004-button-group.md`, `0006-alert.md`,
  * `0009-avatar.md`, `0010-avatar-group.md`, `0007-badge.md`, `0008-chip.md`, `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`,
- * `0018-stack.md`).
+ * `0018-stack.md`, `0012-visually-hidden.md`).
  */
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   Alert: {
@@ -87,6 +88,7 @@ const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     wrap: 'DynamicBoolean',
     children: 'ChildList',
   },
+  VisuallyHidden: { children: 'ChildList' },
 };
 
 type Json = Record<string, unknown>;
@@ -106,7 +108,7 @@ function definition(doc: Json, name: string): { refs: unknown[]; own: Json } {
 }
 
 describe('descriptors compose with the web_core common types (§6.G.1)', () => {
-  test('the catalog holds the eleven descriptors under their catalog names', () => {
+  test('the catalog holds the twelve descriptors under their catalog names', () => {
     expect(Object.keys(catalogJson().components as Json).sort()).toEqual([
       'Alert',
       'Avatar',
@@ -119,6 +121,7 @@ describe('descriptors compose with the web_core common types (§6.G.1)', () => {
       'IconButton',
       'Separator',
       'Stack',
+      'VisuallyHidden',
     ]);
   });
 
@@ -490,10 +493,17 @@ describe('agentExposed (§6.G.1 Contract)', () => {
     accessibility: { hostNaming: { kind: 'always' } },
   } as const;
 
-  test('defaults to true, as on every C1–C11 descriptor', () => {
+  test('defaults to true, as on every descriptor but VisuallyHidden', () => {
     expect(defineDescriptor(fixture).agentExposed).toBe(true);
-    expect(descriptors.every((d) => d.agentExposed)).toBe(true);
-    expect(descriptors).toHaveLength(11);
+    expect(descriptors).toHaveLength(12);
+    expect(descriptors.filter((d) => !d.agentExposed)).toEqual([visuallyHiddenDescriptor]);
+  });
+
+  test('VisuallyHidden is not agent-exposed and keeps its reason (0012-visually-hidden.md Agent contract)', () => {
+    expect(visuallyHiddenDescriptor).toMatchObject({
+      agentExposed: false,
+      agentHiddenReason: 'An untrusted agent could add text that only screen readers hear.',
+    });
   });
 
   test('false keeps its reason', () => {
@@ -524,6 +534,6 @@ describe('importing @websublime/line-genui/catalog (§6.G.1; plan §7.2)', () =>
       child.exited,
     ]);
     expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
-    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 11 });
+    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 12 });
   });
 });

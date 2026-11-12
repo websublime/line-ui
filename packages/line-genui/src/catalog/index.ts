@@ -23,6 +23,7 @@ import { iconDescriptor } from './descriptors/icon.js';
 import { iconButtonDescriptor } from './descriptors/icon-button.js';
 import { separatorDescriptor } from './descriptors/separator.js';
 import { stackDescriptor } from './descriptors/stack.js';
+import { visuallyHiddenDescriptor } from './descriptors/visually-hidden.js';
 import {
   ADVERTISED_VERSIONS,
   type CatalogJson,
@@ -110,6 +111,7 @@ export {
   separatorDescriptor,
   stackDescriptor,
   TOOL_PROVIDERS,
+  visuallyHiddenDescriptor,
 };
 
 /** Every component descriptor, in catalog-name order. */
@@ -125,4 +127,5 @@ export const descriptors: readonly LineDescriptor[] = [
   iconButtonDescriptor,
   separatorDescriptor,
   stackDescriptor,
+  visuallyHiddenDescriptor,
 ];
