@@ -136,7 +136,8 @@ const NAMES = `<button type="button" id="native">Inbox<${HIDE}> 5 unread message
   <line-button id="suffix">Inbox <span slot="suffix">12<${HIDE}> new messages</${HIDE}></span></line-button>
   <button type="button" id="removed">Inbox<${HIDE} hidden> 5 unread messages</${HIDE}></button>
   <button type="button" id="badge-native">Inbox <line-badge>5<${HIDE}> unread messages</${HIDE}></line-badge></button>
-  <line-button id="badge-line">Inbox <line-badge slot="suffix">5<${HIDE}> unread messages</${HIDE}></line-badge></line-button>`;
+  <line-button id="badge-line">Inbox <line-badge slot="suffix">5<${HIDE}> unread messages</${HIDE}></line-badge></line-button>
+  <line-button id="badge-default">Inbox <line-badge>5<${HIDE}> unread messages</${HIDE}></line-badge></line-button>`;
 
 test.describe('screen-reader pass (ariaSnapshot; P2, P6, P7)', () => {
   test('hidden words join the name of a button, a link, a heading and <line-button> in both slots', async ({
@@ -158,13 +159,14 @@ test.describe('screen-reader pass (ariaSnapshot; P2, P6, P7)', () => {
     expect(await page.locator('#removed').ariaSnapshot()).toBe('- button "Inbox"');
   });
 
-  test('the Badge case: hidden words in <line-badge> join the name of a native button and of <line-button> (P6; F4)', async ({
+  test('the Badge case: hidden words in <line-badge> join the name of a native button and of <line-button> in both slots (P6; F4)', async ({
     page,
   }) => {
     await open(page);
     await mount(page, NAMES);
     expect(await page.locator('#badge-native').ariaSnapshot()).toBe('- button "Inbox 5 unread messages"');
     expect(await page.locator('#badge-line').ariaSnapshot()).toContain('button "Inbox 5 unread messages"');
+    expect(await page.locator('#badge-default').ariaSnapshot()).toContain('button "Inbox 5 unread messages"');
     // The hidden words leave the badge's box as it is without them (P6).
     await mount(
       page,
@@ -338,6 +340,7 @@ test.describe('Chromium accessibility tree (CDP)', () => {
     expect(await named(cdp, '#removed', 'button')).toBe('button:Inbox');
     expect(await named(cdp, '#badge-native', 'button')).toBe('button:Inbox 5 unread messages');
     expect(await named(cdp, '#badge-line', 'button')).toBe('button:Inbox 5 unread messages');
+    expect(await named(cdp, '#badge-default', 'button')).toBe('button:Inbox 5 unread messages');
   });
 
   test('an empty host adds no named node and no text to its parent (C8)', async ({ page }) => {
