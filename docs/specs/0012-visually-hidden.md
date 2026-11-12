@@ -12,7 +12,7 @@
 | Ledger row | `01-C12` (`docs/plans/01-tasks-core-primitives.md:58`) |
 | Governing sections | Phase 1 spec §4.2 (`:251`, `:300`), §6.C.0 (`:908-931`), §6.C.4 (C12 row `:1168`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason row `:1338`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4, §7.6, §7.8, §10 SD12, SD34, SD38 (`:2385`), SD39, SD98, SD99, §12 AM-096; ARCH (v0.8.27) §3, §4, §5, §8, §12, §14.6–§14.9, §17.2–§17.4, §17.9 (`:1697`); PRD (v0.8.32) §4.1, §5.2, §8; MANIFESTO Laws 1–6, 9, 10; R8 `docs/research/01-research-accessibility.md:74`; R7 `docs/research/01-research-zag-machines.md:79`; `0007-badge.md` (`:155`, `:216`, `:411`, `:469`; AM-003) |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F6 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D15 stand as drafted (Miguel, 2026-11-12). The spec stays `proposed` until the review gate passes and Miguel approves it.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F6 on 2026-11-12, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D15 stand as drafted (Miguel, 2026-11-12). The spec passed its two-round review gate, and Miguel approved it on 2026-11-12.
 
 ---
 
@@ -635,3 +635,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
+| AM-001 | 2026-11-12 | ledger 01-C12 (factual correction, approval) | The header paragraph (`:15`) says that the spec passed its review gate and that Miguel approved it on 2026-11-12, in place of saying that it stays `proposed` | The approval commit set the Status field to `approved` and left the header paragraph describing the draft state | Commit `36a6e84` (`docs(spec): approve 0012-visually-hidden`) sets `:5` to `` `approved` (Miguel, 2026-11-12) `` |
