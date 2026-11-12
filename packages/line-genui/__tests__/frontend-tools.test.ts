@@ -307,6 +307,12 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
     }
   });
 
+  test('no provider emits a VisuallyHidden tool (0012-visually-hidden.md Agent contract)', () => {
+    for (const provider of TOOL_PROVIDERS) {
+      expect(frontendTools(descriptors, provider).map((each) => each.name)).not.toContain('VisuallyHidden');
+    }
+  });
+
   test('a prop with no literal form throws instead of leaking into the tool', () => {
     const plain = defineDescriptor(fixture({ label: z.string().describe('A plain string.') }));
     expect(() => frontendTools([plain], 'openai')).toThrow('ToolFixture.label');
@@ -346,7 +352,8 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
 describe('the tool description (§6.G.3; §12 AM-086)', () => {
   test('each tool takes the descriptor toolDescription when set, and its description otherwise', () => {
     for (const provider of TOOL_PROVIDERS) {
-      for (const descriptor of descriptors) {
+      // A descriptor with `agentExposed: false` emits no tool (0012-visually-hidden.md Agent contract).
+      for (const descriptor of descriptors.filter((each) => each.agentExposed)) {
         expect(tool(provider, descriptor.name).description).toBe(descriptor.toolDescription ?? descriptor.description);
       }
     }

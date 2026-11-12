@@ -66,6 +66,10 @@
     "./stack": {
       "types": "./dist/stack/index.d.ts",
       "import": "./dist/stack/index.js"
+    },
+    "./visually-hidden": {
+      "types": "./dist/visually-hidden/index.d.ts",
+      "import": "./dist/visually-hidden/index.js"
     }
   },
   "dependencies": {

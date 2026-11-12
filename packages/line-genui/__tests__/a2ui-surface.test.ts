@@ -205,6 +205,23 @@ describe('the line catalog (§6.G.2; §10 SD42)', () => {
         '<line-icon mirror=""></line-icon></line-stack>',
     );
   });
+
+  test('a VisuallyHidden node renders one inert unknown-type placeholder, since its descriptor is not agent-exposed (0012-visually-hidden.md D9)', async () => {
+    const { surface, errors } = await render(
+      [
+        { id: 'root', component: 'Stack', children: ['t', 'hidden'] },
+        { id: 't', component: 'Separator' },
+        { id: 'hidden', component: 'VisuallyHidden' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    const placeholders = surface.querySelectorAll('[data-line-a2ui-placeholder="unknown-type"]');
+    expect(placeholders).toHaveLength(1);
+    expect((placeholders[0] as HTMLElement).inert).toBe(true);
+    expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+    expect(surface.querySelector('line-visually-hidden')).toBeNull();
+    expect(customElements.get('line-visually-hidden')).toBeUndefined();
+  });
 });
 
 describe('Button (§6.G.4 Button; §12 AM-081)', () => {

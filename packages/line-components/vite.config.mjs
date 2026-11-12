@@ -19,6 +19,7 @@ export default mergeConfig(
       'icon-button/index': 'src/icon-button/index.ts',
       'separator/index': 'src/separator/index.ts',
       'stack/index': 'src/stack/index.ts',
+      'visually-hidden/index': 'src/visually-hidden/index.ts',
     },
   }),
   {
