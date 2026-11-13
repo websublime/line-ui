@@ -1,7 +1,7 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
 // Button, Icon, Separator and Stack (C1–C4) through both catalogs, IconButton (C5), ButtonGroup (C6), Alert (C7),
-// Chip (C8), Badge (C9), Avatar (C10) and AvatarGroup (C11) through the `line` catalog, and a basic `Image` with
-// `variant: "avatar"` (C10) through its own `catalogId`, and Kbd (C14).
+// Chip (C8), Badge (C9), Avatar (C10), AvatarGroup (C11) and Kbd (C14) through the `line` catalog, and a basic
+// `Image` with `variant: "avatar"` (C10) through its own `catalogId`.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
