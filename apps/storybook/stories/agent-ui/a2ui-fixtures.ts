@@ -54,13 +54,13 @@ export const basicShowcase: A2uiMessage[] = [
 ];
 
 /**
- * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge, Avatar, AvatarGroup and
- * Alert under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
+ * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge, Avatar, AvatarGroup,
+ * Alert and Kbd under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
  * takes its text from `label` and binds `pressed` to the data model. One Badge binds its count `label` to the data
  * model, and a dot Badge with no `label` is named by its `accessibility.label`. One Avatar binds its `src` and `name`
  * and holds a presence Badge in `status`; a basic `Image` with `variant: "avatar"` renders the second `line-avatar`.
  * One named AvatarGroup holds three Avatars with `max` 2, so "+1" opens a panel with the third, named by its
- * `overflowLabel`.
+ * `overflowLabel`. A Kbd at the end of the toolbar shows the `mod+k` shortcut hint.
  */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
@@ -72,7 +72,7 @@ export const lineShowcase: A2uiMessage[] = [
       orientation: 'horizontal',
       align: 'center',
       gap: '2',
-      children: ['home', 'sep', 'send', 'glyph', 'close', 'zoom'],
+      children: ['home', 'sep', 'send', 'glyph', 'close', 'zoom', 'searchHint'],
     },
     {
       id: 'home',
@@ -102,6 +102,7 @@ export const lineShowcase: A2uiMessage[] = [
       children: ['zoomOut', 'zoomReset', 'zoomIn'],
       accessibility: { label: 'Zoom' },
     },
+    { id: 'searchHint', component: 'Kbd', keys: 'mod+k' },
     {
       id: 'zoomOut',
       component: 'IconButton',
