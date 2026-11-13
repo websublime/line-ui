@@ -29,7 +29,8 @@ const boxes = (count: number): TemplateResult[] =>
   Array.from({ length: count }, (_, index) => html`<div style=${BOX}>Item ${index + 1}</div>`);
 
 const meta = {
-  title: 'Components/Stack',
+  title: 'Components/Primitives Base/Stack',
+  id: 'components-stack',
   component: 'line-stack',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes } },

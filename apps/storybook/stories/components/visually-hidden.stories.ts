@@ -51,7 +51,8 @@ const skipLink = html`<style>
   </main>`;
 
 const meta = {
-  title: 'Components/Visually Hidden',
+  title: 'Components/Primitives Base/Visually Hidden',
+  id: 'components-visually-hidden',
   component: 'line-visually-hidden',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

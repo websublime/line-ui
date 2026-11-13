@@ -53,7 +53,8 @@ const FORMATTING = html`<line-button pressed="false">Bold</line-button>
   <line-button pressed="false">Underline</line-button>`;
 
 const meta = {
-  title: 'Components/Button Group',
+  title: 'Components/Primitives Base/Button Group',
+  id: 'components-button-group',
   component: 'line-button-group',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

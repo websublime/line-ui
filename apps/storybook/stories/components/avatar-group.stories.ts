@@ -67,7 +67,8 @@ const group = ({ label, max, overflowLabel }: AvatarGroupArgs, children: Templat
   );
 
 const meta = {
-  title: 'Components/Avatar Group',
+  title: 'Components/Primitives Base/Avatar Group',
+  id: 'components-avatar-group',
   component: 'line-avatar-group',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

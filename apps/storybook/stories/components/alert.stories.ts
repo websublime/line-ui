@@ -81,7 +81,8 @@ const liveDemo = (alertTemplate: TemplateResult): TemplateResult =>
   </line-stack>`;
 
 const meta = {
-  title: 'Components/Alert',
+  title: 'Components/Primitives Base/Alert',
+  id: 'components-alert',
   component: 'line-alert',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

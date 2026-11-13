@@ -76,7 +76,8 @@ interface IconButtonArgs {
 }
 
 const meta = {
-  title: 'Components/Icon Button',
+  title: 'Components/Primitives Base/Icon Button',
+  id: 'components-icon-button',
   component: 'line-icon-button',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

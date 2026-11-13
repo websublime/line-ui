@@ -59,7 +59,8 @@ const boxStyle = html`<style>
 </style>`;
 
 const meta = {
-  title: 'Components/Portal',
+  title: 'Components/Primitives Base/Portal',
+  id: 'components-portal',
   component: 'line-portal',
   tags: ['autodocs'],
   parameters: {

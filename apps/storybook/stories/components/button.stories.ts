@@ -69,7 +69,8 @@ ${STATE_CSS.replaceAll('.styled-states ', '')}
 \`\`\``;
 
 const meta = {
-  title: 'Components/Button',
+  title: 'Components/Primitives Base/Button',
+  id: 'components-button',
   component: 'line-button',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },
