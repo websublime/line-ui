@@ -36,7 +36,7 @@ await buttonDescriptor.load(); // defines <line-button>
 
 | Export | What it is |
 | --- | --- |
-| `alertDescriptor`, `avatarDescriptor`, `avatarGroupDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `portalDescriptor`, `separatorDescriptor`, `stackDescriptor`, `visuallyHiddenDescriptor` | The descriptors of Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Portal, Separator, Stack and VisuallyHidden; Portal and VisuallyHidden are `agentExposed: false`, so the catalogs and tools leave them out |
+| `alertDescriptor`, `avatarDescriptor`, `avatarGroupDescriptor`, `badgeDescriptor`, `buttonDescriptor`, `buttonGroupDescriptor`, `chipDescriptor`, `iconDescriptor`, `iconButtonDescriptor`, `kbdDescriptor`, `portalDescriptor`, `separatorDescriptor`, `stackDescriptor`, `visuallyHiddenDescriptor` | The descriptors of Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, Icon, IconButton, Kbd, Portal, Separator, Stack and VisuallyHidden; Portal and VisuallyHidden are `agentExposed: false`, so the catalogs and tools leave them out |
 | `descriptors` | Every descriptor above |
 | `defineDescriptor(init)` | Builds a descriptor from its fields and its own props; `agentExposed` defaults to `true` |
 | `componentSchema(description, props)` | The strict prop schema: `props` plus the A2UI `accessibility` object, described and annotated with the `ComponentCommon` mixin |
@@ -89,7 +89,7 @@ line renders the A2UI basic catalog under its upstream id and does not re-emit i
 
 In the controlled tier the agent picks a component and fills its props through a tool call, and your app renders the call. `frontendTools(descriptors, provider)` emits one tool, `{ name, description, parameters }`, for each descriptor with `agentExposed: true`, and none for a descriptor with `agentExposed: false`. `name` is the catalog name, such as `Button`, and matches `^[a-zA-Z0-9_-]{1,64}$`. `parameters` is flat and literal: no `$ref`, `oneOf`, `allOf`, recursion, open map, A2UI common type or data binding; its `properties` object has a null prototype.
 
-`description` is the descriptor's `toolDescription` when it sets one, and its agent-facing description otherwise, at most 1024 characters either way. A tool description names no parameter the tool lacks. Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, IconButton, Separator and Stack set one, because their agent-facing descriptions, which the `line` catalog keeps, name props the tool leaves out (Alert `children`, `title`, `icon`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child`, AvatarGroup, ButtonGroup and Stack `children`) or the `accessibility` object, which the tool flattens (AvatarGroup, Badge, Button, ButtonGroup, IconButton, Separator). Chip and Icon set none, so their tools take their agent-facing descriptions. An empty or whitespace-only `toolDescription` is a descriptor error: the emitter throws and does not fall back to the agent-facing description.
+`description` is the descriptor's `toolDescription` when it sets one, and its agent-facing description otherwise, at most 1024 characters either way. A tool description names no parameter the tool lacks. Alert, Avatar, AvatarGroup, Badge, Button, ButtonGroup, IconButton, Separator and Stack set one, because their agent-facing descriptions, which the `line` catalog keeps, name props the tool leaves out (Alert `children`, `title`, `icon`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child`, AvatarGroup, ButtonGroup and Stack `children`) or the `accessibility` object, which the tool flattens (AvatarGroup, Badge, Button, ButtonGroup, IconButton, Separator). Chip, Icon and Kbd set none, so their tools take their agent-facing descriptions. An empty or whitespace-only `toolDescription` is a descriptor error: the emitter throws and does not fall back to the agent-facing description.
 
 ```ts
 import { descriptors, frontendTools } from '@websublime/line-genui/catalog';
@@ -122,7 +122,7 @@ Each descriptor prop becomes a parameter as follows.
 | `DynamicString`, `DynamicBoolean`, `DynamicNumber` | `string`, `boolean`, `number`, with the prop's description |
 | `z.enum` | A string enum, with the prop's description |
 | `ComponentId`, `ChildList`, `Action` (Alert `icon`, `title`, `children`, `actions` and `dismiss`, Avatar `status`, Button and IconButton `child` and `action`, AvatarGroup, ButtonGroup and Stack `children`) | None: they carry tree structure and actions, not literal values |
-| `accessibility` | `accessibilityLabel` and `accessibilityDescription`, optional strings, on Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator; Alert, Icon and Stack take neither |
+| `accessibility` | `accessibilityLabel` and `accessibilityDescription`, optional strings, on Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator; Alert, Icon, Kbd and Stack take neither |
 
 The provider decides how an optional parameter is written.
 
@@ -141,7 +141,7 @@ Your app renders the call: it creates the tool's element (`descriptor.tag`, afte
 - Set `accessibilityLabel` as the host `aria-label` and `accessibilityDescription` as the host `aria-description`.
 - A value that is empty after trimming whitespace sets nothing.
 - Separator: set neither while `decorative` is true, and remove both when `decorative` turns true.
-- Alert, Icon and Stack tools carry neither parameter.
+- Alert, Icon, Kbd and Stack tools carry neither parameter.
 
 A tool-created Button has no `child`, because the tool leaves it out, so `accessibilityLabel` is its route to an accessible name. A tool-created IconButton has no icon for the same reason, and `accessibilityLabel` is its only name; the tool schema keeps it optional, so your app checks it. A tool-created ButtonGroup has no buttons, because the tool leaves `children` out; your app places them, and `accessibilityLabel` names the toolbar. A tool-created Alert has no content, because the tool leaves `icon`, `title`, `children`, `actions` and `dismiss` out; your app places the message, which states the tone in words, any action buttons and any dismiss button. On `<line-a2ui-surface>`, an Alert's `dismiss` IconButton keeps its own action, and the alert hides itself when the user activates it; it stays hidden if the agent sends the node again. A tool-created Chip takes its visible text and its name from `label`, a required parameter, and its `pressed` flips on each press and fires `line-change` with the new value. A tool-created Badge takes its text from `label`, an optional parameter; with no `label` it draws a dot, so your app gives it `accessibilityLabel`, which `<line-a2ui-surface>` requires in that case.
 
