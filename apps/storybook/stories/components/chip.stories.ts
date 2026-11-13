@@ -80,7 +80,8 @@ interface ChipArgs {
 }
 
 const meta = {
-  title: 'Components/Chip',
+  title: 'Components/Primitives Base/Chip',
+  id: 'components-chip',
   component: 'line-chip',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

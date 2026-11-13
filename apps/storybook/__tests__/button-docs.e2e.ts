@@ -1,7 +1,7 @@
 /**
  * Button autodocs page (Phase 1 spec §6.C.6 stream acceptance; §6.P.10).
  *
- * The `Components/Button` docs page on `storybook-static` lists the
+ * The `Components/Primitives Base/Button` docs page on `storybook-static` lists the
  * attributes, slots, events and CSS parts of `line-button` from the shipped
  * Custom Elements Manifest, each under its own category.
  *

@@ -44,7 +44,8 @@ interface BadgeArgs {
 const VARIANTS: readonly BadgeVariant[] = ['neutral', 'info', 'success', 'warning', 'danger'];
 
 const meta = {
-  title: 'Components/Badge',
+  title: 'Components/Primitives Base/Badge',
+  id: 'components-badge',
   component: 'line-badge',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

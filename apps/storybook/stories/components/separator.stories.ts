@@ -23,7 +23,8 @@ interface SeparatorArgs {
 }
 
 const meta = {
-  title: 'Components/Separator',
+  title: 'Components/Primitives Base/Separator',
+  id: 'components-separator',
   component: 'line-separator',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes } },

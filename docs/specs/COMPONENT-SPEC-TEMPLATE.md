@@ -209,6 +209,8 @@
 ### Tests
 
 > Prove each behaviour at the cheapest tier that can observe it, and send real focus, layout and platform behaviour to the browser tier.
+>
+> The component's stories in `apps/storybook/stories/components/<file>.stories.ts` take the title `Components/<PRD §4 category>/<Name>`, with the category the PRD §4 section whose table holds the component's row, named as its heading with each ` / ` written ` & ` because Storybook splits a title on `/` (`Real-World / Domain Components` → `Real-World & Domain Components`), and the meta pins `id: 'components-<file>'`, so story ids, visual baselines and Storybook URLs stay stable when the sidebar tree changes (`apps/storybook/__tests__/story-titles.test.ts`).
 
 | Tier | Runner | Covers |
 |------|--------|--------|

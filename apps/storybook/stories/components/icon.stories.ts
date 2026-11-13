@@ -51,7 +51,8 @@ interface IconArgs {
 }
 
 const meta = {
-  title: 'Components/Icon',
+  title: 'Components/Primitives Base/Icon',
+  id: 'components-icon',
   component: 'line-icon',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

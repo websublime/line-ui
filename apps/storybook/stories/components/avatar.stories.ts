@@ -33,7 +33,8 @@ interface AvatarArgs {
 }
 
 const meta = {
-  title: 'Components/Avatar',
+  title: 'Components/Primitives Base/Avatar',
+  id: 'components-avatar',
   component: 'line-avatar',
   tags: ['autodocs'],
   parameters: { docs: { extractArgTypes, description: { component: DESCRIPTION } } },

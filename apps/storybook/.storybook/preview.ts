@@ -72,6 +72,42 @@ const preview: Preview = {
         date: /Date$/,
       },
     },
+    // Sidebar order (ledger 01-Z9). The categories under Components follow PRD §4.1–§4.10, named by their
+    // headings. The top-level names are listed in the order the build gave them before this list existed,
+    // because a name the list holds sorts ahead of every name it does not. The default 'configure' method
+    // keeps every unlisted name, so the components inside a category, in file-name order, and the docs page
+    // and stories inside a component, in export order. Storybook reads storySort from this file's source,
+    // so the list stays an inline literal.
+    options: {
+      storySort: {
+        order: [
+          'Agent UI',
+          'Components',
+          [
+            'Primitives Base',
+            'Forms — Essential',
+            'Overlays & Feedback',
+            'Navigation & Disclosure',
+            'Forms — Advanced',
+            'Data Display',
+            'Layout & Containers',
+            'Desktop-Inspired',
+            'Innovative',
+            // The PRD §4.10 heading carries a '/', which Storybook splits as a level separator, so the folder
+            // maps it to '&'; story-titles.test.ts holds this list to the PRD.
+            'Real-World & Domain Components',
+          ],
+          'Customisation',
+          'Customisation Demos',
+          'Design System',
+          'Getting Started',
+          'HTMX',
+          'Recipes',
+          'Theming',
+          'Theming Demos',
+        ],
+      },
+    },
   },
 };
 
