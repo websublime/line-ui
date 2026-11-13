@@ -1,5 +1,13 @@
 # @websublime/line-core
 
+## 0.2.3
+
+### Patch Changes
+
+- [#333](https://github.com/websublime/line-ui/pull/333) [`2adcffc`](https://github.com/websublime/line-ui/commit/2adcffcdbe088afdb0e08c628759826217315bab) Thanks [@miguelramos](https://github.com/miguelramos)! - Add `<line-chip>` at `@websublime/line-components/chip`, a compact toggle button for a category or a filter: each press flips `pressed` and fires `line-change` with `{ value }`, it takes `variant` (`default`, `primary`) and `disabled`, slots for `prefix`, the label, `suffix` and an `indicator` shown only while pressed, and `--line-chip-*` tokens whose colours change when pressed; the `line` A2UI catalog, `catalog.json` and the frontend tools of `@websublime/line-genui/catalog` gain `Chip`, whose `label` the surface writes as the chip's text through the new text binding and `textProp` name source.
+
+- [#315](https://github.com/websublime/line-ui/pull/315) [`59a2265`](https://github.com/websublime/line-ui/commit/59a22652ef36d38483bcec2638904559701b5e06) Thanks [@miguelramos](https://github.com/miguelramos)! - Unused reset sheets from `@websublime/line-core/styles` now tree-shake: each sheet is marked pure, so a bundle keeps only the sheets it imports.
+
 ## 0.2.2
 
 ### Patch Changes

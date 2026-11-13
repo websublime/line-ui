@@ -1,5 +1,11 @@
 # @websublime/line-themes
 
+## 0.2.0
+
+### Minor Changes
+
+- [#324](https://github.com/websublime/line-ui/pull/324) [`22e0844`](https://github.com/websublime/line-ui/commit/22e0844e74daa23049b617a7fe7724b6186d2762) Thanks [@miguelramos](https://github.com/miguelramos)! - Add `@websublime/line-themes/hosts/mcp-apps.css`, a CSS-only bridge that maps MCP Apps host style variables onto line aliases and tokens; load it after the `line-themes` CSS.
+
 ## 0.1.2
 
 ### Patch Changes
