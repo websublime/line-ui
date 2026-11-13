@@ -494,11 +494,11 @@ line-portal:not(:defined) {
 
 ## Kbd
 
-`<line-kbd>` shows a keyboard shortcut drawn for the user's device. Write the shortcut once in `keys`: join keys
+`<line-kbd>` shows a keyboard shortcut drawn for the user's device. Write the shortcut once in `keys`. Join keys
 pressed together with `+` and separate keys pressed one after another with a space. `mod` is the main modifier,
 Command on Apple devices and Control elsewhere, so `keys="mod+k"` draws `⌘K` on a Mac and `Ctrl+K` elsewhere. Write
 the `+` key as `plus` and the space bar as `space`. It has three parts, `root`, `item` (one key) and `separator` (the
-`+` between keys, off Apple only); twelve `--line-kbd-*` tokens; no events. It only shows the shortcut: your app binds
+`+` between keys, off Apple only); twelve `--line-kbd-*` tokens; no events. It only shows the shortcut; your app binds
 and handles the keys.
 
 ```html
@@ -511,9 +511,9 @@ and handles the keys.
 `platform` is `auto` by default, which reads `navigator.userAgentData.platform`, then `navigator.platform`; `apple` or
 `other` forces a drawing, as a docs page that shows both does. On Apple devices the modifiers draw first, as glyphs in
 the order Control, Option, Shift, Command; elsewhere the keys keep your order as words joined by `+`. Each glyph
-carries a visually hidden word, so a control around the hint is named "Search Command K" or "Search Ctrl K", and a
-sequence reads "G then I". Put `aria-keyshortcuts` with the binding your app handles on the control the shortcut
-triggers. Give the host no `aria-label`, because it has no role a name could attach to.
+carries a visually hidden word, so a control around the hint is named "Search Command K" on Apple devices and "Search
+Ctrl K" elsewhere, and a sequence reads "G then I". Put `aria-keyshortcuts` with the binding your app handles on the
+control the shortcut triggers, such as `Meta+K` on a Mac and `Control+K` elsewhere. Give the host no `aria-label`, because it has no role a name could attach to.
 
 While `keys` yields no key, the host shows its own content as written, for a key the grammar lacks. Write the
 off-Apple drawing as text inside the host, so the page shows it until the module runs.

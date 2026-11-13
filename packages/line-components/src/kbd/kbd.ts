@@ -19,14 +19,14 @@ const platformConverter: ComplexAttributeConverter<KbdPlatform> = {
 };
 
 /**
- * `<line-kbd>` shows a keyboard shortcut drawn for the user's device. Write the shortcut once in `keys`: join keys
+ * `<line-kbd>` shows a keyboard shortcut drawn for the user's device. Write the shortcut once in `keys`. Join keys
  * pressed together with `+`, such as `mod+shift+p`, and separate keys pressed one after another with a space, such as
  * `g i`. `mod` is the main modifier, Command on Apple devices and Control elsewhere, so `keys="mod+k"` draws `⌘K` on a
  * Mac and `Ctrl+K` elsewhere. Write the `+` key as `plus` and the space bar as `space`. `platform` forces a drawing,
  * `apple` or `other`; the default, `auto`, reads the browser. Glyphs carry hidden words, so assistive technology reads
  * "Command K", and the keys join the name of a control around them.
  *
- * The component only shows the shortcut: the app binds and handles the keys. Put `aria-keyshortcuts` with the app's
+ * The component only shows the shortcut; the app binds and handles the keys. Put `aria-keyshortcuts` with the app's
  * real binding, such as `Meta+K`, on the control the shortcut triggers. Do not put `aria-label` on the host, because
  * it has no role a name could attach to.
  *
@@ -162,10 +162,14 @@ export class LineKbd extends LineElement {
   protected override willUpdate(changed: PropertyValues<this>): void {
     super.willUpdate(changed);
     // Re-read on every update, with no cache, so a changed static or browser platform shows next time (D8).
-    // `readPlatform` reads through `?.`, so a runtime without `navigator` resolves `other` (F1).
-    const platform = this.platform === 'auto' ? readPlatform(globalThis.navigator) : this.platform;
-    const lookup = wordLookup(parseKeyLabels(this.keyLabels ?? ''), LineKbd.keyLabels ?? {});
-    this.#nodes = drawKeys(this.keys ?? '', platform, lookup);
+    // Any value other than `apple` or `other`, including one code sets on the property, behaves as `auto`; a non-string
+    // `keys` or `keyLabels` behaves as empty or invalid, so nothing throws (D9; AM-004). `readPlatform` reads through
+    // `?.`, so a runtime without `navigator` resolves `other` (F1).
+    const { keys, keyLabels, platform } = this;
+    const resolved = platform === 'apple' || platform === 'other' ? platform : readPlatform(globalThis.navigator);
+    const labels = parseKeyLabels(typeof keyLabels === 'string' ? keyLabels : '');
+    const lookup = wordLookup(labels, LineKbd.keyLabels ?? {});
+    this.#nodes = drawKeys(typeof keys === 'string' ? keys : '', resolved, lookup);
   }
 
   override render(): TemplateResult {

@@ -347,6 +347,38 @@ describe('<line-kbd> platform (F1; D8, D9)', () => {
       restore();
     }
   });
+
+  test('an unknown platform set on the property behaves as auto and throws nothing (D9; AM-004)', async () => {
+    try {
+      stubPlatform('Win32');
+      const el = await mount(html`<line-kbd keys="mod+k" platform="apple"></line-kbd>`);
+      expect(visible(el)).toBe('⌘K');
+      (el as unknown as { platform: string }).platform = 'mac';
+      await el.updateComplete;
+      expect(visible(el)).toBe('Ctrl+K');
+    } finally {
+      restore();
+    }
+  });
+});
+
+describe('<line-kbd> non-string properties (D9; AM-004)', () => {
+  test('a non-string keys behaves as empty and renders the default slot', async () => {
+    const el = await mount(html`<line-kbd keys="mod+k" platform="other">Ctrl+K</line-kbd>`);
+    expect(slotOf(el)).toBeNull();
+    (el as unknown as { keys: unknown }).keys = 5;
+    await el.updateComplete;
+    expect(slotOf(el)).not.toBeNull();
+    expect(count(el, 'item')).toBe(0);
+  });
+
+  test('a non-string keyLabels behaves as an invalid key-labels and falls through to the static', async () => {
+    LineKbd.keyLabels = { control: 'Strg' };
+    const el = await draw('ctrl+k', 'other');
+    (el as unknown as { keyLabels: unknown }).keyLabels = { control: 'X' };
+    await el.updateComplete;
+    expect(visible(el)).toBe('Strg+K');
+  });
 });
 
 describe('<line-kbd> words and their override (F5 (d))', () => {
@@ -392,6 +424,14 @@ describe('<line-kbd> words and their override (F5 (d))', () => {
       expect(visible(await draw('ctrl+alt+k', 'other', invalid))).toBe('Strg+Alt+K');
     });
   }
+
+  test('key-labels changed on a rendered host redraws its words', async () => {
+    const el = await draw('g i', 'other');
+    expect(hidden(el)).toEqual([' then ']);
+    el.setAttribute('key-labels', '{"then": "dann"}');
+    await el.updateComplete;
+    expect(hidden(el)).toEqual([' dann ']);
+  });
 
   test('a changed static is picked up on the next update', async () => {
     const el = await draw('mod+k', 'other');
