@@ -241,6 +241,65 @@ describe('the line catalog (§6.G.2; §10 SD42)', () => {
   });
 });
 
+describe('Kbd (0015-kbd.md Agent contract; §6.G.4)', () => {
+  /** The rendered `line-kbd`, after its upgrade and update, and its shadow text. */
+  async function kbdOf(surface: HTMLElement): Promise<{ host: HTMLElement; text: string }> {
+    // The descriptor's `load()` imports `./kbd` on first use, so the host upgrades after it renders.
+    await customElements.whenDefined('line-kbd');
+    const host = surface.querySelector('line-kbd') as HTMLElement & { updateComplete: Promise<unknown> };
+    await host.updateComplete;
+    return { host, text: host.shadowRoot?.querySelector('[part="root"]')?.textContent ?? '' };
+  }
+
+  test('a Kbd node renders <line-kbd> with keys as an attribute', async () => {
+    const { surface, errors } = await render(
+      [
+        { id: 'root', component: 'Stack', children: ['k'] },
+        { id: 'k', component: 'Kbd', keys: 'mod+k' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-stack><line-kbd keys="mod+k"></line-kbd></line-stack>');
+  });
+
+  test('a bound keys updates the same element', async () => {
+    const { surface, feed } = mount();
+    await feed(
+      create(LINE_CATALOG_ID),
+      components([{ id: 'root', component: 'Kbd', keys: { path: '/shortcut' } }]),
+      data('/shortcut', 'g i'),
+    );
+    const first = await kbdOf(surface);
+    expect(first.host.getAttribute('keys')).toBe('g i');
+    expect(first.text).toBe('G then I');
+    await feed(data('/shortcut', 'mod+shift+p'));
+    const second = await kbdOf(surface);
+    expect(second.host).toBe(first.host);
+    // happy-dom's navigator.platform is not an Apple one, so `auto` draws the other platform (P8).
+    expect(second.text).toBe('Ctrl+Shift+P');
+  });
+
+  test('a node with no keys renders an empty host and raises nothing (C8)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Kbd' }], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    const { host, text } = await kbdOf(surface);
+    expect(host.getAttributeNames()).toEqual([]);
+    expect(text).toBe('');
+    expect(host.shadowRoot?.querySelector('slot')).not.toBeNull();
+  });
+
+  test('an accessibility.label sets no aria-label on the host (hostNaming never)', async () => {
+    const { surface, errors } = await render(
+      [{ id: 'root', component: 'Kbd', keys: 'mod+k', accessibility: { label: 'Command K' } }],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const { host } = await kbdOf(surface);
+    expect(host.hasAttribute('aria-label')).toBe(false);
+  });
+});
+
 describe('Button (§6.G.4 Button; §12 AM-081)', () => {
   test('every surface Button is type="button" with no name or value, from both catalogs', async () => {
     const basic = await render([{ id: 'root', component: 'Button', child: 't', action: action('a') }, text('t', 'A')]);

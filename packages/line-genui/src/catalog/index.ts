@@ -21,6 +21,7 @@ import { buttonGroupDescriptor } from './descriptors/button-group.js';
 import { chipDescriptor } from './descriptors/chip.js';
 import { iconDescriptor } from './descriptors/icon.js';
 import { iconButtonDescriptor } from './descriptors/icon-button.js';
+import { kbdDescriptor } from './descriptors/kbd.js';
 import { portalDescriptor } from './descriptors/portal.js';
 import { separatorDescriptor } from './descriptors/separator.js';
 import { stackDescriptor } from './descriptors/stack.js';
@@ -105,6 +106,7 @@ export {
   iconButtonDescriptor,
   iconDescriptor,
   inlineCatalog,
+  kbdDescriptor,
   LINE_CATALOG_ID,
   lineCapabilities,
   lineCatalog,
@@ -127,6 +129,7 @@ export const descriptors: readonly LineDescriptor[] = [
   chipDescriptor,
   iconDescriptor,
   iconButtonDescriptor,
+  kbdDescriptor,
   portalDescriptor,
   separatorDescriptor,
   stackDescriptor,
