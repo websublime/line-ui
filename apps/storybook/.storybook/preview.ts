@@ -93,7 +93,9 @@ const preview: Preview = {
             'Layout & Containers',
             'Desktop-Inspired',
             'Innovative',
-            'Real-World / Domain Components',
+            // The PRD §4.10 heading carries a '/', which Storybook splits as a level separator, so the folder
+            // maps it to '&'; story-titles.test.ts holds this list to the PRD.
+            'Real-World & Domain Components',
           ],
           'Customisation',
           'Customisation Demos',
