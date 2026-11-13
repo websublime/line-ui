@@ -1,5 +1,11 @@
 # @websublime/line-icons
 
+## 0.2.1
+
+### Patch Changes
+
+- [#320](https://github.com/websublime/line-ui/pull/320) [`6e0d1ae`](https://github.com/websublime/line-ui/commit/6e0d1aee291ad714ba2ab8061a2049fe50087d7c) Thanks [@miguelramos](https://github.com/miguelramos)! - `@websublime/line-genui/catalog` now emits the `line` A2UI catalog (`lineCatalogDocument`, `inlineCatalog`, `lineCapabilities`) and exports the `basic` implementation map (`basicImplementations`), the built document ships as `@websublime/line-genui/catalog.json`, and `@websublime/line-icons/a2ui` (Preview) adds `a2uiIconMap(set, { library })`, which maps the 59 A2UI icon names to Lucide or Phosphor for the surface `iconMap`.
+
 ## 0.2.0
 
 ### Minor Changes
