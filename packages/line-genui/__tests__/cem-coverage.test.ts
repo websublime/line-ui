@@ -30,10 +30,10 @@ describe('descriptor coverage of the built line-components manifest (§6.G.5)', 
   });
 
   test('an element added to the manifest without a descriptor fails', () => {
-    const kbd = { kind: 'class', name: 'LineKbd', tagName: 'line-kbd' };
+    const skeleton = { kind: 'class', name: 'LineSkeleton', tagName: 'line-skeleton' };
     const grown: Manifest = {
-      modules: [...manifest.modules, { path: 'src/kbd/kbd.ts', declarations: [kbd] }],
+      modules: [...manifest.modules, { path: 'src/skeleton/skeleton.ts', declarations: [skeleton] }],
     };
-    expect(coverageViolations(descriptors, grown)).toEqual(['line-kbd']);
+    expect(coverageViolations(descriptors, grown)).toEqual(['line-skeleton']);
   });
 });

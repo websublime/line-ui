@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>line-kbd pre-upgrade fixture (spec 0015-kbd.md)</title>
+    <script type="module">
+      // The component module loads only when the test calls this, so the hosts can be measured undefined first.
+      window.lineLoad = () => import('./pre-upgrade.ts');
+    </script>
+  </head>
+  <body>
+    <main>
+      <p><line-kbd id="text" keys="mod+k" platform="other">Ctrl+K</line-kbd></p>
+      <p><line-kbd id="bare" keys="mod+k" platform="other"></line-kbd></p>
+    </main>
+  </body>
+</html>

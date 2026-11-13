@@ -74,8 +74,10 @@ describe('CEM drift: descriptors against the built line-components manifest (§6
   });
 
   test('a descriptor whose tag the manifest lacks fails', () => {
-    const kbd = variant({ ...buttonDescriptor, name: 'Kbd', tag: 'line-kbd' }, {});
-    expect(driftViolations([kbd], manifest)).toEqual([{ tag: 'line-kbd', kind: 'element', name: 'line-kbd' }]);
+    const skeleton = variant({ ...buttonDescriptor, name: 'Skeleton', tag: 'line-skeleton' }, {});
+    expect(driftViolations([skeleton], manifest)).toEqual([
+      { tag: 'line-skeleton', kind: 'element', name: 'line-skeleton' },
+    ]);
   });
 
   test("AvatarGroup's attribute bindings and default slot pass, and a renamed attribute fails (`0010-avatar-group.md`)", () => {

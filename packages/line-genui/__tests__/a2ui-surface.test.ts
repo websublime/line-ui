@@ -15,7 +15,7 @@
  * @module __tests__/a2ui-surface
  */
 
-import { afterEach, beforeAll, describe, expect, test } from 'bun:test';
+import { afterEach, beforeAll, beforeEach, describe, expect, test } from 'bun:test';
 import { INTERNALS } from '@websublime/line-core';
 import { a2uiIconMap } from '@websublime/line-icons/a2ui';
 import { LineA2uiSurface } from '../src/a2ui/index.js';
@@ -25,6 +25,7 @@ import {
   BASIC_CATALOG_ID,
   badgeDescriptor,
   chipDescriptor,
+  kbdDescriptor,
   LINE_CATALOG_ID,
 } from '../src/catalog/index.js';
 import {
@@ -238,6 +239,79 @@ describe('the line catalog (§6.G.2; §10 SD42)', () => {
     expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
     expect(surface.querySelector('line-portal')).toBeNull();
     expect(customElements.get('line-portal')).toBeUndefined();
+  });
+});
+
+describe('Kbd (0015-kbd.md Agent contract; §6.G.4)', () => {
+  type Kbd = HTMLElement & { keys: string; updateComplete: Promise<unknown> };
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so Kbd is
+  // defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => kbdDescriptor.load());
+
+  // `auto` reads `navigator.platform`; a Windows value makes every drawing here the other platform's on any host (P8).
+  beforeEach(() => {
+    Object.defineProperty(navigator, 'platform', { value: 'Win32', configurable: true });
+  });
+  afterEach(() => {
+    Reflect.deleteProperty(navigator, 'platform');
+  });
+
+  /** The rendered `line-kbd`, after its update, and its shadow text. */
+  async function kbdOf(surface: HTMLElement): Promise<{ host: Kbd; text: string }> {
+    const host = surface.querySelector('line-kbd') as Kbd;
+    await host.updateComplete;
+    return { host, text: host.shadowRoot?.querySelector('[part="root"]')?.textContent ?? '' };
+  }
+
+  test('a Kbd node renders <line-kbd> with keys as an attribute', async () => {
+    const { surface, errors } = await render(
+      [
+        { id: 'root', component: 'Stack', children: ['k'] },
+        { id: 'k', component: 'Kbd', keys: 'mod+k' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-stack><line-kbd keys="mod+k"></line-kbd></line-stack>');
+    const { host, text } = await kbdOf(surface);
+    expect(host.keys).toBe('mod+k');
+    expect(text).toBe('Ctrl+K');
+  });
+
+  test('a bound keys updates the same element', async () => {
+    const { surface, feed } = mount();
+    await feed(
+      create(LINE_CATALOG_ID),
+      components([{ id: 'root', component: 'Kbd', keys: { path: '/shortcut' } }]),
+      data('/shortcut', 'g i'),
+    );
+    const first = await kbdOf(surface);
+    expect(first.host.getAttribute('keys')).toBe('g i');
+    expect(first.text).toBe('G then I');
+    await feed(data('/shortcut', 'mod+shift+p'));
+    const second = await kbdOf(surface);
+    expect(second.host).toBe(first.host);
+    expect(second.text).toBe('Ctrl+Shift+P');
+  });
+
+  test('a node with no keys renders an empty host and raises nothing (C8)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Kbd' }], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    const { host, text } = await kbdOf(surface);
+    expect(host.getAttributeNames()).toEqual([]);
+    expect(text).toBe('');
+    expect(host.shadowRoot?.querySelector('slot')).not.toBeNull();
+  });
+
+  test('an accessibility.label sets no aria-label on the host (hostNaming never)', async () => {
+    const { surface, errors } = await render(
+      [{ id: 'root', component: 'Kbd', keys: 'mod+k', accessibility: { label: 'Command K' } }],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const { host } = await kbdOf(surface);
+    expect(host.hasAttribute('aria-label')).toBe(false);
   });
 });
 

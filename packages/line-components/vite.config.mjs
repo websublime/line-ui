@@ -21,6 +21,7 @@ export default mergeConfig(
       'stack/index': 'src/stack/index.ts',
       'visually-hidden/index': 'src/visually-hidden/index.ts',
       'portal/index': 'src/portal/index.ts',
+      'kbd/index': 'src/kbd/index.ts',
     },
   }),
   {

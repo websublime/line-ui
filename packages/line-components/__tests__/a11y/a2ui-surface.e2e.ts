@@ -13,7 +13,8 @@
  * `label` text in the default slot and a `pressed` bound to the data model, and C9 (Badge) as a count bound to the
  * data model and a dot named by its `accessibility.label`, and C10 (Avatar) as a `line` Avatar with a bound `src` and
  * `name` and a presence Badge in `status`, beside a basic `Image` with `variant: "avatar"`, and C11 (AvatarGroup) as a
- * named group of three Avatars with `max` 2 and an `overflowLabel`, checked with its panel closed and open. The
+ * named group of three Avatars with `max` 2 and an `overflowLabel`, checked with its panel closed and open, and C14
+ * (Kbd) as a `mod+k` shortcut hint at the end of the toolbar. The
  * Placeholders story
  * adds a C9 Badge with no name, which renders the `missing-name` placeholder (`0007-badge.md` F10).
  *
@@ -28,7 +29,7 @@ const STORYBOOK_ORIGIN = 'http://127.0.0.1:4320';
 /** Every surface story by Storybook id, with the number of `line-*` elements it renders once settled. */
 const SURFACE_STORIES = {
   'agent-ui-a2ui-surface--basic': 7,
-  'agent-ui-a2ui-surface--line-catalog': 33,
+  'agent-ui-a2ui-surface--line-catalog': 34,
   'agent-ui-a2ui-surface--list': 7,
   'agent-ui-a2ui-surface--mixed-list': 3,
   'agent-ui-a2ui-surface--placeholders': 1,
@@ -57,7 +58,7 @@ async function openSurfaceStory(page: Page, id: SurfaceStoryId): Promise<void> {
   await expect(surface.locator('[data-line-a2ui-placeholder="pending"]')).toHaveCount(0);
   await expect(
     surface.locator(
-      ':is(line-alert, line-avatar, line-avatar-group, line-badge, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-separator, line-stack)',
+      ':is(line-alert, line-avatar, line-avatar-group, line-badge, line-button, line-button-group, line-chip, line-icon, line-icon-button, line-kbd, line-separator, line-stack)',
     ),
   ).toHaveCount(SURFACE_STORIES[id]);
   await expect(surface).not.toHaveAttribute('aria-busy', 'true');

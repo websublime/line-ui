@@ -138,8 +138,8 @@ function isEnum(schema: z.ZodTypeAny): schema is z.ZodEnum<[string, ...string[]]
 
 /**
  * Whether the tool carries `accessibilityLabel` and `accessibilityDescription`: only when the surface sets
- * `accessibility` on the host of every tool-created node it could render, so never for Icon (`never`) or Stack
- * (`listRole`, a role a tool-created stack never takes) (§6.G.3; §12 AM-069).
+ * `accessibility` on the host of every tool-created node it could render, so never for Alert, Icon and Kbd (`never`)
+ * or Stack (`listRole`, a role a tool-created stack never takes) (§6.G.3; §12 AM-069, AM-098).
  */
 function takesAccessibility(hostNaming: HostNaming<string>): boolean {
   switch (hostNaming.kind) {

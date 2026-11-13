@@ -72,6 +72,7 @@ const LINE_COMPONENTS = [
   'Chip',
   'Icon',
   'IconButton',
+  'Kbd',
   'Separator',
   'Stack',
 ];

@@ -1,7 +1,7 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
 // Button, Icon, Separator and Stack (C1–C4) through both catalogs, IconButton (C5), ButtonGroup (C6), Alert (C7),
-// Chip (C8), Badge (C9), Avatar (C10) and AvatarGroup (C11) through the `line` catalog, and a basic `Image` with
-// `variant: "avatar"` (C10) through its own `catalogId`.
+// Chip (C8), Badge (C9), Avatar (C10), AvatarGroup (C11) and Kbd (C14) through the `line` catalog, and a basic
+// `Image` with `variant: "avatar"` (C10) through its own `catalogId`.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
@@ -54,13 +54,13 @@ export const basicShowcase: A2uiMessage[] = [
 ];
 
 /**
- * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge, Avatar, AvatarGroup and
- * Alert under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
+ * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge, Avatar, AvatarGroup,
+ * Alert and Kbd under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
  * takes its text from `label` and binds `pressed` to the data model. One Badge binds its count `label` to the data
  * model, and a dot Badge with no `label` is named by its `accessibility.label`. One Avatar binds its `src` and `name`
  * and holds a presence Badge in `status`; a basic `Image` with `variant: "avatar"` renders the second `line-avatar`.
  * One named AvatarGroup holds three Avatars with `max` 2, so "+1" opens a panel with the third, named by its
- * `overflowLabel`.
+ * `overflowLabel`. A Kbd at the end of the toolbar shows the `mod+k` shortcut hint.
  */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
@@ -72,7 +72,7 @@ export const lineShowcase: A2uiMessage[] = [
       orientation: 'horizontal',
       align: 'center',
       gap: '2',
-      children: ['home', 'sep', 'send', 'glyph', 'close', 'zoom'],
+      children: ['home', 'sep', 'send', 'glyph', 'close', 'zoom', 'searchHint'],
     },
     {
       id: 'home',
@@ -102,6 +102,7 @@ export const lineShowcase: A2uiMessage[] = [
       children: ['zoomOut', 'zoomReset', 'zoomIn'],
       accessibility: { label: 'Zoom' },
     },
+    { id: 'searchHint', component: 'Kbd', keys: 'mod+k' },
     {
       id: 'zoomOut',
       component: 'IconButton',

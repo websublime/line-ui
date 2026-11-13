@@ -25,6 +25,7 @@ interface ManifestModule {
       kind?: string;
       static?: boolean;
       privacy?: string;
+      attribute?: string;
       description?: string;
       inheritedFrom?: { name: string };
     }[];
@@ -300,5 +301,43 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(method?.static ?? false).toBe(false);
     expect(method && 'privacy' in method).toBe(false);
     expect(method?.description).toStartWith('Shows the box again');
+  });
+
+  test('line-kbd resolves to src/kbd/kbd.ts', () => {
+    const kbd = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-kbd'),
+    );
+    expect(kbd?.path).toBe('src/kbd/kbd.ts');
+    expect(paths.has('src/kbd/kbd.ts')).toBe(true);
+  });
+
+  test('line-kbd declares the public fields keys, platform and keyLabels, no event, one default slot, three parts and twelve tokens', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-kbd');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields.sort()).toEqual(['keyLabels', 'keys', 'platform']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root', 'item', 'separator']);
+    expect(declaration?.cssProperties).toHaveLength(12);
+  });
+
+  test('line-kbd puts key-labels on the instance keyLabels and none on the static keyLabels (0015-kbd.md Props, D19)', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-kbd');
+    const own = (declaration?.members ?? []).filter(
+      (member) => member.name === 'keyLabels' && member.inheritedFrom === undefined,
+    );
+    const instance = own.filter((member) => !member.static);
+    const statics = own.filter((member) => member.static === true);
+    expect(instance).toHaveLength(1);
+    expect(instance[0]?.attribute).toBe('key-labels');
+    expect(statics).toHaveLength(1);
+    expect(statics[0]?.attribute).toBeUndefined();
   });
 });
