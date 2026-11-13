@@ -68,6 +68,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './avatar-group': ['line-avatar-group'],
   './visually-hidden': ['line-visually-hidden'],
   './portal': ['line-portal'],
+  './kbd': ['line-kbd'],
 };
 
 /**

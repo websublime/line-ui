@@ -74,6 +74,10 @@
     "./portal": {
       "types": "./dist/portal/index.d.ts",
       "import": "./dist/portal/index.js"
+    },
+    "./kbd": {
+      "types": "./dist/kbd/index.d.ts",
+      "import": "./dist/kbd/index.js"
     }
   },
   "dependencies": {
