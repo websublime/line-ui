@@ -231,10 +231,11 @@ test.describe('exits that end in one frame (P4)', () => {
       `<line-presence id="p" class="reverse" present><p>Reverse</p></line-presence>
       <line-presence id="q" class="attr" present><p>Distinct</p></line-presence>`,
     );
-    for (const id of ['p', 'q']) {
-      expect((await change(page, id, false)).hidden).toBe(true);
-      expect((await change(page, id, true)).elapsed).not.toBeNull();
-    }
+    const settled = await change(page, 'p', false);
+    expect(settled.elapsed).not.toBeNull();
+    expect(settled.elapsed).toBeLessThan(ONE_FRAME_MS);
+    expect((await change(page, 'q', false)).hidden).toBe(true);
+    for (const id of ['p', 'q']) expect((await change(page, id, true)).elapsed).not.toBeNull();
     await pause(page, 50);
     const reversed = await change(page, 'p', false);
     expect(reversed.elapsed).not.toBeNull();
