@@ -19,6 +19,7 @@ import { badgeDescriptor } from './descriptors/badge.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { buttonGroupDescriptor } from './descriptors/button-group.js';
 import { chipDescriptor } from './descriptors/chip.js';
+import { gridDescriptor } from './descriptors/grid.js';
 import { iconDescriptor } from './descriptors/icon.js';
 import { iconButtonDescriptor } from './descriptors/icon-button.js';
 import { kbdDescriptor } from './descriptors/kbd.js';
@@ -105,6 +106,7 @@ export {
   componentSchema,
   defineDescriptor,
   frontendTools,
+  gridDescriptor,
   iconButtonDescriptor,
   iconDescriptor,
   inlineCatalog,
@@ -131,6 +133,7 @@ export const descriptors: readonly LineDescriptor[] = [
   buttonDescriptor,
   buttonGroupDescriptor,
   chipDescriptor,
+  gridDescriptor,
   iconDescriptor,
   iconButtonDescriptor,
   kbdDescriptor,

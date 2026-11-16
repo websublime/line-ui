@@ -25,6 +25,7 @@ import {
   BASIC_CATALOG_ID,
   badgeDescriptor,
   chipDescriptor,
+  gridDescriptor,
   kbdDescriptor,
   LINE_CATALOG_ID,
   skeletonDescriptor,
@@ -406,6 +407,82 @@ describe('Skeleton (0016-skeleton.md Agent contract; §6.G.4)', () => {
     expect(errors).toEqual([]);
     const [only] = await skeletonsOf(surface);
     expect(only?.host.hasAttribute('aria-label')).toBe(false);
+  });
+});
+
+describe('Grid (0019-grid.md Agent contract; §6.G.4)', () => {
+  type Grid = HTMLElement & { columns?: string; gap?: string; updateComplete: Promise<unknown> };
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so Grid is
+  // defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => gridDescriptor.load());
+
+  async function gridOf(surface: HTMLElement): Promise<Grid> {
+    const host = surface.querySelector('line-grid') as Grid;
+    await host.updateComplete;
+    return host;
+  }
+
+  test('a Grid node renders <line-grid> with its props as attributes and its children in the default slot', async () => {
+    const { surface, errors } = await render(
+      [
+        {
+          id: 'root',
+          component: 'Grid',
+          columns: '3',
+          minColumnWidth: 'xxs',
+          gap: '3',
+          align: 'center',
+          justifyItems: 'end',
+          children: ['a', 'b', 'c'],
+        },
+        { id: 'a', component: 'Skeleton' },
+        { id: 'b', component: 'Skeleton', shape: 'circle' },
+        { id: 'c', component: 'Skeleton', shape: 'text' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe(
+      '<line-grid columns="3" min-column-width="xxs" gap="3" align="center" justify-items="end"><line-skeleton></line-skeleton><line-skeleton shape="circle"></line-skeleton><line-skeleton shape="text"></line-skeleton></line-grid>',
+    );
+    const host = await gridOf(surface);
+    expect(host.columns).toBe('3');
+    expect(host.gap).toBe('3');
+    const slot = host.shadowRoot?.querySelector('slot');
+    expect(slot?.hasAttribute('name')).toBe(false);
+    expect(slot?.assignedElements()).toEqual([...host.children]);
+  });
+
+  test('a node with no props renders an empty <line-grid> with no attribute and raises nothing (C8)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Grid' }], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-grid></line-grid>');
+    const host = await gridOf(surface);
+    expect(host.getAttributeNames()).toEqual([]);
+  });
+
+  test('an accessibility label and description set no aria-label or aria-description (hostNaming never)', async () => {
+    const { surface, errors } = await render(
+      [
+        {
+          id: 'root',
+          component: 'Grid',
+          columns: '2',
+          accessibility: { label: 'Products', description: 'Two products' },
+          children: ['a', 'b'],
+        },
+        { id: 'a', component: 'Skeleton' },
+        { id: 'b', component: 'Skeleton' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const host = await gridOf(surface);
+    expect(host.hasAttribute('aria-label')).toBe(false);
+    expect(host.hasAttribute('aria-description')).toBe(false);
+    expect(host.hasAttribute('role')).toBe(false);
+    expect(host.children).toHaveLength(2);
   });
 });
 
