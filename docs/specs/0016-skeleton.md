@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` — DRAFT, 2026-11-13; F1–F8 decided by Miguel, 2026-11-13; PRD §8.2 "Draft written, not yet reviewed" (`docs/PRD.md:1208`) |
+| Status | `approved` (Miguel, 2026-11-16) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C15 row, `docs/specs/01-spec-core-primitives.md:1171`; PRD §4.1, `docs/PRD.md:261`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-skeleton` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C15` (`docs/plans/01-tasks-core-primitives.md:61`) |
 | Governing sections | Phase 1 spec §4.2 (`:254`, `:303`), §6.C.0 (`:908-931`), §6.C.4 (C15 row `:1171`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason table `:1332-1338`), §6.G.2, §6.G.3 (`:1405`, `:1422`, `:1434-1435`), §6.G.4 (`aria-busy` `:1475`, host naming `:1512-1518`), §6.G.5 (`:1597`), §7.4 (`:2111`), §7.5, §7.6, §7.8, §10 SD12, SD34 (`:2381`), SD38 (`:2385`), SD39 (`:2386`), SD47 (`:2394`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-013, AM-058, AM-086, AM-098 (`:2559`), AM-099 (`:2560`); ARCH (v0.8.27) §3, §4, §5 (`:303-327`), §8 (`:410`), §12, §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3, §17.4 (Theme row `:1639`, Accessibility row `:1643`); PRD (v0.8.33) §4.1, §5.2 (`:534-543`), §8 (`:1194-1217`); MANIFESTO Laws 1, 3, 4, 5, 9, Out of Scope (`docs/MANIFESTO.md:66-67`); R8 `docs/research/01-research-accessibility.md:55`, `:78`, `:241`, `:284-287` |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F8 on 2026-11-13, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D21 stand as drafted, with D21 refined by his colour decision: the consumer chooses the fill and the wave band through two public tokens, and D20's forced-colors fallback holds whatever they are set to (Miguel, 2026-11-13). Review gate round 1 then edited D6, D8, D15, D17, D18 and D21 and the wording of F3's resolution (Review gate round 1, after the option tables). The spec stays `proposed` until its review gate passes, and no code is written before it is approved (PRD §8.3, `docs/PRD.md:1217`; Phase 1 spec §6.C.6, `:1229`).
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F8 on 2026-11-13, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D21 stand as drafted, with D21 refined by his colour decision: the consumer chooses the fill and the wave band through two public tokens, and D20's forced-colors fallback holds whatever they are set to (Miguel, 2026-11-13). Review gate round 1 then edited D6, D8, D15, D17, D18 and D21 and the wording of F3's resolution (Review gate round 1, after the option tables). The spec passed its review gate on 2026-11-16, in two rounds plus a re-check of `c377375` that Miguel asked for, which passed, and Miguel approved it on 2026-11-16 (PRD §8.3, `docs/PRD.md:1217`; Phase 1 spec §6.C.6, `:1229`).
 
 ---
 
@@ -895,3 +895,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
+| AM-001 | 2026-11-16 | ledger 01-C15 (factual correction, approval) | The Status field (`:5`) reads `` `approved` (Miguel, 2026-11-16) `` and the header paragraph (`:15`) says that the spec passed its review gate, two rounds plus a re-check of `c377375`, and that Miguel approved it on 2026-11-16, in place of saying that it stays `proposed` | Miguel approved the spec after the review gate re-check passed, and the header still described the draft state | `docs/context/01-c15.md`, "Review gate (docs), round 2, 2026-11-16": "Miguel approved `0016-skeleton.md` on 2026-11-16." |
