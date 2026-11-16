@@ -42,6 +42,7 @@ const PACKAGE_DIR = resolve(import.meta.dir, '..');
 let outDir = '';
 let paths = new Set<string>();
 let modules: ManifestModule[] = [];
+let packedDependencies: Record<string, string> = {};
 
 beforeAll(async () => {
   outDir = mkdtempSync(join(tmpdir(), 'line-components-pack-'));
@@ -57,6 +58,10 @@ beforeAll(async () => {
   const manifest = files.get('package/custom-elements.json');
   if (!manifest) throw new Error('the tarball holds no custom-elements.json');
   modules = (JSON.parse(await manifest.text()) as { modules: ManifestModule[] }).modules;
+  const packedPackage = files.get('package/package.json');
+  if (!packedPackage) throw new Error('the tarball holds no package.json');
+  packedDependencies =
+    (JSON.parse(await packedPackage.text()) as { dependencies?: Record<string, string> }).dependencies ?? {};
 });
 
 afterAll(() => {
@@ -362,5 +367,43 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.slots ?? []).toEqual([]);
     expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root', 'item']);
     expect(declaration?.cssProperties).toHaveLength(13);
+  });
+
+  test('line-presence resolves to src/presence/presence.ts', () => {
+    const presence = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-presence'),
+    );
+    expect(presence?.path).toBe('src/presence/presence.ts');
+    expect(paths.has('src/presence/presence.ts')).toBe(true);
+  });
+
+  test('line-presence declares the public fields present and skipAnimationOnMount, two events, one default slot, the root part and no token (0017-presence.md Tests, Packaging row)', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-presence');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields.sort()).toEqual(['present', 'skipAnimationOnMount']);
+    expect(declaration?.events?.map((event) => event.name).sort()).toEqual([
+      'line-enter-complete',
+      'line-exit-complete',
+    ]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root']);
+    expect(declaration?.cssProperties ?? []).toEqual([]);
+  });
+});
+
+describe('the @zag-js/presence dependency (0017-presence.md Tests, Packaging row; Phase 1 spec §6.C.7)', () => {
+  test('the packed package.json declares @zag-js/presence at ^1.47.0', () => {
+    expect(packedDependencies['@zag-js/presence']).toBe('^1.47.0');
+  });
+
+  test('bun.lock resolves every @zag-js package to 1.47.0', async () => {
+    const lock = await Bun.file(resolve(PACKAGE_DIR, '../../bun.lock')).text();
+    const versions = new Set([...lock.matchAll(/"@zag-js\/[a-z-]+@([^"]+)"/g)].map((match) => match[1]));
+    expect([...versions]).toEqual(['1.47.0']);
   });
 });

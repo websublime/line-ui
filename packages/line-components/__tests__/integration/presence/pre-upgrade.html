@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>line-presence pre-upgrade fixture (spec 0017-presence.md)</title>
+    <style>
+      /* The documented pre-upgrade rule (D10). */
+      line-presence:not(:defined):not([present]) {
+        display: none;
+      }
+    </style>
+    <script type="module">
+      // The component module loads only when the test calls this, so the hosts can be read undefined first.
+      window.lineLoad = () => import('./pre-upgrade.ts');
+    </script>
+  </head>
+  <body>
+    <main>
+      <line-presence id="closed"><p id="closed-text">Closed</p></line-presence>
+      <line-presence id="open" present><p id="open-text">Open</p></line-presence>
+    </main>
+  </body>
+</html>

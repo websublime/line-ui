@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>line-presence fixture (spec 0017-presence.md)</title>
+    <style>
+      /* Page keyframes, 300 ms each, with distinct enter and exit names (spec 0017-presence.md P2, P4). */
+      @keyframes t-in {
+        from {
+          opacity: 0;
+        }
+      }
+      @keyframes t-out {
+        to {
+          opacity: 0;
+        }
+      }
+      @keyframes t-fade {
+        from {
+          opacity: 0;
+        }
+      }
+      @keyframes t-spin {
+        to {
+          rotate: 1turn;
+        }
+      }
+
+      /* The host attribute form. */
+      line-presence.attr[data-open]::part(root) {
+        animation: t-in 300ms;
+      }
+      line-presence.attr:not([data-open])::part(root) {
+        animation: t-out 300ms;
+      }
+
+      /* The custom state form. */
+      line-presence.state:state(open)::part(root) {
+        animation: t-in 300ms;
+      }
+      line-presence.state:not(:state(open))::part(root) {
+        animation: t-out 300ms;
+      }
+
+      /* Descendants that animate during the exit, one with the exit's own keyframe name. */
+      .spin {
+        display: inline-block;
+        animation: t-spin 1s linear infinite;
+      }
+      .short {
+        display: inline-block;
+        animation: t-out 50ms;
+      }
+
+      /* Exits that end in one frame (P4). */
+      line-presence.none:not([data-open])::part(root) {
+        animation: none;
+      }
+      line-presence.zero:not([data-open])::part(root) {
+        animation: t-out 0s;
+      }
+      line-presence.transition::part(root) {
+        transition: opacity 300ms;
+      }
+      line-presence.transition:not([data-open])::part(root) {
+        opacity: 0;
+      }
+
+      /* The anti-pattern: one keyframe name for both, played in reverse to close (P4). */
+      line-presence.reverse[data-open]::part(root) {
+        animation: t-fade 300ms;
+      }
+      line-presence.reverse:not([data-open])::part(root) {
+        animation: t-fade 300ms reverse;
+      }
+
+      /* The documented reduced-motion gate (F6 (a)). */
+      @media (prefers-reduced-motion: no-preference) {
+        line-presence.gated[data-open]::part(root) {
+          animation: t-in 300ms;
+        }
+        line-presence.gated:not([data-open])::part(root) {
+          animation: t-out 300ms;
+        }
+      }
+
+      /* A page rule that tries to show a hidden root (P3). */
+      line-presence.force::part(root) {
+        display: block;
+      }
+    </style>
+    <script type="module" src="./fixture.ts"></script>
+  </head>
+  <body>
+    <main></main>
+  </body>
+</html>

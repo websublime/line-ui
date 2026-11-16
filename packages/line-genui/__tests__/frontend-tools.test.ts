@@ -323,6 +323,12 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
     }
   });
 
+  test('no provider emits a Presence tool (0017-presence.md Agent contract)', () => {
+    for (const provider of TOOL_PROVIDERS) {
+      expect(frontendTools(descriptors, provider).map((each) => each.name)).not.toContain('Presence');
+    }
+  });
+
   test('a prop with no literal form throws instead of leaking into the tool', () => {
     const plain = defineDescriptor(fixture({ label: z.string().describe('A plain string.') }));
     expect(() => frontendTools([plain], 'openai')).toThrow('ToolFixture.label');

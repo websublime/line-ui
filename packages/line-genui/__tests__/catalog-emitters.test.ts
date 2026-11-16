@@ -154,6 +154,12 @@ describe('the line catalog document (§6.G.2; §10 SD42)', () => {
     expect(JSON.parse(readFileSync(file, 'utf8'))).toEqual(document);
   });
 
+  test('the built catalog.json holds no agentExposed: false descriptor: Portal, Presence and VisuallyHidden (0017-presence.md Agent contract; Phase 1 spec §6.C.4 C16 notes)', () => {
+    const file = Bun.resolveSync('@websublime/line-genui/catalog.json', import.meta.dir);
+    const built = JSON.parse(readFileSync(file, 'utf8')) as { components: Json };
+    for (const name of ['Portal', 'Presence', 'VisuallyHidden']) expect(built.components).not.toHaveProperty(name);
+  });
+
   test('carries the line id, $defs/anyFunction false and an open $defs/theme', () => {
     expect(document.catalogId).toBe('https://line-ui.websublime.com/a2ui/catalogs/line/v1/catalog.json');
     const defs = document.$defs as Json;

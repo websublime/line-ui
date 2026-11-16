@@ -70,6 +70,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './portal': ['line-portal'],
   './kbd': ['line-kbd'],
   './skeleton': ['line-skeleton'],
+  './presence': ['line-presence'],
 };
 
 /**
