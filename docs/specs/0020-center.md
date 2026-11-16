@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` — DRAFT, not APPROVED |
+| Status | `proposed` (forks resolved; not APPROVED) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C18 row, `docs/specs/01-spec-core-primitives.md:1174`; PRD §4.1, `docs/PRD.md:265`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-center` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C18` (`docs/plans/01-tasks-core-primitives.md:64`) |
 | Governing sections | Phase 1 spec §4.2 (`:257`, `:306`), §6.C.0 (`:908-931`), §6.C.4 (C18 row `:1174`, notes `:1147-1153`, `:1178-1183`), §6.C.6 (`:1218-1240`), §6.G.1 (`:1323`, `:1326`), §6.G.2 (`:1371`, `:1373`), §6.G.3 (`:1405`, `:1423`, `:1434`, `:1438`), §6.G.4 (host naming `:1512-1518`), §6.G.5 (`:1597`), §7.3, §7.4 (`:2111`), §7.5 (`:2127`), §7.6 (`:2144`), §7.8 (`:2175`), §10 SD4 (`:2351`), SD12 (`:2359`), SD34 (`:2381`), SD38 (`:2385`), SD47 (`:2394`), SD59 (`:2406`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-069, AM-086, AM-098 (`:2559`), AM-099 (`:2560`), AM-101 (`:2562`); ARCH §3, §4, §5, §8 (`:410`), §12 (`:548`), §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3 (`:1614`), §17.4 (Theme row `:1639`); PRD §4.1 (`:265`), §5.2 (`:534-543`), §8 (`:1194-1217`); MANIFESTO Laws 1, 2, 3, 4, 5, 9; R8 `docs/research/01-research-accessibility.md:55`, `:82` |
 
-This is the draft for row 01-C18. Forks F1–F10 wait for Miguel, and each names the option the draft recommends. Defaults D1–D20 are the drafter's picks, which Miguel may change. Part A and Part B describe the recommended option of every fork. F7 (a), `hostNaming: never`, would add Center to the Phase 1 spec lists of components that take no host name, so choosing it needs a Phase 1 spec amendment AM-102 with trigger `decision`, as AM-098 (Kbd), AM-099 (Skeleton) and AM-101 (Grid) did; this draft does not write that amendment. Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Center only as an example of the Static tier (§8, `:410`); it governs Center through that tier, the bundle rule (§12), the "all Static" reset row (§14.7, `:1163`) and the agent rules (§17).
+The spec stays `proposed` until its review gate passes and Miguel approves it, before any code (PRD §8.3, `docs/PRD.md:1217`). Miguel decided Open Questions F1–F10 on 2026-11-16, each on the option the draft recommended, and Part A and Part B state those decisions. The drafter defaults D1–D20 stand as drafted (Miguel, 2026-11-16). F7 (a), `hostNaming: never`, adds Center to the Phase 1 spec lists of components that take no host name, which needs a Phase 1 spec amendment AM-102 with trigger `decision`, as AM-098 (Kbd), AM-099 (Skeleton) and AM-101 (Grid) did. Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Center only as an example of the Static tier (§8, `:410`); it governs Center through that tier, the bundle rule (§12), the "all Static" reset row (§14.7, `:1163`) and the agent rules (§17).
 
 ---
 
@@ -623,18 +623,18 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | Which API picks the axes, and under which names? | Miguel | open; the draft recommends (a), `axis="both \| horizontal \| vertical"`, default `both` |
-| F2 | Which CSS technique centres the content? | Miguel | open; the draft recommends (a), a column flex container with `justify-content` and `align-items` |
-| F3 | Does Center offer an inline display? | Miguel | open; the draft recommends (a), none, with the `:not([hidden])` recipe in the docs |
-| F4 | Does Center centre its content inside its box, or centre a capped box inside its parent? | Miguel | open; the draft recommends (a), content centring only |
-| F5 | How do several children lay out? | Miguel | open; the draft recommends (a), one centred column in source order, with no gap |
-| F6 | Which props reach agents, in which catalog, and through which slot kind? | Miguel | open; the draft recommends (a), `axis` and `child` (`ComponentId`), in the `line` catalog only |
-| F7 | Does the surface name a Center host, and does the Center tool carry accessibility parameters? | Miguel | open; the draft recommends (a), `hostNaming: never` and no accessibility parameters, which needs Phase 1 spec AM-102 with trigger `decision` |
-| F8 | What happens when the content is larger than the box? | Miguel | open; the draft recommends (a), `safe center` |
-| F9 | Where does the height for vertical centring come from? | Miguel | open; the draft recommends (a), from the consumer or a stretching parent |
-| F10 | Does Center centre lines of text? | Miguel | open; the draft recommends (a), no |
+| F1 | Which API picks the axes, and under which names? | Miguel | resolved: option (a), `axis="both \| horizontal \| vertical"`, default `both` (Miguel, 2026-11-16) |
+| F2 | Which CSS technique centres the content? | Miguel | resolved: option (a), a column flex container with `justify-content` and `align-items` (Miguel, 2026-11-16) |
+| F3 | Does Center offer an inline display? | Miguel | resolved: option (a), none, with the `:not([hidden])` recipe in the docs (Miguel, 2026-11-16) |
+| F4 | Does Center centre its content inside its box, or centre a capped box inside its parent? | Miguel | resolved: option (a), content centring only (Miguel, 2026-11-16) |
+| F5 | How do several children lay out? | Miguel | resolved: option (a), one centred column in source order, with no gap (Miguel, 2026-11-16) |
+| F6 | Which props reach agents, in which catalog, and through which slot kind? | Miguel | resolved: option (a), `axis` and `child` (`ComponentId`), in the `line` catalog only (Miguel, 2026-11-16) |
+| F7 | Does the surface name a Center host, and does the Center tool carry accessibility parameters? | Miguel | resolved: option (a), `hostNaming: never` and no accessibility parameters, which needs Phase 1 spec AM-102 with trigger `decision` (Miguel, 2026-11-16) |
+| F8 | What happens when the content is larger than the box? | Miguel | resolved: option (a), `safe center` (Miguel, 2026-11-16) |
+| F9 | Where does the height for vertical centring come from? | Miguel | resolved: option (a), from the consumer or a stretching parent (Miguel, 2026-11-16) |
+| F10 | Does Center centre lines of text? | Miguel | resolved: option (a), no (Miguel, 2026-11-16) |
 
-**Drafter defaults** (Miguel may change any of them)
+**Drafter defaults** (Miguel left D1–D20 as drafted, 2026-11-16)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -659,7 +659,11 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 | D19 | The Browser tier proves the tree with `ariaSnapshot()` in three engines and a Chromium CDP assertion, and runs no `INTERNALS` read-back | Phase 1 spec `:1180` applies to internals roles, and Center sets none (D5); probe P1; `0019-grid.md` D20 |
 | D20 | Prose and docs spell the verb "centre", as `0018-stack.md:36` and `0019-grid.md:305` do; the tag, class, catalog name and file names keep `center`, from the PRD row and the Phase 1 spec (`docs/PRD.md:265`; Phase 1 spec `:306`, `:1174`) | consistency with the approved specs; the tag and subpath are fixed by the Phase 1 spec |
 
+Miguel decided F1–F10 on 2026-11-16, each on the option the draft recommended, and left D1–D20 as drafted. Each section below states the decision, and its option table stays as the record of what he weighed.
+
 ### F1 — Axis API
+
+**Decision.** Miguel chose option (a) on 2026-11-16, so `axis` takes `both`, `horizontal` or `vertical`, with `both` as the default.
 
 **Evidence.** PRD §4.1 asks for "horizontal, vertical, or both axes" (`docs/PRD.md:265`). Stack names its axis `orientation` with `horizontal` and `vertical`, and A2UI `List.direction` uses the same two words (`0018-stack.md:116`, AM-001). Chakra UI's `AbsoluteCenter` takes `axis` with `horizontal`, `vertical` and `both`, default `both` (P11). In probe P6 the flex rules centre on logical axes, so in `writing-mode: vertical-rl` `horizontal` centres top to bottom; Stack's `orientation` turns the same way. `LineElement` owns `direction`, so that name is taken (`0018-stack.md` AM-001).
 
@@ -671,6 +675,8 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 | (d) Stack-style alignment props | `justify` and `align`, each `start \| center \| end`, default `center` | centres both axes | two enums | Center becomes Stack with other defaults; `start` and `end` duplicate Stack's job |
 
 ### F2 — CSS technique
+
+**Decision.** Miguel chose option (a) on 2026-11-16, so the host is a column flex container that centres through `justify-content` and `align-items`.
 
 **Evidence.** In probe P2 one child lands at 150,130 under a column flex container (a), a row flex container (b), `place-items: center` on a grid (c) and `place-content: center` on a grid (d), in three engines. They part ways with several children and text. (a) keeps three children together and centres each; (b) puts them side by side; (c) spreads them over the height (y 35, 135, 235); (d) leaves each at the start of a track as wide as the widest. `margin-inline: auto` on slotted children (e) centres only block children with a width, on one axis, and leaves text nodes, inline spans and images at the start. Stack's host is a flex container (`0018-stack.md:73`); Chakra and Mantine use a row flex container (P11).
 
@@ -684,6 +690,8 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 
 ### F3 — Inline display
 
+**Decision.** Miguel chose option (a) on 2026-11-16, so Center has no inline display, and the docs show the `:not([hidden])` form of a consumer `display` rule.
+
 **Evidence.** Chakra UI and Mantine ship an `inline` option that sets `display: inline-flex` (P11). In probe P5 an `inline` attribute centres a letter in a 32 × 32 inline box inside a line of text, and keeps `hidden` working when the `[hidden]` rule comes last. A consumer `display: inline-flex` rule on the host also works, but it shows a hidden Center unless it excludes `[hidden]`. Stack and Grid have no inline display (`0018-stack.md` Props; `0019-grid.md` F9). An A2UI Text node has no child prop, so an agent cannot place a Center inside a line of text [INFERENCE: from the basic `Text` schema, which declares no `child` or `children`].
 
 | Option | What it decides | Consequence |
@@ -693,6 +701,8 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 | (c) An `inline` boolean for agents too | as (b), plus `inline` in the descriptor | Agents get a prop they cannot use in A2UI today |
 
 ### F4 — Content centring or intrinsic centring
+
+**Decision.** Miguel chose option (a) on 2026-11-16, so Center centres its content inside its own box and does not cap its width.
 
 **Evidence.** PRD §4.1 asks for centring on "horizontal, vertical, or both axes" (`docs/PRD.md:265`). Intrinsic centring, a box with a `max-width` and `margin-inline: auto`, centres on the horizontal axis only. Radix Themes' `Container` does that, with a `size` scale for the width (P11). In probe P2 (e) margins leave text, inline content and images at the start. `line-tokens` holds the `--line-size-*` scale a width prop could read (`0019-grid.md:559`).
 
@@ -704,6 +714,8 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 
 ### F5 — Several children
 
+**Decision.** Miguel chose option (a) on 2026-11-16, so several children form one centred column in source order with no gap, and spacing comes from a Stack inside the Center.
+
 **Evidence.** In probe P2 three children under (a) form one column whose group and members are centred, with no gap. (b) puts them side by side. (c) spreads them over the height. `<line-stack>` already spaces several children with `gap` and centres them with `justify` and `align` (`0018-stack.md` Props). A2UI `Card` takes one child and tells agents to wrap several in a layout component (P10).
 
 | Option | What it decides | Consequence |
@@ -714,6 +726,8 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 
 ### F6 — Agent props, catalog and slot kind
 
+**Decision.** Miguel chose option (a) on 2026-11-16, so the descriptor exposes `axis` and `child` (`ComponentId`), in the `line` catalog only.
+
 **Evidence.** In probe P9 `axis` and `child` (`ComponentId`) reach the `line` catalog, the inline projection validates, and the three providers' tools carry `axis` alone. The surface renders a Center node with one child, and a Stack child carries several. A `child` list fails validation, and a `ChildList` stub renders several children with no error. Neither A2UI basic catalog has a centring type; basic `Row` and `Column` centre through `justify` and `align` (P10). Grid and Stack take `children` (`0019-grid.md` F6; `0018-stack.md` Descriptor fields), Button and A2UI `Card` take `child` (`packages/line-genui/src/catalog/descriptors/button.ts:29`, `:32`; P10).
 
 | Option | What it decides | Consequence |
@@ -723,6 +737,8 @@ A `line` catalog node the surface renders as the first example, with a Text chil
 | (c) `child` only | no `axis` for agents; every agent Center centres both axes | A smaller tool; agents cannot centre on one axis |
 
 ### F7 — Host naming on the agent path
+
+**Decision.** Miguel chose option (a) on 2026-11-16, so the descriptor takes `hostNaming: never`, and the Center tool carries no accessibility parameters.
 
 **Evidence.** The host is a `generic` with no role (R8 `:82`; P1). A host `aria-label` names that `generic` in the Chromium tree, which ARIA 1.2 prohibits, and axe does not report it (P1 C, D, E). The descriptor kinds are `always`, `never`, `listRole` and `unlessTrue` (`packages/line-genui/src/catalog/descriptor.ts:160-174`). Kbd, Skeleton and Grid took `never` through AM-098, AM-099 and AM-101 (`:2559`, `:2560`, `:2562`). P9 rendered a `never` Center with no name and a tool with no accessibility parameters.
 
@@ -736,6 +752,8 @@ Choosing (a) changes the APPROVED lists in Phase 1 spec §6.G.3 (`:1405`, `:1434
 
 ### F8 — Overflow
 
+**Decision.** Miguel chose option (a) on 2026-11-16, so the host aligns with `safe center`, and content larger than the box starts at its start edge.
+
 **Evidence.** In probe P3 a 600 × 400 child in a 400 × 300 Center with plain `center` starts at −100,−50, and no scroll reaches the cut-off part, in three engines. `safe center` starts it at 0,0 and the scroll area covers all of it, also under `dir="rtl"`. All three engines support `safe` on `justify-content` and `align-items` and compute it back (P3). Chakra, Mantine and Web Awesome's `wa-frame` use plain `center`; `wa-frame` also sets `overflow: hidden` (P11). WCAG 1.4.10 asks that content stay available without loss at 320 CSS px.
 
 | Option | What it decides | Consequence |
@@ -744,6 +762,8 @@ Choosing (a) changes the APPROVED lists in Phase 1 spec §6.G.3 (`:1405`, `:1434
 | (b) `center` | content stays centred and overflows on both sides | Symmetric overflow, as Chakra and Mantine draw it. The start side is cut off where no scroll reaches (P3) |
 
 ### F9 — Height for vertical centring
+
+**Decision.** Miguel chose option (a) on 2026-11-16, so Center sets no height, and the consumer or a stretching parent gives it one.
 
 **Evidence.** In probe P4 a Center in a block parent is as tall as its content, so vertical centring does nothing. A stretching parent, such as a grid cell or a flex row, gives it a height. `min-block-size: 100%` in the component fills a parent with a set height, but it overflows that parent by any sibling's height (a 50 px header overflows a 300 px parent to 350) and does nothing in a parent without a set height. `block-size: 100%` with padding overflows by the padding. A consumer `min-block-size` on `line-center` works (P4).
 
@@ -754,6 +774,8 @@ Choosing (a) changes the APPROVED lists in Phase 1 spec §6.G.3 (`:1405`, `:1434
 | (c) A `fill` boolean | `fill` sets `min-block-size: 100%`, off by default | Opt-in, so no surprise by default; one more attribute whose effect depends on the parent, and an agent prop whose result the agent cannot see |
 
 ### F10 — Lines of text
+
+**Decision.** Miguel chose option (a) on 2026-11-16, so Center sets no `text-align`.
 
 **Evidence.** In probe P2 a long paragraph fills the host's width, so centring has nothing to move, and its lines keep the inherited `text-align` [INFERENCE: line positions were not measured]. A short text node is centred as a whole (P2). Chakra and Mantine set no `text-align` on `Center` (P11).
 
