@@ -10,9 +10,9 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C15 row) |
 | PRD catalogue entry | PRD §4.1, `Skeleton` row (`docs/PRD.md:261`) |
 | Ledger row | `01-C15` (`docs/plans/01-tasks-core-primitives.md:61`) |
-| Governing sections | Phase 1 spec §4.2 (`:254`, `:303`), §6.C.0 (`:908-931`), §6.C.4 (C15 row `:1171`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason table `:1332-1338`), §6.G.2, §6.G.3 (`:1405`, `:1422`, `:1434-1435`), §6.G.4 (`aria-busy` `:1475`, host naming `:1512-1518`), §6.G.5 (`:1597`), §7.4 (`:2111`), §7.5, §7.6, §7.8, §10 SD12, SD34 (`:2381`), SD38 (`:2385`), SD39 (`:2386`), SD47 (`:2394`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-013, AM-058, AM-086, AM-098 (`:2559`); ARCH (v0.8.27) §3, §4, §5 (`:303-327`), §8 (`:410`), §12, §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3, §17.4 (Theme row `:1639`, Accessibility row `:1643`); PRD (v0.8.33) §4.1, §5.2 (`:534-543`), §8 (`:1194-1217`); MANIFESTO Laws 1, 3, 4, 5, 9, Out of Scope (`docs/MANIFESTO.md:66-67`); R8 `docs/research/01-research-accessibility.md:55`, `:78`, `:241`, `:284-287` |
+| Governing sections | Phase 1 spec §4.2 (`:254`, `:303`), §6.C.0 (`:908-931`), §6.C.4 (C15 row `:1171`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1299`, reason table `:1332-1338`), §6.G.2, §6.G.3 (`:1405`, `:1422`, `:1434-1435`), §6.G.4 (`aria-busy` `:1475`, host naming `:1512-1518`), §6.G.5 (`:1597`), §7.4 (`:2111`), §7.5, §7.6, §7.8, §10 SD12, SD34 (`:2381`), SD38 (`:2385`), SD39 (`:2386`), SD47 (`:2394`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-013, AM-058, AM-086, AM-098 (`:2559`), AM-099 (`:2560`); ARCH (v0.8.27) §3, §4, §5 (`:303-327`), §8 (`:410`), §12, §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3, §17.4 (Theme row `:1639`, Accessibility row `:1643`); PRD (v0.8.33) §4.1, §5.2 (`:534-543`), §8 (`:1194-1217`); MANIFESTO Laws 1, 3, 4, 5, 9, Out of Scope (`docs/MANIFESTO.md:66-67`); R8 `docs/research/01-research-accessibility.md:55`, `:78`, `:241`, `:284-287` |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F8 on 2026-11-13, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D21 stand as drafted, with D21 refined by his colour decision: the consumer chooses the fill and the wave band through two public tokens, and D20's forced-colors fallback holds whatever they are set to (Miguel, 2026-11-13). The spec stays `proposed` until its review gate passes, and no code is written before it is approved (PRD §8.3, `docs/PRD.md:1217`; Phase 1 spec §6.C.6, `:1229`).
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F8 on 2026-11-13, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D21 stand as drafted, with D21 refined by his colour decision: the consumer chooses the fill and the wave band through two public tokens, and D20's forced-colors fallback holds whatever they are set to (Miguel, 2026-11-13). Review gate round 1 then edited D6, D8, D15, D17, D18 and D21 and the wording of F3's resolution (Review gate round 1, after the option tables). The spec stays `proposed` until its review gate passes, and no code is written before it is approved (PRD §8.3, `docs/PRD.md:1217`; Phase 1 spec §6.C.6, `:1229`).
 
 ---
 
@@ -103,6 +103,25 @@ Each case held one `line-probe-skeleton`; the probe paused each animation and re
 - The component's own keyframes run in all three engines, and a page keyframe with the same name does not replace them (A1, A3, A9).
 - A consumer's `::part(item)` rule that names a keyframe of the page runs in all three engines (A7). One that names the component's keyframe resolves differently by engine (A8), so the component's keyframe names are not a styling API (D18).
 - The wave runs from inline-start to inline-end and reverses under `dir="rtl"` (A5; D17).
+
+**Addendum, 2026-11-16 (D17).** A third run (Playwright 1.64.0 with chromium 156.0.8078.4, firefox 157.0 and webkit 27.2; a plain `HTMLElement` host with one shadow `item` in an adopted sheet, 200 px wide, the fill `rgb(255, 0, 0)` and the band `rgb(0, 0, 255)`, a 300 ms `linear` wave run twice; two scripts run with `node`, one call each, in `/tmp`, outside the repository, and deleted) asked what a `wave` item shows once its iterations end. Each case read the computed `background-image` and `background-position` of `item` and sampled five pixels across an element screenshot, once with the animation paused at 75 ms and once 1200 ms after load, past `endTime`. Pixel values are chromium's; firefox and webkit differed by at most 1 per channel.
+
+| Case | Paused at 75 ms | After `endTime` | `reducedMotion: 'reduce'`, the keyframes `none` |
+|---|---|---|---|
+| W0 the draft: the gradient on `item`, `background-size: 200% 100%`, keyframes on `background-position` | the band | **the gradient at `background-position: 0% 0%`, half of it: pixels from `rgb(249, 0, 5)` to `rgb(4, 0, 250)`** | the fill, only because the draft also set the image to `none` |
+| W1 the gradient only inside the wave keyframes, as `background-image` beside `background-position` in `from` and `to` | the band, the same pixels as W0 | `background-image: none`; every pixel the fill | `background-image: none`; every pixel the fill |
+| W2 a resting position: `background-size: 300% 100%`, the band in the middle third, keyframes from `100% 0` to `0% 0` | the band, narrower | every pixel the fill, but `background-image` still computes the gradient | the same |
+| W3 W0 with `animation-fill-mode: forwards` | the band | the animation holds at `-100% 0`, the other half: pixels from `rgb(5, 0, 249)` to `rgb(250, 0, 4)` | — |
+| W1 under `dir="rtl"`, `animation-direction: reverse` | the band, at `-50% 0px` | the fill | the fill |
+| W1 in Part B's token form: `--line-skeleton-wave-image` declared on `:host` and read by the keyframes; a page rule on the host sets both colour tokens | the band in the consumer colours | `background-image: none`; the consumer fill | the consumer fill |
+| a colour token set on an ancestor of the host, which declares its default on `:host` | the host's default fill | the same | the same |
+| `animation="none"` and a page rule `::part(item) { animation: page-pulse 300ms linear 2 }` | `page-pulse` runs | the fill | `page-pulse` runs |
+| `animation="none"` and a page rule `::part(item)` with `page-wave` on `background-position` and its own gradient and `background-size` | the band | the rule's gradient at `0% 0%`, half of it | `page-wave` runs |
+| Chromium, `emulateMedia({ forcedColors: 'active' })`, every case | `GrayText` and `background-image: none`, also while W1's keyframes run | the same | — |
+
+- Only W1 leaves `background-image: none` and the plain fill after `endTime` and under reduced motion in all three engines, and it keeps P2 A3's band and travel. Part B adopts it in the token form (D17).
+- A value on an ancestor does not reach a host that declares the token's default on `:host` (D21).
+- A consumer's `::part(item)` rule brings motion back under reduced motion, and a wave there needs its own gradient (F3; D18).
 
 ### P3 — Keyframes of `line-tokens` from inside the shadow root
 
@@ -236,10 +255,11 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
 
 ### What the probes settle
 
-- An empty placeholder is invisible to assistive technology in all three engines without any attribute, and `aria-busy` reaches the Chromium tree only as an attribute, not through internals (P1; F1).
+- An empty placeholder adds no node to the Chromium accessibility tree and nothing to Playwright's `ariaSnapshot()` in three engines, without any attribute, and `aria-busy` reaches the Chromium tree only as an attribute, not through internals (P1; F1).
 - The component must carry its own keyframes: `line-tokens` keyframes do not resolve from its shadow root in Chromium (P2, P3; F2).
 - A keyframe name in a token, set by `shape`-like attribute defaults, works in all three engines and leaves the consumer in control (P3; D6).
-- A normal-importance reduced-motion rule stops the motion and lets a consumer opt back in; `!important` would not (P4; F3).
+- A normal-importance reduced-motion rule stops the motion and lets a consumer's `::part(item)` rule opt back in; `!important` would not (P4; F3).
+- A wave whose band lives only in its keyframes rests on the plain fill after its iterations and under reduced motion (P2 addendum; D17).
 - A finite iteration count stops the motion on its own (P4; F4).
 - `text` lines match real line boxes through `lh` (P7; F5).
 - A wrapper hides content correctly only through `visibility: hidden`, and shows its content before the upgrade (P5, P6; F6).
@@ -331,7 +351,12 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
   --line-skeleton-gap: var(--line-size-2);
   --line-skeleton-last-line-size: 60%;
   --line-skeleton-keyframes: line-skeleton-pulse;
-  --line-skeleton-wave-image: none;
+  --line-skeleton-wave-image: linear-gradient(
+    90deg,
+    var(--line-skeleton-bg) 0%,
+    var(--line-skeleton-wave-color) 50%,
+    var(--line-skeleton-bg) 100%
+  );
   --line-skeleton-duration: var(--line-motion-7);
   --line-skeleton-easing: var(--line-easing-in-out);
   --line-skeleton-iteration-count: 2;
@@ -347,6 +372,7 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
   --line-skeleton-radius: 50%;
   --line-skeleton-block-size: var(--line-size-8);
   --line-skeleton-inline-size: var(--line-skeleton-block-size);
+  --line-skeleton-last-line-size: var(--line-skeleton-block-size);
 }
 
 :host([shape='text']) {
@@ -358,12 +384,6 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
 
 :host([animation='wave']) {
   --line-skeleton-keyframes: line-skeleton-wave;
-  --line-skeleton-wave-image: linear-gradient(
-    90deg,
-    var(--line-skeleton-bg) 0%,
-    var(--line-skeleton-wave-color) 50%,
-    var(--line-skeleton-bg) 100%
-  );
   --line-skeleton-easing: var(--line-easing-linear);
 }
 
@@ -375,7 +395,6 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
   :host,
   :host([animation]) {
     --line-skeleton-keyframes: none;
-    --line-skeleton-wave-image: none;
   }
 }
 
@@ -391,7 +410,6 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
   margin-block: var(--line-skeleton-line-margin);
   border-radius: var(--line-skeleton-radius);
   background-color: var(--line-skeleton-bg);
-  background-image: var(--line-skeleton-wave-image);
   background-size: 200% 100%;
   animation-name: var(--line-skeleton-keyframes);
   animation-duration: var(--line-skeleton-duration);
@@ -422,9 +440,11 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
 
 @keyframes line-skeleton-wave {
   from {
+    background-image: var(--line-skeleton-wave-image);
     background-position: 100% 0;
   }
   to {
+    background-image: var(--line-skeleton-wave-image);
     background-position: -100% 0;
   }
 }
@@ -432,8 +452,10 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
 
 - The keyframes live in this stylesheet, because Chromium does not resolve a document keyframe from a shadow root (P3; F2 (a)).
 - `animation` and `shape` change only token defaults; the keyframe name travels in `--line-skeleton-keyframes`, which resolves against these keyframes in all three engines (P3; D6).
-- The reduced-motion block uses `:host([animation])` beside `:host` so it outranks `:host([animation='wave'])` by order at equal specificity, and it is not `!important`, so a consumer's token or `::part` rule can opt back in (P4; F3 (a)).
-- The forced-colors block sets the colours on `item` itself rather than the tokens on `:host`, and comes after the `item` rule, so it wins by order at equal specificity. A consumer token on the host beats a `:host` rule, so a token-based fallback would bring the consumer colour back, which forced colors turn into Canvas; on `item` the fallback holds whatever the tokens are set to (P4 addendum; D20).
+- The reduced-motion block uses `:host([animation])` beside `:host` so it outranks `:host([animation='wave'])` by order at equal specificity, and it is not `!important`, so a consumer's page rule `line-skeleton::part(item) { animation: <page keyframes> … }` can opt back in (P2 A7, P4; F3 (a)). The keyframe names are internal, so `--line-skeleton-keyframes` is not an opt-in route (D18).
+- The wave's band lives only in the `line-skeleton-wave` keyframes, which paint `--line-skeleton-wave-image` as `background-image` beside the moving `background-position`. `item` itself has no `background-image`, so after the iterations end, under reduced motion and for `pulse` and `none`, it shows only `--line-skeleton-bg`, with no band and no half-gradient. A gradient on `item` would rest at `background-position: 0% 0%` and show half of it (P2 addendum; D17).
+- `circle` sets `--line-skeleton-last-line-size` to its block size, so with `lines` every item stays a circle.
+- The forced-colors block sets the colours on `item` itself rather than the tokens on `:host`, and comes after the `item` rule, so it wins by order at equal specificity. A consumer token on the host beats a `:host` rule, so a token-based fallback would bring the consumer colour back, which forced colors turn into Canvas; on `item` the fallback holds whatever the tokens are set to (P4 addendum; D20) In Chromium the item also computes `background-image: none` while the wave keyframes run (P2 addendum).
 - `display` on `:host` beats the UA `[hidden]` rule, so `:host([hidden])` keeps `hidden` working, as on Badge and Kbd (`0007-badge.md` D3; `0015-kbd.md` D3).
 - `commonReset` stays in `static styles`, because ARCH §14.7 maps Skeleton to `common` only (`docs/ARCHITECTURE.md:1163`; D4).
 - The wave reverses under `:dir(rtl)` (P2 A5); the pulse is symmetric, so the reverse does not change it [INFERENCE].
@@ -474,7 +496,7 @@ The probe module, with `probe-tpl` and the probe-only switches, is 4,444 B minif
 | `animation` | `animation` | `'pulse' \| 'wave' \| 'none'` | `'pulse'` | yes | the motion (F2) |
 
 - `shape` and `animation` reflect as Badge's `variant` and Kbd's `platform` do. A value the author or code sets is written to the attribute, the default leaves no attribute, and an unknown value behaves as the default while the attribute keeps it (Lit `useDefault: true`; `0007-badge.md` D6; `0015-kbd.md` AM-004). The stylesheet styles each default without its attribute, because the surface removes the attributes of props a node does not set (P10; D8).
-- `lines` takes an integer from 1 to 20. A value that is not a finite integer, or is below 1, draws one item; a value above 20 draws 20; nothing throws (MANIFESTO Law 9; P9; D8).
+- `lines` is declared `lines: { type: Number }`, so Lit converts the attribute with `Number()`. `willUpdate` turns it into the item count: a value that `Number.isInteger` rejects, which covers `NaN`, `Infinity`, fractions and non-numbers, or one below 1 gives 1, and a value above 20 gives 20; nothing throws (MANIFESTO Law 9; P9; D8). So `lines="2.5"` draws one item, `lines=" 3 "` draws three, because `Number(" 3 ")` is `3`, and `lines="1e1"` draws ten, because `Number("1e1")` is `10`.
 - The host takes the global `hidden` attribute, which hides it (D3).
 - The docs advise against `aria-label` on the host (D2).
 
@@ -497,17 +519,18 @@ Skeleton holds no value and no interactive element, so it fires nothing and is n
 | `--line-skeleton-block-size` | `var(--line-size-4)`; `var(--line-size-8)` for `circle`; `1em` for `text` | `item` |
 | `--line-skeleton-line-margin` | `0px`; `calc((1lh - 1em) / 2)` for `text` | `item` (`margin-block`) |
 | `--line-skeleton-gap` | `var(--line-size-2)`; `0px` for `text` | `root` |
-| `--line-skeleton-last-line-size` | `60%` | the last `item` of several |
+| `--line-skeleton-last-line-size` | `60%`; `var(--line-skeleton-block-size)` for `circle` | the last `item` of several |
 | `--line-skeleton-keyframes` | `line-skeleton-pulse`; `line-skeleton-wave` for `wave`; `none` for `none` and under `prefers-reduced-motion: reduce` | `item` (`animation-name`) |
-| `--line-skeleton-wave-image` | `none`; the band gradient for `wave`; `none` under reduced motion | `item` (`background-image`) |
+| `--line-skeleton-wave-image` | the band gradient, `--line-skeleton-bg` through `--line-skeleton-wave-color` and back | the `line-skeleton-wave` keyframes only, as the `item` `background-image` while the wave runs (D17) |
 | `--line-skeleton-duration` | `var(--line-motion-7)` | `item` |
 | `--line-skeleton-easing` | `var(--line-easing-in-out)`; `var(--line-easing-linear)` for `wave` | `item` |
 | `--line-skeleton-iteration-count` | `2` | `item` (F4) |
 
-- The defaults are D6. `--line-gray-bg` is Radix step 3 and `--line-gray-surface` step 2 (`packages/line-themes/src/aliases.css:20-21`). `--line-radius-1` is `2px` and `--line-radius-2` `5px` (`packages/line-tokens/src/radii.css:9-10`), `--line-size-2` `0.5rem`, `--line-size-4` `1.25rem` and `--line-size-8` `3rem` (`sizing.css:11`, `:13`, `:17`), `--line-motion-7` `2s` (`motion.css:18`), and `--line-easing-in-out` and `--line-easing-linear` the curves at `easings.css:30` and `:35`.
+- The defaults are D6. `--line-gray-bg` is Radix step 3 and `--line-gray-surface` step 2 (`packages/line-themes/src/aliases.css:20-21`). `--line-radius-1` is `2px` and `--line-radius-2` `5px` (`packages/line-tokens/src/radii.css:9-10`), `--line-size-2` `0.5rem`, `--line-size-4` `1.25rem` and `--line-size-8` `3rem` (`sizing.css:11`, `:13`, `:17`), `--line-motion-7` `2s` (`motion.css:18`), and `--line-easing-in-out` and `--line-easing-linear` the curves at `packages/line-tokens/src/easings.css:14` and `:9`.
 - Without `line-tokens`, `--line-size-4` and `--line-motion-7` are invalid at computed-value time, so a `rect` item is 0 px tall and runs no visible motion (P4). This matches the other components, whose token defaults carry no fallback (`0015-kbd.md` CSS custom properties) [INFERENCE: with longhands, `animation-duration` falls back to `0s` rather than the whole shorthand to `none`; not probed].
 - A consumer sizes a placeholder through the size tokens or `::part(item)` (F8).
-- The colour is the consumer's choice. `--line-skeleton-bg` and `--line-skeleton-wave-color` are public tokens, set on the host or any ancestor, and `--line-gray-bg` and `--line-gray-surface` are only their defaults (D21). A consumer value always wins over the default, except under `forced-colors: active`, where `item` paints `GrayText` with no band whatever the tokens hold (P4 addendum; D20).
+- The colour is the consumer's choice. `--line-skeleton-bg` and `--line-skeleton-wave-color` are public tokens set on the host, and `--line-gray-bg` and `--line-gray-surface` are only their defaults (D21). A page type selector, `line-skeleton { --line-skeleton-bg: … }`, is the app-wide route. A consumer value on the host always wins over the default, except under `forced-colors: active`, where `item` paints `GrayText` with no band whatever the tokens hold (P4 addendum; D20).
+- A value on an ancestor or on `:root` does not reach the host, because `:host` declares each token's default on the host itself, which the host then uses in place of an inherited value (ARCH §17.2 C6, `docs/ARCHITECTURE.md:1577`; the token pattern of Kbd, `0015-kbd.md` D6; P2 addendum).
 
 #### Consumer styling
 
@@ -541,7 +564,19 @@ line-skeleton.long {
 line-skeleton.custom::part(item) {
   animation: page-shimmer 1.5s ease-in-out 2;
 }
+
+/* Motion under reduced motion, when the app decides to keep it (F3; P2 A7, P4) */
+@keyframes page-pulse {
+  50% { opacity: 0.5; }
+}
+@media (prefers-reduced-motion: reduce) {
+  line-skeleton::part(item) {
+    animation: page-pulse 2s ease-in-out 2;
+  }
+}
 ```
+
+- Under `prefers-reduced-motion: reduce` the component stops its motion at normal importance, and a page rule `line-skeleton::part(item) { animation: <page keyframes> … }` brings motion back; the app then owns that choice (F3 (a)). The keyframe names `line-skeleton-pulse` and `line-skeleton-wave` are internal and are not an opt-in route (D18). A wave needs its own gradient and `background-size` in the same rule, because the component's band lives only in its own keyframes; a gradient set in the rule stays, at its resting position, after the page animation ends (P2 addendum).
 
 ### Keyboard
 
@@ -605,7 +640,7 @@ Skeleton takes no focus and handles no key (R8 `:78`, Keyboard "None"). The Brow
 | Slot map | none |
 | Binding map | `shape` → attribute `shape`; `lines` → attribute `lines`; no value prop and no commit event (C9) |
 | Action map | none |
-| Accessibility requirements | no `requiredName`; `hostNaming: { kind: 'never' }`, because the host has no role a name could attach to (`packages/line-genui/src/catalog/descriptor.ts:160-174`; P1 B11; P10). The Phase 1 spec names the components that take no host name in four places, and Skeleton is in none of them, so this choice needs a Phase 1 spec AM, as AM-098 did for Kbd (Spec drift found, item 2) |
+| Accessibility requirements | no `requiredName`; `hostNaming: { kind: 'never' }`, because the host has no role a name could attach to (`packages/line-genui/src/catalog/descriptor.ts:160-174`; P1 B11; P10). The Phase 1 spec names the components that take no host name in four places, and Phase 1 spec AM-099 adds Skeleton to the four lists (`:2560`), as AM-098 did for Kbd (Spec drift found, item 2) |
 | Agent-facing description | A placeholder that stands in for content that is still loading, so the layout keeps its shape until the content arrives. `shape` is `rect` (default) for a block such as an image or a card, `circle` for an avatar or an icon, or `text` for lines of text sized to the surrounding font. `lines` sets how many lines or blocks to draw, one by default, with the last one shorter when there are several. The placeholder only shows that something is loading: it is not interactive, assistive technology skips it, and it takes no label. Replace it with the content once the content arrives. |
 | Tool description | none; the agent-facing description names `shape` and `lines` only, which the tool carries, and no `accessibility` member (Phase 1 spec §6.G.3, `:1423`, `:1435`) |
 | `agentExposed` | `true` (Phase 1 spec §6.C.4 C15 row, `:1171`; Skeleton is none of the three SD38 exceptions, `:2385`; D10) |
@@ -624,8 +659,10 @@ Skeleton takes no focus and handles no key (R8 `:78`, Keyboard "None"). The Brow
   - The tool-name list gains `'Skeleton'` between `'Separator'` and `'Stack'` (`frontend-tools.test.ts:105-118`); the flat-model test gains `expect(names('Skeleton')).toEqual(['shape', 'lines'])` (`:190-192`); the accessibility test adds `Skeleton` to its title and to the tools that carry neither parameter (`:251`, `:270`).
   - `cem-coverage.test.ts:32-37` and `cem-drift.test.ts:76-79` use `line-skeleton` as the made-up tag that a manifest or a descriptor lacks, so both would fail once Skeleton ships. Both switch to the unshipped `line-spinner`, class `LineSpinner`, path `src/spinner/spinner.ts`, catalog name `Spinner` (row 01-C20, `todo`), as row 01-C14 switched its made-up tag (`0015-kbd.md:606`).
   - `a2ui-surface.test.ts` gains a Skeleton block beside the Kbd one (`:245-316`).
+- This source file in `line-genui` changes beside the descriptor and the catalog index (Bundle).
+  - The JSDoc of `takesAccessibility` in `packages/line-genui/src/catalog/tools.ts:141-142` names Alert, Icon, Kbd and Skeleton (`never`) and cites AM-099 beside AM-069 and AM-098; the function itself is unchanged, because it already returns `false` for `never` (D15).
 - These files outside `line-genui` change.
-  - `lineShowcase` in `apps/storybook/stories/agent-ui/a2ui-fixtures.ts` gains the node `{ id: 'pending', component: 'Skeleton', shape: 'text', lines: 2 }` at the end of the root's children (`:68`), and its JSDoc names Skeleton (`:57-63`).
+  - `lineShowcase` in `apps/storybook/stories/agent-ui/a2ui-fixtures.ts` gains the node `{ id: 'pending', component: 'Skeleton', shape: 'text', lines: 2 }` at the end of the root's children (`:68`), its JSDoc names Skeleton (`:57-63`), and the file header that lists the render fixture names Skeleton (C15) (`:1-4`).
   - `'agent-ui-a2ui-surface--line-catalog'` in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` counts 35 elements (`:32`, was 34), the settle selector adds `line-skeleton` (`:61`), and the file JSDoc names C15 (`:1-19`).
 
 ### Bundle / entrypoint
@@ -640,7 +677,7 @@ Skeleton takes no focus and handles no key (R8 `:78`, Keyboard "None"). The Brow
 - The files are `src/skeleton/skeleton.ts`, with the class `LineSkeleton` and `customElements.define`, `src/skeleton/skeleton.types.ts` with `SkeletonShape` and `SkeletonAnimation`, and `src/skeleton/index.ts`, which exports `LineSkeleton` and both types, as `src/kbd/index.ts` does; the root `src/index.ts` is unchanged.
 - `package.json` gains the `./skeleton` export after `./kbd` (Phase 1 spec §4.2, `:254`; `packages/line-components/package.json:78-81`), and the Vite build gains the `skeleton/index` entry after `kbd/index` (`packages/line-components/vite.config.mjs:24`). No new dependency (D15).
 - `packages/line-components/__tests__/bundle-splitting.test.ts` gains the `EXPECTED_TAGS` row `'./skeleton': ['line-skeleton']` after `./kbd` (`:71`). It needs no `ALLOWED_TAG_REFERENCES` row, because the component matches no other tag.
-- `line-genui` gains `src/catalog/descriptors/skeleton.ts` with `skeletonDescriptor`. `src/catalog/index.ts` imports it after `separatorDescriptor` (`:26`), adds it to the named exports after `separatorDescriptor` (`:115`), and adds it to the `descriptors` array in catalog-name order, between `separatorDescriptor` and `stackDescriptor` (`:134-135`).
+- `line-genui` gains `src/catalog/descriptors/skeleton.ts` with `skeletonDescriptor`. `src/catalog/index.ts` imports it after `separatorDescriptor` (`:26`), adds it to the named exports after `separatorDescriptor` (`:115`), and adds it to the `descriptors` array in catalog-name order, between `separatorDescriptor` and `stackDescriptor` (`:134-135`). The JSDoc of `takesAccessibility` in `src/catalog/tools.ts:141-142` names Alert, Icon, Kbd and Skeleton (`never`) and cites AM-099.
 - Skeleton imports no other component (MANIFESTO Law 4; Phase 1 spec §6.C.6, `:1228`).
 
 ### Markup examples
@@ -689,19 +726,21 @@ A `line` catalog node the surface renders as the paragraph example:
 
 | Tier | Runner | Covers |
 |------|--------|--------|
-| Unit | `bun test` on happy-dom, `packages/line-components/__tests__/skeleton.test.ts` | registers `line-skeleton` with its class; one `item` by default; `lines` from 1 to 20 draws that many, and `0`, `-2`, `2.5`, `NaN`, `"x"` and a non-number property draw one, `21` draws 20 (P9; D8); `shape` and `animation` reflect a set value, leave no attribute at their defaults, and keep an unknown value in the attribute while behaving as the default; `aria-hidden="true"` on `root`; no attribute and no internals value on the host; `hidden` hides the host; no event fires; the parts `root` and `item` exist |
-| Browser | Playwright `packages/line-components/__tests__/integration/skeleton/skeleton.e2e.ts` on chromium, firefox and webkit, over fixture pages under `integration/skeleton/` | an empty tree: `ariaSnapshot()` empty for a skeleton alone and in a busy `<section>`, and a Chromium CDP assertion of no node under the host and `busy` on the region (P1; D16); Tab skips the host (§10 SD99); `getAnimations()` names `line-skeleton-pulse` by default, `line-skeleton-wave` for `wave` and nothing for `none`, with `iterations` 2 and `endTime` 4000 ms, and reverses under `dir="rtl"` (P2, P4); `emulateMedia({ reducedMotion: 'reduce' })` leaves no animation and no wave band, and a consumer token restores the motion (P4; F3); token overrides apply on a page with `line-tokens` and `line-themes`; `text` lines match the line boxes of real text within 0.1 px in a 16 px and a 2rem font (P7); `circle` is square; Chromium forced colors give a `GrayText` fill and no band, with and without consumer colour tokens on the host (P4 addendum; D20); the defaults apply with no `shape` or `animation` attribute (P10) |
-| Browser (colour) | Playwright, the same file and fixture pages, on chromium, firefox and webkit | a consumer rule on the host, `line-skeleton { --line-skeleton-bg: …; --line-skeleton-wave-color: … }`, wins over the defaults: in `pulse` the `item` `background-color` computes to the consumer fill, and in `wave` its `background-image` holds the consumer fill at the ends and the consumer band colour in the middle; a host without the rule computes `--line-gray-bg` and `--line-gray-surface`; in Chromium under `emulateMedia({ forcedColors: 'active' })` the same hosts compute `GrayText` and `background-image: none` (D20, D21; P4 addendum) |
+| Unit | `bun test` on happy-dom, `packages/line-components/__tests__/skeleton.test.ts` | registers `line-skeleton` with its class; one `item` by default; `lines` from 1 to 20 draws that many, and `0`, `-2`, `2.5`, `"2.5"`, `NaN`, `"x"` and a non-number property draw one, `" 3 "` draws three, `"1e1"` draws ten and `21` draws 20 (P9; D8); `shape` and `animation` reflect a set value, leave no attribute at their defaults, and keep an unknown value in the attribute while behaving as the default; `aria-hidden="true"` on `root`; no attribute and no internals value on the host; `hidden` hides the host; the parts `root` and `item` exist; that the class declares no event is the CEM assertion of the Packaging row |
+| Browser | Playwright `packages/line-components/__tests__/integration/skeleton/skeleton.e2e.ts` on chromium, firefox and webkit, over fixture pages under `integration/skeleton/` | an empty tree: `ariaSnapshot()` empty for a skeleton alone and in a busy `<section>`, and a Chromium CDP assertion of no node under the host and `busy` on the region (P1; D16); Tab skips the host (§10 SD99); `getAnimations()` names `line-skeleton-pulse` by default, `line-skeleton-wave` for `wave` and nothing for `none`, with `iterations` 2 and `endTime` 4000 ms, and reverses under `dir="rtl"` (P2, P4); after `endTime` a `wave` item computes `background-image: none` and shows only `--line-skeleton-bg` (P2 addendum; D17); `emulateMedia({ reducedMotion: 'reduce' })` leaves no animation and no wave band, and a page rule `line-skeleton::part(item) { animation: page-pulse … }` restores the motion (P2 A7, P4; F3); token overrides apply on a page with `line-tokens` and `line-themes`; `text` lines match the line boxes of real text within 0.1 px in a 16 px and a 2rem font (P7); `circle` is square, and every item of `shape="circle" lines="3"` is square; Chromium forced colors give a `GrayText` fill and no band, with and without consumer colour tokens on the host (P4 addendum; D20); the defaults apply with no `shape` or `animation` attribute, on `index.html` after the upgrade (P10); on `pre-upgrade.html`, before `./skeleton` loads, a bare host is 0 px tall and a host under the documented `line-skeleton:not(:defined)` rule is as tall as `--line-size-4` (P6; D19) |
+| Browser (colour) | Playwright, the same file and fixture pages, on chromium, firefox and webkit | a consumer rule on the host, `line-skeleton { --line-skeleton-bg: …; --line-skeleton-wave-color: … }`, wins over the defaults: in `pulse` the `item` `background-color` computes to the consumer fill, and in `wave`, while the keyframes run, its `background-image` holds the consumer fill at the ends and the consumer band colour in the middle; a host without the rule computes `--line-gray-bg` and `--line-gray-surface`; the same tokens set on an ancestor of the host, or on `:root`, leave the defaults in place (P2 addendum; D21); in Chromium under `emulateMedia({ forcedColors: 'active' })` the same hosts compute `GrayText` and `background-image: none` (D20, D21; P4 addendum) |
 | A11y | axe-core, `packages/line-components/__tests__/a11y/skeleton.e2e.ts` | zero violations (MANIFESTO Law 3) in every story of D13 (Phase 1 spec §7.4) |
 | htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `n/a`. Skeleton is neither value-bearing, because its descriptor binding map names no value prop, nor compound, because it holds no interactive element (ARCH §17.2 C3, C9, `docs/ARCHITECTURE.md:1574`, `:1580`; plan §2.4, `docs/plans/01-plan-core-primitives.md:172-175`), and it has no slot, so behaviour (d) has nothing to swap into (F6 (a)). P8 replaced placeholders by `innerHTML` and `outerHTML` swaps, and all passed on htmx 2 and 4 in three engines. This confirms the Phase 1 spec's "`n/a` expected" (§6.C.4 C15 row, `:1171`; §10 SD34, `:2381`; D12) |
-| Visual | Playwright `packages/line-components/__tests__/visual/skeleton.visual.ts` on the `visual` project | every story of D13 with Linux baselines from a `visual-baselines.yml` run (Phase 1 spec §6.C.6, `:1233`; §10 SD98). `toHaveScreenshot` disables animations by default, fast-forwarding finite ones to their end, so the two-cycle motion settles to its resting style (`node_modules/playwright/types/test.d.ts:9975-9981`; D14) |
+| Visual | Playwright `packages/line-components/__tests__/visual/skeleton.visual.ts` on the `visual` project | every story of D13 with Linux baselines from a `visual-baselines.yml` run (Phase 1 spec §6.C.6, `:1233`; §10 SD98). `toHaveScreenshot` disables animations by default, fast-forwarding finite ones to their end, so the two-cycle motion settles to its resting style, and the Wave story's baseline captures the plain `--line-skeleton-bg` fill with no band (`node_modules/playwright/types/test.d.ts:9975-9981`; D14; P2 addendum; D17) |
 | Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a `line` catalog `Skeleton` node renders `<line-skeleton>` with `shape` and `lines` as attributes; a bound `lines` updates the same element; a node with no props renders one `rect` item and raises nothing; an `accessibility.label` sets no `aria-label` (P10); the node joins the surface render fixture (`apps/storybook/stories/agent-ui/a2ui-fixtures.ts`) and the surface axe test (Phase 1 spec §6.C.6, `:1231`) |
 | Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the CEM coverage and drift tests pass with the new descriptor, the drift test checking the `shape` and `lines` attributes (Phase 1 spec §6.G.5); `catalog.json` holds `Skeleton` and its inline projection validates (§6.G.2; P10); the `Skeleton` tool takes the agent-facing description, stays at or under 1024 characters, passes the backtick guard and carries `shape` and `lines` only (§6.G.3, `:1422-1423`, `:1434-1435`); the coverage and drift tests use `line-spinner` as their made-up tag; the lists and counts change as the Agent contract says (D11) |
-| Packaging | `bun test` on the packed tarball | the registration harness sees `./skeleton` register `line-skeleton` only, and the isolation scan finds no other component's module or tag in its bundle (Phase 1 spec §7.5) |
+| Packaging | `bun test` on the packed tarball | the registration harness sees `./skeleton` register `line-skeleton` only, and the isolation scan finds no other component's module or tag in its bundle (Phase 1 spec §7.5). `packages/line-components/__tests__/manifest-paths.test.ts` reads the packed `custom-elements.json`, as for Kbd (`:306-327`): `line-skeleton` resolves to `src/skeleton/skeleton.ts`; its own public fields are `shape`, `lines` and `animation`; its events and its slots are empty; its parts are `['root', 'item']`; it lists 13 `@cssprop` tokens (ARCH §17.2 C7; D6, D19) |
 
-- PRD §5.2 checklist mapping (`docs/PRD.md:534-543`; Phase 1 spec §6.C.6, `:1222`). Render, reactive props, parts and events (none fired) run in the Unit tier; slots do not apply (none); custom properties run in the Browser tier, on a page with `line-tokens` and `line-themes`; keyboard (Tab skips the host) runs in the Browser tier (§10 SD99) and axe in the A11y tier.
+- PRD §5.2 checklist mapping (`docs/PRD.md:534-543`; Phase 1 spec §6.C.6, `:1222`). Render, reactive props and parts run in the Unit tier, and events (none, by the CEM assertion) in the Packaging tier; slots do not apply (none); custom properties run in the Browser tier, on a page with `line-tokens` and `line-themes`; keyboard (Tab skips the host) runs in the Browser tier (§10 SD99) and axe in the A11y tier.
 - §6.C.6 obligations. Storybook docs, the changeset, the CEM JSDoc, the `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` row and the size report land as D15 says. No other component is imported (Bundle). The Agent contract is filled above. The htmx row is `n/a` with its reason. The surface fixture and surface axe rows are above (`:1231`). No update-rate measurement, because Skeleton is not a machine row (`:1232`). The visual tier is the row above (`:1233`).
 - The axe and visual tests run against the Storybook stories on port 4320, with the story list and `readySkeletonStory(page, id)` in `packages/line-components/__tests__/skeleton-stories.ts`, as `kbd-stories.ts` does for Kbd. The tree, motion and layout tests use the fixture pages under `packages/line-components/__tests__/integration/skeleton/`, served by the existing port-4321 `webServer` (`playwright.config.ts:23-28`).
+- `integration/skeleton/index.html` loads `integration/skeleton/fixture.ts`, which imports the built `@websublime/line-components/skeleton` by package name and, explicitly, `@websublime/line-tokens/sizing`, `@websublime/line-tokens/radii`, `@websublime/line-tokens/motion`, `@websublime/line-tokens/easings` and `@websublime/line-themes`, which the size, `endTime` and colour assertions read, as Kbd's `integration/kbd/fixture.ts` does (`:1-9`). Each test mounts its markup into `<main>`, and the defaults without attributes are checked there, after the upgrade.
+- `integration/skeleton/pre-upgrade.html` is in scope, following Kbd's (`integration/kbd/pre-upgrade.html`, `pre-upgrade.ts`). Its `pre-upgrade.ts` imports only `./skeleton`, and the page loads it only when the test asks, so the D19 `:not(:defined)` check measures the hosts before the module runs. The page loads `@websublime/line-tokens/sizing` itself, so the documented rule's `--line-size-4` resolves before the upgrade.
 
 ### Spec drift found
 
@@ -722,14 +761,14 @@ A `line` catalog node the surface renders as the paragraph example:
 |---|----------|-------|------------|
 | F1 | What busy semantics does Skeleton carry, and who marks the loading region? | Miguel | resolved: option (a), the placeholder is hidden from assistive technology and the app's container carries `aria-busy` (Miguel, 2026-11-13) |
 | F2 | Which animations exist, which is the default, and where do their keyframes live? | Miguel | resolved: option (a), `pulse \| wave \| none`, default `pulse`, keyframes in the component's own stylesheet (Miguel, 2026-11-13) |
-| F3 | What happens under `prefers-reduced-motion: reduce`? | Miguel | resolved: option (a), no motion and no wave band, at normal importance so a consumer can opt back in (Miguel, 2026-11-13) |
+| F3 | What happens under `prefers-reduced-motion: reduce`? | Miguel | resolved: option (a), no motion and no wave band, at normal importance so a consumer can opt back in through a page `line-skeleton::part(item)` rule naming page keyframes (Miguel, 2026-11-13; the route narrowed to `::part(item)` at review gate round 1, D18) |
 | F4 | How does the default motion meet WCAG 2.2.2 when loading lasts more than five seconds? | Miguel | resolved: option (b), two cycles through `--line-skeleton-iteration-count: 2`, then rest (Miguel, 2026-11-13) |
 | F5 | Which shapes exist, and how does Skeleton draw multi-line text? | Miguel | resolved: option (a), `shape="rect \| circle \| text"` and `lines` (Miguel, 2026-11-13) |
 | F6 | Is Skeleton a placeholder only, or also a wrapper whose `loading` hides slotted content? | Miguel | resolved: option (a), placeholder only (Miguel, 2026-11-13) |
 | F7 | Which props does the descriptor expose to agents? | Miguel | resolved: option (a), `shape` and `lines` (Miguel, 2026-11-13) |
 | F8 | How does a consumer size a placeholder? | Miguel | resolved: option (a), size tokens and `::part(item)` only (Miguel, 2026-11-13) |
 
-**Orchestrator defaults** (Miguel left D1–D21 as drafted, with D20 and D21 refined by his colour decision, 2026-11-13)
+**Orchestrator defaults** (Miguel left D1–D21 as drafted, with D20 and D21 refined by his colour decision, 2026-11-13; D6, D8, D15, D17, D18 and D21 edited at review gate round 1)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -738,24 +777,24 @@ A `line` catalog node the surface renders as the paragraph example:
 | D3 | `:host { display: block }` and `:host([hidden]) { display: none }` | Badge D3 (`0007-badge.md`); `0015-kbd.md` D3; a placeholder fills the inline size of its container, as P7 measured |
 | D4 | `commonReset` is the only reset module | ARCH §14.7, `:1163` |
 | D5 | Parts `root` (a flex column with `gap: var(--line-skeleton-gap)`) and `item`, one per line; no part per shape | ARCH §5 `root`, `item` (`docs/ARCHITECTURE.md:306`, `:317`); MANIFESTO Law 1 (every drawn zone is a part); probe P7 |
-| D6 | The thirteen `--line-skeleton-*` tokens and their defaults; `shape` and `animation` change only those defaults; the keyframe name travels in `--line-skeleton-keyframes` | ARCH §17.2 C6; probes P3 (token keyframe names work in three engines, a consumer token wins), P7; Kbd's token pattern (`0015-kbd.md` D6) |
+| D6 | The thirteen `--line-skeleton-*` tokens and their defaults; `shape` and `animation` change only those defaults; the keyframe name travels in `--line-skeleton-keyframes`, and the wave band in `--line-skeleton-wave-image`, which only the wave keyframes read; `circle` sets `--line-skeleton-last-line-size` to its block size, so every item stays square with `lines` | ARCH §17.2 C6; probes P3 (token keyframe names work in three engines, a consumer token wins), P7, the P2 addendum (the token read by the keyframes); Kbd's token pattern (`0015-kbd.md` D6) |
 | D7 | No focus on the host, no key handling, no `delegatesFocus`, no `tabindex` | R8 `:78` Keyboard "None" |
-| D8 | `willUpdate` turns `lines` into an item count from 1 to 20: a value that is not a finite integer or is below 1 gives 1, a value above 20 gives 20; an unknown `shape` or `animation` behaves as the default; the stylesheet styles each default without its attribute; nothing throws | ARCH §17.2 C8; MANIFESTO Laws 5 and 9; probe P10 (the surface removes the attributes of unset props, so reflected defaults vanish). The cap of 20 bounds a hostile agent's `lines` [INFERENCE: no source sets a maximum] |
+| D8 | `lines` is `{ type: Number }`, which converts the attribute with `Number()`; `willUpdate` turns it into an item count from 1 to 20: a value that `Number.isInteger` rejects or one below 1 gives 1, a value above 20 gives 20, so `"2.5"` gives 1, `" 3 "` gives 3 and `"1e1"` gives 10; an unknown `shape` or `animation` behaves as the default; the stylesheet styles each default without its attribute; nothing throws | ARCH §17.2 C8; MANIFESTO Laws 5 and 9; probe P10 (the surface removes the attributes of unset props, so reflected defaults vanish). The cap of 20 bounds a hostile agent's `lines` [INFERENCE: no source sets a maximum] |
 | D9 | Catalog name `Skeleton`; prop schema `shape` (enum) and `lines` (`DynamicNumber`), each bound to its attribute; no slot map; `hostNaming: never`; no `requiredName`; no tool description; `animation` stays out of the schema | PRD row name; Phase 1 spec §6.G.1 (`:1326`, enums take plain `.describe()`, numbers `DynamicNumber`); ARCH §17.4 Theme row (`:1639`); probe P10. `hostNaming: never` adds Skeleton to the Phase 1 spec lists of components that take no host name, through Phase 1 spec AM-099 (Spec drift found, item 2) |
 | D10 | `agentExposed: true` | Phase 1 spec §6.C.4 C15 row, `:1171`; SD38 names three other components (`:2385`); a placeholder adds no text and paints within the surface, so neither SD38 reason applies (`:1336`, `:1338`) |
 | D11 | The genui tests and the surface fixture change as the Agent contract lists, with `line-spinner` as the new made-up tag | Phase 1 spec §6.C.6, `:1231`; the locators in the Agent contract; `0015-kbd.md` D12 for the same switch |
 | D12 | htmx row `n/a` | Phase 1 spec §10 SD34; ARCH §17.2 C9; probe P8 |
 | D13 | `apps/storybook/stories/components/skeleton.stories.ts` with `title: 'Components/Primitives Base/Skeleton'`, the pinned meta `id: 'components-skeleton'`, `tags: ['autodocs']`, and a `DESCRIPTION` that carries the busy-region advice, the reduced-motion and two-cycle behaviour, the `:not(:defined)` rule and the advice against `aria-label`. Stories: Default; Shapes (`rect`, `circle`, `text`); Text lines (`shape="text" lines="3"` beside a real paragraph); Wave; No animation; Profile card (a busy `<article>` with a circle, two text lines and a block); Custom tokens (the Consumer styling rules) | the story-title rule of the template (`COMPONENT-SPEC-TEMPLATE.md:213`); PRD §4.1 places Skeleton under Primitives Base (`docs/PRD.md:243`, `:261`); `kbd.stories.ts:39` |
 | D14 | The visual tier relies on `toHaveScreenshot`'s default `animations: "disabled"` and adds no motion option | `node_modules/playwright/types/test.d.ts:9975-9981`; `packages/line-components/__tests__/visual/story.ts:42` |
-| D15 | The C15 PR also adds a Skeleton row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1 from the F2, F5 and F6 evidence, writes the Storybook docs, adds a `## Skeleton` section to `packages/line-components/README.md` after `## Kbd` (`:495`), adds `skeletonDescriptor` to the export table of `packages/line-genui/README.md:39` and Skeleton to the tools that take their agent-facing descriptions (`:92`) and to those that take neither accessibility parameter (`:125`, `:144`), reports the gzipped size against the < 5 KB soft target, and adds one changeset with `@websublime/line-components` at `patch` and `@websublime/line-genui` at `minor`; no new dependency | Phase 1 spec §6.C.6, `:1223-1227`; §7.6; `0015-kbd.md` D15 |
+| D15 | The C15 PR also adds a Skeleton row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1 from the F2, F5 and F6 evidence, writes the Storybook docs, adds a `## Skeleton` section to `packages/line-components/README.md` after `## Kbd` (`:495`), updates the `takesAccessibility` JSDoc in `packages/line-genui/src/catalog/tools.ts:141-142` to name Alert, Icon, Kbd and Skeleton (`never`) and cite AM-099, adds `skeletonDescriptor` to the export table of `packages/line-genui/README.md:39` and Skeleton to the tools that take their agent-facing descriptions (`:92`) and to those that take neither accessibility parameter (`:125`, `:144`), reports the gzipped size against the < 5 KB soft target, and adds one changeset with `@websublime/line-components` at `patch` and `@websublime/line-genui` at `minor`; no new dependency | Phase 1 spec §6.C.6, `:1223-1227`; §7.6; `0015-kbd.md` D15 |
 | D16 | The Browser tier proves the empty tree with `ariaSnapshot()` in three engines and a Chromium CDP assertion, and runs no `INTERNALS` read-back | Phase 1 spec `:1180` applies to internals roles, and Skeleton sets none (D2); probe P1 |
-| D17 | The wave runs from inline-start to inline-end and reverses under `:host(:dir(rtl))` | probe P2 A5 |
-| D18 | The keyframe names `line-skeleton-pulse` and `line-skeleton-wave` are internal; the docs show custom motion through page keyframes in a `::part(item)` rule | probe P2 A7 (works in three engines), A8 (a `::part` rule naming the component's keyframe resolves differently in Firefox) |
+| D17 | The wave runs from inline-start to inline-end and reverses under `:host(:dir(rtl))`. Its band lives only in the `line-skeleton-wave` keyframes, which read `--line-skeleton-wave-image`, so after its iterations end and under reduced motion a wave item shows only `--line-skeleton-bg`, with no band and no half-gradient, and the Visual baseline captures that fill | probe P2 A5; the P2 addendum (the gradient in the keyframes is the only candidate that leaves `background-image: none` and the plain fill in three engines; a gradient on `item` rests on half of it, and `animation-fill-mode: forwards` holds the other half) |
+| D18 | The keyframe names `line-skeleton-pulse` and `line-skeleton-wave` are internal; the docs show custom motion through page keyframes in a `::part(item)` rule, and the reduced-motion opt-in through the same rule, `line-skeleton::part(item) { animation: <page keyframes> … }`, with a pulse; a wave there needs its own gradient in the rule. No token is an opt-in route | probe P2 A7 (works in three engines), A8 (a `::part` rule naming the component's keyframe resolves differently in Firefox); P4 and the P2 addendum (a `::part` rule runs under reduced motion) |
 | D19 | The class JSDoc says what the component is for, to put `aria-busy` on the loading region, that it takes no label, how the motion stops (two cycles, reduced motion), the `:not(:defined)` rule, and not to put `aria-label` on the host or a lone skeleton in a control; `@cssprop` for each token with its default; `@csspart` for `root` and `item` | Kbd's and Badge's JSDoc patterns (`0015-kbd.md` D19; `0007-badge.md` D14); ARCH §17.2 C7; probe P6 |
 | D20 | Under `forced-colors: active`, `item` itself paints `background-color: GrayText` and `background-image: none` in the shadow stylesheet, so the fallback holds whatever value the consumer gives `--line-skeleton-bg` and `--line-skeleton-wave-color` | probe P4 (the token colour computes to Canvas; `GrayText` survives) and its 2026-11-16 addendum (a consumer token on the host beats a `:host` fallback and vanishes; the `item` fallback holds with and without consumer tokens, in `pulse` and `wave`, Chromium only); Web Awesome's skeleton does the same (`@awesome.me/webawesome` 3.14.0 `dist/chunks/chunk.JLCUD5BZ.js`) |
-| D21 | The consumer chooses the colour: `--line-skeleton-bg` (the fill) and `--line-skeleton-wave-color` (the wave band) are public tokens, a supported contract with an example under Consumer styling and a Browser test showing a consumer value wins. `--line-gray-bg` and `--line-gray-surface`, one Radix step apart, are only their defaults | Miguel, 2026-11-13; ARCH §17.2 C6; probe P3 (a consumer token on the host wins over the `:host` default) and the P4 addendum; `packages/line-themes/src/aliases.css:20-21`; the probe drew the band in a stand-in colour, so the default pairing is a visual judgment for review [INFERENCE] |
+| D21 | The consumer chooses the colour: `--line-skeleton-bg` (the fill) and `--line-skeleton-wave-color` (the wave band) are public tokens set on the host, a supported contract with an example under Consumer styling and a Browser test showing a consumer value wins. A page type selector, `line-skeleton { … }`, is the app-wide route; a value on an ancestor or `:root` does not reach the host, because `:host` declares the default on the host itself, and a Browser test shows it. `--line-gray-bg` and `--line-gray-surface`, one Radix step apart, are only their defaults | Miguel, 2026-11-13; ARCH §17.2 C6; probe P3 (a consumer token on the host wins over the `:host` default), the P4 addendum and the P2 addendum (an ancestor value leaves the default); `packages/line-themes/src/aliases.css:20-21`; the probe drew the band in a stand-in colour, so the default pairing is a visual judgment for review [INFERENCE] |
 
-Miguel decided F1–F8 on 2026-11-13, each on the option the draft recommended, and left D1–D21 as drafted with D20 and D21 refined as above. The option tables below stay as the record of what he weighed.
+Miguel decided F1–F8 on 2026-11-13, each on the option the draft recommended, and left D1–D21 as drafted with D20 and D21 refined as above; review gate round 1 then edited D6, D8, D15, D17, D18 and D21 (Review gate round 1, below). The option tables below stay as the record of what he weighed.
 
 ### F1 — Busy semantics
 
@@ -786,7 +825,7 @@ Miguel decided F1–F8 on 2026-11-13, each on the option the draft recommended, 
 
 | Option | What it decides | Consequence |
 |---|---|---|
-| (a) **Recommended.** Stop, normal importance | `:host, :host([animation]) { --line-skeleton-keyframes: none; --line-skeleton-wave-image: none }` under the query | Still placeholders for users who asked (P4). A consumer can opt back in through the token or `::part`, and then owns the choice. Follows AvatarGroup's token pattern |
+| (a) **Recommended.** Stop, normal importance | `:host, :host([animation]) { --line-skeleton-keyframes: none }` under the query | Still placeholders for users who asked (P4). A consumer can opt back in through a page `::part(item)` rule naming page keyframes (P2 A7), and then owns the choice. Follows AvatarGroup's token pattern |
 | (b) Stop, `!important` | the same with `!important` on `item` | The consumer cannot override it (P4). Removes a choice an app may need, such as its own reduced-motion setting |
 | (c) Soften | under the query, `wave` becomes `pulse` and the pulse slows | Some feedback remains. An opacity pulse is still a change the user asked to avoid [INFERENCE: whether opacity change counts as motion is not settled by WCAG] |
 | (d) Nothing | the app handles the query | No component rule. Every app repeats the rule, and MANIFESTO Law 3 rests on each consumer |
@@ -843,6 +882,8 @@ Miguel decided F1–F8 on 2026-11-13, each on the option the draft recommended, 
 | (a) **Recommended.** Tokens and `::part(item)` | `--line-skeleton-inline-size` and `--line-skeleton-block-size`; `text` follows the font | No new attribute. Agents cannot size a `rect` or a `circle` beyond the defaults |
 | (b) `width` and `height` attributes | the component writes them into styles | Styles in TypeScript (Law 5) and an inline-style API (Out of Scope) |
 | (c) A `size` scale | `size="1"`…`"9"` sets `--line-skeleton-block-size` to a `--line-size-*` step, as AvatarGroup maps its `size` | Agents can size circles and blocks through an enum. One more prop, and widths stay with tokens |
+
+**Review gate round 1 (2026-11-16).** The `reviewer` lens (R1–R9) and the owning-supervisor lens (S1–S8) failed the draft, and the orchestrator settled every finding without a new fork. The colour tokens are set on the host, a page type selector is the app-wide route, and a value on an ancestor or `:root` does not reach the host, which a Browser test asserts (R1; D21). The reduced-motion opt-in goes through a page `::part(item)` rule only, because the keyframe names stay internal; F3's decision is unchanged, and its resolution names the route (R2, S2; D18). `circle` sets `--line-skeleton-last-line-size`, so its items stay square with `lines` (R3, S1; D6). The wave's band moved into the `line-skeleton-wave` keyframes, the mechanism the P2 addendum chose, so a wave item rests on the plain fill after its iterations and under reduced motion; the reduced-motion block now sets only the keyframes, and the token count stays thirteen (S3; D6, D17). The tree evidence names the Chromium tree and Playwright's snapshot here and in Phase 1 spec AM-099 (R4). The other findings were fixed in place: the `takesAccessibility` JSDoc joins the Agent contract and D15 (R5, S4); `manifest-paths.test.ts` joins the Packaging row and carries the no-event check (R6, S5, S8); D8 states the `lines` converter (S6); the Browser fixture, its imports and the pre-upgrade page are named (S7); and the easing locators, the surface fixture header, the AM-099 wording and the Governing sections line were corrected (R7, R8, R9).
 
 ---
 
