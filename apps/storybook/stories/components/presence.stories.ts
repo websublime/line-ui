@@ -30,7 +30,7 @@ const DESCRIPTION = `\`<line-presence>\` shows and hides its content with enter 
 \`\`\`
 
 - **Animate \`::part(root)\`.** Key the rules on the host state, \`[data-open]\` or \`:state(open)\`, and their negation for the exit; \`::part(root)\` takes no attribute selector after it. Use CSS animations, not transitions: the machine waits only for an animation, so \`animation: none\`, a \`0s\` duration, \`display: none\` or a transition end the exit in one frame.
-- **Distinct keyframes.** Give the enter and the exit different keyframe names. The same keyframes played in reverse end every exit after the first reopen at once.
+- **Distinct keyframes.** Give the enter and the exit different keyframe names. The same keyframes played in reverse end every exit after the enter animation has finished, or after a reopen, at once.
 - **Reduced motion.** Presence changes nothing under \`prefers-reduced-motion: reduce\`. Gate your keyframes under \`prefers-reduced-motion: no-preference\`, as above, and the content shows and hides at once for users who ask for less motion.
 - **Open at load.** \`skip-animation-on-mount\` blocks the enter animation at the first render and after the host is reinserted, until \`present\` first changes.
 - **Events.** \`line-exit-complete\` fires when an exit ends and the content is hidden, \`line-enter-complete\` when an enter after the first render ends. Both bubble and are not composed; a nested presence's events reach its outer one, so check \`event.target\`. Removing the host cuts the exit and fires nothing.

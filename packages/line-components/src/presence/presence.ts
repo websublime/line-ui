@@ -55,7 +55,7 @@ function enterComplete(): CustomEvent<LinePresenceEnterCompleteDetail> {
  *
  * - The machine waits only for CSS animations. `animation: none`, a `0s` duration, `display: none` or a CSS
  *   transition end the exit in one frame.
- * - The same keyframes for the enter and the exit, played in reverse, end every exit after the first reopen at once.
+ * - The same keyframes for the enter and the exit, played in reverse, end every exit after the enter animation has finished, or after a reopen, at once.
  * - Removing the host cuts the exit, and no `line-exit-complete` fires.
  * - Content that holds focus keeps it while it exits, and focus goes to `body` when the exit ends; move focus first,
  *   usually back to the trigger.

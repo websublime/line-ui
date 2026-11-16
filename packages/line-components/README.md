@@ -592,7 +592,7 @@ hides in one frame.
 Key the rules on the host state, `[data-open]` or `:state(open)`, before `::part(root)`. Use CSS animations with
 distinct keyframe names for the enter and the exit: the machine waits only for an animation, so `animation: none`, a
 `0s` duration, `display: none` or a CSS transition end the exit in one frame, and the same keyframes played in reverse
-end every exit after the first reopen at once. Gate the keyframes for reduced motion yourself; the component changes
+end every exit after the enter animation has finished, or after a reopen, at once. Gate the keyframes for reduced motion yourself; the component changes
 nothing under `prefers-reduced-motion: reduce`. `skip-animation-on-mount` blocks the enter animation at the first render
 and after the host is reinserted.
 
