@@ -71,6 +71,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './kbd': ['line-kbd'],
   './skeleton': ['line-skeleton'],
   './presence': ['line-presence'],
+  './grid': ['line-grid'],
 };
 
 /**

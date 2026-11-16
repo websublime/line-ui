@@ -86,6 +86,10 @@
     "./presence": {
       "types": "./dist/presence/index.d.ts",
       "import": "./dist/presence/index.js"
+    },
+    "./grid": {
+      "types": "./dist/grid/index.d.ts",
+      "import": "./dist/grid/index.js"
     }
   },
   "dependencies": {
