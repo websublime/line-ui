@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` |
+| Status | `approved` (Miguel, 2026-11-16) |
 | Phase | `1` |
 | Tier | `Pre-built` (Phase 1 spec §6.C.4 C16 row, `docs/specs/01-spec-core-primitives.md:1172`; PRD §4.1, `docs/PRD.md:262`; ARCH §8, `docs/ARCHITECTURE.md:408`) |
 | Tag | `line-presence` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C16` (`docs/plans/01-tasks-core-primitives.md:62`) |
 | Governing sections | Phase 1 spec §4.2 (`:255`, `:267`, `:304`), §6.C.0, §6.C.1 (`:933-958`, machine rows `:949`), §6.C.4 (C16 row `:1172`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.C.7 (`:1242-1272`, floor rule `:1261`, lock acceptance `:1272`), §6.G.1 (reason table `:1332-1338`, Presence row `:1337`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4 (`:2111`), §7.5, §7.6 (`:2144`), §7.8, §10 SD12, SD18 (`:2365`), SD30 (`:2377`), SD34 (`:2381`), SD37 (`:2384`), SD38 (`:2385`), SD39 (`:2386`), SD98, SD99, §12 AM-052 (`:2513`), AM-055, AM-058, AM-096 (`:2557`), AM-097, AM-100 (`:2561`); ARCH (v0.8.27) §3, §4, §5 (`:303-327`), §6 (`:335-377`), §8 (`:402-470`), §12 (`:582`), §14.4 (`hidden` rule), §14.7 (`:1163`), §14.8 (`open` row `:1236`), §16.2 (Details animation, `:1504`), §16.3 (`:1528`), §17.2 (`:1566-1580`), §17.3, §17.4, §17.9 (`:1697`); PRD (v0.8.33) §4.1, §5.2 (`:534-543`), §8 (`:1194-1217`); MANIFESTO Laws 1, 3, 4, 5, 9 (`docs/MANIFESTO.md:47`); R7 `docs/research/01-research-zag-machines.md` §2.2 (`:82-115`), §2.3 (`:117-175`), §4, §6 OQ1–OQ3, OQ7 (`:305-311`); R8 `docs/research/01-research-accessibility.md:55`, `:79`, `:265` (probe P6) |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F7 on 2026-11-16, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D24 stand as drafted (Miguel, 2026-11-16). No chosen option contradicts an APPROVED statement of the Phase 1 spec, the PRD or ARCHITECTURE; the options that would are marked in their tables. One factual amendment of the Phase 1 spec follows from the probes, Phase 1 spec §12 AM-100 (Spec drift found, item 1). The spec stays `proposed` until its review gate passes and Miguel approves it.
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F7 on 2026-11-16, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D24 stand as drafted (Miguel, 2026-11-16). No chosen option contradicts an APPROVED statement of the Phase 1 spec, the PRD or ARCHITECTURE; the options that would are marked in their tables. One factual amendment of the Phase 1 spec follows from the probes, Phase 1 spec §12 AM-100 (Spec drift found, item 1). The spec passed its review gate on 2026-11-16. In round 1 the `reviewer` lens failed it (R1–R9) and the owning-supervisor lens failed it (S1–S8), with no blockers; the fixes landed in `d026667` and `7dac29d`. In round 2 both lenses failed it again, and the orchestrator escalated to Miguel, who chose fix plus a re-check; the fixes landed in `71ae479`. In the re-check the owning-supervisor lens passed it and the `reviewer` lens failed it on how the Unit tier waits for an exit; that fix and the supervisor's nit landed in `d60704d`. Miguel approved the spec on 2026-11-16 (PRD §8.3, `docs/PRD.md:1217`; Phase 1 spec §6.C.6, `:1229`).
 
 ---
 
@@ -743,3 +743,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
+| AM-001 | 2026-11-16 | ledger 01-C16 (factual correction, approval) | The Status field (`:5`) reads `` `approved` (Miguel, 2026-11-16) `` and the header paragraph (`:15`) records the review gate, round 1 fixed in `d026667` and `7dac29d`, round 2 fixed in `71ae479` after Miguel chose fix plus a re-check, and the re-check fix in `d60704d`, and says that Miguel approved the spec on 2026-11-16, in place of saying that it stays `proposed` | Miguel approved the spec after its review gate, and the header still described the draft state | Miguel's approval of `0017-presence.md` on 2026-11-16, relayed by the orchestrator for row 01-C16; commits `d026667`, `7dac29d`, `71ae479` and `d60704d` on `feat/01-c16-presence` |
