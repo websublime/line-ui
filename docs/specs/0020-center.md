@@ -18,7 +18,7 @@ The spec stays `proposed` until its review gate passes and Miguel approves it, b
 
 ## Probes
 
-Throwaway probes ran on 2026-11-16 to inform F1–F10 and defaults D2, D3, D5, D6, D8, D9, D12, D13 and D19. Their code lived in `packages/line-components/temp/c18-probe/` and `packages/line-genui/temp/c18-probe/`, which `.gitignore` ignores through its `temp` entry (`.gitignore:4`), and the downloaded catalog and competitor files in `/tmp/c18-basic-v09.json`, `/tmp/c18-comp/` and `/tmp/c18-size*.js`, outside the repository. All of them were deleted after the run. Nothing of them is committed.
+Throwaway probes ran on 2026-11-16 to inform F1–F10 and defaults D2, D3, D5, D6, D8, D9, D12, D13 and D19. A second run the same day, after review gate round 1, extended P4 to `<line-stack>` and re-emitted the revised descriptions (commands 12–15). Their code lived in `packages/line-components/temp/c18-probe/`, `packages/line-components/temp/c18-p4/`, `packages/line-genui/temp/c18-probe/` and `packages/line-genui/temp/c18-p4/`, which `.gitignore` ignores through its `temp` entry (`.gitignore:4`), and the downloaded catalog and competitor files in `/tmp/c18-basic-v09.json`, `/tmp/c18-comp/` and `/tmp/c18-size*.js`, outside the repository. All of them were deleted after the run. Nothing of them is committed.
 
 ### Setup
 
@@ -51,6 +51,10 @@ Throwaway probes ran on 2026-11-16 to inform F1–F10 and defaults D2, D3, D5, D
 | 9 | `npm view <package> version` for the ten packages of Setup and for `@radix-ui/react-center`, `@spectrum-web-components/center`, `@spectrum-web-components/layout`, `@fluentui/web-components-center` and `@ark-ui/center`; then `npm pack <package>@<version>` and `tar xzf` of the ten into `/tmp/c18-comp`; `jq`, `ls`, `grep` and `find -iname '*center*'` over each package | 0 (the five extra `npm view` calls answered `E404`) | P11 |
 | 10 | `node_modules/.bin/esbuild size.ts --bundle --minify --format=esm --target=es2022 --external:lit '--external:@websublime/*'`, then `gzip -9 -n`, for `size.ts` (the recommended design without `inline` and `defineVariant`) and for `center-probe.ts` | 0 | P12 |
 | 11 | `rm -rf packages/line-components/temp/c18-probe packages/line-genui/temp/c18-probe /tmp/c18-basic-v09.json /tmp/c18-comp /tmp/c18-size.js /tmp/c18-size2.js`; `git status --short` | 0 | deleted; the tree holds only this spec |
+| 12 | `bun build entry.ts --outfile bundle.js --target browser --format esm` in `packages/line-components/temp/c18-p4/`, where `entry.ts` imports the built `dist/stack/index.js` and defines the recommended `line-probe-center` | 0 | one 62.16 KB module with `line-stack`, the probe component, `line-core` and Lit |
+| 13 | `node_modules/.bin/playwright test -c packages/line-components/temp/c18-p4/playwright.config.ts`, a page that inlines `packages/line-tokens/src/sizing.css` and `layouts.css` | 0 | 3 passed; the `<line-stack>` table of P4 |
+| 14 | `bun test ./packages/line-genui/temp/c18-p4/emit.test.ts`, a stub `Center` descriptor with the revised descriptions of Descriptor fields, through `lineCatalogDocument` and `frontendTools` for the three providers | 0 | 1 pass; the catalog keeps the 894-character agent-facing description, every tool takes the 867-character tool description and carries `axis` only, and the tool description puts only `axis`, `both`, `horizontal` and `vertical` in backticks |
+| 15 | `rm -rf packages/line-components/temp packages/line-genui/temp /tmp/c18-p4-results`; `git status --short` | 0 | deleted, with the run's `test-results` output, which the config wrote to `/tmp/c18-p4-results`; the tree is clean |
 
 Every result below was the same in chromium, firefox and webkit unless a row says otherwise. Positions are CSS pixels `x,y` of a child's top-left corner relative to the host's top-left corner; the host is 400 × 300 px unless a row says otherwise. Firefox draws the text node one pixel shorter (17 px against 18 px), so its text rows read 0.5 px lower; the tables give the chromium and webkit value.
 
@@ -156,6 +160,25 @@ A 600 × 400 child in a 400 × 300 box, centred on both axes.
 - A Center gets its width from its container and its height from its content, like any block box, so vertical centring needs a height from the consumer or from a stretching parent (F9).
 - In a flex row or an `auto` grid track, the host sizes to its content, so horizontal centring has no room; the row's height still gives vertical centring room. `flex: 1` gives it the row's width (Connections).
 - `min-block-size: 100%` in the component fills a parent with a set height, but it overflows that parent by the height of any sibling and does nothing in a parent without a set height. `block-size: 100%` with padding overflows by the padding (F9).
+
+**P4 in `<line-stack>` (2026-11-16, after review gate round 1).** A second run (commands 12, 13 and 15) placed the recommended probe host, holding one 100 × 40 child, in the built `line-stack` (`packages/line-components/dist/stack/index.js`) with the `sizing` and `layouts` tokens loaded. A vertical Stack was 400 px wide; a horizontal Stack was 1000 × 300 px and also held a 200 × 300 sibling after the Center. Positions are relative to the Stack, and the child's position inside the host follows in brackets.
+
+| Stack | Host at, and its size | Child at (inside the host) |
+|---|---|---|
+| vertical, default `align` (`stretch`) | 0,0, 400 × 40 | 150,0 (150,0) |
+| vertical, default `align`, the Stack 300 px tall | 0,0, 400 × 40 | 150,0 (150,0) |
+| vertical, `align="center"` | 150,0, 100 × 40 | 150,0 (0,0) |
+| vertical, `align="start"` | 0,0, 100 × 40 | 0,0 (0,0) |
+| horizontal, default `align` (`stretch`) | 0,0, 100 × 300 | 0,130 (0,130) |
+| horizontal, default `align`, no Stack height, the 300 px sibling setting the row's height | 0,0, 100 × 300 | 0,130 (0,130) |
+| horizontal, `align="center"` | 0,130, 100 × 40 | 0,130 (0,0) |
+| horizontal, `align="start"` | 0,0, 100 × 40 | 0,0 (0,0) |
+| horizontal, `justify="stretch"` | 0,0, 446 × 300 | 173,130 (173,130) |
+
+- At Stack's default `align`, `stretch` (`packages/line-components/src/stack/stack.ts:45`), a Center in a vertical Stack is as wide as the Stack and as tall as its content, and in a horizontal Stack as tall as the row and as wide as its content. Only horizontal or only vertical centring shows, as in a plain flex row.
+- Under any other `align`, the Center is only as large as its content, so it has no room of its own to centre in. With `align="center"` the Stack centres the box itself on the cross axis, and with `align="start"` the box sits at the start.
+- A vertical Stack does not grow a Center along its main axis, even when the Stack is taller, so a Center in a vertical Stack never centres top to bottom.
+- `justify="stretch"` on a horizontal Stack grows the Center along the row (`::slotted(*) { flex-grow: 1 }`, `0018-stack.md:125`), so both axes centre.
 
 ### P5 — `hidden`, inline display and consumer CSS
 
