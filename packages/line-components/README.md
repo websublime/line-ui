@@ -562,3 +562,51 @@ The host takes no space until its module runs; reserve it with
 `line-skeleton:not(:defined) { display: block; block-size: var(--line-size-4); }`.
 
 No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
+
+## Presence
+
+`<line-presence>` shows and hides its content with enter and exit animations that your page's CSS defines. Setting
+`present` shows the content at once and lets an enter animation play; clearing it keeps the content on screen while
+the exit animation plays, then hides it. It has one part, `root` (the box around the default slot, which the
+`@zag-js/presence` machine watches), two attributes, `present` and `skip-animation-on-mount`, two events,
+`line-exit-complete` and `line-enter-complete`, and no tokens. It ships no animation: without your CSS it shows and
+hides in one frame.
+
+```html
+<button type="button" aria-expanded="false" aria-controls="shipping">Shipping details</button>
+<line-presence class="panel">
+  <div id="shipping">Ships in two working days.</div>
+</line-presence>
+```
+
+```css
+@keyframes panel-in { from { opacity: 0; translate: 0 -0.5rem; } }
+@keyframes panel-out { to { opacity: 0; translate: 0 -0.5rem; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  line-presence.panel[data-open]::part(root) { animation: panel-in 150ms ease-out; }
+  line-presence.panel:not([data-open])::part(root) { animation: panel-out 120ms ease-in; }
+}
+```
+
+Key the rules on the host state, `[data-open]` or `:state(open)`, before `::part(root)`. Use CSS animations with
+distinct keyframe names for the enter and the exit: the machine waits only for an animation, so `animation: none`, a
+`0s` duration, `display: none` or a CSS transition end the exit in one frame, and the same keyframes played in reverse
+end every exit after the first reopen at once. Gate the keyframes for reduced motion yourself; the component changes
+nothing under `prefers-reduced-motion: reduce`. `skip-animation-on-mount` blocks the enter animation at the first render
+and after the host is reinserted.
+
+Hidden content stays in the document with its state, but it leaves the screen, the Tab order and the accessibility
+tree; its form controls still submit, so disable them as well. Focus inside exiting content goes to `body` when the
+exit ends, so move it first, usually back to the trigger. Presence has no role: the trigger carries `aria-expanded` and
+`aria-controls`, and the host takes no `aria-label`.
+
+`line-exit-complete` fires when an exit ends and the content is hidden, and `line-enter-complete` when an enter after
+the first render ends; both bubble and are not composed. Removing the host cuts the exit and fires nothing. A close
+during an enter animation can skip the exit in Chromium and Firefox
+([chakra-ui/zag#3656](https://github.com/chakra-ui/zag/issues/3656)), and fast toggling in Firefox can fire several
+`line-exit-complete` events, so a handler checks `present` before it acts.
+
+Closed content shows until the module runs; hide it with `line-presence:not(:defined):not([present]) { display: none; }`.
+
+No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
