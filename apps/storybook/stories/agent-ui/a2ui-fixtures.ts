@@ -1,7 +1,7 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
 // Button, Icon, Separator and Stack (C1–C4) through both catalogs, IconButton (C5), ButtonGroup (C6), Alert (C7),
-// Chip (C8), Badge (C9), Avatar (C10), AvatarGroup (C11) and Kbd (C14) through the `line` catalog, and a basic
-// `Image` with `variant: "avatar"` (C10) through its own `catalogId`.
+// Chip (C8), Badge (C9), Avatar (C10), AvatarGroup (C11), Kbd (C14) and Skeleton (C15) through the `line` catalog,
+// and a basic `Image` with `variant: "avatar"` (C10) through its own `catalogId`.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
@@ -55,17 +55,18 @@ export const basicShowcase: A2uiMessage[] = [
 
 /**
  * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge, Avatar, AvatarGroup,
- * Alert and Kbd under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
+ * Alert, Kbd and Skeleton under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
  * takes its text from `label` and binds `pressed` to the data model. One Badge binds its count `label` to the data
  * model, and a dot Badge with no `label` is named by its `accessibility.label`. One Avatar binds its `src` and `name`
  * and holds a presence Badge in `status`; a basic `Image` with `variant: "avatar"` renders the second `line-avatar`.
  * One named AvatarGroup holds three Avatars with `max` 2, so "+1" opens a panel with the third, named by its
- * `overflowLabel`. A Kbd at the end of the toolbar shows the `mod+k` shortcut hint.
+ * `overflowLabel`. A Kbd at the end of the toolbar shows the `mod+k` shortcut hint, and a two-line text Skeleton at
+ * the end of the root stands in for content still to come.
  */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
   components([
-    { id: 'root', component: 'Stack', gap: '3', children: ['toolbar', 'filters', 'team', 'notice'] },
+    { id: 'root', component: 'Stack', gap: '3', children: ['toolbar', 'filters', 'team', 'notice', 'pending'] },
     {
       id: 'toolbar',
       component: 'Stack',
@@ -190,6 +191,7 @@ export const lineShowcase: A2uiMessage[] = [
     { id: 'ana', component: 'Avatar', src: 'avatars/ana.svg', name: 'Ana Silva' },
     { id: 'rui', component: 'Avatar', src: 'avatars/rui.svg', name: 'Rui Costa' },
     { id: 'marta', component: 'Avatar', name: 'Marta Sousa' },
+    { id: 'pending', component: 'Skeleton', shape: 'text', lines: 2 },
   ]),
   data('/filters', { inStock: true, freeShipping: false, results: '24' }),
   data('/user', { photo: 'avatars/ana.svg', name: 'Ana Silva' }),

@@ -340,4 +340,27 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(statics).toHaveLength(1);
     expect(statics[0]?.attribute).toBeUndefined();
   });
+
+  test('line-skeleton resolves to src/skeleton/skeleton.ts', () => {
+    const skeleton = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-skeleton'),
+    );
+    expect(skeleton?.path).toBe('src/skeleton/skeleton.ts');
+    expect(paths.has('src/skeleton/skeleton.ts')).toBe(true);
+  });
+
+  test('line-skeleton declares the public fields shape, lines and animation, no event, no slot, two parts and thirteen tokens (0016-skeleton.md Tests, Packaging row)', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-skeleton');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields.sort()).toEqual(['animation', 'lines', 'shape']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots ?? []).toEqual([]);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root', 'item']);
+    expect(declaration?.cssProperties).toHaveLength(13);
+  });
 });

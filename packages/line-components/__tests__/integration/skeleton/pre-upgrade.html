@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>line-skeleton pre-upgrade fixture (spec 0016-skeleton.md)</title>
+    <script type="module">
+      // A bare specifier resolves under Vite only through a module import, so the rule below can read --line-size-4.
+      import '@websublime/line-tokens/sizing';
+    </script>
+    <style id="rule">
+      line-skeleton:not(:defined) {
+        display: block;
+        block-size: var(--line-size-4);
+      }
+    </style>
+    <script type="module">
+      // The component module loads only when the test calls this, so the hosts can be measured undefined first.
+      window.lineLoad = () => import('./pre-upgrade.ts');
+    </script>
+  </head>
+  <body>
+    <main>
+      <line-skeleton id="host"></line-skeleton>
+    </main>
+  </body>
+</html>

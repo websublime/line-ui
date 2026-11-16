@@ -114,6 +114,7 @@ describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)',
         'IconButton',
         'Kbd',
         'Separator',
+        'Skeleton',
         'Stack',
       ]);
       for (const each of tools(provider)) expect(Object.keys(each)).toEqual(['name', 'description', 'parameters']);
@@ -189,6 +190,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
       expect(names('IconButton')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('Kbd')).toEqual(['keys']);
       expect(names('Separator')).toEqual(['orientation', 'decorative', ...ACCESSIBILITY]);
+      expect(names('Skeleton')).toEqual(['shape', 'lines']);
       expect(names('Stack')).toEqual(['orientation', 'justify', 'align', 'gap', 'wrap']);
     }
   });
@@ -248,7 +250,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   );
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Icon, Kbd and Stack neither',
+    '%s: Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Icon, Kbd, Skeleton and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
       for (const name of [
@@ -267,7 +269,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
         if (provider !== 'openai')
           expect(ACCESSIBILITY.filter((parameter) => required?.includes(parameter))).toEqual([]);
       }
-      for (const name of ['Alert', 'Icon', 'Kbd', 'Stack']) {
+      for (const name of ['Alert', 'Icon', 'Kbd', 'Skeleton', 'Stack']) {
         const { properties } = tool(provider, name).parameters;
         expect(['accessibility', ...ACCESSIBILITY].filter((parameter) => parameter in properties)).toEqual([]);
       }

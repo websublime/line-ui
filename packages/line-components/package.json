@@ -78,6 +78,10 @@
     "./kbd": {
       "types": "./dist/kbd/index.d.ts",
       "import": "./dist/kbd/index.js"
+    },
+    "./skeleton": {
+      "types": "./dist/skeleton/index.d.ts",
+      "import": "./dist/skeleton/index.js"
     }
   },
   "dependencies": {

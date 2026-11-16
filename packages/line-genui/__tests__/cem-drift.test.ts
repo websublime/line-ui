@@ -74,9 +74,9 @@ describe('CEM drift: descriptors against the built line-components manifest (§6
   });
 
   test('a descriptor whose tag the manifest lacks fails', () => {
-    const skeleton = variant({ ...buttonDescriptor, name: 'Skeleton', tag: 'line-skeleton' }, {});
-    expect(driftViolations([skeleton], manifest)).toEqual([
-      { tag: 'line-skeleton', kind: 'element', name: 'line-skeleton' },
+    const spinner = variant({ ...buttonDescriptor, name: 'Spinner', tag: 'line-spinner' }, {});
+    expect(driftViolations([spinner], manifest)).toEqual([
+      { tag: 'line-spinner', kind: 'element', name: 'line-spinner' },
     ]);
   });
 
