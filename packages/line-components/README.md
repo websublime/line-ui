@@ -531,3 +531,34 @@ LineKbd.keyLabels = { 'other.control': 'Strg', 'other.shift': 'Umschalt', then: 
 ```
 
 No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
+
+## Skeleton
+
+`<line-skeleton>` is a placeholder that stands where content will appear once it loads, so the page keeps its layout
+while it waits. `shape` draws a block (`rect`, the default), a circle (`circle`) or lines of text sized to the
+surrounding font (`text`), and `lines` draws that many items, from 1 to 20, the last of several shorter. It has two
+parts, `root` (the column) and `item` (one line or shape); thirteen `--line-skeleton-*` tokens; no slot and no events.
+It holds no content of its own: your app replaces it with the content.
+
+```html
+<article aria-busy="true" aria-label="Profile">
+  <line-skeleton shape="circle"></line-skeleton>
+  <line-skeleton shape="text" lines="2"></line-skeleton>
+  <line-skeleton lines="3"></line-skeleton>
+</article>
+```
+
+The placeholder is hidden from assistive technology and takes no label. Put `aria-busy="true"` on the region that is
+loading while the placeholders show, and remove it when the content arrives. Give the host no `aria-label`, because it
+has no role a name could attach to, and do not put a skeleton alone inside a button or a link.
+
+`animation` is `pulse` (default), `wave` or `none`. The motion stops after two cycles, 4 s with the default tokens, and
+does not run while the user asks for reduced motion. A page rule `line-skeleton::part(item) { animation: … }` naming
+your own keyframes brings motion back; the component's keyframe names are internal. Set `--line-skeleton-bg` and
+`--line-skeleton-wave-color` on the host, or app-wide through `line-skeleton { … }`, to choose the fill and the band;
+a value on an ancestor or `:root` does not reach the host. Under forced colors every item paints `GrayText`.
+
+The host takes no space until its module runs; reserve it with
+`line-skeleton:not(:defined) { display: block; block-size: var(--line-size-4); }`.
+
+No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
