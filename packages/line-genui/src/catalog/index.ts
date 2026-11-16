@@ -23,6 +23,7 @@ import { iconDescriptor } from './descriptors/icon.js';
 import { iconButtonDescriptor } from './descriptors/icon-button.js';
 import { kbdDescriptor } from './descriptors/kbd.js';
 import { portalDescriptor } from './descriptors/portal.js';
+import { presenceDescriptor } from './descriptors/presence.js';
 import { separatorDescriptor } from './descriptors/separator.js';
 import { skeletonDescriptor } from './descriptors/skeleton.js';
 import { stackDescriptor } from './descriptors/stack.js';
@@ -113,6 +114,7 @@ export {
   lineCatalog,
   lineCatalogDocument,
   portalDescriptor,
+  presenceDescriptor,
   separatorDescriptor,
   skeletonDescriptor,
   stackDescriptor,
@@ -133,6 +135,7 @@ export const descriptors: readonly LineDescriptor[] = [
   iconButtonDescriptor,
   kbdDescriptor,
   portalDescriptor,
+  presenceDescriptor,
   separatorDescriptor,
   skeletonDescriptor,
   stackDescriptor,

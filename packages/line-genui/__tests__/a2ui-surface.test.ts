@@ -241,6 +241,23 @@ describe('the line catalog (§6.G.2; §10 SD42)', () => {
     expect(surface.querySelector('line-portal')).toBeNull();
     expect(customElements.get('line-portal')).toBeUndefined();
   });
+
+  test('a Presence node renders one inert unknown-type placeholder, since its descriptor is not agent-exposed (0017-presence.md D13)', async () => {
+    const { surface, errors } = await render(
+      [
+        { id: 'root', component: 'Stack', children: ['t', 'presence'] },
+        { id: 't', component: 'Separator' },
+        { id: 'presence', component: 'Presence' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    const placeholders = surface.querySelectorAll('[data-line-a2ui-placeholder="unknown-type"]');
+    expect(placeholders).toHaveLength(1);
+    expect((placeholders[0] as HTMLElement).inert).toBe(true);
+    expect(codes(errors)).toEqual(['UNKNOWN_COMPONENT_TYPE']);
+    expect(surface.querySelector('line-presence')).toBeNull();
+    expect(customElements.get('line-presence')).toBeUndefined();
+  });
 });
 
 describe('Kbd (0015-kbd.md Agent contract; §6.G.4)', () => {
