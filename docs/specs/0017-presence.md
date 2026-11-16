@@ -12,7 +12,7 @@
 | Ledger row | `01-C16` (`docs/plans/01-tasks-core-primitives.md:62`) |
 | Governing sections | Phase 1 spec §4.2 (`:255`, `:267`, `:304`), §6.C.0, §6.C.1 (`:933-958`, machine rows `:949`), §6.C.4 (C16 row `:1172`, notes `:1147-1153`, `:1179-1183`), §6.C.6 (`:1218-1233`), §6.C.7 (`:1242-1272`, floor rule `:1261`, lock acceptance `:1272`), §6.G.1 (reason table `:1332-1338`, Presence row `:1337`), §6.G.2, §6.G.3, §6.G.4, §6.G.5, §7.4 (`:2111`), §7.5, §7.6 (`:2144`), §7.8, §10 SD12, SD18 (`:2365`), SD30 (`:2377`), SD34 (`:2381`), SD37 (`:2384`), SD38 (`:2385`), SD39 (`:2386`), SD98, SD99, §12 AM-052 (`:2513`), AM-055, AM-058, AM-096 (`:2557`), AM-097; ARCH (v0.8.27) §3, §4, §5 (`:303-327`), §6 (`:335-377`), §8 (`:402-470`), §12 (`:582`), §14.4 (`hidden` rule), §14.7 (`:1163`), §14.8 (`open` row `:1236`), §16.2 (Details animation, `:1504`), §16.3 (`:1528`), §17.2 (`:1566-1580`), §17.3, §17.4, §17.9 (`:1697`); PRD (v0.8.33) §4.1, §5.2 (`:534-543`), §8 (`:1194-1217`); MANIFESTO Laws 1, 3, 4, 5, 9 (`docs/MANIFESTO.md:47`); R7 `docs/research/01-research-zag-machines.md` §2.2 (`:82-115`), §2.3 (`:117-175`), §4, §6 OQ1–OQ3, OQ7 (`:305-311`); R8 `docs/research/01-research-accessibility.md:55`, `:79`, `:265` (probe P6) |
 
-Text marked `[INFERENCE]` has no probe or source behind it yet. This spec is a draft. Open Questions F1–F7 are open forks for Miguel, each with a recommended option, and D1–D24 are orchestrator defaults that stand unless Miguel changes them. No recommended option contradicts an APPROVED statement of the Phase 1 spec, the PRD or ARCHITECTURE; the options that would are marked in their tables. One factual amendment of the Phase 1 spec follows from the probes (Spec drift found, item 1).
+Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F7 on 2026-11-16, each on the option the draft recommended, and Part A and Part B state those decisions. The orchestrator defaults D1–D24 stand as drafted (Miguel, 2026-11-16). No chosen option contradicts an APPROVED statement of the Phase 1 spec, the PRD or ARCHITECTURE; the options that would are marked in their tables. One factual amendment of the Phase 1 spec follows from the probes, Phase 1 spec AM-100 (Spec drift found, item 1). The spec stays `proposed` until its review gate passes and Miguel approves it.
 
 ---
 
@@ -310,7 +310,7 @@ Presence has no semantic variant and no token defaults to switch.
 
 ## Part B — Technical Specification
 
-Part B states the recommended option of each fork: F1 (b), F2 (a), F3 (a), F4 (b), F5 (a), F6 (a), F7 (a). A different answer changes the sections each fork names.
+Part B states the option Miguel chose for each fork on 2026-11-16: F1 (b), F2 (a), F3 (a), F4 (b), F5 (a), F6 (a), F7 (a).
 
 ### Anatomy
 
@@ -607,8 +607,8 @@ The keyframes and the pre-upgrade rule are the Consumer styling block. `line-but
 | 3 | R7 §2.2 (`docs/research/01-research-zag-machines.md:82-115`) | every fact holds for 1.47.0, which is byte-identical to 1.46.0; `immediate` is still unread, while the Zag docs describe it (P1) | record only; research keeps its text |
 | 4 | R7 §2.3 probe P2 (`:144`, `:148`) | the gap is closed, because through the C24 signal `PRESENCE.CHANGED` follows every change of `present` (P4) | record only |
 | 5 | ARCH §16.2 Details animation (`docs/ARCHITECTURE.md:1504`) and §16.3 (`:1528`) | "The `<line-presence>` component handles enter/exit animations" for Accordion and Collapsible. MANIFESTO Law 4 forbids those components from importing `<line-presence>`, so either the consumer slots a Presence into their content or they use a machine directly | not drift for C16; the Phase 3 specs settle it |
-| 6 | ARCH §14.8 complete state mapping (`:1213-1236`) | F3 (a) uses the existing `open` row. F3 (b) would add a `closed` row and F3 (c) a second, string-valued convention | no drift under the recommended option; F3 (b) or (c) is a `decision` |
-| 7 | PRD §4.1 Presence row (`docs/PRD.md:262`) | "Controls mount/unmount animations". Under F2 (a), unmount means the content leaves rendering, the Tab order and the accessibility tree while it stays in the DOM. SD37 gives that meaning to this spec (`:2384`) | no drift under F2 (a) or (b); F2 (c) contradicts MANIFESTO Law 5 |
+| 6 | ARCH §14.8 complete state mapping (`:1213-1236`) | F3 (a) uses the existing `open` row. F3 (b) would add a `closed` row and F3 (c) a second, string-valued convention | no drift under the chosen F3 (a); F3 (b) or (c) would have been a `decision` |
+| 7 | PRD §4.1 Presence row (`docs/PRD.md:262`) | "Controls mount/unmount animations". With F2 (a), unmount means the content leaves rendering, the Tab order and the accessibility tree while it stays in the DOM. SD37 gives that meaning to this spec (`:2384`) | no drift under the chosen F2 (a); F2 (c) would have contradicted MANIFESTO Law 5 |
 | 8 | the Zag presence machine 1.47.0 and 1.48.0 | its `animationcancel` handler unmounts on any cancel while `present` is off, so Chromium and Firefox end an exit at once when it cuts an enter (P1, P4) | upstream behaviour; F7 |
 | 9 | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1 | it has no Presence row yet; the C16 PR adds one (Phase 1 spec §6.C.6; D16) | an obligation, not drift |
 
@@ -618,15 +618,15 @@ The keyframes and the pre-upgrade rule are the Consumer styling block. `line-but
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | Which node does the machine track and the consumer animate? | Miguel | open; recommended (b), the shadow `root` part |
-| F2 | What does "unmount" mean for a custom element? | Miguel | open; recommended (a), `hidden` on the `root` part |
-| F3 | How does the host expose the presence state to consumer CSS? | Miguel | open; recommended (a), `data-open` and `:state(open)` only |
-| F4 | Does the enter animation run at the first render? | Miguel | open; recommended (b), an opt-in `skip-animation-on-mount` attribute |
-| F5 | Which events does Presence fire? | Miguel | open; recommended (a), `line-exit-complete` and `line-enter-complete` |
-| F6 | What happens under `prefers-reduced-motion: reduce`? | Miguel | open; recommended (a), the consumer gates its own keyframes |
-| F7 | What happens when a close cuts an enter animation? | Miguel | open; recommended (a), accept Zag's behaviour, document it and file an upstream issue |
+| F1 | Which node does the machine track and the consumer animate? | Miguel | Miguel 2026-11-16: (b), the shadow `root` part |
+| F2 | What does "unmount" mean for a custom element? | Miguel | Miguel 2026-11-16: (a), `hidden` on the `root` part |
+| F3 | How does the host expose the presence state to consumer CSS? | Miguel | Miguel 2026-11-16: (a), `data-open` and `:state(open)` only |
+| F4 | Does the enter animation run at the first render? | Miguel | Miguel 2026-11-16: (b), an opt-in `skip-animation-on-mount` attribute |
+| F5 | Which events does Presence fire? | Miguel | Miguel 2026-11-16: (a), `line-exit-complete` and `line-enter-complete` |
+| F6 | What happens under `prefers-reduced-motion: reduce`? | Miguel | Miguel 2026-11-16: (a), the consumer gates its own keyframes |
+| F7 | What happens when a close cuts an enter animation? | Miguel | Miguel 2026-11-16: (a), accept Zag's behaviour, document it and file an upstream issue |
 
-**Orchestrator defaults** (they stand unless Miguel changes them)
+**Orchestrator defaults** (Miguel left D1–D24 as drafted, 2026-11-16)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -635,7 +635,7 @@ The keyframes and the pre-upgrade rule are the Consumer styling block. `line-but
 | D3 | `:host { display: contents }`, `:host([hidden]) { display: none }`, `[part='root'] { display: block }` | Portal D3 (`0013-portal.md`); probe P3 (a block host keeps a 1264 × 0 box after the exit); the root is a real box in the flat tree, so it animates inside a contents host [INFERENCE: P2 probed the part with a block host; the Browser tier proves it] |
 | D4 | `commonReset` is the only reset module, and its `[hidden] { display: none !important }` hides the root against page rules | ARCH §14.7, `:1163`; Phase 1 spec `:1181`; `packages/line-core/src/styles/reset.common.css:35-37`; probe P3 |
 | D5 | One part, `root`, wrapping the default slot | ARCH §5 `root` (`:306`); MANIFESTO Law 1; F1 (b) |
-| D6 | `present` and `skipAnimationOnMount` are `{ type: Boolean, reflect: true }`, default `false`; under F4 (b) the root takes an internal `skip` class, rendered by Lit, while both the attribute and the machine's `skip` hold, and a shadow rule sets `animation: none !important` on it | Portal's `disabled`; `0016-skeleton.md` P4 (an `!important` shadow rule beats a page `::part` rule); probe P4 (skip turns false before the first exit's frame check) |
+| D6 | `present` and `skipAnimationOnMount` are `{ type: Boolean, reflect: true }`, default `false`; the root takes an internal `skip` class (F4 (b)), rendered by Lit, while both the attribute and the machine's `skip` hold, and a shadow rule sets `animation: none !important` on it | Portal's `disabled`; `0016-skeleton.md` P4 (an `!important` shadow rule beats a page `::part` rule); probe P4 (skip turns false before the first exit's frame check) |
 | D7 | `connectedCallback` calls `requestUpdate()` after `super.connectedCallback()`, and the component calls `api.setNode(root)` in `firstUpdated()` and on every connection after the first | probe P4 (a host reconnected mid-exit kept showing its content until an update); Portal's `connectedCallback` (`packages/line-components/src/portal/portal.ts`); the controller builds a new machine on each connect (`line-machine-controller.ts`, `hostConnected`) |
 | D8 | Event `detail` types `{ present: false }` and `{ present: true }`; both events bubble, not composed; dispatched from `onExitComplete` and `onEnterComplete` | ARCH §17.2 C3; Chip's `line-change` options; probe P5 |
 | D9 | The docs and the class JSDoc state the animation contract: CSS animations on `::part(root)`, distinct enter and exit keyframe names, `animation: none` or `0s` for an instant change, no transitions, removing the host cuts the exit, focus leaves for `body` when an exit ends, hidden controls still submit | probes P2, P3, P4 |
@@ -654,6 +654,8 @@ The keyframes and the pre-upgrade rule are the Consumer styling block. `line-but
 | D22 | No `exiting` or `skip` reflection beyond `open` | F3 (a); a consumer selects the exiting state with `:not([data-open])` (States) |
 | D23 | The component ships no keyframes, no animation and no motion token; without consumer CSS it shows and hides in one frame | probe P4 (no CSS → 8–18 ms); MANIFESTO Out of Scope, "Opinionated default styling in the core package" (`docs/MANIFESTO.md:64`) |
 | D24 | When the machine fails to start (MANIFESTO Law 9), the root follows `present` directly, and each change fires its completion event in the same update, so a consumer waiting on `line-exit-complete` is not stuck | MANIFESTO Law 9; Chip's fallback (`chip.ts`, `#state()`), which flips itself; [INFERENCE: the failure path was not probed] |
+
+Miguel decided F1–F7 on 2026-11-16, each on the option the draft recommended, and left D1–D24 as drafted. The option tables below stay as the record of what he weighed.
 
 ### F1 — Tracked node
 
