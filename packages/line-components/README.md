@@ -610,3 +610,55 @@ during an enter animation can skip the exit in Chromium and Firefox
 Closed content shows until the module runs; hide it with `line-presence:not(:defined):not([present]) { display: none; }`.
 
 No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
+
+## Grid
+
+`<line-grid>` lays out its children in rows of equal columns. The host is the grid container, it adds no role, and it
+exposes no `::part()`; style it directly with `line-grid { … }`. Children fill the grid in source order, row by row,
+in the writing direction of the page, and the column count adapts to the width the grid has.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `columns` | `1`–`12`, the most columns in a row | at most `12` |
+| `min-column-width` | `xxs` (12rem), `xs` (16rem), `sm` (24rem), `md` (32rem), or `none` to keep all `columns` at any width | `xs` |
+| `gap` | `0`–`5` on the `--line-layout-gap-*` scale | step `2` |
+| `align` | `start`, `center`, `end`, `stretch` (each child within its row) | `stretch` |
+| `justify-items` | `start`, `center`, `end`, `stretch` (each child within its column) | `stretch` |
+
+```html
+<!-- At most three columns, each at least 12rem -->
+<line-grid columns="3" min-column-width="xxs">
+  <article>One</article>
+  <article>Two</article>
+  <article>Three</article>
+</line-grid>
+
+<!-- Two equal columns at any width -->
+<line-grid columns="2" min-column-width="none">…</line-grid>
+```
+
+The template reads `--line-grid-columns`, `--line-grid-min-column-width` and `--line-grid-column-gap`, and the gaps
+read `--line-grid-row-gap` and `--line-grid-column-gap`, both from `--line-grid-gap`. Load
+`@websublime/line-tokens/sizing` and `@websublime/line-tokens/layouts`; without them the grid shows one column with no
+gap. Write `0px`, never a unitless `0`, when you set one of these tokens to zero, and set `--line-grid-column-gap`
+rather than `column-gap`, because the column formula reads the token. For your own breakpoints, set the tokens from a
+container or media query on an ancestor:
+
+```css
+.sidebar { container-type: inline-size; }
+@container (min-width: 40rem) {
+  .sidebar line-grid { --line-grid-columns: 2; }
+}
+```
+
+In a flex row, such as a horizontal `<line-stack>`, or in an `auto` grid track, the grid sizes to its content, so its
+columns have no room; give it `flex: 1` or a width there. `grid-column: 1 / -1` on a child takes a whole row;
+`grid-column: span N` adds an implicit column once fewer than `N` columns fit, so pair it with
+`min-column-width="none"`. CSS that moves children with `order`, `grid-row` or `grid-auto-flow: dense` makes the visual
+order differ from the reading and focus order.
+
+For a list, put `role="list"` on the host and `role="listitem"` on each child. Without a role the grid is a `generic`
+element, so do not give it an `aria-label`. Never put `role="grid"` on it: that role claims an interactive data grid
+with arrow-key navigation, which `<line-grid>` does not provide.
+
+No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
