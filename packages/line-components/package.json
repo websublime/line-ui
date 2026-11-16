@@ -82,6 +82,10 @@
     "./skeleton": {
       "types": "./dist/skeleton/index.d.ts",
       "import": "./dist/skeleton/index.js"
+    },
+    "./presence": {
+      "types": "./dist/presence/index.d.ts",
+      "import": "./dist/presence/index.js"
     }
   },
   "dependencies": {

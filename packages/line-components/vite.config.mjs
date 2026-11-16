@@ -23,6 +23,7 @@ export default mergeConfig(
       'portal/index': 'src/portal/index.ts',
       'kbd/index': 'src/kbd/index.ts',
       'skeleton/index': 'src/skeleton/index.ts',
+      'presence/index': 'src/presence/index.ts',
     },
   }),
   {
