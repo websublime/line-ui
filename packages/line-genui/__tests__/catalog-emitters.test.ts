@@ -74,6 +74,7 @@ const LINE_COMPONENTS = [
   'IconButton',
   'Kbd',
   'Separator',
+  'Skeleton',
   'Stack',
 ];
 

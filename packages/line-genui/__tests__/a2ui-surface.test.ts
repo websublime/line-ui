@@ -27,6 +27,7 @@ import {
   chipDescriptor,
   kbdDescriptor,
   LINE_CATALOG_ID,
+  skeletonDescriptor,
 } from '../src/catalog/index.js';
 import {
   action,
@@ -312,6 +313,82 @@ describe('Kbd (0015-kbd.md Agent contract; §6.G.4)', () => {
     expect(errors).toEqual([]);
     const { host } = await kbdOf(surface);
     expect(host.hasAttribute('aria-label')).toBe(false);
+  });
+});
+
+describe('Skeleton (0016-skeleton.md Agent contract; §6.G.4)', () => {
+  type Skeleton = HTMLElement & { shape: string; lines: number; updateComplete: Promise<unknown> };
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so Skeleton is
+  // defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => skeletonDescriptor.load());
+
+  /** The rendered `line-skeleton` hosts, after their update, with the `item` count of each. */
+  async function skeletonsOf(surface: HTMLElement): Promise<{ host: Skeleton; items: number }[]> {
+    const hosts = [...surface.querySelectorAll('line-skeleton')] as Skeleton[];
+    await Promise.all(hosts.map((host) => host.updateComplete));
+    return hosts.map((host) => ({
+      host,
+      items: host.shadowRoot?.querySelectorAll('[part="item"]').length ?? 0,
+    }));
+  }
+
+  test('a Skeleton node renders <line-skeleton> with shape and lines as attributes', async () => {
+    const { surface, errors } = await render(
+      [
+        { id: 'root', component: 'Stack', children: ['a', 'b'] },
+        { id: 'a', component: 'Skeleton', shape: 'circle' },
+        { id: 'b', component: 'Skeleton', shape: 'text', lines: 3 },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe(
+      '<line-stack><line-skeleton shape="circle"></line-skeleton><line-skeleton shape="text" lines="3"></line-skeleton></line-stack>',
+    );
+    const [circle, text] = await skeletonsOf(surface);
+    expect(circle?.host.shape).toBe('circle');
+    expect(circle?.items).toBe(1);
+    expect(text?.host.lines).toBe(3);
+    expect(text?.items).toBe(3);
+  });
+
+  test('a bound lines updates the same element', async () => {
+    const { surface, feed } = mount();
+    await feed(
+      create(LINE_CATALOG_ID),
+      components([{ id: 'root', component: 'Skeleton', shape: 'text', lines: { path: '/n' } }]),
+      data('/n', 2),
+    );
+    const [first] = await skeletonsOf(surface);
+    expect(first?.host.getAttribute('lines')).toBe('2');
+    expect(first?.items).toBe(2);
+    await feed(data('/n', 4));
+    const [second] = await skeletonsOf(surface);
+    expect(second?.host).toBe(first?.host);
+    expect(second?.host.getAttribute('lines')).toBe('4');
+    expect(second?.items).toBe(4);
+  });
+
+  test('a node with no props renders one rect item and raises nothing (C8)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Skeleton' }], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    expect(errors).toEqual([]);
+    const [only] = await skeletonsOf(surface);
+    expect(only?.host.getAttributeNames()).toEqual([]);
+    expect(only?.host.shape).toBe('rect');
+    expect(only?.items).toBe(1);
+  });
+
+  test('an accessibility.label sets no aria-label on the host (hostNaming never)', async () => {
+    const { surface, errors } = await render(
+      [{ id: 'root', component: 'Skeleton', accessibility: { label: 'Loading' } }],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const [only] = await skeletonsOf(surface);
+    expect(only?.host.hasAttribute('aria-label')).toBe(false);
   });
 });
 
