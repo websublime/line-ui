@@ -24,6 +24,7 @@ export default mergeConfig(
       'kbd/index': 'src/kbd/index.ts',
       'skeleton/index': 'src/skeleton/index.ts',
       'presence/index': 'src/presence/index.ts',
+      'grid/index': 'src/grid/index.ts',
     },
   }),
   {

@@ -70,6 +70,7 @@ const LINE_COMPONENTS = [
   'Button',
   'ButtonGroup',
   'Chip',
+  'Grid',
   'Icon',
   'IconButton',
   'Kbd',

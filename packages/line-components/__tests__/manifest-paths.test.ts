@@ -394,6 +394,35 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root']);
     expect(declaration?.cssProperties ?? []).toEqual([]);
   });
+
+  test('line-grid resolves to src/grid/grid.ts', () => {
+    const grid = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-grid'),
+    );
+    expect(grid?.path).toBe('src/grid/grid.ts');
+    expect(paths.has('src/grid/grid.ts')).toBe(true);
+  });
+
+  test('line-grid declares the public fields align, columns, gap, justifyItems and minColumnWidth, no event, one default slot, no part and five tokens (0019-grid.md Tests, Packaging row)', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-grid');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields.sort()).toEqual(['align', 'columns', 'gap', 'justifyItems', 'minColumnWidth']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts ?? []).toEqual([]);
+    expect(declaration?.cssProperties?.map((property) => property.name)).toEqual([
+      '--line-grid-columns',
+      '--line-grid-min-column-width',
+      '--line-grid-gap',
+      '--line-grid-row-gap',
+      '--line-grid-column-gap',
+    ]);
+  });
 });
 
 describe('the @zag-js/presence dependency (0017-presence.md Tests, Packaging row; Phase 1 spec §6.C.7)', () => {
