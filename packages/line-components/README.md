@@ -662,3 +662,46 @@ element, so do not give it an `aria-label`. Never put `role="grid"` on it: that 
 with arrow-key navigation, which `<line-grid>` does not provide.
 
 No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
+
+## Center
+
+`<line-center>` centres its content horizontally, vertically or on both axes. The host is a flex container that lays
+its children out as one column, in source order and with no gap, and centres them in the writing direction of the
+page. It adds no role, reads no token and exposes no `::part()`; style it directly with `line-center { … }`. Content
+larger than the box starts at its start edge (`safe center`), so none of it is cut off.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `axis` | `both`, `horizontal` (the inline axis), `vertical` (the block axis); an unknown value behaves as `both` | `both` |
+
+```html
+<!-- Centred on both axes in a box with a height -->
+<line-center style="min-block-size: 16rem">
+  <p>No results</p>
+</line-center>
+
+<!-- Several children, spaced by a Stack inside the Center -->
+<line-center style="min-block-size: 16rem">
+  <line-stack gap="3" align="center">…</line-stack>
+</line-center>
+```
+
+Vertical centring needs a height. Give `line-center` a `block-size` or `min-block-size`, or place it where a parent
+stretches it, such as a grid cell, a flex row or a horizontal `<line-stack>` at its default `align`. A vertical
+`<line-stack>` at its default `justify` does not stretch it top to bottom; with `justify="stretch"` it does. In a flex
+row, such as a horizontal `<line-stack>`, or in an `auto` grid track, `line-center` is as wide as its content, so
+horizontal centring has no room; give it `flex: 1` or a width there. In a `<line-stack>` whose `align` is not
+`stretch`, it is only as large as its content across the Stack.
+
+Center moves boxes, not lines of text: to centre the lines of a paragraph, set `text-align: center` on the paragraph.
+A `display` rule on `line-center` shows a hidden Center, so exclude `[hidden]` when you make it inline:
+
+```css
+line-center:not([hidden]) { display: inline-flex; }
+```
+
+Without a role, Center is a `generic` element, so do not give it an `aria-label`. For a named group put `role="group"`
+and an `aria-label` on the host; for a landmark use `role="region"`. CSS that moves children with `order` or
+`flex-direction: column-reverse` makes the visual order differ from the reading and focus order.
+
+No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.

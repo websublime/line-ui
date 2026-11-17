@@ -20,6 +20,7 @@ import {
   badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
+  centerDescriptor,
   chipDescriptor,
   commonProp,
   type DescriptorInit,
@@ -110,6 +111,7 @@ describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)',
         'Badge',
         'Button',
         'ButtonGroup',
+        'Center',
         'Chip',
         'Grid',
         'Icon',
@@ -187,6 +189,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
       expect(names('Badge')).toEqual(['label', 'variant', ...ACCESSIBILITY]);
       expect(names('Button')).toEqual(['variant', 'disabled', 'loading', 'pressed', ...ACCESSIBILITY]);
       expect(names('ButtonGroup')).toEqual(['orientation', 'loop', ...ACCESSIBILITY]);
+      expect(names('Center')).toEqual(['axis']);
       expect(names('Chip')).toEqual(['label', 'variant', 'pressed', 'disabled', ...ACCESSIBILITY]);
       expect(names('Grid')).toEqual(['columns', 'minColumnWidth', 'gap', 'align', 'justifyItems']);
       expect(names('Icon')).toEqual(['name', 'mirror', 'path']);
@@ -253,7 +256,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   );
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Grid, Icon, Kbd, Skeleton and Stack neither',
+    '%s: Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, Center, Grid, Icon, Kbd, Skeleton and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
       for (const name of [
@@ -272,7 +275,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
         if (provider !== 'openai')
           expect(ACCESSIBILITY.filter((parameter) => required?.includes(parameter))).toEqual([]);
       }
-      for (const name of ['Alert', 'Grid', 'Icon', 'Kbd', 'Skeleton', 'Stack']) {
+      for (const name of ['Alert', 'Center', 'Grid', 'Icon', 'Kbd', 'Skeleton', 'Stack']) {
         const { properties } = tool(provider, name).parameters;
         expect(['accessibility', ...ACCESSIBILITY].filter((parameter) => parameter in properties)).toEqual([]);
       }
@@ -432,7 +435,7 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
     expect(lackedNames(each.description, descriptorNamed(name), each)).toEqual([]);
   });
 
-  test('the guard fails on the agent-facing descriptions the seven tool descriptions replace', () => {
+  test('the guard fails on the agent-facing descriptions the eight tool descriptions replace', () => {
     for (const provider of TOOL_PROVIDERS) {
       const lacked = (descriptor: LineDescriptor) =>
         lackedNames(descriptor.description, descriptor, tool(provider, descriptor.name));
@@ -443,14 +446,16 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
       expect(lacked(separatorDescriptor)).toEqual(['accessibility.label', 'accessibility.label']);
       expect(lacked(stackDescriptor)).toEqual(['children']);
       expect(lacked(gridDescriptor)).toEqual(['children']);
+      expect(lacked(centerDescriptor)).toEqual(['child']);
     }
   });
 
-  test('Alert, Button, ButtonGroup, Grid, IconButton, Separator and Stack emit their toolDescription in place of their description', () => {
+  test('Alert, Button, ButtonGroup, Center, Grid, IconButton, Separator and Stack emit their toolDescription in place of their description', () => {
     for (const descriptor of [
       alertDescriptor,
       buttonDescriptor,
       buttonGroupDescriptor,
+      centerDescriptor,
       gridDescriptor,
       iconButtonDescriptor,
       separatorDescriptor,

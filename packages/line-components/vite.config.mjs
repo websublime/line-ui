@@ -25,6 +25,7 @@ export default mergeConfig(
       'skeleton/index': 'src/skeleton/index.ts',
       'presence/index': 'src/presence/index.ts',
       'grid/index': 'src/grid/index.ts',
+      'center/index': 'src/center/index.ts',
     },
   }),
   {

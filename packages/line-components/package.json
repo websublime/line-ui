@@ -90,6 +90,10 @@
     "./grid": {
       "types": "./dist/grid/index.d.ts",
       "import": "./dist/grid/index.js"
+    },
+    "./center": {
+      "types": "./dist/center/index.d.ts",
+      "import": "./dist/center/index.js"
     }
   },
   "dependencies": {

@@ -24,6 +24,7 @@ import {
   avatarGroupDescriptor,
   BASIC_CATALOG_ID,
   badgeDescriptor,
+  centerDescriptor,
   chipDescriptor,
   gridDescriptor,
   kbdDescriptor,
@@ -483,6 +484,66 @@ describe('Grid (0019-grid.md Agent contract; §6.G.4)', () => {
     expect(host.hasAttribute('aria-description')).toBe(false);
     expect(host.hasAttribute('role')).toBe(false);
     expect(host.children).toHaveLength(2);
+  });
+});
+
+describe('Center (0020-center.md Agent contract; §6.G.4)', () => {
+  type Center = HTMLElement & { axis?: string; updateComplete: Promise<unknown> };
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so Center is
+  // defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => centerDescriptor.load());
+
+  async function centerOf(surface: HTMLElement): Promise<Center> {
+    const host = surface.querySelector('line-center') as Center;
+    await host.updateComplete;
+    return host;
+  }
+
+  test('a Center node renders <line-center> with axis as its attribute and its child in the default slot', async () => {
+    const { surface, errors } = await render(
+      [
+        { id: 'root', component: 'Center', axis: 'vertical', child: 'k' },
+        { id: 'k', component: 'Kbd', keys: 'mod+k' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-center axis="vertical"><line-kbd keys="mod+k"></line-kbd></line-center>');
+    const host = await centerOf(surface);
+    expect(host.axis).toBe('vertical');
+    const slot = host.shadowRoot?.querySelector('slot');
+    expect(slot?.hasAttribute('name')).toBe(false);
+    expect(slot?.assignedElements()).toEqual([...host.children]);
+  });
+
+  test('a node with no props renders an empty <line-center> with no attribute and raises nothing (C8)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'Center' }], { catalogId: LINE_CATALOG_ID });
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-center></line-center>');
+    const host = await centerOf(surface);
+    expect(host.getAttributeNames()).toEqual([]);
+  });
+
+  test('an accessibility label and description set no aria-label or aria-description (hostNaming never)', async () => {
+    const { surface, errors } = await render(
+      [
+        {
+          id: 'root',
+          component: 'Center',
+          accessibility: { label: 'Hero', description: 'Welcome' },
+          child: 'k',
+        },
+        { id: 'k', component: 'Kbd', keys: 'esc' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const host = await centerOf(surface);
+    expect(host.hasAttribute('aria-label')).toBe(false);
+    expect(host.hasAttribute('aria-description')).toBe(false);
+    expect(host.hasAttribute('role')).toBe(false);
+    expect(host.children).toHaveLength(1);
   });
 });
 
