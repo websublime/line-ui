@@ -12,7 +12,7 @@
 | Ledger row | `01-C20` (`docs/plans/01-tasks-core-primitives.md:66`) |
 | Governing sections | Phase 1 spec §4.2 (`:259`, `:308`), §6.C.4 (C20 row `:1176`, notes `:1147-1153`, `:1178-1183`, internals proof `:1180`), §6.C.6 (`:1218-1233`), §6.G.1 (`:1316`, `:1323`, `:1325-1326`, reason table `:1332-1338`), §6.G.2 (`:1371`, `:1373`), §6.G.3 (`:1404`, `:1405`, `:1420-1423`, `:1434`, `:1435`, `:1438`), §6.G.4 (`aria-busy` `:1475`, accessibility `:1510-1518`), §6.G.5, §7.4 (`:2111`), §7.5 (`:2127`), §7.6 (`:2144`), §7.8 (`:2175`), §10 SD4 (`:2351`), SD12 (`:2359`), SD34 (`:2381`), SD36 (`:2383`), SD37 (`:2384`), SD38 (`:2385`), SD39 (`:2386`), SD47 (`:2394`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-005, AM-058 (`:2519`), AM-086 (`:2547`), AM-103 (`:2564`); ARCH §3, §4, §5 (`:305`, `:325`), §8 (`:410`), §12 (`:582`), §13.1 (`:596-597`), §13.5 (`:622-625`), §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3, §17.4 (Theme and Accessibility rows); PRD (v0.8.33) §4.1 (`:267`), §5.2 (`:534-543`), §8.1 (`:1194-1202`); MANIFESTO Laws 1–6, 9, Out of Scope (`docs/MANIFESTO.md:66-67`); R8 (`docs/research/01-research-accessibility.md:84`, `:241`, `:286-287`, `:343`); R7 (`docs/research/01-research-zag-machines.md:76`) |
 
-This is the draft for review. Every Open Question F1–F8 is open and belongs to Miguel; each option table marks the option the drafter recommends. The drafter defaults D1–D24 stand unless Miguel or the review gate changes them. Text marked `[INFERENCE]` has no probe or source behind it yet. The recommended options need no change to the APPROVED Phase 1 spec, so the row stays at class `task` if Miguel takes them. F7 (c) would change four approved lists of the Phase 1 spec, and its option carries the proposed Phase 1 spec AM-104 text; choosing it raises the class to `decision` (PROCESS §2). F1 (e), F2 (c) and F6 (c) would each drop a prop that ARCH §13.5 names (`docs/ARCHITECTURE.md:624`), an ARCHITECTURE change that also raises the class to `decision`.
+Miguel decided Open Questions F1–F8 on 2026-11-17, each on the option the draft recommended, and Part A and Part B state those decisions. The drafter defaults D1–D24 stand as drafted (Miguel, 2026-11-17). F7 (a) gives the descriptor the default `hostNaming: always`, which the Phase 1 spec §6.G.4 rule already covers (`docs/specs/01-spec-core-primitives.md:1514`), so the decisions change no Phase 1 spec rule, need no `AM-nnn`, and the row stays at class `task` (PROCESS §2). Text marked `[INFERENCE]` has no probe or source behind it yet. The spec stays `proposed` until it passes its review gate and Miguel approves it.
 
 ---
 
@@ -305,7 +305,7 @@ Three libraries outside the table ship one.
 
 ### P12 — Size
 
-The recommended design, a module with the class, both converters, the stylesheet and `customElements.define`, is 3,422 B minified and 1,103 B gzipped through esbuild (`--bundle --minify --format=esm --target=es2022 --external:lit --external:@websublime/*`, then `gzip -9 -n`), the §7.6 recipe. The shipped `./spinner` lands in the "Size report" step against the < 5 KB soft target [INFERENCE: the shipped figure is not measured yet; the probe used a converter of its own, not a copy of Grid's].
+The decided design, a module with the class, both converters, the stylesheet and `customElements.define`, is 3,422 B minified and 1,103 B gzipped through esbuild (`--bundle --minify --format=esm --target=es2022 --external:lit --external:@websublime/*`, then `gzip -9 -n`), the §7.6 recipe. The shipped `./spinner` lands in the "Size report" step against the < 5 KB soft target [INFERENCE: the shipped figure is not measured yet; the probe used a converter of its own, not a copy of Grid's].
 
 ### What the probes settle
 
@@ -596,7 +596,7 @@ Spinner takes no focus and handles no key (R8 `:84`, Keyboard "None"). The Brows
 - **Proof (D18).** The role and name live in internals, so the Browser tier proves them as Phase 1 spec `:1180` requires, with a Chromium CDP assertion of role, name and the absence of `valuenow`, and an `INTERNALS` read-back of `role`, `ariaLabel` and `ariaHidden` in chromium, firefox and webkit (P1; §10 SD39; §12 AM-058).
 - **Firefox and WebKit.** No check reads their accessibility trees, and no screen reader was run. The gap is recorded here (Phase 1 spec `:1180`; §12 AM-058).
 
-**What axe proves here.** axe 4.14.0 sees no internals role or name, so it reports nothing for a named or an unnamed spinner of the recommended design (P1 R1, U7). It would report a nameless host-attribute `progressbar` (P1 U4), which the recommended design never produces. The CDP assertion carries the proof instead.
+**What axe proves here.** axe 4.14.0 sees no internals role or name, so it reports nothing for a named or an unnamed spinner of this design (P1 R1, U7). It would report a nameless host-attribute `progressbar` (P1 U4), which this design never produces. The CDP assertion carries the proof instead.
 
 ### Agent contract
 
@@ -653,7 +653,7 @@ Spinner takes no focus and handles no key (R8 `:84`, Keyboard "None"). The Brows
   - In `frontend-tools.test.ts`, the tool-name list gains `'Spinner'` between `'Skeleton'` and `'Stack'` (`:123-124`); the flat-model test gains `expect(names('Spinner')).toEqual([...ACCESSIBILITY])` after `:202`; the accessibility test adds `Spinner` to its title and to the tools that take both strings (`:262-273`); the guard test expects `lacked(spinnerDescriptor)` to be `['accessibility.label']` and its title says "the ten tool descriptions" in place of "nine" (`:441-454`) [INFERENCE: from the guard's rule and the backticked names of the agent-facing description]; and the tool-description test adds `spinnerDescriptor` to its list and title (`:457-468`).
   - `a2ui-surface.test.ts` imports `spinnerDescriptor` (`:22-35`) and gains a Spinner block after the AspectRatio block (`:551-622`), with `beforeAll(() => spinnerDescriptor.load())` and the surface cases of Tests.
   - `cem-coverage.test.ts:32-37` and `cem-drift.test.ts:76-80` use `line-spinner` as the made-up tag that a manifest or a descriptor lacks, so both would fail once Spinner ships. Both switch to the unshipped `line-input`, class `LineInput`, path `src/input/input.ts`, catalog name `Input`, the first row of PRD §4.2 (`docs/PRD.md:273`, spec `0023-input.md`), as row 01-C15 switched its made-up tag (`0016-skeleton.md:660`; D17).
-- `packages/line-genui/src/catalog/tools.ts` keeps `takesAccessibility` and its JSDoc unchanged, because the JSDoc names only the `never` and `listRole` components and Spinner takes `always` (`:139-154`). F7 (c) would change it (F7).
+- `packages/line-genui/src/catalog/tools.ts` keeps `takesAccessibility` and its JSDoc unchanged, because the JSDoc names only the `never` and `listRole` components and Spinner takes `always` (`:139-154`; F7 (a)).
 - These files outside `line-genui` change.
   - `lineShowcase` in `apps/storybook/stories/agent-ui/a2ui-fixtures.ts` gains the node `{ id: 'loading-more', component: 'Spinner', accessibility: { label: 'Loading more results' } }` after the AspectRatio nodes (`:205-207`), and the root's `children` gain `'loading-more'` after `'framed'` (`:73`). Its JSDoc names Spinner (`:56-65`), and the file header that lists the render fixture names Spinner (C20) (`:1-4`).
   - `'agent-ui-a2ui-surface--line-catalog'` in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` counts 44 elements (`:34`, was 43), the settle selector adds `line-spinner` (`:63`), and the file JSDoc names C20 (`:1-23`).
@@ -734,7 +734,7 @@ A `line` catalog node the surface renders as a named spinner:
 
 ### Competitive analysis row
 
-The C20 PR appends this row to the §4.1 table of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, in catalog order after `Skeleton`, from P11, checked 2026-11-17 (Phase 1 spec §6.C.6, `:1226`; D22). The Notes cell states the decided design, so the PR rewrites it if Miguel picks other options.
+The C20 PR appends this row to the §4.1 table of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, in catalog order after `Skeleton`, from P11, checked 2026-11-17 (Phase 1 spec §6.C.6, `:1226`; D22). The Notes cell states the decided design.
 
 | Component | line://ui | Web Awesome | Spectrum | Lion | Fluent UI Web Components | Radix | Bits | Ark | Notes |
 |---|---|---|---|---|---|---|---|---|---|
@@ -746,15 +746,15 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 
 | # | Where | Finding | Kind |
 |---|---|---|---|
-| 1 | Phase 1 spec §6.G.3 (`:1405`, `:1434`), §6.G.4 (`:1514-1516`), §10 SD47 (`:2394`) | these places list the components whose tools carry neither accessibility parameter and whose surface node takes no host name. `:1434` names Button and Separator as the tools that carry both, while Avatar, AvatarGroup, Badge, ButtonGroup, Chip and IconButton carry them too (`packages/line-genui/__tests__/frontend-tools.test.ts:262-273`). Under F7 (a) or (b) Spinner carries both and joins no exception list | not drift for this row; the `:1434` carriers read as examples. Under F7 (c) Spinner joins the four exception lists through the proposed Phase 1 spec AM-104 (F7), a ratchet trigger |
+| 1 | Phase 1 spec §6.G.3 (`:1405`, `:1434`), §6.G.4 (`:1514-1516`), §10 SD47 (`:2394`) | these places list the components whose tools carry neither accessibility parameter and whose surface node takes no host name. `:1434` names Button and Separator as the tools that carry both, while Avatar, AvatarGroup, Badge, ButtonGroup, Chip and IconButton carry them too (`packages/line-genui/__tests__/frontend-tools.test.ts:262-273`). Under F7 (a), decided, Spinner carries both and joins no exception list | not drift for this row; the `:1434` carriers read as examples, and F7 (a) needs no Phase 1 spec AM |
 | 2 | Phase 1 spec §6.G.3 Acceptance (`:1438`) | it names Button, Separator and Stack as the descriptors that set a tool description, while Alert, AspectRatio, Avatar, AvatarGroup, Badge, ButtonGroup, Center, Grid and IconButton set one too (`packages/line-genui/README.md:92`). Spinner sets one (D15) | not drift; the list reads as examples, as `0021-aspect-ratio.md` Spec drift found, item 2, recorded |
 | 3 | `0016-skeleton.md:753`, Spec drift found, item 5 there; `packages/line-tokens/src/animations.css:57-61`, `:96` | that item recorded for C20 that a shadow-root component cannot use the `line-tokens` keyframes. P4 confirms it for `--line-animation-spin` in Chromium, while Firefox and WebKit run it. No document says a component consumes those tokens; they still serve light-DOM and `::part` users | no drift; confirmation |
 | 4 | R8 `docs/research/01-research-accessibility.md:84` | R8 says to omit `aria-valuenow` on an indeterminate `progressbar`. Chromium still exposes `valuemin=0` and `valuemax=100`, the ARIA 1.2 implicit defaults, with an empty `valuetext` (P1 R1) | record only; R8 is research and carries no rules (PROCESS §1) |
 | 5 | Phase 1 spec §6.C.4 C20 row (`:1176`) | the htmx cell reads "`n/a` expected [INFERENCE]". P8 confirms it | no drift; confirmation |
 | 6 | Phase 1 spec §6.C.4 C20 row (`:1176`); R8 §6 Q9 (`:343`) | R8 Q9 asks for a screen-reader pass of each role. No screen reader ran; Phase 1 spec SD39 and AM-058 make the pass optional and never blocking (`:1180`, `:2386`) | no drift; the gap is recorded under What automation cannot observe |
 | 7 | `0016-skeleton.md:660`; `packages/line-genui/__tests__/cem-coverage.test.ts:32-37`; `cem-drift.test.ts:76-80` | the coverage and drift tests use `line-spinner` as their made-up tag, which C20 ships | an obligation, not drift; D17 switches the tag to `line-input` |
-| 8 | ARCH §13.5 (`docs/ARCHITECTURE.md:624`) | it names the props `size`, `speed` and `label` and the part `root`. The recommended options keep all four. F1 (e), F2 (c) and F6 (c) would each drop a prop | no drift under the recommended options; those three options would need an ARCHITECTURE change, a `decision` |
-| 9 | PRD §4.1 (`docs/PRD.md:267`), "CSS-only animation, no visual opinion" | the recommended design animates through CSS only and draws a ring in `currentColor`, with no colour of its own. The ring itself is a drawing default, which F8 weighs | no drift under F8 (a) or (b) with a transparent track; F8 (d) reads "no visual opinion" literally |
+| 8 | ARCH §13.5 (`docs/ARCHITECTURE.md:624`) | it names the props `size`, `speed` and `label` and the part `root`. The decided options keep all four (F1 (a), F2 (a), F6 (a)) | no drift |
+| 9 | PRD §4.1 (`docs/PRD.md:267`), "CSS-only animation, no visual opinion" | the decided design animates through CSS only and draws a ring in `currentColor`, with no colour of its own. The ring itself is a drawing default, which F8 (a) decided | no drift |
 | 10 | `0002-button.md:315`, `0003-icon-button.md:308`, `0004-button-group.md:436` | their markup puts an unnamed `<line-spinner>` in the `loading` slot. Under F2 (a) that spinner is hidden, so each button keeps its name (P2 B1, B7, I2) | no drift; confirmation |
 
 ---
@@ -763,16 +763,16 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | Which role does a named spinner carry, and where does it live? | Miguel | open; the draft recommends (a), `progressbar` through `ElementInternals` |
-| F2 | Where does the name come from, and what does an unnamed spinner expose? | Miguel | open; the draft recommends (a), `label` through internals with host `aria-label` and `aria-labelledby` winning, and an unnamed spinner hidden |
-| F3 | Where do the keyframes live? | Miguel | open; the draft recommends (a), own keyframes in the component stylesheet, with internal names |
-| F4 | What happens under `prefers-reduced-motion: reduce`? | Miguel | open; the draft recommends (a), a slow opacity pulse in place of rotation, at normal importance |
-| F5 | How does the spinner meet WCAG 2.2.2 when loading lasts more than five seconds? | Miguel | open; the draft recommends (a), infinite by default, a token for a finite count, and docs that give the app its part |
-| F6 | What shape do `size` and `speed` take? | Miguel | open; the draft recommends (a), `size` steps `1`–`6` on `--line-size-*` and `speed="slow \| normal \| fast"` |
-| F7 | Which props reach agents, and how does an agent name a spinner? | Miguel | open; the draft recommends (a), no own props, `hostNaming: always` and a required `accessibility.label` |
-| F8 | What does the spinner draw? | Miguel | open; the draft recommends (a), a ring arc in `currentColor` with a transparent gap and no track |
+| F1 | Which role does a named spinner carry, and where does it live? | Miguel | decided: option (a), `progressbar` through `ElementInternals` while the spinner has a name (Miguel, 2026-11-17) |
+| F2 | Where does the name come from, and what does an unnamed spinner expose? | Miguel | decided: option (a), `label` through internals with host `aria-label` and `aria-labelledby` winning, and an unnamed spinner hidden (Miguel, 2026-11-17) |
+| F3 | Where do the keyframes live? | Miguel | decided: option (a), own keyframes in the component stylesheet, with internal names (Miguel, 2026-11-17) |
+| F4 | What happens under `prefers-reduced-motion: reduce`? | Miguel | decided: option (a), a 2 s opacity pulse in place of rotation, at normal importance so an app can opt back in (Miguel, 2026-11-17) |
+| F5 | How does the spinner meet WCAG 2.2.2 when loading lasts more than five seconds? | Miguel | decided: option (a), infinite by default, `--line-spinner-iteration-count` for a finite count, and docs that give the app its part in SC 2.2.2 (Miguel, 2026-11-17) |
+| F6 | What shape do `size` and `speed` take? | Miguel | decided: option (a), `size` steps `1`–`6` on `--line-size-3`…`-8` and `speed="slow \| normal \| fast"` (Miguel, 2026-11-17) |
+| F7 | Which props reach agents, and how does an agent name a spinner? | Miguel | decided: option (a), no own props, `hostNaming: always` and a required `accessibility.label` (Miguel, 2026-11-17) |
+| F8 | What does the spinner draw? | Miguel | decided: option (a), a ring arc in `currentColor` with a transparent gap and no track (Miguel, 2026-11-17) |
 
-**Drafter defaults**
+**Drafter defaults** (Miguel left D1–D24 as drafted, 2026-11-17)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -801,7 +801,11 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 | D23 | The class JSDoc says what the component is for, that a name makes it a progress bar and no name makes it decorative, to leave it unnamed in a `loading` slot, to put `aria-busy` on the loading region, how reduced motion changes it, and that the keyframe names are internal; `@summary`; `@csspart root`; `@cssprop` for each of the seven tokens with its default | ARCH §17.2 C7; the JSDoc patterns of Skeleton (`packages/line-components/src/skeleton/skeleton.ts:10-45`) and Icon (`icon.ts:42-59`) |
 | D24 | The ring turns clockwise in both directions, and the gap follows the inline-end side; the component sets no `direction` rule | `LineElement` owns `direction` (`0018-stack.md` AM-001) [INFERENCE: right-to-left was not probed] |
 
+Miguel decided F1–F8 on 2026-11-17, each on the option the draft recommended, and left D1–D24 as drafted. Each section below states the decision, and its option table stays as the record of what he weighed.
+
 ### F1 — Role
+
+**Decision.** Miguel chose option (a) on 2026-11-17, so a named spinner carries `progressbar` through `ElementInternals`, with no `aria-valuenow`, and the host carries no `role` attribute.
 
 **Evidence.** R8 names three candidates for Spinner, "`status` (polite live region, name from author)", "`progressbar` (name required; omit `aria-valuenow` when indeterminate)" and "`img` (name required, no live update)" (`docs/research/01-research-accessibility.md:84`). WAI-ARIA 1.2 says a progressbar "indicates that the user's request has been received and the application is making progress toward completing the requested action", and that the author "SHOULD omit the aria-valuenow attribute" when the value is indeterminate. It defines `status` as a live region "whose content is advisory information", with implicit `aria-live="polite"` and `aria-atomic="true"`, and `img` as "a single graphic". Probe P1 exposed each role through internals with its internals name in Chromium (R1–R3), and `ariaSnapshot()` and axe saw none of them. A host-attribute role is visible to both, and axe then reports it unless its name is a host attribute as well (R5, R7, U4, U6). In a button any named role joins the button's name (P2). Every competitor with a role uses `progressbar`, and Fluent sets it through internals (P11).
 
@@ -815,6 +819,8 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 
 ### F2 — Name source and the unnamed spinner
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so `label` sets `internals.ariaLabel`, a host `aria-label` or `aria-labelledby` names the spinner too and wins, and a spinner with no non-blank name has no role and is hidden through `internals.ariaHidden`.
+
 **Evidence.** ARCH §13.5 gives Spinner a `label` prop (`docs/ARCHITECTURE.md:624`), and ARCH §17.2 C5 lets a host accept `aria-label` and `aria-description` or a documented label property. MANIFESTO Out of Scope makes "Loading" the consumer's string (`docs/MANIFESTO.md:66`). WAI-ARIA 1.2 gives `progressbar` and `img` "Accessible Name Required: True". Probe P1 named an internals progressbar from `label` (R1), from a host `aria-label`, which wins over `label` (N1, N2), and from `aria-labelledby` (N4). Writing `label` to the host as `aria-label` works but sprouts the attribute (N3). An internals progressbar with no name shows in Chromium as `progressbar ""` and raises nothing in axe (U1); the recommended design hides it instead (U7). The semantics follow later changes of the name (P3). Icon hides itself until a host `aria-label` names it (`packages/line-components/src/icon/icon.ts:184-189`). Inside a button, an unnamed spinner leaves the button's name alone, and a named one joins it (P2). Web Awesome and Lion ship an English default; Spectrum and Fluent take the name from the author (P11).
 
 | Option | What it decides | Consequence |
@@ -826,6 +832,8 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 
 ### F3 — Keyframes
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so `@keyframes line-spinner-spin` and `line-spinner-pulse` live in the component stylesheet under internal names, and custom motion goes through a page `::part(root)` rule with page keyframes.
+
 **Evidence.** `line-tokens` ships `@keyframes line-spin` and `--line-animation-spin` (`packages/line-tokens/src/animations.css:57-61`, `:96`). In probe P4, `animation: var(--line-animation-spin)` on a shadow element runs in Firefox and WebKit and not in Chromium (A2), and a plain host naming any document keyframe from its shadow sheet runs nowhere in Chromium. The component's own keyframes run in all three engines (A1). A page `::part(root)` rule with page keyframes runs in all three engines (A3); one naming the component's keyframe stops the motion in Chromium and WebKit (A4); a page keyframe through the keyframes token runs only in Firefox and WebKit (A5). Skeleton chose its own keyframes for the same reason (`0016-skeleton.md` F2 (a)).
 
 | Option | What it decides | Consequence |
@@ -835,6 +843,8 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 | (c) Own keyframes and a public keyframe route | as (a), and the docs present `--line-spinner-keyframes` with page keyframes as a styling API | Works only in Firefox and WebKit (A5), so the docs would promise a route Chromium ignores |
 
 ### F4 — Reduced motion
+
+**Decision.** Miguel chose option (a) on 2026-11-17, so under `prefers-reduced-motion: reduce` the ring pulses in place for 2 s instead of turning, through a normal-importance rule that a page `::part(root)` rule can override.
 
 **Evidence.** In probe P5, a normal-importance rule under `prefers-reduced-motion: reduce` stopped the rotation, slowed it to 3 s, or swapped it for a 2 s opacity pulse, and a consumer's `::part(root)` rule with page keyframes still ran under each. Without a rule the ring keeps turning. Stopped, the ring rests as a three-quarter circle (P5, A8), which WCAG Understanding 2.2.2 Note 4 describes as content users may think "was frozen or broken". AvatarGroup sets its transition token to `0s` under the same query (`packages/line-components/src/avatar-group/avatar-group.ts:123-127`), and Skeleton stops its motion (`0016-skeleton.md` F3 (a)). None of the eleven competitor packages has a reduced-motion rule that reaches its spinner (P11). WCAG 2.3.3 (AAA) asks that motion from interaction can be turned off.
 
@@ -847,6 +857,8 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 
 ### F5 — Motion longer than five seconds
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so the ring turns while it shows, `--line-spinner-iteration-count` lets an app set a finite count, and the docs name the three conditions of SC 2.2.2 and the app's part when they hold.
+
 **Evidence.** WCAG 2.2 SC 2.2.2 (Level A) says: "For any moving, blinking or scrolling information that (1) starts automatically, (2) lasts more than five seconds, and (3) is presented in parallel with other content, there is a mechanism for the user to pause, stop, or hide it unless the movement, blinking, or scrolling is part of an activity where it is essential". Understanding 2.2.2 says that "'starts automatically' broadly refers to animations/updates that are not the direct result of a user's intentional activation, for example, selecting a link or button". Its Note 4 says: "An animation that occurs as part of a preload phase or similar situation can be considered essential if interaction cannot occur during that phase for all users and if not indicating progress could confuse users or cause them to think that content was frozen or broken". Its "loading" example exempts a preloader that "is the only content on the page", because it "is not presented in parallel with other content" (`https://www.w3.org/WAI/WCAG22/Understanding/pause-stop-hide.html`, read 2026-11-17). So a spinner shown after the user presses a button does not start automatically, and a spinner that is the only content is not in parallel, while a spinner that loads one widget on an otherwise usable page and runs past five seconds falls under the criterion [INFERENCE: the component cannot tell which case it is in]. Probe P4 A8 showed that a finite iteration count stops the ring and leaves it still. Skeleton runs two cycles and rests (`0016-skeleton.md` F4 (b)). Web Awesome, Spectrum, Fluent, Chakra and Mantine turn forever (P11).
 
 | Option | What it decides | Consequence |
@@ -856,6 +868,8 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 | (c) A pause control | the component adds a button that stops the motion | A focusable control inside a Static indicator, on every spinner; contradicts D10 and the CSS-only scope of ARCH §13.5 |
 
 ### F6 — `size` and `speed`
+
+**Decision.** Miguel chose option (a) on 2026-11-17, so `size` takes the steps `1`–`6` on `--line-size-3`…`--line-size-8`, and `speed` takes `slow`, `normal` and `fast` on `--line-motion-7`, `-6` and `-slow`, both as reflected closed enums over token defaults.
 
 **Evidence.** ARCH §13.5 names the props `size` and `speed` (`docs/ARCHITECTURE.md:624`). ARCH §17.2 C6 lets a variant change only the defaults of the component's own tokens on `:host`, and MANIFESTO Law 5 keeps styles out of TypeScript (`docs/MANIFESTO.md:47`). AvatarGroup's `size` is a step `1`–`5` on `--line-size-5` … `-9` (`packages/line-components/src/avatar-group/avatar-group.ts:21`, `:129-131`; `0010-avatar-group.md:294`, `:388`). In probe P6, steps `1`–`6` drew 16–48 px through `--line-size-3` … `-8`, `speed` drew 2000, 1000 and 750 ms through `--line-motion-7`, `-6` and `-slow`, an unknown value drew the default, and without an attribute the spinner followed the text size. In probe P10 both enums reached the catalog and the tools, and an unknown value failed validation. A free value through a `<style>` binding injects CSS unless parsed (`0021-aspect-ratio.md` P3). Spectrum uses `s`, `m`, `l`; Chakra and Mantine `xs` … `xl`; Fluent seven names from `tiny` to `huge`; Radix Themes `1`–`3`; Web Awesome and Fluent use a duration token for speed (P11).
 
@@ -868,20 +882,20 @@ The footnote reads `[^4.1-spinner]: Spinner, checked 2026-11-17; line://ui cell 
 
 ### F7 — Agent props and naming
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so the descriptor has no own props, takes `hostNaming: always` and requires `accessibility.label`, and the tool carries `accessibilityLabel` and `accessibilityDescription`. `always` is the default rule of Phase 1 spec §6.G.4 (`:1514`), so no Phase 1 spec AM follows.
+
 **Evidence.** ARCH §17.4 ignores agent theme hints by default, and MANIFESTO Principle 8 leaves styling to the host, so Skeleton kept `animation` out of its schema (`0016-skeleton.md` F7 (a)). In probe P10, a descriptor with no own props and `hostNaming: always` named the spinner through `accessibility.label`, and its tool carried both accessibility strings (`SpinnerA`). A `label` prop with `hostNaming: never` named it through the attribute, and its tool carried `label` only (`SpinnerB`). A `requiredName` of kind `accessibilityLabel` turned a nameless node into a placeholder with `MISSING_ACCESSIBLE_NAME` (`SpinnerD`). An agent cannot put a spinner in a Button's `loading` slot, which stays outside the Button descriptor's slot map (`0002-button.md:130`, AM-005), so every agent spinner stands alone, where F2 (a) would hide it without a name. Badge and IconButton require a name on the agent path (`packages/line-genui/src/catalog/descriptors/badge.ts:33-36`; Phase 1 spec SD36). The Phase 1 spec names the components whose node takes no host name and whose tool carries no accessibility parameters in four places (`:1405`, `:1434`, `:1516`, SD47 `:2394`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
 | (a) **Recommended.** Required `accessibility.label`, no own props | no own props; `requiredName: [{ kind: 'accessibilityLabel' }]`; `hostNaming: always`; the tool carries `accessibilityLabel` and `accessibilityDescription` | Every agent spinner is a named progressbar, and a nameless one fails visibly with an error the agent can correct (P10 `SpinnerD`). No Phase 1 spec change, because `always` is §6.G.4's default rule. Agents cannot size it or set its speed |
 | (b) Optional `accessibility.label` | as (a) without `requiredName` | An agent may place a decorative spinner. A nameless agent spinner says nothing to assistive technology, and nothing reports it (P10 `SpinnerA`) |
-| (c) A `label` prop, `hostNaming: never` | `label` (`DynamicString`) bound to the attribute `label`; the surface sets no host name on a Spinner node; the tool carries `label` and no accessibility strings | One naming route that matches the markup prop (P10 `SpinnerB`). **Ratchet trigger.** It changes the four approved lists, so it needs Phase 1 spec AM-104 below and raises the class to `decision`, and `takesAccessibility`'s JSDoc gains Spinner |
+| (c) A `label` prop, `hostNaming: never` | `label` (`DynamicString`) bound to the attribute `label`; the surface sets no host name on a Spinner node; the tool carries `label` and no accessibility strings | One naming route that matches the markup prop (P10 `SpinnerB`). **Ratchet trigger.** It changes the four approved lists (Phase 1 spec `:1405`, `:1434`, `:1516`, SD47 `:2394`), so it needs a Phase 1 spec AM and raises the class to `decision`, and `takesAccessibility`'s JSDoc gains Spinner |
 | (d) (a) plus `size` and `speed` | both enums in the schema, bound to their attributes | Agents choose size and speed (P10 `SpinnerC`). Styling that ARCH §17.4 keeps with the host |
 
-Proposed Phase 1 spec AM-104, drafted for F7 (c) only and not committed to the Phase 1 spec:
-
-> | AM-104 | `<date>` | ledger 01-C20 (decision — Miguel, `<date>`, component spec `0022-spinner.md` F7 (c): the surface sets no host `aria-label` or `aria-description` on a Spinner node and the Spinner tool carries no accessibility parameters, because the agent names a spinner through its own `label` prop) | Five edits, each in place; this row is appended at the end of §12, so no line above it moves. (1) The Status line (`:3`) names AM-001–AM-104. (2) §6.G.3 Contract, the walker bullet (`:1405`): an Alert tool, a Kbd tool, a Skeleton tool, a Grid tool, a Center tool, an AspectRatio tool and a Spinner tool carry neither parameter, citing `0022-spinner.md` F7 and AM-104. (3) §6.G.3 Acceptance (`:1434`): the Alert, AspectRatio, Center, Grid, Icon, Kbd, Skeleton, Spinner and Stack tools carry neither, citing AM-104. (4) §6.G.4 Accessibility (`:1516`): Icon, Alert, Kbd, Skeleton, Grid, Center, Aspect Ratio and Spinner set neither, citing `0022-spinner.md` F7 and AM-104. (5) §10 SD47 (`:2394`): the accessibility strings are left out for Alert, AspectRatio, Center, Grid, Icon, Kbd, Skeleton, Spinner and Stack, citing AM-104 | Spinner's `label` prop names its host, so a host name from `accessibility.label` would be a second route to the same name, and the tool's accessibility strings would duplicate `label` | `0022-spinner.md` F7 and probe P10 (`SpinnerB`: `label` names the progressbar and `accessibility.label` sets nothing; its tool carries `label` only); AM-098, AM-099, AM-101, AM-102 and AM-103 for the same four lists |
-
 ### F8 — Drawing
+
+**Decision.** Miguel chose option (a) on 2026-11-17, so `root` draws a ring in `--line-spinner-color` (`currentColor`) with a transparent inline-end gap and no track.
 
 **Evidence.** PRD §4.1 asks for "CSS-only animation, no visual opinion" (`docs/PRD.md:267`), and MANIFESTO Out of Scope keeps opinionated default styling out of the core (`docs/MANIFESTO.md:64`). ARCH §13.5 names the one part `root` (`:624`). In probes P6 and P7, a border ring in `currentColor` with a transparent inline-end side took the text's colour, size and the consumer's tokens, and kept a visible gap under forced colors with the D7 rule. Chakra and Mantine draw the same ring with no track; Web Awesome, Spectrum and Fluent draw a track in a second colour; Radix Themes draws eight leaves; Fluent's `indicator` slot replaces the graphic; Lion draws nothing (P11).
 
