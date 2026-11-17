@@ -18,7 +18,7 @@ The spec stays `proposed` until its review gate passes and Miguel approves it, b
 
 ## Probes
 
-Throwaway probes ran on 2026-11-16 to inform F1–F10 and defaults D2, D3, D5, D6, D8, D9, D12, D13 and D19. A second run the same day, after review gate round 1, extended P4 to `<line-stack>` and re-emitted the revised descriptions (commands 12–15). Their code lived in `packages/line-components/temp/c18-probe/`, `packages/line-components/temp/c18-p4/`, `packages/line-genui/temp/c18-probe/` and `packages/line-genui/temp/c18-p4/`, which `.gitignore` ignores through its `temp` entry (`.gitignore:4`), and the downloaded catalog and competitor files in `/tmp/c18-basic-v09.json`, `/tmp/c18-comp/` and `/tmp/c18-size*.js`, outside the repository. All of them were deleted after the run. Nothing of them is committed.
+Throwaway probes ran on 2026-11-16 to inform F1–F10 and defaults D2, D3, D5, D6, D8, D9, D12, D13 and D19. A second run the same day, after review gate round 1, extended P4 to `<line-stack>` and re-emitted the revised descriptions (commands 12–15). A third run on 2026-11-17, after review gate round 2, added `justify="stretch"` Stacks to P4, read an unconnected host on happy-dom for P8 and re-emitted the descriptions again (commands 16–20). Their code lived in `packages/line-components/temp/c18-probe/`, `c18-p4/` and `c18-p4b/`, and in `packages/line-genui/temp/c18-probe/`, `c18-p4/` and `c18-p4b/`, which `.gitignore` ignores through its `temp` entry (`.gitignore:4`), and the downloaded catalog and competitor files in `/tmp/c18-basic-v09.json`, `/tmp/c18-comp/` and `/tmp/c18-size*.js`, outside the repository. All of them were deleted after each run. Nothing of them is committed.
 
 ### Setup
 
@@ -55,6 +55,11 @@ Throwaway probes ran on 2026-11-16 to inform F1–F10 and defaults D2, D3, D5, D
 | 13 | `node_modules/.bin/playwright test -c packages/line-components/temp/c18-p4/playwright.config.ts`, a page that inlines `packages/line-tokens/src/sizing.css` and `layouts.css` | 0 | 3 passed; the `<line-stack>` table of P4 |
 | 14 | `bun test ./packages/line-genui/temp/c18-p4/emit.test.ts`, a stub `Center` descriptor with the revised descriptions of Descriptor fields, through `lineCatalogDocument` and `frontendTools` for the three providers | 0 | 1 pass; the catalog keeps the 894-character agent-facing description, every tool takes the 867-character tool description and carries `axis` only, and the tool description puts only `axis`, `both`, `horizontal` and `vertical` in backticks |
 | 15 | `rm -rf packages/line-components/temp packages/line-genui/temp /tmp/c18-p4-results`; `git status --short` | 0 | deleted, with the run's `test-results` output, which the config wrote to `/tmp/c18-p4-results`; the tree is clean |
+| 16 | `bun build entry.ts --outfile bundle.js --target browser --format esm` in `packages/line-components/temp/c18-p4b/`, with the same `line-stack` import and probe host as command 12 | 0 | one 62,167-byte module |
+| 17 | `node_modules/.bin/playwright test -c packages/line-components/temp/c18-p4b/playwright.config.ts`, the command 13 page with the `sizing` and `layouts` tokens inlined | 0 | 3 passed; the third-run rows of the P4 `<line-stack>` table |
+| 18 | `bun test ./packages/line-components/temp/c18-p4b/happy.test.ts`, which imports the probe class as a value, builds the host with `document.createElement`, reads it, appends it to `document.body`, awaits `updateComplete` and reads it again | 0 | 1 pass; the P8 unconnected-host row |
+| 19 | `bun test ./packages/line-genui/temp/c18-p4b/emit.test.ts`, command 14 with the round 2 descriptions of Descriptor fields | 0 | 1 pass; the catalog keeps the 928-character agent-facing description, every tool takes the 901-character tool description and carries `axis` only, and the tool description puts only `axis`, `both`, `horizontal` and `vertical` in backticks |
+| 20 | `rm -rf packages/line-components/temp packages/line-genui/temp /tmp/c18-p4b-results`; `git status --short` | 0 | deleted, with the run's `test-results` output in `/tmp/c18-p4b-results`; the tree is clean |
 
 Every result below was the same in chromium, firefox and webkit unless a row says otherwise. Positions are CSS pixels `x,y` of a child's top-left corner relative to the host's top-left corner; the host is 400 × 300 px unless a row says otherwise. Firefox draws the text node one pixel shorter (17 px against 18 px), so its text rows read 0.5 px lower; the tables give the chromium and webkit value.
 
@@ -161,7 +166,7 @@ A 600 × 400 child in a 400 × 300 box, centred on both axes.
 - In a flex row or an `auto` grid track, the host sizes to its content, so horizontal centring has no room; the row's height still gives vertical centring room. `flex: 1` gives it the row's width (Connections).
 - `min-block-size: 100%` in the component fills a parent with a set height, but it overflows that parent by the height of any sibling and does nothing in a parent without a set height. `block-size: 100%` with padding overflows by the padding (F9).
 
-**P4 in `<line-stack>` (2026-11-16, after review gate round 1).** A second run (commands 12, 13 and 15) placed the recommended probe host, holding one 100 × 40 child, in the built `line-stack` (`packages/line-components/dist/stack/index.js`) with the `sizing` and `layouts` tokens loaded. A vertical Stack was 400 px wide; a horizontal Stack was 1000 × 300 px and also held a 200 × 300 sibling after the Center. Positions are relative to the Stack, and the child's position inside the host follows in brackets.
+**P4 in `<line-stack>` (2026-11-16, after review gate round 1).** A second run (commands 12, 13 and 15) placed the recommended probe host, holding one 100 × 40 child, in the built `line-stack` (`packages/line-components/dist/stack/index.js`) with the `sizing` and `layouts` tokens loaded. A vertical Stack was 400 px wide; a horizontal Stack was 1000 × 300 px and also held a 200 × 300 sibling after the Center. Every Stack had the default `gap`, 8 px. Positions are relative to the Stack, and the child's position inside the host follows in brackets. The third run (commands 16, 17 and 20, 2026-11-17) added the rows marked "third run", with the same setup and a vertical Stack 400 × 300 px.
 
 | Stack | Host at, and its size | Child at (inside the host) |
 |---|---|---|
@@ -174,10 +179,16 @@ A 600 × 400 child in a 400 × 300 box, centred on both axes.
 | horizontal, `align="center"` | 0,130, 100 × 40 | 0,130 (0,0) |
 | horizontal, `align="start"` | 0,0, 100 × 40 | 0,0 (0,0) |
 | horizontal, `justify="stretch"` | 0,0, 446 × 300 | 173,130 (173,130) |
+| third run: vertical, 300 px tall, default `align` and `justify` | 0,0, 400 × 40 | 150,0 (150,0) |
+| third run: vertical, 300 px tall, `justify="stretch"` | 0,0, 400 × 300 | 150,130 (150,130) |
+| third run: vertical, 300 px tall, `justify="stretch"` and `align="center"` | 150,0, 100 × 300 | 150,130 (0,130) |
+| third run: horizontal, `justify="stretch"` | 0,0, 446 × 300 | 173,130 (173,130) |
+| third run: horizontal, `justify="stretch"` and `align="center"` | 0,130, 446 × 40 | 173,130 (173,0) |
 
 - At Stack's default `align`, `stretch` (`packages/line-components/src/stack/stack.ts:45`), a Center in a vertical Stack is as wide as the Stack and as tall as its content, and in a horizontal Stack as tall as the row and as wide as its content. Only horizontal or only vertical centring shows, as in a plain flex row.
 - Under any other `align`, the Center is only as large as its content, so it has no room of its own to centre in. With `align="center"` the Stack centres the box itself on the cross axis, and with `align="start"` the box sits at the start.
-- A vertical Stack does not grow a Center along its main axis, even when the Stack is taller, so a Center in a vertical Stack never centres top to bottom.
+- A vertical Stack at its default `justify` does not grow a Center along its length, even when the Stack is taller, so the Center does not centre top to bottom there. `justify="stretch"` grows it to the Stack's height, and it then centres top to bottom (third run).
+- `justify="stretch"` grows the Center along the Stack's length under any `align`, while `align="center"` sizes it to its content across the Stack. So a vertical Stack with both gives a 100 × 300 box that centres only top to bottom, and a horizontal one a 446 × 40 box that centres only from side to side (third run).
 - `justify="stretch"` on a horizontal Stack grows the Center along the row (`::slotted(*) { flex-grow: 1 }`, `0018-stack.md:125`), so both axes centre.
 
 ### P5 — `hidden`, inline display and consumer CSS
@@ -233,9 +244,10 @@ A 600 × 400 child in a 400 × 300 box, centred on both axes.
 | `hidden` | `display: none` |
 | `inline` | the attribute `inline=""`; `display: inline-flex` |
 | attributes of a fresh host; `role`; `internals.role` | none; `null`; `null` |
+| third run: a host from `document.createElement`, before and after `document.body.append` and `updateComplete` (command 18) | before, an instance of the class with `shadowRoot` `null` and computed `display` empty; after, shadow children `["slot"]`, two adopted sheets and `display: flex` |
 
 - The unit tier can check the shadow tree, the converter, reflection, the absence of ARIA and the computed alignment keywords on `:host`. Child positions belong to the Browser tier.
-- A test file that names the class only as a type loses its import, so the tag never defines (command 6). Lit renders the shadow tree only once the host is connected, so a test reads it after mounting [INFERENCE: Lit's first update runs from `connectedCallback`; the probe did not read an unconnected host]. The Unit tier imports `LineCenter` as a value and mounts through `fixture()` and `mountMarkup`, as `grid.test.ts:17-29` does.
+- A test file that names the class only as a type loses its import, so the tag never defines (command 6). A host from `document.createElement` that is not yet connected has no shadow tree, so a test reads it after mounting (command 18). The Unit tier imports `LineCenter` as a value and mounts through `fixture()` and `mountMarkup`, as `grid.test.ts:17-29` does.
 
 ### P9 — Agent path
 
