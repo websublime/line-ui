@@ -73,6 +73,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './presence': ['line-presence'],
   './grid': ['line-grid'],
   './center': ['line-center'],
+  './aspect-ratio': ['line-aspect-ratio'],
 };
 
 /**

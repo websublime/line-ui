@@ -26,6 +26,7 @@ export default mergeConfig(
       'presence/index': 'src/presence/index.ts',
       'grid/index': 'src/grid/index.ts',
       'center/index': 'src/center/index.ts',
+      'aspect-ratio/index': 'src/aspect-ratio/index.ts',
     },
   }),
   {
