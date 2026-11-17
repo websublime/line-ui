@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` (forks resolved; not APPROVED) |
+| Status | `approved` (Miguel, 2026-11-17) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C18 row, `docs/specs/01-spec-core-primitives.md:1174`; PRD §4.1, `docs/PRD.md:265`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-center` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C18` (`docs/plans/01-tasks-core-primitives.md:64`) |
 | Governing sections | Phase 1 spec §4.2 (`:257`, `:306`), §6.C.0 (`:908-931`), §6.C.4 (C18 row `:1174`, notes `:1147-1153`, `:1178-1183`), §6.C.6 (`:1218-1240`), §6.G.1 (`:1323`, `:1326`), §6.G.2 (`:1371`, `:1373`), §6.G.3 (`:1405`, `:1423`, `:1434`, `:1438`), §6.G.4 (host naming `:1512-1518`), §6.G.5 (`:1597`), §7.3, §7.4 (`:2111`), §7.5 (`:2127`), §7.6 (`:2144`), §7.8 (`:2175`), §10 SD4 (`:2351`), SD12 (`:2359`), SD34 (`:2381`), SD38 (`:2385`), SD47 (`:2394`), SD59 (`:2406`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-069, AM-086, AM-098 (`:2559`), AM-099 (`:2560`), AM-101 (`:2562`), AM-102 (`:2563`); ARCH §3, §4, §5, §8 (`:410`), §12 (`:548`), §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3 (`:1614`), §17.4 (Theme row `:1639`); PRD §4.1 (`:265`), §5.2 (`:534-543`), §8 (`:1194-1217`); MANIFESTO Laws 1, 2, 3, 4, 5, 9; R8 `docs/research/01-research-accessibility.md:55`, `:82` |
 
-The spec stays `proposed` until its review gate passes and Miguel approves it, before any code (PRD §8.3, `docs/PRD.md:1217`). Miguel decided Open Questions F1–F10 on 2026-11-16, each on the option the draft recommended, and Part A and Part B state those decisions. The drafter defaults D1–D20 stand as drafted (Miguel, 2026-11-16). F7 (a), `hostNaming: never`, adds Center to the Phase 1 spec lists of components that take no host name, through Phase 1 spec AM-102. Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Center only as an example of the Static tier (§8, `:410`); it governs Center through that tier, the bundle rule (§12), the "all Static" reset row (§14.7, `:1163`) and the agent rules (§17).
+Miguel decided Open Questions F1–F10 on 2026-11-16, each on the option the draft recommended, and Part A and Part B state those decisions. The drafter defaults D1–D20 stand as drafted (Miguel, 2026-11-16). F7 (a), `hostNaming: never`, adds Center to the Phase 1 spec lists of components that take no host name, through Phase 1 spec AM-102. The spec passed its review gate on 2026-11-17 in three rounds. Round 1 failed and was fixed in `06572df` and `ae30ce8`, round 2 failed and was fixed in `8474606` and `a20815c`, and round 3 passed with one nit fixed in `7ef7904`. Miguel approved it on 2026-11-17, before any code (PRD §8.3, `docs/PRD.md:1217`; Phase 1 spec §6.C.6, `:1229`). Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Center only as an example of the Static tier (§8, `:410`); it governs Center through that tier, the bundle rule (§12), the "all Static" reset row (§14.7, `:1163`) and the agent rules (§17).
 
 ---
 
@@ -832,3 +832,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
+| AM-001 | 2026-11-17 | ledger 01-C18 (factual correction, approval) | The Status field (`:5`) reads `` `approved` (Miguel, 2026-11-17) `` and the header paragraph (`:15`) says that the spec passed its review gate in three rounds and that Miguel approved it on 2026-11-17, in place of saying that it stays `proposed` | Miguel approved the spec after the review gate round 3 passed, and the header still described the draft state | `docs/context/01-c18.md`, "Review gate (docs), round 1, 2026-11-16", "Review gate (docs), round 2, 2026-11-16" and "Review gate (docs), round 3, 2026-11-17"; Miguel's approval of `0020-center.md` on 2026-11-17, relayed by the orchestrator |
