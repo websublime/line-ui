@@ -13,6 +13,7 @@ import {
 } from './basic.js';
 import { commonProp, componentSchema, defineDescriptor, type LineDescriptor } from './descriptor.js';
 import { alertDescriptor } from './descriptors/alert.js';
+import { aspectRatioDescriptor } from './descriptors/aspect-ratio.js';
 import { avatarDescriptor } from './descriptors/avatar.js';
 import { avatarGroupDescriptor } from './descriptors/avatar-group.js';
 import { badgeDescriptor } from './descriptors/badge.js';
@@ -95,6 +96,7 @@ export type {
 export {
   ADVERTISED_VERSIONS,
   alertDescriptor,
+  aspectRatioDescriptor,
   avatarDescriptor,
   avatarGroupDescriptor,
   BASIC_CATALOG_ID,
@@ -129,6 +131,7 @@ export {
 /** Every component descriptor, in catalog-name order. */
 export const descriptors: readonly LineDescriptor[] = [
   alertDescriptor,
+  aspectRatioDescriptor,
   avatarDescriptor,
   avatarGroupDescriptor,
   badgeDescriptor,
