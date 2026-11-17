@@ -273,7 +273,7 @@ test.describe('size from the parent (P4; D9)', () => {
     expectSize(await host(page), 400, 225);
   });
 
-  // `flex: none` keeps the sibling at 200 px under `justify="stretch"`, which grows every Stack child (P4).
+  // P4's 792 px reading needs the sibling to stay at 200 px under `justify="stretch"`.
   const SIBLING = (height: number) => `<div style="flex: none; inline-size: 200px; block-size: ${height}px"></div>`;
 
   test('a 1000 px horizontal Stack at its defaults beside a 200 × 300 sibling: 80 × 300', async ({ page }) => {
