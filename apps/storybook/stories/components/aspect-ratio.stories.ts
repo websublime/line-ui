@@ -219,7 +219,7 @@ export const InAHorizontalStack: Story = {
   },
   render: () =>
     html`<line-stack orientation="horizontal" align="start" gap="3" style="max-inline-size: 40rem">
-      <div style="${FRAME} flex: none; inline-size: 8rem; block-size: 14rem"><p style=${LABEL}>A taller item</p></div>
+      <div style="${FRAME} flex: none; inline-size: 8rem; block-size: 20rem"><p style=${LABEL}>A taller item</p></div>
       <line-aspect-ratio ratio="widescreen" style="flex: 1; ${FRAME}">
         <img src=${PICTURE} alt="Mountains under a yellow sun" />
       </line-aspect-ratio>
@@ -237,11 +237,13 @@ export const LongContent: Story = {
     },
   },
   render: () =>
-    html`<div style="inline-size: 20rem; padding-block-end: 8rem">
+    html`<div style="inline-size: 14rem; padding-block-end: 12rem">
       <line-aspect-ratio ratio="ultrawide" style=${FRAME}>
         <p style=${LABEL}>
-          The box keeps its ratio whatever its content. This paragraph is longer than the box is tall, so its lines
-          run past the bottom edge, where they stay readable instead of being cut off.
+          The box keeps its ratio whatever its content. This paragraph is much longer than the box is tall, so its
+          lines run past the bottom edge, where they stay readable instead of being cut off. The box itself stays at
+          its ultrawide ratio, and the text after it would sit under these lines, so leave room after the box or
+          clip it with overflow: hidden.
         </p>
       </line-aspect-ratio>
     </div>`,
