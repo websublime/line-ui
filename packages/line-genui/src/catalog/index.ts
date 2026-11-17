@@ -18,6 +18,7 @@ import { avatarGroupDescriptor } from './descriptors/avatar-group.js';
 import { badgeDescriptor } from './descriptors/badge.js';
 import { buttonDescriptor } from './descriptors/button.js';
 import { buttonGroupDescriptor } from './descriptors/button-group.js';
+import { centerDescriptor } from './descriptors/center.js';
 import { chipDescriptor } from './descriptors/chip.js';
 import { gridDescriptor } from './descriptors/grid.js';
 import { iconDescriptor } from './descriptors/icon.js';
@@ -101,6 +102,7 @@ export {
   basicImplementations,
   buttonDescriptor,
   buttonGroupDescriptor,
+  centerDescriptor,
   chipDescriptor,
   commonProp,
   componentSchema,
@@ -132,6 +134,7 @@ export const descriptors: readonly LineDescriptor[] = [
   badgeDescriptor,
   buttonDescriptor,
   buttonGroupDescriptor,
+  centerDescriptor,
   chipDescriptor,
   gridDescriptor,
   iconDescriptor,

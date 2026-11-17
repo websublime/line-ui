@@ -69,6 +69,7 @@ const LINE_COMPONENTS = [
   'Badge',
   'Button',
   'ButtonGroup',
+  'Center',
   'Chip',
   'Grid',
   'Icon',
