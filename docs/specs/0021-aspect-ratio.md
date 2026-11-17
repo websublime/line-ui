@@ -10,9 +10,9 @@
 | Form-associated | `no` (Phase 1 spec §6.C.4 C19 row) |
 | PRD catalogue entry | PRD §4.1, `Aspect Ratio` row (`docs/PRD.md:266`) |
 | Ledger row | `01-C19` (`docs/plans/01-tasks-core-primitives.md:65`) |
-| Governing sections | Phase 1 spec §4.2 (`:258`, `:307`), §6.C.0 (`:906-931`), §6.C.4 (C19 row `:1175`, notes `:1147-1153`, `:1178-1183`), §6.C.6 (`:1218-1240`), §6.G.1 (`:1316`, `:1323`, `:1326`, `:1332-1338`), §6.G.2 (`:1371`, `:1373`), §6.G.3 (`:1405`, `:1422`, `:1423`, `:1434`, `:1438`), §6.G.4 (host naming `:1512-1518`), §6.G.5 (`:1597`), §7.3, §7.4 (`:2111`), §7.5 (`:2127`), §7.6 (`:2144`), §7.8 (`:2175`), §10 SD4 (`:2351`), SD12 (`:2359`), SD34 (`:2381`), SD38 (`:2385`), SD47 (`:2394`), SD59 (`:2406`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-098 (`:2559`), AM-099 (`:2560`), AM-101 (`:2562`), AM-102 (`:2563`); ARCH §3, §4, §5, §8 (`:410`), §12 (`:548`), §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3 (`:1582`), §17.4 (`:1628`); PRD §4.1 (`:266`), §5.2 (`:515`, checklist `:534-543`), §8.3 (`:1215`), the `aspects` token family (`:207`, `:1519`); R8 `docs/research/01-research-accessibility.md:55`, `:83`; R7 `docs/research/01-research-zag-machines.md:76`; MANIFESTO Law 5 |
+| Governing sections | Phase 1 spec §4.2 (`:258`, `:307`), §6.C.0 (`:906-931`), §6.C.4 (C19 row `:1175`, notes `:1147-1153`, `:1178-1183`), §6.C.6 (`:1218-1240`), §6.G.1 (`:1316`, `:1323`, `:1326`, `:1332-1338`), §6.G.2 (`:1371`, `:1373`), §6.G.3 (`:1405`, `:1422`, `:1423`, `:1434`, `:1438`), §6.G.4 (host naming `:1512-1518`), §6.G.5 (`:1597`), §7.3, §7.4 (`:2111`), §7.5 (`:2127`), §7.6 (`:2144`), §7.8 (`:2175`), §10 SD4 (`:2351`), SD12 (`:2359`), SD34 (`:2381`), SD38 (`:2385`), SD47 (`:2394`), SD59 (`:2406`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-098 (`:2559`), AM-099 (`:2560`), AM-101 (`:2562`), AM-102 (`:2563`), AM-103 (`:2564`); ARCH §3, §4, §5, §8 (`:410`), §12 (`:548`), §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3 (`:1582`), §17.4 (`:1628`); PRD §4.1 (`:266`), §5.2 (`:515`, checklist `:534-543`), §8.3 (`:1215`), the `aspects` token family (`:207`, `:1519`); R8 `docs/research/01-research-accessibility.md:55`, `:83`; R7 `docs/research/01-research-zag-machines.md:76`; MANIFESTO Law 5 |
 
-This spec is a draft. Its status stays `proposed` until it passes the review gate and Miguel approves it, before any code (PRD §8.3, `docs/PRD.md:1215`; Phase 1 spec §6.C.6, `:1229`). Open Questions F1–F8 are open. Each one names a recommended option, and Part A and Part B describe the recommended options, with the fork each part depends on in brackets. The drafter defaults D1–D22 stand unless Miguel changes them. F8 (a), `hostNaming: never`, would add Aspect Ratio to the four Phase 1 spec lists of components that take no host name, so it raises the row's class from `task` to `decision` (PROCESS §2) and needs a Phase 1 spec AM-103, drafted under F8. Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Aspect Ratio nowhere; ARCH §8 (`:410`) and §14.7 (`:1163`, "all Static") cover it through the Static tier.
+Miguel decided Open Questions F1–F8 on 2026-11-17, each on the option the draft recommended, and Part A and Part B state those decisions. The drafter defaults D1–D22 stand as drafted (Miguel, 2026-11-17). F8 (a), `hostNaming: never`, adds Aspect Ratio to the Phase 1 spec lists of components that take no host name, through Phase 1 spec AM-103 (`docs/specs/01-spec-core-primitives.md:2564`), which raised the row's class from `task` to `decision` (PROCESS §2). The status stays `proposed` until the spec passes its review gate and Miguel approves it, before any code (PRD §8.3, `docs/PRD.md:1215`; Phase 1 spec §6.C.6, `:1229`). Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Aspect Ratio nowhere; ARCH §8 (`:410`) and §14.7 (`:1163`, "all Static") cover it through the Static tier.
 
 ---
 
@@ -318,7 +318,7 @@ One 80 × 80 img child unless a row says otherwise. "Box" is the host's position
 
 - The unit tier can read the shadow tree, the converter, reflection, the absence of ARIA and, with literal fallbacks, the computed `aspect-ratio` and own token on `:host`. It cannot resolve the `line-tokens` values, which sit in `@layer line { :where(html) { … } }` (`packages/line-tokens/src/aspects.css:6-7`) [INFERENCE: happy-dom's `@layer` or `:where()` handling is the cause], nor apply `::slotted()` rules. Sizes, token values and child placement belong to the Browser tier.
 - A test file that names the class only as a type loses its import, so the probe test imported `LineProbeAspectRatio` as a value; a host from `document.createElement` has no shadow tree until it is connected (`0020-center.md` P8).
-- The probe used Center's `enumConverter` (unknown → `square`, `useDefault`). D8 recommends Grid's `variantConverter` (unknown → `undefined`), which the probe did not run [INFERENCE: the stylesheet keys off the attribute, so both converters draw the same box].
+- The probe used Center's `enumConverter` (unknown → `square`, `useDefault`). D8 takes Grid's `variantConverter` (unknown → `undefined`), which the probe did not run [INFERENCE: the stylesheet keys off the attribute, so both converters draw the same box].
 
 ### P9 — Agent path
 
@@ -381,7 +381,7 @@ Three libraries outside the table ship one.
 
 ### P12 — Size
 
-The recommended design, a module with the class, the converter, the stylesheet and `customElements.define`, is 1,569 B minified and 658 B gzipped through esbuild (`--bundle --minify --format=esm --target=es2022 --external:lit --external:@websublime/*`, then `gzip -9 -n`), the §7.6 recipe. Without the six literal fallbacks of F6 (b) it is 1,525 B and 626 B. The shipped `./aspect-ratio` lands in the "Size report" step against the < 5 KB soft target [INFERENCE: the shipped figure is not measured yet; the probe used Center's converter, not Grid's].
+The decided design, a module with the class, the converter, the stylesheet and `customElements.define`, is 1,569 B minified and 658 B gzipped through esbuild (`--bundle --minify --format=esm --target=es2022 --external:lit --external:@websublime/*`, then `gzip -9 -n`), the §7.6 recipe. Without the six literal fallbacks of F6 (b) it is 1,525 B and 626 B. The shipped `./aspect-ratio` lands in the "Size report" step against the < 5 KB soft target [INFERENCE: the shipped figure is not measured yet; the probe used Center's converter, not Grid's].
 
 ### What the probes settle
 
@@ -456,7 +456,7 @@ The recommended design, a module with the class, the converter, the stylesheet a
 |-----------|--------|----------|
 | `ratio` | `square \| landscape \| portrait \| widescreen \| ultrawide \| golden` | `square` (1:1) for tiles and avatars; `landscape` (4:3) and `portrait` (3:4) for photos; `widescreen` (16:9) for video; `ultrawide` (18:5) for banners; `golden` (1.618:1) for cards and hero images |
 
-- `ratio` is a C6 semantic variant [F1 (a)]. Each value changes only the default of the component's own token `--line-aspect-ratio-ratio`, to the matching `--line-aspect-*` token of `line-tokens` with a literal fallback (ARCH §17.2 C6; F6 (b)). No value adds any other rule.
+- `ratio` is a C6 semantic variant (F1 (a)). Each value changes only the default of the component's own token `--line-aspect-ratio-ratio`, to the matching `--line-aspect-*` token of `line-tokens` with a literal fallback (ARCH §17.2 C6; F6 (b)). No value adds any other rule.
 - With no attribute, or an unknown value, the box is square (F5 (a); D8).
 
 ---
@@ -493,7 +493,7 @@ Aspect Ratio has no finite states and no state flags, so it writes no `data-*` a
 
 | Slot | Kind | Accepts |
 |------|------|---------|
-| `(default)` | `ComponentId` | the content of the box, one element in the agent contract (F7 (a)); in markup, several elements share the one cell and overlap in source order, so a later child paints over an earlier one (P2 caption) [F2 (a)]; the A2UI `child` |
+| `(default)` | `ComponentId` | the content of the box, one element in the agent contract (F7 (a)); in markup, several elements share the one cell and overlap in source order, so a later child paints over an earlier one (P2 caption) (F2 (a)); the A2UI `child` |
 
 ### Parts
 
@@ -508,7 +508,7 @@ Aspect Ratio has no finite states and no state flags, so it writes no `data-*` a
 
 | Property | Attribute | Type | Default | Reflects | Description |
 |----------|-----------|------|---------|----------|-------------|
-| `ratio` | `ratio` | `'square' \| 'landscape' \| 'portrait' \| 'widescreen' \| 'ultrawide' \| 'golden' \| undefined` | `undefined` (drawn as `square`) | yes | the shape of the box, one of the six named ratios of the `line-tokens` `aspects` family [F1 (a), F5 (a)] |
+| `ratio` | `ratio` | `'square' \| 'landscape' \| 'portrait' \| 'widescreen' \| 'ultrawide' \| 'golden' \| undefined` | `undefined` (drawn as `square`) | yes | the shape of the box, one of the six named ratios of the `line-tokens` `aspects` family (F1 (a), F5 (a)) |
 
 - `aspect-ratio.ts` defines its own `variantConverter`, a copy of `packages/line-components/src/grid/grid.ts:16-19`, so an unknown value becomes `undefined`, the attribute keeps what the author wrote, and the stylesheet draws a square through its `:host` default (D8). Importing Grid's converter would pull `line-grid` into the `./aspect-ratio` bundle, which the isolation test rejects (`packages/line-components/__tests__/bundle-splitting.test.ts`, Phase 1 spec §7.5) and MANIFESTO Law 4 forbids.
 - "Reflects" means a value the author or code sets is written to the attribute; `undefined` leaves no attribute, as on Grid's `columns` (`0019-grid.md` D9).
@@ -529,7 +529,7 @@ Aspect Ratio dispatches no event. It holds no value and takes no input, so C3 an
 |----------|---------|--------------|
 | `--line-aspect-ratio-ratio` | `var(--line-aspect-square, 1)`; the `ratio` value's `--line-aspect-*` token with its literal fallback | host (`aspect-ratio`) |
 
-The component reads the six `--line-aspect-*` tokens of `packages/line-tokens/src/aspects.css:8-13`, each with a literal fallback equal to its value there [F6 (b)]. The component stylesheet after `commonReset` is this rule set, in this order.
+The component reads the six `--line-aspect-*` tokens of `packages/line-tokens/src/aspects.css:8-13`, each with a literal fallback equal to its value there (F6 (b)). The component stylesheet after `commonReset` is this rule set, in this order.
 
 ```css
 :host {
@@ -580,7 +580,7 @@ The component reads the six `--line-aspect-*` tokens of `packages/line-tokens/sr
 - The `minmax(0, 1fr)` tracks keep content from growing the grid, so the box holds the ratio and content larger than the box overflows it (P2, P5; F3 (a)).
 - `min-block-size: 0` keeps chromium from growing a box that is a flex item to the height of its content (P4, command 11; D9).
 - `place-self: stretch` fills the box with a child of `auto` size, and the `max-*` sizes clamp a child whose size attributes or styles exceed it; a child's own smaller size wins and sits at the start corner (P2).
-- `cover` crops an image or a video to the box without distortion [F4 (a)]; a consumer `object-fit` on the child wins (P2).
+- `cover` crops an image or a video to the box without distortion (F4 (a)); a consumer `object-fit` on the child wins (P2).
 - There is no rule for `ratio='square'`, because `:host` already declares it.
 - The `[hidden]` rule comes last, so no earlier rule sets `display` over it (D3).
 - Aspect Ratio draws no colour, border or focus ring, so it needs no `line-themes` role token.
@@ -627,8 +627,8 @@ Aspect Ratio takes no focus. Focus moves through its children in source order (P
 
 - **C5.** ARIA 1.2 prohibits `aria-label` and `aria-labelledby` on `generic`, so a name on a role-less `line-aspect-ratio` names nothing a user can reach (R8 `:55`). Chromium still exposes it as a named `generic`, and axe 4.14.0 does not report it (P1 C, D; `0018-stack.md:168-169`). A name applies only with an author role that allows one, such as `role="img"` for a picture built from several elements, with `alt=""` on any decorative image inside, or `role="group"` for a gallery item (P1 E, F).
 - **Media names.** The box names nothing; each `<img>` keeps its `alt`, each `<iframe>` its `title` and each `<video>` its label (P1 A, G, H). axe still reports an `<img>` without `alt` inside the box (P1 I).
-- **Reflow.** Content taller than the box spills out visibly rather than being cut off, so text enlarged by zoom stays readable (P5; WCAG 1.4.4, 1.4.10) [F3 (a)]. It overlaps what follows the box, which the docs warn about.
-- **Focus visible.** The component does not clip, so a focus ring at the edge of a control that fills the box stays visible; clipping it would hide that ring in all three engines (P5; WCAG 2.4.7) [F3 (a)].
+- **Reflow.** Content taller than the box spills out visibly rather than being cut off, so text enlarged by zoom stays readable (P5; WCAG 1.4.4, 1.4.10) (F3 (a)). It overlaps what follows the box, which the docs warn about.
+- **Focus visible.** The component does not clip, so a focus ring at the edge of a control that fills the box stays visible; clipping it would hide that ring in all three engines (P5; WCAG 2.4.7) (F3 (a)).
 - **Proof (D20).** No role, name or ARIA value lives in internals, so the CDP-and-read-back rule for internals roles does not apply (Phase 1 spec `:1180`). The Browser tier checks the tree with `ariaSnapshot()` in three engines and a Chromium CDP assertion.
 - **Firefox and WebKit.** No check reads their accessibility trees, and no screen reader was run. The gap is recorded here (Phase 1 spec `:1180`; §12 AM-058).
 
@@ -638,12 +638,12 @@ Aspect Ratio takes no focus. Focus moves through its children in source order (P
 
 | Rule | Summary | How this component meets it |
 |------|---------|-----------------------------|
-| C1 | Public inputs are JSON-serialisable attributes or properties | `ratio` is a string enum [F1 (a)] |
-| C2 | Slots carry `@slot` and a single or multiple classification | one `@slot` tag for the default slot, classified `ComponentId` [F7 (a)] |
+| C1 | Public inputs are JSON-serialisable attributes or properties | `ratio` is a string enum (F1 (a)) |
+| C2 | Slots carry `@slot` and a single or multiple classification | one `@slot` tag for the default slot, classified `ComponentId` (F7 (a)) |
 | C3 | Events carry `@fires`, a typed `detail` and the `line-` prefix | no events |
 | C4 | Form-associated components expose `value` and accept external validity | not form-associated |
-| C5 | The host accepts an accessible name and applies it to the element with the role | the host is the only element and carries any author role; a name is valid only with an author role that allows it (A11y). On the agent path the surface sets no host name on an AspectRatio node, and the AspectRatio tool carries no accessibility parameters [F8 (a)] |
-| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `ratio` is reflected, closed, and changes only the default of `--line-aspect-ratio-ratio` [F1 (a)] |
+| C5 | The host accepts an accessible name and applies it to the element with the role | the host is the only element and carries any author role; a name is valid only with an author role that allows it (A11y). On the agent path the surface sets no host name on an AspectRatio node, and the AspectRatio tool carries no accessibility parameters (F8 (a)) |
+| C6 | Semantic variants are reflected closed enums that change only the defaults of the component's own tokens | `ratio` is reflected, closed, and changes only the default of `--line-aspect-ratio-ratio` (F1 (a)) |
 | C7 | CEM JSDoc carries `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated` | the class JSDoc carries `@summary`, `@slot` for the default slot and `@cssprop` for `--line-aspect-ratio-ratio`; no `@csspart` or `@fires`, because there are no parts or events; nothing is deprecated (D19) |
 | C8 | Missing or partial props degrade to an empty or neutral state | with no attribute or an unknown `ratio` the box is square; with no children it is an empty box of that shape; without `line-tokens` the literal fallbacks keep every ratio (P3, P8, P9; D8; F6 (b)) |
 | C9 | A value-bearing or compound component names exactly one bubbling commit event that fires once per committed result | neither value-bearing nor compound |
@@ -654,7 +654,7 @@ Aspect Ratio takes no focus. Focus moves through its children in source order (P
 |-------|-----------------------------|-------------------------------|
 | none | — | — |
 
-- `--line-aspect-ratio-ratio` is a CSS custom property, not an input of the prop schema. The surface ignores agent theme hints and binds no style (ARCH §17.4 Theme row), so agents choose among the six `ratio` values [F1 (a)].
+- `--line-aspect-ratio-ratio` is a CSS custom property, not an input of the prop schema. The surface ignores agent theme hints and binds no style (ARCH §17.4 Theme row), so agents choose among the six `ratio` values (F1 (a)).
 
 #### Descriptor fields
 
@@ -667,13 +667,13 @@ Aspect Ratio takes no focus. Focus moves through its children in source order (P
 | Slot map | `(default)` → `ComponentId` (`child`) |
 | Binding map | `ratio` → attribute `ratio`; no value prop; no commit event (C9) |
 | Action map | none |
-| Accessibility requirements | no `requiredName`; `hostNaming: { kind: 'never' }`, because the host has no role a name could attach to and the surface never gives `line-aspect-ratio` a role (`packages/line-genui/src/catalog/descriptor.ts:160-174`; P1 C; P9). The Phase 1 spec names the components that take no host name in four places, and the proposed Phase 1 spec AM-103 adds Aspect Ratio to the four lists, as AM-102 did for Center [F8 (a); Spec drift found, item 1] |
+| Accessibility requirements | no `requiredName`; `hostNaming: { kind: 'never' }`, because the host has no role a name could attach to and the surface never gives `line-aspect-ratio` a role (`packages/line-genui/src/catalog/descriptor.ts:160-174`; P1 C; P9). The Phase 1 spec names the components that take no host name in four places, and Phase 1 spec AM-103 (`:2564`) adds Aspect Ratio to the four lists, as AM-102 did for Center (F8 (a); Spec drift found, item 1) |
 | Agent-facing description | A box that keeps a fixed width-to-height ratio, such as a 16:9 frame. Put the content in `child`; to show several components, put them in a Stack and make the Stack the child. A child that sets no size of its own, such as a Stack or a Center, fills the box. `ratio` sets the shape: `square` (1:1, default), `landscape` (4:3), `portrait` (3:4), `widescreen` (16:9), `ultrawide` (18:5) or `golden` (1.618:1). At the root, in a vertical Stack at its default alignment and in a Grid cell, the box takes its width from its container and its height from the ratio. In a vertical Stack with another alignment it is only as wide as its content. In a horizontal Stack it is as wide as its content unless the Stack makes its children grow along its length, and at the Stack's default alignment it is as tall as the row, which can break the ratio; a Stack that aligns its children to the start keeps it. Content taller than the box spills past its bottom edge. |
 | Tool description | A box that keeps a fixed width-to-height ratio, such as a 16:9 frame. The app places one component inside it, which may be a Stack that holds several. A child that sets no size of its own, such as a Stack or a Center, fills the box. `ratio` sets the shape: `square` (1:1, default), `landscape` (4:3), `portrait` (3:4), `widescreen` (16:9), `ultrawide` (18:5) or `golden` (1.618:1). At the root, in a vertical Stack at its default alignment and in a Grid cell, the box takes its width from its container and its height from the ratio. In a vertical Stack with another alignment it is only as wide as its content. In a horizontal Stack it is as wide as its content unless the Stack makes its children grow along its length, and at the Stack's default alignment it is as tall as the row, which can break the ratio; a Stack that aligns its children to the start keeps it. Content taller than the box spills past its bottom edge. |
 | `agentExposed` | `true` (Phase 1 spec §6.C.4 C19 row, `:1175`; Aspect Ratio is none of the three SD38 exceptions, `:2385`; D11) |
 
 - The agent-facing description is 949 characters and the tool description 924, both under the 1024 cap (Phase 1 spec `:1422`). The tool description replaces "Put the content in `child`; to show several components, put them in a Stack and make the Stack the child." with "The app places one component inside it, which may be a Stack that holds several.", because the tool has no `child` parameter (Phase 1 spec `:1423`; `0018-stack.md` AM-006; D13). The Stack and Grid sentences name no Stack prop, because the backtick guard rejects a backticked name the tool lacks (Phase 1 spec `:1423`). Command 25 emitted this wording through all three providers, with only `ratio` and its six values in backticks in the tool description (P9).
-- Each sentence about size rests on a P4 row: the root (the real surface row), a vertical Stack at its default `align` and with `start`, `center` and `end`, a Grid cell, a horizontal Stack at its default `align` and `justify`, with `justify="stretch"`, with a taller sibling and with `align="start"`, and a Center and a Stack child. "Content taller than the box spills past its bottom edge" rests on P5 [F3 (a)].
+- Each sentence about size rests on a P4 row: the root (the real surface row), a vertical Stack at its default `align` and with `start`, `center` and `end`, a Grid cell, a horizontal Stack at its default `align` and `justify`, with `justify="stretch"`, with a taller sibling and with `align="start"`, and a Center and a Stack child. "Content taller than the box spills past its bottom edge" rests on P5 (F3 (a)).
 - The frontend tool carries `ratio` only, with no `accessibilityLabel` or `accessibilityDescription` (F8 (a); P9).
 - The surface writes `ratio` as its attribute and removes it when unset; a node with no props renders an empty `<line-aspect-ratio>`, square, and raises nothing (P9; C8).
 - Aspect Ratio joins the `line` catalog only. No A2UI v0.9 or v0.9.1 basic type has a ratio, and the basic `Image.fit` binds nothing on the native `<img>` (P10), so the `basic` map keeps its 10 types (Phase 1 spec §6.G.2, `:1371`, `:1373`; D12).
@@ -687,7 +687,7 @@ Aspect Ratio takes no focus. Focus moves through its children in source order (P
   - `a2ui-surface.test.ts` imports `aspectRatioDescriptor` (`:22-31`) and gains an AspectRatio block after the Center block (`:490-548`), with `beforeAll(() => aspectRatioDescriptor.load())`, as the Center block loads its descriptor, and the three surface cases of Tests.
   - `cem-coverage.test.ts` and `cem-drift.test.ts` keep `line-spinner` as their made-up tag, which Aspect Ratio does not collide with.
 - This source file in `line-genui` changes beside the descriptor and the catalog index (Bundle).
-  - The JSDoc of `takesAccessibility` in `packages/line-genui/src/catalog/tools.ts:139-143` names Alert, AspectRatio, Center, Grid, Icon, Kbd and Skeleton (`never`) and cites AM-103 beside AM-069, AM-098, AM-099, AM-101 and AM-102; the function itself is unchanged, because it already returns `false` for `never` [F8 (a); D18].
+  - The JSDoc of `takesAccessibility` in `packages/line-genui/src/catalog/tools.ts:139-143` names Alert, AspectRatio, Center, Grid, Icon, Kbd and Skeleton (`never`) and cites AM-103 beside AM-069, AM-098, AM-099, AM-101 and AM-102; the function itself is unchanged, because it already returns `false` for `never` (F8 (a); D18).
 - These files outside `line-genui` change.
   - `lineShowcase` in `apps/storybook/stories/agent-ui/a2ui-fixtures.ts` gains the node `{ id: 'framed', component: 'AspectRatio', ratio: 'widescreen', child: 'framed-center' }`, its child `{ id: 'framed-center', component: 'Center', child: 'framed-kbd' }` and `{ id: 'framed-kbd', component: 'Kbd', keys: 'space' }`, after the Center nodes (`:203-204`), and the root's `children` gain `'framed'` after `'centred'` (`:73`). Its JSDoc names Aspect Ratio (`:56-65`), the sentence "A two-column Grid of two Skeleton tiles follows, and a centred Kbd hint closes the root." (`:64`) gains "and a widescreen frame with a centred Kbd hint" in place of its ending, and the file header that lists the render fixture names Aspect Ratio (C19) (`:1-4`).
   - `'agent-ui-a2ui-surface--line-catalog'` in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` counts 43 elements (`:34`, was 40; the fixture adds one `line-aspect-ratio`, one `line-center` and one `line-kbd`), the settle selector adds `line-aspect-ratio` (`:63`), and the file JSDoc names C19 (`:1-23`).
@@ -757,7 +757,7 @@ A `line` catalog node the surface renders as a framed, centred hint:
 
 | Tier | Runner | Covers |
 |------|--------|--------|
-| Unit | `bun test` on happy-dom, `packages/line-components/__tests__/aspect-ratio.test.ts`, which imports `LineAspectRatio` as a value and mounts through `fixture()` from `@open-wc/testing-helpers` and a `mountMarkup` helper, as `grid.test.ts:22-29` does (P8) | registers `line-aspect-ratio` with its class; the shadow root holds only a bare `<slot>`; `ratio` reflects a set value, leaves no attribute when `undefined`, reads `undefined` for an unknown attribute value while the attribute keeps it, and returns to `undefined` when the attribute is removed; computed `display: grid` and, through the literal fallbacks, `aspect-ratio: 1 / 1` and `--line-aspect-ratio-ratio: 1` with no attribute and with an unknown value, and each `ratio` value's literal ratio, as P8 read for `widescreen` and `golden` [F6 (b)]; `hidden` computes `display: none`; no `role`, `aria-*` or `tabindex` on a fresh host and `internals.role` `null`; no event, by a `dispatchEvent` spy over setting every value |
+| Unit | `bun test` on happy-dom, `packages/line-components/__tests__/aspect-ratio.test.ts`, which imports `LineAspectRatio` as a value and mounts through `fixture()` from `@open-wc/testing-helpers` and a `mountMarkup` helper, as `grid.test.ts:22-29` does (P8) | registers `line-aspect-ratio` with its class; the shadow root holds only a bare `<slot>`; `ratio` reflects a set value, leaves no attribute when `undefined`, reads `undefined` for an unknown attribute value while the attribute keeps it, and returns to `undefined` when the attribute is removed; computed `display: grid` and, through the literal fallbacks, `aspect-ratio: 1 / 1` and `--line-aspect-ratio-ratio: 1` with no attribute and with an unknown value, and each `ratio` value's literal ratio, as P8 read for `widescreen` and `golden` (F6 (b)); `hidden` computes `display: none`; no `role`, `aria-*` or `tabindex` on a fresh host and `internals.role` `null`; no event, by a `dispatchEvent` spy over setting every value |
 | Browser | Playwright `packages/line-components/__tests__/integration/aspect-ratio/aspect-ratio.e2e.ts` on chromium, firefox and webkit, over fixture pages under `integration/aspect-ratio/` | in a 400 px wrapper, the six `ratio` heights within 0.05 px (400, 300, 533.33, 225, 111.11, 247.22), an unknown value and no attribute at 400; `--line-aspect-ratio-ratio: 21 / 9` from a page rule at 420 × 180 and over `ratio="widescreen"`, and inline `aspect-ratio: 2` at 400 × 200 (P3); the no-tokens twin page draws the same six heights (F6 (b)); the P2 children of (a): an img, a portrait img, an img 600 × 800, a video, a video 640 × 360, an iframe with and without its border, each 400 × 225 at 0,0, with computed `object-fit: cover` on the img and the video and a consumer `object-fit: contain` winning; a sized 50 × 50 img at 0,0, and at 350,0 under `dir="rtl"`; a caption with `align-self: end` whose top equals 225 minus its measured height within 1 px, which keeps the font out of the assertion; a 600 px div child clamped to 400 × 225 and a 150-word paragraph whose text overflows the 225 px box while the box stays 400 × 225 (P2, P5); the P4 parents: a vertical `<line-stack>` at its default `align` (400 × 225) and with `align="center"` (80 × 45), a plain flex column (400 × 225, the chromium guard of D9), a horizontal `<line-stack>` at its defaults with a 200 × 300 sibling (80 × 300), with `justify="stretch"` (792 × 445.5) and with `justify="stretch" align="start"` and a 600 px sibling (792 × 445.5), `<line-grid columns="3">` at 900 px (294.66 × 165.73 within 0.05), `block-size: 90px` (160 × 90) and `writing-mode: vertical-rl` (533.33 × 300); `hidden` (`display: none`) and a consumer `:not([hidden])` display rule; Tab skips the host and enters a slotted button; the tree through `ariaSnapshot()` in three engines and a Chromium CDP `Accessibility.getFullAXTree` assertion that a role-less host adds no node and an img child reads `image "<alt>"`, and that `role="img"` with `aria-label` reads as one named image (P1; D20) |
 | A11y | axe-core, `packages/line-components/__tests__/a11y/aspect-ratio.e2e.ts` | zero violations (MANIFESTO Law 3) in every story of D15 (Phase 1 spec §7.4) |
 | htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `n/a`. Aspect Ratio is neither value-bearing, because its descriptor binding map names no value prop, nor compound, because it holds no interactive element of its own (ARCH §17.2 C3, C9, `docs/ARCHITECTURE.md:1574`, `:1580`; plan §2.4, `docs/plans/01-plan-core-primitives.md:172-175`). P7 ran `innerHTML` and `outerHTML` swaps on htmx 2.0.11 and 4.0.0 in three engines, and both sized the swapped content, so Aspect Ratio needs nothing from htmx. This confirms the Phase 1 spec's "`n/a` expected" (§6.C.4 C19 row, `:1175`; §10 SD34, `:2381`; D14) |
@@ -774,7 +774,7 @@ A `line` catalog node the surface renders as a framed, centred hint:
 
 ### Competitive analysis row
 
-The C19 PR appends this row to the §4.1 table of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, in catalog order after `Alert`, from P11, checked 2026-11-17 (Phase 1 spec §6.C.6, `:1226`; D18). The Notes cell states the recommended options and changes with Miguel's decisions.
+The C19 PR appends this row to the §4.1 table of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, in catalog order after `Alert`, from P11, checked 2026-11-17 (Phase 1 spec §6.C.6, `:1226`; D18). The Notes cell states the decided design.
 
 | Component | line://ui | Web Awesome | Spectrum | Lion | Fluent UI Web Components | Radix | Bits | Ark | Notes |
 |---|---|---|---|---|---|---|---|---|---|
@@ -786,8 +786,8 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 
 | # | Where | Finding | Kind |
 |---|---|---|---|
-| 1 | Phase 1 spec §6.G.3 (`:1405`, `:1434`), §6.G.4 (`:1516`), §10 SD47 (`:2394`), Status line (`:3`) | these places name the components whose surface node takes no host name and whose tool carries no accessibility parameters: Alert, Center, Grid, Icon, Kbd, Skeleton and Stack. F8 (a), `hostNaming: never`, adds Aspect Ratio. The proposed Phase 1 spec AM-103 (text under F8) adds it to all four lists and names AM-103 in the Status line, as AM-098 did for Kbd (`:2559`), AM-099 for Skeleton (`:2560`), AM-101 for Grid (`:2562`) and AM-102 for Center (`:2563`) | changes a design choice in an approved document; raises the row from `task` to `decision` if Miguel picks F8 (a) |
-| 2 | Phase 1 spec §6.G.3 Acceptance (`:1438`) | it names Button, Separator and Stack as the descriptors that set a tool description, while Alert, Avatar, AvatarGroup, Badge, ButtonGroup, Center, Grid and IconButton set one too (`packages/line-genui/README.md:92`). Aspect Ratio would set one (D13) | not drift for this row; the list reads as examples, as `0020-center.md` Spec drift item 2 recorded |
+| 1 | Phase 1 spec §6.G.3 (`:1405`, `:1434`), §6.G.4 (`:1516`), §10 SD47 (`:2394`), Status line (`:3`) | these places name the components whose surface node takes no host name and whose tool carries no accessibility parameters: Alert, Center, Grid, Icon, Kbd, Skeleton and Stack. F8 (a), `hostNaming: never`, adds Aspect Ratio. Phase 1 spec AM-103 (`:2564`) adds it to all four lists and names AM-103 in the Status line, as AM-098 did for Kbd (`:2559`), AM-099 for Skeleton (`:2560`), AM-101 for Grid (`:2562`) and AM-102 for Center (`:2563`) | changes a design choice in an approved document, a ratchet trigger decided by Miguel on 2026-11-17 (Phase 1 spec AM-103) |
+| 2 | Phase 1 spec §6.G.3 Acceptance (`:1438`) | it names Button, Separator and Stack as the descriptors that set a tool description, while Alert, Avatar, AvatarGroup, Badge, ButtonGroup, Center, Grid and IconButton set one too (`packages/line-genui/README.md:92`). Aspect Ratio sets one (D13) | not drift for this row; the list reads as examples, as `0020-center.md` Spec drift item 2 recorded |
 | 3 | Phase 1 spec §6.C.4 C19 row (`:1175`) | the htmx cell reads "`n/a` expected [INFERENCE]". P7 confirms it | no drift; confirmation |
 | 4 | PRD `:1519`; `packages/line-tokens/src/aspects.css:8-13` | the PRD lists the family as "(16/9, 4/3, 1/1, etc.)", and the file holds those three plus 3 / 4, 18 / 5 and 1.618 / 1. `ultrawide` is 18 / 5 (3.6:1), not 21:9, the same value Chakra UI's `ultrawide` token holds (P11) | no drift; record only. The descriptions state each value so agents need not guess |
 | 5 | PRD §4.1 (`:266`), "for responsive media"; Phase 1 spec §6.C.4 C19 row (`:1175`, `agentExposed: true`) | the `line` catalog holds only `line` descriptors and a surface renders one catalog id (`packages/line-genui/src/catalog/line.ts:84-93`), so a `line` agent cannot place an `Image` or a `Video` in the box (P9). Its agent use is a frame for a Center, a Stack, an Avatar, an Icon or a Skeleton | no drift; `agentExposed: true` still holds. F7 weighs it |
@@ -800,16 +800,16 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 
 | # | Question | Owner | Resolution |
 |---|----------|-------|------------|
-| F1 | Which ratios does `ratio` accept, and how does any other ratio reach the box? | Miguel | open; recommended (a) |
-| F2 | Which CSS technique holds the ratio, and where do the children go? | Miguel | open; recommended (a) |
-| F3 | What happens to content larger than the box? | Miguel | open; recommended (a) |
-| F4 | How do images and videos fit the box? | Miguel | open; recommended (a) |
-| F5 | Which ratio does a box with no `ratio` draw? | Miguel | open; recommended (a) |
-| F6 | What does the box draw without `line-tokens`? | Miguel | open; recommended (b) |
-| F7 | Which props reach agents, in which catalog, and through which slot kind? | Miguel | open; recommended (a) |
-| F8 | Does the surface name an Aspect Ratio host, and does its tool carry accessibility parameters? | Miguel | open; recommended (a), which raises the class to `decision` through the proposed Phase 1 spec AM-103 |
+| F1 | Which ratios does `ratio` accept, and how does any other ratio reach the box? | Miguel | decided: option (a), six token names through `ratio` and any other ratio through `--line-aspect-ratio-ratio` (Miguel, 2026-11-17) |
+| F2 | Which CSS technique holds the ratio, and where do the children go? | Miguel | decided: option (a), a one-cell grid whose stretched children share the cell (Miguel, 2026-11-17) |
+| F3 | What happens to content larger than the box? | Miguel | decided: option (a), the box keeps the ratio and content spills visibly (Miguel, 2026-11-17) |
+| F4 | How do images and videos fit the box? | Miguel | decided: option (a), `object-fit: cover` on slotted `img` and `video` (Miguel, 2026-11-17) |
+| F5 | Which ratio does a box with no `ratio` draw? | Miguel | decided: option (a), `square` (Miguel, 2026-11-17) |
+| F6 | What does the box draw without `line-tokens`? | Miguel | decided: option (b), literal fallbacks equal to the `aspects` token values (Miguel, 2026-11-17) |
+| F7 | Which props reach agents, in which catalog, and through which slot kind? | Miguel | decided: option (a), `ratio` and `child` (`ComponentId`), in the `line` catalog only (Miguel, 2026-11-17) |
+| F8 | Does the surface name an Aspect Ratio host, and does its tool carry accessibility parameters? | Miguel | decided: option (a), `hostNaming: never` and no accessibility parameters, through Phase 1 spec AM-103 (Miguel, 2026-11-17) |
 
-**Drafter defaults**
+**Drafter defaults** (Miguel left D1–D22 as drafted, 2026-11-17)
 
 | # | Default | Basis |
 |---|---------|-------|
@@ -830,13 +830,17 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 | D15 | `apps/storybook/stories/components/aspect-ratio.stories.ts` with `title: 'Components/Primitives Base/Aspect Ratio'` (PRD §4.1 heading "Primitives Base", `docs/PRD.md:243`), the pinned meta `id: 'components-aspect-ratio'`, `tags: ['autodocs']`, the imports `@websublime/line-components/center`, `./stack` and `./grid` and `@websublime/line-tokens/aspects`, `./sizing` and `./layouts`, because the stories hold a Center, a Stack and a Grid and draw the token ratios, while the Storybook preview loads only `line-colors` and `line-themes` (`apps/storybook/.storybook/preview.ts:3-4`); the stories Default, Ratios (all six), Media (an img, a video and an iframe), Custom ratio (the token), Caption overlay, Icon tile (a Center), In a Grid, In a horizontal Stack (`align="start"` with `flex: 1`), Long content (the spill) and Author image role; media as inline SVG data URLs; a `DESCRIPTION` that carries the flex-row warning, the spill warning, the `:not([hidden])` form, the bare-text advice of D21 and the names advice of D5 | the template's Storybook rule (`docs/specs/COMPONENT-SPEC-TEMPLATE.md:213`); `0020-center.md` D14; the review-gate finding on unimported tokens (`docs/context/01-c18.md`, round 1) |
 | D16 | The Browser tier runs on fixture pages under `integration/aspect-ratio/` with a sized wrapper per case and a no-tokens twin, and reads boxes relative to the host, as P2 did | probes P2–P4; Grid's Browser tier and twin (`packages/line-components/__tests__/integration/grid/`) |
 | D17 | The genui tests and the surface fixture change as the Agent contract lists; the made-up tag stays `line-spinner` | Phase 1 spec §6.C.6, `:1231`; the locators in the Agent contract; `0020-center.md` D16 |
-| D18 | The C19 PR also adds the Aspect Ratio row and footnote of Competitive analysis row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, writes the Storybook docs, adds a `## Aspect Ratio` section to `packages/line-components/README.md` after `## Center` (`:666`) with the flex-row warning, the spill warning and the `:not([hidden])` form, updates the `takesAccessibility` JSDoc in `packages/line-genui/src/catalog/tools.ts:139-143` to name AspectRatio (`never`) and cite AM-103 [F8 (a)], and adds `aspectRatioDescriptor` to the export table and the tool lists of `packages/line-genui/README.md` (`:39`, `:92`, `:124`, `:125`, `:144`) | Phase 1 spec §6.C.6, `:1223-1227`; `0020-center.md` D17 |
+| D18 | The C19 PR also adds the Aspect Ratio row and footnote of Competitive analysis row to `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.1, writes the Storybook docs, adds a `## Aspect Ratio` section to `packages/line-components/README.md` after `## Center` (`:666`) with the flex-row warning, the spill warning and the `:not([hidden])` form, updates the `takesAccessibility` JSDoc in `packages/line-genui/src/catalog/tools.ts:139-143` to name AspectRatio (`never`) and cite AM-103 (F8 (a)), and adds `aspectRatioDescriptor` to the export table and the tool lists of `packages/line-genui/README.md` (`:39`, `:92`, `:124`, `:125`, `:144`) | Phase 1 spec §6.C.6, `:1223-1227`; `0020-center.md` D17 |
 | D19 | The class JSDoc says what the component is for, that each child fills the box unless it sets its own size, that media are cropped with `cover`, that long content spills, that bare text takes its own row, that in a flex row the box needs a width or `flex: 1` and start alignment, and the `:not([hidden])` form; `@summary`; `@slot` for the default slot; `@cssprop [--line-aspect-ratio-ratio=var(--line-aspect-square, 1)]` | ARCH §17.2 C7; Grid's JSDoc pattern (`packages/line-components/src/grid/grid.ts:22-45`) |
 | D20 | The Browser tier proves the tree with `ariaSnapshot()` in three engines and a Chromium CDP assertion, and runs no `INTERNALS` read-back | Phase 1 spec `:1180` applies to internals roles, and Aspect Ratio sets none (D5); probe P1; `0020-center.md` D19 |
 | D21 | The docs advise wrapping text in an element, because a bare text node beside an element takes an implicit second row of the grid | probe P2 (img 400 × 201, text at y 204); `::slotted()` matches elements only |
 | D22 | No inline display and no `inline` prop; the docs show `line-aspect-ratio:not([hidden]) { display: inline-grid }` with a width | `0020-center.md` F3 (a), decided by Miguel on 2026-11-16; probes P4 (inline row) and P5 |
 
+Miguel decided F1–F8 on 2026-11-17, each on the option the draft recommended, and left D1–D22 as drafted. Each section below states the decision, and its option table stays as the record of what he weighed.
+
 ### F1 — Ratio values
+
+**Decision.** Miguel chose option (a) on 2026-11-17, so `ratio` takes the six `line-tokens` names as a C6 variant, and any other ratio goes through `--line-aspect-ratio-ratio` in consumer CSS.
 
 **Evidence.** The `line-tokens` `aspects` family holds six named ratios (`packages/line-tokens/src/aspects.css:8-13`; PRD `:207`, `:1519`), and a C6 variant may set only the defaults of the component's own tokens (ARCH §17.2 C6). Through attribute rules the six names draw their ratios in three engines, and the component's own token takes any other ratio from consumer CSS or an inline style (P3). No engine reads a ratio from an attribute through CSS alone, because typed `attr()` draws nothing in chromium, firefox or webkit (P3). A free ratio needs JavaScript. A Lit binding in a shadow `<style>` works in three engines, and a raw value injects CSS (`background-color` turned red), so it needs a parser that lets through only positive numbers (P3). MANIFESTO Law 5 says "no styles in TypeScript" [INFERENCE: whether a parsed number bound into a `<style>` counts as a style in TypeScript is a reading of the law, not settled by any document]. On the agent path, an enum rejects `16/9` with a validation error, while a `DynamicString` writes whatever the agent sends, `1; background: red` included, and binds to the data model (P9; Phase 1 spec §6.G.1 requires `DynamicString` for a string prop). Every competitor takes a numeric or string ratio from code, and none takes a token name on the component (P11). The six names leave out common ratios such as 3:2, 9:16 and 21:9, which the token reaches in markup but agents cannot (P3).
 
@@ -849,6 +853,8 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 
 ### F2 — Technique and child placement
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so the host is a one-cell grid with `aspect-ratio`, and slotted elements share the cell with `place-self: stretch` and `max-*` sizes of `100%`.
+
 **Evidence.** CSS `aspect-ratio` works in three engines (P2, P3). In probe P2 a one-cell grid with `minmax(0, 1fr)` tracks, `place-self: stretch` and `max-*` sizes of `100%` (a) holds the box at 400 × 225 and fills it with every child of `auto` size, including images and videos that carry `width` and `height` attributes and a bordered iframe; a child with its own smaller size stays at the start corner, and a caption with `align-self: end` sits at the bottom. Slotted `100%` sizes (a′) add an iframe's border and stop `align-self`. A block host (b) leaves media at their natural size and grows with content. The padding wrapper (c), the Radix and Bits technique, and absolute children on an `aspect-ratio` host (d), the Chakra placement, fill the box but add an iframe's border; (c) also drops a bare text node below the box. Several children overlap in (a), (c) and (d) and stack in (b). Stack, Grid and Center keep the host as their layout container over a bare slot (D2).
 
 | Option | What it decides | Media children | Several children | Consequence |
@@ -860,6 +866,8 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 
 ### F3 — Content larger than the box
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so the box keeps the ratio, sets no `overflow`, and content taller than the box spills past its bottom edge.
+
 **Evidence.** Under (a) the box keeps 400 × 225 with a 150-word paragraph inside, whose text runs 546 px and overlaps what follows the box (P5). `overflow: hidden` or `clip` on the host clips that text and hides the outside focus ring of a control that fills the box in all three engines; `overflow-clip-margin` restores the ring in chromium only (P5). A consumer `overflow` rule on the host beats `:host` (P5). A box that grows with its content needs a block host, because a grid with an `auto` row is not interoperable (P2 (y)). WCAG 1.4.4 and 1.4.10 ask that enlarged text stay available; Center chose to keep oversized content reachable (`0020-center.md` F8). Web Awesome's `wa-frame` and Chakra's children clip with `overflow: hidden`; Radix and Mantine do not (P11).
 
 | Option | What it decides | Consequence |
@@ -869,6 +877,8 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 | (c) Grow with content | a block host (F2 (b)); the ratio is a minimum | No overlap and no clipping. The box no longer keeps a fixed ratio when content is tall, and media need consumer sizing to fill it (P2 (b)) |
 
 ### F4 — Media fit
+
+**Decision.** Miguel chose option (a) on 2026-11-17, so slotted `img` and `video` take `object-fit: cover`.
 
 **Evidence.** Stretched to the box, an image keeps the UA `object-fit: fill` and distorts, and a video keeps the UA `contain` and letterboxes (P2 `fit` column). `object-fit: cover` on slotted `img` and `video` crops both to the box, and a consumer `object-fit` on the child wins over it (P2). Chakra, Mantine and Web Awesome's `wa-frame` set `cover`; Radix and Bits set nothing (P11). A2UI `Image.fit` offers `contain`, `cover`, `fill`, `none` and `scaleDown`, default `fill`, and the `basic` map binds nothing to it (P10). Fluent's `<fluent-image>` takes `fit` (P11).
 
@@ -880,6 +890,8 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 
 ### F5 — Default ratio
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so a box with no `ratio` is square.
+
 **Evidence.** With no attribute the probe draws a square through `--line-aspect-square` (P3). Radix, Bits and Mantine default to 1; Chakra defaults to 4:3 (P11). Without any ratio, an empty box has no height and a box holding an image takes the image's ratio (P3 no-tokens rows). The surface removes the attribute of an unset prop, so an agent node with no `ratio` draws the default (P9).
 
 | Option | What it decides | Consequence |
@@ -889,6 +901,8 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 | (c) `widescreen` | no attribute draws 16:9 | Fits video, the PRD's "responsive media"; differs from every competitor's default |
 
 ### F6 — Without `line-tokens`
+
+**Decision.** Miguel chose option (b) on 2026-11-17, so each `--line-aspect-*` token is read with a literal fallback equal to its value in `aspects.css`.
 
 **Evidence.** Without the `aspects` tokens and with no literal fallback, every `ratio` computes `aspect-ratio: auto`, so an empty box has no height and an image sets its own ratio (P3). With literal fallbacks equal to the token values, all six ratios draw unchanged without the tokens (P3, command 19), and happy-dom reads them in the Unit tier (P8). The fallbacks cost 32 B gzipped (P12). Grid reads its size and gap tokens with no literal fallback (`0019-grid.md` D8); AvatarGroup and Avatar read `--line-focus-ring` and `--line-gray-1` with literal fallbacks (`packages/line-components/src/avatar-group/avatar-group.ts:74-75`). A consumer who redefines `--line-aspect-widescreen` changes every `widescreen` box under (a) and (b) [INFERENCE: from `var()` substitution; not probed].
 
@@ -900,6 +914,8 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 
 ### F7 — Agent props, catalog and slot kind
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so the descriptor exposes `ratio` and `child` (`ComponentId`), in the `line` catalog only.
+
 **Evidence.** In probe P9 `ratio` and `child` (`ComponentId`) reach the `line` catalog, the inline projection validates, and the three providers' tools carry `ratio` alone. The surface renders an AspectRatio node with one child, and a Stack child carries several; a `child` list fails validation, and a `ChildList` stub renders several overlapping children with no error. The `line` catalog has no `Image` or `Video`, so a `line` agent frames line components only, of which a Center or a Stack fills the box, an Avatar keeps its own size and a Skeleton draws a 20 px bar (P4, P9). No basic type has a ratio (P10). Center and A2UI `Card` take one `child` (`0020-center.md` F6; P10); Chakra's `AspectRatio` takes exactly one child (P11). The Phase 1 spec C19 row sets `agentExposed: true` (`:1175`), and SD38 names three exceptions (`:2385`).
 
 | Option | What it decides | Consequence |
@@ -910,15 +926,15 @@ The footnote reads `[^4.1-aspect-ratio]: Aspect Ratio, checked 2026-11-17; line:
 
 ### F8 — Host naming on the agent path
 
+**Decision.** Miguel chose option (a) on 2026-11-17, so the descriptor takes `hostNaming: never`, the AspectRatio tool carries no accessibility parameters, and Phase 1 spec AM-103 adds Aspect Ratio to the four lists of components that take no host name.
+
 **Evidence.** The host is a `generic` with no role (R8 `:83`; P1). A host `aria-label` names that `generic` in the Chromium tree, which ARIA 1.2 prohibits, and axe does not report it (P1 C, D). The descriptor kinds are `always`, `never`, `listRole` and `unlessTrue` (`packages/line-genui/src/catalog/descriptor.ts:160-174`). Kbd, Skeleton, Grid and Center took `never` through AM-098, AM-099, AM-101 and AM-102 (`:2559`, `:2560`, `:2562`, `:2563`). P9 rendered a `never` AspectRatio with no name and a tool with no accessibility parameters. An author `role="img"` with `aria-label` names the box as one image (P1 E).
 
-Option (a) changes the APPROVED lists in Phase 1 spec §6.G.3 (`:1405`, `:1434`), §6.G.4 (`:1516`) and §10 SD47 (`:2394`), which name the components that take no host name and whose tool carries no accessibility parameters. The row's class rises from `task` to `decision` (PROCESS §2, ratchet upward), and Phase 1 spec AM-103, trigger `decision`, adds Aspect Ratio to them, as AM-102 did for Center. The proposed row, for the `docs(spec): AM-103 — …` commit that would precede the code:
-
-> | AM-103 | <decision date> | ledger 01-C19 (decision — Miguel, <decision date>, component spec `0021-aspect-ratio.md` F8 (a): the surface sets no host `aria-label` or `aria-description` on an AspectRatio node and the AspectRatio tool carries no accessibility parameters, because the host is a `generic`) | Five edits, each in place; this row is appended at the end of §12, so no line above it moves. (1) The Status line (`:3`) names AM-001–AM-103. (2) §6.G.3 Contract, the walker bullet (`:1405`): an Alert tool, a Kbd tool, a Skeleton tool, a Grid tool, a Center tool and an AspectRatio tool carry neither parameter, citing `0021-aspect-ratio.md` F8 and AM-103. (3) §6.G.3 Acceptance (`:1434`): the Alert, AspectRatio, Center, Grid, Icon, Kbd, Skeleton and Stack tools carry neither, citing AM-103. (4) §6.G.4 Accessibility, the exception list (`:1516`): Icon, Alert, Kbd, Skeleton, Grid, Center and Aspect Ratio set neither, citing `0021-aspect-ratio.md` F8 and AM-103. (5) SD47 (`:2394`): the walker leaves the flattened accessibility strings out for Alert, AspectRatio, Center, Grid, Icon, Kbd, Skeleton and Stack, citing AM-103 | `<line-aspect-ratio>` is a layout box with no role, so its host maps to `generic`, which ARIA prohibits naming (R8 `docs/research/01-research-accessibility.md:55`, `:83`); a host name would name nothing a user can reach, and axe does not report it (`0021-aspect-ratio.md` D5, F8) | `0021-aspect-ratio.md` probe P1 (a role-less Aspect Ratio adds no node of its own to the Chromium accessibility tree, read through CDP; a host `aria-label` makes it a named `generic` in that tree; Playwright's `ariaSnapshot()` in chromium, firefox and webkit shows only the children; axe 4.14.0 reports nothing) and probe P9 (a stub `AspectRatio` descriptor with `hostNaming: { kind: 'never' }` reaches the catalog and all three providers' tools without `accessibilityLabel` or `accessibilityDescription`, and an `accessibility.label` and `.description` set no `aria-label` or `aria-description` on the rendered host); `docs/context/01-c19.md` |
+Option (a) changes the APPROVED lists in Phase 1 spec §6.G.3 (`:1405`, `:1434`), §6.G.4 (`:1516`) and §10 SD47 (`:2394`), which name the components that take no host name and whose tool carries no accessibility parameters. Phase 1 spec AM-103 (`docs/specs/01-spec-core-primitives.md:2564`), trigger `decision`, adds Aspect Ratio to them and names AM-103 in the Status line (`:3`), as AM-102 did for Center, and it raised the row's class from `task` to `decision` (PROCESS §2).
 
 | Option | What it decides | Consequence |
 |---|---|---|
-| (a) **Recommended.** `never` | the surface sets no `aria-label` or `aria-description` on an AspectRatio node; the tool carries no `accessibilityLabel` or `accessibilityDescription` | Mirrors Kbd, Skeleton, Grid and Center. Raises the class to `decision`; Phase 1 spec AM-103 adds Aspect Ratio to §6.G.3 `:1405`, `:1434`, §6.G.4 `:1516` and SD47 `:2394` (Spec drift found, item 1) |
+| (a) **Recommended.** `never` | the surface sets no `aria-label` or `aria-description` on an AspectRatio node; the tool carries no `accessibilityLabel` or `accessibilityDescription` | Mirrors Kbd, Skeleton, Grid and Center. Raises the class to `decision`; Phase 1 spec AM-103 (`:2564`) adds Aspect Ratio to §6.G.3 `:1405`, `:1434`, §6.G.4 `:1516` and SD47 `:2394` (Spec drift found, item 1) |
 | (b) `always` | the surface sets both on every AspectRatio node; the tool carries both parameters | No Phase 1 spec change and the class stays `task`. Every agent label names a `generic`, which ARIA prohibits and no check reports (P1 C) |
 | (c) An agent image role | a prop such as `image` makes the surface set `role="img"` on the host and apply the label, with a host naming kind that names only that role | Agents could name a framed composite as one picture (P1 E). A new surface rule and a new `hostNaming` kind, so a Phase 1 spec AM wider than AM-103, and an `img` needs a name, so the descriptor would need a `requiredName` rule for it |
 
