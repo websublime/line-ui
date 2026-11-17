@@ -2,7 +2,7 @@
 
 | Field | Value |
 |-------|-------|
-| Status | `proposed` |
+| Status | `approved` (Miguel, 2026-11-17) |
 | Phase | `1` |
 | Tier | `Static` (Phase 1 spec §6.C.4 C19 row, `docs/specs/01-spec-core-primitives.md:1175`; PRD §4.1, `docs/PRD.md:266`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-aspect-ratio` |
@@ -12,7 +12,7 @@
 | Ledger row | `01-C19` (`docs/plans/01-tasks-core-primitives.md:65`) |
 | Governing sections | Phase 1 spec §4.2 (`:258`, `:307`), §6.C.0 (`:906-931`), §6.C.4 (C19 row `:1175`, notes `:1147-1153`, `:1178-1183`), §6.C.6 (`:1218-1240`), §6.G.1 (`:1316`, `:1323`, `:1326`, `:1332-1338`), §6.G.2 (`:1371`, `:1373`), §6.G.3 (`:1405`, `:1422`, `:1423`, `:1434`, `:1438`), §6.G.4 (host naming `:1512-1518`), §6.G.5 (`:1597`), §7.3, §7.4 (`:2111`), §7.5 (`:2127`), §7.6 (`:2144`), §7.8 (`:2175`), §10 SD4 (`:2351`), SD12 (`:2359`), SD34 (`:2381`), SD38 (`:2385`), SD47 (`:2394`), SD59 (`:2406`), SD98 (`:2445`), SD99 (`:2446`), §12 AM-098 (`:2559`), AM-099 (`:2560`), AM-101 (`:2562`), AM-102 (`:2563`), AM-103 (`:2564`); ARCH §3, §4, §5, §8 (`:410`), §12 (`:548`), §14.7 (`:1163`), §14.8, §17.2 (`:1566-1580`), §17.3 (`:1582`), §17.4 (`:1628`); PRD §4.1 (`:266`), §5.2 (`:515`, checklist `:534-543`), §8.3 (`:1215`), the `aspects` token family (`:207`, `:1519`); R8 `docs/research/01-research-accessibility.md:55`, `:83`; R7 `docs/research/01-research-zag-machines.md:76`; MANIFESTO Law 5 |
 
-Miguel decided Open Questions F1–F8 on 2026-11-17, each on the option the draft recommended, and Part A and Part B state those decisions. The drafter defaults D1–D22 stand as drafted (Miguel, 2026-11-17). F8 (a), `hostNaming: never`, adds Aspect Ratio to the Phase 1 spec lists of components that take no host name, through Phase 1 spec AM-103 (`docs/specs/01-spec-core-primitives.md:2564`), which raised the row's class from `task` to `decision` (PROCESS §2). The status stays `proposed` until the spec passes its review gate and Miguel approves it, before any code (PRD §8.3, `docs/PRD.md:1215`; Phase 1 spec §6.C.6, `:1229`). Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Aspect Ratio nowhere; ARCH §8 (`:410`) and §14.7 (`:1163`, "all Static") cover it through the Static tier.
+Miguel decided Open Questions F1–F8 on 2026-11-17, each on the option the draft recommended, and Part A and Part B state those decisions. The drafter defaults D1–D22 stand as drafted (Miguel, 2026-11-17). F8 (a), `hostNaming: never`, adds Aspect Ratio to the Phase 1 spec lists of components that take no host name, through Phase 1 spec AM-103 (`docs/specs/01-spec-core-primitives.md:2564`), which raised the row's class from `task` to `decision` (PROCESS §2). The spec passed its review gate on 2026-11-17 in four rounds. Round 1 failed and was fixed in `d8b8dcc`. Round 2 failed, was escalated, and Miguel chose a new probe, fixed in `6a8b801`. In round 3 the reviewer passed and the supervisor lens failed; it was escalated, Miguel chose a delta round 4, and the fix landed in `b884841`. Round 4 passed. Miguel approved the spec on 2026-11-17, before any code (PRD §8.3, `docs/PRD.md:1215`; Phase 1 spec §6.C.6, `:1229`). Text marked `[INFERENCE]` has no probe or source behind it yet. ARCHITECTURE names Aspect Ratio nowhere; ARCH §8 (`:410`) and §14.7 (`:1163`, "all Static") cover it through the Static tier.
 
 ---
 
@@ -979,3 +979,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 
 | ID | Date | Trigger | Change | Reason | Evidence |
 |---|---|---|---|---|---|
+| AM-001 | 2026-11-17 | ledger 01-C19 (factual correction, approval) | The Status field (`:5`) reads `` `approved` (Miguel, 2026-11-17) `` and the header paragraph (`:15`) says that the spec passed its review gate in four rounds and that Miguel approved it on 2026-11-17, in place of saying that it stays `proposed` | Miguel approved the spec after the review gate round 4 passed, and the header still described the draft state | `docs/context/01-c19.md`, "Review gate (docs), round 1, 2026-11-17", "Review gate (docs), round 2, 2026-11-17", "Review gate (docs), round 3, 2026-11-17" and "Review gate (docs), round 4 (delta), 2026-11-17"; Miguel's approval of `0021-aspect-ratio.md` on 2026-11-17, relayed by the orchestrator |
