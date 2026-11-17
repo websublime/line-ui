@@ -94,6 +94,10 @@
     "./center": {
       "types": "./dist/center/index.d.ts",
       "import": "./dist/center/index.js"
+    },
+    "./aspect-ratio": {
+      "types": "./dist/aspect-ratio/index.d.ts",
+      "import": "./dist/aspect-ratio/index.js"
     }
   },
   "dependencies": {

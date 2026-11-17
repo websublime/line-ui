@@ -1,7 +1,7 @@
 // A2UI v0.9.1 message streams the <line-a2ui-surface> stories feed (Phase 1 spec §6.G.4). The render fixture:
 // Button, Icon, Separator and Stack (C1–C4) through both catalogs, IconButton (C5), ButtonGroup (C6), Alert (C7),
-// Chip (C8), Badge (C9), Avatar (C10), AvatarGroup (C11), Kbd (C14), Skeleton (C15), Grid (C17) and Center (C18)
-// through the `line` catalog, and a basic `Image` with `variant: "avatar"` (C10) through its own `catalogId`.
+// Chip (C8), Badge (C9), Avatar (C10), AvatarGroup (C11), Kbd (C14), Skeleton (C15), Grid (C17), Center (C18) and
+// Aspect Ratio (C19) through the `line` catalog, and a basic `Image` with `variant: "avatar"` (C10) through its own `catalogId`.
 // Each C5–C20 row that is agent-exposed adds its component here and to the surface axe test (§6.C.6).
 
 /** One A2UI message. */
@@ -55,13 +55,13 @@ export const basicShowcase: A2uiMessage[] = [
 
 /**
  * The `line` catalog: Stack, Button, Icon, Separator, IconButton, ButtonGroup, Chip, Badge, Avatar, AvatarGroup,
- * Alert, Kbd, Skeleton, Grid and Center under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
+ * Alert, Kbd, Skeleton, Grid, Center and Aspect Ratio under the `line` id. The Alert's texts are basic catalog Text nodes, which a node selects with its own `catalogId`. Each Chip
  * takes its text from `label` and binds `pressed` to the data model. One Badge binds its count `label` to the data
  * model, and a dot Badge with no `label` is named by its `accessibility.label`. One Avatar binds its `src` and `name`
  * and holds a presence Badge in `status`; a basic `Image` with `variant: "avatar"` renders the second `line-avatar`.
  * One named AvatarGroup holds three Avatars with `max` 2, so "+1" opens a panel with the third, named by its
  * `overflowLabel`. A Kbd at the end of the toolbar shows the `mod+k` shortcut hint, and a two-line text Skeleton at
- * the end of the root stands in for content still to come. A two-column Grid of two Skeleton tiles follows, and a centred Kbd hint closes the root.
+ * the end of the root stands in for content still to come. A two-column Grid of two Skeleton tiles follows, then a centred Kbd hint, and a widescreen frame with a centred Kbd hint closes the root.
  */
 export const lineShowcase: A2uiMessage[] = [
   create(LINE_CATALOG_ID),
@@ -70,7 +70,7 @@ export const lineShowcase: A2uiMessage[] = [
       id: 'root',
       component: 'Stack',
       gap: '3',
-      children: ['toolbar', 'filters', 'team', 'notice', 'pending', 'tiles', 'centred'],
+      children: ['toolbar', 'filters', 'team', 'notice', 'pending', 'tiles', 'centred', 'framed'],
     },
     {
       id: 'toolbar',
@@ -202,6 +202,9 @@ export const lineShowcase: A2uiMessage[] = [
     { id: 'tile-b', component: 'Skeleton' },
     { id: 'centred', component: 'Center', child: 'centred-kbd' },
     { id: 'centred-kbd', component: 'Kbd', keys: 'esc' },
+    { id: 'framed', component: 'AspectRatio', ratio: 'widescreen', child: 'framed-center' },
+    { id: 'framed-center', component: 'Center', child: 'framed-kbd' },
+    { id: 'framed-kbd', component: 'Kbd', keys: 'space' },
   ]),
   data('/filters', { inStock: true, freeShipping: false, results: '24' }),
   data('/user', { photo: 'avatars/ana.svg', name: 'Ana Silva' }),

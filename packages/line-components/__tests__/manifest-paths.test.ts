@@ -446,6 +446,29 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.cssParts ?? []).toEqual([]);
     expect(declaration?.cssProperties ?? []).toEqual([]);
   });
+
+  test('line-aspect-ratio resolves to src/aspect-ratio/aspect-ratio.ts', () => {
+    const aspectRatio = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-aspect-ratio'),
+    );
+    expect(aspectRatio?.path).toBe('src/aspect-ratio/aspect-ratio.ts');
+    expect(paths.has('src/aspect-ratio/aspect-ratio.ts')).toBe(true);
+  });
+
+  test('line-aspect-ratio declares the public field ratio, no event, one default slot, no part and one token (0021-aspect-ratio.md Tests, Packaging row)', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-aspect-ratio');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual(['ratio']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots?.map((slot) => slot.name)).toEqual(['']);
+    expect(declaration?.cssParts ?? []).toEqual([]);
+    expect(declaration?.cssProperties?.map((property) => property.name)).toEqual(['--line-aspect-ratio-ratio']);
+  });
 });
 
 describe('the @zag-js/presence dependency (0017-presence.md Tests, Packaging row; Phase 1 spec §6.C.7)', () => {

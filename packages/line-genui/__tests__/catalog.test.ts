@@ -43,7 +43,7 @@ const COMMON_TYPES = 'common_types.json#/$defs/';
  * type by its `$defs` name, or `enum` for a literal enum (`0002-button.md`, `0004-button-group.md`, `0006-alert.md`,
  * `0009-avatar.md`, `0010-avatar-group.md`, `0007-badge.md`, `0008-chip.md`, `0014-icon.md`, `0003-icon-button.md`, `0011-separator.md`,
  * `0018-stack.md`, `0012-visually-hidden.md`, `0013-portal.md`, `0015-kbd.md`, `0016-skeleton.md`, `0017-presence.md`, `0019-grid.md`,
- * `0020-center.md`).
+ * `0020-center.md`, `0021-aspect-ratio.md`).
  */
 const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   Alert: {
@@ -54,6 +54,7 @@ const PROP_TYPES: Readonly<Record<string, Readonly<Record<string, string>>>> = {
     actions: 'ChildList',
     dismiss: 'ComponentId',
   },
+  AspectRatio: { ratio: 'enum', child: 'ComponentId' },
   Avatar: { src: 'DynamicString', name: 'DynamicString', status: 'ComponentId' },
   AvatarGroup: {
     children: 'ChildList',
@@ -124,9 +125,10 @@ function definition(doc: Json, name: string): { refs: unknown[]; own: Json } {
 }
 
 describe('descriptors compose with the web_core common types (§6.G.1)', () => {
-  test('the catalog holds the eighteen descriptors under their catalog names', () => {
+  test('the catalog holds the nineteen descriptors under their catalog names', () => {
     expect(Object.keys(catalogJson().components as Json).sort()).toEqual([
       'Alert',
+      'AspectRatio',
       'Avatar',
       'AvatarGroup',
       'Badge',
@@ -517,7 +519,7 @@ describe('agentExposed (§6.G.1 Contract)', () => {
 
   test('defaults to true, as on every descriptor but Portal, Presence and VisuallyHidden', () => {
     expect(defineDescriptor(fixture).agentExposed).toBe(true);
-    expect(descriptors).toHaveLength(18);
+    expect(descriptors).toHaveLength(19);
     expect(descriptors.filter((d) => !d.agentExposed)).toEqual([
       portalDescriptor,
       presenceDescriptor,
@@ -575,6 +577,6 @@ describe('importing @websublime/line-genui/catalog (§6.G.1; plan §7.2)', () =>
       child.exited,
     ]);
     expect({ code, stderr }).toEqual({ code: 0, stderr: '' });
-    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 18 });
+    expect(JSON.parse(stdout)).toEqual({ defined: [], descriptors: 19 });
   });
 });

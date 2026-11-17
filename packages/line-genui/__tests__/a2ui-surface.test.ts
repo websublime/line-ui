@@ -20,6 +20,7 @@ import { INTERNALS } from '@websublime/line-core';
 import { a2uiIconMap } from '@websublime/line-icons/a2ui';
 import { LineA2uiSurface } from '../src/a2ui/index.js';
 import {
+  aspectRatioDescriptor,
   avatarDescriptor,
   avatarGroupDescriptor,
   BASIC_CATALOG_ID,
@@ -544,6 +545,79 @@ describe('Center (0020-center.md Agent contract; §6.G.4)', () => {
     expect(host.hasAttribute('aria-description')).toBe(false);
     expect(host.hasAttribute('role')).toBe(false);
     expect(host.children).toHaveLength(1);
+  });
+});
+
+describe('AspectRatio (0021-aspect-ratio.md Agent contract; §6.G.4)', () => {
+  type AspectRatio = HTMLElement & { ratio?: string; updateComplete: Promise<unknown> };
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so Aspect Ratio
+  // is defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => aspectRatioDescriptor.load());
+
+  async function aspectRatioOf(surface: HTMLElement): Promise<AspectRatio> {
+    const host = surface.querySelector('line-aspect-ratio') as AspectRatio;
+    await host.updateComplete;
+    return host;
+  }
+
+  test('an AspectRatio node renders <line-aspect-ratio> with ratio as its attribute and a Center child holding a Kbd (P9)', async () => {
+    const { surface, errors } = await render(
+      [
+        { id: 'root', component: 'AspectRatio', ratio: 'widescreen', child: 'c' },
+        { id: 'c', component: 'Center', child: 'k' },
+        { id: 'k', component: 'Kbd', keys: 'mod+k' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe(
+      '<line-aspect-ratio ratio="widescreen"><line-center><line-kbd keys="mod+k"></line-kbd></line-center></line-aspect-ratio>',
+    );
+    const host = await aspectRatioOf(surface);
+    expect(host.ratio).toBe('widescreen');
+    const slot = host.shadowRoot?.querySelector('slot');
+    expect(slot?.hasAttribute('name')).toBe(false);
+    expect(slot?.assignedElements()).toEqual([...host.children]);
+  });
+
+  test('a node with no props renders an empty <line-aspect-ratio> with no attribute and raises nothing (C8)', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'AspectRatio' }], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-aspect-ratio></line-aspect-ratio>');
+    const host = await aspectRatioOf(surface);
+    expect(host.getAttributeNames()).toEqual([]);
+  });
+
+  test('an accessibility label and description set no aria-label or aria-description (hostNaming never)', async () => {
+    const { surface, errors } = await render(
+      [
+        {
+          id: 'root',
+          component: 'AspectRatio',
+          accessibility: { label: 'Cover', description: 'Hero image' },
+          child: 's',
+        },
+        { id: 's', component: 'Skeleton' },
+      ],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const host = await aspectRatioOf(surface);
+    expect(host.hasAttribute('aria-label')).toBe(false);
+    expect(host.hasAttribute('aria-description')).toBe(false);
+    expect(host.hasAttribute('role')).toBe(false);
+    expect(host.children).toHaveLength(1);
+  });
+
+  test('ratio "16/9" is rejected by the strict schema and renders nothing (P9; F1 (a))', async () => {
+    const { surface, errors } = await render([{ id: 'root', component: 'AspectRatio', ratio: '16/9' }], {
+      catalogId: LINE_CATALOG_ID,
+    });
+    expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+    expect(surface.querySelector('line-aspect-ratio')).toBeNull();
   });
 });
 

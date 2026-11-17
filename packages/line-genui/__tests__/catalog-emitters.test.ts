@@ -64,6 +64,7 @@ const document = lineCatalogDocument(descriptors);
 /** The catalog names of the agent-exposed descriptors, in catalog-name order. */
 const LINE_COMPONENTS = [
   'Alert',
+  'AspectRatio',
   'Avatar',
   'AvatarGroup',
   'Badge',

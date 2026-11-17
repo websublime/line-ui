@@ -705,3 +705,57 @@ and an `aria-label` on the host; for a landmark use `role="region"`. CSS that mo
 `flex-direction: column-reverse` makes the visual order differ from the reading and focus order.
 
 No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
+
+## Aspect Ratio
+
+`<line-aspect-ratio>` holds its content at a fixed width-to-height ratio, such as a 16:9 frame for a video or a
+square tile for an avatar. The box takes its width from its container and its height from the ratio. It adds no role,
+exposes no `::part()` and takes no focus; style it directly with `line-aspect-ratio { … }`.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `ratio` | `square` (1:1), `landscape` (4:3), `portrait` (3:4), `widescreen` (16:9), `ultrawide` (18:5), `golden` (1.618:1); an unknown value behaves as no attribute | none, drawn as `square` |
+
+| Custom property | Default | What it sets |
+|-----------------|---------|--------------|
+| `--line-aspect-ratio-ratio` | `var(--line-aspect-square, 1)`; each `ratio` value reads its `--line-aspect-*` token, with the token's value as a fallback | the host's `aspect-ratio` |
+
+The ratios come from the `line-tokens` `aspects` family. Without `line-tokens` the literal fallbacks keep every ratio.
+Any other ratio goes through the custom property, which beats every `ratio` value:
+
+```html
+<!-- A 16:9 video embed -->
+<line-aspect-ratio ratio="widescreen">
+  <iframe src="https://player.example/v/42" title="Product tour" frameborder="0" allowfullscreen></iframe>
+</line-aspect-ratio>
+
+<!-- Any other ratio -->
+<line-aspect-ratio style="--line-aspect-ratio-ratio: 9 / 16">
+  <video src="/story.mp4" controls aria-label="Story"></video>
+</line-aspect-ratio>
+```
+
+The host is a one-cell grid. Every child shares the cell and fills the box unless it sets its own size; a child with
+a smaller size sits at the start corner, and later children paint over earlier ones, so a child with
+`align-self: end` makes a caption over an image. Images and videos are cropped with `object-fit: cover`; an
+`object-fit` on the child wins. A bare text node beside an element takes its own row below the cell, so wrap text in
+an element.
+
+The box keeps its ratio and never clips: content taller than the box spills past its bottom edge over what follows.
+Leave room after it, or set `overflow: hidden` on the box and keep focus rings inside with an inset `outline-offset`.
+
+In a flex row, such as a horizontal `<line-stack>`, the box is as wide as its content and as tall as the row, so the
+ratio breaks. Give it a width or `flex: 1`, and set `align="start"` on the Stack. In a `<line-grid>` at its default
+`align`, a taller item in the same row stretches the box past its ratio, and `justify-items` other than `stretch` can
+widen it past its column: keep `justify-items` at `stretch` and set `align="start"` on a Grid whose rows hold taller
+items. A `display` rule on `line-aspect-ratio` shows a hidden box, so exclude `[hidden]` when you make it inline:
+
+```css
+line-aspect-ratio:not([hidden]) { display: inline-grid; inline-size: 10rem; }
+```
+
+Without a role, Aspect Ratio is a `generic` element, so do not give it an `aria-label`; name the media inside
+(`alt`, `title`, `aria-label`). For a picture built from several elements, put `role="img"` and an `aria-label` on the
+box and `alt=""` on any decorative image inside; for a gallery item, use `role="group"`.
+
+No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
