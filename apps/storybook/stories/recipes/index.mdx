@@ -1,0 +1,24 @@
+import { Meta } from '@storybook/addon-docs/blocks';
+
+<Meta title="Recipes/Overview" />
+
+# Transport recipes
+
+line://ui ships no transport code. Your app owns the transport, and `<line-a2ui-surface>` takes A2UI messages in and raises `line-a2ui-action` and `line-a2ui-error` out. Each recipe shows one transport that brings A2UI messages in and sends Button actions out. A recipe also sends each `line-a2ui-error` out when its transport has an error channel, which AG-UI lacks. Each recipe talks to an in-browser producer, so its stories run in this static Storybook.
+
+## Phase 1 transports
+
+| Transport | Inbound | Outbound | Pinned versions |
+|---|---|---|---|
+| [AG-UI](?path=/docs/recipes-ag-ui--docs) | `ACTIVITY_SNAPSHOT` events with `activityType: "a2ui-surface"`, whose content carries `a2ui_operations` | A Button action as `forwardedProps.a2uiAction.userAction` on the next run. The recipe logs a `line-a2ui-error` locally and sends nothing, because AG-UI and `@ag-ui/a2ui-middleware` define no error channel | AG-UI 1.0, `@ag-ui/a2ui-middleware` 0.0.13 (exact), `@ag-ui/client` 1.0.3, `rxjs` 7.8.1 |
+| [A2A](?path=/docs/recipes-a2a--docs) | A DataPart whose part `metadata.mimeType` is `application/a2ui+json` or `application/json+a2ui`, holding an array of messages or a single message | An `application/a2ui+json` DataPart holding `[action]` or `[error]`. The client capabilities travel in `message.metadata.a2uiClientCapabilities` | A2A v1.0, `@a2a-js/sdk` 1.3.0 |
+| [MCP](?path=/docs/recipes-mcp--docs) | A tool-result `EmbeddedResource` whose `resource.mimeType` is `application/a2ui+json` and whose `resource.text` holds the JSON array of A2UI messages | A `tools/call` of `a2ui_action` or `a2ui_error`. The client capabilities travel in `_meta.a2ui.clientCapabilities` | MCP TypeScript SDK v2, in the code sample only. The story imports no MCP SDK |
+| [SSE](?path=/docs/recipes-sse--docs) | One A2UI message per SSE event, as the JSON text of `data:`. A named `end` event ends the stream | A POST of the A2UI `action` or `error` message as JSON. The client capabilities travel in the query string | None. The recipe uses the browser's own `EventSource`, and A2UI defines no SSE binding yet |
+
+## WebSocket and `fetch` streams
+
+WebSocket and `fetch`-stream JSONL get no Phase 1 recipe. ARCHITECTURE §17.5 lists them as a fifth transport, with JSONL inbound and a POST outbound, but PRD §7.3 item 8 scopes the Phase 1 recipes to AG-UI, A2A, MCP and SSE.
+
+## Related
+
+[Loading line://ui into an MCP Apps View](?path=/docs/recipes-mcp-apps-view--docs) shows how the lazy component chunks load inside an MCP Apps View and how the View takes the host theme. It is not a transport.

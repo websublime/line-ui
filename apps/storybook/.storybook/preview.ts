@@ -103,6 +103,8 @@ const preview: Preview = {
           'Getting Started',
           'HTMX',
           'Recipes',
+          // The index page sorts first, and the recipes follow in file-name order.
+          ['Overview'],
           'Theming',
           'Theming Demos',
         ],
