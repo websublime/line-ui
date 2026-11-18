@@ -186,7 +186,11 @@ export class LineSpinner extends LineElement {
     return html`<span part="root"></span>`;
   }
 
-  /** A `progressbar` named by `label` while any name is present; decorative and hidden with none. */
+  /**
+   * Writes the role, name and hidden state to the internals. A non-blank `label`, `aria-label` or `aria-labelledby`
+   * makes the spinner a `progressbar`, and a host attribute wins over `label` as its name. With no name the spinner
+   * has no role and is hidden.
+   */
   #writeSemantics(): void {
     const label = this.label?.trim() ? this.label : null;
     const named = Boolean(
