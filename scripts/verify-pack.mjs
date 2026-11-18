@@ -8,7 +8,7 @@
  *
  * For every publishable package (packages/* minus `"private": true` minus the
  * `.changeset/config.json` ignore list) it packs a staged copy (workspace: ranges
- * rewritten from packages/*\/package.json versions) with `bun pm pack` and checks:
+ * rewritten from packages/*\/package.json versions) with `bun pm pack --ignore-scripts` and checks:
  *   (a) every exports target / main / module / types / customElements exists in the tarball
  *   (b) every tarball path is on the allowlist (package.json, README*, LICENSE*, LICENCE*, `files` entries)
  *   (c) no tarball path hits the denylist (__tests__/, *.test.*, *.spec.*, tsconfig*.json, vite.config.*, *.tsbuildinfo, .-prefixed segments, *.pem, *.key)
@@ -66,7 +66,8 @@ export function rewriteWorkspaceRange(dep, range, versions) {
 
 /**
  * Stage a copy of the package (without node_modules), rewrite workspace: ranges,
- * and run `bun pm pack`. Returns { tarball, cleanup }; cleanup removes the temp dirs.
+ * and run `bun pm pack --ignore-scripts`, so no prepack, prepare or postpack script runs (AM-089).
+ * Returns { tarball, cleanup }; cleanup removes the temp dirs.
  */
 export function stageAndPack(pkg, root = ROOT) {
   const versions = workspaceVersions(root);
@@ -90,7 +91,7 @@ export function stageAndPack(pkg, root = ROOT) {
       }
     }
     writeFileSync(join(stageDir, 'package.json'), `${JSON.stringify(manifest, null, 2)}\n`);
-    const proc = Bun.spawnSync(['bun', 'pm', 'pack', '--quiet', '--destination', outDir], {
+    const proc = Bun.spawnSync(['bun', 'pm', 'pack', '--quiet', '--ignore-scripts', '--destination', outDir], {
       cwd: stageDir,
       stdout: 'pipe',
       stderr: 'pipe',
