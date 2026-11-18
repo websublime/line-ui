@@ -413,6 +413,27 @@ test.describe('motion (F3, F4, F5; P4, P5)', () => {
       iterations: [3],
     });
   });
+
+  test('a finite --line-spinner-iteration-count ends the motion after its last turn (P4 A8)', async ({ page }) => {
+    await open(page);
+    await mount(
+      page,
+      '<line-spinner id="brief" style="--line-spinner-iteration-count: 3; --line-spinner-duration: 100ms"></line-spinner>',
+    );
+    const ended = await page.evaluate(async () => {
+      const root = document.getElementById('brief')?.shadowRoot?.querySelector('[part="root"]') as HTMLElement;
+      const [animation] = root.getAnimations();
+      const timing = animation?.effect?.getComputedTiming();
+      await animation?.finished;
+      return {
+        iterations: timing?.iterations,
+        endTime: Math.round(Number(timing?.endTime)),
+        playState: animation?.playState,
+        remaining: root.getAnimations().length,
+      };
+    });
+    expect(ended).toEqual({ iterations: 3, endTime: 300, playState: 'finished', remaining: 0 });
+  });
 });
 
 test.describe('size, colour and layout (F6, F8; P6)', () => {
