@@ -103,7 +103,7 @@ export class LineSpinner extends LineElement {
         --line-spinner-duration: var(--line-motion-slow, 0.75s);
       }
 
-      /* Normal importance and after the speed rules, so a page ::part(root) rule can opt back in (spec 0022-spinner.md F4). */
+      /* This rule follows the speed rules at normal importance, so a page ::part(root) rule can bring rotation back (spec 0022-spinner.md F4). */
       @media (prefers-reduced-motion: reduce) {
         :host,
         :host([speed]) {
@@ -127,7 +127,7 @@ export class LineSpinner extends LineElement {
         animation-iteration-count: var(--line-spinner-iteration-count);
       }
 
-      /* On root, not the token, so the gap stays visible whatever colour the consumer set (spec 0022-spinner.md D7). */
+      /* This rule sets the colours on root, so the gap stays visible whatever colour the consumer sets (spec 0022-spinner.md D7). */
       @media (forced-colors: active) {
         [part='root'] {
           border-color: CanvasText;
