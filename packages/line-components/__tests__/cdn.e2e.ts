@@ -206,7 +206,8 @@ test.beforeAll(async () => {
     }),
     '/unpkg.html': page(
       unpkgModules,
-      `<script>${PROCESS_SHIM}</script><script type="importmap">${JSON.stringify({ imports: map.imports })}</script>`,
+      // `<` escaped as `\u003c`, so no value in the map can close the `<script>` element.
+      `<script>${PROCESS_SHIM}</script><script type="importmap">${JSON.stringify({ imports: map.imports }).replaceAll('<', '\\u003c')}</script>`,
     ),
   });
   console.info(

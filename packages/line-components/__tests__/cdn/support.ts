@@ -66,14 +66,22 @@ export function manifest(name: string, version: string): Promise<Manifest> {
   return pending;
 }
 
+/**
+ * `value` when it is an exact version, else an error naming `source`. Every version that reaches a URL or a page
+ * passes here: the environment variables, the `canary` dist-tag, the bundle imports and the jsDelivr resolutions.
+ * The rejected value is printed through `JSON.stringify`, so a newline in it cannot start a workflow command.
+ */
+function exactVersion(value: unknown, source: string): string {
+  if (typeof value !== 'string' || !EXACT_VERSION.test(value)) {
+    throw new Error(`${source} gave ${JSON.stringify(value)}, not an exact version; ranges and tags are rejected.`);
+  }
+  return value;
+}
+
 /** The exact version an environment variable names, or `undefined` when it is unset or empty. */
 function exactFromEnv(variable: string): string | undefined {
   const value = process.env[variable]?.trim();
-  if (!value) return undefined;
-  if (!EXACT_VERSION.test(value)) {
-    throw new Error(`${variable}="${value}" is not an exact version; ranges and tags are rejected (spec §6.P.6).`);
-  }
-  return value;
+  return value ? exactVersion(value, variable) : undefined;
 }
 
 export interface CdnVersions {
@@ -96,8 +104,11 @@ export interface CdnVersions {
 export async function resolveVersions(subpaths: readonly string[]): Promise<CdnVersions> {
   const fromEnv = exactFromEnv('LINE_CDN_COMPONENTS_VERSION');
   const components =
-    fromEnv ?? (await getJson<Record<string, string>>(`${REGISTRY}/-/package/${COMPONENTS}/dist-tags`)).canary;
-  if (components === undefined) throw new Error(`${COMPONENTS} has no canary dist-tag.`);
+    fromEnv ??
+    exactVersion(
+      (await getJson<Record<string, unknown>>(`${REGISTRY}/-/package/${COMPONENTS}/dist-tags`)).canary,
+      `The ${COMPONENTS} canary dist-tag`,
+    );
   await manifest(COMPONENTS, components);
 
   const imported = await bundleImports(components, subpaths);
@@ -140,14 +151,16 @@ async function bundleImports(components: string, subpaths: readonly string[]): P
 
   const imported: Record<string, string> = {};
   for (const [name, versions] of seen) {
-    const [version] = versions.keys();
-    if (versions.size !== 1 || version === undefined || !EXACT_VERSION.test(version)) {
-      const list = [...versions].map(([v, from]) => `${v} (from ${[...from].join(', ')})`).join('; ');
+    if (versions.size !== 1) {
+      const list = [...versions].map(([v, from]) => `${JSON.stringify(v)} (from ${[...from].join(', ')})`).join('; ');
       throw new Error(
         `The ${COMPONENTS}@${components} jsDelivr bundles import ${name} at: ${list}; need one exact version.`,
       );
     }
-    imported[name] = version;
+    imported[name] = exactVersion(
+      versions.keys().next().value,
+      `The ${COMPONENTS}@${components} bundle import of ${name}`,
+    );
   }
   return imported;
 }
@@ -270,9 +283,10 @@ async function dependencyVersion(
   const pin = pinned[dependency];
   if (pin !== undefined) return pin;
   const url = `${JSDELIVR_DATA}/${dependency}/resolved?specifier=${encodeURIComponent(range)}`;
-  const { version } = await getJson<{ version: string | null }>(url);
-  if (!version) throw new Error(`No published ${dependency} satisfies ${range} (from ${from}).`);
-  return version;
+  const { version } = await getJson<{ version: unknown }>(url);
+  if (version === null)
+    throw new Error(`No published ${dependency} satisfies ${JSON.stringify(range)} (from ${from}).`);
+  return exactVersion(version, `jsDelivr's resolution of ${dependency}@${JSON.stringify(range)}`);
 }
 
 /** Each specifier the `exports` of `name@version` give a browser, to its file; `./x/*` patterns are expanded. */
