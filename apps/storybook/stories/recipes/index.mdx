@@ -4,7 +4,7 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Transport recipes
 
-line://ui ships no transport code. Your app owns the transport, and `<line-a2ui-surface>` takes A2UI messages in and raises `line-a2ui-action` and `line-a2ui-error` out. Each recipe shows one transport that carries those messages both ways, against an in-browser producer, so its stories run in this static Storybook.
+line://ui ships no transport code. Your app owns the transport, and `<line-a2ui-surface>` takes A2UI messages in and raises `line-a2ui-action` and `line-a2ui-error` out. Each recipe shows one transport that brings A2UI messages in and sends Button actions out. A recipe also sends each `line-a2ui-error` out when its transport has an error channel, which AG-UI lacks. Each recipe talks to an in-browser producer, so its stories run in this static Storybook.
 
 ## Phase 1 transports
 
