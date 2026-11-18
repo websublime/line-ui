@@ -27,6 +27,7 @@ export default mergeConfig(
       'grid/index': 'src/grid/index.ts',
       'center/index': 'src/center/index.ts',
       'aspect-ratio/index': 'src/aspect-ratio/index.ts',
+      'spinner/index': 'src/spinner/index.ts',
     },
   }),
   {

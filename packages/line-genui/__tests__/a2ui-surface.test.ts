@@ -31,6 +31,7 @@ import {
   kbdDescriptor,
   LINE_CATALOG_ID,
   skeletonDescriptor,
+  spinnerDescriptor,
 } from '../src/catalog/index.js';
 import {
   action,
@@ -618,6 +619,79 @@ describe('AspectRatio (0021-aspect-ratio.md Agent contract; §6.G.4)', () => {
     });
     expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
     expect(surface.querySelector('line-aspect-ratio')).toBeNull();
+  });
+});
+
+describe('Spinner (0022-spinner.md Agent contract; §6.G.4)', () => {
+  type Spinner = HTMLElement & { updateComplete: Promise<unknown> };
+  const semantics = (host: Element) => {
+    const internals = Reflect.get(host, INTERNALS) as {
+      role?: string | null;
+      ariaLabel?: string | null;
+      ariaHidden?: string | null;
+    };
+    return {
+      role: internals.role ?? null,
+      ariaLabel: internals.ariaLabel ?? null,
+      ariaHidden: internals.ariaHidden ?? null,
+    };
+  };
+
+  // happy-dom runs no attributeChangedCallback for the attributes an element holds when it upgrades, so the spinner
+  // is defined before the surface creates one; a browser upgrade reads them.
+  beforeAll(() => spinnerDescriptor.load());
+
+  async function spinnerOf(surface: HTMLElement): Promise<Spinner> {
+    const host = surface.querySelector('line-spinner') as Spinner;
+    await host.updateComplete;
+    return host;
+  }
+
+  test('a node with accessibility.label renders <line-spinner aria-label>, a named progressbar (P10; F7 (a))', async () => {
+    const { surface, errors } = await render(
+      [{ id: 'root', component: 'Spinner', accessibility: { label: 'Loading orders' } }],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    expect(surface.innerHTML).toBe('<line-spinner aria-label="Loading orders"></line-spinner>');
+    const host = await spinnerOf(surface);
+    expect(semantics(host)).toEqual({ role: 'progressbar', ariaLabel: null, ariaHidden: null });
+  });
+
+  test('accessibility.description sets aria-description', async () => {
+    const { surface, errors } = await render(
+      [{ id: 'root', component: 'Spinner', accessibility: { label: 'Loading orders', description: 'Fetching' } }],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(errors).toEqual([]);
+    const host = await spinnerOf(surface);
+    expect(host.getAttribute('aria-label')).toBe('Loading orders');
+    expect(host.getAttribute('aria-description')).toBe('Fetching');
+  });
+
+  test('a node with no label, or a blank one, renders the missing-name placeholder and raises MISSING_ACCESSIBLE_NAME (P10 SpinnerD)', async () => {
+    for (const node of [
+      { id: 'root', component: 'Spinner' },
+      { id: 'root', component: 'Spinner', accessibility: { label: '  ' } },
+      { id: 'root', component: 'Spinner', accessibility: { description: 'Fetching' } },
+    ]) {
+      const { surface, errors } = await render([node], { catalogId: LINE_CATALOG_ID });
+      expect(surface.querySelector('line-spinner')).toBeNull();
+      const placeholder = surface.querySelector('[data-line-a2ui-placeholder="missing-name"]') as HTMLElement;
+      expect(placeholder.inert).toBe(true);
+      expect(codes(errors)).toEqual(['MISSING_ACCESSIBLE_NAME']);
+      expect(errors[0]?.error.componentId).toBe('root');
+      surface.remove();
+    }
+  });
+
+  test('a size or speed prop is rejected by the strict schema and renders nothing (F7 (a))', async () => {
+    const { surface, errors } = await render(
+      [{ id: 'root', component: 'Spinner', size: '3', accessibility: { label: 'Loading' } }],
+      { catalogId: LINE_CATALOG_ID },
+    );
+    expect(codes(errors)).toEqual(['VALIDATION_ERROR']);
+    expect(surface.querySelector('line-spinner')).toBeNull();
   });
 });
 

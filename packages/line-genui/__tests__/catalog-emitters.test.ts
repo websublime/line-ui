@@ -78,6 +78,7 @@ const LINE_COMPONENTS = [
   'Kbd',
   'Separator',
   'Skeleton',
+  'Spinner',
   'Stack',
 ];
 

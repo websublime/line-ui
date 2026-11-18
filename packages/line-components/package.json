@@ -98,6 +98,10 @@
     "./aspect-ratio": {
       "types": "./dist/aspect-ratio/index.d.ts",
       "import": "./dist/aspect-ratio/index.js"
+    },
+    "./spinner": {
+      "types": "./dist/spinner/index.d.ts",
+      "import": "./dist/spinner/index.js"
     }
   },
   "dependencies": {

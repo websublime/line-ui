@@ -29,6 +29,7 @@ import { portalDescriptor } from './descriptors/portal.js';
 import { presenceDescriptor } from './descriptors/presence.js';
 import { separatorDescriptor } from './descriptors/separator.js';
 import { skeletonDescriptor } from './descriptors/skeleton.js';
+import { spinnerDescriptor } from './descriptors/spinner.js';
 import { stackDescriptor } from './descriptors/stack.js';
 import { visuallyHiddenDescriptor } from './descriptors/visually-hidden.js';
 import {
@@ -123,6 +124,7 @@ export {
   presenceDescriptor,
   separatorDescriptor,
   skeletonDescriptor,
+  spinnerDescriptor,
   stackDescriptor,
   TOOL_PROVIDERS,
   visuallyHiddenDescriptor,
@@ -147,6 +149,7 @@ export const descriptors: readonly LineDescriptor[] = [
   presenceDescriptor,
   separatorDescriptor,
   skeletonDescriptor,
+  spinnerDescriptor,
   stackDescriptor,
   visuallyHiddenDescriptor,
 ];

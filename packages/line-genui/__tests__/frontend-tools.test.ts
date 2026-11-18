@@ -35,6 +35,7 @@ import {
   type LineDescriptor,
   lineCatalogDocument,
   separatorDescriptor,
+  spinnerDescriptor,
   stackDescriptor,
   TOOL_PROVIDERS,
   type ToolProvider,
@@ -121,6 +122,7 @@ describe('every tool, for every provider (§6.G.3 Acceptance; §10 SD46, SD49)',
         'Kbd',
         'Separator',
         'Skeleton',
+        'Spinner',
         'Stack',
       ]);
       for (const each of tools(provider)) expect(Object.keys(each)).toEqual(['name', 'description', 'parameters']);
@@ -200,6 +202,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
       expect(names('Kbd')).toEqual(['keys']);
       expect(names('Separator')).toEqual(['orientation', 'decorative', ...ACCESSIBILITY]);
       expect(names('Skeleton')).toEqual(['shape', 'lines']);
+      expect(names('Spinner')).toEqual([...ACCESSIBILITY]);
       expect(names('Stack')).toEqual(['orientation', 'justify', 'align', 'gap', 'wrap']);
     }
   });
@@ -259,7 +262,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
   );
 
   test.each([...TOOL_PROVIDERS])(
-    '%s: Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton and Separator take the optional accessibility strings, Alert, AspectRatio, Center, Grid, Icon, Kbd, Skeleton and Stack neither',
+    '%s: Avatar, AvatarGroup, Badge, Button, ButtonGroup, Chip, IconButton, Separator and Spinner take the optional accessibility strings, Alert, AspectRatio, Center, Grid, Icon, Kbd, Skeleton and Stack neither',
     (provider) => {
       const optionalString = provider === 'openai' ? ['string', 'null'] : 'string';
       for (const name of [
@@ -271,6 +274,7 @@ describe('the flat literal model (§6.G.3 Contract; §10 SD47, SD48; §12 AM-069
         'Chip',
         'IconButton',
         'Separator',
+        'Spinner',
       ]) {
         const { properties, required } = tool(provider, name).parameters;
         expect(properties.accessibility).toBeUndefined();
@@ -438,7 +442,7 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
     expect(lackedNames(each.description, descriptorNamed(name), each)).toEqual([]);
   });
 
-  test('the guard fails on the agent-facing descriptions the nine tool descriptions replace', () => {
+  test('the guard fails on the agent-facing descriptions the ten tool descriptions replace', () => {
     for (const provider of TOOL_PROVIDERS) {
       const lacked = (descriptor: LineDescriptor) =>
         lackedNames(descriptor.description, descriptor, tool(provider, descriptor.name));
@@ -451,10 +455,11 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
       expect(lacked(gridDescriptor)).toEqual(['children']);
       expect(lacked(centerDescriptor)).toEqual(['child']);
       expect(lacked(aspectRatioDescriptor)).toEqual(['child']);
+      expect(lacked(spinnerDescriptor)).toEqual(['accessibility.label']);
     }
   });
 
-  test('Alert, AspectRatio, Button, ButtonGroup, Center, Grid, IconButton, Separator and Stack emit their toolDescription in place of their description', () => {
+  test('Alert, AspectRatio, Button, ButtonGroup, Center, Grid, IconButton, Separator, Spinner and Stack emit their toolDescription in place of their description', () => {
     for (const descriptor of [
       alertDescriptor,
       aspectRatioDescriptor,
@@ -464,6 +469,7 @@ describe('the tool description (§6.G.3; §12 AM-086)', () => {
       gridDescriptor,
       iconButtonDescriptor,
       separatorDescriptor,
+      spinnerDescriptor,
       stackDescriptor,
     ]) {
       expect(descriptor.toolDescription).toBeString();

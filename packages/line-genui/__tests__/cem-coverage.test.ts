@@ -30,10 +30,10 @@ describe('descriptor coverage of the built line-components manifest (§6.G.5)', 
   });
 
   test('an element added to the manifest without a descriptor fails', () => {
-    const spinner = { kind: 'class', name: 'LineSpinner', tagName: 'line-spinner' };
+    const input = { kind: 'class', name: 'LineInput', tagName: 'line-input' };
     const grown: Manifest = {
-      modules: [...manifest.modules, { path: 'src/spinner/spinner.ts', declarations: [spinner] }],
+      modules: [...manifest.modules, { path: 'src/input/input.ts', declarations: [input] }],
     };
-    expect(coverageViolations(descriptors, grown)).toEqual(['line-spinner']);
+    expect(coverageViolations(descriptors, grown)).toEqual(['line-input']);
   });
 });

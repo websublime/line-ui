@@ -759,3 +759,88 @@ Without a role, Aspect Ratio is a `generic` element, so do not give it an `aria-
 box and `alt=""` on any decorative image inside; for a gallery item, use `role="group"`.
 
 No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
+
+## Spinner
+
+`<line-spinner>` is a loading indicator, a small ring that turns while something is in progress. It draws in the
+colour and at the size of the surrounding text, its motion is CSS only, and it takes no focus. Style the ring through
+`::part(root)` and the custom properties below.
+
+| Attribute | Values | Default |
+|-----------|--------|---------|
+| `label` | the accessible name, such as `Loading orders`; does not reflect | none: the spinner is decorative and hidden |
+| `size` | `1`–`6`: 16, 20, 24, 28, 32 or 48 px at the default root font (`--line-size-3` … `--line-size-8`); an unknown value behaves as no attribute | none: the text size |
+| `speed` | `slow` (2 s a turn), `normal` (1 s), `fast` (0.75 s); an unknown value behaves as no attribute | none, drawn as `normal` |
+
+| Custom property | Default | What it sets |
+|-----------------|---------|--------------|
+| `--line-spinner-size` | `1em`; `var(--line-size-N, …)` for `size` | the host's inline and block size |
+| `--line-spinner-width` | `0.125em` | the ring's border width |
+| `--line-spinner-color` | `currentColor`; ignored under forced colors | the ring's colour |
+| `--line-spinner-keyframes` | `line-spinner-spin`; `line-spinner-pulse` under reduced motion | the internal keyframes `root` runs; `none` stops the motion |
+| `--line-spinner-duration` | `var(--line-motion-6, 1s)`; 2 s for `slow` and under reduced motion, 0.75 s for `fast` | one cycle |
+| `--line-spinner-easing` | `var(--line-easing-linear, …)`; `var(--line-easing-in-out, …)` under reduced motion | the timing function |
+| `--line-spinner-iteration-count` | `infinite` | how many cycles run |
+
+Every `line-tokens` value has its token value as a literal fallback, so the spinner sizes and turns without
+`line-tokens` exactly as with them.
+
+```html
+<!-- A loading panel; the region is busy and the spinner is named -->
+<section aria-busy="true" aria-label="Orders">
+  <line-center><line-spinner size="5" label="Loading orders"></line-spinner></line-center>
+</section>
+
+<!-- Inline and decorative; the text says what is happening -->
+<p><line-spinner></line-spinner> Saving…</p>
+
+<!-- A loading button; the spinner stays unnamed and the slot carries the text -->
+<line-button loading>
+  Save
+  <span slot="loading"><line-spinner></line-spinner> Saving…</span>
+</line-button>
+
+<!-- Named by visible text elsewhere -->
+<span id="upload-status">Uploading report.pdf</span>
+<line-spinner aria-labelledby="upload-status"></line-spinner>
+```
+
+A spinner with a name from `label`, `aria-label` or `aria-labelledby` is an indeterminate `progressbar` with that
+name; a host `aria-label` or `aria-labelledby` wins over `label`, and a blank value counts as none. Both are
+`ElementInternals` defaults, so an author `role` or `aria-*` attribute wins. Without a name the spinner is decorative
+and hidden. The component ships no default string: "Loading" is yours to write and localise.
+
+- Name a standalone spinner. Leave a spinner in the `loading` slot of `<line-button>` or `<line-icon-button>` unnamed
+  and put the loading text beside it, because a named spinner joins the button's name ("Save" becomes "Save Loading").
+- Put `aria-busy="true"` on the region that is loading while the spinner shows; the spinner writes `aria-busy`
+  nowhere. It says nothing when it goes away, so announce the result with a live region or an Alert.
+- Beside text, a page rule `line-spinner { vertical-align: middle; }` centres the ring on the line.
+
+Under `prefers-reduced-motion: reduce` the ring pulses in place for 2 s instead of turning. The keyframe names
+`line-spinner-spin` and `line-spinner-pulse` are internal: a `::part(root)` rule that names them stops the motion in
+Chromium and WebKit, so custom motion, and rotation kept under reduced motion, go through a `::part(root)` rule with
+page keyframes. Under forced colors the ring paints `CanvasText` with a `Canvas` gap; a page rule that recolours the
+border through `::part(root)` carries its own `@media (forced-colors: active)` rule.
+
+```css
+@keyframes page-sweep { to { transform: rotate(-1turn); } }
+line-spinner.reverse::part(root) { animation: page-sweep 1.5s linear infinite; }
+
+/* Stop after five turns; the app then owns what a still ring means */
+line-spinner.brief { --line-spinner-iteration-count: 5; }
+```
+
+WCAG 2.2.2 asks for a way to pause, stop or hide motion that starts automatically, lasts more than five seconds and
+shows beside other content. A spinner shown after the user presses a button does not start automatically, and a
+spinner that is the only content is not beside other content. An app that shows a spinner beside usable content for
+longer removes or hides it within five seconds, gives a way to stop it, or sets a finite
+`--line-spinner-iteration-count`.
+
+With htmx, the spinner is a request indicator: htmx shows it through its `htmx-request` class while the request runs.
+
+```html
+<button hx-get="/results" hx-target="#results" hx-indicator="#results-spinner">Search</button>
+<line-spinner id="results-spinner" class="htmx-indicator" label="Loading results"></line-spinner>
+```
+
+No check reads the Firefox or WebKit accessibility tree, and no screen reader was run.
