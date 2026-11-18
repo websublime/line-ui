@@ -342,9 +342,13 @@ async function expectPage(p: Page, requests: string[], errors: string[]): Promis
 
   await test.step('every @websublime/* URL names one exact version', async () => {
     expect(requests.length).toBeGreaterThan(0);
-    const off = requests.filter((url) =>
-      [...url.matchAll(WEBSUBLIME_URL)].some(([, name, version]) => name === undefined || pins[name] !== version),
-    );
+    // An unversioned URL, such as `/npm/@websublime/line-core/+esm`, or one this regex cannot read, fails too.
+    const off = requests.filter((url) => {
+      const found = [...url.matchAll(WEBSUBLIME_URL)];
+      return (
+        found.length === 0 || found.some(([, name = '', version]) => version === undefined || pins[name] !== version)
+      );
+    });
     expect(off, `pinned: ${JSON.stringify(pins)}`).toEqual([]);
   });
 

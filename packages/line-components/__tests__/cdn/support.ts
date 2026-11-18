@@ -24,8 +24,14 @@ export const CORE = '@websublime/line-core';
 /** An exact semver version: no range operator, no `x`, no tag. */
 const EXACT_VERSION = /^\d+\.\d+\.\d+(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/;
 
-/** A `@websublime/*` package at a version inside a CDN URL or a jsDelivr bundle import. */
-export const WEBSUBLIME_URL = /\/(@websublime\/[a-z0-9-]+)@([^/"'\s]+)\//g;
+/**
+ * A `@websublime/*` package inside a CDN URL or a jsDelivr bundle import, with the version the URL names; the
+ * version group is `undefined` for an unversioned URL such as `/npm/@websublime/line-core/+esm`.
+ */
+export const WEBSUBLIME_URL = /\/(@websublime\/[a-z0-9-]+)(?:@([^/"'\s]+))?(?=[/"'\s]|$)/g;
+
+/** The specifier of each static or dynamic import in a module's text. */
+const IMPORT_SPECIFIER = /\b(?:from|import)\s*\(?\s*["']([^"']+)["']/g;
 
 async function fetchOk(url: string): Promise<Response> {
   let failure: unknown;
@@ -139,14 +145,20 @@ export async function resolveVersions(subpaths: readonly string[]): Promise<CdnV
 async function bundleImports(components: string, subpaths: readonly string[]): Promise<Record<string, string>> {
   // package → version → the subpaths whose bundle imports it at that version
   const seen = new Map<string, Map<string, Set<string>>>();
+  const unversioned: string[] = [];
   for (const subpath of subpaths) {
     const url = `${JSDELIVR}/${COMPONENTS}@${components}/${subpath === '.' ? '' : `${subpath}/`}+esm`;
-    for (const [, name, version] of (await (await fetchOk(url)).text()).matchAll(WEBSUBLIME_URL)) {
-      if (name === undefined || version === undefined || name === COMPONENTS) continue;
+    const bundle = websublimeImports(await (await fetchOk(url)).text());
+    unversioned.push(...bundle.unversioned.map((specifier) => `${JSON.stringify(specifier)} (from ${subpath})`));
+    for (const [name, version] of bundle.versioned) {
+      if (name === COMPONENTS) continue;
       const versions = seen.get(name) ?? new Map<string, Set<string>>();
       versions.set(version, (versions.get(version) ?? new Set()).add(subpath));
       seen.set(name, versions);
     }
+  }
+  if (unversioned.length > 0) {
+    throw new Error(`The ${COMPONENTS}@${components} jsDelivr bundles import unversioned ${unversioned.join('; ')}.`);
   }
 
   const imported: Record<string, string> = {};
@@ -163,6 +175,25 @@ async function bundleImports(components: string, subpaths: readonly string[]): P
     );
   }
   return imported;
+}
+
+/**
+ * The `@websublime/*` imports in a bundle's text: each package at the version its URL names, and every specifier
+ * that mentions `@websublime/` without naming a version, such as `/npm/@websublime/line-core/+esm`.
+ */
+function websublimeImports(text: string): { versioned: [string, string][]; unversioned: string[] } {
+  const versioned: [string, string][] = [];
+  const unversioned: string[] = [];
+  for (const [, specifier = ''] of text.matchAll(IMPORT_SPECIFIER)) {
+    if (!specifier.includes('@websublime/')) continue;
+    const found = [...specifier.matchAll(WEBSUBLIME_URL)];
+    if (found.length === 0 || found.some(([, , version]) => version === undefined)) {
+      unversioned.push(specifier);
+      continue;
+    }
+    for (const [, name = '', version = ''] of found) versioned.push([name, version]);
+  }
+  return { versioned, unversioned };
 }
 
 /** One import map entry: a bare specifier, the package that serves it, and the file or folder in that package. */
