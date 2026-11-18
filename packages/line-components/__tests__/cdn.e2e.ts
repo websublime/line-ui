@@ -123,7 +123,7 @@ interface PageModules {
 }
 
 /**
- * A no-build page. The module imports every entry, defines `FormAssociated(LineElement)` as `<cdn-form-field>`,
+ * A no-build page. The module imports every entry, defines `FormAssociated(LineElement)` as `<line-cdn-form-field>`,
  * and hands `setIconRegistry`, `INTERNALS` and an `import()` bound to the page's import map to the test.
  */
 function page(modules: PageModules, head = ''): string {
@@ -134,7 +134,7 @@ function page(modules: PageModules, head = ''): string {
     <line-button id="button">Save</line-button>
     <line-icon id="path-icon"></line-icon>
     <line-icon id="early-icon" library="stub" name="early"></line-icon>
-    <form id="form"><cdn-form-field id="field" name="field"></cdn-form-field></form>
+    <form id="form"><line-cdn-form-field id="field" name="field"></line-cdn-form-field></form>
     <script type="module">
       import { setIconRegistry } from '${modules.root}';
       import '${modules.button}';
@@ -142,7 +142,7 @@ function page(modules: PageModules, head = ''): string {
       import { FormAssociated } from '${modules.formAssociated}';
       import { INTERNALS, LineElement } from '${modules.coreRoot}';
 
-      customElements.define('cdn-form-field', class extends FormAssociated(LineElement) {});
+      customElements.define('line-cdn-form-field', class extends FormAssociated(LineElement) {});
       window.lineCdn = { setIconRegistry, INTERNALS, load: (specifier) => import(specifier) };
     </script>
   </body>
