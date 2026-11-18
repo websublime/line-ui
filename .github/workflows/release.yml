@@ -1,18 +1,47 @@
 name: release
 on:
   push: { branches: [main] }                   # AM-038: npm rejects trusted-publishing tokens from pull_request_target / issue_comment
-permissions:                                   # AM-038: only what changesets/action and the publisher need
-  contents: write                              # push the Version PR branch and tags, create GitHub releases
-  pull-requests: write                         # open / update the Version PR
-  id-token: write                              # npm trusted publishing (OIDC) and provenance
+permissions: {}                                # AM-089: each job declares its own
 concurrency:                                   # AM-038: one release run at a time; a running publish is never cancelled
   group: release-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  publish:
+  build:                                       # AM-089: runs the build code; no environment, no OIDC, no write scope, no git credentials
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions: { contents: read }            # checkout only
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Checkout                         # node24 runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }   # AM-089: the build job holds no git credentials
+      - name: Set up Bun                       # AM-069: no job restores or saves the Bun executable in the Actions cache
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version, no-cache: true }
+      - name: Set up Node 24                   # AM-089: the build runs on the publish job's Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Install
+        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: no build step needs a package lifecycle script
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only the package builds
+      - name: Upload the package builds        # AM-089: every generated path a published tarball ships
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-builds
+          path: |
+            packages/*/dist
+            packages/*/custom-elements.json
+          if-no-files-found: error
+          retention-days: 1
+  publish:                                     # AM-089: holds the npm environment, OIDC and write scopes; runs no build code
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 30                        # AM-038
     environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
+    permissions:                               # AM-038: only what changesets/action and the publisher need
+      contents: write                          # push the Version PR branch and tags, create GitHub releases
+      pull-requests: write                     # open / update the Version PR
+      id-token: write                          # npm trusted publishing (OIDC) and provenance
     steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
       - name: Checkout                         # AM-038: node24 runtime; credentials kept: changesets/action pushes the Version PR branch and tags
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -35,9 +64,35 @@ jobs:
             }
           "
       - name: Install
-        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: the job holds write and OIDC permissions; no build step needs a package lifecycle script
-      - name: Build
-        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
+        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: the job holds write and OIDC permissions; it runs no lifecycle script
+      - name: Download the package builds      # AM-089: outside the checkout; this job builds nothing
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: package-builds
+          path: ${{ runner.temp }}/package-builds
+      - name: Copy the build outputs into place  # AM-089: only <pkg>/dist and <pkg>/custom-elements.json; manifests, scripts and src stay from the checkout
+        shell: bash                            # -eo pipefail
+        env:
+          BUILDS: ${{ runner.temp }}/package-builds
+        run: |
+          shopt -s nullglob dotglob
+          fail() { echo "::error::package-builds: $1"; exit 1; }
+          [ -z "$(find "$BUILDS" -type l)" ] || fail "symlinks are not allowed"
+          for entry in "$BUILDS"/*; do
+            pkg=${entry##*/}
+            [ -d "$entry" ] && [ -f "packages/$pkg/package.json" ] || fail "$pkg is not a package in the checkout"
+            [ -d "$entry/dist" ] || fail "$pkg has no dist"
+            for item in "$entry"/*; do
+              case "${item##*/}" in
+                dist) ;;
+                custom-elements.json) [ -f "$item" ] || fail "$pkg/custom-elements.json is not a file" ;;
+                *) fail "unexpected entry $pkg/${item##*/}" ;;
+              esac
+            done
+            rm -rf "packages/$pkg/dist"
+            cp -R "$entry/dist" "packages/$pkg/dist"
+            if [ -f "$entry/custom-elements.json" ]; then cp "$entry/custom-elements.json" "packages/$pkg/"; fi
+          done
       - name: Version PR or publish
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
