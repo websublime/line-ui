@@ -91,7 +91,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
 | D1 | D | Agent-driven UI guide (spec §6.D.1) | webcomponents-supervisor | G1–G6 | todo | — | — | — |
-| D2 | D | Recipes index for the transport recipes (spec §6.D.2) | webcomponents-supervisor | G7 | todo | — | — | — |
+| D2 | D | Recipes index for the transport recipes (spec §6.D.2) | webcomponents-supervisor | G7 | in_progress | docs/01-d2-recipes-index | — | — |
 | D3 | D | Getting Started updates for `line-genui` and the Phase 1 components, with snippets on the published phase-exit versions (`0.2.x`). `blocked` until the Phase 1 Version PR merges, or until P13 merges when no phase-exit Version PR opens (spec §6.D.3, §6.P.13) | webcomponents-supervisor | C1–C20, G4, P6 | blocked | — | — | AM-051 |
 | D4 | D | Recipe for CSS mask icons in component slots (off-plan, class `change`; Miguel 2026-10-29). A Storybook MDX page shows icons drawn the way Lea Verou's "The best way to use icons in Web UIs" (2026-10-11) and `@nudeui/icons` draw them: `--icon-*` tokens holding SVG URLs, painted by a masked pseudo-element on an element the consumer puts in a component slot (ARCHITECTURE §11, "or anything else"). It states the limits: monochrome glyphs only, container style queries, the WebKit workarounds, and no error signal for a missing token, so the agent path keeps `<line-icon>` and `iconMap`. `<line-icon>` gains no mask mode (Miguel 2026-10-29) | webcomponents-supervisor | C1 | todo | — | — | — |
 
