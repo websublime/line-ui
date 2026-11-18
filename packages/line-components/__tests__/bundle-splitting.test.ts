@@ -74,6 +74,7 @@ const EXPECTED_TAGS: Readonly<Record<string, readonly string[]>> = {
   './grid': ['line-grid'],
   './center': ['line-center'],
   './aspect-ratio': ['line-aspect-ratio'],
+  './spinner': ['line-spinner'],
 };
 
 /**

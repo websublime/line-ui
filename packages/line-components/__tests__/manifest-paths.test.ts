@@ -469,6 +469,37 @@ describe('custom-elements.json in the packed tarball', () => {
     expect(declaration?.cssParts ?? []).toEqual([]);
     expect(declaration?.cssProperties?.map((property) => property.name)).toEqual(['--line-aspect-ratio-ratio']);
   });
+
+  test('line-spinner resolves to src/spinner/spinner.ts', () => {
+    const spinner = modules.find((module) =>
+      module.declarations?.some((declaration) => declaration.tagName === 'line-spinner'),
+    );
+    expect(spinner?.path).toBe('src/spinner/spinner.ts');
+    expect(paths.has('src/spinner/spinner.ts')).toBe(true);
+  });
+
+  test('line-spinner declares the public fields label, size and speed, no event, no slot, the root part and seven tokens (0022-spinner.md Tests, Packaging row)', () => {
+    const declaration = modules
+      .flatMap((module) => module.declarations ?? [])
+      .find((each) => each.tagName === 'line-spinner');
+    const members = declaration?.members ?? [];
+    const fields = members
+      .filter((member) => member.privacy === 'public' && member.inheritedFrom === undefined)
+      .map((member) => member.name);
+    expect(fields).toEqual(['label', 'size', 'speed']);
+    expect(declaration?.events ?? []).toEqual([]);
+    expect(declaration?.slots ?? []).toEqual([]);
+    expect(declaration?.cssParts?.map((part) => part.name)).toEqual(['root']);
+    expect(declaration?.cssProperties?.map((property) => property.name)).toEqual([
+      '--line-spinner-size',
+      '--line-spinner-width',
+      '--line-spinner-color',
+      '--line-spinner-keyframes',
+      '--line-spinner-duration',
+      '--line-spinner-easing',
+      '--line-spinner-iteration-count',
+    ]);
+  });
 });
 
 describe('the @zag-js/presence dependency (0017-presence.md Tests, Packaging row; Phase 1 spec §6.C.7)', () => {
