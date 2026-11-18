@@ -1,14 +1,14 @@
 name: cdn-check
 on:                                            # 01-C22: CDN-backed specs run on demand, never on pull_request
   workflow_dispatch:
-    inputs:                                    # AM-105: exact versions to test; empty = resolve the npm canary dist-tag
+    inputs:                                    # AM-105, AM-106: exact versions to test; empty = resolved by cdn.e2e.ts
       line-components-version:
         description: 'Exact @websublime/line-components version to test; empty = resolve the npm canary dist-tag'
         type: string
         required: false
         default: ''
       line-core-version:
-        description: 'Exact @websublime/line-core version to test; empty = the version the line-components manifest depends on'
+        description: 'Exact @websublime/line-core version to test; empty = the version the line-components jsDelivr +esm bundles import'
         type: string
         required: false
         default: ''
