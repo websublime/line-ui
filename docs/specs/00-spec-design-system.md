@@ -561,6 +561,7 @@ This is **not active configuration**; it is documented in `docs/runbooks/bundler
 | AM-086 | 2026-11-04 | ledger `01-G4` (decision — Miguel, 2026-11-04, from CI run 41806454034: the Unit tier runs `bun test --isolate`, over stubbing `load()` in the genui in-process tests and moving the real-component tests to subprocesses; Phase 1 spec §12 AM-085) | Four edits. (1) §6.D.5, the Unit row of the test table: `bun test --isolate`. (2) §6.F.3 gains a note after the `bunfig.toml` block: the Unit tier runs `bun test --isolate`, each test file on a fresh global object, and `isolate = true` under `[test]` is not used because Bun 1.4.3 does not honour it. (3) §6.F.5 `checks.yml`, the "Unit tier" step runs `bun test --isolate`. (4) §9.3, the `FormAssociated` criterion names the Unit tier as `bun test --isolate` | The Phase 1 genui unit tests render the `line` components through each descriptor's `load()`, which imports `@websublime/line-components/<c>` and so defines each tag from the `line-components` `dist/`, the only route Phase 1 spec §6.Z.3 allows (rule 1; rule 3 forbids a relative path into another package's `src/`). The `line-components` unit tests define the same tags from their own `src/`. Without isolation every test file shares the one happy-dom `customElements` registry the §6.F.3 preload registers, `bun test` runs files in readdir order, and whichever module instance defines a tag second throws "the name … has already been used with this registry"; on the CI runner genui ran first. `--isolate` gives each test file a fresh global object, and with it a fresh registry | CI run 41806454034 (PR #321, head `0b25de8`): "Unit tier" 5 fail, 5 errors, each at a component's `define`; orchestrator on Bun 1.4.3, with the `290418c` test helper reverted: `bun test --randomize --seed=1` and `--seed=6` over `packages/line-genui packages/line-components` give 8 and 10 "already been used" errors, and 0 with `--isolate`; with `isolate = true` in `bunfig.toml` and no flag, 8; root `bun test --isolate` 643/643 in 9.5 s against 9.3 s without it |
 | AM-087 | 2026-11-04 | ledger `01-G3` (decision — Miguel, 2026-11-04: an optional descriptor tool description; Phase 1 spec §12 AM-086; factual alignment here) | One edit to §6.G.4, the `COMPONENT-SPEC-TEMPLATE.md` bullet: the descriptor fields the Agent contract section fills add the optional tool description, after the agent-facing description | Phase 1 spec AM-086 adds an optional tool description to the descriptor, which the frontend-tool emitter uses over the agent-facing description, and `COMPONENT-SPEC-TEMPLATE.md` gains its Tool description row in the same commit, so the §6.G.4 field list went stale. No design choice changes here | Phase 1 spec §6.G.1 Fields, §12 AM-086; PRD v0.8.30 §8.1; ARCHITECTURE v0.8.22 §17.3; `docs/specs/COMPONENT-SPEC-TEMPLATE.md` Descriptor fields |
 | AM-088 | 2026-11-10 | ledger `01-Z7` (factual alignment; PRD v0.8.32 §9.12) | Two edits. (1) The §6.C cascade-layer contract bullet on `:where()` names the `body` rule of the MCP Apps host bridge `line-themes/hosts/mcp-apps.css` as the one exception, still inside `@layer line`. (2) The §6.G.3 Cascade strategy item names the same exception | The Phase 1 bridge (ledger `01-G6`) declares its form P primitives and the recomposed `--line-focus-ring` on a plain `body` selector inside `@layer line`, as Phase 1 spec §10 SD17 and PRD §7.3 deliverable 7 require, so "every selector keeps its `:where()` form" went false. No design choice changes here | `packages/line-themes/src/hosts/mcp-apps.css` (`body` rule inside `@layer line`); PRD v0.8.32 §9.12; Phase 1 spec §10 SD17 |
+| AM-089 | 2026-11-18 | ledger `01-P16` (decision — Miguel, 2026-11-18, chose a `build` job and a `publish` job in both `release.yml` and `snapshot-deploy.yml`, with `snapshot:version` re-run in the `publish` job, over carrying the versioned manifests in the artifact, over splitting `release.yml` only and over no split; on 2026-11-18 Miguel also chose to download the artifact outside the checkout and copy only the build outputs into place, with `--ignore-scripts` on the publisher's `bun pm pack`, over downloading into `packages/` and over `--ignore-scripts` alone; the finding is the security-reviewer Medium finding carried from rows `01-P4` and `01-P14`; it reverses the AM-039 choice of one `snapshot-deploy.yml` job and changes the AM-038 and AM-040 job shape) | Five §6.F.5 edits. (1) The `release.yml` block. The top-level `permissions` becomes `{}` with `# AM-089: each job declares its own`. A new `build` job (`timeout-minutes: 30`, `permissions: { contents: read }`, no `environment`) checks out with `persist-credentials: false`, sets up Bun (`no-cache: true`) and Node 24, runs `bun install --frozen-lockfile --ignore-scripts` and `bun --filter './packages/*' build`, and uploads `packages/*/dist` and `packages/*/custom-elements.json` as `package-builds` with `actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2`, `if-no-files-found: error` and `retention-days: 1`. The `publish` job gains `needs: build` and job-level `permissions` with the former top-level `contents: write`, `pull-requests: write` and `id-token: write` and their comments. Its `Build` step is replaced, after the install, by `Download the package builds`, `actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2` with `name: package-builds` and `path: ${{ runner.temp }}/package-builds`, and by `Copy the build outputs into place`. That bash step fails on any symlink in the artifact, on a top-level entry with no `packages/<pkg>/package.json` in the checkout, on a package entry without `dist`, and on any package entry other than `dist` and `custom-elements.json`; it copies only those two into `packages/<pkg>/`. It takes the package and entry names from `${entry##*/}` and `${item##*/}`, not `$(basename …)`, because command substitution strips trailing newlines and would turn an entry named `..` plus a newline into `..`. (2) The `snapshot-deploy.yml` block. The same top-level change and the same `build` job, which also runs `Require main` as its first step. The job `canary` becomes `publish`, gains `needs: build` and job-level `permissions` with the former `contents: read`, `pull-requests: read` and `id-token: write`, keeps `Require main` first, and replaces its `Build` step with the same download and copy steps, placed after the install and before `Compute snapshot versions`. (3) The two block headings, and the snapshot paragraph, which says where each workflow runs `snapshot:version`, that `snapshot-deploy.yml` builds in one job and versions and publishes in another, when the token fallback is written, and that the first step of each job checks the ref. (4) A new **Build and publish split** paragraph before the publish path. Three comments of kept steps change. The `Install` comment of both `publish` jobs ends with `it runs no lifecycle script` instead of `no build step needs a package lifecycle script`. The `snapshot-deploy.yml` `publish` job's `Require main` comment reads `AM-039: a dispatch from another ref fails instead of showing a skipped run; AM-089: the OIDC job checks the ref itself`. (5) Publish path step 4 runs `bun pm pack --quiet --ignore-scripts --destination <tmpdir>`, so the shared staging function in `scripts/verify-pack.mjs`, used by the publisher and `checks.yml`, never runs `prepack`, `prepare` or `postpack`. Names, triggers, concurrency, the environment `npm`, the action pins already in use, and the rest of the publisher contract (checks (a)–(e), the guards, the dry run) are unchanged | The build ran in the job that holds `environment: npm` and `id-token: write`, and in `release.yml` also `contents: write`, `pull-requests: write` and the persisted checkout credentials. A compromised build-time dependency (a vite or PostCSS plugin, `tsc`, the CEM analyzer) would run there. It could mint an npm OIDC token for any of the 9 packages, and in `release.yml` push branches and tags to the repository. AM-067's `--ignore-scripts` closed only the install-time path, as AM-068 found for `deploy-site.yml`. After the split the build job holds no credential, and the publish job runs only the locked release tooling and the publisher. The build job still controls the artifact, because it runs before the upload step on the same runner. Unpacked into `packages/`, a forged artifact could replace a manifest, and `bun pm pack` would run its `prepack` script in the OIDC job. The copy step keeps manifests, scripts and `src` on the checkout, and `--ignore-scripts` stops any lifecycle script during packing | Workflow files at `7ddd6ae`, equal to the former blocks (no drift). `docs/context/01-p16.md`. At `7ddd6ae` a packages build left `git status --porcelain` empty, and `git status --ignored` listed only `packages/*/dist`, the `line-components` and `line-genui` `custom-elements.json` and three `tsconfig.tsbuildinfo` files, which ship in no `files` entry. After `snapshot:version` and a clean rebuild, every `dist` was identical (`diff -r`), and both CEM files were identical after sorting `.modules` by `path`. A fresh clone with `bun install --frozen-lockfile --ignore-scripts` and only the two artifact globs copied in passed `scripts/verify-pack.mjs` (9 packed, 0 failures) and `snapshot:publish --dry-run` (5 `publish`, 4 `skip`). `actionlint` 1.7.12 passed on both new blocks. The upload and download pins match `deploy-site.yml:27` and `:58`. Bun 1.4.3 `bun pm pack` ran a scratch manifest's `prepack`, and with `--ignore-scripts` it ran none of `prepack`, `prepare` and `postpack`; `jq` over `packages/*/package.json` finds none of these scripts, so no tarball changes. The copy step, run against scratch artifacts, copied a valid one and failed on an unknown package directory, a `<pkg>/package.json`, a symlink, a hidden top-level or package entry, a top-level file and a package without `dist`. After the infra lens of the Review gate (2026-11-18) showed that `pkg=$(basename "$entry")` turned an entry named `..` plus a newline into `..` and wrote the repository root's `dist/`, the step takes `pkg=${entry##*/}`; the re-test failed that entry, and one named `a` plus a newline, with nothing written outside `packages/<pkg>/`. The reviewer then found that the inner `case "$(basename "$item")"` let an entry named `dist` plus a newline inside a package pass as `dist`, so the step matches `${item##*/}` there too; the re-test failed that entry and a `custom-elements.json` plus a newline. An empty or missing artifact directory exits 0, but `download-artifact` fails on a missing artifact and check (a) fails every package before its upload |
 
 **A4 — npm scope.**
 
@@ -1873,24 +1874,53 @@ jobs:
         run: bun --filter '@websublime/line-storybook' build
 ```
 
-`.github/workflows/release.yml` — runs on push to `main`:
+`.github/workflows/release.yml` — runs on push to `main`; a `build` job builds the packages, and a `publish` job opens the Version PR or publishes them (AM-089):
 
 ```yaml
 name: release
 on:
   push: { branches: [main] }                   # AM-038: npm rejects trusted-publishing tokens from pull_request_target / issue_comment
-permissions:                                   # AM-038: only what changesets/action and the publisher need
-  contents: write                              # push the Version PR branch and tags, create GitHub releases
-  pull-requests: write                         # open / update the Version PR
-  id-token: write                              # npm trusted publishing (OIDC) and provenance
+permissions: {}                                # AM-089: each job declares its own
 concurrency:                                   # AM-038: one release run at a time; a running publish is never cancelled
   group: release-${{ github.ref }}
   cancel-in-progress: false
 jobs:
-  publish:
+  build:                                       # AM-089: runs the build code; no environment, no OIDC, no write scope, no git credentials
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions: { contents: read }            # checkout only
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Checkout                         # node24 runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }   # AM-089: the build job holds no git credentials
+      - name: Set up Bun                       # AM-069: no job restores or saves the Bun executable in the Actions cache
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version, no-cache: true }
+      - name: Set up Node 24                   # AM-089: the build runs on the publish job's Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Install
+        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: no build step needs a package lifecycle script
+      - name: Build
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only the package builds
+      - name: Upload the package builds        # AM-089: every generated path a published tarball ships
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-builds
+          path: |
+            packages/*/dist
+            packages/*/custom-elements.json
+          if-no-files-found: error
+          retention-days: 1
+  publish:                                     # AM-089: holds the npm environment, OIDC and write scopes; runs no build code
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 30                        # AM-038
     environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
+    permissions:                               # AM-038: only what changesets/action and the publisher need
+      contents: write                          # push the Version PR branch and tags, create GitHub releases
+      pull-requests: write                     # open / update the Version PR
+      id-token: write                          # npm trusted publishing (OIDC) and provenance
     steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
       - name: Checkout                         # AM-038: node24 runtime; credentials kept: changesets/action pushes the Version PR branch and tags
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -1913,9 +1943,35 @@ jobs:
             }
           "
       - name: Install
-        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: the job holds write and OIDC permissions; no build step needs a package lifecycle script
-      - name: Build
-        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
+        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: the job holds write and OIDC permissions; it runs no lifecycle script
+      - name: Download the package builds      # AM-089: outside the checkout; this job builds nothing
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: package-builds
+          path: ${{ runner.temp }}/package-builds
+      - name: Copy the build outputs into place  # AM-089: only <pkg>/dist and <pkg>/custom-elements.json; manifests, scripts and src stay from the checkout
+        shell: bash                            # -eo pipefail
+        env:
+          BUILDS: ${{ runner.temp }}/package-builds
+        run: |
+          shopt -s nullglob dotglob
+          fail() { echo "::error::package-builds: $1"; exit 1; }
+          [ -z "$(find "$BUILDS" -type l)" ] || fail "symlinks are not allowed"
+          for entry in "$BUILDS"/*; do
+            pkg=${entry##*/}
+            [ -d "$entry" ] && [ -f "packages/$pkg/package.json" ] || fail "$pkg is not a package in the checkout"
+            [ -d "$entry/dist" ] || fail "$pkg has no dist"
+            for item in "$entry"/*; do
+              case "${item##*/}" in
+                dist) ;;
+                custom-elements.json) [ -f "$item" ] || fail "$pkg/custom-elements.json is not a file" ;;
+                *) fail "unexpected entry $pkg/${item##*/}" ;;
+              esac
+            done
+            rm -rf "packages/$pkg/dist"
+            cp -R "$entry/dist" "packages/$pkg/dist"
+            if [ -f "$entry/custom-elements.json" ]; then cp "$entry/custom-elements.json" "packages/$pkg/"; fi
+          done
       - name: Version PR or publish
         uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
         with:
@@ -1978,25 +2034,62 @@ jobs:
           { echo '### Canary plan (dry run)'; echo '```'; cat "$RUNNER_TEMP/plan.txt"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
 ```
 
-`.github/workflows/snapshot-deploy.yml` — manual dispatch; versions and publishes a canary from `main` in one ephemeral job (AM-039):
+`.github/workflows/snapshot-deploy.yml` — manual dispatch; a `build` job builds the packages, and an ephemeral `publish` job versions and publishes a canary from `main` (AM-039, AM-089):
 
 ```yaml
 name: snapshot-deploy
 on: workflow_dispatch                          # AM-039: manual only; AM-038: npm rejects trusted-publishing tokens from pull_request_target / issue_comment
-permissions:                                   # AM-039
-  contents: read                               # checkout; @changesets/changelog-github reads commits
-  pull-requests: read                          # @changesets/changelog-github reads the associated pull requests
-  id-token: write                              # AM-038: npm trusted publishing (OIDC) and provenance
+permissions: {}                                # AM-089: each job declares its own
 concurrency:                                   # AM-039: one canary publish at a time; a running publish is never cancelled
   group: snapshot-deploy
   cancel-in-progress: false
 jobs:
-  canary:
+  build:                                       # AM-089: runs the build code; no environment, no OIDC, no git credentials
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions: { contents: read }            # checkout only
+    steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
+      - name: Require main                     # AM-039, AM-089: a dispatch from another ref fails before any work
+        run: |
+          if [ "$REF" != "refs/heads/main" ]; then
+            echo "::error::canaries publish only from main (dispatched on $REF)"
+            exit 1
+          fi
+        env:
+          REF: ${{ github.ref }}               # via env, never interpolated into the script
+      - name: Checkout                         # node24 runtime
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with: { persist-credentials: false }   # AM-089: the build job holds no git credentials
+      - name: Set up Bun                       # AM-069: no job restores or saves the Bun executable in the Actions cache
+        uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
+        with: { bun-version-file: .bun-version, no-cache: true }
+      - name: Set up Node 24                   # AM-089: the build runs on the publish job's Node
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with: { node-version: '24', package-manager-cache: false }
+      - name: Install
+        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: no build step needs a package lifecycle script
+      - name: Build                            # AM-089: no build output reads a manifest version, so snapshot:version runs only in the publish job
+        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only the package builds
+      - name: Upload the package builds        # AM-089: every generated path a published tarball ships
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: package-builds
+          path: |
+            packages/*/dist
+            packages/*/custom-elements.json
+          if-no-files-found: error
+          retention-days: 1
+  publish:                                     # AM-089: holds the npm environment and OIDC; runs no build code
+    needs: build
     runs-on: ubuntu-latest
     timeout-minutes: 30
     environment: npm                           # AM-038: deployment branch policy = main only; trusted publishers require this environment
+    permissions:                               # AM-039
+      contents: read                           # checkout; @changesets/changelog-github reads commits
+      pull-requests: read                      # @changesets/changelog-github reads the associated pull requests
+      id-token: write                          # AM-038: npm trusted publishing (OIDC) and provenance
     steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
-      - name: Require main                     # AM-039: a dispatch from another ref fails instead of showing a skipped run
+      - name: Require main                     # AM-039: a dispatch from another ref fails instead of showing a skipped run; AM-089: the OIDC job checks the ref itself
         run: |
           if [ "$REF" != "refs/heads/main" ]; then
             echo "::error::canaries publish only from main (dispatched on $REF)"
@@ -2026,13 +2119,39 @@ jobs:
             }
           "
       - name: Install
-        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: the job holds OIDC permission (id-token: write); no build step needs a package lifecycle script
+        run: bun install --frozen-lockfile --ignore-scripts  # AM-067: the job holds OIDC permission (id-token: write); it runs no lifecycle script
+      - name: Download the package builds      # AM-089: outside the checkout; this job builds nothing
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: package-builds
+          path: ${{ runner.temp }}/package-builds
+      - name: Copy the build outputs into place  # AM-089: only <pkg>/dist and <pkg>/custom-elements.json; manifests, scripts and src stay from the checkout
+        shell: bash                            # -eo pipefail
+        env:
+          BUILDS: ${{ runner.temp }}/package-builds
+        run: |
+          shopt -s nullglob dotglob
+          fail() { echo "::error::package-builds: $1"; exit 1; }
+          [ -z "$(find "$BUILDS" -type l)" ] || fail "symlinks are not allowed"
+          for entry in "$BUILDS"/*; do
+            pkg=${entry##*/}
+            [ -d "$entry" ] && [ -f "packages/$pkg/package.json" ] || fail "$pkg is not a package in the checkout"
+            [ -d "$entry/dist" ] || fail "$pkg has no dist"
+            for item in "$entry"/*; do
+              case "${item##*/}" in
+                dist) ;;
+                custom-elements.json) [ -f "$item" ] || fail "$pkg/custom-elements.json is not a file" ;;
+                *) fail "unexpected entry $pkg/${item##*/}" ;;
+              esac
+            done
+            rm -rf "packages/$pkg/dist"
+            cp -R "$entry/dist" "packages/$pkg/dist"
+            if [ -f "$entry/custom-elements.json" ]; then cp "$entry/custom-elements.json" "packages/$pkg/"; fi
+          done
       - name: Compute snapshot versions
         run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # @changesets/changelog-github calls the GitHub GraphQL API
-      - name: Build
-        run: bun --filter './packages/*' build # AM-040: packages only; the publisher and its pack checks need only packages/*/dist
       - name: Write the npm token fallback (bootstrap only)
         run: |                                 # AM-038: same rule as changesets/action — no line when the secret is unset
           if [ -n "$NPM_TOKEN" ]; then
@@ -2044,7 +2163,9 @@ jobs:
         run: bun run snapshot:publish          # publisher --tag canary --no-git-tag; the snapshot guard runs before the first upload
 ```
 
-Both snapshot workflows run `snapshot:version` (`changeset version --snapshot`, unchanged) before the build. It writes `<version>-<40-char sha>-SNAPSHOT` into the manifests of the packages with pending changesets and of their dependents (`snapshot.prereleaseTemplate` = `{commit}-SNAPSHOT`, `useCalculatedVersion: true`, `{commit}` = `git rev-parse HEAD`), for example `0.1.0-<sha>-SNAPSHOT`. It needs `GITHUB_TOKEN`: `@changesets/changelog-github` (`.changeset/config.json`) reads each changeset's commit and its pull requests through the GitHub GraphQL API and throws when no token is set. The workflows grant `contents: read` and `pull-requests: read` for that query, and these two scopes suffice: `snapshot-deploy.yml` run 37474782644 ran `snapshot:version` with only them and `@changesets/changelog-github` succeeded (AM-042). `fetch-depth: 0` gives Changesets the history it walks to find the commit that added each changeset (on a shallow clone it deepens with `git fetch --deepen`). The snapshot versions live only in the job's working tree: neither workflow commits, tags, or pushes, and both check out with `persist-credentials: false`. Both set up the same Node 24 toolchain (`actions/setup-node@v6`, no `registry-url`, the npm/Node assertion), so the dry-run plan comes from the npm that the deploy uses. `snapshot-version.yml` holds no npm credential and uploads nothing; the dry-run plan (package, version, tag, `publish`/`skip`) goes to the log and the job summary, and the snapshot guard below fails it the same way it would fail a deploy. `snapshot-deploy.yml` versions and publishes in one job. `snapshot:publish` runs the publisher with `--tag canary --no-git-tag` (AM-036), so it creates no git tags, and it authenticates as the Auth paragraph below describes (AM-038); the token fallback is written after install and build, right before the publish step. Two checks keep it on `main`. The `npm` environment's branch policy (AM-038) rejects the job on any other ref, and the job's first step fails with "canaries publish only from main" when `github.ref` is not `refs/heads/main`. That step reads the ref through `env`, and it still fails the run if the environment policy is missing. Its concurrency group carries no ref and never cancels a running job, so two canary runs never publish at once. This is the RC pipeline: an RC is a canary snapshot published from `main` by manual dispatch under the `canary` dist-tag. There is no `next` branch (see AM-008). Observed on the first publish: when a package had no `latest`, npm set `latest` to the version published with `--tag canary`, so the bootstrap canary was `latest` until `0.1.0` (§7.2, AM-042).
+Both snapshot workflows run `snapshot:version` (`changeset version --snapshot`, unchanged). `snapshot-version.yml` runs it before its build, and `snapshot-deploy.yml` runs it in its `publish` job, which builds nothing (AM-089). It writes `<version>-<40-char sha>-SNAPSHOT` into the manifests of the packages with pending changesets and of their dependents (`snapshot.prereleaseTemplate` = `{commit}-SNAPSHOT`, `useCalculatedVersion: true`, `{commit}` = `git rev-parse HEAD`), for example `0.1.0-<sha>-SNAPSHOT`. It needs `GITHUB_TOKEN`: `@changesets/changelog-github` (`.changeset/config.json`) reads each changeset's commit and its pull requests through the GitHub GraphQL API and throws when no token is set. The workflows grant `contents: read` and `pull-requests: read` for that query, and these two scopes suffice: `snapshot-deploy.yml` run 37474782644 ran `snapshot:version` with only them and `@changesets/changelog-github` succeeded (AM-042). `fetch-depth: 0` gives Changesets the history it walks to find the commit that added each changeset (on a shallow clone it deepens with `git fetch --deepen`). The snapshot versions live only in the working tree of the job that computes them: neither workflow commits, tags, or pushes, and every job in both checks out with `persist-credentials: false`. Both set up the same Node 24 toolchain (`actions/setup-node@v6`, no `registry-url`, the npm/Node assertion), so the dry-run plan comes from the npm that the deploy uses. `snapshot-version.yml` holds no npm credential and uploads nothing; the dry-run plan (package, version, tag, `publish`/`skip`) goes to the log and the job summary, and the snapshot guard below fails it the same way it would fail a deploy. `snapshot-deploy.yml` builds in a `build` job, then versions and publishes in a `publish` job (AM-089). `snapshot:publish` runs the publisher with `--tag canary --no-git-tag` (AM-036), so it creates no git tags, and it authenticates as the Auth paragraph below describes (AM-038); the token fallback is written after the install, the download of the package builds and `snapshot:version`, right before the publish step. Two checks keep it on `main`. The `npm` environment's branch policy (AM-038) rejects the `publish` job on any other ref, and the first step of each job fails with "canaries publish only from main" when `github.ref` is not `refs/heads/main`, so the `build` job stops before any work (AM-089). Both steps read the ref through `env`, and they still fail the run if the environment policy is missing. The `snapshot-deploy.yml` concurrency group carries no ref and never cancels a running job, so two canary runs never publish at once. This is the RC pipeline: an RC is a canary snapshot published from `main` by manual dispatch under the `canary` dist-tag. There is no `next` branch (see AM-008). Observed on the first publish: when a package had no `latest`, npm set `latest` to the version published with `--tag canary`, so the bootstrap canary was `latest` until `0.1.0` (§7.2, AM-042).
+
+**Build and publish split (AM-089).** `release.yml` and `snapshot-deploy.yml` each run two jobs, so no build code runs where a credential lives. The `build` job holds `contents: read` only, with no `environment`, no `id-token` and no git credentials. It runs every build tool (vite, PostCSS, `tsc`, the CEM analyzer, `emit-catalog.mjs`, `validate-contrast.mjs`) and uploads the `package-builds` artifact. The artifact holds `packages/*/dist` and `packages/*/custom-elements.json`, the only shipped paths that the build generates. The publishable manifests' `files` entries are `dist`, `src` and `custom-elements.json`; `src` is tracked, and the build writes nothing under it. The generated `tsconfig.tsbuildinfo` ships in no package. `@actions/glob` merges the two patterns into the one search path `packages`, so `upload-artifact` roots the artifact at `packages/`, and every top-level entry is a package directory name. The upload skips hidden files and keeps the artifact one day. The `publish` job has `needs: build`, `environment: npm` and the scopes the workflow held before the split. It installs with `--ignore-scripts` and builds nothing, so it runs only the locked release tooling and the publisher. It downloads `package-builds` to `${{ runner.temp }}`, outside the checkout, as `deploy-site.yml` does. A copy step then fails the job on any symlink, on any top-level entry that is not a package directory with a `package.json` in the checkout, on such a directory without `dist`, and on any entry in it other than `dist` and `custom-elements.json`. It copies only those two into `packages/<pkg>/`, so manifests, scripts and `src` always come from the checkout. The build job controls the artifact, so the copy step keeps a forged manifest out of the publish job, and the publisher's `--ignore-scripts` pack keeps any lifecycle script from running there. No build output reads a manifest version. `vite.config.shared.mjs` reads only the package and dependency names, and the CEM configs set `packagejson: false`. So the `snapshot-deploy.yml` `build` job builds at the committed versions, and the `publish` job runs `snapshot:version` at the same commit before the snapshot guard checks the sha. The publisher's checks (a)–(e) run on every tarball before its upload, and check (a) fails a missing `exports` target or `customElements` file. Within the artifact's day, "Re-run failed jobs" re-runs `publish` alone; after it, a full re-run rebuilds first, and either re-run is idempotent because step 3 skips published versions. The workflow filenames and the environment name `npm` are unchanged, so the trusted publishers still match.
 
 **Publish path (AM-036).** Changesets versions and tags, Bun packs a staged copy of each package, and npm uploads. `changeset publish` is not used, because under Bun it uploads with `npm publish`, which drops `dist/` and ships `workspace:` ranges unrewritten. The root `package.json` declares three scripts:
 
@@ -2063,7 +2184,7 @@ The publisher `scripts/publish.mjs` is a Bun-run ESM script like the other `scri
 1. It discovers the publishable packages. These are the `packages/*/package.json` manifests, minus those with `"private": true`, minus the names in the `ignore` list of `.changeset/config.json`. It reuses the discovery function that `scripts/verify-pack.mjs` exports.
 2. It orders them so dependencies come before dependents. The order is a topological sort over the internal `@websublime/*` names in each manifest's `dependencies` and `peerDependencies`. Packages with no ordering constraint between them sort by package name. A dependency cycle fails the run.
 3. For each package it runs `npm view <name>@<version> version --json`. Exit 0 with a version means the version is published, so it logs a line saying so and skips the upload. A non-zero exit whose JSON has `.error.code === "E404"` means the version is new, so it publishes; this covers both "package not found" and "no match for version". Any other result fails the run. This step runs for every package before step 4 runs for any (AM-039), so the snapshot guard below sees the whole plan before the first upload.
-4. It packs the package through the shared staging function that `scripts/verify-pack.mjs` exports. The function copies the package directory, without `node_modules`, to a temp staging directory. In the staged `package.json` it rewrites every `workspace:` range in `dependencies`, `peerDependencies`, `optionalDependencies`, and `devDependencies`, using the target package's `version` from `packages/*/package.json`. `workspace:^` becomes `^<v>`, `workspace:~` becomes `~<v>`, `workspace:*` becomes `<v>`, and `workspace:<range>` becomes `<range>`. A target that is not a workspace package fails the run. Then it runs `bun pm pack --quiet --destination <tmpdir>` in the staging directory. That command prints a blank line and then the absolute tarball path, so the script takes the last non-empty stdout line as the path. Tracked files are never mutated. The staging exists because `bun pm pack` fills `workspace:` ranges from the versions recorded in `bun.lock`, and `changeset version` does not update `bun.lock`. CI installs with `--frozen-lockfile`, which accepts the stale versions, so a pack without the staging would ship stale ranges. Since the fix in Bun 1.4.1 (oven-sh/bun#18906), a plain `bun install` refreshes those versions. The root `version` script therefore runs `bun install --ignore-scripts` after `changeset version`, and the Version PR carries the synced `bun.lock` (AM-072). The staging still covers the snapshot path, whose versions exist only in the job's working tree, and any state where `bun.lock` lags the manifests.
+4. It packs the package through the shared staging function that `scripts/verify-pack.mjs` exports. The function copies the package directory, without `node_modules`, to a temp staging directory. In the staged `package.json` it rewrites every `workspace:` range in `dependencies`, `peerDependencies`, `optionalDependencies`, and `devDependencies`, using the target package's `version` from `packages/*/package.json`. `workspace:^` becomes `^<v>`, `workspace:~` becomes `~<v>`, `workspace:*` becomes `<v>`, and `workspace:<range>` becomes `<range>`. A target that is not a workspace package fails the run. Then it runs `bun pm pack --quiet --ignore-scripts --destination <tmpdir>` in the staging directory. `--ignore-scripts` keeps Bun from running a `prepack`, `prepare` or `postpack` script of the staged manifest, so packing never runs package code in the publishing jobs (AM-089). That command prints a blank line and then the absolute tarball path, so the script takes the last non-empty stdout line as the path. Tracked files are never mutated. The staging exists because `bun pm pack` fills `workspace:` ranges from the versions recorded in `bun.lock`, and `changeset version` does not update `bun.lock`. CI installs with `--frozen-lockfile`, which accepts the stale versions, so a pack without the staging would ship stale ranges. Since the fix in Bun 1.4.1 (oven-sh/bun#18906), a plain `bun install` refreshes those versions. The root `version` script therefore runs `bun install --ignore-scripts` after `changeset version`, and the Version PR carries the synced `bun.lock` (AM-072). The staging still covers the snapshot path, whose versions exist only in the job's working tree, and any state where `bun.lock` lags the manifests.
 5. It runs the guard's tarball checks (a)–(e) below on that tarball, using the functions `scripts/verify-pack.mjs` exports. A failed check stops the run before that package uploads.
 6. It uploads with `npm publish <tarball> --access public --tag <tag>`. The tag comes from `--tag <name>` and defaults to `latest`. Steps 3 and 6 run with the repository root as the working directory, so the repo `.npmrc` applies. It pins both `registry` and `@websublime:registry` to `https://registry.npmjs.org/`, because npm resolves the scope key before `registry` and project config beats user config for the same key (AM-037). Only `bun pm pack` runs in the staging directory.
 7. After every upload succeeds, it runs `changeset tag` unless `--no-git-tag` is passed. It passes `changeset tag` stdout through unchanged, because `changesets/action@v1` detects published packages from the `New tag: <name>@<version>` lines. `release.yml` pins the action to commit `a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d` (v1.9.0, the head of the `v1` branch when pinned, AM-040), whose regex is at `src/run.ts:101`.
