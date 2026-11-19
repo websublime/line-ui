@@ -19,14 +19,6 @@ line-skeleton:not(:defined) {
   block-size: var(--line-size-4);
 }
 
-/* Chromium and WebKit map a legacy `align` attribute on any element to `text-align`. Stack and Grid use
- * `align` for box alignment, so text inside them inherits as usual. */
-
-line-stack[align],
-line-grid[align] {
-  text-align: inherit;
-}
-
 /* Document */
 
 html {

@@ -103,6 +103,39 @@ test.describe('with line-tokens', () => {
     });
   }
 
+  test('align never changes text alignment: host and child inherit text-align, and consumer text-align wins', async ({
+    page,
+  }) => {
+    for (const [value, alignItems] of [
+      ['start', 'flex-start'],
+      ['center', 'center'],
+      ['end', 'flex-end'],
+      ['stretch', 'stretch'],
+    ] as const) {
+      await mount(
+        page,
+        `<div style="text-align: justify"><line-stack align="${value}">${ITEMS}</line-stack></div><line-stack id="consumer" align="${value}" style="text-align: right">${ITEMS}</line-stack>`,
+      );
+      const result = await page.evaluate(() => {
+        const host = document.querySelector('main div line-stack') as Element;
+        const consumer = document.getElementById('consumer') as Element;
+        const text = (el: Element) => getComputedStyle(el).textAlign;
+        return {
+          host: text(host),
+          child: text(host.firstElementChild as Element),
+          alignItems: getComputedStyle(host).alignItems,
+          consumer: text(consumer),
+          consumerChild: text(consumer.firstElementChild as Element),
+        };
+      });
+      expect(result.host, value).toBe('justify');
+      expect(result.child, value).toBe('justify');
+      expect(result.alignItems, value).toBe(alignItems);
+      expect(result.consumer, value).toBe('right');
+      expect(result.consumerChild, value).toBe('right');
+    }
+  });
+
   test('wrap computes flex-wrap wrap', async ({ page }) => {
     await mount(page, `<line-stack wrap>${ITEMS}</line-stack>`);
     expect((await computed(page, ['flex-wrap']))['flex-wrap']).toBe('wrap');
