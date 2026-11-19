@@ -1,0 +1,43 @@
+<section class="card" aria-labelledby="card-agent-title">
+  <line-stack gap="4">
+    <header class="card__header">
+      <h3 id="card-agent-title" class="card__title">Agent-driven UI</h3>
+      <p class="card__lead">
+        <code>@websublime/line-genui</code> renders an agent's A2UI messages as these same components. Your theme
+        still styles them.
+      </p>
+    </header>
+
+    <line-alert variant="info">
+      <line-icon slot="icon" library="lucide" name="sparkles"></line-icon>
+      <h4 slot="title" class="alert__title">Preview</h4>
+      <p>The A2UI renderer stays a preview until A2UI v1.0 is final.</p>
+    </line-alert>
+
+    <article class="agent-reply" aria-busy="true" aria-labelledby="agent-reply-status">
+      <line-stack orientation="horizontal" align="center" gap="2">
+        <line-spinner class="agent-reply__spinner" size="2"></line-spinner>
+        <span id="agent-reply-status" class="agent-reply__status">Agent is composing a reply</span>
+      </line-stack>
+      <line-stack orientation="horizontal" align="start" gap="3">
+        <line-skeleton class="agent-reply__avatar" shape="circle"></line-skeleton>
+        <line-skeleton class="agent-reply__lines" shape="text" lines="3" animation="wave"></line-skeleton>
+      </line-stack>
+    </article>
+
+    <line-alert variant="success">
+      <line-icon slot="icon" library="lucide" name="circle-check"></line-icon>
+      <h4 slot="title" class="alert__title">Reply rendered</h4>
+      <p>Success: the agent sent a booking form, drawn with your theme.</p>
+    </line-alert>
+  </line-stack>
+</section>
+
+<script>
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/alert';
+  import '@websublime/line-components/icon';
+  import '@websublime/line-components/spinner';
+  import '@websublime/line-components/skeleton';
+  import '../../scripts/icons';
+</script>

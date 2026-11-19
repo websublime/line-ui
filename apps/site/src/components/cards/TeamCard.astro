@@ -1,0 +1,56 @@
+---
+const members = [
+  { name: 'Ana Silva', role: 'Owner', variant: 'info' },
+  { name: 'Rui Costa', role: 'Maintainer', variant: 'neutral' },
+  { name: 'Marta Sousa', role: 'Reviewer', variant: 'neutral' },
+];
+const watchers = ['Ana Silva', 'Rui Costa', 'Marta Sousa', 'João Lima', 'Inês Rocha', 'Tiago Alves'];
+---
+
+<section class="card" aria-labelledby="card-team-title">
+  <line-stack gap="4">
+    <header class="card__header">
+      <h3 id="card-team-title" class="card__title">Composition through slots</h3>
+      <p class="card__lead">Avatar, Badge and Button meet in slots. No component imports another.</p>
+    </header>
+
+    <ul class="member-list">
+      {
+        members.map((member) => (
+          <li>
+            <line-stack orientation="horizontal" align="center" gap="3">
+              <line-avatar name={member.name}>
+                <line-badge slot="status" variant="success" aria-label="Online"></line-badge>
+              </line-avatar>
+              <span class="member-list__name">{member.name}</span>
+              <line-badge class="member-list__role" variant={member.variant}>
+                {member.role}
+              </line-badge>
+            </line-stack>
+          </li>
+        ))
+      }
+    </ul>
+
+    <line-stack orientation="horizontal" justify="spaceBetween" align="center" gap="3" wrap>
+      <line-avatar-group aria-label="Watchers" max="3" size="3" spacing="1" overflow-label="+{count} more watchers">
+        {watchers.map((name) => <line-avatar name={name}></line-avatar>)}
+      </line-avatar-group>
+      <line-button variant="primary">
+        <line-icon slot="prefix" library="lucide" name="user-plus"></line-icon>
+        Invite<line-visually-hidden> a teammate</line-visually-hidden>
+      </line-button>
+    </line-stack>
+  </line-stack>
+</section>
+
+<script>
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/avatar';
+  import '@websublime/line-components/avatar-group';
+  import '@websublime/line-components/badge';
+  import '@websublime/line-components/button';
+  import '@websublime/line-components/icon';
+  import '@websublime/line-components/visually-hidden';
+  import '../../scripts/icons';
+</script>

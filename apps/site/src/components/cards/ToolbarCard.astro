@@ -1,0 +1,43 @@
+---
+const marks = [
+  { name: 'bold', label: 'Bold', pressed: 'true' },
+  { name: 'italic', label: 'Italic', pressed: 'false' },
+  { name: 'underline', label: 'Underline', pressed: 'false' },
+  { name: 'strikethrough', label: 'Strikethrough', pressed: 'false' },
+];
+---
+
+<section class="card" aria-labelledby="card-a11y-title">
+  <line-stack gap="4">
+    <header class="card__header">
+      <h3 id="card-a11y-title" class="card__title">Accessible by default</h3>
+      <p class="card__lead">
+        WCAG 2.1 AA is the floor. Roles, names, pressed states and focus come with every component.
+      </p>
+    </header>
+
+    <line-button-group aria-label="Text formatting" loop>
+      {
+        marks.map((mark) => (
+          <line-icon-button pressed={mark.pressed} aria-label={mark.label}>
+            <line-icon library="lucide" name={mark.name}></line-icon>
+          </line-icon-button>
+        ))
+      }
+    </line-button-group>
+
+    <p class="card__hint">
+      The toolbar is one Tab stop. Inside it, <line-kbd keys="left">Left</line-kbd> and <line-kbd keys="right">Right</line-kbd> move
+      between buttons, and <line-kbd keys="space">Space</line-kbd> toggles one.
+    </p>
+  </line-stack>
+</section>
+
+<script>
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/button-group';
+  import '@websublime/line-components/icon-button';
+  import '@websublime/line-components/icon';
+  import '@websublime/line-components/kbd';
+  import '../../scripts/icons';
+</script>
