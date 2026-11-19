@@ -1,0 +1,307 @@
+import { Meta, Source } from '@storybook/addon-docs/blocks';
+import catalogsSample from './agent-driven-ui-samples/catalogs.ts?raw';
+import descriptorsSample from './agent-driven-ui-samples/descriptors.ts?raw';
+import surfaceErrorsSample from './agent-driven-ui-samples/surface-errors.ts?raw';
+import surfacePoliciesSample from './agent-driven-ui-samples/surface-policies.ts?raw';
+import surfaceSample from './agent-driven-ui-samples/surface.ts?raw';
+import toolsSample from './agent-driven-ui-samples/tools.ts?raw';
+
+<Meta title="Agent-driven UI" />
+
+# Agent-driven UI
+
+An AI agent can build an interface from line://ui components at run time. `@websublime/line-genui` describes each component to the agent and renders what the agent sends back. The components themselves know no agent protocol, and your app owns the transport.
+
+An agent drives the UI in one of two ways.
+
+- It streams [A2UI](https://a2ui.org) v0.9 messages, and `<line-a2ui-surface>` renders them with line://ui components.
+- It calls one frontend tool per component, and your app renders each call.
+
+## Packages
+
+```sh
+bun add @websublime/line-genui @websublime/line-components @websublime/line-icons
+bun add @websublime/line-tokens @websublime/line-colors @websublime/line-themes
+```
+
+`@websublime/line-components` and `@websublime/line-icons` are peer dependencies of `line-genui`. The second line installs the design-system CSS, which [Getting Started](?path=/docs/getting-started--docs) sets up. `line-themes` also ships the MCP Apps host bridge.
+
+| Import | Holds |
+|---|---|
+| `@websublime/line-genui/catalog` | Descriptors, the `line` catalog emitters, the `basic` implementation map and the frontend-tool emitter. Defines no element |
+| `@websublime/line-genui/catalog.json` | The `line` catalog document |
+| `@websublime/line-genui/a2ui` | `Session` and `<line-a2ui-surface>`. Defines `line-a2ui-surface` and nothing else |
+| `@websublime/line-icons/a2ui` | `a2uiIconMap` and the A2UI icon types, for the surface property `iconMap` |
+| `@websublime/line-themes/hosts/mcp-apps.css` | The MCP Apps host bridge, CSS only |
+
+## Stability
+
+- The descriptor API and both catalogs follow the breaking-changes policy (PRD §7.1).
+- `@websublime/line-genui/a2ui` is a **preview**. It may change in any minor release and sits outside the breaking-changes policy until line://ui targets a final A2UI v1.0.
+- `@websublime/line-icons/a2ui` is a **preview** on the same terms, because its types and `a2uiIconMap` feed the preview property `iconMap`.
+- `line-genui` pins `@a2ui/web_core` at exactly `0.14.0`, because upstream ships breaking changes in minor versions.
+
+## Descriptors
+
+Each `line-components` component has one descriptor in `@websublime/line-genui/catalog`. The catalogs, the frontend tools and the surface all read it. A descriptor holds no protocol of its own, and `line-components` gains no Zod or A2UI dependency.
+
+| Field | Holds |
+|---|---|
+| `name` | The catalog name, such as `Button` |
+| `tag` | The element tag, such as `line-button` |
+| `load()` | A dynamic import of the component subpath, which defines the element |
+| `schema` | A strict Zod 3 prop schema on the `@a2ui/web_core` common types (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings), plus the A2UI `accessibility` object |
+| `slots` | The slot each child prop fills |
+| `bindings` | Where each prop lands (an attribute, a property, the host's text, an attribute behind the URL policy, or a surface lookup such as Icon `name` → `iconMap`), and the value prop with its commit event |
+| `actions` | The DOM event that runs each action prop |
+| `accessibility` | The sources of a required accessible name, and when the surface sets the host `aria-label` and `aria-description` |
+| `description` | The agent-facing description the `line` catalog carries |
+| `toolDescription` | An optional description for the frontend tool, set when `description` names a prop the tool leaves out |
+| `agentExposed` | Whether agents see the component. Defaults to `true` |
+
+### `agentExposed`
+
+Every component keeps a descriptor, even one an agent should not use. That descriptor sets `agentExposed: false` with an `agentHiddenReason`, and the catalogs and the frontend tools leave it out. Phase 1 hides three components.
+
+| Component | Reason |
+|---|---|
+| Portal | It paints its content above the whole page, outside the surface, so an untrusted agent could cover the host's own UI |
+| Presence | It emits no ARIA and needs CSS exit animations, which the host owns |
+| VisuallyHidden | An untrusted agent could add text that only screen readers hear |
+
+`defineDescriptor(init)` builds a descriptor and requires `agentHiddenReason` whenever `agentExposed` is `false`.
+
+<Source code={descriptorsSample} language="ts" />
+
+## Catalogs
+
+line://ui renders two A2UI catalogs, each versioned on its own.
+
+### The `line` catalog
+
+- It holds every agent-exposed descriptor, the full line://ui vocabulary.
+- Its id is `https://line-ui.websublime.com/a2ui/catalogs/line/v1/catalog.json`, exported as `LINE_CATALOG_ID`. The id is an identifier and need not resolve.
+- An incompatible change to the catalog moves it to a new id, with `v2` in place of `v1`.
+- `@websublime/line-genui/catalog.json` holds its document form. Give it to an agent that reads a catalog document, or load it with `Catalog.fromJson`.
+- `lineCatalogDocument(descriptors)` builds the same document at run time, and `inlineCatalog(document)` derives the inline form a renderer advertises.
+
+### The `basic` catalog
+
+- line://ui renders the A2UI basic catalog with its own components, so an agent that knows only the basic catalog still renders here.
+- It answers only to `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, exported as `BASIC_CATALOG_ID`. line://ui registers its components under that upstream id and does not re-emit the basic JSON Schema.
+- Phase 1 maps 10 of the 18 basic types: Text, Image, Icon, Video, AudioPlayer, Row, Column, List, Divider and Button.
+- An unmapped type, such as TextField or Card, renders an inert placeholder and raises `line-a2ui-error`.
+
+### Advertising a catalog
+
+A `Session` always registers both catalogs, so the surface renders a surface created under either id. The client capabilities decide which ids the agent hears about.
+
+- `lineCapabilities(catalog)` lists the `line` id with its inline catalog, under `v0.9` and `v0.9.1`.
+- `lineCapabilities(catalog, { basic: true })` also lists the basic id. The basic catalog is never inlined.
+- The basic id is opt-in, and stays off by default until line://ui maps every basic type. Opt in when your agent knows only the basic catalog.
+
+<Source code={catalogsSample} language="ts" />
+
+## Frontend tools
+
+With frontend tools the agent picks a component and fills its props through a tool call, and your app renders the call. `frontendTools(descriptors, provider)` emits one tool, `{ name, description, parameters }`, for each agent-exposed descriptor.
+
+- `provider` is one of `TOOL_PROVIDERS`, which are `'openai'`, `'anthropic'` and `'gemini'`.
+- `name` is the catalog name and matches `^[a-zA-Z0-9_-]{1,64}$`, which all three providers accept.
+- `parameters` is flat and literal. It carries no `$ref`, `oneOf`, `allOf`, recursion, open map, A2UI common type or data binding.
+- A dynamic prop takes its literal type, such as `DynamicString` → `string`, and an enum stays an enum.
+- `ComponentId`, `ChildList` and `Action` props are left out, because they carry tree structure and actions, not values.
+- The `accessibility` object becomes two optional strings, `accessibilityLabel` and `accessibilityDescription`, on the tools whose host takes a name.
+
+| Provider | `parameters` |
+|---|---|
+| `openai` | OpenAI strict function calling. Every parameter is in `required`, an optional one is typed `["T", "null"]`, and the object has `additionalProperties: false` |
+| `anthropic` | Anthropic strict tool use. Optional parameters stay out of `required`, and the object has `additionalProperties: false` |
+| `gemini` | The Gemini `parameters` subset of OpenAPI 3.0.3. Optional parameters are `nullable: true`, and the object has no `additionalProperties`, `const`, `$ref`, `oneOf` or `allOf` |
+
+### The 1024-character cap
+
+- Every tool description stays at or under 1024 characters.
+- The cap is line://ui's own. It matches the limit OpenAI was observed to enforce on function descriptions, and no provider documents one.
+- `frontendTools` throws on a description over the cap, so a descriptor of your own fails at emit time and never at the provider.
+- The tool description is the descriptor's `toolDescription` when it sets one, and its `description` otherwise. The longest Phase 1 tool description, AspectRatio's, has 933 characters.
+
+### Anthropic per-request caps
+
+Anthropic documents three caps on one request, counted across every strict tool in it, your app's own tools included:
+
+| Cap | Limit | Phase 1 line://ui tools |
+|---|---|---|
+| Strict tools | 20 | 17 |
+| Optional parameters | 24 | 60 |
+| Union-typed parameters | 16 | 0, because the `anthropic` serialisation writes no union type |
+
+All 17 tools in one strict request break the optional-parameter cap, so send the tools a request needs. `frontendTools` checks none of these caps. The figures are Anthropic's limits as line://ui research recorded them on 2026-10-19, so check the current Anthropic tool-use documentation.
+
+<Source code={toolsSample} language="ts" />
+
+### Rendering a tool call
+
+- Create `descriptor.tag` after `await descriptor.load()`, and write each argument as `descriptor.bindings.props` says.
+- Skip a `null` argument, which OpenAI sends for an unset optional parameter and Gemini may send.
+- Run a URL binding, such as Avatar `src`, through your own URL policy, because the surface's policy does not run on a tool call.
+- Set `accessibilityLabel` as the host `aria-label` and `accessibilityDescription` as the host `aria-description`. A value that is empty after trimming sets nothing.
+- Set neither on a Separator while `decorative` is true, as the surface does.
+
+## Rendering A2UI
+
+`<line-a2ui-surface>` renders one A2UI surface in its light DOM. Document `::part()` rules and `--line-*` tokens style agent-built UI as they style hand-written UI. Each component loads on first use through its descriptor's `load()`.
+
+- A `Session` holds one `@a2ui/web_core` `MessageProcessor` with both catalogs. Surfaces with different `surface-id` values can share one session.
+- `surface.feed(batch)` or `session.process(batch, surfaceId)` takes one transport batch.
+- The session checks and applies each message on its own, so a bad message drops only itself.
+- The surface ignores agent theme hints, because the host owns styling.
+
+<Source code={surfaceSample} language="ts" />
+
+The [A2UI Surface](?path=/docs/agent-ui-a2ui-surface--docs) page renders live examples and the full attribute, property and event table.
+
+### A2UI v0.9 only
+
+The surface accepts only A2UI v0.9 envelopes. An element is a v0.9 envelope when all three of these hold:
+
+- its `version` is `v0.9` or `v0.9.1`;
+- it has no own `type` property;
+- it holds exactly one of `createSurface`, `updateComponents`, `updateDataModel` and `deleteSurface`.
+
+An array or a `{ messages: […] }` wrapper unwraps one level, and the surface judges each inner element on its own. Any other element, such as a v0.8 envelope or a `web_core` internal operation, applies nothing and raises `UNSUPPORTED_MESSAGE`. Every message the surface sends carries `version: "v0.9.1"`.
+
+### Live region
+
+Each surface holds one live region.
+
+| Attribute | Property | Default | Announced |
+|---|---|---|---|
+| `live-update-text` | `liveUpdateText` | "Content updated." | Once per batch that changed the surface |
+| `live-error-text` | `liveErrorText` | "Some content could not be shown." | After an error |
+
+The defaults are English, and line://ui ships no translations. Set both attributes in the page's language to localise the live region.
+
+```html
+<line-a2ui-surface
+  surface-id="main"
+  live-update-text="Conteúdo atualizado."
+  live-error-text="Parte do conteúdo não pôde ser mostrada."
+></line-a2ui-surface>
+```
+
+### Limits
+
+| Attribute | Property | Default | Measures |
+|---|---|---|---|
+| `max-nodes` | `maxNodes` | 1000 | Component definitions or rendered nodes, placeholders included, whichever is larger |
+| `max-depth` | `maxDepth` | 32 | The depth of the rendered tree, the root at depth 1 |
+| `max-data-model-size` | `maxDataModelSize` | 1048576 (1 MiB) | UTF-8 bytes of `JSON.stringify` of the data model, as the message leaves it |
+
+- The session checks each message against the limits before it applies.
+- A message that would breach a limit applies nothing and raises `LIMIT_EXCEEDED`. Its error body adds `limit`, `value` and `max`.
+- Each attribute takes a positive integer, which can lower a limit or raise it.
+- Any other value, such as `0`, a negative number or a non-integer, keeps the default, and the surface throws nothing.
+- When several surfaces with the same `surface-id` share a session, the strictest value of each limit applies.
+
+### URL policy
+
+- Image, Video and AudioPlayer URLs, every URL binding such as Avatar `src`, and `openUrl` resolve against the document base first.
+- The default policy allows `https:`, `http:`, `mailto:` and `tel:`. `data:` and every other scheme never pass.
+- `openUrl` runs only from a user action and opens the URL in a new browsing context.
+- The `urlPolicy` property, typed `(url: URL, use: 'image' | 'video' | 'audio' | 'openUrl') => boolean`, runs after the default policy. It has no attribute and no default.
+- `urlPolicy` can reject a URL the default allows and cannot admit one the default rejects. `false` or a throw keeps the URL out of the DOM and out of `openUrl`.
+
+### Markdown
+
+- Text renders as plain text by default.
+- The `markdownRenderer` property, typed `(markdown: string) => Node`, opts in. It has no attribute and no default.
+- The surface passes each Text value to the hook and puts the returned node inside the Text element.
+- line://ui ships no Markdown renderer, and sanitising is yours.
+- When the hook throws or returns a value that is not a `Node`, the Text renders as plain text and the surface raises `MARKDOWN_RENDER_ERROR`.
+
+<Source code={surfacePoliciesSample} language="ts" />
+
+### Errors
+
+`line-a2ui-error` carries an A2UI `error` message in its generic form, ready for your transport. `line-a2ui-action` carries the resolved A2UI `action` message. Both bubble and are composed.
+
+```json
+{
+  "version": "v0.9.1",
+  "error": { "code": "LIMIT_EXCEEDED", "surfaceId": "main", "message": "…", "limit": "maxNodes", "value": 1203, "max": 1000 }
+}
+```
+
+An error that `@a2ui/web_core` throws or reports keeps its `web_core` code, such as `VALIDATION_ERROR`, `CATALOG_ERROR` or `UNKNOWN_COMPONENT_TYPE`. An error the surface raises itself carries one of its own codes.
+
+| Code | Raised when |
+|---|---|
+| `LIMIT_EXCEEDED` | A message would breach `max-nodes`, `max-depth` or `max-data-model-size`. The message applies nothing |
+| `MARKDOWN_RENDER_ERROR` | `markdownRenderer` threw or returned a value that is not a `Node`. The Text renders as plain text |
+| `MISSING_ACCESSIBLE_NAME` | A component that needs an accessible name has none. It renders an inert placeholder |
+| `UNMAPPED_ICON` | An Icon name is not an own property of `iconMap`, or `iconMap` is unset. The icon stays empty |
+| `COMPONENT_LOAD_ERROR` | A descriptor's `load()` rejected, so its component never defines |
+| `UNSUPPORTED_MESSAGE` | A batch element is not an A2UI v0.9 envelope. It never reaches `web_core` |
+
+<Source code={surfaceErrorsSample} language="ts" />
+
+### Focus and template lists
+
+The surface never moves focus to another component. Its reconciler keys each element by the node's `instanceId` and keeps focus across reorders. On a reparent it uses `moveBefore()` where the browser has it, and otherwise returns focus to the same `instanceId` when the batch ends.
+
+Template lists are the exception. In a template list, `{ "componentId": …, "path": … }`, an item's `instanceId` names its position in the bound array, not its data. An insertion or a reorder of that array keeps the element at each position, so a kept element, and the focus on it, can rebind to another item.
+
+line://ui revisits this limit when [a2ui#1745](https://github.com/a2ui-project/a2ui/issues/1745) lands. That upstream issue adds data-derived keys to A2UI.
+
+## MCP Apps
+
+An [MCP Apps](https://github.com/modelcontextprotocol/ext-apps) View is one HTML document that the host renders in a sandboxed iframe. line://ui works in it unchanged, `<line-a2ui-surface>` included, once the lazy component chunks load and the View takes the host theme.
+
+### The host bridge
+
+`@websublime/line-themes/hosts/mcp-apps.css` maps the standard MCP Apps host style variables onto line://ui theme aliases and tokens.
+
+- It is CSS only, so `line-themes` gains no runtime.
+- It maps the role-matched subset, 40 of the 76 host keys: 2 font families, 4 font weights, the role-matched colours, and the radii, sizes and line heights the line://ui scales match.
+- A variable the host leaves unset keeps the line://ui value.
+- It loads after the `line-themes` CSS.
+
+```css
+@import '@websublime/line-themes';
+@import '@websublime/line-themes/hosts/mcp-apps.css';
+```
+
+The View applies the host context with the ext-apps 2.x SDK, imported from `@modelcontextprotocol/ext-apps/app-with-deps`. That entry bundles its Zod 4 dependencies, while the main entry would pull Zod 4 into an app that runs Zod 3.
+
+```ts
+import { App, applyDocumentTheme, applyHostStyleVariables } from '@modelcontextprotocol/ext-apps/app-with-deps';
+
+const app = new App({ name: 'Inbox', version: '1.0.0' }, {});
+
+function applyHostContext(context) {
+  // Sets each host variable on <html>, where mcp-apps.css reads it.
+  if (context?.styles?.variables) applyHostStyleVariables(context.styles.variables);
+  // Sets data-theme and color-scheme on <html>, so light-dark() follows the host.
+  if (context?.theme) applyDocumentTheme(context.theme);
+}
+
+app.onhostcontextchanged = applyHostContext;
+await app.connect();
+applyHostContext(app.getHostContext());
+```
+
+### View delivery
+
+The host's default Content Security Policy allows scripts only inline and from the sandbox's own origin, which serves no line://ui files. Each component loads through a lazy `import()`, so its chunk must sit inside the HTML file or come from an origin the View declares.
+
+1. **`vite-plugin-singlefile`, first choice.** It turns code splitting off and inlines every lazy `load()` chunk into the one HTML file. Check that the build output is one file and nothing else.
+2. **A CDN in `resourceDomains`, the alternative.** The server lists the CDN origin in the resource's `_meta.ui.csp.resourceDomains`, and the View imports line://ui from it with URLs that name one exact version.
+
+The default policy has no `font-src`, so server authors list every font origin in `resourceDomains`.
+
+[Loading line://ui into an MCP Apps View](?path=/docs/recipes-mcp-apps-view--docs) shows both builds and the CSP in full.
+
+## Transports
+
+line://ui ships no transport code. The [transport recipes](?path=/docs/recipes-overview--docs) wire `<line-a2ui-surface>` to AG-UI, A2A, MCP and SSE.
