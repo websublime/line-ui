@@ -1,5 +1,17 @@
 name: cdn-check
-on: [workflow_dispatch]                        # 01-C22: CDN-backed specs run on demand, never on pull_request
+on:                                            # 01-C22: CDN-backed specs run on demand, never on pull_request
+  workflow_dispatch:
+    inputs:                                    # AM-105, AM-106: exact versions to test; empty = resolved by cdn.e2e.ts
+      line-components-version:
+        description: 'Exact @websublime/line-components version to test; empty = resolve the npm canary dist-tag'
+        type: string
+        required: false
+        default: ''
+      line-core-version:
+        description: 'Exact @websublime/line-core version to test; empty = the version the line-components jsDelivr +esm bundles import'
+        type: string
+        required: false
+        default: ''
 permissions: { contents: read }
 jobs:
   cdn:
@@ -20,4 +32,7 @@ jobs:
         run: bunx playwright install --with-deps chromium firefox webkit
       - name: CDN tier
         run: bunx playwright test cdn.e2e
-        env: { LINE_E2E_CDN: '1' }
+        env:                                   # AM-105: inputs reach the test only through env, never inside run
+          LINE_E2E_CDN: '1'
+          LINE_CDN_COMPONENTS_VERSION: ${{ inputs.line-components-version }}
+          LINE_CDN_CORE_VERSION: ${{ inputs.line-core-version }}
