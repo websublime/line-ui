@@ -81,6 +81,8 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
+          // The guide sorts ahead of the Agent UI stories it introduces.
+          'Agent-driven UI',
           'Agent UI',
           'Components',
           [
