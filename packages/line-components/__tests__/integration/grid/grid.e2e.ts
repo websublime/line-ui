@@ -186,7 +186,7 @@ test.describe('alignment (P5; F4)', () => {
     ] as const) {
       await mount(
         page,
-        `<div style="text-align: end"><line-grid align="${value}"><div>a</div></line-grid></div><line-grid id="consumer" align="${value}" style="text-align: right"><div>a</div></line-grid>`,
+        `<div style="text-align: justify"><line-grid align="${value}"><div>a</div></line-grid></div><line-grid id="consumer" align="${value}" style="text-align: right"><div>a</div></line-grid>`,
       );
       const result = await page.evaluate(() => {
         const host = document.querySelector('main div line-grid') as Element;
@@ -200,8 +200,8 @@ test.describe('alignment (P5; F4)', () => {
           consumerChild: text(consumer.firstElementChild as Element),
         };
       });
-      expect(result.host, value).toBe('end');
-      expect(result.child, value).toBe('end');
+      expect(result.host, value).toBe('justify');
+      expect(result.child, value).toBe('justify');
       expect(result.alignItems, value).toBe(alignItems);
       expect(result.consumer, value).toBe('right');
       expect(result.consumerChild, value).toBe('right');

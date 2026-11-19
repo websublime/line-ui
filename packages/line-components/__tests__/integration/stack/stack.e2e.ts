@@ -114,7 +114,7 @@ test.describe('with line-tokens', () => {
     ] as const) {
       await mount(
         page,
-        `<div style="text-align: end"><line-stack align="${value}">${ITEMS}</line-stack></div><line-stack id="consumer" align="${value}" style="text-align: right">${ITEMS}</line-stack>`,
+        `<div style="text-align: justify"><line-stack align="${value}">${ITEMS}</line-stack></div><line-stack id="consumer" align="${value}" style="text-align: right">${ITEMS}</line-stack>`,
       );
       const result = await page.evaluate(() => {
         const host = document.querySelector('main div line-stack') as Element;
@@ -128,8 +128,8 @@ test.describe('with line-tokens', () => {
           consumerChild: text(consumer.firstElementChild as Element),
         };
       });
-      expect(result.host, value).toBe('end');
-      expect(result.child, value).toBe('end');
+      expect(result.host, value).toBe('justify');
+      expect(result.child, value).toBe('justify');
       expect(result.alignItems, value).toBe(alignItems);
       expect(result.consumer, value).toBe('right');
       expect(result.consumerChild, value).toBe('right');
