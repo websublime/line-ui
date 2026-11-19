@@ -1,5 +1,11 @@
 # @websublime/line-components
 
+## 0.2.6
+
+### Patch Changes
+
+- [#355](https://github.com/websublime/line-ui/pull/355) [`b65dd26`](https://github.com/websublime/line-ui/commit/b65dd26f7fa9abe7c6df2859eb1d27e8425ea51a) Thanks [@miguelramos](https://github.com/miguelramos)! - `line-stack` and `line-grid` with an `align` attribute no longer centre or end-align their text in Chromium and WebKit; text alignment now inherits as usual.
+
 ## 0.2.5
 
 ### Patch Changes
