@@ -175,6 +175,39 @@ test.describe('alignment (P5; F4)', () => {
     });
   }
 
+  test('align never changes text alignment: host and child inherit text-align, and consumer text-align wins', async ({
+    page,
+  }) => {
+    for (const [value, alignItems] of [
+      ['start', 'start'],
+      ['center', 'center'],
+      ['end', 'end'],
+      ['stretch', 'stretch'],
+    ] as const) {
+      await mount(
+        page,
+        `<div style="text-align: end"><line-grid align="${value}"><div>a</div></line-grid></div><line-grid id="consumer" align="${value}" style="text-align: right"><div>a</div></line-grid>`,
+      );
+      const result = await page.evaluate(() => {
+        const host = document.querySelector('main div line-grid') as Element;
+        const consumer = document.getElementById('consumer') as Element;
+        const text = (el: Element) => getComputedStyle(el).textAlign;
+        return {
+          host: text(host),
+          child: text(host.firstElementChild as Element),
+          alignItems: getComputedStyle(host).alignItems,
+          consumer: text(consumer),
+          consumerChild: text(consumer.firstElementChild as Element),
+        };
+      });
+      expect(result.host, value).toBe('end');
+      expect(result.child, value).toBe('end');
+      expect(result.alignItems, value).toBe(alignItems);
+      expect(result.consumer, value).toBe('right');
+      expect(result.consumerChild, value).toBe('right');
+    }
+  });
+
   const UNEVEN = '<div>One</div><div>Two<br />two<br />two</div><div>Three</div>';
 
   test('the P5 item boxes: stretched by default, then placed by align and justify-items', async ({ page }) => {

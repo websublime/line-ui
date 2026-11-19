@@ -82,6 +82,8 @@ export class LineGrid extends LineElement {
         column-gap: var(--line-grid-column-gap);
         align-items: stretch;
         justify-items: stretch;
+        /* Chromium and WebKit map a legacy align attribute to text-align; box alignment leaves text alone. */
+        text-align: inherit;
       }
 
       :host([hidden]) {

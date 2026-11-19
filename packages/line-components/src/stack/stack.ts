@@ -59,6 +59,8 @@ export class LineStack extends LineElement {
         align-items: stretch;
         flex-wrap: nowrap;
         gap: var(--line-stack-gap);
+        /* Chromium and WebKit map a legacy align attribute to text-align; box alignment leaves text alone. */
+        text-align: inherit;
       }
 
       :host([hidden]) {
