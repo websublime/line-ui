@@ -9,6 +9,7 @@
  */
 
 import { expect, type Locator, test } from 'playwright/test';
+import { openDocs } from './docs-page';
 
 test.use({ baseURL: 'http://127.0.0.1:4320' });
 
@@ -31,7 +32,7 @@ async function rowsOf(table: Locator, category: string): Promise<string[]> {
 }
 
 test('the Button docs page shows attributes, slots, events and parts from the manifest', async ({ page }) => {
-  await page.goto('/iframe.html?id=components-button--docs&viewMode=docs');
+  await openDocs(page, 'components-button--docs');
   const table = page.locator('table.docblock-argstable').first();
   await expect(table).toBeVisible();
 
