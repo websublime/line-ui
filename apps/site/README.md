@@ -1,7 +1,7 @@
 # @websublime/line-site
 
 Astro 7 site for the line://ui design system, served at <https://line-ui.websublime.com>. Private (never published).
-Phase 00 ships a static placeholder; full landing content is Phase 1.
+The landing page builds from the line://ui components; each section loads its own through a `<script>` import, and `__tests__/landing.e2e.ts` guards that every `line-*` tag registers.
 
 The site builds static HTML with no adapter (spec AM-046).
 

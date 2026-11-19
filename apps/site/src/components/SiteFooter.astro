@@ -1,0 +1,26 @@
+---
+import { GITHUB_URL, STORYBOOK_URL } from '../site';
+---
+
+<footer class="site-footer">
+  <line-stack gap="4">
+    <line-separator decorative></line-separator>
+    <line-stack orientation="horizontal" justify="spaceBetween" align="center" gap="3" wrap>
+      <p class="site-footer__brand">
+        <span class="wordmark">line<span class="wordmark__accent">://</span>ui</span>
+        Headless UI primitives as native Web Components. MIT licensed.
+      </p>
+      <nav aria-label="Footer">
+        <line-stack orientation="horizontal" align="center" gap="4">
+          <a class="nav-link" href={STORYBOOK_URL}>Storybook</a>
+          <a class="nav-link" href={GITHUB_URL}>GitHub</a>
+        </line-stack>
+      </nav>
+    </line-stack>
+  </line-stack>
+</footer>
+
+<script>
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/separator';
+</script>

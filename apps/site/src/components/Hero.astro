@@ -1,0 +1,72 @@
+---
+import { GETTING_STARTED_URL, GITHUB_URL, STORYBOOK_URL } from '../site';
+
+// The first command is composed from the package name in the line-components README, which has no install line.
+// The second is the Getting Started install line, wrapped with a shell line continuation. The `Use` import below
+// is the README's subpath import.
+const install = [
+  'bun add @websublime/line-components',
+  'bun add @websublime/line-tokens \\\n  @websublime/line-colors @websublime/line-themes',
+];
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <line-grid class="hero__grid" columns="2" min-column-width="xs" gap="5" align="center">
+    <line-stack class="hero__copy" gap="4" align="start">
+      <line-badge>Open source · MIT</line-badge>
+      <h1 id="hero-title" class="hero__title">Headless UI primitives as native Web Components</h1>
+      <p class="hero__lead">
+        State machines run the behaviour, the keyboard and the accessibility. You own every pixel
+        through <code>::part()</code> and <code>--line-*</code> custom properties. The same tags work in React,
+        Vue, Svelte, Angular, htmx or plain HTML.
+      </p>
+      <line-stack orientation="horizontal" align="center" gap="3" wrap>
+        <a class="cta cta--primary" href={STORYBOOK_URL}>
+          Browse the components
+          <line-icon library="lucide" name="arrow-right"></line-icon>
+        </a>
+        <a class="cta" href={GITHUB_URL}>View on GitHub</a>
+      </line-stack>
+    </line-stack>
+
+    <div class="snippet">
+      <line-stack class="snippet__bar" orientation="horizontal" justify="spaceBetween" align="center">
+        <h2 class="snippet__title">Install</h2>
+        <line-icon-button class="snippet__copy" variant="borderless" aria-label="Copy install commands">
+          <line-icon library="lucide" name="copy"></line-icon>
+        </line-icon-button>
+      </line-stack>
+      <pre class="snippet__code"><code>{install.join('\n')}</code></pre>
+      <h2 class="snippet__title">Use</h2>
+      <pre class="snippet__code"><code>{"import '@websublime/line-components/button';\n\n<line-button>Save</line-button>"}</code></pre>
+      <p class="snippet__note">
+        The theme is optional. <a href={GETTING_STARTED_URL}>Getting Started</a> lists its stylesheet imports.
+      </p>
+      <line-visually-hidden><span class="snippet__status" role="status"></span></line-visually-hidden>
+    </div>
+  </line-grid>
+</section>
+
+<script>
+  import '@websublime/line-components/grid';
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/badge';
+  import '@websublime/line-components/icon-button';
+  import '@websublime/line-components/icon';
+  import '@websublime/line-components/visually-hidden';
+  import '../scripts/icons';
+
+  const copy = document.querySelector<HTMLElement>('.snippet__copy');
+  const code = document.querySelector('.snippet__code');
+  const status = document.querySelector('.snippet__status');
+
+  copy?.addEventListener('click', async () => {
+    if (!(code?.textContent && status)) return;
+    try {
+      await navigator.clipboard.writeText(code.textContent);
+      status.textContent = 'Install commands copied';
+    } catch {
+      status.textContent = 'Copy failed; select the commands instead';
+    }
+  });
+</script>

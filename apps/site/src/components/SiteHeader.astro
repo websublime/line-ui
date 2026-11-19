@@ -1,0 +1,28 @@
+---
+import { GITHUB_URL, STORYBOOK_URL } from '../site';
+---
+
+<header class="site-header">
+  <line-visually-hidden class="skip-link"><a href="#main">Skip to main content</a></line-visually-hidden>
+  <line-stack class="site-header__bar" orientation="horizontal" justify="spaceBetween" align="center" gap="3">
+    <a class="wordmark" href="/" aria-label="line://ui home">line<span class="wordmark__accent">://</span>ui</a>
+    <nav aria-label="Main">
+      <line-stack orientation="horizontal" align="center" gap="3">
+        <a class="nav-link" href={STORYBOOK_URL}>
+          <line-icon library="lucide" name="book-open"></line-icon>
+          Storybook
+        </a>
+        <line-separator orientation="vertical" decorative></line-separator>
+        <a class="nav-link" href={GITHUB_URL}>GitHub</a>
+      </line-stack>
+    </nav>
+  </line-stack>
+</header>
+
+<script>
+  import '@websublime/line-components/visually-hidden';
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/separator';
+  import '@websublime/line-components/icon';
+  import '../scripts/icons';
+</script>

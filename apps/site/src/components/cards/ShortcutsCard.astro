@@ -1,0 +1,37 @@
+---
+// Each `fallback` is the off-Apple drawing, shown as text until the Kbd module runs.
+const shortcuts = [
+  { action: 'Open the command palette', keys: 'mod+k', fallback: 'Ctrl+K' },
+  { action: 'Run a command by name', keys: 'mod+shift+p', fallback: 'Ctrl+Shift+P' },
+  { action: 'Go to the inbox', keys: 'g i', fallback: 'G I' },
+  { action: 'Save the draft', keys: 'mod+s', fallback: 'Ctrl+S' },
+  { action: 'Close the panel', keys: 'escape', fallback: 'Esc' },
+];
+---
+
+<section class="card" aria-labelledby="card-keys-title">
+  <line-stack gap="4">
+    <header class="card__header">
+      <h3 id="card-keys-title" class="card__title">Keyboard first</h3>
+      <p class="card__lead">Kbd draws each shortcut for the reader's device, as Command glyphs on a Mac and words elsewhere.</p>
+    </header>
+
+    <ul class="shortcut-list">
+      {
+        shortcuts.map((shortcut) => (
+          <li>
+            <line-stack orientation="horizontal" justify="spaceBetween" align="center" gap="3">
+              <span>{shortcut.action}</span>
+              <line-kbd keys={shortcut.keys}>{shortcut.fallback}</line-kbd>
+            </line-stack>
+          </li>
+        ))
+      }
+    </ul>
+  </line-stack>
+</section>
+
+<script>
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/kbd';
+</script>

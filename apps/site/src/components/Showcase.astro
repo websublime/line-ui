@@ -1,0 +1,39 @@
+---
+import AgentCard from './cards/AgentCard.astro';
+import MediaCard from './cards/MediaCard.astro';
+import NotificationsCard from './cards/NotificationsCard.astro';
+import ShortcutsCard from './cards/ShortcutsCard.astro';
+import TeamCard from './cards/TeamCard.astro';
+import ToolbarCard from './cards/ToolbarCard.astro';
+---
+
+<section class="showcase" aria-labelledby="showcase-title">
+  <div class="showcase__intro">
+    <h2 id="showcase-title" class="showcase__title">Live components, not screenshots</h2>
+    <p class="showcase__lead">
+      Every card below is built from line://ui primitives and themed with <code>line-themes</code>. Press, tab and
+      toggle them.
+    </p>
+  </div>
+
+  <!-- Three columns of cards, each a Stack, so cards of different heights pack without row gaps. -->
+  <line-grid columns="3" min-column-width="xxs" gap="4" align="start">
+    <line-stack gap="4">
+      <TeamCard />
+      <ShortcutsCard />
+    </line-stack>
+    <line-stack gap="4">
+      <NotificationsCard />
+      <MediaCard />
+    </line-stack>
+    <line-stack gap="4">
+      <AgentCard />
+      <ToolbarCard />
+    </line-stack>
+  </line-grid>
+</section>
+
+<script>
+  import '@websublime/line-components/grid';
+  import '@websublime/line-components/stack';
+</script>

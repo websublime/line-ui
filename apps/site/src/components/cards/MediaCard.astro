@@ -1,0 +1,42 @@
+<section class="card" aria-labelledby="card-media-title">
+  <line-stack gap="4">
+    <header class="card__header">
+      <h3 id="card-media-title" class="card__title">Headless, so you own the pixels</h3>
+      <p class="card__lead">
+        Restyle any surface with <code>::part()</code> or a <code>--line-*</code> token. The theme is an accelerator,
+        never a requirement.
+      </p>
+    </header>
+
+    <line-aspect-ratio class="media__frame" ratio="widescreen" role="img" aria-label="Poster for the product tour video">
+      <div class="media__poster"></div>
+      <line-center class="media__overlay">
+        <line-icon class="media__glyph" library="lucide" name="play"></line-icon>
+        <span class="media__caption">Product tour · 2:14</span>
+      </line-center>
+    </line-aspect-ratio>
+
+    <line-stack orientation="horizontal" justify="spaceBetween" align="center" gap="3">
+      <line-stack orientation="horizontal" align="center" gap="2">
+        <line-icon-button variant="primary" pressed="false" aria-label="Play">
+          <line-icon library="lucide" name="play"></line-icon>
+        </line-icon-button>
+        <line-icon-button pressed="false" aria-label="Mute">
+          <line-icon library="lucide" name="volume-x"></line-icon>
+        </line-icon-button>
+      </line-stack>
+      <line-icon-button variant="borderless" aria-label="Full screen">
+        <line-icon library="lucide" name="maximize"></line-icon>
+      </line-icon-button>
+    </line-stack>
+  </line-stack>
+</section>
+
+<script>
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/aspect-ratio';
+  import '@websublime/line-components/center';
+  import '@websublime/line-components/icon-button';
+  import '@websublime/line-components/icon';
+  import '../../scripts/icons';
+</script>

@@ -1,0 +1,50 @@
+<section class="card" aria-labelledby="card-notify-title">
+  <line-stack gap="4">
+    <header class="card__header">
+      <h3 id="card-notify-title" class="card__title">State machines, not event soup</h3>
+      <p class="card__lead">
+        Every toggle runs on an explicit machine. Press one and its state flips, announced as pressed.
+      </p>
+    </header>
+
+    <fieldset class="chip-set">
+      <legend class="card__label">Notify me about</legend>
+      <line-stack orientation="horizontal" gap="2" wrap>
+        <line-chip pressed>
+          <line-icon slot="indicator" library="lucide" name="check"></line-icon>
+          Mentions
+        </line-chip>
+        <line-chip>
+          <line-icon slot="indicator" library="lucide" name="check"></line-icon>
+          Replies
+        </line-chip>
+        <line-chip pressed>
+          <line-icon slot="indicator" library="lucide" name="check"></line-icon>
+          Releases
+        </line-chip>
+        <line-chip variant="primary">Security <span slot="suffix">2</span></line-chip>
+      </line-stack>
+    </fieldset>
+
+    <line-separator decorative></line-separator>
+
+    <line-stack gap="2">
+      <h4 class="card__label" id="notify-channels">Deliver by</h4>
+      <line-button-group aria-labelledby="notify-channels">
+        <line-button pressed="true">Email</line-button>
+        <line-button pressed="false">Push</line-button>
+        <line-button pressed="false">Weekly digest</line-button>
+      </line-button-group>
+    </line-stack>
+  </line-stack>
+</section>
+
+<script>
+  import '@websublime/line-components/stack';
+  import '@websublime/line-components/chip';
+  import '@websublime/line-components/icon';
+  import '@websublime/line-components/separator';
+  import '@websublime/line-components/button-group';
+  import '@websublime/line-components/button';
+  import '../../scripts/icons';
+</script>

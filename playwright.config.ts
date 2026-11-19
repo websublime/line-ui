@@ -26,6 +26,14 @@ export default defineConfig({
       url: 'http://127.0.0.1:4321/button/',
       reuseExistingServer: !process.env.CI,
     },
+    {
+      // Serves the apps/site/dist that `bun run build` produces; the landing tier sets this baseURL itself.
+      // --ignore-lock: no lock file, and no self-backgrounding when Astro detects an AI agent (it would detach).
+      command: 'bunx --no-install astro preview --host 127.0.0.1 --port 4322 --ignore-lock',
+      cwd: 'apps/site',
+      url: 'http://127.0.0.1:4322/',
+      reuseExistingServer: !process.env.CI,
+    },
   ],
   projects: [
     { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
