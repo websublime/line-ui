@@ -14,6 +14,9 @@
     "astro": "^7.3.8"
   },
   "devDependencies": {
+    "@websublime/line-components": "workspace:^",
+    "@websublime/line-icons": "workspace:^",
+    "@websublime/line-themes": "workspace:^",
     "wrangler": "4.148.0"
   }
 }
