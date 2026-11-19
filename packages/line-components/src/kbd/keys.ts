@@ -44,7 +44,8 @@ const META = named('meta', { glyph: '⌘', word: 'Command' }, { word: 'Meta' });
 const CONTROL = named('control', { glyph: '⌃', word: 'Control' }, { word: 'Ctrl' });
 const ALT = named('alt', { glyph: '⌥', word: 'Option' }, { word: 'Alt' });
 const SHIFT = named('shift', { glyph: '⇧', word: 'Shift' }, { word: 'Shift' });
-const ENTER = named('enter', { glyph: '↩', word: 'Return' }, { word: 'Enter' });
+// U+21A9 is the one table glyph with an emoji presentation, so U+FE0E requests its text presentation (spec AM-006).
+const ENTER = named('enter', { glyph: '\u21A9\uFE0E', word: 'Return' }, { word: 'Enter' });
 const ESCAPE = named('escape', { glyph: '⎋', word: 'Escape' }, { word: 'Esc' });
 const BACKSPACE = named('backspace', { glyph: '⌫', word: 'Delete' }, { word: 'Backspace' });
 const DELETE = named('delete', { glyph: '⌦', word: 'Forward Delete' }, { word: 'Del' });
