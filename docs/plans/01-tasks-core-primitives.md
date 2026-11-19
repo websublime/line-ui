@@ -100,7 +100,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 
 | ID | Stream | Task | Owner | Deps | Status | Branch | PR | AM |
 |---|---|---|---|---|---|---|---|---|
-| S1 | S | Landing page built with Phase 1 line://ui components (hero, value proposition, features, Storybook link), one PR (spec §6.S.1) | webcomponents-supervisor | C1–C4 | in_progress | feat/01-s1-landing-page | — | — |
+| S1 | S | Landing page built with Phase 1 line://ui components (hero, value proposition, features, Storybook link), one PR (spec §6.S.1) | webcomponents-supervisor | C1–C12, C14, C15, C17–C20 | in_progress | feat/01-s1-landing-page | — | — |
 
 ## Stream Z — Repo-wide
 

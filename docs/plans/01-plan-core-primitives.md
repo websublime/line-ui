@@ -5,6 +5,7 @@ Row 01-C1 on 2026-10-27 applies Miguel's decision that a semantic variant may se
 Row 01-G1 on 2026-11-03 applies Miguel's decision to accept that the `@a2ui/web_core/v0_9` barrel loads Lit when `line-genui` runs unbundled: `./catalog` defines no element and its own modules touch no DOM at load, and no `line-genui` module imports Lit (§2.1 surfaces table, §5.6 PT (b) row; spec §4.1, §6.G.4, AM-065), citing PRD v0.8.29 and ARCHITECTURE v0.8.17 (Source PRD and Source Architecture lines).
 Row 01-G3 on 2026-11-04 applies Miguel's decision that a descriptor may carry an optional tool description, which the frontend-tool emitter uses over the agent-facing description (spec §6.G.1, §6.G.3, AM-086). No plan section states the descriptor fields, so only the header changes, citing PRD v0.8.30 and ARCHITECTURE v0.8.22 (Source PRD and Source Architecture lines).
 Row 01-C5 on 2026-11-05 records ARCHITECTURE v0.8.23, a factual correction of §14.2 and §14.8 on which native pseudo-classes match a component host (spec AM-089; component specs `0002-button.md` AM-008, `0003-icon-button.md` AM-002). No plan section states it, so only the Source Architecture line changes.
+Row 01-S1 on 2026-11-19 applies Miguel's decision that the landing page depends on every visible Phase 1 component (C1–C12, C14, C15, C17–C20) and follows the radix-ui.com homepage layout (§2.8, §4.5, §6; spec §6.S.1, AM-109).
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
@@ -207,7 +208,7 @@ ARCHITECTURE §17.3 maps these basic catalog types in Phase 1.
 - `apps/site/src/pages/index.astro` is a placeholder at `https://line-ui.websublime.com`.
 - The Phase 00 plan (its O4) shipped the scaffold only and left full landing content to Phase 1.
 - The landing page (hero, value proposition, features, Storybook link) is built with Phase 1 line components and is an exit criterion (O3 (b), PRD v0.8.17).
-- The landing page depends on C1–C4, and a section that needs another component adds that C row through a spec AM (spec §6.S.1, AM-037).
+- The landing page depends on C1–C12, C14, C15 and C17–C20 (spec AM-109), and a section that needs another component adds that C row through a spec AM (spec §6.S.1, AM-037).
 - PRD §5.3 lists the full site structure.
 
 ### 2.9 TypeScript 7
@@ -325,7 +326,7 @@ Stream G also writes the descriptors of Button, Icon, Stack and Separator.
 ### 4.5 Stream S — site
 
 - S1 builds the landing page (hero, value proposition, features, Storybook link) with Phase 1 line components (O3 (b)).
-- S1 depends on C1–C4 and is one PR that opens when they are done. A section that needs another component adds that C row to S1's Deps through a spec AM (spec §6.S.1, AM-037).
+- S1 depends on C1–C12, C14, C15 and C17–C20 (spec AM-109) and is one PR that opens when they are done. A section that needs another component adds that C row to S1's Deps through a spec AM (spec §6.S.1, AM-037).
 
 ### 4.6 Stream Z — repo-wide
 
@@ -533,7 +534,7 @@ G3 tool emitter ─────────────────────�
 component spec APPROVED ─────────────► component implementation (C1–C20)
 C1–C4 shipped ───────────────────────► stream G validates on them (PRD §7.3)
 CEM entries of real components ──────► G5 drift and coverage tests
-C1–C4 ───────────────────────────────► S1 landing page (spec §6.S.1, AM-037)
+C1–C12, C14, C15, C17–C20 ──────────► S1 landing page (spec §6.S.1, AM-109)
 P4 trusted publisher ────────────────► P14 release publisher ──► first line-genui release (spec §6.P.14, AM-051)
 every other row except D3 and Z3 ────► P13 phase-exit minors ──► phase-exit Version PR, if one opens ──► D3, Z3 (spec §6.P.13, AM-051)
 P4, C1, C2 ──────────────────────────► P6 CDN check (spec §6.P.4, §6.P.6, AM-032, AM-036)
@@ -553,7 +554,7 @@ The plan gate chose this sequence (O2.a (b), O2.c (a)), and revision 00-Z45 adds
 6. Stream G (G1–G7), including the descriptors of C1–C4.
 7. C5–C20, each with its descriptor in the same PR, after G1, G4 and G5; C12, C13 and C16 also after G3 (spec §6.C.0).
 
-- Stream S builds the landing page in one PR after C1–C4 (spec §6.S.1, AM-037).
+- Stream S builds the landing page in one PR after C1–C12, C14, C15 and C17–C20 (spec §6.S.1, AM-109).
 - P4 and P14 land before the first `line-genui` release. Miguel creates the P14 publisher within the 48 hours before he merges the first Version PR that releases `line-genui` 0.2.0, and he merges no Version PR between the P1 merge and the P14 merge. P4 step 2 is the first `snapshot-deploy` run after P1 merges, and step 5 runs from a later `main` commit (spec §6.P.4, §6.P.14, AM-032, AM-036, AM-037, AM-051).
 - P13 lands after every other Phase 1 row except D3 and Z3 and after the exit sweep's rows, with its row `blocked` until then and flipped to `todo` by the orchestrator (main session or `sdlc`). The phase-exit Version PR follows it when a non-empty changeset is pending; otherwise no Version PR opens (spec §6.P.13, AM-038, AM-041, AM-051).
 - D3 and Z3 land after the Phase 1 Version PR merges, or after P13 merges when no phase-exit Version PR opens; Z3 depends on D3 (spec §6.D.3, §6.Z.2, AM-038, AM-051).
