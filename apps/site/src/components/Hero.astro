@@ -1,8 +1,9 @@
 ---
 import { GETTING_STARTED_URL, GITHUB_URL, STORYBOOK_URL } from '../site';
 
-// Each command traces to a documented source: the line-components README (package and subpath import) and the
-// Getting Started guide (the theme install line, wrapped with a shell line continuation).
+// The first command is composed from the package name in the line-components README, which has no install line.
+// The second is the Getting Started install line, wrapped with a shell line continuation. The `Use` import below
+// is the README's subpath import.
 const install = [
   'bun add @websublime/line-components',
   'bun add @websublime/line-tokens \\\n  @websublime/line-colors @websublime/line-themes',
