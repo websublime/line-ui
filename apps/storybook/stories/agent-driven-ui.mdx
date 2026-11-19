@@ -21,9 +21,10 @@ An agent drives the UI in one of two ways.
 
 ```sh
 bun add @websublime/line-genui @websublime/line-components @websublime/line-icons
+bun add @websublime/line-tokens @websublime/line-colors @websublime/line-themes
 ```
 
-`@websublime/line-components` and `@websublime/line-icons` are peer dependencies of `line-genui`.
+`@websublime/line-components` and `@websublime/line-icons` are peer dependencies of `line-genui`. The second line installs the design-system CSS, which [Getting Started](?path=/docs/getting-started--docs) sets up. `line-themes` also ships the MCP Apps host bridge.
 
 | Import | Holds |
 |---|---|
