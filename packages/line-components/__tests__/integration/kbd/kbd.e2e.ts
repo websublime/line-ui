@@ -173,6 +173,77 @@ test.describe('Chromium accessibility tree (CDP)', () => {
   });
 });
 
+/**
+ * The Return glyph draws as text (AM-006; ledger 01-C31). `--line-font-sans` lists "Apple Color Emoji", and U+21A9
+ * has an emoji presentation, so without U+FE0E Chromium and Firefox on macOS draw it as a colour emoji. Linux CI has
+ * no Apple Color Emoji, so there these checks guard only the glyph span selector and the font path; the colour
+ * failure reproduces on macOS. Chromium on Linux draws text with LCD subpixel antialiasing, whose colour fringes
+ * reach a channel spread of 130 on a text glyph, so the colour test launches its own Chromium with
+ * `--disable-lcd-text`. Playwright forbids `launchOptions` in a describe group, and a launch inside the test leaves
+ * every other engine and test unchanged.
+ */
+const RETURN =
+  '<line-kbd id="ret" keys="mod+enter" platform="apple" style="font-family: var(--line-font-sans); --line-kbd-font-size: 40px"></line-kbd>';
+/** The glyph span of the second key, `enter`; Playwright CSS selectors pierce the open shadow root. */
+const RETURN_GLYPH = '#ret [part="item"]:nth-of-type(2) > span[aria-hidden="true"]';
+
+test.describe('Return glyph presentation (AM-006)', () => {
+  test('the Return glyph draws without colour pixels', async ({ page, browser, browserName, launchOptions }) => {
+    const lcdOff =
+      browserName === 'chromium'
+        ? await browser
+            .browserType()
+            .launch({ ...launchOptions, args: [...(launchOptions.args ?? []), '--disable-lcd-text'] })
+        : undefined;
+    try {
+      const target = lcdOff ? await lcdOff.newPage() : page;
+      await open(target);
+      await mount(target, RETURN);
+      const glyph = target.locator(RETURN_GLYPH);
+      const png = (await glyph.screenshot()).toString('base64');
+      // A pixel is coloured when its channels spread by more than 60; a text glyph is grey on grey.
+      const coloured = await target.evaluate(async (data) => {
+        const image = new Image();
+        image.src = `data:image/png;base64,${data}`;
+        await image.decode();
+        const canvas = document.createElement('canvas');
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const context = canvas.getContext('2d') as CanvasRenderingContext2D;
+        context.drawImage(image, 0, 0);
+        const { data: pixels } = context.getImageData(0, 0, image.width, image.height);
+        let count = 0;
+        for (let i = 0; i < pixels.length; i += 4) {
+          const rgb = [pixels[i], pixels[i + 1], pixels[i + 2]] as number[];
+          if (Math.max(...rgb) - Math.min(...rgb) > 60) count += 1;
+        }
+        return count;
+      }, png);
+      expect(coloured).toBe(0);
+      expect(await glyph.textContent()).toBe('\u21A9\uFE0E');
+    } finally {
+      await lcdOff?.close();
+    }
+  });
+
+  test('Chromium draws the Return glyph from no emoji font (CDP)', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'CDP sessions are Chromium-only (Phase 1 spec AM-058)');
+    await open(page);
+    await mount(page, RETURN);
+    const cdp = await page.context().newCDPSession(page);
+    await cdp.send('DOM.enable');
+    await cdp.send('CSS.enable');
+    await cdp.send('DOM.getDocument', { depth: 0 });
+    const { result } = await cdp.send('Runtime.evaluate', {
+      expression: `document.getElementById('ret').shadowRoot.querySelectorAll('[part="item"]')[1].querySelector('span[aria-hidden="true"]')`,
+    });
+    const { nodeId } = await cdp.send('DOM.requestNode', { objectId: result.objectId as string });
+    const { fonts } = await cdp.send('CSS.getPlatformFontsForNode', { nodeId });
+    expect(fonts.length).toBeGreaterThan(0);
+    expect(fonts.filter((font) => /Emoji/i.test(font.familyName))).toEqual([]);
+  });
+});
+
 test.describe('platform auto (P1; F1)', () => {
   test('auto draws what the page reads from navigator, in each engine', async ({ page }) => {
     await open(page);

@@ -96,8 +96,8 @@ const TABLE: readonly (readonly [string, string, readonly string[], string, read
   ['option', '⌥', ['Option'], 'Alt', []],
   ['opt', '⌥', ['Option'], 'Alt', []],
   ['shift', '⇧', ['Shift'], 'Shift', []],
-  ['enter', '↩', ['Return'], 'Enter', []],
-  ['return', '↩', ['Return'], 'Enter', []],
+  ['enter', '↩\uFE0E', ['Return'], 'Enter', []],
+  ['return', '↩\uFE0E', ['Return'], 'Enter', []],
   ['escape', '⎋', ['Escape'], 'Esc', []],
   ['esc', '⎋', ['Escape'], 'Esc', []],
   ['backspace', '⌫', ['Delete'], 'Backspace', []],
@@ -139,6 +139,19 @@ describe('<line-kbd> drawing table (P2; F3, F4)', () => {
       ]);
     });
   }
+
+  test('the enter glyph span holds U+21A9 U+FE0E, and no other glyph carries U+FE0E (AM-006)', async () => {
+    const glyphs = await Promise.all(
+      TABLE.map(async ([keys]) => {
+        const span = rootOf(await draw(keys, 'apple')).querySelector('[part="item"] > [aria-hidden="true"]');
+        return [keys, span?.textContent ?? ''] as const;
+      }),
+    );
+    for (const [keys, glyph] of glyphs) {
+      if (keys === 'enter' || keys === 'return') expect(glyph).toBe('\u21A9\uFE0E');
+      else expect(glyph).not.toContain('\uFE0E');
+    }
+  });
 
   test('key names are case-insensitive', async () => {
     expect(visible(await draw('MOD+Shift+K', 'other'))).toBe('Ctrl+Shift+K');
@@ -183,7 +196,7 @@ describe('<line-kbd> chords (P2; F3 (a))', () => {
   });
 
   test('named keys in a chord: mod+enter, mod+backspace, mod+plus, shift+?', async () => {
-    expect(visible(await draw('mod+enter', 'apple'))).toBe('⌘↩');
+    expect(visible(await draw('mod+enter', 'apple'))).toBe('⌘↩\uFE0E');
     expect(visible(await draw('mod+enter', 'other'))).toBe('Ctrl+Enter');
     expect(visible(await draw('mod+backspace', 'apple'))).toBe('⌘⌫');
     expect(hidden(await draw('mod+backspace', 'apple'))).toEqual(['Command', 'Delete']);
