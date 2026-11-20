@@ -9,7 +9,16 @@
  */
 
 import { describe, expect, test } from 'bun:test';
-import { evaluate, expectedCdnVersion, MARKER, selectRecord, VERSION_PR_REF } from '../release-records.mjs';
+import {
+  currentStatus,
+  evaluate,
+  expectedCdnVersion,
+  lastEditor,
+  MARKER,
+  needsPost,
+  selectRecord,
+  VERSION_PR_REF,
+} from '../release-records.mjs';
 
 type Run = {
   path: string;
@@ -20,7 +29,7 @@ type Run = {
   head_sha: string;
   display_title: string;
 };
-type Comment = { body: string; authorAdmin: boolean; edited: boolean; editorAdmin: boolean };
+type Comment = { body: string; authorAdmin: boolean; editorAdmin: boolean };
 
 const REPO = 'websublime/line-ui';
 const MAIN = '6c944036865ca09b1e19c0d2eb8e871d016538e1';
@@ -28,7 +37,8 @@ const OTHER = '0123456789abcdef0123456789abcdef01234567';
 const VERSIONS = { head: '0.2.8', base: '0.2.7' };
 const CANARY = `0.2.8-${MAIN}-SNAPSHOT`;
 
-const VERSION_PR = { headRef: VERSION_PR_REF, headRepo: REPO };
+const VERSION_SHA = 'feedfacefeedfacefeedfacefeedfacefeedface';
+const VERSION_PR = { headRef: VERSION_PR_REF, headRepo: REPO, headSha: VERSION_SHA };
 const url = (id: number, repo = REPO) => `https://github.com/${repo}/actions/runs/${id}`;
 
 const run = (file: string, overrides: Partial<Run> = {}): Run => ({
@@ -53,8 +63,7 @@ const body = (ids = [1, 2, 3], extra = ANTHROPIC) => [MARKER, ...ids.map((id) =>
 const comment = (text = body(), overrides: Partial<Comment> = {}): Comment => ({
   body: text,
   authorAdmin: true,
-  edited: false,
-  editorAdmin: false,
+  editorAdmin: true,
   ...overrides,
 });
 
@@ -74,7 +83,8 @@ const withRun = (id: number, overrides: Partial<Run>) =>
 
 describe('PRs that are not the Version PR', () => {
   test('another head ref gets success without any record', () => {
-    expect(evaluate({ repository: REPO, pr: { headRef: 'feat/01-c1-button', headRepo: REPO } })).toEqual({
+    const pr = { headRef: 'feat/01-c1-button', headRepo: REPO, headSha: OTHER };
+    expect(evaluate({ repository: REPO, pr, versionPrShas: [VERSION_SHA] })).toEqual({
       state: 'success',
       description: 'Not a Version PR',
     });
@@ -84,8 +94,22 @@ describe('PRs that are not the Version PR', () => {
     ['a fork with the Version PR ref', { headRef: VERSION_PR_REF, headRepo: 'stranger/line-ui' }],
     ['a fork with another ref', { headRef: 'main', headRepo: 'stranger/line-ui' }],
     ['a deleted fork', { headRef: VERSION_PR_REF, headRepo: null }],
-  ])('%s gets success', (_label, pr) => {
-    expect(evaluate({ repository: REPO, pr }).state).toBe('success');
+  ])('%s at another sha gets success', (_label, pr) => {
+    expect(evaluate({ repository: REPO, pr: { ...pr, headSha: OTHER }, versionPrShas: [VERSION_SHA] })?.state).toBe(
+      'success',
+    );
+  });
+
+  test.each([
+    ['a fork PR', 'stranger/line-ui', 'copy-of-version-pr'],
+    ['a same-repository PR', REPO, 'chore/copy'],
+  ])("%s at the Version PR's head sha gets no status", (_label, headRepo, headRef) => {
+    const pr = { headRef, headRepo, headSha: VERSION_SHA };
+    expect(evaluate({ repository: REPO, pr, versionPrShas: [OTHER, VERSION_SHA] })).toBeNull();
+  });
+
+  test('the Version PR itself is evaluated even though its sha is a Version PR sha', () => {
+    expect(versionPr({ versionPrShas: [VERSION_SHA] })?.state).toBe('success');
   });
 });
 
@@ -122,25 +146,44 @@ describe('the record comment', () => {
   });
 
   test('an admin comment edited by a non-admin is skipped', () => {
-    const edited = comment(body(), { edited: true, editorAdmin: false });
+    const edited = comment(body(), { editorAdmin: false });
     expect(selectRecord([edited])).toBeNull();
-    expect(versionPr({ comments: [edited] }).state).toBe('failure');
+    expect(versionPr({ comments: [edited] })?.state).toBe('failure');
   });
 
   test('an admin comment edited by a non-admin falls back to the earlier admin record', () => {
     const earlier = comment();
-    const edited = comment(body([1]), { edited: true, editorAdmin: false });
+    const edited = comment(body([1]), { editorAdmin: false });
     expect(selectRecord([earlier, edited])).toBe(earlier);
-    expect(versionPr({ comments: [earlier, edited] }).state).toBe('success');
-  });
-
-  test('an admin comment edited by an admin counts', () => {
-    expect(versionPr({ comments: [comment(body(), { edited: true, editorAdmin: true })] }).state).toBe('success');
+    expect(versionPr({ comments: [earlier, edited] })?.state).toBe('success');
   });
 
   test('a deleted record leaves no record, so the PR fails', () => {
-    const other = { body: 'LGTM', authorAdmin: true, edited: false, editorAdmin: false };
-    expect(versionPr({ comments: [other] }).state).toBe('failure');
+    const other = { body: 'LGTM', authorAdmin: true, editorAdmin: true };
+    expect(versionPr({ comments: [other] })?.state).toBe('failure');
+  });
+});
+
+describe('the last editor', () => {
+  const node = (editors: (string | null)[]) => ({
+    author: { login: 'miguelramos' },
+    userContentEdits: { nodes: editors.map((login) => ({ editor: login === null ? null : { login } })) },
+  });
+
+  test('a comment never edited falls back to its author', () => {
+    expect(lastEditor(node([]))).toBe('miguelramos');
+  });
+
+  test('an admin edit followed by a non-admin edit gives the non-admin, the newest entry', () => {
+    expect(lastEditor(node(['stranger', 'miguelramos']))).toBe('stranger');
+  });
+
+  test('a non-admin edit followed by an admin edit gives the admin', () => {
+    expect(lastEditor(node(['miguelramos', 'stranger']))).toBe('miguelramos');
+  });
+
+  test('an edit by a deleted account gives no editor', () => {
+    expect(lastEditor(node([null, 'miguelramos']))).toBeNull();
   });
 });
 
@@ -261,4 +304,39 @@ test('the description names every problem and stays within the 140 characters Gi
   expect(result.state).toBe('failure');
   expect(result.description.length).toBeLessThanOrEqual(140);
   expect(result.description.startsWith(`cites a run outside ${REPO}; no snapshot-deploy run`)).toBe(true);
+});
+
+describe('posting only on change', () => {
+  const status = (state: string, description: string, login = 'github-actions[bot]', context = 'release-records') => ({
+    context,
+    state,
+    description,
+    creator: { login },
+  });
+  const SUCCESS = { state: 'success', description: 'Not a Version PR' };
+
+  test('the newest own release-records status is the current one', () => {
+    const statuses = [
+      status('success', 'other context', 'github-actions[bot]', 'checks'),
+      status('failure', 'no snapshot-deploy run'),
+      status('success', 'Not a Version PR'),
+    ];
+    expect(currentStatus(statuses)).toEqual({ state: 'failure', description: 'no snapshot-deploy run' });
+  });
+
+  test('a status posted by anyone else never counts', () => {
+    expect(currentStatus([status('success', 'Not a Version PR', 'miguelramos')])).toBeNull();
+  });
+
+  test('an unchanged status is not posted again', () => {
+    expect(needsPost(SUCCESS, currentStatus([status('success', 'Not a Version PR')]))).toBe(false);
+  });
+
+  test.each([
+    ['no status yet', null],
+    ['another state', { state: 'failure', description: 'Not a Version PR' }],
+    ['another description', { state: 'success', description: 'Records cite runs on main 6c94403' }],
+  ])('%s is posted', (_label, current) => {
+    expect(needsPost(SUCCESS, current)).toBe(true);
+  });
 });

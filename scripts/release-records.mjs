@@ -7,15 +7,17 @@
  *
  *   PR_NUMBER=<n> GITHUB_TOKEN=<token> GITHUB_REPOSITORY=<owner/repo> bun run scripts/release-records.mjs
  *
- * A PR that is not the Version PR gets `success`. The Version PR gets `success` only when its record, the
- * latest marker comment by an admin and last edited by an admin, cites one passing `workflow_dispatch` run on
- * the `main` tip of each release-time workflow and carries the Anthropic live-call line. Every fact comes from
- * the GitHub API; `evaluate` turns the facts into the status and does no I/O.
+ * A PR that is not the Version PR gets `success`, or no status at all when its head sha is the Version PR's,
+ * because a status belongs to the sha. The Version PR gets `success` only when its record, the latest marker
+ * comment whose author and last editor are admins, cites one passing `workflow_dispatch` run on the `main` tip
+ * of each release-time workflow and carries the Anthropic live-call line. Every fact comes from the GitHub API;
+ * `evaluate` turns the facts into the status and does no I/O. A run posts only when the status changes.
  */
 
 export const STATUS_CONTEXT = 'release-records';
 export const MARKER = '<!-- line-ui:release-records -->';
 export const VERSION_PR_REF = 'changeset-release/main';
+export const STATUS_CREATOR = 'github-actions[bot]';
 
 /** The release-time workflows a record cites, in the order the description names them. */
 export const WORKFLOWS = [
@@ -34,16 +36,25 @@ export function isVersionPr(pr, repository) {
 }
 
 /**
- * The latest marker comment whose author is an admin and whose last editor, if it was edited, is an admin.
- * Other marker comments are skipped, so a stranger's comment can neither be the record nor hide it.
- * @param {Array<{ body: string, authorAdmin: boolean, edited: boolean, editorAdmin: boolean }>} comments
- *   in creation order
+ * The login of a comment's last editor. GraphQL lists `userContentEdits` newest first, so the first entry is
+ * the last edit; a comment that was never edited falls back to its author.
+ * @param {{ author: { login: string } | null, userContentEdits: { nodes: Array<{ editor: { login: string } | null }> } }} node
+ */
+export function lastEditor(node) {
+  const edit = node.userContentEdits.nodes[0];
+  return (edit ? edit.editor?.login : node.author?.login) ?? null;
+}
+
+/**
+ * The latest marker comment whose author and last editor are admins. Other marker comments are skipped, so a
+ * stranger's comment can neither be the record nor hide it.
+ * @param {Array<{ body: string, authorAdmin: boolean, editorAdmin: boolean }>} comments in creation order
  */
 export function selectRecord(comments) {
   for (let i = comments.length - 1; i >= 0; i--) {
     const comment = comments[i];
     if (!comment.body.includes(MARKER)) continue;
-    if (comment.authorAdmin && (!comment.edited || comment.editorAdmin)) return comment;
+    if (comment.authorAdmin && comment.editorAdmin) return comment;
   }
   return null;
 }
@@ -130,21 +141,35 @@ function describe(problems) {
 }
 
 /**
- * The status for one PR.
+ * The status for one PR, or `null` when the PR must get no status.
  * @param {{
  *   repository: string,
- *   pr: { headRef: string, headRepo: string | null },
+ *   pr: { headRef: string, headRepo: string | null, headSha: string },
+ *   versionPrShas?: string[],
  *   mainSha?: string,
- *   comments?: Array<{ body: string, authorAdmin: boolean, edited: boolean, editorAdmin: boolean }>,
+ *   comments?: Array<{ body: string, authorAdmin: boolean, editorAdmin: boolean }>,
  *   runs?: Record<number, { path: string, status?: string, conclusion: string | null, event: string,
  *     head_branch: string, head_sha: string, display_title: string } | null>,
  *   versions?: { head: string | null, base: string | null },
- * }} facts `runs` holds every run the record cites, `null` for one the API does not find; `versions` holds
- *   the `line-components` version at the Version PR head and at the base sha
- * @returns {{ state: 'success' | 'failure', description: string }}
+ * }} facts `versionPrShas` holds the `changeset-release/main` tip and the head sha of each open PR from it;
+ *   `runs` holds every run the record cites, `null` for one the API does not find; `versions` holds the
+ *   `line-components` version at the Version PR head and at the base sha
+ * @returns {{ state: 'success' | 'failure', description: string } | null}
  */
-export function evaluate({ repository, pr, mainSha = '', comments = [], runs = {}, versions = {} }) {
-  if (!isVersionPr(pr, repository)) return { state: 'success', description: 'Not a Version PR' };
+export function evaluate({
+  repository,
+  pr,
+  versionPrShas = [],
+  mainSha = '',
+  comments = [],
+  runs = {},
+  versions = {},
+}) {
+  if (!isVersionPr(pr, repository)) {
+    // A status on the Version PR's sha would stand for the Version PR, whichever PR posted it.
+    if (versionPrShas.includes(pr.headSha)) return null;
+    return { state: 'success', description: 'Not a Version PR' };
+  }
 
   const record = selectRecord(comments);
   if (!record) return { state: 'failure', description: 'No admin comment carries the release-records marker' };
@@ -158,6 +183,21 @@ export function evaluate({ repository, pr, mainSha = '', comments = [], runs = {
 
   if (problems.length > 0) return { state: 'failure', description: describe(problems) };
   return { state: 'success', description: `Records cite runs on main ${mainSha.slice(0, 7)}` };
+}
+
+/**
+ * The latest `release-records` status this workflow posted, from a sha's statuses listed newest first, or
+ * `null`. A status anyone else posted never counts.
+ * @param {Array<{ context: string, state: string, description: string | null, creator: { login: string } | null }>} statuses
+ */
+export function currentStatus(statuses) {
+  const own = statuses.find((s) => s.context === STATUS_CONTEXT && s.creator?.login === STATUS_CREATOR);
+  return own ? { state: own.state, description: own.description ?? '' } : null;
+}
+
+/** True when `result` differs from the status already on the sha, so a repeat costs no write. */
+export function needsPost(result, current) {
+  return current === null || current.state !== result.state || current.description !== result.description;
 }
 
 function env(name) {
@@ -199,7 +239,7 @@ const COMMENTS_QUERY = `query($owner: String!, $name: String!, $number: Int!, $a
   repository(owner: $owner, name: $name) {
     pullRequest(number: $number) {
       comments(first: 100, after: $after) {
-        nodes { body lastEditedAt author { login } editor { login } }
+        nodes { body author { login } userContentEdits(first: 1) { nodes { editor { login } } } }
         pageInfo { hasNextPage endCursor }
       }
     }
@@ -229,9 +269,23 @@ async function readComponentsVersion(gh, repository, ref) {
   return typeof version === 'string' && version !== '' ? version : null;
 }
 
+/** The `changeset-release/main` tip of this repository and the head sha of each open PR from that branch. */
+async function readVersionPrShas(gh, repository) {
+  const [owner] = repository.split('/');
+  const branch = await gh.request('GET', `/repos/${repository}/branches/${VERSION_PR_REF}`, { allow404: true });
+  const open = await gh.request(
+    'GET',
+    `/repos/${repository}/pulls?state=open&per_page=100&head=${encodeURIComponent(`${owner}:${VERSION_PR_REF}`)}`,
+  );
+  return [...(branch ? [branch.commit.sha] : []), ...open.map((p) => p.head.sha)];
+}
+
 async function gatherFacts(gh, repository, number, pr) {
   const facts = { repository, pr };
-  if (!isVersionPr(pr, repository)) return facts;
+  if (!isVersionPr(pr, repository)) {
+    facts.versionPrShas = await readVersionPrShas(gh, repository);
+    return facts;
+  }
 
   facts.mainSha = (await gh.request('GET', `/repos/${repository}/branches/main`)).commit.sha;
 
@@ -254,12 +308,10 @@ async function gatherFacts(gh, repository, number, pr) {
   facts.comments = [];
   for (const node of await readComments(gh, repository, number)) {
     const marked = node.body.includes(MARKER);
-    const edited = node.lastEditedAt !== null;
     facts.comments.push({
       body: node.body,
       authorAdmin: marked && (await isAdmin(node.author?.login)),
-      edited,
-      editorAdmin: marked && edited && (await isAdmin(node.editor?.login)),
+      editorAdmin: marked && (await isAdmin(lastEditor(node))),
     });
   }
 
@@ -291,13 +343,26 @@ async function main() {
       body: { state, description, context: STATUS_CONTEXT, target_url: targetUrl },
     });
 
+  // A failed evaluation posts `failure`, so no earlier `success` stays on the head sha. It posts nothing on a
+  // PR whose head may be the Version PR's sha until `evaluate` has ruled that out.
+  let mayPost = isVersionPr(pr, repository);
   try {
-    const { state, description } = evaluate(await gatherFacts(gh, repository, number, pr));
-    await post(state, description);
-    console.info(`${STATUS_CONTEXT}: PR #${number} ${pr.headSha} → ${state}: ${description}`);
+    const result = evaluate(await gatherFacts(gh, repository, number, pr));
+    if (result === null) {
+      console.info(`${STATUS_CONTEXT}: PR #${number} ${pr.headSha} is the Version PR's head; no status`);
+      return;
+    }
+    mayPost = true;
+
+    const statuses = await gh.request('GET', `/repos/${repository}/commits/${pr.headSha}/statuses?per_page=100`);
+    if (!needsPost(result, currentStatus(statuses))) {
+      console.info(`${STATUS_CONTEXT}: PR #${number} ${pr.headSha} already ${result.state}: ${result.description}`);
+      return;
+    }
+    await post(result.state, result.description);
+    console.info(`${STATUS_CONTEXT}: PR #${number} ${pr.headSha} → ${result.state}: ${result.description}`);
   } catch (err) {
-    // An evaluation that fails must not leave an earlier `success` standing on the head sha.
-    await post('failure', 'Evaluation failed; see the workflow run').catch(() => {});
+    if (mayPost) await post('failure', 'Evaluation failed; see the workflow run').catch(() => {});
     throw err;
   }
 }
