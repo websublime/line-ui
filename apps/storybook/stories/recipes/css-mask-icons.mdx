@@ -35,7 +35,7 @@ The slotted `<span>` is light DOM: it stays a child of `<line-button>` in your d
 
 Two ways put an icon on the element:
 
-- **A class.** `.icon` (with `--icon`), `.icon-start` (with `--icon-start`) and `.icon-end` (with `--icon-end`) paint the pseudo-element in every browser with CSS masks. Use a class wherever the icon is essential, such as in an icon-only control.
+- **A class.** `.icon` (with `--icon`), `.icon-start` (with `--icon-start`) and `.icon-end` (with `--icon-end`) paint the pseudo-element without container style queries, in any browser with unprefixed `mask` and unprefixed `image-set()`: Chrome and Edge 120, Firefox 89, Safari 17. Use a class wherever the icon is essential, such as in an icon-only control.
 - **The property alone.** Any element that sets `--icon-start` or `--icon-end` gets the icon through a container style query, `@container style(--icon-start)`. A browser without style queries shows no icon.
 
 The stories resolve each file against the document's base URL and declare the absolute URL, because the Storybook previews deploy under a sub-path. In your app, use root-relative URLs, absolute URLs or `data:` URIs (see "Relative URLs" under Limits).
@@ -100,7 +100,7 @@ The icon is a mask, and a mask reads only the alpha channel. A glyph paints in o
 
 ### Container style queries and the class fallback
 
-The property-alone path depends on container style queries. They are Baseline 2026: Firefox shipped them last, in May 2026. Chromium, Firefox and WebKit run them in this repository's browser tests. A browser without them shows no icon for an element that sets only `--icon-start` or `--icon-end`. The classes `.icon`, `.icon-start` and `.icon-end` need only CSS masks; use them where the icon carries meaning.
+The property-alone path depends on container style queries. They are Baseline 2026: Firefox shipped them last, in May 2026. Chromium, Firefox and WebKit run them in this repository's browser tests. A browser without them shows no icon for an element that sets only `--icon-start` or `--icon-end`. The classes `.icon`, `.icon-start` and `.icon-end` do without style queries but still need unprefixed `mask` (Chrome 120, Firefox 53, Safari 15.4) for the glyph and unprefixed `image-set()` (Chrome 113, Firefox 89, Safari 17) in `content`, so they paint from Chrome and Edge 120, Firefox 89 and Safari 17. In Safari 15.4 to 16, which have `mask` but not unprefixed `image-set()`, `content` is invalid and the class paints nothing. In Chrome 113 to 119, which have `image-set()` but only the prefixed `-webkit-mask`, the box is generated without its mask, so it shows as a filled square. Use the classes where the icon carries meaning.
 
 ### WebKit bugs 301609, 320220 and 325900
 
