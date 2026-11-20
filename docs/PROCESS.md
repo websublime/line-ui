@@ -177,7 +177,7 @@ Gates are proportional to the class. A phase is not locked until its gate passes
   opens it with `gh pr create`; **Miguel merges**.
 - **A Version PR merges only with the `release-records` status green.** Its record comment follows the phase
   spec §7.2 contract (Phase 1 spec AM-114). A regenerated Version PR needs a fresh record comment that cites
-  runs on the new `main` tip.
+  runs on the new `main` tip. A fork PR gets its status once someone comments on it.
 - **Session end.** Branch pushed, ledger row current, nothing stranded locally.
 
 ## 7. Language, clarity, artifacts
