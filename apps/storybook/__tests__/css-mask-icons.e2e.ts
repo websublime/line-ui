@@ -202,7 +202,8 @@ test('hovering the host swaps the glyph through --icon-hover', async ({ page }) 
   await page.locator('#storybook-root line-button').hover();
   await expect.poll(maskImage).toContain('/icons/lucide/plus.svg');
   const [hovered] = await iconPaints(page);
-  if (hovered) expectPainted({ ...hovered, glyph: 'plus' });
+  expect(hovered, 'the hover-swap icon element').toBeDefined();
+  expectPainted({ ...(hovered as IconPaint), glyph: 'plus' });
   await expectFilesLoaded(files, ['star', 'plus']);
 
   await page.mouse.move(0, 0);
@@ -217,7 +218,8 @@ test('a missing token paints nothing and reports nothing', async ({ page }) => {
   expect(missing?.boxWidth).toBe(0);
   // The button beside it paints the same way with a declared token.
   const [declared] = await iconPaints(page);
-  if (declared) expectPainted(declared);
+  expect(declared, 'the declared-token icon element').toBeDefined();
+  expectPainted(declared as IconPaint);
   expect(errors, 'console errors and uncaught exceptions').toEqual([]);
 });
 
@@ -242,8 +244,24 @@ test('only WebKit runs the 301609 workaround animation, on each icon pseudo-elem
     const painted = ['check ::before', 'plus ::before', 'refresh-cw ::after', 'settings ::after'];
     await expect.poll(seen).toEqual(expect.arrayContaining(painted));
   } else {
-    const [icon] = await iconPaints(page);
-    expect(icon?.painted).toEqual(['::before']);
+    // The workaround sits behind a WebKit-only @supports test, so no icon pseudo-element declares the animation.
+    const icons = await iconPaints(page);
+    expect(icons).toHaveLength(4);
+    for (const icon of icons) expectPainted(icon);
+    const names = await page
+      .locator('#storybook-root [data-mask-icon]')
+      .evaluateAll((elements) =>
+        elements.flatMap((element) =>
+          ['::before', '::after'].map((pseudo) => getComputedStyle(element, pseudo).animationName),
+        ),
+      );
+    expect(names).toEqual(Array(8).fill('none'));
+    // A 0s animation that had started fires animationend by the next frame; wait two to be past it.
+    await page.evaluate(() => {
+      const { promise, resolve } = Promise.withResolvers<void>();
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+      return promise;
+    });
     expect(await seen()).toEqual([]);
   }
 });
