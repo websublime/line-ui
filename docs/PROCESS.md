@@ -175,6 +175,8 @@ Gates are proportional to the class. A phase is not locked until its gate passes
   `<NN>-<ID> — <task title>`, body with Understand (class, write-back), Decisions, Deviations and AM rows,
   Verify (the record, the reviewer verdict, which agents ran), Ledger (row change). `git-workflow-manager`
   opens it with `gh pr create`; **Miguel merges**.
+- **A Version PR merges only with the `release-records` status green.** Its record comment follows the phase
+  spec §7.2 contract (Phase 1 spec AM-114).
 - **Session end.** Branch pushed, ledger row current, nothing stranded locally.
 
 ## 7. Language, clarity, artifacts
