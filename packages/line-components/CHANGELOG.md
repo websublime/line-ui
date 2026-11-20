@@ -1,5 +1,11 @@
 # @websublime/line-components
 
+## 0.2.7
+
+### Patch Changes
+
+- [#357](https://github.com/websublime/line-ui/pull/357) [`1f911a0`](https://github.com/websublime/line-ui/commit/1f911a0c3855772dbce57d960fe559df89bdd046) Thanks [@miguelramos](https://github.com/miguelramos)! - `<line-kbd>` draws the Apple Return key `↩` as a text glyph, where Chromium and Firefox on macOS drew it as a colour emoji.
+
 ## 0.2.6
 
 ### Patch Changes
