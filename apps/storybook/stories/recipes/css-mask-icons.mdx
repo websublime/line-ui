@@ -1,0 +1,136 @@
+import { Canvas, Meta, Source } from '@storybook/addon-docs/blocks';
+import { HOVER_CSS, ICON_TOKENS_CSS, WEBKIT_KEYFRAMES_CSS } from './css-mask-icons';
+import * as MaskIconStories from './css-mask-icons.stories';
+
+<Meta of={MaskIconStories} />
+
+# CSS mask icons
+
+A line://ui component takes its icons through slots: Button `prefix` and `suffix`, the IconButton default slot, Chip `prefix`, `suffix` and `indicator`, and the Alert `icon` slot. The component draws nothing in the slot, so the slot takes `<line-icon>`, an inline `<svg>`, "or anything else" (ARCHITECTURE §11). This recipe fills the slots with CSS mask icons, the technique of Lea Verou's [The best way to use icons in Web UIs](https://lea.verou.me/blog/2026/icons/) (2026-10-11), with her icon system CSS, [`@nudeui/icons`](https://www.npmjs.com/package/@nudeui/icons) (0.0.3 here, MIT). No line://ui component changes, and line://ui ships nothing for it: the recipe is CSS your app owns.
+
+## How it works
+
+- **Icons are tokens.** Each icon is a custom property on `:root`, such as `--icon-plus`, that holds the URL of an SVG file or the SVG itself as a `data:` URI.
+- **An element asks for one.** `--icon-start` paints an icon in the element's `::before`, `--icon-end` in its `::after`. On an element with the `.icon` class, `--icon` does the same as `--icon-start`.
+- **A pseudo-element paints it.** `@nudeui/icons` makes that pseudo-element a square of `--icon-style-size` (default `1em`) filled with `--icon-style-color` (default `currentColor`), and masks the square with the icon. So the glyph takes the text colour and the font size of where it sits.
+- **No icon, no box.** The pseudo-element's `content` is `image-set(…, var(--icon-start))`. When the property is unset, `content` is invalid and computes to `none`, so the pseudo-element does not exist.
+
+## The recipe for line://ui slots
+
+1. Load `@nudeui/icons` into the document, as `import '@nudeui/icons'` from a bundled module (these stories do) or as a `<link>` to its `icons.css`.
+2. Declare the icon tokens on `:root`. These are the recipe's tokens, with root-relative URLs, and with `--icon-check` embedded as a `data:` URI:
+
+<Source language="css" code={ICON_TOKENS_CSS} />
+
+3. Put an empty element in the slot and give it an icon:
+
+```html
+<line-button variant="primary">
+  <span slot="prefix" class="icon" style="--icon: var(--icon-plus)"></span>
+  Add item
+</line-button>
+```
+
+The slotted `<span>` is light DOM: it stays a child of `<line-button>` in your document, and the component's shadow root only shows it in the `prefix` slot. So the document's CSS styles the span and its `::before`, and the glyph renders where the slot is.
+
+Two ways put an icon on the element:
+
+- **A class.** `.icon` (with `--icon`), `.icon-start` (with `--icon-start`) and `.icon-end` (with `--icon-end`) paint the pseudo-element in every browser with CSS masks. Use a class wherever the icon is essential, such as in an icon-only control.
+- **The property alone.** Any element that sets `--icon-start` or `--icon-end` gets the icon through a container style query, `@container style(--icon-start)`. A browser without style queries shows no icon.
+
+The stories resolve each file against the document's base URL and declare the absolute URL, because the Storybook previews deploy under a sub-path. In your app, use root-relative URLs, absolute URLs or `data:` URIs (see "Relative URLs" under Limits).
+
+## Examples
+
+### Button prefix and suffix
+
+The prefix glyphs use `.icon` and `--icon`. The **Refresh** suffix sets `--icon-end` alone, through the style query; the **Settings** suffix adds `.icon-end`. Each glyph takes its button's text colour, so it follows the variant.
+
+<Canvas of={MaskIconStories.ButtonPrefixAndSuffix} sourceState="shown" />
+
+### IconButton, icon only
+
+The glyph is decorative: the pseudo-element has no text, so it adds nothing to the accessible name. The host `aria-label` names each button, as it does with `<line-icon>`.
+
+<Canvas of={MaskIconStories.IconButtonIconOnly} sourceState="shown" />
+
+### Chip prefix, suffix and indicator
+
+The check in `indicator` shows only while the chip is pressed, because the chip renders that slot only then. The check is the `data:` URI token.
+
+<Canvas of={MaskIconStories.ChipSlots} sourceState="shown" />
+
+### Alert icon
+
+The alert's variant sets its text colour, and the glyph follows it.
+
+<Canvas of={MaskIconStories.AlertIcon} sourceState="shown" />
+
+### Swap on hover
+
+The recipe adds one rule, the article's `--icon-hover` redirect, aimed at the slotted element: while the host is hovered, a slotted `.icon` that sets `--icon-hover` shows that icon instead of `--icon`. Hover **Add to favourites** to see the star turn into a plus.
+
+<Source language="css" code={HOVER_CSS} />
+
+<Canvas of={MaskIconStories.HoverSwap} sourceState="shown" />
+
+### Size
+
+`--icon-style-size` sets the square's side and inherits, so setting it on the host sizes the glyph in the slot. These IconButtons set `1em` (the default), `1.25em` and `1.5em`.
+
+<Canvas of={MaskIconStories.Size} sourceState="shown" />
+
+### A missing token
+
+The second button asks for `--icon-does-not-exist`, which no rule declares. Its prefix paints nothing, and nothing reports it: no console message, no event, no error. See "No error for a missing token" under Limits.
+
+<Canvas of={MaskIconStories.MissingToken} sourceState="shown" />
+
+## Accessibility
+
+- **Decorative by default.** The pseudo-element has no text, so assistive technology ignores it and the slotted element adds nothing to the component's name. A Button or Chip keeps the name its label gives it.
+- **Name an icon-only control.** Set `aria-label` on the `<line-icon-button>` host, which copies it to the native button inside. The article also names a control through alternative text on `content`; `@nudeui/icons` 0.0.3 sets no alternative text, so the host `aria-label` is the way here.
+- **Forced colours.** The pseudo-element sets `forced-color-adjust: none`, so the mask keeps its fill, and `currentColor` takes the forced text colour.
+
+## Limits
+
+### Monochrome glyphs only
+
+The icon is a mask, and a mask reads only the alpha channel. A glyph paints in one colour, `--icon-style-color` or `currentColor`; partial opacity survives, other colours in the SVG do not. A multi-colour icon needs another technique: an inline `<svg>`, an `<img>`, or `<line-icon>`.
+
+### Container style queries and the class fallback
+
+The property-alone path depends on container style queries. They are Baseline 2026: Firefox shipped them last, in May 2026. Chromium, Firefox and WebKit run them in this repository's browser tests. A browser without them shows no icon for an element that sets only `--icon-start` or `--icon-end`. The classes `.icon`, `.icon-start` and `.icon-end` need only CSS masks; use them where the icon carries meaning.
+
+### WebKit bugs 301609, 320220 and 325900
+
+`@nudeui/icons` ships a workaround for each, behind a WebKit `@supports` test, so other engines never see them:
+
+```css
+@supports ((-webkit-nbsp-mode: normal) or (-webkit-touch-callout: none) or (font: -apple-system-body))
+  and (content-visibility: auto) {
+  /* … */
+}
+```
+
+- [Bug 301609](https://bugs.webkit.org/show_bug.cgi?id=301609): a style-query icon does not show until the user interacts with the element. The workaround gives every `::before` and `::after` a zero-duration animation, `animation: webkit-301609 0s` in the `webkit-301609-fix` cascade layer, which makes WebKit resolve the style again against the right container. The article reports that it also fixes [bug 320220](https://bugs.webkit.org/show_bug.cgi?id=320220). Because the layer loses to unlayered rules, your own `animation` on those pseudo-elements turns the workaround off for them. In WebKit the animation runs on the `::before` and `::after` of every rendered element the document's styles reach, whether or not the pseudo-element generates a box, and each fires animation events such as `animationend` (with `pseudoElement` set) that a document-level listener sees.
+- [Bug 325900](https://bugs.webkit.org/show_bug.cgi?id=325900): `inherit` on a non-inheriting registered property is unreliable, which breaks a swap that sets `--icon-start` directly, such as the hover rule above. The workaround registers `--icon-start` and `--icon-end` again as inheriting (the last registration wins) and resets them on descendants inside `@container style(…)` rules in the `webkit-325900-fix` layer.
+- **Keep the empty keyframes.** The 301609 workaround animates with `@keyframes webkit-301609 {}`. A minifier that drops empty rules removes it, and the animation then runs nothing. cssnano's `discardEmpty` does: this repository's PostCSS chain runs it on Storybook's CSS, so these stories declare the keyframes again in the `<style>` that holds the tokens:
+
+<Source language="css" code={WEBKIT_KEYFRAMES_CSS} />
+
+### Shadow roots
+
+Registered properties are ignored in shadow-root styles ([csswg-drafts #10541](https://github.com/w3c/csswg-drafts/issues/10541)). Loaded inside a shadow root, `@nudeui/icons` would leave `--icon-start` unregistered and so inheriting, and every descendant of an icon element would grow an icon. So the system CSS lives in the document, and the icon element lives in the document's light DOM, as a slotted child of the line://ui host. An app that renders line://ui inside its own shadow root cannot scope the icon system there.
+
+### Relative URLs
+
+A relative URL in a token resolves against the stylesheet that uses the token, not the one that declares it. The tokens are used in the `mask` declaration of `@nudeui/icons`, which the build emits under `assets/`, so `url("./icons/lucide/x.svg")` declared on the page resolves to `assets/icons/lucide/x.svg` in Chromium, Firefox and WebKit alike. Use root-relative URLs, absolute URLs or `data:` URIs.
+
+### No error for a missing token
+
+`var(--icon-…)` with a name that no rule declares is invalid at computed-value time, so the pseudo-element disappears. The page shows a gap, and nothing tells you: no console message, no event, no failing style. That is fine for a page you author and review, and wrong for the agent path, where an agent names icons at run time. There, keep `<line-icon>` with the `<line-a2ui-surface>` `iconMap`: an Icon name that is not in `iconMap` raises `line-a2ui-error` with the code `UNMAPPED_ICON`, which your transport can send back to the agent (see [Agent-driven UI](?path=/docs/agent-driven-ui--docs)).
+
+### `<line-icon>` has no mask mode
+
+[`<line-icon>`](?path=/docs/components-icon--docs) gains no mask mode. It keeps rendering the SVG its registry resolves. CSS mask icons are a consumer technique for the slots, not a line://ui feature.
