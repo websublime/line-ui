@@ -1,4 +1,5 @@
 name: cdn-check
+run-name: cdn-check line-components@${{ inputs.line-components-version }}  # AM-114: release-records reads the tested version from display_title
 on:                                            # 01-C22: CDN-backed specs run on demand, never on pull_request
   workflow_dispatch:
     inputs:                                    # AM-105, AM-106: exact versions to test; empty = resolved by cdn.e2e.ts
