@@ -4,11 +4,11 @@
 |-------|-------|
 | Status | `approved` (Miguel, 2026-11-10) |
 | Phase | `1` |
-| Tier | `Static` (Phase 1 spec §6.C.4 C9 row, `docs/specs/01-spec-core-primitives.md:1165`; PRD §4.1, `docs/PRD.md:252`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
+| Tier | `Static` (Phase 1 spec §6.C.4 C9 row, `docs/specs/01-spec-core-primitives.md:1165`; PRD §4.1, `docs/PRD.md:253`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-badge` |
 | Entrypoint | `@websublime/line-components/badge` (Phase 1 spec §4.2, `:248`, `:297`; §10 SD12, `:2359`) |
 | Form-associated | `no` (Phase 1 spec §6.C.4 C9 row) |
-| PRD catalogue entry | PRD §4.1, `Badge` row (`docs/PRD.md:252`) |
+| PRD catalogue entry | PRD §4.1, `Badge` row (`docs/PRD.md:253`) |
 | Ledger row | `01-C9` (`docs/plans/01-tasks-core-primitives.md:55`) |
 | Governing sections | Phase 1 spec §4 (file classes `:134-154`; `:248`, `:297`), §6.C.0, §6.C.4 (C9 row and notes), §6.C.6, §6.G.1, §6.G.3, §6.G.4 (Accessibility), §6.G.5, §7.4, §7.8, §10 SD12, SD34, SD37, SD38, SD39, SD98, SD99, §12 AM-058, AM-067, AM-086, AM-092; ARCH (v0.8.26) §2, §3, §5, §8, §12, §13.2, §14.3, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8, §9.3; MANIFESTO Laws 1–4, 9, Out of Scope; R8 §2.2 |
 
@@ -121,7 +121,7 @@ The count of the plain, internals `status` and internals `ariaLive` hosts change
 
 #### Description
 
-`<line-badge>` is a small, non-interactive status marker: a count such as "5", a short label such as "Beta", or a dot with no text (PRD §4.1, `docs/PRD.md:252`). The consumer writes the count or the label as text in its default slot, and a badge with an empty slot draws as a dot (F1). The component does not cap or format numbers; a consumer who wants "99+" writes "99+" (F3). It has no role, so assistive technology reads its text in place and as part of the name of a control around it (R8 `:70`; probe P1). A dot is hidden from assistive technology unless the host carries an `aria-label`, which makes it an `img` with that name, as Icon does (F4; `0014-icon.md` decision D1). A `variant` gives it the tone of one of the theme's semantic roles, the same five tones Alert uses (F6), drawn as a soft fill for a count or a label and a solid fill for a dot (F7, AM-001). It sits inline where the consumer puts it; overlapping the corner of an avatar or an icon is the job of that component's slot or of consumer CSS (F8). It holds no state, takes no focus and fires no event (ARCH §8, `docs/ARCHITECTURE.md:410`).
+`<line-badge>` is a small, non-interactive status marker: a count such as "5", a short label such as "Beta", or a dot with no text (PRD §4.1, `docs/PRD.md:253`). The consumer writes the count or the label as text in its default slot, and a badge with an empty slot draws as a dot (F1). The component does not cap or format numbers; a consumer who wants "99+" writes "99+" (F3). It has no role, so assistive technology reads its text in place and as part of the name of a control around it (R8 `:70`; probe P1). A dot is hidden from assistive technology unless the host carries an `aria-label`, which makes it an `img` with that name, as Icon does (F4; `0014-icon.md` decision D1). A `variant` gives it the tone of one of the theme's semantic roles, the same five tones Alert uses (F6), drawn as a soft fill for a count or a label and a solid fill for a dot (F7, AM-001). It sits inline where the consumer puts it; overlapping the corner of an avatar or an icon is the job of that component's slot or of consumer CSS (F8). It holds no state, takes no focus and fires no event (ARCH §8, `docs/ARCHITECTURE.md:410`).
 
 #### Use cases
 
@@ -135,7 +135,7 @@ The count of the plain, internals `status` and internals `ariaLive` hosts change
 
 - A message that needs a sentence, a title or actions. Use `<line-alert>` (`0006-alert.md`).
 - An option the user turns on or off, such as a filter. Use `<line-chip>` (`0008-chip.md`).
-- A removable tag, such as an entered email address. Tag Input covers it (PRD §4.5, `docs/PRD.md:331`).
+- A removable tag, such as an entered email address. Tag Input covers it (PRD §4.5, `docs/PRD.md:332`).
 - A badge as the only carrier of meaning through colour, such as a red dot with no name and no nearby text. WCAG 1.4.1 forbids colour as the only means (MANIFESTO Law 3, `docs/MANIFESTO.md:43`); state the meaning in words or name the dot (F4).
 - A clickable badge. Badge takes no focus and handles no key; put it inside a `<line-button>` or a link instead.
 - A count that must be heard when it changes, with no other route. Badge announces nothing by default; follow the live-region recipe of F2 or announce the change from the page.
@@ -144,7 +144,7 @@ The count of the plain, internals `status` and internals `ariaLive` hosts change
 
 - The badge reads as text where it sits; a count inside a button is read with the button's label, such as "Inbox 5" (probe P1).
 - A dot that carries meaning has a spoken name; a dot that only repeats nearby text is silent (F4).
-- The tone follows meaning and stays the same whatever the accent, because the semantic roles are fixed at the root (PRD §9.3, `docs/PRD.md:1327`).
+- The tone follows meaning and stays the same whatever the accent, because the semantic roles are fixed at the root (PRD §9.3, `docs/PRD.md:1328`).
 - The badge never takes focus and never moves focus.
 - Consumer CSS on `line-badge` and `::part(root)` overrides every visual default (ARCH §4).
 
@@ -429,7 +429,7 @@ A `line` catalog node the surface renders as the second example, with the count 
 | Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the CEM coverage and drift tests pass with the new descriptor (Phase 1 spec §6.G.5); `catalog.json` holds `Badge` and its inline projection validates (§6.G.2); the `Badge` tool takes the tool description, stays at or under 1024 characters, and carries `label`, `variant`, `accessibilityLabel` and `accessibilityDescription` (§6.G.3) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./badge` register `line-badge` only, and the isolation scan finds no other component's module in its bundle (Phase 1 spec §7.5) |
 
-- PRD §5.2 checklist mapping (`docs/PRD.md:515`; Phase 1 spec §6.C.6, `:1222`): render, reactive props, slots, parts, custom properties and events (none fired) run in the Unit tier, keyboard (Tab skips the host) in the Browser tier, and axe in the A11y tier.
+- PRD §5.2 checklist mapping (`docs/PRD.md:516`; Phase 1 spec §6.C.6, `:1222`): render, reactive props, slots, parts, custom properties and events (none fired) run in the Unit tier, keyboard (Tab skips the host) in the Browser tier, and axe in the A11y tier.
 - No update-rate measurement: Badge is not a machine row (Phase 1 spec §6.C.6, `:1232`).
 - The axe and visual tests run against the Storybook stories on port 4320; the story list lives in `packages/line-components/__tests__/badge-stories.ts`, as `button-stories.ts` does for Button. The CDP and token tests use fixture pages under `packages/line-components/__tests__/integration/badge/`, served by the existing port-4321 `webServer` (`playwright.config.ts`).
 - `line-colors` is not a `line-components` dependency, so the colour test sets the palette steps it reads on `html`, as Alert's does (`0006-alert.md` Tests).
@@ -475,7 +475,7 @@ Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option t
 
 ### F1 — Count, dot or label
 
-**Evidence.** The PRD row names three forms: "count, dot, or label variant" (`docs/PRD.md:252`). MANIFESTO Law 4 prefers slots over props for content (`docs/MANIFESTO.md:45`), and ARCH §2 lists badge among simple components, "single custom element with slots" (`docs/ARCHITECTURE.md:168`). C6 allows a variant to change only token defaults (`:1577`), so a form that hides content is not a C6 variant [INFERENCE]. Alert already decides emptiness from the slot (`alert.ts:240-261`; `0006-alert.md` D11). ARCH §14.8 lists `empty` as a reflectable state (`:1228`); no Static component reflects a flag yet (`0014-icon.md` default F9; `0006-alert.md` States). On the agent path the text binding writes a string, and an empty string leaves the slot empty (`projection.ts:161-166`).
+**Evidence.** The PRD row names three forms: "count, dot, or label variant" (`docs/PRD.md:253`). MANIFESTO Law 4 prefers slots over props for content (`docs/MANIFESTO.md:45`), and ARCH §2 lists badge among simple components, "single custom element with slots" (`docs/ARCHITECTURE.md:168`). C6 allows a variant to change only token defaults (`:1577`), so a form that hides content is not a C6 variant [INFERENCE]. Alert already decides emptiness from the slot (`alert.ts:240-261`; `0006-alert.md` D11). ARCH §14.8 lists `empty` as a reflectable state (`:1228`); no Static component reflects a flag yet (`0014-icon.md` default F9; `0006-alert.md` States). On the agent path the text binding writes a string, and an empty string leaves the slot empty (`projection.ts:161-166`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -528,7 +528,7 @@ Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option t
 
 ### F6 — Tones
 
-**Evidence.** Alert has `variant="neutral | info | success | warning | danger"`, `neutral` → gray (`0006-alert.md` Variants; `alert.ts:13`). PRD §9.3 has six roles, the four semantic ones fixed at the root plus `accent` and `gray` (`docs/PRD.md:1316-1325`). Chip uses `variant="default | primary"` for emphasis (`0008-chip.md` F4). The PRD row names no tone (`:252`).
+**Evidence.** Alert has `variant="neutral | info | success | warning | danger"`, `neutral` → gray (`0006-alert.md` Variants; `alert.ts:13`). PRD §9.3 has six roles, the four semantic ones fixed at the root plus `accent` and `gray` (`docs/PRD.md:1317-1326`). Chip uses `variant="default | primary"` for emphasis (`0008-chip.md` F4). The PRD row names no tone (`:253`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -599,3 +599,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | AM-004 | 2026-11-12 | ledger 01-C12 (factual correction — the C12 Browser tier passed with the shipped `<line-visually-hidden>`, as AM-003 and `0012-visually-hidden.md` Tests require) | In Part B Slots (`:216`), the `[INFERENCE]` on words in a `<line-visually-hidden>` joining an enclosing control's name is lifted, and the line names the native `<button>` and both `<line-button>` slots. In the Part A Connections `<line-button>` row (`:155`), the default slot joins `suffix` as proven and cites this AM, and the `<line-icon-button>` mark stays | AM-003 narrowed `:216` until the C12 Browser tier proved the case with the shipped element, and the `0012-visually-hidden.md` Tests bullet asks this AM to settle the Button default slot of `:155`, which probe P6 b7 did not probe | The Badge-case test of `packages/line-components/__tests__/integration/visually-hidden/visually-hidden.e2e.ts` reads `button "Inbox 5 unread messages"` through `ariaSnapshot()` for `#badge-native`, `#badge-line` (`suffix`) and `#badge-default` (default slot) in chromium, firefox and webkit. The same test finds the badge box the same with and without the hidden words. The Chromium CDP names test of that file reads `button:Inbox 5 unread messages` for all three. The run on 2026-11-12 on this branch, with `--repeat-each 2`, gave 100 passed and 8 skipped, the skips being the CDP tests outside chromium |
 | AM-005 | 2026-11-12 | ledger 01-C13 (decision — Miguel, 2026-11-12: PRD v0.8.33, Phase 1 spec AM-097; factual realignment) | Locators only, no design change. PRD: §4.1 Badge row `:252` (was `:251`), five times; §4.5 Tag Input row `:331` (was `:330`); §9.3 "Why semantic roles are fixed" `:1327` (was `:1326`); §5.2 heading `:515` (was `:514`); §9.3 role list `:1316-1325` (was `:1315-1324`). Amendment rows keep their locators as record | PRD v0.8.33 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.33) at `080cfde`; Phase 1 spec §12 AM-097 |
 | AM-006 | 2026-11-13 | ledger 01-Z9 (factual realignment — Miguel, 2026-11-13: components stories grouped by PRD §4 category, `docs/context/01-z9.md`) | Locators only, no design change. `avatar.stories.ts:121-123` (was `:120-122`), the Avatar story that shows the badge in the `status` slot, at `:411` and in D11 (`:469`). Amendment rows keep their locators as record | The `id:` line that 01-Z9 pins in each components stories meta moved every later line down by one (PROCESS §3, line locators follow the lines) | Commit `0f77015` (`chore(storybook): group components stories by PRD §4 category`) adds one meta line; checked by content against `main` at `4441f25`: `avatar.stories.ts` lines 121–123 hold the text that lines 120–122 held |
+| AM-007 | 2026-11-20 | ledger 01-Z10 (decision — Miguel, 2026-11-20: PRD v0.8.34, Phase 1 spec AM-113; factual realignment) | Locators only, no design change. PRD: §4.1 Badge row `:253` (was `:252`), five times; §4.5 Tag Input row `:332` (was `:331`); §9.3 "Why semantic roles are fixed" `:1328` (was `:1327`); §5.2 Testing Strategy heading `:516` (was `:515`); §9.3 role variables and roles table `:1317-1326` (was `:1316-1325`). Amendment rows keep their locators as record | PRD v0.8.34 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.34) on `chore/01-z10-release-time-records`; Phase 1 spec §12 AM-113 |
