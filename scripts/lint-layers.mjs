@@ -4,19 +4,19 @@
  * scripts/lint-layers.mjs — Layer-lint + prefix audit + colour-literal guard.
  *
  * Bun script (Node-compatible APIs only) invoked from CI per
- * docs/specs/00-spec-design-system.md §6.F.5 line 1330:
+ * docs/specs/00-spec-design-system.md (Phase 00 spec §6.F.5):
  *   - run: bun run scripts/lint-layers.mjs
  *
  * Three independent enforcers (all surfaced in a single run; non-zero exit if any fail):
  *
- *   1. DEPENDENCY GUARD (§6.B B3, lines 462-465):
+ *   1. DEPENDENCY GUARD (Phase 00 spec §6.B B3):
  *      For each `packages/<pkg>/package.json` and `apps/<app>/package.json`, read
- *      `dependencies` + `peerDependencies` (NOT `devDependencies` — see DECISION
- *      in bead line-ui-7qm.2.3 comments). For every `@websublime/*` edge,
+ *      `dependencies` + `peerDependencies` (NOT `devDependencies` — per Phase 00
+ *      spec §6.B B3, "dependencies + peerDependencies"). For every `@websublime/*` edge,
  *      verify the source package is in the allowed-edges table and that the
  *      target is in the source's allowed Set. Manifesto Law 10.
  *
- *   2. PREFIX AUDIT (§9.1 line 1644, Manifesto Law 2, PRD §9.14 T1):
+ *   2. PREFIX AUDIT (Phase 00 spec §9.1, Manifesto Law 2, PRD §9.14 T1):
  *      (a) Every published `name` field matches `^@websublime/line-[a-z][a-z0-9-]*$`.
  *      (b) Every `--*` CSS custom-property declaration emitted by
  *          line-tokens / line-colors / line-themes (src/ and dist/) is `--line-*` prefixed.
@@ -24,7 +24,7 @@
  *          (customElements.define / @customElement / createElement of a hyphenated
  *          tag) uses a `line-*` tag.
  *
- *   3. COLOUR-LITERAL GUARD (§7.5 line 1601 + §6.B line 569 + §10 D8 line 1776):
+ *   3. COLOUR-LITERAL GUARD (Phase 00 spec §7.4 + §6.C.2 + §10 D8):
  *      packages/line-tokens/src/{gradients,highlights,svg}.css MUST NOT contain
  *      literal hex / rgb / hsl / color() values. Allowed reference form:
  *      `var(--line-{hue}-{step})`. Missing files are skipped (Stream C C2 owns them).
@@ -70,7 +70,7 @@ const ALLOWED_EDGES = Object.freeze({
   'line-genui': new Set(['line-core', 'line-components', 'line-icons']),
 });
 
-// Packages where CSS custom-property prefix audit applies (§9.1 line 1644 (a)).
+// Packages where CSS custom-property prefix audit applies (Phase 00 spec §9.1).
 const CSS_PREFIX_PACKAGES = ['line-tokens', 'line-colors', 'line-themes'];
 
 // Files inside packages/line-tokens/src/ that must contain zero colour literals.
@@ -183,7 +183,7 @@ function checkDependencyEdges(manifest, manifestPath) {
   const rel = relative(REPO_ROOT, manifestPath);
 
   // Apps (private:true) are not in ALLOWED_EDGES — their devDeps are out of
-  // scope per spec §6.B B3 line 463 ("dependencies + peerDependencies").
+  // scope per Phase 00 spec §6.B B3 ("dependencies + peerDependencies").
   // Their `dependencies` + `peerDependencies` must still be empty of
   // @websublime/* OR explicitly handled below. apps/site has none; apps/storybook
   // declares @websublime/* only in devDependencies (allowed).
@@ -202,7 +202,7 @@ function checkDependencyEdges(manifest, manifestPath) {
       log.err(
         'dependency',
         `${rel}: app '${pkgName}' declares forbidden runtime edge ` +
-          `'${depName}' — apps may only reference @websublime/* in devDependencies (spec §3 line 88).`,
+          `'${depName}' — apps may only reference @websublime/* in devDependencies (Phase 00 spec §3).`,
       );
       continue;
     }
@@ -220,7 +220,7 @@ function checkDependencyEdges(manifest, manifestPath) {
       log.err(
         'dependency',
         `${rel}: package '${short}' is not in the allowed-edges table ` +
-          `(spec §6.B lines 449-460). Cannot declare edge to '${depName}'.`,
+          `(Phase 00 spec §6.B, Phase 1 spec §3.2). Cannot declare edge to '${depName}'.`,
       );
       continue;
     }
@@ -290,7 +290,7 @@ async function auditCssCustomProperties(packageShort) {
         log.err(
           'prefix',
           `${rel}: CSS custom property '${prop}' is not '--line-*' prefixed ` +
-            `(Manifesto Law 2, spec §9.1 line 1644).`,
+            `(Manifesto Law 2, Phase 00 spec §9.1).`,
         );
       }
     }
@@ -318,7 +318,7 @@ const TAG_PATTERNS = [
 ];
 
 function isTestFile(name, path) {
-  // Test conventions per spec §7.1: __tests__/ dirs, *.test.{ts,tsx,js,mjs},
+  // Test conventions per Phase 1 spec §7.8: __tests__/ dirs, *.test.{ts,tsx,js,mjs},
   // and tests/ dirs (browser tier).
   if (!/\.(ts|tsx|js|mjs|cjs)$/.test(name)) return false;
   if (/\.test\.[a-z]+$/.test(name)) return true;
@@ -336,7 +336,7 @@ function checkTagsInSource(source, fileRel) {
         log.err(
           'prefix',
           `${fileRel}: custom-element tag '${tag}' is not 'line-*' prefixed ` +
-            `(Manifesto Law 2, spec §9.1 line 1644).`,
+            `(Manifesto Law 2, Phase 00 spec §9.1).`,
         );
       }
     }
@@ -357,7 +357,7 @@ async function auditCustomElementTags() {
 /* --------------------------------------------------------------------------
  * Enforcer 3: Colour-literal guard.
  *
- * Scope (spec §7.5 line 1601 + §6.B line 569):
+ * Scope (Phase 00 spec §7.4 + §6.C.2):
  *   packages/line-tokens/src/gradients.css
  *   packages/line-tokens/src/highlights.css
  *   packages/line-tokens/src/svg.css
@@ -521,7 +521,7 @@ async function auditColourLiterals() {
       log.err(
         'colour',
         `${rel}:${line}: forbidden colour literal (${name}) — '${snippet}'. ` +
-          `Decorative families must reference 'var(--line-{hue}-{step})' (spec §6.B line 569).`,
+          `Decorative families must reference 'var(--line-{hue}-{step})' (Phase 00 spec §7.4, §6.C.2).`,
       );
     }
   }
