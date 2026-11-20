@@ -70,7 +70,7 @@ const ALLOWED_EDGES = Object.freeze({
   'line-genui': new Set(['line-core', 'line-components', 'line-icons']),
 });
 
-// Packages where CSS custom-property prefix audit applies (Phase 00 spec §9.1 (a)).
+// Packages where CSS custom-property prefix audit applies (Phase 00 spec §9.1).
 const CSS_PREFIX_PACKAGES = ['line-tokens', 'line-colors', 'line-themes'];
 
 // Files inside packages/line-tokens/src/ that must contain zero colour literals.
@@ -318,7 +318,7 @@ const TAG_PATTERNS = [
 ];
 
 function isTestFile(name, path) {
-  // Test conventions per Phase 00 spec §6.F.3: __tests__/ dirs, *.test.{ts,tsx,js,mjs},
+  // Test conventions per Phase 1 spec §7.8: __tests__/ dirs, *.test.{ts,tsx,js,mjs},
   // and tests/ dirs (browser tier).
   if (!/\.(ts|tsx|js|mjs|cjs)$/.test(name)) return false;
   if (/\.test\.[a-z]+$/.test(name)) return true;
