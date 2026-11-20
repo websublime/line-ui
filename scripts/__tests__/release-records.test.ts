@@ -13,9 +13,11 @@ import {
   currentStatus,
   evaluate,
   expectedCdnVersion,
+  isVersionPr,
   lastEditor,
   MARKER,
   needsPost,
+  prFacts,
   selectRecord,
   VERSION_PR_REF,
 } from '../release-records.mjs';
@@ -38,7 +40,14 @@ const VERSIONS = { head: '0.2.8', base: '0.2.7' };
 const CANARY = `0.2.8-${MAIN}-SNAPSHOT`;
 
 const VERSION_SHA = 'feedfacefeedfacefeedfacefeedfacefeedface';
-const VERSION_PR = { headRef: VERSION_PR_REF, headRepo: REPO, headSha: VERSION_SHA };
+const VERSION_PR = {
+  headRef: VERSION_PR_REF,
+  headRepo: REPO,
+  headSha: VERSION_SHA,
+  baseRef: 'main',
+  state: 'open',
+  author: 'github-actions[bot]',
+};
 const url = (id: number, repo = REPO) => `https://github.com/${repo}/actions/runs/${id}`;
 
 const run = (file: string, overrides: Partial<Run> = {}): Run => ({
@@ -108,8 +117,30 @@ describe('PRs that are not the Version PR', () => {
     expect(evaluate({ repository: REPO, pr, versionPrShas: [OTHER, VERSION_SHA] })).toBeNull();
   });
 
+  test.each([
+    ['a duplicate open PR into another base', { baseRef: 'release/0.2' }],
+    ['a closed PR from the Version PR branch', { state: 'closed' }],
+    ['a PR from the Version PR branch opened by a person', { author: 'miguelramos' }],
+  ])("%s at the Version PR's head sha is not the Version PR and gets no status", (_label, overrides) => {
+    const pr = { ...VERSION_PR, ...overrides };
+    expect(isVersionPr(pr, REPO)).toBe(false);
+    expect(evaluate({ repository: REPO, pr, versionPrShas: [VERSION_SHA] })).toBeNull();
+  });
+
   test('the Version PR itself is evaluated even though its sha is a Version PR sha', () => {
+    expect(isVersionPr(VERSION_PR, REPO)).toBe(true);
     expect(versionPr({ versionPrShas: [VERSION_SHA] })?.state).toBe('success');
+  });
+
+  test('prFacts reads the head, base, state and author of a pulls API item', () => {
+    const raw = {
+      head: { ref: VERSION_PR_REF, sha: VERSION_SHA, repo: { full_name: REPO } },
+      base: { ref: 'main' },
+      state: 'open',
+      user: { login: 'github-actions[bot]' },
+    };
+    expect(prFacts(raw)).toEqual(VERSION_PR);
+    expect(prFacts({ ...raw, head: { ...raw.head, repo: null } }).headRepo).toBeNull();
   });
 });
 

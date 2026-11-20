@@ -17,7 +17,8 @@
 export const STATUS_CONTEXT = 'release-records';
 export const MARKER = '<!-- line-ui:release-records -->';
 export const VERSION_PR_REF = 'changeset-release/main';
-export const STATUS_CREATOR = 'github-actions[bot]';
+/** The GitHub Actions bot, which opens the Version PR and posts this workflow's statuses. */
+export const ACTIONS_BOT = 'github-actions[bot]';
 
 /** The release-time workflows a record cites, in the order the description names them. */
 export const WORKFLOWS = [
@@ -30,9 +31,31 @@ const CDN_TITLE = /^cdn-check line-components@(.*)$/;
 const RUN_URL = /https:\/\/github\.com\/([\w.-]+\/[\w.-]+)\/actions\/runs\/(\d+)/g;
 const DESCRIPTION_MAX = 140;
 
-/** True when the PR is the Changesets Version PR of `repository`; a fork with the same ref is not. */
+/** The PR facts the decision reads, from a `GET /pulls/{n}` or `GET /pulls` item. */
+export function prFacts(raw) {
+  return {
+    headRef: raw.head.ref,
+    headRepo: raw.head.repo?.full_name ?? null,
+    headSha: raw.head.sha,
+    baseRef: raw.base.ref,
+    state: raw.state,
+    author: raw.user?.login ?? null,
+  };
+}
+
+/**
+ * True only for the Changesets Version PR of `repository`, the open PR from its `changeset-release/main` into
+ * `main` that `github-actions[bot]` opened. GitHub allows one open PR per head and base, so a fork, a duplicate
+ * into another base, a closed PR or a hand-opened PR from that branch is not it.
+ */
 export function isVersionPr(pr, repository) {
-  return pr.headRef === VERSION_PR_REF && pr.headRepo?.toLowerCase() === repository.toLowerCase();
+  return (
+    pr.headRef === VERSION_PR_REF &&
+    pr.headRepo?.toLowerCase() === repository.toLowerCase() &&
+    pr.baseRef === 'main' &&
+    pr.state === 'open' &&
+    pr.author === ACTIONS_BOT
+  );
 }
 
 /**
@@ -144,7 +167,8 @@ function describe(problems) {
  * The status for one PR, or `null` when the PR must get no status.
  * @param {{
  *   repository: string,
- *   pr: { headRef: string, headRepo: string | null, headSha: string },
+ *   pr: { headRef: string, headRepo: string | null, headSha: string, baseRef: string, state: string,
+ *     author: string | null },
  *   versionPrShas?: string[],
  *   mainSha?: string,
  *   comments?: Array<{ body: string, authorAdmin: boolean, editorAdmin: boolean }>,
@@ -191,7 +215,7 @@ export function evaluate({
  * @param {Array<{ context: string, state: string, description: string | null, creator: { login: string } | null }>} statuses
  */
 export function currentStatus(statuses) {
-  const own = statuses.find((s) => s.context === STATUS_CONTEXT && s.creator?.login === STATUS_CREATOR);
+  const own = statuses.find((s) => s.context === STATUS_CONTEXT && s.creator?.login === ACTIONS_BOT);
   return own ? { state: own.state, description: own.description ?? '' } : null;
 }
 
@@ -269,7 +293,7 @@ async function readComponentsVersion(gh, repository, ref) {
   return typeof version === 'string' && version !== '' ? version : null;
 }
 
-/** The `changeset-release/main` tip of this repository and the head sha of each open PR from that branch. */
+/** The `changeset-release/main` tip of this repository and the head sha of each open Version PR. */
 async function readVersionPrShas(gh, repository) {
   const [owner] = repository.split('/');
   const branch = await gh.request('GET', `/repos/${repository}/branches/${VERSION_PR_REF}`, { allow404: true });
@@ -277,7 +301,8 @@ async function readVersionPrShas(gh, repository) {
     'GET',
     `/repos/${repository}/pulls?state=open&per_page=100&head=${encodeURIComponent(`${owner}:${VERSION_PR_REF}`)}`,
   );
-  return [...(branch ? [branch.commit.sha] : []), ...open.map((p) => p.head.sha)];
+  const versionPrs = open.map(prFacts).filter((pr) => isVersionPr(pr, repository));
+  return [...(branch ? [branch.commit.sha] : []), ...versionPrs.map((pr) => pr.headSha)];
 }
 
 async function gatherFacts(gh, repository, number, pr) {
@@ -337,7 +362,7 @@ async function main() {
   const targetUrl = `${process.env.GITHUB_SERVER_URL ?? 'https://github.com'}/${repository}/actions/runs/${process.env.GITHUB_RUN_ID}`;
 
   const raw = await gh.request('GET', `/repos/${repository}/pulls/${number}`);
-  const pr = { headRef: raw.head.ref, headRepo: raw.head.repo?.full_name ?? null, headSha: raw.head.sha };
+  const pr = prFacts(raw);
   const post = (state, description) =>
     gh.request('POST', `/repos/${repository}/statuses/${pr.headSha}`, {
       body: { state, description, context: STATUS_CONTEXT, target_url: targetUrl },
