@@ -1,7 +1,9 @@
 // The CSS packages export only `.css` targets, so these side-effect imports resolve to no
 // declarations and TypeScript 7.x reports TS2882 under `noUncheckedSideEffectImports`.
-// Ambient declarations cover exactly these twelve specifiers; the check stays on for every
-// other import (01-P8; R11 §2.7 RC1, §6 OQ2 (b)).
+// Ambient declarations cover exactly these thirteen specifiers; the check stays on for every
+// other import (01-P8; R11 §2.7 RC1, §6 OQ2 (b)). `@nudeui/icons` is the icon system CSS of
+// the CSS mask icons recipe (01-D4), whose `.` export is `./icons.css`.
+declare module '@nudeui/icons';
 declare module '@websublime/line-colors';
 declare module '@websublime/line-themes';
 declare module '@websublime/line-tokens/aspects';
