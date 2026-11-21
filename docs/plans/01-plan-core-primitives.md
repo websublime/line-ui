@@ -6,10 +6,11 @@ Row 01-G1 on 2026-11-03 applies Miguel's decision to accept that the `@a2ui/web_
 Row 01-G3 on 2026-11-04 applies Miguel's decision that a descriptor may carry an optional tool description, which the frontend-tool emitter uses over the agent-facing description (spec §6.G.1, §6.G.3, AM-086). No plan section states the descriptor fields, so only the header changes, citing PRD v0.8.30 and ARCHITECTURE v0.8.22 (Source PRD and Source Architecture lines).
 Row 01-C5 on 2026-11-05 records ARCHITECTURE v0.8.23, a factual correction of §14.2 and §14.8 on which native pseudo-classes match a component host (spec AM-089; component specs `0002-button.md` AM-008, `0003-icon-button.md` AM-002). No plan section states it, so only the Source Architecture line changes.
 Row 01-S1 on 2026-11-19 applies Miguel's decision that the landing page depends on every visible Phase 1 component (C1–C12, C14, C15, C17–C20) and follows the radix-ui.com homepage layout (§2.8, §4.5, §6; spec §6.S.1, AM-109).
+Row 01-Z10 on 2026-11-20 applies Miguel's decision that an Anthropic live call before each release proves Anthropic acceptance of the emitted tools, and the offline R3 P11 subset checks in CI prove OpenAI and Gemini acceptance (§7.2; spec AM-113), citing PRD v0.8.34 (Source PRD line).
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
-**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.30)
+**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.34)
 **Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.23)
 
 > **What this document is.** A phase plan (PROCESS §1–§2, the lifecycle and gate rules). It sets scope, streams, dependencies, research targets, acceptance criteria and risks for Phase 1 (PRD §7.3, the Core Primitives phase).
@@ -588,7 +589,7 @@ The plan mirrors the 17 PRD §7.3 exit criteria in their wording. Plan-level add
 - [ ] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
 - [ ] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
 - [ ] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
-- [ ] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini, and every tool description stays at or under the self-imposed cap of 1024 characters
+- [ ] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
 - [ ] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
 - [ ] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
 - [ ] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
