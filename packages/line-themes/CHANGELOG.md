@@ -1,5 +1,13 @@
 # @websublime/line-themes
 
+## 0.2.1
+
+### Patch Changes
+
+- Updated dependencies [[`d4e13c9`](https://github.com/websublime/line-ui/commit/d4e13c922733ea6cbe7065e9b3b2e39c9fe6ee1d), [`d4e13c9`](https://github.com/websublime/line-ui/commit/d4e13c922733ea6cbe7065e9b3b2e39c9fe6ee1d)]:
+  - @websublime/line-colors@0.2.0
+  - @websublime/line-schemas@0.2.0
+
 ## 0.2.0
 
 ### Minor Changes
