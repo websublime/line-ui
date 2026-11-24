@@ -1,5 +1,11 @@
 # @websublime/line-tokens
 
+## 0.2.0
+
+### Minor Changes
+
+- [#362](https://github.com/websublime/line-ui/pull/362) [`d4e13c9`](https://github.com/websublime/line-ui/commit/d4e13c922733ea6cbe7065e9b3b2e39c9fe6ee1d) Thanks [@miguelramos](https://github.com/miguelramos)! - Ship `line-tokens`' Phase 1 release at `0.2.0`, the line that carries the gray-role shadow scale with `--line-shadow-strength-dark`, the `@layer line` cascade layer and the whitespace-preserving token CSS from 0.1.1–0.1.3; the tokens are unchanged in this release.
+
 ## 0.1.3
 
 ### Patch Changes

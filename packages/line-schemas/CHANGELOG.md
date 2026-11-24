@@ -1,5 +1,11 @@
 # @websublime/line-schemas
 
+## 0.2.0
+
+### Minor Changes
+
+- [#362](https://github.com/websublime/line-ui/pull/362) [`d4e13c9`](https://github.com/websublime/line-ui/commit/d4e13c922733ea6cbe7065e9b3b2e39c9fe6ee1d) Thanks [@miguelramos](https://github.com/miguelramos)! - Ship `line-schemas`' Phase 1 release at `0.2.0`, the line that carries the `neutral` hue in `HUES` and `GRAY_HUES` from 0.1.1; the contracts and their Zod schemas are unchanged in this release.
+
 ## 0.1.1
 
 ### Patch Changes

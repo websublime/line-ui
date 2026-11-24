@@ -1,5 +1,12 @@
 # @websublime/line-icons
 
+## 0.2.2
+
+### Patch Changes
+
+- Updated dependencies [[`d4e13c9`](https://github.com/websublime/line-ui/commit/d4e13c922733ea6cbe7065e9b3b2e39c9fe6ee1d)]:
+  - @websublime/line-tokens@0.2.0
+
 ## 0.2.1
 
 ### Patch Changes
