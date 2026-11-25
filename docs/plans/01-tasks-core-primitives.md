@@ -92,6 +92,7 @@ CEM entry and the changeset; C5–C20 also ship their descriptor (spec §6.C.0, 
 | G5 | G | CEM drift test and descriptor coverage test (spec §6.G.5) | webcomponents-supervisor | G1, P10 | done | test/01-g5-cem-drift-coverage | #322 | — |
 | G6 | G | MCP Apps bridge `line-themes/hosts/mcp-apps.css` (spec §6.G.6) | webcomponents-supervisor | P1, C1–C4 | done | feat/01-g6-mcp-apps-bridge | #324 | AM-087 (Phase 1 spec) |
 | G7 | G | Transport recipes in Storybook (AG-UI, A2A, MCP, SSE) (spec §6.G.7) | webcomponents-supervisor | G4, G6 | done | feat/01-g7-transport-recipes | #325 | AM-088 (Phase 1 spec) |
+| G8 | G | Align the module comments of `line-genui/a2ui` (`packages/line-genui/src/a2ui/index.ts:1`, "Preview until A2UI v1.0") and `line-icons/a2ui` (`packages/line-icons/src/a2ui/index.ts:5`, "until A2UI v1.0") with ARCHITECTURE v0.8.28 §17.7: the preview lasts until `line-genui/a2ui` targets the final A2UI v1.0 (class `change`, with `patch` changesets for both packages; found by the 01-Z11 review, which kept published source out of that docs PR) | webcomponents-supervisor | Z11 | todo | — | — | — |
 
 ## Stream D — Cross-Cutting Documentation (`webcomponents-supervisor`)
 
