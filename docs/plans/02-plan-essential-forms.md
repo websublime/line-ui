@@ -33,11 +33,13 @@ Two facts shape the phase more than the component count.
    form-associated custom element, where `required`, `pattern` and `minlength` take effect only through
    `setValidity`. Thirteen of the 15 components are form-associated (ARCHITECTURE §7, `:398`), so either each builds
    this contract or one shared layer does (O1).
-2. **Zag's form wiring does not cross the shadow boundary.** Every Phase 2 pre-built machine carries its value on a
-   hidden or visible native input with `name` and `form` props, and tracks reset and disabled through
-   `closest('form')` and `closest('fieldset')`. Inside a shadow root that input has no form owner and both lookups
-   find nothing, so the host drives `setFormValue`, `formResetCallback` and `formDisabledCallback` itself (§2.3,
-   R1).
+2. **Zag's form wiring does not reach a light-DOM form from a shadow root.** Most Phase 2 pre-built machines carry
+   their value on a hidden or visible native input with `name` and `form` props (toggle-group has no input at all,
+   and password-input has no `form` prop), and they track reset and disabled through `closest('form')` and
+   `closest('fieldset')`. A native input inside a shadow root has no form owner in the page (HTML form owner
+   rules), and `closest()` does not cross the shadow boundary [INFERENCE: standard DOM behaviour, not yet probed;
+   R1 probes it]. The host then drives `setFormValue`, `formResetCallback` and `formDisabledCallback` itself
+   (§2.3, R1).
 
 ### 1.1 What the phase validates
 
@@ -55,7 +57,7 @@ PRD §7.4 lists what the phase validates.
 | Retrospective hand-off 1: the SD76 widening duty | Binds the first Phase 2 PR that adds a `minor` changeset for `line-components` or `line-icons` (§2.6) | `docs/retrospective/01-phase-01-retro.md`, Hand-off 1; Phase 1 spec §7.2 |
 | Retrospective hand-off 2: the open items | Triaged by Miguel on 2026-11-25: rows P17, P18, C33, D5 and Z12 in the Phase 1 ledger; the WebKit and `web_core` scaling item is a risk here (§8); three items closed | `docs/plans/01-tasks-core-primitives.md` (row 01-Z11 commits) |
 | Retrospective hand-off 3: the locator policy | A plan fork (O6) | Retrospective Hand-off 3 |
-| Retrospective hand-off 4: rules over lists, probes before agent-facing claims | Plan rules (§2.4, §5.5) | Retrospective lessons 1 and 2 |
+| Retrospective hand-off 4: rules over lists, probes before agent-facing claims | Plan rules (§5.3) | Retrospective lessons 1 and 2 |
 | `FormAssociated` mixin | Exists; forwards `ElementInternals`, implements no form contract; `formStateRestoreCallback` is declared and tested nowhere | `packages/line-core/src/form-associated.ts`; `packages/line-core/__tests__/integration/form-associated/form-associated.e2e.ts` |
 | Button's form behaviour | The Phase 1 reference: disabled from a `fieldset` through `formDisabledCallback`, submit through a temporary native submitter, reset, and external validity through `custom-validity`, which "sets the convention for the Phase 2 form controls" | `packages/line-components/src/button/button.ts`; `docs/specs/0002-button.md:356` |
 | Agent contract C1–C9, htmx C9 rule and harness, visual tier and Roles baselines, axe tier, CEM, `release-records` | Carried as obligations; Phase 2 adds no template work for them | ARCHITECTURE §17.2; Phase 1 spec §6.C.6, §7.2, §7.4 |
@@ -67,7 +69,7 @@ PRD §7.4 lists what the phase validates.
 
 ### 2.1 The 15 components
 
-| Component | PRD tier (§4.2) | Form-associated (ARCH §7) | Pre-built candidate at 1.49.0 | Spec |
+| Component | PRD tier (§4.2) | Form-associated (ARCH §7) | Pre-built candidate on npm (1.49.0 on 2026-11-25) | Spec |
 |---|---|---|---|---|
 | Input | Custom | yes | — | `0023-input.md` |
 | PasswordInput | Custom; "the Phase 2 spec settles the tier" | yes | `@zag-js/password-input` | `0024-password-input.md` |
@@ -97,7 +99,7 @@ PRD §7.4 lists what the phase validates.
   (ARCHITECTURE §9, `docs/ARCHITECTURE.md:470-494`; MANIFESTO Law 4).
 - Its state comes from explicit props first, then child events, then native validity (ARCHITECTURE §9, `:478-481`).
 - The labelling mechanism across the shadow boundary was deferred to "the Field spec" twice (`:483`; Phase 1 plan
-  §2.1). Phase 2 settles it after R3.
+  §5.6, `docs/plans/01-plan-core-primitives.md:510`). Phase 2 settles it after R3.
 - The floating label is not built in. `data-focused` and `data-filled` enable it in pure CSS, and Storybook
   documents the pattern (ARCHITECTURE §9, `:487`; PRD §7.4 exit).
 
@@ -128,14 +130,19 @@ attribute are plan additions (§7).
   validity to that form, the hazard Phase 1 closed for Button (Phase 1 spec AM-081). The Phase 2 spec states one rule
   for every form-associated control the surface creates (R6, §5.5).
 - A2UI v1.0 is final upstream (announced 2026-11-11; `specification/versions.json` lists v1.0 as `current` and
-  v0.9.1 as `previous`). `line-genui/a2ui` stays a preview "until it targets a final A2UI v1.0" (ARCHITECTURE §17.7,
-  `docs/ARCHITECTURE.md:1677`; PRD Appendix D, `docs/PRD.md:1831`), so the preview ends only when the package
-  targets v1.0. Three statements now read stale: `line-icons/a2ui` keeps the preview "until A2UI v1.0" (ARCHITECTURE
-  `:1678`; PRD `:1832`), the Phase 1 plan keeps the v1.0 emitter out "until v1.0 is final" (§3), and the site's agent
-  card says "The A2UI renderer stays a preview until A2UI v1.0 is final" (`apps/site/src/components/cards/AgentCard.astro:14`).
-  v1.0 changes the form schemas: `checks` becomes `@checks` with a `ValidationResult`, TextField gains
-  `placeholder`, drops `validationRegexp` and requires `value`, and Slider gains `steps` as a count of divisions.
-  Which A2UI version Phase 2 targets is fork O3.
+  v0.9.1 as `previous`), while `line-genui` targets v0.9.1. The documents disagree on what that does to the preview:
+  - MANIFESTO principle 8 (`docs/MANIFESTO.md:33`) and PRD principle 6 and §3 (`docs/PRD.md:134`, `:216`) keep the
+    A2UI renderer a preview "until A2UI v1.0 is final", a condition that fired on 2026-11-11.
+  - ARCHITECTURE §17.7 (`docs/ARCHITECTURE.md:1677`) and PRD Appendix D (`docs/PRD.md:1831`) keep it a preview
+    "until it targets a final A2UI v1.0", which has not happened.
+  - `line-icons/a2ui` follows the preview "until A2UI v1.0" (ARCHITECTURE `:1678`; PRD `:1832`), the Phase 1 plan
+    kept the v1.0 emitter out "until v1.0 is final" (§3), and the site's agent card says "The A2UI renderer stays a
+    preview until A2UI v1.0 is final" (`apps/site/src/components/cards/AgentCard.astro:14`).
+
+  The plan does not settle which statement holds; O3 decides the A2UI version, and each option names the MANIFESTO
+  and PRD wording it needs (§5.4, §5.7). v1.0 also changes the form schemas: `checks` becomes `@checks` with a
+  `ValidationResult`, TextField gains `placeholder`, drops `validationRegexp` and requires `value`, and Slider gains
+  `steps` as a count of divisions.
 
 ### 2.5 Storybook
 
@@ -165,8 +172,8 @@ changesets for that package are `patch` (PROCESS §6).
 
 ### 2.8 Site
 
-PRD §7.4 runs the Theming showcase "in parallel" (`docs/PRD.md:982`), and Phase 1 left it out on purpose (Phase 1
-plan O3 (c)). Whether it dogfoods the Phase 2 controls and gates the exit is fork O5.
+PRD §7.4 reads "**Parallel:** Theming showcase on site." (`docs/PRD.md:982`), and Phase 1 left the showcase out on
+purpose (Phase 1 plan O3 (c)). Whether it dogfoods the Phase 2 controls and gates the exit is fork O5.
 
 ---
 
@@ -180,6 +187,9 @@ plan O3 (c)). Whether it dogfoods the Phase 2 controls and gates the exit is for
 - WebMCP for form-associated elements (ARCHITECTURE §17.8).
 - Server-side A2UI → `<line-*>` HTML, and model-authored markup (PRD Appendix D).
 - `@zag-js/field` and `@zag-js/fieldset`, which exist only on the Zag 2.0.0-next line.
+- SSR/SSG stays in neither list until O8 decides. PRD §1.7 (`docs/PRD.md:165`), the PRD comparison table (`:81`) and
+  the MANIFESTO Out of Scope list (`docs/MANIFESTO.md:65`) plan the investigation "post-Phase 1", a deferral that has
+  now run out.
 
 ---
 
@@ -252,12 +262,12 @@ contradicts this plan returns to the plan and the PRD before any spec work.
 
 | Item | Research target |
 |---|---|
-| R1 Zag form machines in Shadow DOM | For each Phase 2 machine at the O4 baseline: how `LineMachineController` passes `getRootNode`; what the hidden or visible native input does inside a shadow root; replacing Zag's `closest('form')` reset and `closest('fieldset')` disabled tracking with the host callbacks; the native `input`/`change` events the machines dispatch against C3; zag#3088 (focus outside not detected in a shadow root) for Select; zag#3239 (hidden-input focus scroll) for Radio Group; number-input submitting its formatted string; toggle-group with no native input |
+| R1 Zag form machines in Shadow DOM | For each Phase 2 machine at the O4 baseline: how `LineMachineController` passes `getRootNode`; what the hidden or visible native input does inside a shadow root; replacing Zag's `closest('form')` reset and `closest('fieldset')` disabled tracking with the host callbacks; the native `input`/`change` events the machines dispatch against C3; zag#3088 (focus outside not detected in a shadow root) for Select; zag#3239 (hidden-input focus scroll) for Radio Group; number-input submitting its formatted string; toggle-group with no native input; the static fallback when a machine fails (MANIFESTO Law 9, PRD §1.7) and what then happens to the form value; RTL (`dir`) and touch and pointer behaviour for the custom machines (PRD §1.7) |
 | R2 Form-associated platform contract | Constraint validation computed by the component (`required`, `pattern`, `minlength`, `min`/`max`, `step`) with an anchor; `:user-invalid`, which never matches a form-associated custom element, and an error-after-interaction state; reset; restore (WebKit restores only a string and never for autocomplete; a third-party report of Firefox handing one element's state to another); implicit submission from an inner `<input>`; autofill and password managers through an inner native input; three engines, Linux WebKit included |
 | R3 Field and labelling | The Field labelling mechanism across the shadow boundary: reference target (Chromium only today), `ariaLabelledByElements` (all three engines, toward ancestor trees only), a host role, `<label for>` on a form-associated host; the Field event contract (`line-focus`, `line-blur`, `line-invalid`, `line-valid`) against C3 and C9; native controls inside Field (ARCHITECTURE §16.2 recommends a native `<select>` there); `data-error` vs `data-invalid` |
 | R4 Select | Native or custom against MANIFESTO Law 8 and ARCHITECTURE §15–§16 (G1); "with search" (PRD §4.2) vs typeahead and the Phase 4 Combobox; the listbox in the top layer without Popover (Phase 3), through what Portal proved in Phase 1; mobile; zag#3088 |
-| R5 DateInput | `@zag-js/date-input` vs a custom machine; its segments (`span` with `contentEditable` and `role: spinbutton`) vs ARCHITECTURE §15.1 "one `<input>` per segment" and §16.2 "masked `<input type="text">`"; `@internationalized/date` weight; locale and granularity; the A2UI DateTimeInput `enableTime`; the Phase 4 DatePicker composition (`slot="trigger"`) |
-| R6 A2UI form types | The five basic types at v0.9.1 and v1.0: value binding, `checks`/`@checks` to C4 validity, ChoicePicker variants, TextField variants (`longText`, `obscured`, `number`), Slider `steps`; the host-form hazard of every surface-created form control; the v1.0 catalog shape and `@a2ui/web_core` 0.16.x breaking changes on the v0_9 path (per O3) |
+| R5 DateInput | `@zag-js/date-input` vs a custom machine; its segments (`span` with `contentEditable` and `role: spinbutton`) vs ARCHITECTURE §15.1 "`<input>` (per segment)" and §16.2 "`<input type="text">` with segment masking"; `@internationalized/date` weight; locale and granularity; the A2UI DateTimeInput `enableTime`; the Phase 4 DatePicker composition (`slot="trigger"`) |
+| R6 A2UI form types | The five basic types at v0.9.1 and v1.0: value binding, `checks`/`@checks` to C4 validity, ChoicePicker variants, TextField variants (`longText`, `obscured`, `number`), Slider `steps`; the host-form hazard of every surface-created form control, weighed against MANIFESTO Law 7 ("native `<form>` semantics is the only contract", `docs/MANIFESTO.md:51`) and C4 validity; the v1.0 catalog shape and `@a2ui/web_core` 0.16.x breaking changes on the v0_9 path (per O3) |
 | R7 Progressive enhancement | Whether Input, Textarea and Select can stay functional without JavaScript (MANIFESTO Law 8, PRD §1.7 `:171`), for example through a slotted native control; a recorded "not feasible" is a valid outcome |
 | R8 Packaging and weight | Entry points and families for the components ARCHITECTURE §12 does not list (Radio Group, Toggle Group, Checkbox, Switch, Slider, Number Input); gzipped weight of each new Zag machine and of `@internationalized/date` against the < 5 KB soft target |
 | R9 Fieldset | Disabled propagation from a Fieldset to slotted controls, when a `<fieldset disabled>` inside the shadow root does not make light-DOM descendants disabled per HTML; native and line controls |
@@ -301,9 +311,10 @@ Each fork names its options, what each decides, and a recommendation. Miguel res
 
 #### O2 Exit criteria
 
-PRD §7.4 drops criteria that Phase 1 had: the descriptor and the CEM drift and coverage tests per component, the
-basic-catalog types, the htmx row, the visual baselines and the release records. It also names submit, reset and
-validation but not restore.
+PRD §7.4 drops criteria that Phase 1 had (PRD §7.3, Phase 1 plan §7): the descriptor and the CEM drift and coverage
+tests per component, the basic-catalog types, the surface rendering every agent-exposed component with zero axe
+violations, bundle splitting, CDN delivery, the htmx row, the visual baselines and the release records. It also
+names submit, reset and validation but not restore.
 
 | Option | What it decides | Recommendation |
 |---|---|---|
@@ -314,15 +325,15 @@ validation but not restore.
 
 | Option | What it decides | Recommendation |
 |---|---|---|
-| (a) | Phase 2 stays on A2UI v0.9.1 and `@a2ui/web_core` 0.14.0; the v1.0 move is a later phase; `line-genui/a2ui` and `line-icons/a2ui` stay previews, and the stale "until v1.0" statements (§2.4) are reworded to "until the package targets v1.0" | — |
-| (b) | Phase 2 adds v1.0 beside v0.9.1: a v1.0 `line` and `basic` catalog, the surface on both protocol versions, the five form types on both, `web_core` moved to 0.16.x through a spec AM; `line-genui/a2ui` leaves preview at the phase exit | Recommended: v1.0 is final, the form types are where v1.0 changed most (`@checks`, `ValidationResult`, TextField, Slider), and Gemini and Compose still run v0.9.1, so both are needed; R6 confirms the cost before the spec |
-| (c) | Phase 2 moves to v1.0 only | — |
+| (a) | Phase 2 stays on A2UI v0.9.1 and `@a2ui/web_core` 0.14.0; the v1.0 move is a later phase; `line-genui/a2ui` and `line-icons/a2ui` stay previews. Needs a MANIFESTO revision of principle 8 and a PRD revision of principle 6, §3 and Appendix D (`docs/PRD.md:134`, `:216`, `:1832`), with ARCHITECTURE `:1678`, the Phase 1 plan §3 and the site card aligned, so that each reads "until the package targets A2UI v1.0" | — |
+| (b) | Phase 2 adds v1.0 beside v0.9.1: a v1.0 `line` and `basic` catalog, the surface on both protocol versions, the five form types on both, `web_core` moved to 0.16.x through a spec AM; `line-genui/a2ui` leaves preview at the phase exit. Needs a PRD revision of §7.4 (the v1.0 scope and its exit criterion) and Appendix D, ARCHITECTURE §17.3 and §17.7, and the same MANIFESTO principle 8 and PRD principle 6 and §3 rewording as (a) for the time until the exit | Recommended: v1.0 is final, the form types are where v1.0 changed most (`@checks`, `ValidationResult`, TextField, Slider), and Gemini and Compose still run v0.9.1, so both are needed; R6 confirms the cost before the spec |
+| (c) | Phase 2 moves to v1.0 only. Needs the revisions of (b), and drops v0.9.1 consumers | — |
 
 #### O4 Dependency baseline
 
 | Option | What it decides | Recommendation |
 |---|---|---|
-| (a) | A P row refreshes the dependencies within their current majors before the first component row (Zag 1.49, Bun 1.4.5, Biome 2.6.9, Playwright 1.65.1, Storybook 10.6.x, Vite 8.3.x, Astro 7.4.x), as Phase 00 row 00-Z20 did; `@a2ui/web_core` follows O3; Changesets v3 is a separate decision row | Recommended: the Phase 2 machines start on the version they will ship with, and the Zag fixes since 1.47 are Phase 2 fixes |
+| (a) | A P row refreshes the dependencies within their current majors before the first component row (Zag 1.49, Bun 1.4.5, Biome 2.6.x, Playwright 1.65.1, Storybook 10.6.x, Vite 8.3.x, Astro 7.4.x), as Phase 00 row 00-Z20 did; `@a2ui/web_core` follows O3; Changesets v3 is a separate decision row. npm `@biomejs/biome@2.6.9` failed to install its platform binary on 2026-11-25 (`ETARGET`, Phase 1 retrospective), so the row probes the Biome version it can take | Recommended: the Phase 2 machines start on the version they will ship with, and the Zag fixes since 1.47 are Phase 2 fixes |
 | (b) | Each component row adds or moves the packages it needs | — |
 | (c) | As (a), with Changesets v3 and `changelog-github` 1.0 in the same row | — |
 
@@ -360,13 +371,25 @@ ARCHITECTURE §17.3 maps ChoicePicker to `<line-radio-group>`, "a checkbox group
 | (b) | Add a CheckboxGroup as a 16th Phase 2 component, through a PRD §4.2 and §7.4 revision | — |
 | (c) | Map it to `<line-toggle-group>` in multiple mode | — |
 
+#### O8 SSR/SSG investigation
+
+PRD §1.7 (`docs/PRD.md:165`), the PRD comparison table (`:81`) and the MANIFESTO Out of Scope list
+(`docs/MANIFESTO.md:65`) plan an SSR/SSG investigation for Astro, Nuxt and Next.js "post-Phase 1"; it is not a launch
+blocker.
+
+| Option | What it decides | Recommendation |
+|---|---|---|
+| (a) | Phase 2 carries the investigation as one research note, folded into R7 (progressive enhancement and declarative shadow DOM for the form controls), with no exit criterion | Recommended: progressive enhancement of Input, Textarea and Select (MANIFESTO Law 8) and server rendering ask the same question about markup that works before upgrade |
+| (b) | The investigation moves to a later phase; the PRD and MANIFESTO wording changes from "post-Phase 1" to that phase | — |
+| (c) | The investigation becomes a Phase 2 stream with an exit criterion; needs a PRD §7.4 revision | — |
+
 ### 5.5 Spec-level questions
 
 These belong to the Phase 2 spec. They are neither research items nor plan forks.
 
 - The tier of PasswordInput and DateInput (ARCHITECTURE §8, `:412`), after R1 and R5.
-- The shared form contract: where it lives, its API, and how a pre-built machine's native input stays out of the
-  form (R1, R2).
+- Under O1 (a), the API of the shared form layer in `line-core`; under O1 (b), the per-component contract each spec
+  states. Either way, how a pre-built machine's native input stays out of the form (R1, R2).
 - The Field event contract as a rule for every Field-compatible control, and how Field reads a native control (R3).
 - The Field labelling mechanism (R3).
 - The error-after-interaction state, since `:user-invalid` never matches a form-associated custom element (R2).
@@ -376,6 +399,11 @@ These belong to the Phase 2 spec. They are neither research items nor plan forks
 - Entry points and families for the components ARCHITECTURE §12 does not list (R8).
 - How a Fieldset disables slotted controls (R9).
 - A control size scale, so Input, Select, Number Input and Button align; the PRD sets none.
+- The static fallback of each form control when its machine fails, and what then reaches the form (MANIFESTO Law
+  9; R1).
+- RTL (`dir`), touch and pointer behaviour for the custom machines (PRD §1.7; R1).
+- The consumer-supplied labels of internal parts: the password toggle, the clear button, the steppers and the date
+  segments (PRD §1.7, MANIFESTO Out of Scope localisation).
 
 ### 5.6 Decisions after the research stage
 
@@ -388,22 +416,23 @@ The research stage confirms each item; a PRD and ARCHITECTURE revision then fixe
 
 | Gap | Where |
 |---|---|
-| `line-icons/a2ui` stays a preview "until A2UI v1.0", and the site says the renderer "stays a preview until A2UI v1.0 is final"; v1.0 went final on 2026-11-11 while `line-genui` still targets v0.9.1 | ARCHITECTURE `:1678`; PRD `:1832`; `apps/site/src/components/cards/AgentCard.astro:14` |
+| The preview of the A2UI renderer ends "until A2UI v1.0 is final" (MANIFESTO principle 8; PRD principle 6 and §3) vs "until it targets a final A2UI v1.0" (ARCHITECTURE §17.7; PRD Appendix D); `line-icons/a2ui` "until A2UI v1.0"; the Phase 1 plan and the site card "until v1.0 is final"; v1.0 went final on 2026-11-11 while `line-genui` still targets v0.9.1. The wording follows O3 | MANIFESTO `:33`; PRD `:134`, `:216`, `:1831-1832`; ARCHITECTURE `:1677-1678`; Phase 1 plan §3; `apps/site/src/components/cards/AgentCard.astro:14` |
 | Native HTML5 validation "works natively" on a form-associated custom element | ARCHITECTURE §7 (`docs/ARCHITECTURE.md:389-390`) |
-| Select wraps a native control (MANIFESTO Law 8, PRD §1.7) vs uses no native `<select>` (ARCHITECTURE §15.1, §16.2) while keeping `reset.select.css` | MANIFESTO `:55`; PRD `:171`; ARCHITECTURE `:871`, `:1152`, `:1333-1335`, `:1442-1448` |
-| DateInput: "one `<input>` per segment" vs "masked `<input type="text">`" | ARCHITECTURE §15.1, §16.2 |
+| Select wraps a native control (MANIFESTO Law 8, PRD §1.7) vs uses no native `<select>` (ARCHITECTURE §15.1, §16.2) while keeping `reset.select.css` | MANIFESTO `:53`; PRD `:171`; ARCHITECTURE `:871`, `:1152`, `:1333-1335`, `:1442-1448` |
+| DateInput: "`<input>` (per segment)" (§15.1) vs "`<input type="text">` with segment masking" (§16.2) | ARCHITECTURE `:1328`, `:1424` |
 | Slider: no native element (§15.1) vs `reset.range.css` (§14.6, §14.7) | ARCHITECTURE `:890`, `:1154`, `:1333-1335` |
 | Number Input `pattern="[0-9]*"` excludes decimals and negatives; `line-number-field` vs `line-number-input` | ARCHITECTURE §14.10, §16.2 |
 | `line-valid` is a Field child event (§9 `:480`) but not in the Field-compatible contract (`:489-490`) | ARCHITECTURE §9 |
 | PasswordInput and DateInput "Custom" in §7.4 vs "the Phase 2 spec settles the tier" in §4.2 | PRD `:276`, `:278`, `:955`, `:957` |
 | Zag 1.47.0 named as the machine version, which O4 (a) moves | ARCHITECTURE `:412`, `:601` |
 | The focus ring on step 7 (PRD §9) vs the shipped `--line-accent-8` | PRD `:1284`, `:1418`; `packages/line-tokens/src/focus-ring.css:16` |
+| The SSR/SSG investigation is planned "post-Phase 1"; the wording follows O8 | PRD `:81`, `:165`; MANIFESTO `:65` |
 
 ---
 
 ## 6. Task Dependencies
 
-Per O1 (a):
+Per O1 (a), O4 (a) and O5 (b):
 
 ```
 P (O4 dependency baseline) ──► F (form foundation) ──► C Input, Field, Checkbox ──► G TextField, CheckBox ──► C the other 12 (each with its descriptor)
@@ -433,21 +462,25 @@ The 8 PRD §7.4 criteria keep their wording; the plan's additions are in *italic
 - [ ] Changeset entry for every component
 - [ ] *Every Phase 2 component spec is APPROVED before code, with the Agent contract section filled.*
 - [ ] *Every story has a committed Chromium baseline, and the visual tier passes.*
-- [ ] *Every form-associated component runs the htmx harness for path (a), its value in the `<form hx-post>` request.*
+- [ ] *Every component fills its htmx Tests row, and every value-bearing or compound component runs the harness for the four PRD Appendix A behaviours (`docs/PRD.md:1745-1750`), path (a) among them for each form-associated component.*
 - [ ] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.2.*
 - [ ] *Each component's gzipped size is reported against the < 5 KB soft target (not gating).*
+- [ ] *Bundle splitting is verified for every Phase 2 subpath and family (the `./select` family among them).*
+- [ ] *CDN delivery through unpkg and jsDelivr is verified for the Phase 2 subpaths, and each Version PR records its `cdn-check.yml` run.*
 
 ### 7.2 Agent-driven UI
 
 - [ ] *Every Phase 2 component has a descriptor (exposed, or `agentExposed: false` with a reason), and the CEM drift and coverage tests pass.*
 - [ ] *The basic catalog maps TextField, CheckBox, ChoicePicker, Slider and DateTimeInput, and validity reaches each control from A2UI checks through C4.*
-- [ ] *A form control the surface creates never adds a field or blocks submission in a host-page `<form>` unless the spec's rule says so.*
+- [ ] *`<line-a2ui-surface>` renders every agent-exposed Phase 2 component with zero axe-core violations.*
+- [ ] *Every form control the surface creates follows the Phase 2 spec's surface rule, which states how a host-page `<form>`, C4 validity from A2UI checks and MANIFESTO Law 7 apply (§5.5).*
 - [ ] *Per O3: the A2UI version scope the gate chooses.*
 
 ### 7.3 Documentation
 
 - [ ] Floating label pattern documented in Storybook Patterns section
 - [ ] *A forms guide covers native participation, validity, Field and the agent path.*
+- [ ] *Per O5 (b): the site's Theming showcase is built with Phase 2 controls and is live at `line-ui.websublime.com`.*
 
 ### 7.4 Platform and release
 
@@ -485,7 +518,7 @@ The 8 PRD §7.4 criteria keep their wording; the plan's additions are in *italic
 
 ## 10. Next Steps
 
-1. The plan gate: the plan↔PRD lens and Miguel resolve O1–O7 (§5.4); the plan becomes APPROVED.
+1. The plan gate: the plan↔PRD lens and Miguel resolve O1–O8 (§5.4); the plan becomes APPROVED.
 2. One research note per §5.1 item, each under its own row.
 3. A PRD, ARCHITECTURE and plan revision lands the research outcomes and the §5.7 gaps in one commit (PROCESS §3).
 4. The Phase 2 spec `docs/specs/02-spec-essential-forms.md` answers §5.5, then passes the coherence review (3 clean
