@@ -2,7 +2,7 @@
 
 **Status:** APPROVED
 **Date:** 2026-05-19
-**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming). Revised 2026-10-07 with PRD v0.8.6 to add Principle 8 (agent-ready components and agent-driven UI). Revised 2026-10-12 with PRD v0.8.15 to restate Law 7 after the HTMX spike (ledger row `00-Z17`).
+**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming). Revised 2026-10-07 with PRD v0.8.6 to add Principle 8 (agent-ready components and agent-driven UI). Revised 2026-10-12 with PRD v0.8.15 to restate Law 7 after the HTMX spike (ledger row `00-Z17`). Revised 2026-11-25 with PRD v0.8.36 to tie the Principle 8 preview to the renderer targeting the final A2UI v1.0 and to move the SSR/SSG investigation into Phase 2 (ledger row `01-Z11`).
 
 This manifesto is the foundation that the PRD, the architecture, and every downstream decision must align with. If a design or task contradicts a Governing Law below, the design is wrong — not the law.
 
@@ -30,7 +30,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 7. **HTMX through native paths.** The web is bigger than SPAs. Server-rendered, HTMX-driven workflows are an explicit target. Components work with htmx through host attributes, slotted content, form values and a named commit event. A test harness guards those paths on every supported htmx major. The `LineHtmxElement` adapter stayed exploratory and is deferred as a nice-to-have after 1.0. The platform already does the work.
 
-8. **Agent-ready by construction.** Every component is describable to an AI agent. A protocol-neutral catalog of Zod descriptors, checked against the Custom Elements Manifest, states each component's props, slots, events, value binding and accessible name. Agents render line://ui components through the opt-in `@websublime/line-genui` package, which speaks A2UI today. Components never import a protocol, and the host keeps every styling decision. The A2UI renderer stays a preview until A2UI v1.0 is final.
+8. **Agent-ready by construction.** Every component is describable to an AI agent. A protocol-neutral catalog of Zod descriptors, checked against the Custom Elements Manifest, states each component's props, slots, events, value binding and accessible name. Agents render line://ui components through the opt-in `@websublime/line-genui` package, which speaks A2UI today. Components never import a protocol, and the host keeps every styling decision. The A2UI renderer stays a preview until it targets the final A2UI v1.0.
 
 ---
 
@@ -62,7 +62,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 - **Framework-specific bindings or adapters.** No React wrappers, no Vue plugins, no Svelte stores. Web Components is the contract; framework integration belongs to the consumer. Protocol renderers such as the A2UI renderer are not framework adapters. They ship as opt-in packages outside `line-components` and render the same custom elements.
 - **Opinionated default styling in the core package.** Visual themes ship as a separate, optional package. The core renders unstyled by design.
-- **SSR/SSG as a v1 hard requirement.** Investigation for Astro / Nuxt / Next.js compatibility is planned post-Phase 1; it is not a launch blocker.
+- **SSR/SSG as a v1 hard requirement.** Investigation for Astro / Nuxt / Next.js compatibility is a Phase 2 research question; it is not a launch blocker.
 - **Localisation of component-level strings.** Labels like "Close", "Dismiss", "Loading" are the consumer's responsibility via slots and attributes. No bundled i18n.
 - **Visual overrides via inline `style` attribute as a primary API.** `::part()` and `--line-*` custom properties are the supported surfaces. Inline styles are not extended.
 - **Node.js / non-browser runtime targets.** Components target Chrome / Firefox / Safari (latest 2 stable). No Node DOM polyfill story.

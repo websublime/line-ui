@@ -8,10 +8,11 @@ Row 01-C5 on 2026-11-05 records ARCHITECTURE v0.8.23, a factual correction of §
 Row 01-S1 on 2026-11-19 applies Miguel's decision that the landing page depends on every visible Phase 1 component (C1–C12, C14, C15, C17–C20) and follows the radix-ui.com homepage layout (§2.8, §4.5, §6; spec §6.S.1, AM-109).
 Row 01-Z10 on 2026-11-20 applies Miguel's decision that an Anthropic live call before each release proves Anthropic acceptance of the emitted tools, and the offline R3 P11 subset checks in CI prove OpenAI and Gemini acceptance (§7.2; spec AM-113), citing PRD v0.8.34 (Source PRD line).
 Row 01-Z3 on 2026-11-25 applies Miguel's decision that Z3 closes Phase 1 as well as writing its retrospective: it evidences every spec §9 criterion in three slices, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line, and a criterion fixed during the close that changes a published package is released before Z3 lands, as a row that is not a P13 dependency (§4.0, §4.6, §6, §7, §10 step 7; spec §6.Z.2, §6.P.13, AM-115), citing PRD v0.8.35 (Source PRD line). The same row corrects the `00-Z29` trigger as a fact: Biome PR #11869 already ships in 2.5.15, and 2.6.8 still panics, so the row waits for a release that fixes biomejs/biome#12158 (§5.4 O4.b, §11).
+Row 01-Z11 on 2026-11-25 aligns §2.1 and §3 with PRD v0.8.36 and ARCHITECTURE v0.8.28: `line-icons/a2ui` follows the preview until `line-genui/a2ui` targets the final A2UI v1.0, and the v1.0 emitter that stayed out of Phase 1 is Phase 2 scope (Phase 2 plan O3 (b)), citing PRD v0.8.36 (Source PRD line).
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
-**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.35)
+**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.36)
 **Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.23)
 
 > **What this document is.** A phase plan (PROCESS §1–§2, the lifecycle and gate rules). It sets scope, streams, dependencies, research targets, acceptance criteria and risks for Phase 1 (PRD §7.3, the Core Primitives phase).
@@ -96,7 +97,7 @@ PRD Appendix D and ARCHITECTURE §17.7 set the preview policy.
 
 - `@websublime/line-genui/a2ui` may change in any minor release.
 - `@websublime/line-genui/a2ui` sits outside the PRD §7.1 breaking-changes policy until it targets a final A2UI v1.0.
-- `@websublime/line-icons/a2ui` follows the same preview status until A2UI v1.0, because its `A2uiIconName`, `A2uiIconEntry` and `A2uiIconMap` types and its `a2uiIconMap` helper feed the preview property `iconMap` (ARCHITECTURE §17.7; spec AM-008, AM-011, AM-014).
+- `@websublime/line-icons/a2ui` follows the same preview status until `line-genui/a2ui` targets the final A2UI v1.0, because its `A2uiIconName`, `A2uiIconEntry` and `A2uiIconMap` types and its `a2uiIconMap` helper feed the preview property `iconMap` (ARCHITECTURE §17.7; spec AM-008, AM-011, AM-014).
 - The agent contract, the descriptor API and both catalogs follow the normal PRD §7.1 policy.
 
 The package has four dependency rules.
@@ -229,7 +230,7 @@ ARCHITECTURE §17.3 maps these basic catalog types in Phase 1.
 ## 3. Scope — Out
 
 - Phase 2+ components (PRD §7.4 onward) and the basic-catalog types they bring (TextField, CheckBox, ChoicePicker, Slider, DateTimeInput, Tabs, Modal, Card; ARCHITECTURE §17.3).
-- An A2UI v1.0 emitter stays out until v1.0 is final (§17.3).
+- An A2UI v1.0 emitter stays out of Phase 1; Phase 2 adds the v1.0 catalogs beside v0.9.1 (ARCHITECTURE §17.3; PRD v0.8.36 §7.4).
 - ARCHITECTURE §17.8 items stay out, each with its revisit trigger:
 
 | Item | Decision | Trigger to revisit |
