@@ -4,15 +4,49 @@ import { Meta } from '@storybook/addon-docs/blocks';
 
 # Getting Started
 
-The line://ui design system has five packages, and its CSS ships in three of them. `line-tokens` holds the global tokens, `line-colors` holds one palette file per hue, and `line-themes` maps those palettes onto roles such as accent and gray. This guide installs those three.
+line://ui publishes nine packages under the `@websublime` scope. Three of them ship the design-system CSS, `line-components` ships the components, and `line-genui` is an opt-in package for agent-driven UI. This guide installs the CSS and the components, loads the components from a CDN without a build step, and points to the guide for `line-genui`.
+
+| Package | Holds |
+|---|---|
+| `@websublime/line-tokens` | The global tokens (CSS) |
+| `@websublime/line-colors` | One palette file per hue (CSS) |
+| `@websublime/line-themes` | The role mappings, such as accent and gray, the semantic roles and the named aliases (CSS) |
+| `@websublime/line-components` | The 20 components, one subpath each |
+| `@websublime/line-core` | `LineElement`, the mixins and the state-machine controller the components build on |
+| `@websublime/line-icons` | The icon registry and the Lucide and Phosphor resolvers for `<line-icon>` |
+| `@websublime/line-genui` | Opt-in package with the component descriptors, the A2UI catalogs and the `<line-a2ui-surface>` renderer |
+| `@websublime/line-schemas` | Zod schemas and typed lists for the hues, roles, steps and aliases |
+| `@websublime/line-utils` | Colour helpers for mixing, tints, shades, alpha and contrast |
 
 ## Install
+
+Install the design-system CSS first. Every component reads its colours and sizes from it.
 
 ```sh
 bun add @websublime/line-tokens @websublime/line-colors @websublime/line-themes
 ```
 
-CDN delivery (unpkg, jsDelivr) is not supported until Phase 1.
+Then install the components. `line-components` brings `line-core` with it.
+
+```sh
+bun add @websublime/line-components
+```
+
+Add `line-icons` when a `<line-icon>` names an icon from a library, such as Lucide or Phosphor.
+
+```sh
+bun add @websublime/line-icons
+```
+
+### Agent-driven UI
+
+`line-genui` is opt-in. Install it with its two peer dependencies, `line-components` and `line-icons`.
+
+```sh
+bun add @websublime/line-genui @websublime/line-components @websublime/line-icons
+```
+
+The [Agent-driven UI guide](?path=/docs/agent-driven-ui--docs) covers the catalogs, the descriptors, the frontend tools and `<line-a2ui-surface>`.
 
 ## Setup
 
@@ -47,7 +81,104 @@ Then set the accent on the root element.
 
 The `data-accent` attribute picks the accent hue for the element and everything inside it. Change the value to another hue you have imported, such as `violet`, and the same role variables re-theme the element.
 
+## Components
+
+Each component has its own subpath, and importing the subpath defines its element.
+
+```js
+import '@websublime/line-components/button';
+```
+
+```html
+<line-button>Save</line-button>
+```
+
+The root entry, `@websublime/line-components`, defines no element. It exports `setIconRegistry`, which hands a `line-icons` registry to every `<line-icon>`.
+
+The 20 subpaths are `alert`, `aspect-ratio`, `avatar`, `avatar-group`, `badge`, `button`, `button-group`, `center`, `chip`, `grid`, `icon`, `icon-button`, `kbd`, `portal`, `presence`, `separator`, `skeleton`, `spinner`, `stack` and `visually-hidden`. Each one has a docs page under Components › Primitives Base in the sidebar.
+
+## CDN
+
+The components also load from a CDN with no build step. Two paths are supported, jsDelivr `+esm` and unpkg raw files. Both cover `line-components` and `line-core`. The design-system CSS from Setup is outside this CDN contract.
+
+- Use full subpath URLs. A bare package URL returns 404 and is not supported.
+- Name an exact version in every `@websublime/*` URL, never a range such as `@0.2` and never `@latest`.
+- Load each `@websublime/*` package at one version per page. For `line-core`, that version is the one the `line-components` `+esm` bundles import, which the unpkg import map also pins, `0.2.3` for `line-components` `0.2.8`.
+
+### jsDelivr `+esm`
+
+The URL form is `https://cdn.jsdelivr.net/npm/@websublime/line-components@0.2.8/<subpath>/+esm`, and the root entry is `@0.2.8/+esm`. The page needs no setup.
+
+```html
+<script type="module">
+  import { setIconRegistry } from 'https://cdn.jsdelivr.net/npm/@websublime/line-components@0.2.8/+esm';
+  import 'https://cdn.jsdelivr.net/npm/@websublime/line-components@0.2.8/button/+esm';
+  import 'https://cdn.jsdelivr.net/npm/@websublime/line-components@0.2.8/icon/+esm';
+</script>
+
+<line-button>Save</line-button>
+```
+
+A page that builds its own elements on `line-core` imports it at the same version the components import.
+
+```js
+import { INTERNALS, LineElement } from 'https://cdn.jsdelivr.net/npm/@websublime/line-core@0.2.3/+esm';
+import { FormAssociated } from 'https://cdn.jsdelivr.net/npm/@websublime/line-core@0.2.3/mixins/form-associated/+esm';
+```
+
+The page loads two copies of `lit-html` and `@lit/reactive-element`. Each `+esm` URL also carries its own copy of the icon registry module, and the copies share one registry through a global symbol, so `setIconRegistry` from the root URL reaches every `<line-icon>`. jsDelivr marks the `+esm` endpoint as beta.
+
+### unpkg raw files
+
+The URL form is `https://unpkg.com/@websublime/line-components@0.2.8/dist/<subpath>/index.js`. The root entry is `dist/index.js`. The browser resolves the bare imports inside these files through an import map, and Zag reads `process.env.NODE_ENV`, so the page sets `globalThis.process` before the first module runs.
+
+```html
+<script>globalThis.process = { env: { NODE_ENV: 'production' } };</script>
+<script type="importmap">
+{
+  "imports": {
+    "@websublime/line-core": "https://unpkg.com/@websublime/line-core@0.2.3/dist/index.js",
+    "@websublime/line-core/machine": "https://unpkg.com/@websublime/line-core@0.2.3/dist/machine/index.js",
+    "@websublime/line-core/styles": "https://unpkg.com/@websublime/line-core@0.2.3/dist/styles/index.js",
+    "@websublime/line-core/mixins/direction": "https://unpkg.com/@websublime/line-core@0.2.3/dist/mixins/direction.js",
+    "@websublime/line-core/mixins/form-associated": "https://unpkg.com/@websublime/line-core@0.2.3/dist/mixins/form-associated.js",
+    "@websublime/line-core/mixins/inspector": "https://unpkg.com/@websublime/line-core@0.2.3/dist/mixins/inspector.js",
+    "@websublime/line-core/mixins/metadata": "https://unpkg.com/@websublime/line-core@0.2.3/dist/mixins/metadata.js",
+    "lit": "https://unpkg.com/lit@3.3.3/index.js",
+    "lit/": "https://unpkg.com/lit@3.3.3/",
+    "lit-element/": "https://unpkg.com/lit-element@4.2.2/",
+    "lit-html": "https://unpkg.com/lit-html@3.3.3/lit-html.js",
+    "lit-html/": "https://unpkg.com/lit-html@3.3.3/",
+    "@lit/reactive-element": "https://unpkg.com/@lit/reactive-element@2.1.2/reactive-element.js",
+    "@lit/reactive-element/": "https://unpkg.com/@lit/reactive-element@2.1.2/",
+    "@zag-js/vanilla": "https://unpkg.com/@zag-js/vanilla@1.49.0/dist/index.mjs",
+    "@zag-js/core": "https://unpkg.com/@zag-js/core@1.49.0/dist/index.mjs",
+    "@zag-js/store": "https://unpkg.com/@zag-js/store@1.49.0/dist/index.mjs",
+    "@zag-js/utils": "https://unpkg.com/@zag-js/utils@1.49.0/dist/index.mjs",
+    "@zag-js/types": "https://unpkg.com/@zag-js/types@1.49.0/dist/index.mjs",
+    "@zag-js/dom-query": "https://unpkg.com/@zag-js/dom-query@1.49.0/dist/index.mjs",
+    "@zag-js/toggle": "https://unpkg.com/@zag-js/toggle@1.49.0/dist/index.mjs",
+    "@zag-js/presence": "https://unpkg.com/@zag-js/presence@1.49.0/dist/index.mjs",
+    "@zag-js/anatomy": "https://unpkg.com/@zag-js/anatomy@1.49.0/dist/index.mjs",
+    "proxy-compare": "https://unpkg.com/proxy-compare@3.0.1/dist/index.js"
+  }
+}
+</script>
+<script type="module">
+  import { setIconRegistry } from 'https://unpkg.com/@websublime/line-components@0.2.8/dist/index.js';
+  import 'https://unpkg.com/@websublime/line-components@0.2.8/dist/button/index.js';
+  import 'https://unpkg.com/@websublime/line-components@0.2.8/dist/icon/index.js';
+</script>
+
+<line-button>Save</line-button>
+```
+
+A page that builds its own elements on `line-core` imports `https://unpkg.com/@websublime/line-core@0.2.3/dist/index.js`, the same URL as the map's `@websublime/line-core` entry, and the mixins from `dist/mixins/<name>.js`.
+
+The page loads one copy of Lit but makes many requests, about 84 for `line-core`. This path is verified in Chromium and WebKit only, because Firefox showed CORS errors on a cold cache.
+
 ## What's next
 
 - The [Theming guide](?path=/docs/theming--docs) covers `data-accent` and `data-gray` scoping, the hue catalogue, gray auto-pairing, light and dark modes, the semantic roles and the named aliases.
 - The [Customisation guide](?path=/docs/customisation--docs) covers the `::part()` contract, the three tiers of custom properties, component token naming and the cascade strategy.
+- The [Agent-driven UI guide](?path=/docs/agent-driven-ui--docs) covers `line-genui`.
