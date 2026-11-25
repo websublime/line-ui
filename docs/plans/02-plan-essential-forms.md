@@ -99,7 +99,7 @@ PRD §7.4 lists what the phase validates.
   (ARCHITECTURE §9, `docs/ARCHITECTURE.md:474-498`; MANIFESTO Law 4).
 - Its state comes from explicit props first, then child events, then native validity (ARCHITECTURE §9, `:482-485`).
 - The labelling mechanism across the shadow boundary was deferred to "the Field spec" twice (`:487`; Phase 1 plan
-  §5.6, `docs/plans/01-plan-core-primitives.md:510`). Phase 2 settles it after R3.
+  §5.6, `docs/plans/01-plan-core-primitives.md:511`). Phase 2 settles it after R3.
 - The floating label is not built in. `data-focused` and `data-filled` enable it in pure CSS, and Storybook
   documents the pattern (ARCHITECTURE §9, `:491`; PRD §7.4 exit).
 
@@ -374,8 +374,8 @@ spec (§4.7).
 
 **Resolution:** (a) chosen — Miguel, 2026-11-25.
 
-ARCHITECTURE §17.3 maps ChoicePicker to `<line-radio-group>`, "a checkbox group", `<line-select>` or
-`<line-toggle-group>` (`docs/ARCHITECTURE.md:1623`). The PRD catalogue has no checkbox group.
+ARCHITECTURE v0.8.27 §17.3 mapped ChoicePicker to `<line-radio-group>`, "a checkbox group", `<line-select>` or
+`<line-toggle-group>` (now `docs/ARCHITECTURE.md:1623`, reworded by O7 (a)). The PRD catalogue has no checkbox group.
 
 | Option | What it decides | Recommendation |
 |---|---|---|
@@ -387,8 +387,8 @@ ARCHITECTURE §17.3 maps ChoicePicker to `<line-radio-group>`, "a checkbox group
 
 **Resolution:** (a) chosen — Miguel, 2026-11-25.
 
-PRD §1.7 (`docs/PRD.md:166`), the PRD comparison table (`:82`) and the MANIFESTO Out of Scope list
-(`docs/MANIFESTO.md:65`) plan an SSR/SSG investigation for Astro, Nuxt and Next.js "post-Phase 1"; it is not a launch
+PRD v0.8.35 §1.7 and the PRD comparison table (now `docs/PRD.md:166`, `:82`, reworded by O8 (a)) and the MANIFESTO Out of Scope list
+(`docs/MANIFESTO.md:65`) planned an SSR/SSG investigation for Astro, Nuxt and Next.js "post-Phase 1"; it is not a launch
 blocker.
 
 | Option | What it decides | Recommendation |
