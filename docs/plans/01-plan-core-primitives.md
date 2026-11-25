@@ -259,7 +259,7 @@ ARCHITECTURE §17.3 maps these basic catalog types in Phase 1.
 | C | Core primitives (20 components, spec + implementation + descriptor + stories + changeset) | webcomponents-supervisor (file classes: spec §4 table, AM-022) |
 | D | Cross-cutting documentation (agent-driven UI guide, recipes index, Getting Started updates) | webcomponents-supervisor |
 | S | Site landing page (dogfoods the Phase 1 components; exit criterion per O3 (b)) | webcomponents-supervisor (file classes: spec §4 table, AM-022; spec §6.S.1, §10 SD71) |
-| Z | Repo-wide (code of conduct, workspace resolution in tests, retrospective; the main session runs the exit sweep); process alignment lands in the ledger PR (§4.6) | Main session / per row |
+| Z | Repo-wide (code of conduct, workspace resolution in tests, phase exit and retrospective; the main session runs the exit sweep); process alignment lands in the ledger PR (§4.6) | Main session / per row |
 
 Each P, C, G, D and S owner is the accountable supervisor, who runs the task on its branch; Z rows name the main session (the Z row above). `git-workflow-manager` opens the PR (PROCESS §4, §6). The spec §4 table says which supervisor edits each class of file; when a task touches a class the table gives to the other supervisor, the orchestrator (main session or `sdlc`) dispatches the other supervisor, one after the other on the same task branch, for the classes the Phase 1 spec §4 table gives it. The second dispatch adds no changeset entry; the accountable supervisor writes the changeset entry last, after the other dispatch returns, and names every published package the branch changed (spec AM-022, AM-025, AM-026, AM-027).
 
@@ -333,7 +333,7 @@ Stream G also writes the descriptors of Button, Icon, Stack and Separator.
 
 - Z1 adds the code of conduct (PRD §10).
 - No Z2 task remains, and spec AM-002 removes it. Row 00-Z49, the PR that created the Phase 1 ledger, made the process alignment that §4.0 describes, with the Phase 1 streams in the `CLAUDE.md` ledger pointer (§10 step 6).
-- Z3 writes the Phase 1 retrospective and depends on every other Phase 1 row. The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as the Phase 00 sweep filed row C18 (spec §6.Z.2, §10 SD87, AM-036).
+- Z3 closes Phase 1 and writes its retrospective, and depends on every other Phase 1 row. The close evidences every spec §9 criterion, ticks the §9 and §7 boxes and adds the PRD §7.3 status line (spec AM-115). The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as the Phase 00 sweep filed row C18 (spec §6.Z.2, §10 SD87, AM-036).
 - Z5 makes every test reach another workspace package through its package name and a declared dependency, and its own package's build output through its own `exports` (PRD §5.2). It adds the private package `@websublime/line-testing`, which holds the htmx harness, moves the `line-tokens` shadow check into `line-themes`, and replaces the auto-pair string test with a browser test of all 31 accents (PRD §5.2.1). It lands before C1–C20 (spec §6.Z.3, AM-048).
 - The O4 items are Phase 00 ledger rows `00-Z28` (O4.a, class `decision`), `00-Z29` (O4.b, `blocked` until the Biome release) and `00-Z30` (O4.c, class `amendment`).
 - These rows do not wait for the Phase 1 ledger.
@@ -655,7 +655,7 @@ The plan mirrors the 17 PRD §7.3 exit criteria in their wording. Plan-level add
 4. Until the Phase 1 ledger exists, each opening PR (the spec, the coherence review, the ledger) gets its own row in stream Z of the Phase 00 ledger.
 5. The coherence review runs 3 clean rounds with the lenses plan↔PRD, spec↔research and spec↔ARCHITECTURE (PROCESS §5). Done: rounds 32, 33 and 34 came back clean (row 00-Z48, #281).
 6. The ledger `docs/plans/01-tasks-core-primitives.md` follows the spec's streams. Done in row 00-Z49, whose PR also made the process alignment that §4.0 describes (spec §6.Z). No Z2 task remains (spec AM-002).
-7. Work is delegated to the supervisors, the exit sweep runs and files its findings as new rows, and Z3's retrospective `docs/retrospective/01-<slug>.md` closes the phase (spec §6.Z.2).
+7. Work is delegated to the supervisors, the exit sweep runs and files its findings as new rows, and Z3 closes the phase with the exit evidence and the retrospective `docs/retrospective/01-<slug>.md` (spec §6.Z.2, AM-115).
 
 ---
 
