@@ -7,11 +7,11 @@ Row 01-G3 on 2026-11-04 applies Miguel's decision that a descriptor may carry an
 Row 01-C5 on 2026-11-05 records ARCHITECTURE v0.8.23, a factual correction of §14.2 and §14.8 on which native pseudo-classes match a component host (spec AM-089; component specs `0002-button.md` AM-008, `0003-icon-button.md` AM-002). No plan section states it, so only the Source Architecture line changes.
 Row 01-S1 on 2026-11-19 applies Miguel's decision that the landing page depends on every visible Phase 1 component (C1–C12, C14, C15, C17–C20) and follows the radix-ui.com homepage layout (§2.8, §4.5, §6; spec §6.S.1, AM-109).
 Row 01-Z10 on 2026-11-20 applies Miguel's decision that an Anthropic live call before each release proves Anthropic acceptance of the emitted tools, and the offline R3 P11 subset checks in CI prove OpenAI and Gemini acceptance (§7.2; spec AM-113), citing PRD v0.8.34 (Source PRD line).
-Row 01-Z3 on 2026-11-25 applies Miguel's decision that Z3 closes Phase 1 as well as writing its retrospective: it evidences every spec §9 criterion in three slices, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line, and a criterion fixed during the close that changes a published package is released before Z3 lands, as a row that is not a P13 dependency (§4.0, §4.6, §6, §10 step 7; spec §6.Z.2, §6.P.13, AM-115). The same row corrects the `00-Z29` trigger as a fact: Biome PR #11869 already ships in 2.5.15, and 2.6.8 still panics, so the row waits for a release that fixes biomejs/biome#12158 (§5.4 O4.b, §11).
+Row 01-Z3 on 2026-11-25 applies Miguel's decision that Z3 closes Phase 1 as well as writing its retrospective: it evidences every spec §9 criterion in three slices, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line, and a criterion fixed during the close that changes a published package is released before Z3 lands, as a row that is not a P13 dependency (§4.0, §4.6, §6, §7, §10 step 7; spec §6.Z.2, §6.P.13, AM-115), citing PRD v0.8.35 (Source PRD line). The same row corrects the `00-Z29` trigger as a fact: Biome PR #11869 already ships in 2.5.15, and 2.6.8 still panics, so the row waits for a release that fixes biomejs/biome#12158 (§5.4 O4.b, §11).
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
-**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.34)
+**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.35)
 **Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.23)
 
 > **What this document is.** A phase plan (PROCESS §1–§2, the lifecycle and gate rules). It sets scope, streams, dependencies, research targets, acceptance criteria and risks for Phase 1 (PRD §7.3, the Core Primitives phase).
@@ -656,7 +656,7 @@ The plan mirrors the 17 PRD §7.3 exit criteria in their wording. Plan-level add
 4. Until the Phase 1 ledger exists, each opening PR (the spec, the coherence review, the ledger) gets its own row in stream Z of the Phase 00 ledger.
 5. The coherence review runs 3 clean rounds with the lenses plan↔PRD, spec↔research and spec↔ARCHITECTURE (PROCESS §5). Done: rounds 32, 33 and 34 came back clean (row 00-Z48, #281).
 6. The ledger `docs/plans/01-tasks-core-primitives.md` follows the spec's streams. Done in row 00-Z49, whose PR also made the process alignment that §4.0 describes (spec §6.Z). No Z2 task remains (spec AM-002).
-7. Work is delegated to the supervisors, the exit sweep runs and files its findings as new rows, and Z3 closes the phase with the exit evidence and the retrospective `docs/retrospective/01-<slug>.md` (spec §6.Z.2, AM-115).
+7. Work is delegated to the supervisors, the exit sweep runs and files its findings as new rows, and Z3 closes the phase with the exit evidence and the retrospective `docs/retrospective/01-<slug>.md` (spec §6.Z.2, AM-115). Done in row 01-Z3 on 2026-11-25: the sweep ran on 2026-11-20 and filed Z10, and the exit record is `docs/retrospective/01-phase-01-retro.md` (PRD v0.8.35).
 
 ---
 
