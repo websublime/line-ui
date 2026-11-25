@@ -573,46 +573,46 @@ The plan mirrors the 17 PRD §7.3 exit criteria in their wording. Plan-level add
 
 ### 7.1 Components
 
-- [ ] All listed components pass the 8-point test checklist (PRD §5.2)
-- [ ] Storybook documentation complete for every component
-- [ ] Zero axe-core violations
-- [ ] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
-- [ ] CEM manifest generated and verified
-- [ ] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; spec §10 SD94).*
-- [ ] Changeset entry for every component
-- [ ] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
-- [ ] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
-- [ ] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
-- [ ] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
+- [x] All listed components pass the 8-point test checklist (PRD §5.2)
+- [x] Storybook documentation complete for every component
+- [x] Zero axe-core violations
+- [x] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
+- [x] CEM manifest generated and verified
+- [x] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; spec §10 SD94).*
+- [x] Changeset entry for every component
+- [x] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
+- [x] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
+- [x] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
+- [x] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
 
 ### 7.2 Agent-driven UI
 
-- [ ] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
-- [ ] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
-- [ ] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
-- [ ] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
-- [ ] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
-- [ ] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
-- [ ] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
+- [x] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
+- [x] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
+- [x] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
+- [x] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
+- [x] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
+- [x] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
+- [x] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
 
 ### 7.3 Documentation
 
-- [ ] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
-- [ ] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
+- [x] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
+- [x] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
 
 ### 7.4 Platform and release
 
-- [ ] Bundle splitting verified — families and independents work as documented
-- [ ] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
-- [ ] The npm trusted publisher for `@websublime/line-genui` exists before its first release
-- [ ] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of spec §10 SD32 (PRD §1.7).*
-- [ ] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
-- [ ] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
-- [ ] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
-- [ ] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
-- [ ] *A code of conduct is present before `v0.2.0` (PRD §10).*
-- [ ] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
-- [ ] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
+- [x] Bundle splitting verified — families and independents work as documented
+- [x] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
+- [x] The npm trusted publisher for `@websublime/line-genui` exists before its first release
+- [x] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of spec §10 SD32 (PRD §1.7).*
+- [x] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
+- [x] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
+- [x] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
+- [x] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
+- [x] *A code of conduct is present before `v0.2.0` (PRD §10).*
+- [x] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
+- [x] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
 
 ---
 

@@ -2263,104 +2263,104 @@ Phase 1 is complete when every item below holds. The list mirrors plan §7.1–�
 
 ### 9.1 Components
 
-- [ ] All listed components pass the 8-point test checklist (PRD §5.2)
+- [x] All listed components pass the 8-point test checklist (PRD §5.2)
   - Tasks: C1–C20 (§6.C.6).
   - Check: the "Unit tier" `bun test --isolate` (§12 AM-085) and "Browser tier" `bun run e2e` steps in `.github/workflows/checks.yml` pass.
-- [ ] Storybook documentation complete for every component
+- [x] Storybook documentation complete for every component
   - Tasks: C1–C20, P10.
   - Check: the Storybook build passes, and each component's autodocs page shows its attributes, slots, events and CSS parts from the shipped manifest (§6.P.10, §6.C.6).
-- [ ] Zero axe-core violations
+- [x] Zero axe-core violations
   - Tasks: P7, C1–C20.
   - Check: `packages/line-components/__tests__/a11y/<c>.e2e.ts` passes in three engines with the §7.4 ruleset.
-- [ ] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
+- [x] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
   - Tasks: P11, P12, C1–C20.
   - Check: the "Browser tier" step runs `packages/line-components/__tests__/visual/<c>.visual.ts` and `roles.visual.ts` in the `visual` project, each story and combination has a committed `-visual-linux.png` baseline from `visual-baselines.yml`, and the release PR records a passing `visual-off-pairs.yml` run (§6.P.11, §6.P.12; §10 SD98).
-- [ ] CEM manifest generated and verified
+- [x] CEM manifest generated and verified
   - Tasks: P10, G5.
   - Check: `bun run scripts/verify-pack.mjs` fails without `custom-elements.json` in the `line-components` tarball; the G5 drift and coverage tests pass.
-- [ ] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; §10 SD94).*
+- [x] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; §10 SD94).*
   - Tasks: P10, G4.
   - Check: `apps/storybook/.storybook/preview.ts` calls `setCustomElementsManifest` with the manifest merged from both packages; `verify-pack` check (a) covers the `customElements` field of both packages (§4.1, §4.2).
-- [ ] Changeset entry for every component
+- [x] Changeset entry for every component
   - Tasks: C1–C20.
   - Check: each component PR adds a `.changeset/*.md` entry (§6.C.6).
-- [ ] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
+- [x] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
   - Tasks: C1–C20, step 1 of the §6.C.0 sequence.
   - Check: each `docs/specs/NNNN-<component>.md` reads `**Status:** APPROVED` before its implementation PR opens.
-- [ ] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
+- [x] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
   - Tasks: C1–C20 (§6.C.4 htmx column).
   - Check: the component spec Tests row; the harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`, §6.Z.3) where it applies.
-- [ ] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
+- [x] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
   - Tasks: C1–C20 (§6.C.6).
   - Check: the row exists for each of the 20 components.
-- [ ] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
+- [x] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
   - Tasks: P5, C1–C20.
   - Check: `scripts/report-size.mjs` prints the per-component table in the CI log (§7.6).
 
 ### 9.2 Agent-driven UI
 
-- [ ] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
+- [x] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
   - Tasks: G1, G5, C5–C20.
   - Check: the G5 tests in `packages/line-genui` pass in the unit tier (§6.G.5).
-- [ ] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
+- [x] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
   - Task: G2.
   - Check: the G2 tests listed in §6.G.2 Acceptance.
-- [ ] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
+- [x] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
   - Tasks: G2, G4, C10 (the `Image` `variant: "avatar"` route; §12 AM-021, L3R15-02).
   - Check: a message with the v0_9 basic id renders mapped types and raises `line-a2ui-error` for each unmapped type (§6.G.4); an `Image` with `variant: "avatar"` renders `<line-avatar>` (§6.C.4).
-- [ ] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
+- [x] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
   - Task: G3.
   - Check: Ajv validation and the offline R3 P11 subset checks run in CI on every PR; the Anthropic live call is recorded in the Version PR (§6.G.3; §12 AM-113).
-- [ ] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
+- [x] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
   - Task: G6.
   - Check: `bun run scripts/lint-layers.mjs` passes; the G6 browser test passes in three engines; the §6.G.6 key table is complete.
-- [ ] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
+- [x] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
   - Tasks: G4 for C1–C4; C5–C20 for the rest; P7.
   - Check: the surface stories pass the §7.4 axe ruleset; the G4 acceptance tests in §6.G.4; each C5–C20 PR extends the surface render fixture (§6.C.6).
-- [ ] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
+- [x] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
   - Tasks: G1, G4 (on the P5 harness).
   - Check: the `line-genui` registration harness on the packed tarball (§7.5).
 
 ### 9.3 Documentation
 
-- [ ] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
+- [x] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
   - Tasks: G7, D2.
   - Check: the four recipes render C1–C4 in the deployed Storybook; the Bun middleware comparison test passes (§6.G.7).
-- [ ] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
+- [x] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
   - Task: S1.
   - Check: `apps/site/__tests__/landing.e2e.ts` asserts every `line-*` element is `:defined` in three engines; `deploy-site.yml` publishes the page (§6.S.1).
 
 ### 9.4 Platform and release
 
-- [ ] Bundle splitting verified — families and independents work as documented
+- [x] Bundle splitting verified — families and independents work as documented
   - Task: P5.
   - Check: `packages/line-components/__tests__/bundle-splitting.test.ts` runs the §7.5 checks on the packed tarball.
-- [ ] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
+- [x] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
   - Task: P2.
   - Check: `ALLOWED_EDGES` equals the §3.3 block, and `bun run scripts/lint-layers.mjs` exits 0.
-- [ ] The npm trusted publisher for `@websublime/line-genui` exists before its first release
+- [x] The npm trusted publisher for `@websublime/line-genui` exists before its first release
   - Tasks: P4, P14.
   - Check: the package settings show two trusted publishers and token publishing disallowed (§6.P.4, §6.P.14).
-- [ ] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of §10 SD32 (PRD §1.7).*
+- [x] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of §10 SD32 (PRD §1.7).*
   - Tasks: P6, C22, D3.
   - Check: `packages/line-components/__tests__/cdn.e2e.ts` passes on both paths, and the release PR records both runs (§7.7). The C22 matrix tests `packages/line-icons/__tests__/consumer-matrix.e2e.ts` and `consumer-matrix.cdn.e2e.ts` render icons in three bundlers and on both CDN paths in three engines (§6.C.3).
-- [ ] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
+- [x] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
   - Task: P8.
   - Check: `bun run build`, `bun --filter '@websublime/*' typecheck` and `verify-pack` exit 0; `tsc --version` prints 7.x (§6.P.8).
-- [ ] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
+- [x] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
   - Tasks: P9 (externals), P5 (checks; §12 AM-020, L3R14-02).
   - Check: `packages/line-components/__tests__/line-element-identity.test.ts` and the `instanceof` harness pass (§6.P.5, §7.5).
-- [ ] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
+- [x] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
   - Check: §10 SD1.
-- [ ] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
+- [x] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
   - Tasks: P3, P4, P13, P14.
   - Check: the P3 dry run lists a `0.2.x` version for each of the nine packages, with `line-genui` at `0.2.0`; after the phase-exit Version PR, or the P13 merge when none opens, `npm view` shows a `0.2.x` version with provenance for all nine packages (§7.2).
-- [ ] *A code of conduct is present before `v0.2.0` (PRD §10).*
+- [x] *A code of conduct is present before `v0.2.0` (PRD §10).*
   - Task: Z1.
   - Check: `CODE_OF_CONDUCT.md` exists on `main`, and the `README.md` link resolves.
-- [ ] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
+- [x] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
   - Check: the ledger rows' status.
-- [ ] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
+- [x] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
   - Task: Z3.
   - Check: the retrospective file under `docs/retrospective/` exists with its hand-off section, which names the SD76 widening duty, and with its exit-criteria section, which gives every §9 criterion its evidence (§6.Z.2; §12 AM-115).
 
