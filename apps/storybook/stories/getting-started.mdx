@@ -14,7 +14,7 @@ line://ui publishes nine packages under the `@websublime` scope. Three of them s
 | `@websublime/line-components` | The 20 components, one subpath each |
 | `@websublime/line-core` | `LineElement`, the mixins and the state-machine controller the components build on |
 | `@websublime/line-icons` | The icon registry and the Lucide and Phosphor resolvers for `<line-icon>` |
-| `@websublime/line-genui` | Opt-in. Component descriptors, the A2UI catalogs and the `<line-a2ui-surface>` renderer |
+| `@websublime/line-genui` | Opt-in package with the component descriptors, the A2UI catalogs and the `<line-a2ui-surface>` renderer |
 | `@websublime/line-schemas` | Zod schemas and typed lists for the hues, roles, steps and aliases |
 | `@websublime/line-utils` | Colour helpers for mixing, tints, shades, alpha and contrast |
 
@@ -101,11 +101,9 @@ The 20 subpaths are `alert`, `aspect-ratio`, `avatar`, `avatar-group`, `badge`, 
 
 The components also load from a CDN with no build step. Two paths are supported, jsDelivr `+esm` and unpkg raw files. Both cover `line-components` and `line-core`. The design-system CSS from Setup is outside this CDN contract.
 
-The URLs follow three rules on both paths.
-
 - Use full subpath URLs. A bare package URL returns 404 and is not supported.
 - Name an exact version in every `@websublime/*` URL, never a range such as `@0.2` and never `@latest`.
-- Load each `@websublime/*` package at one version per page. For `line-core`, that version is the one the `line-components` files import, `0.2.3` for `line-components` `0.2.8`.
+- Load each `@websublime/*` package at one version per page. For `line-core`, that version is the one the `line-components` `+esm` bundles import, which the unpkg import map also pins, `0.2.3` for `line-components` `0.2.8`.
 
 ### jsDelivr `+esm`
 
@@ -128,11 +126,7 @@ import { INTERNALS, LineElement } from 'https://cdn.jsdelivr.net/npm/@websublime
 import { FormAssociated } from 'https://cdn.jsdelivr.net/npm/@websublime/line-core@0.2.3/mixins/form-associated/+esm';
 ```
 
-This path has known costs.
-
-- The page loads two copies of `lit-html` and `@lit/reactive-element`.
-- Each `+esm` URL carries its own copy of the icon registry module. The copies share one registry through a global symbol, so `setIconRegistry` from the root URL reaches every `<line-icon>`.
-- jsDelivr marks the `+esm` endpoint as beta.
+The page loads two copies of `lit-html` and `@lit/reactive-element`. Each `+esm` URL also carries its own copy of the icon registry module, and the copies share one registry through a global symbol, so `setIconRegistry` from the root URL reaches every `<line-icon>`. jsDelivr marks the `+esm` endpoint as beta.
 
 ### unpkg raw files
 
@@ -181,10 +175,7 @@ The URL form is `https://unpkg.com/@websublime/line-components@0.2.8/dist/<subpa
 
 A page that builds its own elements on `line-core` imports `https://unpkg.com/@websublime/line-core@0.2.3/dist/index.js`, the same URL as the map's `@websublime/line-core` entry, and the mixins from `dist/mixins/<name>.js`.
 
-This path has known costs.
-
-- The page loads one copy of Lit but makes many requests, about 84 for `line-core`.
-- This path is verified in Chromium and WebKit only. Firefox showed CORS errors on a cold cache.
+The page loads one copy of Lit but makes many requests, about 84 for `line-core`. This path is verified in Chromium and WebKit only, because Firefox showed CORS errors on a cold cache.
 
 ## What's next
 
