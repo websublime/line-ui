@@ -131,7 +131,7 @@ attribute are plan additions (§7).
   for every form-associated control the surface creates (R6, §5.5).
 - A2UI v1.0 is final upstream (announced 2026-11-11; `specification/versions.json` lists v1.0 as `current` and
   v0.9.1 as `previous`), while `line-genui` targets v0.9.1. The documents disagree on what that does to the preview:
-  - MANIFESTO principle 8 (`docs/MANIFESTO.md:33`) and PRD principle 6 and §3 (`docs/PRD.md:134`, `:216`) keep the
+  - MANIFESTO principle 8 (`docs/MANIFESTO.md:33`) and PRD principle 6 and §2 (`docs/PRD.md:134`, `:216`) keep the
     A2UI renderer a preview "until A2UI v1.0 is final", a condition that fired on 2026-11-11.
   - ARCHITECTURE §17.7 (`docs/ARCHITECTURE.md:1677`) and PRD Appendix D (`docs/PRD.md:1831`) keep it a preview
     "until it targets a final A2UI v1.0", which has not happened.
@@ -325,8 +325,8 @@ names submit, reset and validation but not restore.
 
 | Option | What it decides | Recommendation |
 |---|---|---|
-| (a) | Phase 2 stays on A2UI v0.9.1 and `@a2ui/web_core` 0.14.0; the v1.0 move is a later phase; `line-genui/a2ui` and `line-icons/a2ui` stay previews. Needs a MANIFESTO revision of principle 8 and a PRD revision of principle 6, §3 and Appendix D (`docs/PRD.md:134`, `:216`, `:1832`), with ARCHITECTURE `:1678`, the Phase 1 plan §3 and the site card aligned, so that each reads "until the package targets A2UI v1.0" | — |
-| (b) | Phase 2 adds v1.0 beside v0.9.1: a v1.0 `line` and `basic` catalog, the surface on both protocol versions, the five form types on both, `web_core` moved to 0.16.x through a spec AM; `line-genui/a2ui` leaves preview at the phase exit. Needs a PRD revision of §7.4 (the v1.0 scope and its exit criterion) and Appendix D, ARCHITECTURE §17.3 and §17.7, and the same MANIFESTO principle 8 and PRD principle 6 and §3 rewording as (a) for the time until the exit | Recommended: v1.0 is final, the form types are where v1.0 changed most (`@checks`, `ValidationResult`, TextField, Slider), and Gemini and Compose still run v0.9.1, so both are needed; R6 confirms the cost before the spec |
+| (a) | Phase 2 stays on A2UI v0.9.1 and `@a2ui/web_core` 0.14.0; the v1.0 move is a later phase; `line-genui/a2ui` and `line-icons/a2ui` stay previews. Needs a MANIFESTO revision of principle 8 and a PRD revision of principle 6, §2 and Appendix D (`docs/PRD.md:134`, `:216`, `:1832`), with ARCHITECTURE `:1678`, the Phase 1 plan §3 and the site card aligned, so that each reads "until the package targets A2UI v1.0" | — |
+| (b) | Phase 2 adds v1.0 beside v0.9.1: a v1.0 `line` and `basic` catalog, the surface on both protocol versions, the five form types on both, `web_core` moved to 0.16.x through a spec AM; `line-genui/a2ui` leaves preview at the phase exit. Needs a PRD revision of §7.4 (the v1.0 scope and its exit criterion) and Appendix D, ARCHITECTURE §17.3 and §17.7, and the same MANIFESTO principle 8 and PRD principle 6 and §2 rewording as (a) for the time until the exit | Recommended: v1.0 is final, the form types are where v1.0 changed most (`@checks`, `ValidationResult`, TextField, Slider), and Gemini and Compose still run v0.9.1, so both are needed; R6 confirms the cost before the spec |
 | (c) | Phase 2 moves to v1.0 only. Needs the revisions of (b), and drops v0.9.1 consumers | — |
 
 #### O4 Dependency baseline
@@ -416,7 +416,7 @@ The research stage confirms each item; a PRD and ARCHITECTURE revision then fixe
 
 | Gap | Where |
 |---|---|
-| The preview of the A2UI renderer ends "until A2UI v1.0 is final" (MANIFESTO principle 8; PRD principle 6 and §3) vs "until it targets a final A2UI v1.0" (ARCHITECTURE §17.7; PRD Appendix D); `line-icons/a2ui` "until A2UI v1.0"; the Phase 1 plan and the site card "until v1.0 is final"; v1.0 went final on 2026-11-11 while `line-genui` still targets v0.9.1. The wording follows O3 | MANIFESTO `:33`; PRD `:134`, `:216`, `:1831-1832`; ARCHITECTURE `:1677-1678`; Phase 1 plan §3; `apps/site/src/components/cards/AgentCard.astro:14` |
+| The preview of the A2UI renderer ends "until A2UI v1.0 is final" (MANIFESTO principle 8; PRD principle 6 and §2) vs "until it targets a final A2UI v1.0" (ARCHITECTURE §17.7; PRD Appendix D); `line-icons/a2ui` "until A2UI v1.0"; the Phase 1 plan and the site card "until v1.0 is final"; v1.0 went final on 2026-11-11 while `line-genui` still targets v0.9.1. The wording follows O3 | MANIFESTO `:33`; PRD `:134`, `:216`, `:1831-1832`; ARCHITECTURE `:1677-1678`; Phase 1 plan §3; `apps/site/src/components/cards/AgentCard.astro:14` |
 | Native HTML5 validation "works natively" on a form-associated custom element | ARCHITECTURE §7 (`docs/ARCHITECTURE.md:389-390`) |
 | Select wraps a native control (MANIFESTO Law 8, PRD §1.7) vs uses no native `<select>` (ARCHITECTURE §15.1, §16.2) while keeping `reset.select.css` | MANIFESTO `:53`; PRD `:171`; ARCHITECTURE `:871`, `:1152`, `:1333-1335`, `:1442-1448` |
 | DateInput: "`<input>` (per segment)" (§15.1) vs "`<input type="text">` with segment masking" (§16.2) | ARCHITECTURE `:1328`, `:1424` |
@@ -462,7 +462,7 @@ The 8 PRD §7.4 criteria keep their wording; the plan's additions are in *italic
 - [ ] Changeset entry for every component
 - [ ] *Every Phase 2 component spec is APPROVED before code, with the Agent contract section filled.*
 - [ ] *Every story has a committed Chromium baseline, and the visual tier passes.*
-- [ ] *Every component fills its htmx Tests row, and every value-bearing or compound component runs the harness for the four PRD Appendix A behaviours (`docs/PRD.md:1745-1750`), path (a) among them for each form-associated component.*
+- [ ] *Every component fills its htmx Tests row, and every value-bearing or compound component runs the harness for the four PRD Appendix A behaviours (`docs/PRD.md:1744-1747`), path (a) among them for each form-associated component.*
 - [ ] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` §4.2.*
 - [ ] *Each component's gzipped size is reported against the < 5 KB soft target (not gating).*
 - [ ] *Bundle splitting is verified for every Phase 2 subpath and family (the `./select` family among them).*
