@@ -71,7 +71,16 @@ the heavier one, and a class only ever moves up mid-task.
 - **Line locators follow the lines.** A change to ARCHITECTURE or the PRD that moves lines realigns, in the
   same PR, every live locator into the moved lines (`docs/ARCHITECTURE.md:N`, `docs/PRD.md:N`, and a bare
   `:N` its sentence ties to either), resolved by the text it cites. Live is as in the checklist above;
-  `docs/context/` and `done` ledger rows also keep theirs as record. Each spec it touches gets one `AM-nnn` row.
+  `docs/context/` and `done` ledger rows also keep theirs as record, and component specs pin instead (next rule).
+  Each spec it touches gets one `AM-nnn` row.
+- **Component specs pin what they cite.** A component spec (`docs/specs/NNNN-<component>.md`) carries a
+  `Pinned sources` header row that names the PRD version, the ARCHITECTURE version and its phase spec through its
+  last `AM-nnn`. Every locator in it into those documents, and every bare `:N` its sentence ties to one, resolves
+  at the pin, so a revision of a pinned document realigns nothing in it. A component spec that moves a pin
+  realigns, in that change, every locator into that document, with one `AM-nnn` row. Read a pinned locator in the
+  document at the pin: the PRD or ARCHITECTURE at the commit that added that version's revision note
+  (`git log --reverse --format=%h -S '**v0.8.35 (' -- docs/PRD.md | head -1`), the phase spec at the commit that
+  added that `AM-nnn` row (`-S '| AM-116 |'`).
 - **Genuine forks go to Miguel** through the question tool (the harness's ask/AskUser tool). Defaults you can
   pick yourself, you pick and you say which you picked. Each option names the concrete thing it decides.
 

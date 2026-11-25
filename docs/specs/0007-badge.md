@@ -4,13 +4,14 @@
 |-------|-------|
 | Status | `approved` (Miguel, 2026-11-10) |
 | Phase | `1` |
-| Tier | `Static` (Phase 1 spec §6.C.4 C9 row, `docs/specs/01-spec-core-primitives.md:1165`; PRD §4.1, `docs/PRD.md:254`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
+| Tier | `Static` (Phase 1 spec §6.C.4 C9 row, `docs/specs/01-spec-core-primitives.md:1170`; PRD §4.1, `docs/PRD.md:254`; ARCH §8, `docs/ARCHITECTURE.md:410`) |
 | Tag | `line-badge` |
-| Entrypoint | `@websublime/line-components/badge` (Phase 1 spec §4.2, `:248`, `:297`; §10 SD12, `:2359`) |
+| Entrypoint | `@websublime/line-components/badge` (Phase 1 spec §4.2, `:248`, `:297`; §10 SD12, `:2386`) |
 | Form-associated | `no` (Phase 1 spec §6.C.4 C9 row) |
 | PRD catalogue entry | PRD §4.1, `Badge` row (`docs/PRD.md:254`) |
 | Ledger row | `01-C9` (`docs/plans/01-tasks-core-primitives.md:55`) |
-| Governing sections | Phase 1 spec §4 (file classes `:134-154`; `:248`, `:297`), §6.C.0, §6.C.4 (C9 row and notes), §6.C.6, §6.G.1, §6.G.3, §6.G.4 (Accessibility), §6.G.5, §7.4, §7.8, §10 SD12, SD34, SD37, SD38, SD39, SD98, SD99, §12 AM-058, AM-067, AM-086, AM-092; ARCH (v0.8.26) §2, §3, §5, §8, §12, §13.2, §14.3, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8, §9.3; MANIFESTO Laws 1–4, 9, Out of Scope; R8 §2.2 |
+| Governing sections | Phase 1 spec §4 (file classes `:134-154`; `:248`, `:297`), §6.C.0, §6.C.4 (C9 row and notes), §6.C.6, §6.G.1, §6.G.3, §6.G.4 (Accessibility), §6.G.5, §7.4, §7.8, §10 SD12, SD34, SD37, SD38, SD39, SD98, SD99, §12 AM-058, AM-067, AM-086, AM-092; ARCH (v0.8.27) §2, §3, §5, §8, §12, §13.2, §14.3, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8, §9.3; MANIFESTO Laws 1–4, 9, Out of Scope; R8 §2.2 |
+| Pinned sources | `docs/PRD.md` v0.8.35, `docs/ARCHITECTURE.md` v0.8.27, `docs/specs/01-spec-core-primitives.md` through AM-116 (PROCESS §3; row 01-Z13) |
 
 Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F11 on 2026-11-10 and approved the spec the same day; Part B states those decisions. The orchestrator defaults D1–D14 stand as drafted (Miguel, 2026-11-10).
 
@@ -93,7 +94,7 @@ Each case below was mounted twice in one `<main>`: alone in a `<div>`, and insid
 
 ### P3 — axe
 
-axe 4.14.0 reported zero violations for the whole page, every case alone and inside the button, in chromium, firefox and webkit, with the §7.4 tags and with every rule. That includes the unnamed internals `img`, the named role-less host and the unnamed empty dot. axe does not see internals values (`packages/line-core/src/internals.ts:1-13`; Phase 1 spec §7.4, `:2122-2123`), so zero violations prove nothing about an internals role or its name.
+axe 4.14.0 reported zero violations for the whole page, every case alone and inside the button, in chromium, firefox and webkit, with the §7.4 tags and with every rule. That includes the unnamed internals `img`, the named role-less host and the unnamed empty dot. axe does not see internals values (`packages/line-core/src/internals.ts:1-13`; Phase 1 spec §7.4, `:2149-2150`), so zero violations prove nothing about an internals role or its name.
 
 ### P4 — Count change (Chromium)
 
@@ -105,12 +106,12 @@ The count of the plain, internals `status` and internals `ariaLive` hosts change
 - A live role on the host is not free: an internals `status` drops the count from the name of a button around the badge (P1; F2).
 - A component cannot make a polite live region through internals alone without a role; a host `aria-live` attribute can (P1; F2).
 - An internals `img` named by the host `aria-label` gives a dot, or a count, one name that also joins the enclosing control's name (P1; F4, F5).
-- No automated check catches an unnamed dot or an unnamed internals `img`: axe sees no internals (P3), and Playwright's snapshot sees no internals either (P2). Only a Chromium CDP assertion and the internals read-back prove the semantics (Phase 1 spec §6.C.4 notes, `:1180`; D13).
+- No automated check catches an unnamed dot or an unnamed internals `img`: axe sees no internals (P3), and Playwright's snapshot sees no internals either (P2). Only a Chromium CDP assertion and the internals read-back prove the semantics (Phase 1 spec §6.C.4 notes, `:1185`; D13).
 
 ### What automation cannot observe
 
 - Whether a screen reader announces a count, at load or on change (P4).
-- Firefox and WebKit exposure of internals values to assistive technology. The read-back proves the values each engine holds, not what it exposes (Phase 1 spec `:1180`; §12 AM-058).
+- Firefox and WebKit exposure of internals values to assistive technology. The read-back proves the values each engine holds, not what it exposes (Phase 1 spec `:1185`; §12 AM-058).
 - How a screen reader speaks "99+" [INFERENCE: probably "99 plus", not probed].
 
 ---
@@ -152,7 +153,7 @@ The count of the plain, internals `status` and internals `ariaLive` hosts change
 
 | Component | Relation | Connects through |
 |-----------|----------|------------------|
-| `<line-button>`, `<line-icon-button>` | parent | the Button `suffix` slot (ARCH §13.1, `docs/ARCHITECTURE.md:596`) or the default slot; the badge text joins the inner button's name, as `<line-button>` with a badge in `suffix` and in the default slot shows in chromium, firefox and webkit (`0012-visually-hidden.md` probe P6; AM-003; AM-004) [INFERENCE: `<line-icon-button>` not probed]. Badge never imports Button (MANIFESTO Law 4, `docs/MANIFESTO.md:45`; Phase 1 spec §6.C.6, `:1228`) |
+| `<line-button>`, `<line-icon-button>` | parent | the Button `suffix` slot (ARCH §13.1, `docs/ARCHITECTURE.md:596`) or the default slot; the badge text joins the inner button's name, as `<line-button>` with a badge in `suffix` and in the default slot shows in chromium, firefox and webkit (`0012-visually-hidden.md` probe P6; AM-003; AM-004) [INFERENCE: `<line-icon-button>` not probed]. Badge never imports Button (MANIFESTO Law 4, `docs/MANIFESTO.md:45`; Phase 1 spec §6.C.6, `:1233`) |
 | `<line-chip>` | parent | the Chip `suffix` slot, which takes a count (`0008-chip.md` Slots) |
 | `<line-avatar>` | parent | the Avatar `status` slot (ARCH §13.2, `docs/ARCHITECTURE.md:605`); Avatar (row 01-C10) places the slot over its corner, and Badge knows nothing of it (F8) |
 | `<line-stack>` | parent | the Stack default slot, beside a label in a horizontal Stack |
@@ -286,7 +287,7 @@ Badge holds no value and no interactive element, so it fires nothing and is neit
 |-----|--------|
 | none | — |
 
-Badge takes no focus and handles no key. Keyboard navigation is tested in the Browser tier only to prove that Tab skips the host (Phase 1 spec §10 SD99, `:2446`).
+Badge takes no focus and handles no key. Keyboard navigation is tested in the Browser tier only to prove that Tab skips the host (Phase 1 spec §10 SD99, `:2473`).
 
 ### A11y
 
@@ -297,11 +298,11 @@ Badge takes no focus and handles no key. Keyboard navigation is tested in the Br
 | Accessible name | a count or label is read as text in place and joins the name of an enclosing control (probe P1). A host `aria-label` names the `img` directly, because the role sits on the host (C5); nothing is copied |
 | Focus | none; the host is not focusable and does not delegate focus |
 
-- **Count announcement (F2).** A count is text. Badge sets no live role, because an internals `status` drops the count from an enclosing button's name (probe P1). The docs show the recipe for a count that must be heard on change: the author sets `aria-live="polite"` on the host, which Chromium exposes as a polite, non-atomic live region that leaves the count in the enclosing name (probe P1); set it before the count changes. On `<line-a2ui-surface>` the surface's live region announces "Content updated." once per batch that changed the DOM, so an agent badge needs no live role of its own (Phase 1 spec §6.G.4, `:1520-1521`).
+- **Count announcement (F2).** A count is text. Badge sets no live role, because an internals `status` drops the count from an enclosing button's name (probe P1). The docs show the recipe for a count that must be heard on change: the author sets `aria-live="polite"` on the host, which Chromium exposes as a polite, non-atomic live region that leaves the count in the enclosing name (probe P1); set it before the count changes. On `<line-a2ui-surface>` the surface's live region announces "Content updated." once per batch that changed the DOM, so an agent badge needs no live role of its own (Phase 1 spec §6.G.4, `:1525-1526`).
 - **Dot (F4).** An unnamed dot is hidden, because R8 says a dot badge "needs a text alternative or `aria-hidden`" (`docs/research/01-research-accessibility.md:70`). A dot that carries meaning gets `aria-label`. The docs say to state the meaning in nearby text or name the dot, never colour alone (WCAG 1.4.1).
 - **Named text badge (F5).** A host `aria-label` on a count or label badge makes it an `img` named by the label, such as "5 unread messages" over "5", so the host is never a named `generic`, which ARIA prohibits (R8 `:55`; probe P1).
-- **Proof (D13).** The role and `ariaHidden` live only in internals, so the Browser tier proves them with a Chromium CDP accessibility-tree assertion of role and name and an `INTERNALS` read-back in chromium, firefox and webkit (Phase 1 spec §6.C.4 notes, `:1180`; §10 SD39; §12 AM-058). Playwright's `ariaSnapshot()` cannot serve, because it reads no internals value (probe P2). axe reports nothing for an unnamed dot or `img` (probe P3).
-- **Firefox and WebKit gap.** No check proves what Firefox and WebKit expose to assistive technology for the internals `img`, its name and `ariaHidden`. The gap is recorded here (Phase 1 spec `:1180`; §12 AM-058). A manual screen-reader pass is optional and never blocks the row.
+- **Proof (D13).** The role and `ariaHidden` live only in internals, so the Browser tier proves them with a Chromium CDP accessibility-tree assertion of role and name and an `INTERNALS` read-back in chromium, firefox and webkit (Phase 1 spec §6.C.4 notes, `:1185`; §10 SD39; §12 AM-058). Playwright's `ariaSnapshot()` cannot serve, because it reads no internals value (probe P2). axe reports nothing for an unnamed dot or `img` (probe P3).
+- **Firefox and WebKit gap.** No check proves what Firefox and WebKit expose to assistive technology for the internals `img`, its name and `ariaHidden`. The gap is recorded here (Phase 1 spec `:1185`; §12 AM-058). A manual screen-reader pass is optional and never blocks the row.
 - **Chromium hidden-count quirk.** Chromium leaves "5" in an enclosing button's name even when the badge host is hidden (probe P1). The rule above never hides a badge that holds text, so the quirk does not reach a shipped default; an author `aria-hidden` on a count meets it.
 
 ### Agent contract
@@ -333,22 +334,22 @@ Badge takes no focus and handles no key. Keyboard navigation is tested in the Br
 | Catalog name | `Badge` (D10) |
 | Tag | `line-badge` |
 | `load()` subpath | `@websublime/line-components/badge` |
-| Prop schema | `label` (`DynamicString`, optional, through `commonProp`), `variant` (`z.enum(['neutral', 'info', 'success', 'warning', 'danger'])`, plain `.describe()`, optional), plus `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1, `:1323`, `:1326`; §12 AM-067). No `child` (F9) |
-| Slot map | none; the label reaches the default slot through the text binding, and a descriptor with a text binding has no slot map (Phase 1 spec §6.G.1, `:1312`, AM-092; F9) |
+| Prop schema | `label` (`DynamicString`, optional, through `commonProp`), `variant` (`z.enum(['neutral', 'info', 'success', 'warning', 'danger'])`, plain `.describe()`, optional), plus `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1, `:1328`, `:1331`; §12 AM-067). No `child` (F9) |
+| Slot map | none; the label reaches the default slot through the text binding, and a descriptor with a text binding has no slot map (Phase 1 spec §6.G.1, `:1317`, AM-092; F9) |
 | Binding map | `label` → text binding `{ kind: 'text' }`; `variant` → attribute `variant`; no value prop and no commit event (F9, F11) |
 | Action map | none |
 | Accessibility requirements | `requiredName: [{ kind: 'textProp', prop: 'label' }, { kind: 'accessibilityLabel' }]`, so a node needs a non-blank `label` or `accessibility.label`, which makes every agent dot named (F10); `hostNaming: { kind: 'always' }` (`packages/line-genui/src/catalog/descriptor.ts:138-141`, `:153-157`) |
 | Agent-facing description | A small status marker beside other content, such as an unread count next to Inbox or a "Beta" tag next to a heading. Set `label` to its short text: a number such as "5" or "99+", or a word or two. To show a dot instead, leave `label` empty and give `accessibility.label` the meaning, such as "New messages". `variant` sets the tone and colour: `info` for helpful context, `success` for a positive state, `warning` for something that needs attention, `danger` for an error or an urgent count, or `neutral` (default). Also state the meaning in words, because colour alone does not reach every user. A badge is not interactive and announces nothing on its own. Use Alert for a message that needs a sentence, and Chip for an option the user can turn on or off. |
 | Tool description | A small status marker beside other content, such as an unread count next to Inbox or a "Beta" tag next to a heading. Set `label` to its short text: a number such as "5" or "99+", or a word or two. To show a dot instead, leave `label` empty and give `accessibilityLabel` the meaning, such as "New messages". `variant` sets the tone and colour: `info` for helpful context, `success` for a positive state, `warning` for something that needs attention, `danger` for an error or an urgent count, or `neutral` (default). Also state the meaning in words, because colour alone does not reach every user. A badge is not interactive and announces nothing on its own. Use Alert for a message that needs a sentence, and Chip for an option the user can turn on or off. |
-| `agentExposed` | `true` (Phase 1 spec §6.C.4 C9 row; Badge is none of the three SD38 exceptions, `:2385`) |
+| `agentExposed` | `true` (Phase 1 spec §6.C.4 C9 row; Badge is none of the three SD38 exceptions, `:2412`) |
 
-- The agent-facing description names `accessibility.label`, so the descriptor sets a tool description that names `accessibilityLabel` instead, as Separator's does (Phase 1 spec §6.G.3, `:1423`; `packages/line-genui/src/catalog/descriptors/separator.ts:9-12`). The agent-facing description is 756 characters and the tool description 755, under the 1024 cap (Phase 1 spec §6.G.3, `:1422`).
+- The agent-facing description names `accessibility.label`, so the descriptor sets a tool description that names `accessibilityLabel` instead, as Separator's does (Phase 1 spec §6.G.3, `:1428`; `packages/line-genui/src/catalog/descriptors/separator.ts:9-12`). The agent-facing description is 756 characters and the tool description 755, under the 1024 cap (Phase 1 spec §6.G.3, `:1427`).
 - The frontend tool carries `label`, `variant`, and the optional `accessibilityLabel` and `accessibilityDescription`, because `hostNaming` is `always` (`packages/line-genui/src/catalog/tools.ts:144-148`, `:228`; Phase 1 spec §12 AM-069).
 - The surface writes the resolved `label` as the host's text content, replacing the slot's light DOM (`packages/line-genui/src/a2ui/projection.ts:458-462`, `:161-166`). A number bound from the data model becomes its decimal string (`projection.ts:126-131`) [INFERENCE: that `web_core` passes a number through a `DynamicString` binding unchanged is not probed]. An empty `label` leaves the slot empty, so the agent badge draws as a dot (F1).
-- The surface sets `accessibility.label` as the host `aria-label` (Phase 1 spec §6.G.4, `:1514`), which makes the dot, or a text badge, an `img` with that name (F4, F5).
-- The drift test skips the text binding and checks the `variant` attribute against the manifest (Phase 1 spec §6.G.5, `:1607`, AM-092).
+- The surface sets `accessibility.label` as the host `aria-label` (Phase 1 spec §6.G.4, `:1519`), which makes the dot, or a text badge, an `img` with that name (F4, F5).
+- The drift test skips the text binding and checks the `variant` attribute against the manifest (Phase 1 spec §6.G.5, `:1612`, AM-092).
 - No A2UI v0.9 `basic` type maps to Badge; the ARCH §17.3 basic table has none (`docs/ARCHITECTURE.md:1608-1626`), and the vendored basic catalog fixture names none (`packages/line-genui/__tests__/fixtures/`). The `basic` map is unchanged (D1).
-- C9 ships its descriptor in the same PR, joins the `descriptors` array in catalog-name order (`packages/line-genui/src/catalog/index.ts:105-115`), and adds Badge to the `<line-a2ui-surface>` render fixture and the surface axe test (Phase 1 spec §6.C.0, `:927`; §6.C.6, `:1231`).
+- C9 ships its descriptor in the same PR, joins the `descriptors` array in catalog-name order (`packages/line-genui/src/catalog/index.ts:105-115`), and adds Badge to the `<line-a2ui-surface>` render fixture and the surface axe test (Phase 1 spec §6.C.0, `:932`; §6.C.6, `:1236`).
 
 ### Bundle / entrypoint
 
@@ -361,7 +362,7 @@ Badge takes no focus and handles no key. Keyboard navigation is tested in the Br
 
 - Files: `src/badge/badge.ts` (class and `customElements.define`), `src/badge/badge.types.ts`, `src/badge/index.ts`.
 - `package.json` gains the `./badge` export (Phase 1 spec §4.2, `:248`), and the Vite build gains the `badge/index` entry (§4, `:140-141`). No new dependency.
-- Badge imports no other component (MANIFESTO Law 4; Phase 1 spec §6.C.6, `:1228`).
+- Badge imports no other component (MANIFESTO Law 4; Phase 1 spec §6.C.6, `:1233`).
 
 ### Markup examples
 
@@ -421,16 +422,16 @@ A `line` catalog node the surface renders as the second example, with the count 
 | Tier | Runner | Covers |
 |------|--------|--------|
 | Unit | `bun test` on happy-dom | render with no errors; `variant` default with no host attribute, reflection of a set value, the converter falling back to `neutral` while an unknown attribute keeps the author's value, and removing the attribute restoring the default; `data-empty` and `:state(empty)` through the fake internals, for an empty slot, a whitespace-only slot, slotted text, a slotted element, text changed in place and text removed (F1); the internals values table (`role`, `ariaHidden`) for every row, including a blank `aria-label` counting as absent and a change of `aria-label` or of the slot updating them synchronously (F4, F5; D7); no event of any kind; C8 with no attributes and no content |
-| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | Tab skips the host (Phase 1 spec §10 SD99); the Chromium CDP assertion of role and name for a count, a count inside a native button ("Inbox 5"), an unnamed dot (no node), a named dot (`image` "New messages") and a named count (`image` "5 unread messages"), with the `INTERNALS` read-back of each in all three engines (Phase 1 spec `:1180`; D13); the author `aria-live="polite"` recipe exposing a polite live region in Chromium (F2); computed colour tokens for every row of the variant table on a page with `line-themes` and a palette, and the unthemed dot drawing in `currentColor` (D8); the dot's computed size |
-| A11y | axe-core | zero violations (MANIFESTO Law 3) in every Badge story of D11 (Phase 1 spec §7.4, `:2118-2119`). axe cannot see the internals role or name (probe P3), so the Browser tier carries the semantic proof |
+| Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | Tab skips the host (Phase 1 spec §10 SD99); the Chromium CDP assertion of role and name for a count, a count inside a native button ("Inbox 5"), an unnamed dot (no node), a named dot (`image` "New messages") and a named count (`image` "5 unread messages"), with the `INTERNALS` read-back of each in all three engines (Phase 1 spec `:1185`; D13); the author `aria-live="polite"` recipe exposing a polite live region in Chromium (F2); computed colour tokens for every row of the variant table on a page with `line-themes` and a palette, and the unthemed dot drawing in `currentColor` (D8); the dot's computed size |
+| A11y | axe-core | zero violations (MANIFESTO Law 3) in every Badge story of D11 (Phase 1 spec §7.4, `:2145-2146`). axe cannot see the internals role or name (probe P3), so the Browser tier carries the semantic proof |
 | htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `n/a`: Badge is neither value-bearing, because its descriptor binding map names no value prop, nor compound, because it holds no interactive element (ARCH §17.2 C3, C9, `docs/ARCHITECTURE.md:1574`, `:1580`; plan §2.4, `docs/plans/01-plan-core-primitives.md:174-177`). This confirms the Phase 1 spec's "`n/a` expected" (§6.C.4 C9 row; §10 SD34; F11) |
-| Visual | Playwright `badge.visual.ts` on the `visual` project | every Badge story with Linux baselines from a `visual-baselines.yml` run; the five tone baselines differ from each other (Phase 1 spec §6.C.6, `:1233`; §10 SD98) |
-| Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a `line` catalog `Badge` node renders `<line-badge>` with its `label` text in the default slot, and a changed or bound `label` rewrites the text; `variant` reaches the attribute; a node with an empty `label` and an `accessibility.label` renders a dot whose host carries that `aria-label`; a node with neither renders the `missing-name` placeholder and raises one `MISSING_ACCESSIBLE_NAME` `line-a2ui-error` (F10; Phase 1 spec §6.G.4, `:1512-1513`); the node joins the surface render fixture and the surface axe test (Phase 1 spec §6.C.6, `:1231`) |
+| Visual | Playwright `badge.visual.ts` on the `visual` project | every Badge story with Linux baselines from a `visual-baselines.yml` run; the five tone baselines differ from each other (Phase 1 spec §6.C.6, `:1238`; §10 SD98) |
+| Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a `line` catalog `Badge` node renders `<line-badge>` with its `label` text in the default slot, and a changed or bound `label` rewrites the text; `variant` reaches the attribute; a node with an empty `label` and an `accessibility.label` renders a dot whose host carries that `aria-label`; a node with neither renders the `missing-name` placeholder and raises one `MISSING_ACCESSIBLE_NAME` `line-a2ui-error` (F10; Phase 1 spec §6.G.4, `:1517-1518`); the node joins the surface render fixture and the surface axe test (Phase 1 spec §6.C.6, `:1236`) |
 | Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the CEM coverage and drift tests pass with the new descriptor (Phase 1 spec §6.G.5); `catalog.json` holds `Badge` and its inline projection validates (§6.G.2); the `Badge` tool takes the tool description, stays at or under 1024 characters, and carries `label`, `variant`, `accessibilityLabel` and `accessibilityDescription` (§6.G.3) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./badge` register `line-badge` only, and the isolation scan finds no other component's module in its bundle (Phase 1 spec §7.5) |
 
-- PRD §5.2 checklist mapping (`docs/PRD.md:517`; Phase 1 spec §6.C.6, `:1222`): render, reactive props, slots, parts, custom properties and events (none fired) run in the Unit tier, keyboard (Tab skips the host) in the Browser tier, and axe in the A11y tier.
-- No update-rate measurement: Badge is not a machine row (Phase 1 spec §6.C.6, `:1232`).
+- PRD §5.2 checklist mapping (`docs/PRD.md:517`; Phase 1 spec §6.C.6, `:1227`): render, reactive props, slots, parts, custom properties and events (none fired) run in the Unit tier, keyboard (Tab skips the host) in the Browser tier, and axe in the A11y tier.
+- No update-rate measurement: Badge is not a machine row (Phase 1 spec §6.C.6, `:1237`).
 - The axe and visual tests run against the Storybook stories on port 4320; the story list lives in `packages/line-components/__tests__/badge-stories.ts`, as `button-stories.ts` does for Button. The CDP and token tests use fixture pages under `packages/line-components/__tests__/integration/badge/`, served by the existing port-4321 `webServer` (`playwright.config.ts`).
 - `line-colors` is not a `line-components` dependency, so the colour test sets the palette steps it reads on `html`, as Alert's does (`0006-alert.md` Tests).
 
@@ -467,8 +468,8 @@ A `line` catalog node the surface renders as the second example, with the count 
 | D9 | No `max`, no number formatting and no `Intl` in the component | Follows F3 (a); MANIFESTO Out of Scope, component strings are the consumer's (`docs/MANIFESTO.md:66`) |
 | D10 | Catalog name `Badge`, `agentExposed: true` | PRD row name; Phase 1 spec C9 row |
 | D11 | Stories: Label, Count, Count in a button, Overflow, Dot decorative, Dot named, Named count, Tones (one per `variant`), Live count recipe, Custom tokens, and Count with hidden words, which row 01-C12 adds. The Avatar example lives in Avatar's stories (`avatar.stories.ts:121-123`, row 01-C10) (AM-003) | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0006-alert.md` D16) |
-| D12 | The C9 PR also fills the Badge row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs, reports the gzipped size and adds a changeset | Phase 1 spec §6.C.6, `:1223-1227`; plan §2.3, `docs/plans/01-plan-core-primitives.md:170` |
-| D13 | The Browser tier proves the internals semantics with a Chromium CDP assertion and an `INTERNALS` read-back in three engines, not with Playwright `ariaSnapshot()` | Phase 1 spec §6.C.4 notes, `:1180`; probe P2 shows `ariaSnapshot()` reads no internals |
+| D12 | The C9 PR also fills the Badge row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs, reports the gzipped size and adds a changeset | Phase 1 spec §6.C.6, `:1228-1232`; plan §2.3, `docs/plans/01-plan-core-primitives.md:170` |
+| D13 | The Browser tier proves the internals semantics with a Chromium CDP assertion and an `INTERNALS` read-back in three engines, not with Playwright `ariaSnapshot()` | Phase 1 spec §6.C.4 notes, `:1185`; probe P2 shows `ariaSnapshot()` reads no internals |
 | D14 | The class JSDoc tells authors to state a badge's meaning in words, to name a dot that carries meaning, and to set `aria-live` before a count changes | Alert's JSDoc pattern (`alert.ts:40-46`); WCAG 1.4.1; F2, F4 |
 
 Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option tables below stay as the record of what he weighed.
@@ -485,7 +486,7 @@ Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option t
 
 ### F2 — Count announcement
 
-**Evidence.** R8 covers dot-badge text, not counts (Phase 1 spec C9 row, `:1165`; R8 `:70`). Probe P1: a role-less count is text in place and joins an enclosing button's name ("Inbox 5"); an internals `status` makes a polite atomic live region but drops the count from the enclosing button's name ("Inbox "); an internals `ariaLive` alone exposes no live region; a host `aria-live="polite"` attribute exposes a polite non-atomic region and keeps "Inbox 5". APG says screen readers do not announce live content present at page load (R8 `:88-89`). No automated check observes an announcement (probe P4). Alert offers an opt-in `live` property that writes an internals role (`0006-alert.md` D1, D12), and no shipped component writes an ARIA attribute on its own host (`0006-alert.md` Internals values; `separator.ts:75-84`). `Element.ariaNotify()` misses Safari 26, outside the browser target (R8 `:94-95`). The surface announces each changing batch through its own live region (Phase 1 spec §6.G.4, `:1520-1521`).
+**Evidence.** R8 covers dot-badge text, not counts (Phase 1 spec C9 row, `:1170`; R8 `:70`). Probe P1: a role-less count is text in place and joins an enclosing button's name ("Inbox 5"); an internals `status` makes a polite atomic live region but drops the count from the enclosing button's name ("Inbox "); an internals `ariaLive` alone exposes no live region; a host `aria-live="polite"` attribute exposes a polite non-atomic region and keeps "Inbox 5". APG says screen readers do not announce live content present at page load (R8 `:88-89`). No automated check observes an announcement (probe P4). Alert offers an opt-in `live` property that writes an internals role (`0006-alert.md` D1, D12), and no shipped component writes an ARIA attribute on its own host (`0006-alert.md` Internals values; `separator.ts:75-84`). `Element.ariaNotify()` misses Safari 26, outside the browser target (R8 `:94-95`). The surface announces each changing batch through its own live region (Phase 1 spec §6.G.4, `:1525-1526`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -548,7 +549,7 @@ Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option t
 
 ### F8 — Anchoring over another element
 
-**Evidence.** MANIFESTO Law 4 forbids a component importing another to compose its children (`docs/MANIFESTO.md:45`), and Phase 1 spec §6.C.6 requires "Import no other component; compose through slots" (`:1228`). ARCH §13.2 gives Avatar a `status` slot (`docs/ARCHITECTURE.md:605`). Button has a `suffix` slot (`:596`). The CSS Anchor Positioning module could tie a badge to any element [INFERENCE: support in Firefox and Safari against the PRD latest-2 target not checked].
+**Evidence.** MANIFESTO Law 4 forbids a component importing another to compose its children (`docs/MANIFESTO.md:45`), and Phase 1 spec §6.C.6 requires "Import no other component; compose through slots" (`:1233`). ARCH §13.2 gives Avatar a `status` slot (`docs/ARCHITECTURE.md:605`). Button has a `suffix` slot (`:596`). The CSS Anchor Positioning module could tie a badge to any element [INFERENCE: support in Firefox and Safari against the PRD latest-2 target not checked].
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -559,7 +560,7 @@ Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option t
 
 ### F9 — Descriptor props
 
-**Evidence.** The text binding writes a prop's string as the host's text content, so it lands in the default slot (Phase 1 spec §6.G.1, `:1312`, AM-092; `projection.ts:458-462`); Chip uses it for `label` (`packages/line-genui/src/catalog/descriptors/chip.ts:12`, `:23`). A `line` catalog `child` yields no visible text, because the `line` catalog has no `Text` and `childText` counts only basic `Text` (`projection.ts:168-184`; `0008-chip.md` F6). Enum props take plain `.describe()` (Phase 1 spec `:1324`); Alert's descriptor carries `variant` (`packages/line-genui/src/catalog/descriptors/alert.ts:14-19`, `:32`).
+**Evidence.** The text binding writes a prop's string as the host's text content, so it lands in the default slot (Phase 1 spec §6.G.1, `:1317`, AM-092; `projection.ts:458-462`); Chip uses it for `label` (`packages/line-genui/src/catalog/descriptors/chip.ts:12`, `:23`). A `line` catalog `child` yields no visible text, because the `line` catalog has no `Text` and `childText` counts only basic `Text` (`projection.ts:168-184`; `0008-chip.md` F6). Enum props take plain `.describe()` (Phase 1 spec `:1329`); Alert's descriptor carries `variant` (`packages/line-genui/src/catalog/descriptors/alert.ts:14-19`, `:32`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -569,7 +570,7 @@ Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option t
 
 ### F10 — Agent name requirement
 
-**Evidence.** The surface checks `requiredName` before render and turns a nameless node into a placeholder with `line-a2ui-error` (Phase 1 spec §6.G.4, `:1512-1513`; `descriptor.ts:160-167`). The name sources are `childText`, `textProp` and `accessibilityLabel` (`descriptor.ts:138-141`). With F9 (a), `[textProp label, accessibilityLabel]` passes a node with text or an `accessibility.label`, and fails only an agent dot with no `accessibility.label`. An agent cannot place a decorative dot next to words reliably, and WCAG 1.4.1 forbids meaning by colour alone.
+**Evidence.** The surface checks `requiredName` before render and turns a nameless node into a placeholder with `line-a2ui-error` (Phase 1 spec §6.G.4, `:1517-1518`; `descriptor.ts:160-167`). The name sources are `childText`, `textProp` and `accessibilityLabel` (`descriptor.ts:138-141`). With F9 (a), `[textProp label, accessibilityLabel]` passes a node with text or an `accessibility.label`, and fails only an agent dot with no `accessibility.label`. An agent cannot place a decorative dot next to words reliably, and WCAG 1.4.1 forbids meaning by colour alone.
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -578,7 +579,7 @@ Miguel decided F1–F11 on 2026-11-10 and left D1–D14 as drafted. The option t
 
 ### F11 — htmx row
 
-**Evidence.** The htmx row applies to value-bearing or compound components (plan §2.4, `docs/plans/01-plan-core-primitives.md:174`; template). Badge has no value prop (F9) and no interactive element (D4), so it is neither (ARCH §17.2 C3, C9). The Phase 1 spec expects `n/a` and leaves the confirmation here (§6.C.4 C9 row; §10 SD34, `:2381`).
+**Evidence.** The htmx row applies to value-bearing or compound components (plan §2.4, `docs/plans/01-plan-core-primitives.md:174`; template). Badge has no value prop (F9) and no interactive element (D4), so it is neither (ARCH §17.2 C3, C9). The Phase 1 spec expects `n/a` and leaves the confirmation here (§6.C.4 C9 row; §10 SD34, `:2408`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -601,3 +602,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | AM-006 | 2026-11-13 | ledger 01-Z9 (factual realignment — Miguel, 2026-11-13: components stories grouped by PRD §4 category, `docs/context/01-z9.md`) | Locators only, no design change. `avatar.stories.ts:121-123` (was `:120-122`), the Avatar story that shows the badge in the `status` slot, at `:411` and in D11 (`:469`). Amendment rows keep their locators as record | The `id:` line that 01-Z9 pins in each components stories meta moved every later line down by one (PROCESS §3, line locators follow the lines) | Commit `0f77015` (`chore(storybook): group components stories by PRD §4 category`) adds one meta line; checked by content against `main` at `4441f25`: `avatar.stories.ts` lines 121–123 hold the text that lines 120–122 held |
 | AM-007 | 2026-11-20 | ledger 01-Z10 (decision — Miguel, 2026-11-20: PRD v0.8.34, Phase 1 spec AM-113; factual realignment) | Locators only, no design change. PRD: §4.1 Badge row `:253` (was `:252`), five times; §4.5 Tag Input row `:332` (was `:331`); §9.3 "Why semantic roles are fixed" `:1328` (was `:1327`); §5.2 Testing Strategy heading `:516` (was `:515`); §9.3 role variables and roles table `:1317-1326` (was `:1316-1325`). Plan: §2.4 bullets `:174-177` (was `:172-175`), which already cited a range beginning on the blank line under the §2.4 heading and leaving out the n/a bullet at `6c94403`; §2.3 COMPETITIVE-COMPONENT-ANALYSIS bullet `:170` (was `:168`), which already cited the Agent contract bullet at `6c94403`; §2.4 htmx-row bullet `:174` (was `:172`), which already cited the blank line under the §2.4 heading at `6c94403`. Amendment rows keep their locators as record | PRD v0.8.34 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.34) on `chore/01-z10-release-time-records`; Phase 1 spec §12 AM-113; `docs/plans/01-plan-core-primitives.md` after the 01-Z10 header line (lines from `:9` down moved one), resolved against `git show 6c94403:docs/plans/01-plan-core-primitives.md` |
 | AM-008 | 2026-11-25 | ledger 01-Z3 (decision — Miguel, 2026-11-25: PRD v0.8.35, Phase 1 spec AM-115; factual realignment) | Locators only, no design change. PRD: §4.1 Badge row `:254` (was `:253`), 5 times; §4.5 Tag Input row `:333` (was `:332`); §5.2 heading `:517` (was `:516`); §9.3 `:1320-1329` (was `:1317-1326`); §9.3 `:1331` (was `:1328`). Amendment rows keep their locators as record | PRD v0.8.35 adds a one-line revision note above every cited line and a two-line Phase 1 status note above the §7.3 exit criteria, so each cited line moved down by one, and each line past §7.3 by three (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.35) on `docs/01-z3-phase-01-exit`; Phase 1 spec §12 AM-116 |
+| AM-009 | 2026-11-25 | ledger 01-Z13 (decision — Miguel, 2026-11-25: Phase 2 plan fork O6 (c), scope (a)) | Pins adopted, no design change. (1) The header gains `Pinned sources`: PRD v0.8.35, ARCHITECTURE v0.8.27, Phase 1 spec through AM-116. (2) 37 Phase 1 spec locators move to the spec through AM-116, each to the line that held its text when the locator was written: `:927` → `:932`; `:1165` → `:1170` (2 times); `:1180` → `:1185` (6 times); `:1222` → `:1227`; `:1223-1227` → `:1228-1232`; `:1228` → `:1233` (3 times); `:1231` → `:1236` (2 times); `:1232` → `:1237`; `:1233` → `:1238`; `:1312` → `:1317` (2 times); `:1323` → `:1328`; `:1324` → `:1329`; `:1326` → `:1331`; `:1422` → `:1427`; `:1423` → `:1428`; `:1512-1513` → `:1517-1518` (2 times); `:1514` → `:1519`; `:1520-1521` → `:1525-1526` (2 times); `:1607` → `:1612`; `:2118-2119` → `:2145-2146`; `:2122-2123` → `:2149-2150`; `:2359` → `:2386`; `:2381` → `:2408`; `:2385` → `:2412`; `:2446` → `:2473`. (3) The Governing sections pin reads `ARCH (v0.8.27)` (was `ARCH (v0.8.26)`); v0.8.27 moved no line. The PRD and ARCHITECTURE locators already resolve at the pins. Amendment rows keep their locators as record | PROCESS §3 now pins component specs (Phase 2 plan O6 (c)); Phase 1 spec AMs that added lines, such as AM-114 and AM-115, had moved the spec under these locators with no rule to realign them (Phase 1 retrospective, Open items) | For each locator: the commit where it entered this spec, the Phase 1 spec line it named at that commit, and the line holding that text at AM-116 (`docs/context/01-z13.md`, Method) |
