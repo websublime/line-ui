@@ -7,6 +7,7 @@ Row 01-G3 on 2026-11-04 applies Miguel's decision that a descriptor may carry an
 Row 01-C5 on 2026-11-05 records ARCHITECTURE v0.8.23, a factual correction of §14.2 and §14.8 on which native pseudo-classes match a component host (spec AM-089; component specs `0002-button.md` AM-008, `0003-icon-button.md` AM-002). No plan section states it, so only the Source Architecture line changes.
 Row 01-S1 on 2026-11-19 applies Miguel's decision that the landing page depends on every visible Phase 1 component (C1–C12, C14, C15, C17–C20) and follows the radix-ui.com homepage layout (§2.8, §4.5, §6; spec §6.S.1, AM-109).
 Row 01-Z10 on 2026-11-20 applies Miguel's decision that an Anthropic live call before each release proves Anthropic acceptance of the emitted tools, and the offline R3 P11 subset checks in CI prove OpenAI and Gemini acceptance (§7.2; spec AM-113), citing PRD v0.8.34 (Source PRD line).
+Row 01-Z3 on 2026-11-25 applies Miguel's decision that Z3 closes Phase 1 as well as writing its retrospective: it evidences every spec §9 criterion in three slices, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line, and a criterion fixed during the close that changes a published package is released before Z3 lands (§4.0, §4.6, §10 step 7; spec §6.Z.2, AM-115).
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
@@ -333,7 +334,7 @@ Stream G also writes the descriptors of Button, Icon, Stack and Separator.
 
 - Z1 adds the code of conduct (PRD §10).
 - No Z2 task remains, and spec AM-002 removes it. Row 00-Z49, the PR that created the Phase 1 ledger, made the process alignment that §4.0 describes, with the Phase 1 streams in the `CLAUDE.md` ledger pointer (§10 step 6).
-- Z3 closes Phase 1 and writes its retrospective, and depends on every other Phase 1 row. The close evidences every spec §9 criterion, ticks the §9 and §7 boxes and adds the PRD §7.3 status line (spec AM-115). The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as the Phase 00 sweep filed row C18 (spec §6.Z.2, §10 SD87, AM-036).
+- Z3 closes Phase 1 and writes its retrospective, and depends on every other Phase 1 row. The close evidences every spec §9 criterion, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line (spec AM-115). The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as the Phase 00 sweep filed row C18 (spec §6.Z.2, §10 SD87, AM-036).
 - Z5 makes every test reach another workspace package through its package name and a declared dependency, and its own package's build output through its own `exports` (PRD §5.2). It adds the private package `@websublime/line-testing`, which holds the htmx harness, moves the `line-tokens` shadow check into `line-themes`, and replaces the auto-pair string test with a browser test of all 31 accents (PRD §5.2.1). It lands before C1–C20 (spec §6.Z.3, AM-048).
 - The O4 items are Phase 00 ledger rows `00-Z28` (O4.a, class `decision`), `00-Z29` (O4.b, `blocked` until the Biome release) and `00-Z30` (O4.c, class `amendment`).
 - These rows do not wait for the Phase 1 ledger.
