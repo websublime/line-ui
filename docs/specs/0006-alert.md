@@ -4,13 +4,14 @@
 |-------|-------|
 | Status | `approved` (Miguel, 2026-11-09) |
 | Phase | `1` |
-| Tier | `Static` (Phase 1 spec §6.C.4 C7 row, `docs/specs/01-spec-core-primitives.md:1163`; PRD §4.1, `docs/PRD.md:253`) |
+| Tier | `Static` (Phase 1 spec §6.C.4 C7 row, `docs/specs/01-spec-core-primitives.md:1168`; PRD §4.1, `docs/PRD.md:253`) |
 | Tag | `line-alert` |
 | Entrypoint | `@websublime/line-components/alert` |
 | Form-associated | `no` (Phase 1 spec §6.C.4 C7 row) |
 | PRD catalogue entry | PRD §4.1, `Alert` row (`docs/PRD.md:253`) |
 | Ledger row | `01-C7` |
 | Governing sections | Phase 1 spec §4.2, §6.C.0, §6.C.4 (C7 row and notes), §6.C.6, §6.G.1, §6.G.3, §6.G.4, §7.4, §7.8, §10 SD4, SD12, SD19, SD31, SD34, SD37, SD39, SD98, §12 AM-058, AM-067, AM-086; ARCH §1–§5, §8, §12, §14.6–§14.8, §14.10, §17.2–§17.4; PRD §4.1, §5.2, §8, §9.3; MANIFESTO Laws 1–4, Out of Scope |
+| Pinned sources | `docs/PRD.md` v0.8.35, `docs/ARCHITECTURE.md` v0.8.27, `docs/specs/01-spec-core-primitives.md` through AM-116 (PROCESS §3; row 01-Z13) |
 
 Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions D1–D7 and D11–D16 on 2026-11-09 and raised no objection to the orchestrator defaults D8–D10; Part B states those decisions.
 
@@ -18,7 +19,7 @@ Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided O
 
 ## Probe — live roles on a slotting host
 
-The Phase 1 spec leaves the `alert` vs `status` role to this spec (§6.C.4 C7 row, `:1163`; §10 SD37; R8 §6 Q8, `docs/research/01-research-accessibility.md:341-342`). A role set only through `ElementInternals` needs a Chromium accessibility-tree assertion and an `INTERNALS` read-back in three engines, and the spec records the Firefox and WebKit gap (§6.C.4 notes, `:1180`; §10 SD39; §12 AM-058). The probe ran on 2026-11-09 to inform D1, D2 and D8.
+The Phase 1 spec leaves the `alert` vs `status` role to this spec (§6.C.4 C7 row, `:1168`; §10 SD37; R8 §6 Q8, `docs/research/01-research-accessibility.md:341-342`). A role set only through `ElementInternals` needs a Chromium accessibility-tree assertion and an `INTERNALS` read-back in three engines, and the spec records the Firefox and WebKit gap (§6.C.4 notes, `:1180`; §10 SD39; §12 AM-058). The probe ran on 2026-11-09 to inform D1, D2 and D8.
 
 ### Setup
 
@@ -108,8 +109,8 @@ All three placements give Chromium the same live region over the slotted text. T
 
 - Whether a screen reader announces the region, at load, on insertion or on a text change. APG says screen readers "do not inform users of alerts that are present on the page before page load completes" (R8 `:88-89`; https://www.w3.org/WAI/ARIA/apg/patterns/alert/). CDP exposes the live-region properties but no announcement event (P4).
 - Whether any engine fires its platform alert event while the host is role-less between `append()` and the first Lit update. P4 shows the internals value only [INFERENCE: Chromium builds its tree after microtasks run, so it likely never sees the role-less state].
-- Firefox and WebKit exposure of the internals role to assistive technology. The read-back proves the values each engine holds, not what it exposes (Phase 1 spec `:1180`; §12 AM-058).
-- A manual screen-reader pass is optional and never blocks the row (Phase 1 spec `:1180`).
+- Firefox and WebKit exposure of the internals role to assistive technology. The read-back proves the values each engine holds, not what it exposes (Phase 1 spec `:1185`; §12 AM-058).
+- A manual screen-reader pass is optional and never blocks the row (Phase 1 spec `:1185`).
 
 ### What the probe settles
 
@@ -346,7 +347,7 @@ Alert takes no focus and handles no key. Slotted buttons and links keep their ow
 - A labelled live host passes `aria-prohibited-attr`, because axe exempts a custom element with no explicit role (`0011-separator.md` A11y, `axe.js:32335-32336`; probe P3).
 - Playwright `ariaSnapshot()` reads only the `role` attribute and shows no internals role (`0004-button-group.md` probe P6).
 
-**Accessibility tree** (Phase 1 spec §6.C.4 notes, `:1180`; §10 SD39; §12 AM-058)
+**Accessibility tree** (Phase 1 spec §6.C.4 notes, `:1185`; §10 SD39; §12 AM-058)
 
 - **Chromium accessibility tree, automated.** A Browser-tier test opens a CDP session and reads `Accessibility.getPartialAXTree` or `getFullAXTree` for each host. It asserts the following.
   - A host with `live="off"`, or with no `live` attribute, is not an `alert` or `status` node and carries no `live` property.
@@ -364,8 +365,8 @@ Alert takes no focus and handles no key. Slotted buttons and links keep their ow
   - After an in-place `Text` data change on a live alert, the new text sits under the live node once the update completes (AM-005).
   - An alert created, given `live="assertive"` and appended after load is an `alert` node with the same properties.
   - The `INTERNALS` read-back gives `null`, `status` and `alert` for `off`, `polite` and `assertive` in all three engines, with `ariaLive` and `ariaAtomic` `null`. The role is there synchronously after `append()`, after a property set, after `removeAttribute('live')` (back to `null`) and in an element parsed by `innerHTML`.
-- A manual screen-reader pass is not required (Phase 1 spec `:1180`).
-- Firefox and WebKit exposure to assistive technology stays unverified by any check above, and so does whether any engine or screen reader announces the region. The gap is recorded here (Phase 1 spec `:1180`; §12 AM-058; probe "What automation cannot observe").
+- A manual screen-reader pass is not required (Phase 1 spec `:1185`).
+- Firefox and WebKit exposure to assistive technology stays unverified by any check above, and so does whether any engine or screen reader announces the region. The gap is recorded here (Phase 1 spec `:1185`; §12 AM-058; probe "What automation cannot observe").
 
 ### Agent contract
 
@@ -409,7 +410,7 @@ Alert takes no focus and handles no key. Slotted buttons and links keep their ow
 - The frontend tool carries no message text, as Button's tool carries no label (`packages/line-genui/src/catalog/descriptors/button.ts:9-12`). The app supplies the content and any dismiss button.
 - An Alert the surface rendered and that hid itself after a dismiss stays hidden when the agent sends its node again, because the surface binds no `hidden` (AM-006).
 - No A2UI v0.9 `basic` type maps to Alert. The basic catalog holds `AudioPlayer`, `Button`, `Card`, `CheckBox`, `ChoicePicker`, `Column`, `DateTimeInput`, `Divider`, `Icon`, `Image`, `List`, `Modal`, `Row`, `Slider`, `Tabs`, `Text`, `TextField` and `Video` (`node_modules/.bun/@a2ui+web_core@0.14.0/node_modules/@a2ui/web_core/src/v0_9/schemas/catalogs/basic/catalog.json`, `components`; the v1_0 file lists the same 18). ARCH §17.3 maps `Card` to `<line-card>` in Phase 5 (`docs/ARCHITECTURE.md:1625`), so the `basic` map is unchanged (D6).
-- C7 ships its descriptor in the same PR and adds Alert to the `<line-a2ui-surface>` render fixture and the surface axe test (Phase 1 spec §6.C.0 step 5, `:922`; §6.C.6).
+- C7 ships its descriptor in the same PR and adds Alert to the `<line-a2ui-surface>` render fixture and the surface axe test (Phase 1 spec §6.C.0 step 5, `:927`; §6.C.6).
 
 ### Bundle / entrypoint
 
@@ -714,3 +715,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | AM-012 | 2026-11-13 | ledger 01-Z9 (factual realignment — Miguel, 2026-11-13: components stories grouped by PRD §4 category, `docs/context/01-z9.md`) | Locators only, no design change. `separator.stories.ts:47-80` (was `:46-79`), the Separator stories in the evidence at `:687`. Amendment rows keep their locators as record | The `id:` line that 01-Z9 pins in each components stories meta moved every later line down by one (PROCESS §3, line locators follow the lines) | Commit `0f77015` (`chore(storybook): group components stories by PRD §4 category`) adds one meta line; checked by content against `main` at `4441f25`: `separator.stories.ts` lines 47–80 hold the text that lines 46–79 held |
 | AM-013 | 2026-11-20 | ledger 01-Z10 (decision — Miguel, 2026-11-20: PRD v0.8.34, Phase 1 spec AM-113; factual realignment) | Locators only, no design change. PRD: §4.1 Alert row `:252` (was `:251`), four times; §4.3 Alert Dialog row `:295` (was `:294`); §9.3 "Why semantic roles are fixed" `:1328` (was `:1327`); §9.3 `SEMANTIC_MAP` `:1333-1338` (was `:1332-1337`), twice; the v0.8.28 revision note `:19` (was `:18`). Amendment rows keep their locators as record | PRD v0.8.34 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.34) on `chore/01-z10-release-time-records`; Phase 1 spec §12 AM-113 |
 | AM-014 | 2026-11-25 | ledger 01-Z3 (decision — Miguel, 2026-11-25: PRD v0.8.35, Phase 1 spec AM-115; factual realignment) | Locators only, no design change. PRD: the v0.8.28 revision note `:20` (was `:19`); §4.1 Alert row `:253` (was `:252`), 4 times; §4.3 Alert Dialog row `:296` (was `:295`); §9.3 `:1331` (was `:1328`); §9.3 `:1336-1341` (was `:1333-1338`), 2 times. Amendment rows keep their locators as record | PRD v0.8.35 adds a one-line revision note above every cited line and a two-line Phase 1 status note above the §7.3 exit criteria, so each cited line moved down by one, and each line past §7.3 by three (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.35) on `docs/01-z3-phase-01-exit`; Phase 1 spec §12 AM-116 |
+| AM-015 | 2026-11-25 | ledger 01-Z13 (decision — Miguel, 2026-11-25: Phase 2 plan fork O6 (c), scope (a)) | Pins adopted, no design change. (1) The header gains `Pinned sources`: PRD v0.8.35, ARCHITECTURE v0.8.27, Phase 1 spec through AM-116. (2) 8 Phase 1 spec locators move to the spec through AM-116, each to the line that held its text when the locator was written: `:922` → `:927`; `:1163` → `:1168` (2 times); `:1180` → `:1185` (5 times). The PRD and ARCHITECTURE locators already resolve at the pins. Amendment rows keep their locators as record | PROCESS §3 now pins component specs (Phase 2 plan O6 (c)); Phase 1 spec AMs that added lines, such as AM-114 and AM-115, had moved the spec under these locators with no rule to realign them (Phase 1 retrospective, Open items) | For each locator: the commit where it entered this spec, the Phase 1 spec line it named at that commit, and the line holding that text at AM-116 (`docs/context/01-z13.md`, Method) |

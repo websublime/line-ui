@@ -4,13 +4,14 @@
 |-------|-------|
 | Status | `approved` (Miguel, 2026-11-11) |
 | Phase | `1` |
-| Tier | `Static` (Phase 1 spec §6.C.4 C10 row, `docs/specs/01-spec-core-primitives.md:1166`; PRD §4.1, `docs/PRD.md:256`; ARCH §8, `docs/ARCHITECTURE.md:410`; ARCH §13.2, `docs/ARCHITECTURE.md:605`) |
+| Tier | `Static` (Phase 1 spec §6.C.4 C10 row, `docs/specs/01-spec-core-primitives.md:1171`; PRD §4.1, `docs/PRD.md:256`; ARCH §8, `docs/ARCHITECTURE.md:410`; ARCH §13.2, `docs/ARCHITECTURE.md:605`) |
 | Tag | `line-avatar` |
 | Entrypoint | `@websublime/line-components/avatar` (Phase 1 spec §4.2, `:249`, `:298`) |
 | Form-associated | `no` (Phase 1 spec §6.C.4 C10 row) |
 | PRD catalogue entry | PRD §4.1, `Avatar` row (`docs/PRD.md:256`) |
 | Ledger row | `01-C10` (`docs/plans/01-tasks-core-primitives.md:56`) |
-| Governing sections | Phase 1 spec §4 (`:249`, `:298`), §6.C.0, §6.C.4 (C10 row `:1166`, notes `:1178-1183`), §6.C.6 (`:1218-1233`), §6.G.1–§6.G.5, §7.4, §7.8, §10 SD4, SD12, SD31, SD34, SD37, SD38, SD39, SD57, SD98, SD99, §12 AM-021, AM-058, AM-092, AM-094; ARCH (v0.8.27) §3, §5, §8, §12, §13.2, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8; MANIFESTO Laws 1–5, 9, Out of Scope; R7 §2.4, §6 OQ6; R8 §2.2; R9 §2.1 |
+| Governing sections | Phase 1 spec §4 (`:249`, `:298`), §6.C.0, §6.C.4 (C10 row `:1171`, notes `:1183-1188`), §6.C.6 (`:1223-1238`), §6.G.1–§6.G.5, §7.4, §7.8, §10 SD4, SD12, SD31, SD34, SD37, SD38, SD39, SD57, SD98, SD99, §12 AM-021, AM-058, AM-092, AM-094; ARCH (v0.8.27) §3, §5, §8, §12, §13.2, §14.6–§14.8, §17.2–§17.4; PRD §4.1, §5.2, §8; MANIFESTO Laws 1–5, 9, Out of Scope; R7 §2.4, §6 OQ6; R8 §2.2; R9 §2.1 |
+| Pinned sources | `docs/PRD.md` v0.8.35, `docs/ARCHITECTURE.md` v0.8.27, `docs/specs/01-spec-core-primitives.md` through AM-116 (PROCESS §3; row 01-Z13) |
 
 Text marked `[INFERENCE]` has no probe or source behind it yet. Miguel decided Open Questions F1–F13 on 2026-11-11 and approved the spec the same day; Part B states those decisions. The orchestrator defaults D1–D17 stand as drafted (Miguel, 2026-11-11).
 
@@ -117,7 +118,7 @@ The results were the same in chromium, firefox and webkit, and the same with the
 | every other case, `host-img` unnamed with initials included | none | none |
 
 - axe checks a role or an `<img>` in an open shadow root and in light DOM, and flags it unnamed (`role-img-alt`, `image-alt`).
-- axe ignores the internals role, so an unnamed `host-img` passes unless an enclosing link ends up without a name (Phase 1 spec §7.4, `:2122-2123`).
+- axe ignores the internals role, so an unnamed `host-img` passes unless an enclosing link ends up without a name (Phase 1 spec §7.4, `:2149-2150`).
 
 ### P4 — Image events, three engines
 
@@ -190,7 +191,7 @@ An `<img alt="">` in an open shadow root went through the steps below; the log r
 ### What automation cannot observe
 
 - What a screen reader says for any case. VoiceOver and NVDA may still read the presentational children of a host `img` [INFERENCE: not run].
-- Firefox and WebKit exposure to assistive technology. The read-back proves values, and the snapshot is Playwright's own computation (Phase 1 spec `:1180`; §12 AM-058).
+- Firefox and WebKit exposure to assistive technology. The read-back proves values, and the snapshot is Playwright's own computation (Phase 1 spec `:1185`; §12 AM-058).
 
 ---
 
@@ -210,7 +211,7 @@ An `<img alt="">` in an open shadow root went through the steps below; the log r
 - An organisation's logo as an inline `<svg>` in the default slot, with a square radius set through `--line-avatar-radius` (F1, F8).
 - Initials when a person has no photo or the photo fails, such as "AS" for "Ana Silva" (F4).
 - A stack of participants inside `<line-avatar-group>` with an overlap ring and a "+3" overflow (row 01-C11; F12).
-- An agent-built avatar on `<line-a2ui-surface>`, from a `line` catalog `Avatar` node or a basic catalog `Image` node with `variant: "avatar"` (Phase 1 spec §6.C.4, `:1182`; F9–F11).
+- An agent-built avatar on `<line-a2ui-surface>`, from a `line` catalog `Avatar` node or a basic catalog `Image` node with `variant: "avatar"` (Phase 1 spec §6.C.4, `:1187`; F9–F11).
 
 #### Anti-patterns
 
@@ -234,9 +235,9 @@ An `<img alt="">` in an open shadow root went through the steps below; the log r
 
 | Component | Relation | Connects through |
 |-----------|----------|------------------|
-| `<line-badge>` | child | the `status` slot; a named dot such as `<line-badge slot="status" variant="success" aria-label="Online">`, positioned by Avatar's `::slotted([slot="status"])` rule (F6; `0007-badge.md` F8, which leaves the overlay to the anchor's slot). Avatar never imports Badge (MANIFESTO Law 4, `docs/MANIFESTO.md:45`; Phase 1 spec §6.C.6, `:1228`) |
+| `<line-badge>` | child | the `status` slot; a named dot such as `<line-badge slot="status" variant="success" aria-label="Online">`, positioned by Avatar's `::slotted([slot="status"])` rule (F6; `0007-badge.md` F8, which leaves the overlay to the anchor's slot). Avatar never imports Badge (MANIFESTO Law 4, `docs/MANIFESTO.md:45`; Phase 1 spec §6.C.6, `:1233`) |
 | `<line-icon>` | child | the default slot, as custom media in place of the image (F1), or the `fallback` slot, as a fallback glyph (F4) |
-| `<line-avatar-group>` (row 01-C11, `docs/specs/0010-avatar-group.md`) | parent | its default slot, under manual slot assignment; it sets `--line-avatar-size` and `--line-avatar-ring-width` on its own host, which reach the avatars by inheritance, and overlaps them through `margin-inline-start` on its own shadow wrappers around each assigned avatar (`0010-avatar-group.md` D10, D20; AM-004). It never imports Avatar and never writes attributes on slotted avatars (Phase 1 spec §10 SD4, `:2351`; §6.C.4, `:1153`, `:1167`; F12). The pinned contract is under Agent contract, "AvatarGroup contract" |
+| `<line-avatar-group>` (row 01-C11, `docs/specs/0010-avatar-group.md`) | parent | its default slot, under manual slot assignment; it sets `--line-avatar-size` and `--line-avatar-ring-width` on its own host, which reach the avatars by inheritance, and overlaps them through `margin-inline-start` on its own shadow wrappers around each assigned avatar (`0010-avatar-group.md` D10, D20; AM-004). It never imports Avatar and never writes attributes on slotted avatars (Phase 1 spec §10 SD4, `:2378`; §6.C.4, `:1158`, `:1172`; F12). The pinned contract is under Agent contract, "AvatarGroup contract" |
 | `<line-button>`, links | parent | the default slot of the button or the content of the link; the avatar's name becomes the control's name, and a slotted status joins it (probe P1, with a native link) |
 | `<line-stack>` | parent | beside a name in a horizontal Stack, with the avatar decorative (F3) |
 | `<line-a2ui-surface>` | orchestrator | creates `line-avatar` by tag from a `line` catalog `Avatar` node or a basic `Image` node with `variant: "avatar"`, writes `src` behind the URL policy and `name`, wires a `status` child into the `status` slot, and sets `accessibility.label` as the host `aria-label` (ARCH §17.3, `docs/ARCHITECTURE.md:1611`; §17.4, `:1636`, `:1641`; F9–F11) |
@@ -280,7 +281,7 @@ An `<img alt="">` in an open shadow root went through the steps below; the log r
 
 | Field | Value |
 |-------|-------|
-| Machine | `none` (Static tier; ARCH §8, `docs/ARCHITECTURE.md:410`; ARCH §13.2; Phase 1 spec §10 SD37, `:2384`, which answers R7 §6 OQ6 with Static) |
+| Machine | `none` (Static tier; ARCH §8, `docs/ARCHITECTURE.md:410`; ARCH §13.2; Phase 1 spec §10 SD37, `:2411`, which answers R7 §6 OQ6 with Static) |
 
 | State | Entered on | Left on | Host reflection |
 |-------|------------|---------|-----------------|
@@ -336,7 +337,7 @@ An `<img alt="">` in an open shadow root went through the steps below; the log r
 | empty (decorative) | absent | absent | `"true"` | `""` |
 
 - The component writes these attributes in its own shadow tree during render, from `name` and the observed `aria-label` and `aria-description`. It writes no `role` or `aria-*` on the host and sets no internals role.
-- A host `aria-label` stays on the host as the author wrote it, so Chromium also exposes a named `generic` host, as it does for Button (Phase 1 spec §6.C.4 C1 row, `:1157`; probe P1, the host `aria-label` case). `name` avoids it, and the docs lead with `name`.
+- A host `aria-label` stays on the host as the author wrote it, so Chromium also exposes a named `generic` host, as it does for Button (Phase 1 spec §6.C.4 C1 row, `:1162`; probe P1, the host `aria-label` case). `name` avoids it, and the docs lead with `name`.
 
 ### Events
 
@@ -375,7 +376,7 @@ Avatar holds no value and no interactive element, so it is neither value-bearing
 |-----|--------|
 | none | — |
 
-Avatar takes no focus and handles no key. The Browser tier proves only that Tab skips the host (Phase 1 spec §10 SD99, `:2446`).
+Avatar takes no focus and handles no key. The Browser tier proves only that Tab skips the host (Phase 1 spec §10 SD99, `:2473`).
 
 ### A11y
 
@@ -388,9 +389,9 @@ Avatar takes no focus and handles no key. The Browser tier proves only that Tab 
 
 - **Status (F6).** The `status` slot sits outside `root`, so a named marker keeps its own node and follows the avatar in an enclosing name, such as "Ana Silva Online" (probe P1). The marker names itself; Badge makes a named dot an `img` (`0007-badge.md` F4).
 - **Decorative (F3).** An avatar with no name exposes nothing of its own: no role on `root`, `alt=""` on the image and a hidden fallback (probe P1, the `inner-hidden` cases). A slotted status stays exposed.
-- **Proof (D14).** The role and name live in an open shadow root, not in internals, so the internals rule of Phase 1 spec §6.C.4 notes (`:1180`) does not apply. axe checks them, and flags an unnamed `role="img"` with `role-img-alt` (probe P3). Playwright's `ariaSnapshot()` sees them in all three engines (probe P2), and a Chromium CDP assertion proves the enclosing-name composition (probe P1).
+- **Proof (D14).** The role and name live in an open shadow root, not in internals, so the internals rule of Phase 1 spec §6.C.4 notes (`:1185`) does not apply. axe checks them, and flags an unnamed `role="img"` with `role-img-alt` (probe P3). Playwright's `ariaSnapshot()` sees them in all three engines (probe P2), and a Chromium CDP assertion proves the enclosing-name composition (probe P1).
 - **Unnamed by mistake.** An avatar left without a name is decorative, as Icon and Badge are (F3), so no automated check catches a missing name. The JSDoc and the docs say to set `name` unless the name is written beside the avatar (D13).
-- **Firefox and WebKit gap.** No check proves what Firefox and WebKit expose to assistive technology. The snapshot is Playwright's own computation (Phase 1 spec `:1180`; §12 AM-058). A manual screen-reader pass is optional and never blocks the row.
+- **Firefox and WebKit gap.** No check proves what Firefox and WebKit expose to assistive technology. The snapshot is Playwright's own computation (Phase 1 spec `:1185`; §12 AM-058). A manual screen-reader pass is optional and never blocks the row.
 
 ### Agent contract
 
@@ -422,25 +423,25 @@ Avatar takes no focus and handles no key. The Browser tier proves only that Tab 
 | Catalog name | `Avatar` (D11) |
 | Tag | `line-avatar` |
 | `load()` subpath | `@websublime/line-components/avatar` |
-| Prop schema | `src` (`DynamicString`, optional, through `commonProp`), `name` (`DynamicString`, optional), `status` (`ComponentId`, optional), plus `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1, `:1323`, `:1326`; F9) |
+| Prop schema | `src` (`DynamicString`, optional, through `commonProp`), `name` (`DynamicString`, optional), `status` (`ComponentId`, optional), plus `accessibility` from the `ComponentCommon` mixin (Phase 1 spec §6.G.1, `:1328`, `:1331`; F9) |
 | Slot map | `status` → `status` (F9) |
 | Binding map | `src` → URL binding `{ kind: 'url', use: 'image', name: 'src' }`, which the surface runs through its URL policy before it sets the attribute (F10); `name` → attribute `name`; no value prop and no commit event |
 | Action map | none |
 | Accessibility requirements | none required, so an avatar node without a name renders decorative (F11); `hostNaming: { kind: 'always' }`, so `accessibility.label` becomes the host `aria-label`, which the component copies to `root` (`packages/line-genui/src/catalog/descriptor.ts:153-157`; F2) |
 | Agent-facing description | A picture that stands for a person or an organisation, such as a user's photo beside a comment or in an account menu. Set `src` to the image URL and `name` to the person's or organisation's name. Assistive technology announces the name, and while the image loads, fails or is missing the avatar shows the name's initials instead. Leave `name` empty only when the same name is already written next to the avatar, so it is not announced twice; the avatar is then decorative. To show presence, put a Badge in `status`, such as a `success` Badge with an empty label and the accessible label "Online". An avatar is not interactive. Use Image for any other picture, and Icon for a symbol. |
 | Tool description | A picture that stands for a person or an organisation, such as a user's photo beside a comment or in an account menu. Set `src` to the image URL and `name` to the person's or organisation's name. Assistive technology announces the name, and while the image loads, fails or is missing the avatar shows the name's initials instead. Leave `name` empty only when the same name is already written next to the avatar, so it is not announced twice; the avatar is then decorative. An avatar is not interactive. Use Image for any other picture, and Icon for a symbol. |
-| `agentExposed` | `true` (Phase 1 spec §6.C.4 C10 row; Avatar is none of the three SD38 exceptions, `:2385`) |
+| `agentExposed` | `true` (Phase 1 spec §6.C.4 C10 row; Avatar is none of the three SD38 exceptions, `:2412`) |
 
-- The agent-facing description names `status`, a `ComponentId` prop the tool lacks, so the descriptor sets a tool description without that sentence (Phase 1 spec §6.G.3, `:1423`). The agent-facing description is 682 characters and the tool description 558, under the 1024 cap (`:1422`).
-- The frontend tool carries `src`, `name`, `accessibilityLabel` and `accessibilityDescription`, because `hostNaming` is `always` (`packages/line-genui/src/catalog/tools.ts:144-148`, `:228`). The app renders a tool call, not the surface, so the URL policy of F10 does not cover a tool-created avatar; the G3 docs say so (Phase 1 spec §6.G.3, `:1405`).
+- The agent-facing description names `status`, a `ComponentId` prop the tool lacks, so the descriptor sets a tool description without that sentence (Phase 1 spec §6.G.3, `:1428`). The agent-facing description is 682 characters and the tool description 558, under the 1024 cap (`:1427`).
+- The frontend tool carries `src`, `name`, `accessibilityLabel` and `accessibilityDescription`, because `hostNaming` is `always` (`packages/line-genui/src/catalog/tools.ts:144-148`, `:228`). The app renders a tool call, not the surface, so the URL policy of F10 does not cover a tool-created avatar; the G3 docs say so (Phase 1 spec §6.G.3, `:1410`).
 - The surface wires a `status` child into the `status` slot by setting `slot="status"` on the child's element, the existing slot-map path (`packages/line-genui/src/a2ui/projection.ts:487-503`, `:497`).
-- The drift test checks the `name` attribute, the `src` member of the URL binding and the `status` slot against the manifest (Phase 1 spec §6.G.5, `:1607`; F10).
-- C10 ships its descriptor in the same PR, joins the `descriptors` array in catalog-name order (`packages/line-genui/src/catalog/index.ts:108-115`), and adds Avatar to the `<line-a2ui-surface>` render fixture and the surface axe test (Phase 1 spec §6.C.0, `:927`; §6.C.6, `:1231`).
+- The drift test checks the `name` attribute, the `src` member of the URL binding and the `status` slot against the manifest (Phase 1 spec §6.G.5, `:1612`; F10).
+- C10 ships its descriptor in the same PR, joins the `descriptors` array in catalog-name order (`packages/line-genui/src/catalog/index.ts:108-115`), and adds Avatar to the `<line-a2ui-surface>` render fixture and the surface axe test (Phase 1 spec §6.C.0, `:932`; §6.C.6, `:1236`).
 
 #### URL policy (F10)
 
 - A new binding kind joins `Binding` in `packages/line-genui/src/catalog/descriptor.ts`: `{ kind: 'url'; use: UrlBindingUse; name: string }`, where `UrlBindingUse` is `'image' | 'video' | 'audio'`, the media subset of the policy's `UrlUse` without `'openUrl'` (AM-003). The surface resolves the prop through `allowedUrl(value, use, document.baseURI, urlPolicy)` (`packages/line-genui/src/a2ui/url-policy.ts:31-46`) and sets the attribute `name` to the resolved `href`, or removes it when the policy rejects the URL. Today `#bind` sets attributes with no policy (`projection.ts:450-472`), and only native targets go through `allowedUrl` (`:432-444`).
-- The default policy applies: `https:`, `http:`, `mailto:`, `tel:`, never `data:` (`url-policy.ts:20`; Phase 1 spec §6.G.4, `:1499-1504`; §10 SD57). A rejected URL leaves no `src`, so the avatar shows its fallback (C8).
+- The default policy applies: `https:`, `http:`, `mailto:`, `tel:`, never `data:` (`url-policy.ts:20`; Phase 1 spec §6.G.4, `:1504-1509`; §10 SD57). A rejected URL leaves no `src`, so the avatar shows its fallback (C8).
 - The binding reads the surface's `urlPolicy` signal inside the node's effect, as `#native` does, so a new policy re-projects the node [INFERENCE: follows from `projection.ts:433` reading `getValue(this.urlPolicy)` inside the effect].
 - Phase 1 spec AM-094 records the binding kind, with trigger `decision`, in its own commit before the code on the C10 branch. It edits §6.G.1 Fields (the Binding map row), §6.G.4 URLs (the binding kind covers a component's URL prop), §6.G.5 (the drift test checks the URL binding's member) and the ARCH §17.3 binding sentence, as AM-092 did for the text binding.
 
@@ -454,11 +455,11 @@ Avatar takes no focus and handles no key. The Browser tier proves only that Tab 
 | `variant` | selects the target | `"avatar"` → `<line-avatar>`; every other value, and a missing one, keeps the native `<img>` |
 | `accessibility.label`, `.description` | host `aria-label`, `aria-description` | `hostNaming: always`; the component copies them to `root` |
 
-- `basic.ts` keeps one `Image` entry (`packages/line-genui/src/catalog/basic.ts:102-103`) and gains a per-variant target: `avatar` → `{ kind: 'component', descriptor: avatarDescriptor }`, the rest the existing native target. The map still holds 10 types (Phase 1 spec §6.G.2, `:1389`).
+- `basic.ts` keeps one `Image` entry (`packages/line-genui/src/catalog/basic.ts:102-103`) and gains a per-variant target: `avatar` → `{ kind: 'component', descriptor: avatarDescriptor }`, the rest the existing native target. The map still holds 10 types (Phase 1 spec §6.G.2, `:1394`).
 - `BASIC_PROP_NAMES` gains `Image: { url: 'src', description: 'name' }` (`projection.ts:64-67`).
 - A node whose `variant` changes swaps between `<img>` and `<line-avatar>`, because `#element` creates a new element when the tag differs (`projection.ts:313-330`).
 - An `Image` node with `variant: "avatar"` and no `description` and no `accessibility.label` renders a decorative avatar, as the same node with another variant renders `<img alt="">` (`projection.ts:439`; F11).
-- The C10 acceptance (Phase 1 spec §6.C.4, `:1182`; §12 AM-021) holds when, on `<line-a2ui-surface>`, a message with the v0_9 basic id and an `Image` node with `variant: "avatar"` renders `<line-avatar>`, with `src` set from an allowed `url`, no `src` for a `data:` or rejected URL, and `name` from `description`, while an `Image` node with `variant: "mediumFeature"` still renders `<img>`.
+- The C10 acceptance (Phase 1 spec §6.C.4, `:1187`; §12 AM-021) holds when, on `<line-a2ui-surface>`, a message with the v0_9 basic id and an `Image` node with `variant: "avatar"` renders `<line-avatar>`, with `src` set from an allowed `url`, no `src` for a `data:` or rejected URL, and `name` from `description`, while an `Image` node with `variant: "mediumFeature"` still renders `<img>`.
 
 #### AvatarGroup contract (F12)
 
@@ -559,15 +560,15 @@ A basic catalog node the surface renders as `<line-avatar src="https://example.c
 |------|--------|--------|
 | Unit | `bun test` on happy-dom | render with no errors; `src` renders the internal `<img>` and a blank or removed `src` renders none; the flags table through dispatched `load` and `error` events and the fake internals, including an event for a stale `src` dropped and a removed `src` clearing both flags (F5; D6); custom media in the default slot hiding the image and the fallback and clearing the flags (F1); the initials rule over the P6 names, a `fallback` slot that wins over computed initials, and a blank `name` giving none (F4; D9); the Semantics on `root` table for `name`, a host `aria-label` that wins, a blank `aria-label` counting as absent, `aria-description` copied, and the decorative row (F2, F3; D10); a change of `name`, `aria-label` or `aria-description` re-rendering `root`; no event of any kind; C8 with no attributes and no content |
 | Browser | Playwright `*.e2e.ts` on chromium, firefox and webkit | Tab skips the host (Phase 1 spec §10 SD99); real loads through `page.route` as in probe P4: a good `src`, a 404, a change from good to 404 and back, a removed `src`, each flipping the flags and the visible zone; `ariaSnapshot()` of a named loaded avatar, a named failed avatar, a decorative one, and a named one with a status badge inside a link (`link "Ana Silva Online"`) in all three engines (D14); a Chromium CDP assertion of the same link names (probe P1); the computed token defaults and their inheritance through a wrapping link from a container that sets `--line-avatar-size`, the ring width and `--line-avatar-status-visibility` (contract G1–G4; probe P5); the status marker's position at the inline-end, block-end corner under `dir="ltr"` and `dir="rtl"` |
-| A11y | axe-core | zero violations (MANIFESTO Law 3) in every Avatar story of D12 (Phase 1 spec §7.4, `:2118-2119`). A fixture with `role="img"` on `root` and no name is not shipped; probe P3 showed axe would flag it with `role-img-alt` |
-| htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `n/a`: Avatar is neither value-bearing, because its descriptor binding map names no value prop, nor compound, because it holds no interactive element (ARCH §17.2 C3, C9, `docs/ARCHITECTURE.md:1574`, `:1580`; plan §2.4, `docs/plans/01-plan-core-primitives.md:174-177`). This confirms the Phase 1 spec's "`n/a` expected" (§6.C.4 C10 row; §10 SD34, `:2381`; F13) |
-| Visual | Playwright `avatar.visual.ts` on the `visual` project | every Avatar story with Linux baselines from a `visual-baselines.yml` run, including a loaded image, initials, an error fallback, custom media, a status badge and the inherited ring and size (Phase 1 spec §6.C.6, `:1233`; §10 SD98, `:2445`) |
-| Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a `line` catalog `Avatar` node renders `<line-avatar>` with `src` from an allowed URL and `name`, a bound `name` updates, a `data:`, `javascript:` or `urlPolicy`-rejected `src` leaves no attribute, a throwing `urlPolicy` leaves no attribute, and replacing `urlPolicy` re-projects (F10); a `status` child renders with `slot="status"` (F9); `accessibility.label` reaches the host `aria-label`; a node with no name renders a decorative avatar and raises nothing (F11); the basic `Image` route of F11, including the variant swap and the acceptance of Phase 1 spec `:1182`; the nodes join the surface render fixture and the surface axe test (§6.C.6, `:1231`) |
+| A11y | axe-core | zero violations (MANIFESTO Law 3) in every Avatar story of D12 (Phase 1 spec §7.4, `:2145-2146`). A fixture with `role="img"` on `root` and no name is not shipped; probe P3 showed axe would flag it with `role-img-alt` |
+| htmx | Playwright `*.e2e.ts` through the shared harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`), on htmx 2 and htmx 4 in chromium, firefox and webkit | `n/a`: Avatar is neither value-bearing, because its descriptor binding map names no value prop, nor compound, because it holds no interactive element (ARCH §17.2 C3, C9, `docs/ARCHITECTURE.md:1574`, `:1580`; plan §2.4, `docs/plans/01-plan-core-primitives.md:174-177`). This confirms the Phase 1 spec's "`n/a` expected" (§6.C.4 C10 row; §10 SD34, `:2408`; F13) |
+| Visual | Playwright `avatar.visual.ts` on the `visual` project | every Avatar story with Linux baselines from a `visual-baselines.yml` run, including a loaded image, initials, an error fallback, custom media, a status badge and the inherited ring and size (Phase 1 spec §6.C.6, `:1238`; §10 SD98, `:2472`) |
+| Surface | `bun test` in `packages/line-genui/__tests__/a2ui-surface.test.ts`; Playwright axe in `packages/line-components/__tests__/a11y/a2ui-surface.e2e.ts` | a `line` catalog `Avatar` node renders `<line-avatar>` with `src` from an allowed URL and `name`, a bound `name` updates, a `data:`, `javascript:` or `urlPolicy`-rejected `src` leaves no attribute, a throwing `urlPolicy` leaves no attribute, and replacing `urlPolicy` re-projects (F10); a `status` child renders with `slot="status"` (F9); `accessibility.label` reaches the host `aria-label`; a node with no name renders a decorative avatar and raises nothing (F11); the basic `Image` route of F11, including the variant swap and the acceptance of Phase 1 spec `:1187`; the nodes join the surface render fixture and the surface axe test (§6.C.6, `:1236`) |
 | Catalog and tools | `bun test` in `packages/line-genui/__tests__` | the CEM coverage and drift tests pass with the new descriptor, and a fixture URL binding whose member the manifest lacks fails the drift test (Phase 1 spec §6.G.5; F10); `catalog.json` holds `Avatar` and its inline projection validates (§6.G.2); the `Avatar` tool takes the tool description, stays at or under 1024 characters, and carries `src`, `name`, `accessibilityLabel` and `accessibilityDescription` and no `status` (§6.G.3) |
 | Packaging | `bun test` on the packed tarball | the registration harness sees `./avatar` register `line-avatar` only, and the isolation scan finds no other component's module in its bundle (Phase 1 spec §7.5) |
 
-- PRD §5.2 checklist mapping (`docs/PRD.md:517`; Phase 1 spec §6.C.6, `:1222`): render, reactive props, slots, parts, custom properties and events (none fired) run in the Unit tier, keyboard (Tab skips the host) in the Browser tier, and axe in the A11y tier.
-- Avatar is not a machine row, so it measures no update rate (Phase 1 spec §6.C.6, `:1232`).
+- PRD §5.2 checklist mapping (`docs/PRD.md:517`; Phase 1 spec §6.C.6, `:1227`): render, reactive props, slots, parts, custom properties and events (none fired) run in the Unit tier, keyboard (Tab skips the host) in the Browser tier, and axe in the A11y tier.
+- Avatar is not a machine row, so it measures no update rate (Phase 1 spec §6.C.6, `:1237`).
 - Avatar sets no internals role, so the Browser tier runs no `INTERNALS` read-back (D14). It reads `:state(loading)` and `:state(error)` with `matches()`.
 - The axe and visual tests run against the Storybook stories on port 4320; the story list lives in `packages/line-components/__tests__/avatar-stories.ts`, as `badge-stories.ts` does for Badge. Story images are local files under the Storybook static directory, so the visual baselines never depend on the network (D12). The load and token tests use fixture pages under `packages/line-components/__tests__/integration/avatar/`, served by the existing port-4321 `webServer` (`playwright.config.ts`).
 
@@ -595,7 +596,7 @@ A basic catalog node the surface renders as `<line-avatar src="https://example.c
 
 | # | Default | Basis |
 |---|---------|-------|
-| D1 | Static: no machine, no events, not value-bearing, not form-associated; `@zag-js/avatar` is not used | ARCH §13.2, `:605`; Phase 1 spec §10 SD37, `:2384`; R7 §6 OQ6 option (a), `docs/research/01-research-zag-machines.md:310` |
+| D1 | Static: no machine, no events, not value-bearing, not form-associated; `@zag-js/avatar` is not used | ARCH §13.2, `:605`; Phase 1 spec §10 SD37, `:2411`; R7 §6 OQ6 option (a), `docs/research/01-research-zag-machines.md:310` |
 | D2 | Anatomy as drawn; host `display: inline-block; position: relative`; `:host([hidden]) { display: none }` | ARCH §13.2; Badge D3 (`0007-badge.md`) |
 | D3 | No focus, no key handling, no `tabindex` | R8 Avatar row: Keyboard "None" (`docs/research/01-research-accessibility.md:71`) |
 | D4 | Reset modules: `commonReset` only | ARCH §14.7, `:1163` |
@@ -608,16 +609,16 @@ A basic catalog node the surface renders as `<line-avatar src="https://example.c
 | D11 | Catalog name `Avatar`, `agentExposed: true` | PRD row name; Phase 1 spec C10 row |
 | D12 | Stories: Photo, Initials, Error fallback, Decorative beside a name, Fallback slot, Custom media (`<picture>` and inline SVG), Status, In a link, Spoken name override, Custom tokens, Ring and size from a container. Images are local Storybook static files. No Loading story: the Browser tier covers loading with a held route (AM-002) | One axe and one visual baseline per meaningful state (Phase 1 spec §6.C.6; `0007-badge.md` D11) |
 | D13 | The class JSDoc tells authors to set `name` unless the name is written beside the avatar, to name a status marker, to give custom media `alt=""`, and that `aria-labelledby` is unsupported | Alert's JSDoc pattern (`packages/line-components/src/alert/alert.ts:40-46`); F2, F3, F6 |
-| D14 | The Browser tier proves role and name with Playwright `ariaSnapshot()` in three engines and a Chromium CDP assertion of enclosing names; no `INTERNALS` read-back, because no role lives in internals | Probe P2 (the snapshot sees a shadow role); Phase 1 spec §6.C.4 notes, `:1180`, which govern internals roles only |
-| D15 | The component applies no URL policy to hand-written `src`; only the surface does | Phase 1 spec §6.G.4, `:1499-1504`, places the policy on the surface; MANIFESTO Law 9 |
+| D14 | The Browser tier proves role and name with Playwright `ariaSnapshot()` in three engines and a Chromium CDP assertion of enclosing names; no `INTERNALS` read-back, because no role lives in internals | Probe P2 (the snapshot sees a shadow role); Phase 1 spec §6.C.4 notes, `:1185`, which govern internals roles only |
+| D15 | The component applies no URL policy to hand-written `src`; only the surface does | Phase 1 spec §6.G.4, `:1504-1509`, places the policy on the surface; MANIFESTO Law 9 |
 | D16 | No `loading`, `srcset`, `sizes`, `crossorigin` or `referrerpolicy` prop; consumers who need them use custom media in the default slot | F1 (a); C1 keeps the prop schema small |
-| D17 | The C10 PR also fills the Avatar row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs, reports the gzipped size, updates the `basic.ts` Image comment, lands the F10 Phase 1 spec AM before its code, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1223-1227`; PROCESS §3, §6 |
+| D17 | The C10 PR also fills the Avatar row of `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`, writes the Storybook docs, reports the gzipped size, updates the `basic.ts` Image comment, lands the F10 Phase 1 spec AM before its code, and adds one changeset covering `line-components` and `line-genui` | Phase 1 spec §6.C.6, `:1228-1232`; PROCESS §3, §6 |
 
 Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option tables below stay as the record of what he weighed.
 
 ### F1 — Image source and the default slot
 
-**Evidence.** ARCH §13.2 names the slots default, `fallback` and `status` and the parts `root`, `image` and `fallback`, and says nothing of what the default slot holds (`docs/ARCHITECTURE.md:605`). ARCH §3 makes an element the component coordinates with its state an internal part (`:219-226`), and the image's load state drives the fallback (R7 `docs/research/01-research-zag-machines.md:206-207`). In probe P1 a consumer `<img alt>` in light DOM is named while visible, but once it is hidden on error the name leaves with it and an enclosing link is named "AS". Probe P3 shows axe flagging an unnamed light-DOM `<img>` (`image-alt`). Probe P4 shows the events of an internal `<img>` driving the switch reliably in all three engines. On the agent path a URL must pass the surface's policy (Phase 1 spec §6.G.4, `:1499-1504`), which is simplest on an attribute (F10). `<picture>`, `srcset` and `loading="lazy"` exist only on native elements.
+**Evidence.** ARCH §13.2 names the slots default, `fallback` and `status` and the parts `root`, `image` and `fallback`, and says nothing of what the default slot holds (`docs/ARCHITECTURE.md:605`). ARCH §3 makes an element the component coordinates with its state an internal part (`:219-226`), and the image's load state drives the fallback (R7 `docs/research/01-research-zag-machines.md:206-207`). In probe P1 a consumer `<img alt>` in light DOM is named while visible, but once it is hidden on error the name leaves with it and an enclosing link is named "AS". Probe P3 shows axe flagging an unnamed light-DOM `<img>` (`image-alt`). Probe P4 shows the events of an internal `<img>` driving the switch reliably in all three engines. On the agent path a URL must pass the surface's policy (Phase 1 spec §6.G.4, `:1504-1509`), which is simplest on an attribute (F10). `<picture>`, `srcset` and `loading="lazy"` exist only on native elements.
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -633,7 +634,7 @@ Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option t
 | Option | What it decides | Consequence |
 |---|---|---|
 | (a) Host internals `img`, Icon and Badge parity | `internals.role = 'img'` on the host, named by the host `aria-label` | One naming rule across Icon, Badge and Avatar. The status drops out of enclosing names (P1); proof needs CDP and read-back; axe and Playwright are blind to it (P2, P3) |
-| (b) **Recommended.** `role="img"` on the shadow `root` | `root` wraps image and fallback and carries `role="img"` and `aria-label` from the host `aria-label`, else `name`; the `status` slot sits outside `root` | Status joins the enclosing name (P1); axe and Playwright check it in three engines (P2, P3). A host `aria-label` also leaves a named `generic` host in Chromium, as Button does (Phase 1 spec `:1157`) |
+| (b) **Recommended.** `role="img"` on the shadow `root` | `root` wraps image and fallback and carries `role="img"` and `aria-label` from the host `aria-label`, else `name`; the `status` slot sits outside `root` | Status joins the enclosing name (P1); axe and Playwright check it in three engines (P2, P3). A host `aria-label` also leaves a named `generic` host in Chromium, as Button does (Phase 1 spec `:1162`) |
 | (c) Alternating native elements | `<img alt="…">` while loaded; `role="img"` with `aria-label` on the fallback while not | Same exposure as (b) (P1, P3). Two elements carry the name and swap on every load change |
 | (d) Light-DOM `<img alt>` | follows F1 (c) | axe checks the consumer's `alt`. The name vanishes on error (P1) |
 
@@ -696,7 +697,7 @@ Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option t
 
 ### F9 — Descriptor props and slot map
 
-**Evidence.** Phase 1 spec §6.G.1 requires `DynamicString` for string props and keeps `ComponentId` for slot props (`:1326`). The surface wires a slot-map child by setting its `slot` attribute (`projection.ts:497`). The G3 walker drops `ComponentId` props from tools (`:1404`). Custom media and fallback markup cannot come from an agent (C1 table above).
+**Evidence.** Phase 1 spec §6.G.1 requires `DynamicString` for string props and keeps `ComponentId` for slot props (`:1331`). The surface wires a slot-map child by setting its `slot` attribute (`projection.ts:497`). The G3 walker drops `ComponentId` props from tools (`:1404`). Custom media and fallback markup cannot come from an agent (C1 table above).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -706,7 +707,7 @@ Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option t
 
 ### F10 — URL policy on the agent path
 
-**Evidence.** The surface's URL policy covers Image URLs (Phase 1 spec §6.G.4, `:1499-1504`; §10 SD57, `:2404`). Today only native targets run `allowedUrl` (`projection.ts:432-444`); component bindings set attributes unchecked (`:450-472`). The descriptor API has property, attribute, surface-lookup and text bindings (`descriptor.ts:84-113`); AM-092 added the text binding through the same kind of decision (Phase 1 spec `:2553`).
+**Evidence.** The surface's URL policy covers Image URLs (Phase 1 spec §6.G.4, `:1504-1509`; §10 SD57, `:2431`). Today only native targets run `allowedUrl` (`projection.ts:432-444`); component bindings set attributes unchecked (`:450-472`). The descriptor API has property, attribute, surface-lookup and text bindings (`descriptor.ts:84-113`); AM-092 added the text binding through the same kind of decision (Phase 1 spec `:2580`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -716,17 +717,17 @@ Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option t
 
 ### F11 — Basic `Image` mapping and the agent name
 
-**Evidence.** The basic `Image` carries `url`, `description`, `fit` and `variant` (`basic_components.js:56-76`). The native route uses `description`, else `accessibility.label`, as `alt`, and `""` when both are missing (`projection.ts:437-439`). `requiredName` sources are `childText`, `textProp` (a text-binding prop only) and `accessibilityLabel` (`descriptor.ts:133-141`; Phase 1 spec `:1512`). The name check reads the node's raw props before `renamed` maps them (`projection.ts:364`, `:457`). Badge requires a name because an unnamed dot carries meaning by colour alone (`0007-badge.md` F10); an avatar beside a written name carries none.
+**Evidence.** The basic `Image` carries `url`, `description`, `fit` and `variant` (`basic_components.js:56-76`). The native route uses `description`, else `accessibility.label`, as `alt`, and `""` when both are missing (`projection.ts:437-439`). `requiredName` sources are `childText`, `textProp` (a text-binding prop only) and `accessibilityLabel` (`descriptor.ts:133-141`; Phase 1 spec `:1517`). The name check reads the node's raw props before `renamed` maps them (`projection.ts:364`, `:457`). Badge requires a name because an unnamed dot carries meaning by colour alone (`0007-badge.md` F10); an avatar beside a written name carries none.
 
 | Option | What it decides | Consequence |
 |---|---|---|
 | (a) **Recommended.** Map, no requirement | `url` → `src`, `description` → `name`, `fit` ignored, `accessibility` → host; no `requiredName`; a nameless node renders decorative | Matches the native `Image` route, so basic agents never hit a placeholder. An agent can forget a name silently |
 | (b) Map, name required | as (a) plus `requiredName`; a nameless node becomes a placeholder with `MISSING_ACCESSIBLE_NAME` | Every agent avatar is named. A decorative agent avatar beside a name is impossible; `requiredName` needs a new source kind for the attribute prop `name`, and the check must read renamed props |
-| (c) Basic route only, no `line` Avatar descriptor | Avatar stays out of the `line` catalog | Smallest genui change. Phase 1 spec §6.C.4 lists C10 `agentExposed: true` and §6.C.6 requires a descriptor (`:1166`, `:1229`), so this needs a spec change |
+| (c) Basic route only, no `line` Avatar descriptor | Avatar stays out of the `line` catalog | Smallest genui change. Phase 1 spec §6.C.4 lists C10 `agentExposed: true` and §6.C.6 requires a descriptor (`:1171`, `:1234`), so this needs a spec change |
 
 ### F12 — AvatarGroup contract
 
-**Evidence.** AvatarGroup takes avatars through a slot and never imports Avatar (Phase 1 spec §10 SD4, `:2351`; §6.C.4, `:1153`, `:1167`). ARCH §13.2 gives AvatarGroup `max`, `size` and `spacing` (`:606`). The target visual shows avatars that overlap with a gap ring and end in a "+3" circle. In probe P5 `::slotted(*)` reaches only direct children and beats the avatar's `:host` rules, and inheritance through a wrapper works only without a `:host` declaration. MANIFESTO Law 5 keeps DOM mutation inside the component's own reactive cycle (`docs/MANIFESTO.md:47`).
+**Evidence.** AvatarGroup takes avatars through a slot and never imports Avatar (Phase 1 spec §10 SD4, `:2378`; §6.C.4, `:1158`, `:1172`). ARCH §13.2 gives AvatarGroup `max`, `size` and `spacing` (`:606`). The target visual shows avatars that overlap with a gap ring and end in a "+3" circle. In probe P5 `::slotted(*)` reaches only direct children and beats the avatar's `:host` rules, and inheritance through a wrapper works only without a `:host` declaration. MANIFESTO Law 5 keeps DOM mutation inside the component's own reactive cycle (`docs/MANIFESTO.md:47`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -736,7 +737,7 @@ Miguel decided F1–F13 on 2026-11-11 and left D1–D17 as drafted. The option t
 
 ### F13 — htmx row
 
-**Evidence.** The htmx row applies to value-bearing or compound components (plan §2.4, `docs/plans/01-plan-core-primitives.md:174-177`). Avatar has no value prop (F9) and no interactive element (D3). The Phase 1 spec expects `n/a` (§6.C.4 C10 row; §10 SD34, `:2381`).
+**Evidence.** The htmx row applies to value-bearing or compound components (plan §2.4, `docs/plans/01-plan-core-primitives.md:174-177`). Avatar has no value prop (F9) and no interactive element (D3). The Phase 1 spec expects `n/a` (§6.C.4 C10 row; §10 SD34, `:2408`).
 
 | Option | What it decides | Consequence |
 |---|---|---|
@@ -758,3 +759,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | AM-005 | 2026-11-12 | ledger 01-C13 (decision — Miguel, 2026-11-12: PRD v0.8.33, Phase 1 spec AM-097; factual realignment) | Locators only, no design change. PRD: §4.1 Avatar row `:254` (was `:253`), four times; §5.2 heading `:515` (was `:514`). Amendment rows keep their locators as record | PRD v0.8.33 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.33) at `080cfde`; Phase 1 spec §12 AM-097 |
 | AM-006 | 2026-11-20 | ledger 01-Z10 (decision — Miguel, 2026-11-20: PRD v0.8.34, Phase 1 spec AM-113; factual realignment) | Locators only, no design change. PRD: §4.1 Avatar row `:255` (was `:254`), four times; §5.2 heading `:516` (was `:515`). Plan: §2.4 bullets `:174-177` (was `:172-175`), twice, which already cited the blank line under the §2.4 heading through the C9 bullet, leaving out the n/a bullet, at `6c94403`. Amendment rows keep their locators as record | PRD v0.8.34 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.34) on `chore/01-z10-release-time-records`; Phase 1 spec §12 AM-113; `docs/plans/01-plan-core-primitives.md` after the 01-Z10 header line (lines from `:9` down moved one), resolved against `git show 6c94403:docs/plans/01-plan-core-primitives.md` |
 | AM-007 | 2026-11-25 | ledger 01-Z3 (decision — Miguel, 2026-11-25: PRD v0.8.35, Phase 1 spec AM-115; factual realignment) | Locators only, no design change. PRD: §4.1 Avatar row `:256` (was `:255`), 4 times; §5.2 heading `:517` (was `:516`). Amendment rows keep their locators as record | PRD v0.8.35 adds a one-line revision note above every cited line and a two-line Phase 1 status note above the §7.3 exit criteria, so each cited line moved down by one, and each line past §7.3 by three (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.35) on `docs/01-z3-phase-01-exit`; Phase 1 spec §12 AM-116 |
+| AM-008 | 2026-11-25 | ledger 01-Z13 (decision — Miguel, 2026-11-25: Phase 2 plan fork O6 (c), scope (a)) | Pins adopted, no design change. (1) The header gains `Pinned sources`: PRD v0.8.35, ARCHITECTURE v0.8.27, Phase 1 spec through AM-116. (2) 53 Phase 1 spec locators move to the spec through AM-116, each to the line that held its text when the locator was written: `:927` → `:932`; `:1153` → `:1158` (2 times); `:1157` → `:1162` (2 times); `:1166` → `:1171` (3 times); `:1167` → `:1172` (2 times); `:1178-1183` → `:1183-1188`; `:1180` → `:1185` (4 times); `:1182` → `:1187` (3 times); `:1218-1233` → `:1223-1238`; `:1222` → `:1227`; `:1223-1227` → `:1228-1232`; `:1228` → `:1233`; `:1229` → `:1234`; `:1231` → `:1236` (2 times); `:1232` → `:1237`; `:1233` → `:1238`; `:1323` → `:1328`; `:1326` → `:1331` (2 times); `:1389` → `:1394`; `:1405` → `:1410`; `:1422` → `:1427`; `:1423` → `:1428`; `:1499-1504` → `:1504-1509` (4 times); `:1512` → `:1517`; `:1607` → `:1612`; `:2118-2119` → `:2145-2146`; `:2122-2123` → `:2149-2150`; `:2351` → `:2378` (2 times); `:2381` → `:2408` (2 times); `:2384` → `:2411` (2 times); `:2385` → `:2412`; `:2404` → `:2431`; `:2445` → `:2472`; `:2446` → `:2473`; `:2553` → `:2580`. The PRD and ARCHITECTURE locators already resolve at the pins. Amendment rows keep their locators as record | PROCESS §3 now pins component specs (Phase 2 plan O6 (c)); Phase 1 spec AMs that added lines, such as AM-114 and AM-115, had moved the spec under these locators with no rule to realign them (Phase 1 retrospective, Open items) | For each locator: the commit where it entered this spec, the Phase 1 spec line it named at that commit, and the line holding that text at AM-116 (`docs/context/01-z13.md`, Method) |
