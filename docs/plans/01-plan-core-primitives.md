@@ -7,10 +7,11 @@ Row 01-G3 on 2026-11-04 applies Miguel's decision that a descriptor may carry an
 Row 01-C5 on 2026-11-05 records ARCHITECTURE v0.8.23, a factual correction of §14.2 and §14.8 on which native pseudo-classes match a component host (spec AM-089; component specs `0002-button.md` AM-008, `0003-icon-button.md` AM-002). No plan section states it, so only the Source Architecture line changes.
 Row 01-S1 on 2026-11-19 applies Miguel's decision that the landing page depends on every visible Phase 1 component (C1–C12, C14, C15, C17–C20) and follows the radix-ui.com homepage layout (§2.8, §4.5, §6; spec §6.S.1, AM-109).
 Row 01-Z10 on 2026-11-20 applies Miguel's decision that an Anthropic live call before each release proves Anthropic acceptance of the emitted tools, and the offline R3 P11 subset checks in CI prove OpenAI and Gemini acceptance (§7.2; spec AM-113), citing PRD v0.8.34 (Source PRD line).
+Row 01-Z3 on 2026-11-25 applies Miguel's decision that Z3 closes Phase 1 as well as writing its retrospective: it evidences every spec §9 criterion in three slices, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line, and a criterion fixed during the close that changes a published package is released before Z3 lands, as a row that is not a P13 dependency (§4.0, §4.6, §6, §7, §10 step 7; spec §6.Z.2, §6.P.13, AM-115), citing PRD v0.8.35 (Source PRD line). The same row corrects the `00-Z29` trigger as a fact: Biome PR #11869 already ships in 2.5.15, and 2.6.8 still panics, so the row waits for a release that fixes biomejs/biome#12158 (§5.4 O4.b, §11).
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
-**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.34)
+**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.35)
 **Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.23)
 
 > **What this document is.** A phase plan (PROCESS §1–§2, the lifecycle and gate rules). It sets scope, streams, dependencies, research targets, acceptance criteria and risks for Phase 1 (PRD §7.3, the Core Primitives phase).
@@ -259,7 +260,7 @@ ARCHITECTURE §17.3 maps these basic catalog types in Phase 1.
 | C | Core primitives (20 components, spec + implementation + descriptor + stories + changeset) | webcomponents-supervisor (file classes: spec §4 table, AM-022) |
 | D | Cross-cutting documentation (agent-driven UI guide, recipes index, Getting Started updates) | webcomponents-supervisor |
 | S | Site landing page (dogfoods the Phase 1 components; exit criterion per O3 (b)) | webcomponents-supervisor (file classes: spec §4 table, AM-022; spec §6.S.1, §10 SD71) |
-| Z | Repo-wide (code of conduct, workspace resolution in tests, retrospective; the main session runs the exit sweep); process alignment lands in the ledger PR (§4.6) | Main session / per row |
+| Z | Repo-wide (code of conduct, workspace resolution in tests, phase exit and retrospective; the main session runs the exit sweep); process alignment lands in the ledger PR (§4.6) | Main session / per row |
 
 Each P, C, G, D and S owner is the accountable supervisor, who runs the task on its branch; Z rows name the main session (the Z row above). `git-workflow-manager` opens the PR (PROCESS §4, §6). The spec §4 table says which supervisor edits each class of file; when a task touches a class the table gives to the other supervisor, the orchestrator (main session or `sdlc`) dispatches the other supervisor, one after the other on the same task branch, for the classes the Phase 1 spec §4 table gives it. The second dispatch adds no changeset entry; the accountable supervisor writes the changeset entry last, after the other dispatch returns, and names every published package the branch changed (spec AM-022, AM-025, AM-026, AM-027).
 
@@ -333,7 +334,7 @@ Stream G also writes the descriptors of Button, Icon, Stack and Separator.
 
 - Z1 adds the code of conduct (PRD §10).
 - No Z2 task remains, and spec AM-002 removes it. Row 00-Z49, the PR that created the Phase 1 ledger, made the process alignment that §4.0 describes, with the Phase 1 streams in the `CLAUDE.md` ledger pointer (§10 step 6).
-- Z3 writes the Phase 1 retrospective and depends on every other Phase 1 row. The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as the Phase 00 sweep filed row C18 (spec §6.Z.2, §10 SD87, AM-036).
+- Z3 closes Phase 1 and writes its retrospective, and depends on every other Phase 1 row. The close evidences every spec §9 criterion, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line (spec AM-115). The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as the Phase 00 sweep filed row C18 (spec §6.Z.2, §10 SD87, AM-036).
 - Z5 makes every test reach another workspace package through its package name and a declared dependency, and its own package's build output through its own `exports` (PRD §5.2). It adds the private package `@websublime/line-testing`, which holds the htmx harness, moves the `line-tokens` shadow check into `line-themes`, and replaces the auto-pair string test with a browser test of all 31 accents (PRD §5.2.1). It lands before C1–C20 (spec §6.Z.3, AM-048).
 - The O4 items are Phase 00 ledger rows `00-Z28` (O4.a, class `decision`), `00-Z29` (O4.b, `blocked` until the Biome release) and `00-Z30` (O4.c, class `amendment`).
 - These rows do not wait for the Phase 1 ledger.
@@ -429,7 +430,7 @@ Each item has two options, an own ledger row or a plan risk entry. Miguel asked 
 | Item | Fact | Options | Recommendation | Resolution |
 |---|---|---|---|---|
 | O4.a `deploy-site.yml` install scripts | The Install step runs `bun install --frozen-lockfile` without `--ignore-scripts` in the same job whose Deploy step holds `CLOUDFLARE_API_TOKEN` and runs `bun x --no-install wrangler pages deploy dist` from `node_modules`. The token sits only in the Deploy step `env`, but an install script can rewrite code that step runs. Default-trusted packages with install scripts today are `esbuild` and `workerd`. Phase 00 spec AM-067 (row `00-Z26`, Miguel's decision on 2026-10-13) applied `--ignore-scripts` to the release and snapshot workflows and rejected extending it to `deploy-site.yml`. | Own row, or plan risk entry | Own Z row, class `decision`, because it reopens a Phase 00 spec AM-067 choice and changes `.github/`. It lands before `line-genui` adds `@a2ui/web_core` and its dependencies to the workspace install. One option for that row splits build and deploy into two jobs with `--ignore-scripts` in the deploy job, the shape `deploy-storybook.yml` already uses. | Own row chosen (Miguel, 2026-10-13); ledger row `00-Z28`, class `decision`. The plan risk entry was rejected. |
-| O4.b Biome `--vcs-use-ignore-file=false` | `scripts/generate-palettes.mjs` and `scripts/generate-role-maps.mjs` pass the flag so Biome 2.5.15 can format a temp output dir outside the repo root. Without it Biome panics (biomejs/biome#12158). PR biomejs/biome#11869 fixes it; it merged on 2026-09-21, and a maintainer wrote on 2026-10-05 "Will be available in the next release". npm `latest` is still 2.5.15 on 2026-10-13. | Own row, or plan risk entry | Keep it in the plan as a watch item with the trigger "a Biome release after 2.5.15 that contains PR #11869". The row is created when the trigger fires, because a row created now would sit blocked. | Own row chosen now (Miguel, 2026-10-13) over the recommended watch item; ledger row `00-Z29`, status `blocked` until a Biome release after 2.5.15 ships PR #11869. |
+| O4.b Biome `--vcs-use-ignore-file=false` | `scripts/generate-palettes.mjs` and `scripts/generate-role-maps.mjs` pass the flag so Biome 2.5.15 can format a temp output dir outside the repo root. Without it Biome panics (biomejs/biome#12158). PR biomejs/biome#11869 fixes it; it merged on 2026-09-21, and a maintainer wrote on 2026-10-05 "Will be available in the next release". npm `latest` is still 2.5.15 on 2026-10-13. | Own row, or plan risk entry | Keep it in the plan as a watch item with the trigger "a Biome release after 2.5.15 that contains PR #11869". The row is created when the trigger fires, because a row created now would sit blocked. | Own row chosen now (Miguel, 2026-10-13) over the recommended watch item; ledger row `00-Z29`, status `blocked` until a Biome release after 2.5.15 ships PR #11869. Corrected by row 01-Z3 on 2026-11-25: the #11869 merge commit is already in 2.5.15, and 2.6.8 still panics, so the row stays `blocked` until a Biome release fixes biomejs/biome#12158, checked by a format run outside the repo root without the flag. |
 | O4.c Stale Bun version in the Phase 00 spec | `docs/specs/00-spec-design-system.md` line 2009 (§6.F.5 publish path, step 4) says "Bun 1.3.14 fills `workspace:` ranges from the versions in `bun.lock`". The repo runs Bun 1.4.3 (`.bun-version`, `engines.bun >=1.4.3`). Miguel reports the behaviour persists on 1.4.3 (unverified; the O4.c row runs a Bun 1.4.3 probe). | Own row, or plan risk entry | Own Z row now, class `amendment` (one factual `AM-nnn` in the Phase 00 spec, no code, a Bun 1.4.3 probe as evidence). The Phase 1 plan cannot amend the Phase 00 spec, and `CLAUDE.md` asks to fix drift in the session it is found. | Own row chosen now (Miguel, 2026-10-13); ledger row `00-Z30`, class `amendment`. The plan risk entry was rejected. |
 
 ### 5.5 Spec-level questions
@@ -557,7 +558,7 @@ The plan gate chose this sequence (O2.a (b), O2.c (a)), and revision 00-Z45 adds
 
 - Stream S builds the landing page in one PR after C1–C12, C14, C15 and C17–C20 (spec §6.S.1, AM-109).
 - P4 and P14 land before the first `line-genui` release. Miguel creates the P14 publisher within the 48 hours before he merges the first Version PR that releases `line-genui` 0.2.0, and he merges no Version PR between the P1 merge and the P14 merge. P4 step 2 is the first `snapshot-deploy` run after P1 merges, and step 5 runs from a later `main` commit (spec §6.P.4, §6.P.14, AM-032, AM-036, AM-037, AM-051).
-- P13 lands after every other Phase 1 row except D3 and Z3 and after the exit sweep's rows, with its row `blocked` until then and flipped to `todo` by the orchestrator (main session or `sdlc`). The phase-exit Version PR follows it when a non-empty changeset is pending; otherwise no Version PR opens (spec §6.P.13, AM-038, AM-041, AM-051).
+- P13 lands after every other Phase 1 row except D3 and Z3 and after the exit sweep's rows, with its row `blocked` until then and flipped to `todo` by the orchestrator (main session or `sdlc`); a row Z3 files after P13 lands is not a P13 dependency. The phase-exit Version PR follows it when a non-empty changeset is pending; otherwise no Version PR opens (spec §6.P.13, AM-038, AM-041, AM-051, AM-115).
 - D3 and Z3 land after the Phase 1 Version PR merges, or after P13 merges when no phase-exit Version PR opens; Z3 depends on D3 (spec §6.D.3, §6.Z.2, AM-038, AM-051).
 - P6 runs after P4, C1 and C2, against a canary that contains C1 and C2 (spec §6.P.6, AM-036).
 - P7, P11 and P12 land before C1, and P12 after P11, so the default pairs gate every PR from C1 on (spec §10 SD86, SD98; spec §6.P.11, §6.P.12, AM-036).
@@ -572,46 +573,46 @@ The plan mirrors the 17 PRD §7.3 exit criteria in their wording. Plan-level add
 
 ### 7.1 Components
 
-- [ ] All listed components pass the 8-point test checklist (PRD §5.2)
-- [ ] Storybook documentation complete for every component
-- [ ] Zero axe-core violations
-- [ ] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
-- [ ] CEM manifest generated and verified
-- [ ] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; spec §10 SD94).*
-- [ ] Changeset entry for every component
-- [ ] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
-- [ ] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
-- [ ] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
-- [ ] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
+- [x] All listed components pass the 8-point test checklist (PRD §5.2)
+- [x] Storybook documentation complete for every component
+- [x] Zero axe-core violations
+- [x] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
+- [x] CEM manifest generated and verified
+- [x] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; spec §10 SD94).*
+- [x] Changeset entry for every component
+- [x] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
+- [x] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
+- [x] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
+- [x] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
 
 ### 7.2 Agent-driven UI
 
-- [ ] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
-- [ ] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
-- [ ] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
-- [ ] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
-- [ ] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
-- [ ] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
-- [ ] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
+- [x] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
+- [x] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
+- [x] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
+- [x] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
+- [x] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
+- [x] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
+- [x] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
 
 ### 7.3 Documentation
 
-- [ ] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
-- [ ] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
+- [x] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
+- [x] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
 
 ### 7.4 Platform and release
 
-- [ ] Bundle splitting verified — families and independents work as documented
-- [ ] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
-- [ ] The npm trusted publisher for `@websublime/line-genui` exists before its first release
-- [ ] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of spec §10 SD32 (PRD §1.7).*
-- [ ] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
-- [ ] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
-- [ ] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
-- [ ] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
-- [ ] *A code of conduct is present before `v0.2.0` (PRD §10).*
-- [ ] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
-- [ ] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
+- [x] Bundle splitting verified — families and independents work as documented
+- [x] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
+- [x] The npm trusted publisher for `@websublime/line-genui` exists before its first release
+- [x] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of spec §10 SD32 (PRD §1.7).*
+- [x] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
+- [x] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
+- [x] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
+- [x] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
+- [x] *A code of conduct is present before `v0.2.0` (PRD §10).*
+- [x] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
+- [x] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
 
 ---
 
@@ -655,7 +656,7 @@ The plan mirrors the 17 PRD §7.3 exit criteria in their wording. Plan-level add
 4. Until the Phase 1 ledger exists, each opening PR (the spec, the coherence review, the ledger) gets its own row in stream Z of the Phase 00 ledger.
 5. The coherence review runs 3 clean rounds with the lenses plan↔PRD, spec↔research and spec↔ARCHITECTURE (PROCESS §5). Done: rounds 32, 33 and 34 came back clean (row 00-Z48, #281).
 6. The ledger `docs/plans/01-tasks-core-primitives.md` follows the spec's streams. Done in row 00-Z49, whose PR also made the process alignment that §4.0 describes (spec §6.Z). No Z2 task remains (spec AM-002).
-7. Work is delegated to the supervisors, the exit sweep runs and files its findings as new rows, and Z3's retrospective `docs/retrospective/01-<slug>.md` closes the phase (spec §6.Z.2).
+7. Work is delegated to the supervisors, the exit sweep runs and files its findings as new rows, and Z3 closes the phase with the exit evidence and the retrospective `docs/retrospective/01-<slug>.md` (spec §6.Z.2, AM-115). Done in row 01-Z3 on 2026-11-25: the sweep ran on 2026-11-20 and filed Z10, and the exit record is `docs/retrospective/01-phase-01-retro.md` (PRD v0.8.35).
 
 ---
 
@@ -669,7 +670,7 @@ The plan mirrors the 17 PRD §7.3 exit criteria in their wording. Plan-level add
 | O2.c | Where is the projection technique evidence produced? | In the research stage (R2), so the spec designs one renderer. Outcome: direct projection on `NodeResolver` (b), chosen on 2026-10-19 |
 | O3 | What is the site scope in Phase 1? | A landing page that dogfoods the Phase 1 components and is an exit criterion |
 | O4.a | How is the `deploy-site.yml` install-script risk handled? | Ledger row `00-Z28`, class `decision` |
-| O4.b | How is the Biome `--vcs-use-ignore-file=false` workaround tracked? | Ledger row `00-Z29`, blocked until a Biome release after 2.5.15 ships PR #11869 |
+| O4.b | How is the Biome `--vcs-use-ignore-file=false` workaround tracked? | Ledger row `00-Z29`, blocked until a Biome release fixes biomejs/biome#12158, checked by a format run outside the repo root without the flag. PR #11869 already ships in 2.5.15, and 2.6.8 still panics (row 01-Z3, 2026-11-25) |
 | O4.c | How is the stale Bun version in the Phase 00 spec fixed? | Ledger row `00-Z30`, class `amendment` |
 | PT | Which projection technique does the renderer use? | Direct projection on the `web_core` models and binder (`NodeResolver`) (Miguel, 2026-10-19) |
 | D1 | How do the Vite-built packages get `.d.ts` files on TypeScript 7? | They emit every `.d.ts` with TypeScript 7.x `tsc --emitDeclarationOnly`, and `vite-plugin-dts` leaves the build; the `tsc -b` packages emit with 7.x `tsc -b` (Miguel, 2026-10-20) |

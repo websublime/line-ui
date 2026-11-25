@@ -4,11 +4,11 @@
 |-------|-------|
 | Status | `approved` (Miguel, 2026-11-09) |
 | Phase | `1` |
-| Tier | `Static` (Phase 1 spec §6.C.4 C7 row, `docs/specs/01-spec-core-primitives.md:1163`; PRD §4.1, `docs/PRD.md:252`) |
+| Tier | `Static` (Phase 1 spec §6.C.4 C7 row, `docs/specs/01-spec-core-primitives.md:1163`; PRD §4.1, `docs/PRD.md:253`) |
 | Tag | `line-alert` |
 | Entrypoint | `@websublime/line-components/alert` |
 | Form-associated | `no` (Phase 1 spec §6.C.4 C7 row) |
-| PRD catalogue entry | PRD §4.1, `Alert` row (`docs/PRD.md:252`) |
+| PRD catalogue entry | PRD §4.1, `Alert` row (`docs/PRD.md:253`) |
 | Ledger row | `01-C7` |
 | Governing sections | Phase 1 spec §4.2, §6.C.0, §6.C.4 (C7 row and notes), §6.C.6, §6.G.1, §6.G.3, §6.G.4, §7.4, §7.8, §10 SD4, SD12, SD19, SD31, SD34, SD37, SD39, SD98, §12 AM-058, AM-067, AM-086; ARCH §1–§5, §8, §12, §14.6–§14.8, §14.10, §17.2–§17.4; PRD §4.1, §5.2, §8, §9.3; MANIFESTO Laws 1–4, Out of Scope |
 
@@ -127,7 +127,7 @@ All three placements give Chromium the same live region over the slotted text. T
 
 #### Description
 
-`<line-alert>` is an inline box that tells the user about the state of something on the page: a saved change, a warning before an action, a failed payment, a piece of context (PRD §4.1, `docs/PRD.md:252`). It holds an optional icon, an optional title, a message, optional actions and an optional dismiss control, all supplied by the consumer through slots (D4; AM-006). A `variant` colours it by meaning, through the component's own tokens over the theme's semantic roles (D3). It stays on the page until the consumer removes it, or until the user activates the dismiss control the consumer puts in its `dismiss` slot; Alert then fires `line-dismiss` and hides itself unless the event is cancelled (AM-006). By default assistive technology reads it as part of the page; the opt-in `live` attribute makes it a live region that announces itself when it appears or changes (D1).
+`<line-alert>` is an inline box that tells the user about the state of something on the page: a saved change, a warning before an action, a failed payment, a piece of context (PRD §4.1, `docs/PRD.md:253`). It holds an optional icon, an optional title, a message, optional actions and an optional dismiss control, all supplied by the consumer through slots (D4; AM-006). A `variant` colours it by meaning, through the component's own tokens over the theme's semantic roles (D3). It stays on the page until the consumer removes it, or until the user activates the dismiss control the consumer puts in its `dismiss` slot; Alert then fires `line-dismiss` and hides itself unless the event is cancelled (AM-006). By default assistive technology reads it as part of the page; the opt-in `live` attribute makes it a live region that announces itself when it appears or changes (D1).
 
 #### Use cases
 
@@ -139,7 +139,7 @@ All three placements give Chromium the same live region over the slotted text. T
 
 #### Anti-patterns
 
-- A message that interrupts the user and asks for a decision. Use Alert Dialog (`docs/PRD.md:295`), because Alert takes no focus and blocks nothing.
+- A message that interrupts the user and asks for a decision. Use Alert Dialog (`docs/PRD.md:296`), because Alert takes no focus and blocks nothing.
 - A transient notification that disappears on a timer. Use Toast (ARCH §12 `./toast`); APG warns against alerts that disappear automatically (WCAG 2.2.3; R8 `:88-89`).
 - Validation text for one field. Use the `error` slot of `<line-field>` (ARCH §17.2 C4).
 - A small status marker or count. Use `<line-badge>`.
@@ -149,7 +149,7 @@ All three placements give Chromium the same live region over the slotted text. T
 #### User expectations
 
 - The alert sits in the flow of the page, as wide as its container, with its icon, title, message and actions laid out in one box.
-- Its colour follows its meaning, and the theme's semantic roles stay fixed whatever the accent (PRD §9.3, `docs/PRD.md:1328`; D3).
+- Its colour follows its meaning, and the theme's semantic roles stay fixed whatever the accent (PRD §9.3, `docs/PRD.md:1331`; D3).
 - A screen reader reads it in page order. An alert with `live="polite"` or `live="assertive"` is announced when it appears or when its text changes, politely for `polite` (`status`) and assertively for `assertive` (`alert`) (R8 `:68`; ARIA `status`; D1, D12).
 - Buttons in the alert work as buttons anywhere do; the alert itself takes no focus and handles no keys. Activating the control in the `dismiss` slot hides the alert (AM-006).
 - Consumer CSS on `line-alert` and its parts overrides every visual default.
@@ -175,7 +175,7 @@ All three placements give Chromium the same live region over the slotted text. T
 | | `danger` | an error or a failed action |
 
 - `variant` is a C6 semantic variant. It changes only the defaults of `--line-alert-*` tokens on `:host` and adds no other CSS rule (ARCH §17.2 C6, `docs/ARCHITECTURE.md:1577`). It sets no role, no icon and no text (D1, D3).
-- The values follow the line://ui semantic role names `success`, `warning`, `danger` and `info` (PRD §9.3 `SEMANTIC_MAP`, `docs/PRD.md:1333-1338`), and `neutral` maps to the `gray` role.
+- The values follow the line://ui semantic role names `success`, `warning`, `danger` and `info` (PRD §9.3 `SEMANTIC_MAP`, `docs/PRD.md:1336-1341`), and `neutral` maps to the `gray` role.
 
 ---
 
@@ -528,7 +528,7 @@ Miguel decided D1–D7 on 2026-11-09, each on the option the draft recommended, 
 Evidence:
 
 - APG Alert says screen readers "do not inform users of alerts that are present on the page before page load completes" and that alerts must not affect keyboard focus (R8 `:68`, `:88-89`; https://www.w3.org/WAI/ARIA/apg/patterns/alert/, read 2026-11-09).
-- The PRD calls Alert "Inline persistent feedback" (`docs/PRD.md:252`). R8 Q8 lists three options: always `alert`, a variant that switches to `status`, or no live role for static content (`:341-342`).
+- The PRD calls Alert "Inline persistent feedback" (`docs/PRD.md:253`). R8 Q8 lists three options: always `alert`, a variant that switches to `status`, or no live role for static content (`:341-342`).
 - Probe P4 shows Chromium exposes a host present at load exactly like an inserted one; neither CDP nor axe shows an announcement. In a client-rendered app every alert is inserted after load [INFERENCE], so an always-live `alert` speaks on every route change and re-render.
 - Probe P1 shows `alert` and `status` both expose their implicit live values on a slotting host, and probe P3 shows an author `role` or `aria-live` overrides any internals default.
 - C6 lets a variant change only the defaults of the component's own tokens and add no other rule (ARCH `:1577`), so a role tied to `variant` goes beyond C6.
@@ -556,7 +556,7 @@ Evidence: probe P1 and P2 (all placements give the same live region over the slo
 
 ### D3 — Variant attribute and values
 
-Evidence: Button's tone attribute is `variant` (`packages/line-components/src/button/button.ts:95`; ARCH §4 example, `docs/ARCHITECTURE.md:255`). The line://ui semantic roles are `success`, `warning`, `danger` and `info` (PRD `SEMANTIC_MAP`, `docs/PRD.md:1333-1338`), with role aliases such as `--line-danger-bg` (`packages/line-themes/src/aliases.css`). C6 limits a variant to the defaults of `--line-alert-*` tokens (ARCH `:1577`). Precedents: Web Awesome `variant` `brand | neutral | success | warning | danger`; Fluent `intent` `success | warning | error | info`; Spectrum `variant` `neutral | info | negative` (`[^4.1-alert]`). Button's default value is `default` (`button.types.ts`).
+Evidence: Button's tone attribute is `variant` (`packages/line-components/src/button/button.ts:95`; ARCH §4 example, `docs/ARCHITECTURE.md:255`). The line://ui semantic roles are `success`, `warning`, `danger` and `info` (PRD `SEMANTIC_MAP`, `docs/PRD.md:1336-1341`), with role aliases such as `--line-danger-bg` (`packages/line-themes/src/aliases.css`). C6 limits a variant to the defaults of `--line-alert-*` tokens (ARCH `:1577`). Precedents: Web Awesome `variant` `brand | neutral | success | warning | danger`; Fluent `intent` `success | warning | error | info`; Spectrum `variant` `neutral | info | negative` (`[^4.1-alert]`). Button's default value is `default` (`button.types.ts`).
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -615,7 +615,7 @@ Evidence: probe P4 (a `willUpdate` write leaves the host role-less from `append(
 
 ### D9 — Tokens
 
-Evidence: C6 and PRD v0.8.28 let a variant set the defaults of its component's tokens (ARCH `:1577`; `docs/PRD.md:19`); Button's default tokens use the `gray` role aliases (`button.ts:117`). Separator draws with border longhands for forced colors (`0011-separator.md` Drawing). Radix step semantics put backgrounds at step 3, borders at step 7 and text at steps 11 and 12 (ARCH `:243`). Contrast of steps 11 and 12 over step 3 is not measured here [INFERENCE: the Radix steps are designed for it].
+Evidence: C6 and PRD v0.8.28 let a variant set the defaults of its component's tokens (ARCH `:1577`; `docs/PRD.md:20`); Button's default tokens use the `gray` role aliases (`button.ts:117`). Separator draws with border longhands for forced colors (`0011-separator.md` Drawing). Radix step semantics put backgrounds at step 3, borders at step 7 and text at steps 11 and 12 (ARCH `:243`). Contrast of steps 11 and 12 over step 3 is not measured here [INFERENCE: the Radix steps are designed for it].
 
 | Option | What it decides | Tradeoff |
 |---|---|---|
@@ -713,3 +713,4 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | AM-011 | 2026-11-12 | ledger 01-C13 (decision — Miguel, 2026-11-12: PRD v0.8.33, Phase 1 spec AM-097; factual realignment) | Locators only, no design change. PRD: §4.1 Alert row `:251` (was `:250`), four times; §4.3 Alert Dialog row `:294` (was `:293`); §9.3 "Why semantic roles are fixed" `:1327` (was `:1326`); §9.3 `SEMANTIC_MAP` `:1332-1337` (was `:1331-1336`), twice; the v0.8.28 revision note `:18` (was `:17`). Amendment rows keep their locators as record | PRD v0.8.33 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.33) at `080cfde`; Phase 1 spec §12 AM-097 |
 | AM-012 | 2026-11-13 | ledger 01-Z9 (factual realignment — Miguel, 2026-11-13: components stories grouped by PRD §4 category, `docs/context/01-z9.md`) | Locators only, no design change. `separator.stories.ts:47-80` (was `:46-79`), the Separator stories in the evidence at `:687`. Amendment rows keep their locators as record | The `id:` line that 01-Z9 pins in each components stories meta moved every later line down by one (PROCESS §3, line locators follow the lines) | Commit `0f77015` (`chore(storybook): group components stories by PRD §4 category`) adds one meta line; checked by content against `main` at `4441f25`: `separator.stories.ts` lines 47–80 hold the text that lines 46–79 held |
 | AM-013 | 2026-11-20 | ledger 01-Z10 (decision — Miguel, 2026-11-20: PRD v0.8.34, Phase 1 spec AM-113; factual realignment) | Locators only, no design change. PRD: §4.1 Alert row `:252` (was `:251`), four times; §4.3 Alert Dialog row `:295` (was `:294`); §9.3 "Why semantic roles are fixed" `:1328` (was `:1327`); §9.3 `SEMANTIC_MAP` `:1333-1338` (was `:1332-1337`), twice; the v0.8.28 revision note `:19` (was `:18`). Amendment rows keep their locators as record | PRD v0.8.34 adds a one-line revision note above every cited line, so each moved down by one (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.34) on `chore/01-z10-release-time-records`; Phase 1 spec §12 AM-113 |
+| AM-014 | 2026-11-25 | ledger 01-Z3 (decision — Miguel, 2026-11-25: PRD v0.8.35, Phase 1 spec AM-115; factual realignment) | Locators only, no design change. PRD: the v0.8.28 revision note `:20` (was `:19`); §4.1 Alert row `:253` (was `:252`), 4 times; §4.3 Alert Dialog row `:296` (was `:295`); §9.3 `:1331` (was `:1328`); §9.3 `:1336-1341` (was `:1333-1338`), 2 times. Amendment rows keep their locators as record | PRD v0.8.35 adds a one-line revision note above every cited line and a two-line Phase 1 status note above the §7.3 exit criteria, so each cited line moved down by one, and each line past §7.3 by three (PROCESS §3, line locators follow the lines) | `docs/PRD.md` (v0.8.35) on `docs/01-z3-phase-01-exit`; Phase 1 spec §12 AM-116 |

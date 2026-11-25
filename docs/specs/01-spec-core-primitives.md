@@ -1,10 +1,10 @@
 # SPEC: Phase 1 — Core Primitives
 
-**Status:** APPROVED — Miguel on 2026-10-20, with every §10 row approved; amended by AM-001–AM-114 (§12)
+**Status:** APPROVED — Miguel on 2026-10-20, with every §10 row approved; amended by AM-001–AM-116 (§12)
 **Author:** line://ui orchestrator (row 00-Z46)
 **Date:** 2026-10-20
 **Phase target:** line://ui v0.2.0
-**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.34, APPROVED; approved against v0.8.19; amended by AM-001–AM-048, AM-056, AM-065, AM-086, AM-097, AM-113)
+**Source PRD:** [`docs/PRD.md`](../PRD.md) (v0.8.35, APPROVED; approved against v0.8.19; amended by AM-001–AM-048, AM-056, AM-065, AM-086, AM-097, AM-113, AM-115, AM-116)
 **Source Plan:** [`docs/plans/01-plan-core-primitives.md`](../plans/01-plan-core-primitives.md) (APPROVED, revision 00-Z45, factual corrections 00-Z46, coherence revision 00-Z48)
 **Source Architecture:** [`docs/ARCHITECTURE.md`](../ARCHITECTURE.md) (v0.8.27; approved against v0.8.5; amended by AM-001–AM-044, AM-050, AM-052, AM-056, AM-065, AM-067, AM-070, AM-071, AM-072, AM-086, AM-092, AM-093, AM-094)
 **Source Research:**
@@ -871,7 +871,7 @@ export default {
 - **Deps:** P11 (§6.P.11 Timing; §12 AM-035). Blocks C1, so the default pairs gate every PR from C1 on, as AM-033 decided (§10 SD86, SD98; §12 AM-033, AM-036).
 - **Changes:** `packages/line-components/__tests__/visual/roles.visual.ts` and `roles.off-pairs.visual.ts` over the `Design System/Roles` story `Toolbar` (`design-system-roles--toolbar`), with their baselines from a `visual-baselines.yml` run on the PR branch (§10 SD98; §12 AM-033). PRD §5.2.1 requires a baseline for every supported `(accent, gray, mode)` combination:
   - `roles.visual.ts` holds the default pairs: each of the 31 `ACCENT_HUES` with the auto-paired gray, in light and dark, 62 screenshots at `&globals=accent:<hue>&args=mode:<mode>`. It runs in the "Browser tier" step and gates the merge.
-  - `roles.off-pairs.visual.ts` holds the off pairs: each accent with each of the five `GRAY_HUES` that are not its auto pair, set explicitly, in light and dark, 310 screenshots at `&globals=accent:<hue>;gray:<gray>&args=mode:<mode>`. It runs only in `visual-off-pairs.yml` and does not gate a PR. PRD §5.2.1 defines an off pair as "a non-auto-paired gray with a given accent" (`docs/PRD.md:565`); each auto pair is one of the six `GRAY_HUES` (`packages/line-themes/src/defaults.css`), so the default pair is not repeated (§12 AM-035).
+  - `roles.off-pairs.visual.ts` holds the off pairs: each accent with each of the five `GRAY_HUES` that are not its auto pair, set explicitly, in light and dark, 310 screenshots at `&globals=accent:<hue>;gray:<gray>&args=mode:<mode>`. It runs only in `visual-off-pairs.yml` and does not gate a PR. PRD §5.2.1 defines an off pair as "a non-auto-paired gray with a given accent" (`docs/PRD.md:566`); each auto pair is one of the six `GRAY_HUES` (`packages/line-themes/src/defaults.css`), so the default pair is not repeated (§12 AM-035).
   - Both files import `ACCENT_HUES` and `GRAY_HUES` from `@websublime/line-schemas`, which `line-components` declares as a devDependency (§4.2; §12 AM-047).
   - `roles.off-pairs.visual.ts` declares all 372 `(accent, gray, mode)` tests, 31 accents by six grays by two modes, with the gray set explicitly. A worker-scoped Playwright fixture finds each accent's auto pair in Chromium from the computed cascade. It opens the story with only the accent global and reads `--line-gray-1` to `--line-gray-12` on `<html>`. It compares them with `--line-<gray>-1` to `--line-<gray>-12` of each gray and requires exactly one match; any other count fails the run. The test of the auto pair calls `test.skip` with the reason "default pair, covered by roles.visual.ts". 310 tests take a screenshot and 62 skip. The built `packages/line-themes/dist/defaults.css` is minified, so the fixture reads no CSS text (§12 AM-047).
   - Each call passes `story.ts` the `name` `` `toolbar-${accent}-${gray ?? 'auto'}-${mode}.png` ``, so under the §6.P.11 path template each combination has its own baseline, for example `roles.visual.ts-snapshots/toolbar-indigo-auto-dark-visual-linux.png` and `roles.off-pairs.visual.ts-snapshots/toolbar-indigo-sand-dark-visual-linux.png`; the default name `` `${storyId}.png` `` would give every combination one file (§12 AM-035).
@@ -888,7 +888,7 @@ export default {
 #### 6.P.13 P13 — Phase-exit `minor` changesets
 
 - **Owner:** infra-supervisor.
-- **Deps:** every other Phase 1 row except D3 and Z3, the rows the exit sweep files included (§6.D.3; §6.Z.2; §12 AM-037, AM-038). P13's changeset list depends on every merged changeset, so P13's ledger row stays `blocked` until the main session has run the exit sweep and the sweep's rows are `done`, as D3 stays `blocked` until the Phase 1 Version PR merges (§6.D.3). The orchestrator (main session or `sdlc`) then flips the row `blocked → todo` (§6.Z; §12 AM-040, AM-041, AM-051).
+- **Deps:** every other Phase 1 row except D3 and Z3, the rows the exit sweep files included, and except a row Z3 files after P13 lands (§6.D.3; §6.Z.2; §12 AM-037, AM-038, AM-115). P13's changeset list depends on every merged changeset, so P13's ledger row stays `blocked` until the main session has run the exit sweep and the sweep's rows are `done`, as D3 stays `blocked` until the Phase 1 Version PR merges (§6.D.3). The orchestrator (main session or `sdlc`) then flips the row `blocked → todo` (§6.Z; §12 AM-040, AM-041, AM-051).
 - **Changes:**
   - A `minor` changeset for each package whose manifest version is still `0.1.x` and that has no pending `minor` changeset (`bun run changeset status`), so every package ends Phase 1 in `0.2.x` (§7.2; §10 SD75; §12 AM-051). A package with only `patch` changesets needs one. In Phase 00, Version PR #218 bumped `line-themes` and `line-components` only to `0.0.1` because their pending changesets were all `patch`, and row `00-Z6` fixed it (`docs/plans/00-tasks-design-system.md:120`; §12 AM-039). The §4 catch-all row covers changeset entries (§12 AM-038).
   - P13 adds no context file, because the changeset file gives the row a PR. When no package qualifies, P13 runs `bun run empty`, so the row still has one (PROCESS §6; §12 AM-051).
@@ -1977,18 +1977,21 @@ The PR that creates the Phase 1 ledger also aligns PROCESS §4 "Repo agents" (`d
   - Miguel supplies the reporting contact in the Z1 PR (§10 SD74).
 - **Acceptance:** the file exists and the README link resolves.
 
-#### 6.Z.2 Z3 — Phase 1 retrospective
+#### 6.Z.2 Z3 — Phase 1 exit and retrospective
 
 - **Owner:** main session.
 - **Deps:** every other Phase 1 row (§10 SD87; §12 AM-009, R5-L1-01; §12 AM-036).
 - **Timing:** Z3 lands after D3, so after the Phase 1 Version PR merges, or after P13 merges when no phase-exit Version PR opens (§6.D.3, §6.P.13; §12 AM-038, AM-051).
 - **Exit sweep:** the main session runs the sweep over the live documents and the ledger before the last rows land (plan §7.4, §10 step 7). The sweep is not a row of its own: each finding becomes a new row, as the Phase 00 exit sweep filed row C18 (`docs/plans/00-tasks-design-system.md:53`, "found by the Phase 00 exit sweep"), and Z3's Deps take in those rows (§12 AM-036).
-- **Changes:** `docs/retrospective/01-<slug>.md` with a hand-off to Phase 2 (plan §10 step 7).
+- **Exit evidence:** the main session evidences every §9 criterion in three slices, as the Phase 00 exit did (`docs/retrospective/00-phase-00-retro.md:10-12`). The local slice runs each command once on `main` at one sha, the static slice reads the files, and the remote slice queries GitHub Actions, npm and the deployed URLs (§12 AM-115).
+- **Changes:** `docs/retrospective/01-<slug>.md` with an exit-criteria section, which gives each §9 criterion its evidence, and a hand-off to Phase 2 (plan §10 step 7). Each §9 box and its plan §7 twin are ticked. PRD §7.3 gains a Phase 1 status line that names the close date and the retrospective, with a PRD revision-log entry, and the Source PRD lines of this spec and the plan name the new PRD version (PROCESS §3; §12 AM-115).
 - **Contract:**
   - The sweep MUST run before the last rows land (plan §7.4; retrospective lesson 9).
+  - Every §9 criterion MUST carry evidence from a slice that can prove it, and its box and its plan §7 twin are ticked only once that evidence is in the retrospective (§12 AM-115).
+  - A criterion that does not hold MUST become a new ledger row that joins Z3's Deps, and Z3 lands only after that row is `done`. The row is not a P13 dependency, because P13 has landed (§6.P.13). When the row changes a published package, its changeset is a `patch` (PROCESS §6), and Z3 lands only after the Version PR that releases it merges with the §7.2 release-time records; the remote slice for that criterion then runs again against the released version (§12 AM-115).
   - The retrospective MUST carry a hand-off section for Phase 2 (plan §7.4).
   - The Phase 2 hand-off MUST name the SD76 widening duty (§7.2; §12 AM-030).
-- **Acceptance:** the sweep's findings are ledger rows, and the retrospective file exists with its hand-off section, which names the SD76 widening duty (§7.2; §10 SD87; §12 AM-032, L3R23-05).
+- **Acceptance:** the sweep's findings are ledger rows; every §9 box and its plan §7 twin are ticked with the evidence in the retrospective's exit-criteria section; PRD §7.3 carries the Phase 1 status line with its revision-log entry; and the retrospective file exists with its hand-off section, which names the SD76 widening duty (§7.2; §10 SD87; §12 AM-032, L3R23-05; §12 AM-115).
 
 #### 6.Z.3 Z5 — Workspace resolution in tests
 
@@ -2260,106 +2263,106 @@ Phase 1 is complete when every item below holds. The list mirrors plan §7.1–�
 
 ### 9.1 Components
 
-- [ ] All listed components pass the 8-point test checklist (PRD §5.2)
+- [x] All listed components pass the 8-point test checklist (PRD §5.2)
   - Tasks: C1–C20 (§6.C.6).
   - Check: the "Unit tier" `bun test --isolate` (§12 AM-085) and "Browser tier" `bun run e2e` steps in `.github/workflows/checks.yml` pass.
-- [ ] Storybook documentation complete for every component
+- [x] Storybook documentation complete for every component
   - Tasks: C1–C20, P10.
   - Check: the Storybook build passes, and each component's autodocs page shows its attributes, slots, events and CSS parts from the shipped manifest (§6.P.10, §6.C.6).
-- [ ] Zero axe-core violations
+- [x] Zero axe-core violations
   - Tasks: P7, C1–C20.
   - Check: `packages/line-components/__tests__/a11y/<c>.e2e.ts` passes in three engines with the §7.4 ruleset.
-- [ ] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
+- [x] *Every story of every component, and the `Design System/Roles` `Toolbar` story under every `(accent, gray, mode)` combination, has a committed Chromium baseline, and the visual tier passes (PRD §5.2, §5.2.1).*
   - Tasks: P11, P12, C1–C20.
   - Check: the "Browser tier" step runs `packages/line-components/__tests__/visual/<c>.visual.ts` and `roles.visual.ts` in the `visual` project, each story and combination has a committed `-visual-linux.png` baseline from `visual-baselines.yml`, and the release PR records a passing `visual-off-pairs.yml` run (§6.P.11, §6.P.12; §10 SD98).
-- [ ] CEM manifest generated and verified
+- [x] CEM manifest generated and verified
   - Tasks: P10, G5.
   - Check: `bun run scripts/verify-pack.mjs` fails without `custom-elements.json` in the `line-components` tarball; the G5 drift and coverage tests pass.
-- [ ] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; §10 SD94).*
+- [x] *Storybook loads the manifest through `setCustomElementsManifest`, and `@websublime/line-components` and `@websublime/line-genui` each ship one with a `customElements` field and a `files` entry (D8; §10 SD94).*
   - Tasks: P10, G4.
   - Check: `apps/storybook/.storybook/preview.ts` calls `setCustomElementsManifest` with the manifest merged from both packages; `verify-pack` check (a) covers the `customElements` field of both packages (§4.1, §4.2).
-- [ ] Changeset entry for every component
+- [x] Changeset entry for every component
   - Tasks: C1–C20.
   - Check: each component PR adds a `.changeset/*.md` entry (§6.C.6).
-- [ ] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
+- [x] *Every Phase 1 component spec is APPROVED before code, with the Agent contract section filled (hand-off item 4).*
   - Tasks: C1–C20, step 1 of the §6.C.0 sequence.
-  - Check: each `docs/specs/NNNN-<component>.md` reads `**Status:** APPROVED` before its implementation PR opens.
-- [ ] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
+  - Check: each `docs/specs/NNNN-<component>.md` carries the Status row `` | Status | `approved` (<who>, <date>) | `` (`docs/specs/COMPONENT-SPEC-TEMPLATE.md:9`) before its implementation PR opens (§12 AM-116).
+- [x] *Every component fills the htmx Tests row per C9 (harness run, or `n/a` with a reason).*
   - Tasks: C1–C20 (§6.C.4 htmx column).
   - Check: the component spec Tests row; the harness `@websublime/line-testing/htmx` (`packages/line-testing/src/htmx.ts`, §6.Z.3) where it applies.
-- [ ] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
+- [x] *Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md`.*
   - Tasks: C1–C20 (§6.C.6).
   - Check: the row exists for each of the 20 components.
-- [ ] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
+- [x] *Each component's gzipped size is measured and reported against the < 5 KB soft target (not gating, PRD §1.7).*
   - Tasks: P5, C1–C20.
   - Check: `scripts/report-size.mjs` prints the per-component table in the CI log (§7.6).
 
 ### 9.2 Agent-driven UI
 
-- [ ] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
+- [x] Every Phase 1 component in `@websublime/line-components` has an agent descriptor (exposed, or flagged `agentExposed: false` with a reason), and the CEM drift and coverage tests pass
   - Tasks: G1, G5, C5–C20.
   - Check: the G5 tests in `packages/line-genui` pass in the unit tier (§6.G.5).
-- [ ] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
+- [x] The inline form of `@websublime/line-genui/catalog.json` (the `line` catalog) validates against the A2UI v0.9.1 `client_capabilities.json#/$defs/Catalog`, `web_core` reads the catalog back with `Catalog.fromJson`, and the catalog's `validationSchema` compiles
   - Task: G2.
   - Check: the G2 tests listed in §6.G.2 Acceptance.
-- [ ] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
+- [x] The Phase 1 subset of the `basic` catalog is registered under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, and unmapped basic types render an inert placeholder and raise `line-a2ui-error`
   - Tasks: G2, G4, C10 (the `Image` `variant: "avatar"` route; §12 AM-021, L3R15-02).
   - Check: a message with the v0_9 basic id renders mapped types and raises `line-a2ui-error` for each unmapped type (§6.G.4); an `Image` with `variant: "avatar"` renders `<line-avatar>` (§6.C.4).
-- [ ] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
+- [x] The frontend-tool schemas validate as JSON Schema and use literal, flat parameters without the A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Every tool description stays at or under the self-imposed cap of 1024 characters
   - Task: G3.
   - Check: Ajv validation and the offline R3 P11 subset checks run in CI on every PR; the Anthropic live call is recorded in the Version PR (§6.G.3; §12 AM-113).
-- [ ] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
+- [x] `@websublime/line-themes/hosts/mcp-apps.css` maps every MCP Apps standard host colour, font and border-radius variable on the reference list that the Phase 1 spec fixes, each to a line theme alias or token, and passes `lint-layers`
   - Task: G6.
   - Check: `bun run scripts/lint-layers.mjs` passes; the G6 browser test passes in three engines; the §6.G.6 key table is complete.
-- [ ] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
+- [x] `<line-a2ui-surface>` renders every agent-exposed Phase 1 component from A2UI messages with zero axe-core violations, and document `::part()` rules apply to the rendered elements
   - Tasks: G4 for C1–C4; C5–C20 for the rest; P7.
   - Check: the surface stories pass the §7.4 axe ruleset; the G4 acceptance tests in §6.G.4; each C5–C20 PR extends the surface render fixture (§6.C.6).
-- [ ] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
+- [x] Importing `@websublime/line-genui/catalog` defines no element; importing `@websublime/line-genui/a2ui` defines only `line-a2ui-surface`
   - Tasks: G1, G4 (on the P5 harness).
   - Check: the `line-genui` registration harness on the packed tarball (§7.5).
 
 ### 9.3 Documentation
 
-- [ ] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
+- [x] Storybook holds one recipe per transport (AG-UI, A2A, MCP, SSE)
   - Tasks: G7, D2.
   - Check: the four recipes render C1–C4 in the deployed Storybook; the Bun middleware comparison test passes (§6.G.7).
-- [ ] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
+- [x] The site landing page (hero, value proposition, features, Storybook link; PRD §5.3) is built with Phase 1 line://ui components and is live at `line-ui.websublime.com`
   - Task: S1.
   - Check: `apps/site/__tests__/landing.e2e.ts` asserts every `line-*` element is `:defined` in three engines; `deploy-site.yml` publishes the page (§6.S.1).
 
 ### 9.4 Platform and release
 
-- [ ] Bundle splitting verified — families and independents work as documented
+- [x] Bundle splitting verified — families and independents work as documented
   - Task: P5.
   - Check: `packages/line-components/__tests__/bundle-splitting.test.ts` runs the §7.5 checks on the packed tarball.
-- [ ] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
+- [x] `scripts/lint-layers.mjs` carries the `line-genui` edges and passes
   - Task: P2.
   - Check: `ALLOWED_EDGES` equals the §3.3 block, and `bun run scripts/lint-layers.mjs` exits 0.
-- [ ] The npm trusted publisher for `@websublime/line-genui` exists before its first release
+- [x] The npm trusted publisher for `@websublime/line-genui` exists before its first release
   - Tasks: P4, P14.
   - Check: the package settings show two trusted publishers and token publishing disallowed (§6.P.4, §6.P.14).
-- [ ] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of §10 SD32 (PRD §1.7).*
+- [x] *CDN delivery through unpkg and jsDelivr is verified against the two-path contract of §10 SD32 (PRD §1.7).*
   - Tasks: P6, C22, D3.
   - Check: `packages/line-components/__tests__/cdn.e2e.ts` passes on both paths, and the release PR records both runs (§7.7). The C22 matrix tests `packages/line-icons/__tests__/consumer-matrix.e2e.ts` and `consumer-matrix.cdn.e2e.ts` render icons in three bundlers and on both CDN paths in three engines (§6.C.3).
-- [ ] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
+- [x] *The workspace builds, type-checks and emits declarations on TypeScript 7.x (O1). The Vite-built packages emit every `.d.ts` with 7.x `tsc --emitDeclarationOnly`, and the `tsc -b` packages with 7.x `tsc -b` (D1).*
   - Task: P8.
   - Check: `bun run build`, `bun --filter '@websublime/*' typecheck` and `verify-pack` exit 0; `tsc --version` prints 7.x (§6.P.8).
-- [ ] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
+- [x] *A consumer that imports `@websublime/line-core` and a `line-components` subpath gets one `LineElement` class (P9).*
   - Tasks: P9 (externals), P5 (checks; §12 AM-020, L3R14-02).
   - Check: `packages/line-components/__tests__/line-element-identity.test.ts` and the `instanceof` harness pass (§6.P.5, §7.5).
-- [ ] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
+- [x] *The Phase 1 spec records the utility-class decision (PRD §9.13).*
   - Check: §10 SD1.
-- [ ] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
+- [x] *Every package is released in `0.2.x` through `release.yml` with provenance, each package's first Phase 1 `minor` as its `0.2.0`, and `line-genui` gets its first release per the spec.*
   - Tasks: P3, P4, P13, P14.
   - Check: the P3 dry run lists a `0.2.x` version for each of the nine packages, with `line-genui` at `0.2.0`; after the phase-exit Version PR, or the P13 merge when none opens, `npm view` shows a `0.2.x` version with provenance for all nine packages (§7.2).
-- [ ] *A code of conduct is present before `v0.2.0` (PRD §10).*
+- [x] *A code of conduct is present before `v0.2.0` (PRD §10).*
   - Task: Z1.
   - Check: `CODE_OF_CONDUCT.md` exists on `main`, and the `README.md` link resolves.
-- [ ] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
+- [x] *Rows `00-Z28` and `00-Z30` are done, and row `00-Z29` is done or still blocked on the Biome release.*
   - Check: the ledger rows' status.
-- [ ] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
+- [x] *The exit sweep runs before the last rows land, its findings become ledger rows, and the Phase 1 retrospective is written with a hand-off to Phase 2 (retrospective lesson 9).*
   - Task: Z3.
-  - Check: the retrospective file under `docs/retrospective/` exists with its hand-off section, which names the SD76 widening duty (§6.Z.2).
+  - Check: the retrospective file under `docs/retrospective/` exists with its hand-off section, which names the SD76 widening duty, and with its exit-criteria section, which gives every §9 criterion its evidence (§6.Z.2; §12 AM-115).
 
 ---
 
@@ -2455,7 +2458,7 @@ Fork R1–R6 rows record Miguel's choice among options. Default R1–R4 rows rec
 | SD84 | Which reset modules do Chip and AvatarGroup take (ARCH §14.7)? | `common` and `button`, because each renders an inner native `<button>` (§10 SD31) | `common` only | ARCH §14.7; R8 §2.2, §6 Q1, Q7 | Drafting | Approved 2026-10-20 |
 | SD85 | In which order do `mcp-apps.css` and the `line-themes` CSS load? | `mcp-apps.css` loads after the `line-themes` CSS; the docs state the order; a G6 browser test checks it | Leaving the order unstated | `packages/line-themes/src/aliases.css:6-7`; §6.G.6 | Drafting | Approved 2026-10-20 |
 | SD86 | Which tasks must merge before each C1–C20 row? | The §6.C.4 Deps column. P7 and P11 land before C1 (AM-031); P12 follows P11 (AM-035) and lands before C1 (AM-036); C5 and C6 depend on C1; C11 depends on C10; C5–C20 depend on G1, G4 and G5 (AM-020); C12, C13 and C16 also depend on G3 (AM-023); every C1–C20 row depends on Z5 (AM-048) | Only the plan §6 dependencies | plan §6; ARCH §13.1; §10 SD4, SD10 | Drafting | Approved 2026-10-20 |
-| SD87 | Which task owns the exit sweep and the Phase 1 retrospective? | Task Z3, owned by the main session, writes the retrospective and depends on every other Phase 1 row (AM-009). The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as in Phase 00 (AM-036) | The sweep as Z3's own work, with two dependency sets in one Deps field (AM-037) | plan §7.4, §10 step 7 | Drafting | Approved 2026-10-20 |
+| SD87 | Which task owns the exit sweep, the Phase 1 exit and the retrospective? | Task Z3, owned by the main session, closes the phase and writes the retrospective, and depends on every other Phase 1 row (AM-009). The close evidences every §9 criterion, ticks the §9 and plan §7 boxes and adds the PRD §7.3 status line (AM-115). The main session runs the exit sweep before the last rows land; the sweep is not a row, and each finding becomes a new row, as in Phase 00 (AM-036) | The sweep as Z3's own work, with two dependency sets in one Deps field (AM-037) | plan §7.4, §10 step 7 | Drafting | Approved 2026-10-20 |
 | SD88 | Q07: Decide the resolver loading mechanism now, or after more research? | R10 round 2 first (row 00-Z47); settled by SD89–SD92 | Decide now from the contract; decide now on fetch-by-URL | R10 §3 P6, §6 Q3 | Fork R1 | Approved 2026-10-20 |
 | SD89 | Q07a: Which mechanism do the reference resolvers use? | Both the Lucide and Phosphor resolvers fetch the SVG from a base URL. It is the only probed mechanism that renders in Vite, esbuild and webpack builds and on the jsDelivr `+esm` and unpkg paths, for both sets and any name of the set. The entry is about 1 KB with no map, and each icon costs one request | Lucide literal `.mjs` map for the A2UI names plus fetch for Phosphor; full Lucide `.mjs` map plus fetch for Phosphor; template `import()` with consumer fixes; `?raw` map; `import.meta.glob` | R10 round 2 §2.2, §2.3, §2.6 | Fork R5 | Approved 2026-10-20 |
 | SD90 | Q07b: Who owns the base URL? | `base` is a required option of `createLucideResolver` and `createPhosphorResolver`. Without it the resolver rejects and `<line-icon>` stays neutral. No third-party request happens unless the consumer sets `base`. The docs show a jsDelivr URL pinned to the peer version and a self-host recipe | A default jsDelivr base | R10 round 2 §2.4, §2.6, §2.7, §6 Q4 | Fork R5 | Approved 2026-10-20 |
@@ -2597,5 +2600,7 @@ PROCESS §3 requires that any change to this spec after approval lands as a row 
 | AM-112 | 2026-11-20 | ledger 01-Z4 (factual correction, found during the 01-P2 understand and Verify) | Eight edits, no design change. (1) The Status line names AM-001–AM-112. (2) §3.1, the apps devDependencies bullet: the `scripts/lint-layers.mjs` cite reads `:181-208` (was `:181-205`). (3) §3.1, the `line-testing` bullet: `:181-208` (was `:181-205`). (4) §3.3, the merge bullet: `:190-193` (was `:187-190`). (5) §4.4, the prefix audit bullet: `:271-298` (was `:268-295`). (6) §4.6, the private-package bullet: `:181-208` (was `:181-205`). (7) §7.8, the test-file tag bullet: `:311-355` (was `:308-350`). (8) This row | P2 inserted lines 33, 59 and 70 into `scripts/lint-layers.mjs`, so locators written before P2 sit three lines above the code they cite. Each range was redrawn by the text it cites, so not every edit is a plain three-line shift: the app-rule ranges keep their start at `isApp` (181) and end at the closing brace of the app branch (208), and the test-tag range now ends at the closing brace of `auditCustomElementTags` (355). The P2 before-state locators in §3.3 and §6.P.2 Changes (`:32-35`, `:47-58`, `:59-68`) stay, because they describe the file P2 changed. | `git show f90ca80 -- scripts/lint-layers.mjs`; `scripts/lint-layers.mjs:181` (`isApp`), `:199-208` (app branch of the edge loop), `:190-193` (merge of `dependencies` and `peerDependencies`), `:271-298` (`auditCssCustomProperties`), `:311-355` (`TAG_PATTERNS` to `auditCustomElementTags`) |
 | AM-113 | 2026-11-20 | ledger 01-Z10 (decision — Miguel, 2026-11-20, F2 (b): the live call before each release goes to Anthropic only, and OpenAI and Gemini acceptance rests on the offline R3 P11 subset checks that run in CI on every PR) | Each edit in place unless stated. (1) The Status line names AM-001–AM-114. (2) The Source PRD line names v0.8.34 and AM-113. (3) §6.G.3 Acceptance (`:1437`): Miguel calls Anthropic live in strict mode with every agent-exposed emitted tool before each release and records the date, the tool count and the result in the Version PR; OpenAI and Gemini rest on the offline checks. (4) §7.2 (`:2091`): the release-time records name the Anthropic live call. (5) §8, the Anthropic strict-mode risk row (`:2237`). (6) §9.2, the frontend-tool item (`:2308`) mirrors PRD §7.3 v0.8.34 word for word, and its Check (`:2310`) names the Anthropic live call. (7) §10 SD49 (`:2420`): the decision names the Anthropic live call, and Rejected adds live OpenAI and Gemini calls before each release. (8) PRD v0.8.34 adds one revision-note line, so §6.P.11 (`:874`) cites PRD §5.2.1 off pairs at `docs/PRD.md:565` (was `:564`). Amendment rows keep their locators as record | The Phase 1 exit sweep found that #313, the only Version PR with a live-call record, called Anthropic alone because no OpenAI or Gemini key was available. The offline checks already prove each provider's subset on every PR: OpenAI and Anthropic strict mode, and the Gemini OpenAPI `parameters` subset | `docs/context/01-z10.md` (Observed, Decisions F2); `packages/line-genui/__tests__/tool-subsets.ts:7-18` (OpenAI, Anthropic and Gemini subsets) and `frontend-tools.test.ts:139-147`; PRD v0.8.34 revision note |
 | AM-114 | 2026-11-20 | ledger 01-Z10 (decision — Miguel, 2026-11-20, F3 (c): a required commit status keeps a Version PR from merging without its release-time records; G1: branch protection sets `enforce_admins: true`; G2 (a): a `snapshot-deploy.yml` run on the base sha precedes `cdn-check.yml`, which tests that canary; H1: the workflow runs on `pull_request` and `issue_comment`, and a fork PR's status comes from the `issue_comment` run; review gate round 1 defaults: the status bound to the GitHub Actions app, the latest marker comment with an `admin` author and last editor, the base sha read from `main`, PR data only through `env:`, the apply step re-evaluating open PRs; review gate round 2 should-fix items: a `concurrency` group per PR, the `deleted` event, the job-level `if:`, the PR read through `GET /pulls/{n}`, marker comments by non-admins skipped; implementer default: the job checks out `main` for the script; Verify gate iteration 1 fixes: no status on a PR whose head sha is the Version PR's, a post only when the status changes, the last editor from `userContentEdits`, `failure` on an evaluation error, the scope of the app binding, the apply order and the lock-in recovery; Verify gate round 2: the Version PR is only the open `github-actions[bot]` PR from `changeset-release/main` into `main`) | §7.2 (`:2091`) adds the `snapshot-deploy.yml` run to the release-time records. §7.2 gains the `release-records` contract below that bullet (`:2092-2107`, sixteen new lines): the workflow and its `pull_request` and `issue_comment` (`created`, `edited`, `deleted`) triggers, the apply order after this branch merges and the recovery when a broken script on `main` blocks every PR, the job-level `if:` that skips a comment on a plain issue and a fork PR's `pull_request` run, the per-PR `concurrency` group with `cancel-in-progress: false`, the sparse `main` checkout that runs `scripts/release-records.mjs` with its unit-tested decision function, the PR read through `GET /pulls/{n}`, the Version PR as the open PR from `changeset-release/main` of this repository into `main` that `github-actions[bot]` opened, so a duplicate, closed or hand-opened PR from that branch falls to the no-status rule (a hand-opened PR into `main` keeps the release blocked until Miguel closes it and re-runs `release.yml`, and the author test holds while `changesets/action` uses `GITHUB_TOKEN`, `release.yml:102`), `success` at once on any PR that is not a Version PR, no status at all on such a PR whose head sha is the tip of `changeset-release/main` or the head of an open Version PR, a post only when the state or description differs from the latest `github-actions[bot]` status on the head sha, `failure` on an evaluation error outside that rule, the record comment as the event that evaluates a Version PR, the base sha as the `main` tip read on every run, the latest marker comment whose author and last editor (the newest GraphQL `userContentEdits` entry, else the author) are admins, with every other marker comment skipped and a deleted record re-evaluated, the three cited `workflow_dispatch` runs on `main` at the base sha and no other run, the `cdn-check.yml` `line-components-version` rule (the `<x.y.z>-<base sha>-SNAPSHOT` canary when the Version PR releases `line-components`, that is when its head version differs from the base-sha version, else the base-sha version npm `latest` serves), the `cdn-check.yml` `run-name` that the status reads from `display_title` (an implement-phase change to `cdn-check.yml`), the attested Anthropic live-call line with its date, `<n> tools` and `passed`, PR data only through the API or `env:`, the read-only permissions with `statuses: write`, the job-name rule, branch protection bound to app 15368 with `strict: true` and `enforce_admins: true` that Miguel applies, which stops a status posted by hand but not a write collaborator's workflow, the re-evaluation of open PRs at apply time and the Verify evidence (unit tests before the merge, the live paths after it). Every later line moves down sixteen, and AM-113, from the same PR, cites the moved lines; other amendment rows keep their locators as record | The duty lived only in prose, and the Phase 1 exit sweep found Version PRs #356 and #358 with none of the three records and #292–#311 with gaps. A required status makes a missing record visible on the Version PR itself. With `enforce_admins: false` the admin who merges could bypass it, and a required context bound to no app accepts a status any collaborator posts. Before the merge the release version is not on npm, and the `canary` dist-tag can be days old, so only a canary built from the base sha tests what the Version PR releases. GitHub blocks `pull_request_target` by default in public repositories from 2026-12-02, and `line-ui` is public. One queued run per PR keeps an older evaluation from overwriting a newer one, and a stranger's marker comment would block a Version PR if it counted as the record. The `issue_comment` payload carries no head sha. The decision function lives in a file so that it can be unit-tested, so the job checks out `main`, never the PR. A commit status belongs to the sha, so a fork or branch PR at the Version PR's head sha could otherwise post `success` on it through its `issue_comment` run. Every workflow on a same-repository branch also runs as the GitHub Actions app, so the app binding stops only a status posted by hand. GitHub keeps at most 1000 statuses per sha and context, so a repeat post on each comment could exhaust them. A check on head ref and repository alone let a duplicate or closed PR from `changeset-release/main` post `failure` on the real Version PR's head sha | `docs/context/01-z10.md` (Observed table, Decisions F3, G1, G2, H1); `.github/workflows/release.yml` opens the Version PR from `changeset-release/main`; #358 head `8ffc201` has one parent, `1f911a0`, the `main` tip it was built from, and its `checks` `pull_request` run waited at `action_required` in attempt 1 (Phase 00 spec §7.2, `00-spec-design-system.md:2637`); `gh api repos/websublime/line-ui/branches/main/protection` on 2026-11-20 lists no required context, `strict: true` and `enforce_admins.enabled: false`; `gh api /apps/github-actions -q .id` returns 15368; `gh api repos/websublime/line-ui/actions/runs/44324656955` returns no `inputs`; GitHub changelog 2026-11-02, "pull_request_target blocked by default" (https://github.blog/changelog/2026-11-02-pull_request_target-blocked-by-default-december-2/); `.changeset/config.json:19-22` (`prereleaseTemplate: "{commit}-SNAPSHOT"`); `scripts/publish.mjs:39`, `:135-136` (snapshot guard); `.github/workflows/snapshot-deploy.yml:20` (`REF` through `env:`); GraphQL introspection of `IssueComment` on 2026-11-20 lists `editor` and `lastEditedAt` and no `lastEditedBy`; `gh api repos/websublime/line-ui/collaborators/<login>/permission` on 2026-11-20 returns `admin` for Miguel and `read` for a non-collaborator; GraphQL on #321 comment 6627237481 on 2026-11-20: `userContentEdits(first: 1)` returns the edit at `lastEditedAt`, and `userContentEdits(last: 1)` returns the creation entry; `gh api repos/websublime/line-ui/collaborators` on 2026-11-20 lists only `miguelramos` (admin); security-reviewer, Verify round 2 (`scripts/release-records.mjs:34`); `gh api repos/websublime/line-ui/pulls/358` gives `user.login: github-actions[bot]`, `base.ref: main` |
+| AM-115 | 2026-11-25 | ledger 01-Z3 (decision — Miguel, 2026-11-25, in the 01-Z3 understand: Z3 absorbs the Phase 1 close, as row `00-Z19` closed Phase 00; at decide: the main session writes the close and the retrospective, and the evidence comes in three slices; at the review gate: a criterion fixed during Z3 that changes a published package is released before Z3 lands) | Seven edits. (1) The Status line names AM-001–AM-115. (2) The §6.Z.2 heading reads "Z3 — Phase 1 exit and retrospective". (3) §6.Z.2 gains the Exit evidence line (local, static and remote slices); Changes add the retrospective's exit-criteria section, the ticked §9 and plan §7 boxes, the PRD §7.3 status line with its revision-log entry, and the Source PRD lines of this spec and the plan; Contract gains the evidence-before-tick item and the failed-criterion row item, which exempts that row from P13's Deps and, when it changes a published package, holds Z3 until the Version PR that releases its `patch` merges and the remote slice runs again; Acceptance follows. (4) §6.P.13 Deps exempt a row Z3 files after P13 lands. (5) The §9.4 Z3 check names the exit-criteria section. (6) SD87's question and decision name the close. (7) This row. Outside the spec, in the same commit: the plan Status block gains a row 01-Z3 line, the plan §4.0 Z row, the plan §4.6 Z3 bullet and plan §10 step 7 name the close, the plan §6 P13 sequencing bullet takes the same exemption, and the ledger Z3 Task cell follows | PROCESS §2 and §5 close a phase with every spec §9 criterion evidenced, but §6.Z.2 asked Z3 only for the sweep and the retrospective, so no Phase 1 row owned the close. Phase 00 closed through row `00-Z19`, which evidenced every criterion, ticked the boxes, set the PRD status line and completed the retrospective in one PR. P13 (#362) and the Version PR #363 have merged, so a row filed during the close lands after P13, and a fix that ships unreleased would leave the close resting on code npm does not serve | `docs/PROCESS.md:49`, `:119`; `docs/plans/00-tasks-design-system.md:133` (row `00-Z19`, PR #251); on `main` @ `16d3e06`, §9 and plan §7 each hold 31 unticked boxes while the Phase 00 spec and plan have theirs ticked (`f02ba3f`); `docs/PRD.md:862` carries the Phase 0 status line and §7.3 has none; `d4e13c9` (P13, #362); `docs/context/01-z3.md` |
+| AM-116 | 2026-11-25 | ledger 01-Z3 (factual correction, found by the Phase 1 exit evidence; PRD v0.8.35 from AM-115) | Five edits, no design change. (1) The Status line names AM-001–AM-116. (2) The Source PRD line names v0.8.35, AM-115 and AM-116. (3) §6.P.11 cites PRD §5.2.1 off pairs at `docs/PRD.md:566` (was `:565`). (4) The §9.1 check of the component-spec approval names the template's Status table row with the value `approved` (was "reads `**Status:** APPROVED`"). (5) This row. Outside the spec, in the same commit: PRD v0.8.35, the plan Source PRD line, and one locator AM in each component spec that cites the PRD by line (`0003`, `0004`, `0006`–`0022`). Amendment rows keep their locators as record | PRD v0.8.35 adds a one-line revision note and a two-line Phase 1 status note above §7.3 Exit criteria, so the cited §5.2.1 line moved down by one (PROCESS §3). The 20 component specs follow `COMPONENT-SPEC-TEMPLATE.md:9`, a Status table row, and carry no `**Status:**` line, so the check named a line no spec has | `docs/PRD.md` (v0.8.35); `docs/specs/COMPONENT-SPEC-TEMPLATE.md:9`; `docs/specs/0002-button.md:5` to `0022-spinner.md:5` at `16d3e06`, each a Status row reading `approved` with Miguel's name and a date; `docs/retrospective/01-phase-01-retro.md` S9.1.8 |
 
 *End of spec.*
