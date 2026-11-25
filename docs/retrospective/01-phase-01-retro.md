@@ -36,7 +36,7 @@ tree (`71ae3d1`) equals the tree of `16d3e06`. All 17 steps of that run succeede
 | S9.1.5 | CEM manifest generated and verified | Pass | `verify-pack` exits 0 for 9 packages. With `custom-elements.json` moved out of `line-components` it exits 1 with "(a) export target ./custom-elements.json missing", and 0 again once restored. G5 `cem-drift.test.ts` (21) and `cem-coverage.test.ts` (3) pass. |
 | S9.1.6 | Storybook loads the manifest through `setCustomElementsManifest`; `line-components` and `line-genui` each ship one with `customElements` and a `files` entry | Pass | `apps/storybook/.storybook/preview.ts:7-8` imports both manifests and `:14-17` merges them into `setCustomElementsManifest`. Both manifests declare `"customElements": "./custom-elements.json"` and list the file in `files`, as do the published `line-components@0.2.8` and `line-genui@0.2.0`. `scripts/verify-pack.mjs:160-176` check (a) iterates the field. |
 | S9.1.7 | Changeset entry for every component | Pass | Each C1–C20 PR (#300, #316, #303, #305, #326–#328, #333–#338, #340–#346) adds a `.changeset/*.md`, and each appears as a changeset source in a Version PR changelog (#302, #304, #307, #313). |
-| S9.1.8 | Every component spec APPROVED before code, with the Agent contract filled | Pass | Each of the 20 specs (`0002`–`0022`, without `0005`) entered `main` in its own implementation PR with `\| Status \| \`approved\` (Miguel, <date>) \|` at `:5`, and each approval date equals its PR's creation date. Each carries a filled `### Agent contract`, and no `TODO`, `TBD` or `<fill` remains. The check's `**Status:** APPROVED` wording did not match the template format (`COMPONENT-SPEC-TEMPLATE.md:9`), and spec AM-116 corrects it. |
+| S9.1.8 | Every component spec APPROVED before code, with the Agent contract filled | Pass | Each of the 20 specs (`0002`–`0022`, without `0005`) entered `main` in its own implementation PR with its Status row at `:5` reading `approved` with Miguel's name and a date, and each approval date equals its PR's creation date. Each carries a filled `### Agent contract`, and no `TODO`, `TBD` or `<fill` remains. The check's `**Status:** APPROVED` wording did not match the template's Status row (`COMPONENT-SPEC-TEMPLATE.md:9`), and spec AM-116 corrects it. |
 | S9.1.9 | Every component fills the htmx Tests row per C9 | Pass | All 20 rows are filled. Button (`0002-button.md:339`), IconButton (`0003-icon-button.md:334`) and Chip (`0008-chip.md:419`) run `@websublime/line-testing/htmx`, and their `*.htmx.e2e.ts` files pass in three engines, each skip an "(a) n/a" annotation. The other 17 rows read `n/a` with a reason. |
 | S9.1.10 | Every component fills its row in `docs/COMPETITIVE-COMPONENT-ANALYSIS.md` | Pass | `docs/COMPETITIVE-COMPONENT-ANALYSIS.md:32-51` holds the 20 rows, each with tag, subpath and spec file, and every C1–C20 PR modifies the file. |
 | S9.1.11 | Each component's gzipped size is measured against the < 5 KB soft target | Pass | The `Size report` step of run 45591598791 prints the per-component table (`gh run view 45591598791 --log`). All 20 are under 5 KB gzip; the largest is `./avatar-group` at 3964 B and the smallest `./visually-hidden` at 346 B. The local run printed the same table. |
@@ -174,6 +174,7 @@ realignments. The PRD took revisions v0.8.20 to v0.8.35.
 | `snapshot-deploy.yml` publisher scope | It keeps `npm dist-tag` and `npm stage publish` against the security reviewer's advice, by Miguel's decision (`docs/context/01-p4.md:124`). | Recorded only |
 | `release-records` limits | It does not defend against a write collaborator, and comment spam spends the `GITHUB_TOKEN` budget (spec §7.2; `docs/context/01-z10.md`). A new write collaborator reopens the question. | Recorded only |
 | Repo agents not mounted | The `sdlc`, supervisor and `git-workflow-manager` agents were not mounted in the harness, so general subagents ran their checklists (#300, #353, #362, #364). | No row yet |
+| Phase 1 spec locators in component specs | PROCESS §3 realigns live locators only when ARCHITECTURE or the PRD moves. Phase 1 spec AMs that added lines, such as AM-114 (sixteen lines in §7.2) and AM-115, moved the spec under the component specs' `docs/specs/01-spec-core-primitives.md:N` and Governing-sections locators. For example `0019-grid.md:7` cites the C17 row at `:1173`, which is the C12 row at `16d3e06`, and its SD12 locator `:2359` lands on a §9.4 check. | No row yet |
 
 ## Hand-off to Phase 2
 
@@ -188,8 +189,9 @@ realignments. The PRD took revisions v0.8.20 to v0.8.35.
 2. **The open items above become rows when Phase 2 opens**, or are closed by decision there, as the Phase 00 open
    items became rows `00-Z21` to `00-Z26`. The CDN literals in Getting Started need a refresh duty before the first
    Phase 2 release.
-3. **Plan the locator cost.** Lesson 3 recurs with every PRD and ARCHITECTURE revision. The Phase 2 plan should
-   decide how the component specs cite the PRD before the first Phase 2 component spec is written.
+3. **Plan the locator cost.** Lesson 3 recurs with every PRD and ARCHITECTURE revision, and locators into the Phase 1
+   spec already drift with no rule to realign them (Open items). The Phase 2 plan should decide how the component
+   specs cite the PRD and the phase spec before the first Phase 2 component spec is written.
 4. **Write rules, not lists, into the Phase 2 spec** wherever a set of components will grow (lesson 1), and require
    a probe for every agent-facing claim about layout or sizing (lesson 2).
 5. **Phase 2 scope** is PRD §7.4: the 15 form components, the Field child-state detection, native-form
