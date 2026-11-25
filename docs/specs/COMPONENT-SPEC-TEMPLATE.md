@@ -13,8 +13,10 @@
 | Entrypoint | `@websublime/line-components/<subpath>` |
 | Form-associated | `<yes \| no>` |
 | PRD catalogue entry | PRD §4.`<n>`, `<Component>` row |
+| Pinned sources | `docs/PRD.md` v`<x.y.z>`, `docs/ARCHITECTURE.md` v`<x.y.z>`, `docs/specs/<NN>-spec-<slug>.md` through AM-`<nnn>` |
 
 > Status follows PRD §8.2 (`proposed → reviewed → approved → implemented`), the tier follows PRD §3 and ARCHITECTURE §8, the tag carries the `line-` prefix (MANIFESTO Law 2), the entrypoint follows ARCHITECTURE §12, and form association follows ARCHITECTURE §7.
+> Pinned sources names the versions every `docs/PRD.md:N`, `docs/ARCHITECTURE.md:N` and phase-spec line locator in this spec resolves at, and every bare `:N` its sentence ties to one of them (PROCESS §3). Write the current versions when the spec is drafted. A later revision of those documents changes nothing here; moving a pin realigns every locator into that document in the same change, with one `AM-nnn` row.
 
 ---
 
