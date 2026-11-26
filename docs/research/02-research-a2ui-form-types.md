@@ -240,7 +240,7 @@ docker run --rm --cpus 2 --memory 1g --ipc=host -e PLAYWRIGHT_BROWSERS_PATH=/ms-
   -w /site mcr.microsoft.com/playwright:v1.65.1-noble node run.mjs webkit
 ```
 
-The container was Ubuntu 24.04.5 on aarch64, with the container's Node v26.13.1 and WebKit build 2388. It ran the repo's Playwright 1.65.1 JavaScript from the mounted `node_modules`; nothing was installed in the container. Exit 0. Linux WebKit matched macOS WebKit, Chromium and Firefox in all 70 non-timing values of P6; only the timings differ (§2.7). The run used `--cpus 2`, which can affect only the Linux WebKit timings in §2.7. The row 01-Z21 review re-ran the P6 non-timing values with `--cpus 1` and got the same results. This is a local aarch64 run. CI runs x86_64 Linux and has not run these probes.
+The container was Ubuntu 24.04.5 on aarch64, with the container's Node v26.13.1 and WebKit build 2388. It ran the repo's Playwright 1.65.1 JavaScript from the mounted `node_modules`; nothing was installed in the container. Exit 0. Linux WebKit matched macOS WebKit, Chromium and Firefox in all 70 non-timing values of P6; only the timings differ (§2.7). The run used `--cpus 2`, which can affect only the Linux WebKit timings in §2.7. The row 01-Z21 review did not re-run P6. It ran its own smaller host-form page in Chromium and Linux WebKit: the surface's agent Button and a form-associated custom element inside a host `<form>`, with and without `form=""`. Its results agreed with P6 for those checks. This is a local aarch64 run. CI runs x86_64 Linux and has not run these probes.
 
 | # | Method | Result |
 |---|---|---|
