@@ -204,8 +204,8 @@ Same in Chromium, Firefox, macOS WebKit and Linux WebKit.
   reports `fieldset.disabled` and observes only that fieldset's `disabled` attribute. Checkbox wires it from its
   hidden input into a `fieldsetDisabled` context (`@zag-js/checkbox` 1.49.0 `dist/checkbox.machine.mjs:27`, `:64`,
   `:85-89`).
-- **2.0.0-next.4** (`@zag-js/dom-query` `dist/form.mjs:63-72`): reports `fieldset.matches(":disabled")` and observes
-  every ancestor fieldset.
+- **2.0.0-next.4** (`@zag-js/dom-query` `dist/form.mjs:64-72`, with the shared `fieldsetDisabledObserver` it uses at
+  `:63`): reports `fieldset.matches(":disabled")` and observes every ancestor fieldset.
 
 Run in the probe page against real elements (§3.4), both in all four builds:
 
