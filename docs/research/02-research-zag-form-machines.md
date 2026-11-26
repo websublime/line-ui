@@ -12,7 +12,7 @@
 > - **`LineMachineController` passes no `getRootNode`.** Zag reads `id`, `ids` and `getRootNode` from the props function once, at construction, and defaults the root to `document`. No Phase 1 component passes either. A Phase 2 component must put `id` and `getRootNode` in its props function. Without them the checkbox loses its `aria-labelledby` and the slider ignores pointer input, silently (P5, P12). A constant `id` per component is enough when the root is the shadow root: five running checkboxes on one page shared the same `id` and worked independently (P5).
 > - **The controller starts machines too early for Phase 2.** It starts in `hostConnected`, before the first render. Machine-level effects then query a shadow root that is still empty. The checkbox press tracking never binds, and the slider thumb stays `visibility: hidden` for good, so it cannot take focus and the slider has no keyboard support (P5, P12). A probe-only controller that starts after the first render fixes both in all four builds. This contradicts ARCHITECTURE §6 and Phase 1 spec SD29, which keep the start in `hostConnected` (§6).
 > - **Events.** Zag's own synthetic `click` and `input` events on hidden inputs do not leave the shadow root. `@zag-js/select` dispatches a `composed: true` `change` on every value change, which reaches the host and `document` (P16), and trusted `input` events from inner native controls are composed too (P2, P5). C3 says no component dispatches an unprefixed `input` or `change` event. The machines' change callbacks (`onCheckedChange`, `onValueChange`, `onValueChangeEnd`, `onValueCommit`) are what the `line-change` and `line-input` events can map to. They do not fire for the default value, so the host must set its initial form value itself (P5).
-> - **zag#3088 is worse than reported.** At 1.49.0 a Select inside a shadow root stays open when focus moves to another element in the same shadow root, to a light-DOM element, or away with Tab. Only a pointer-down outside closes it (P16, four builds). `@zag-js/interact-outside` reads `composedPath()` in a deferred frame, after dispatch has emptied the path.
+> - **zag#3088 holds for both focus moves, from two causes.** At 1.49.0 a Select inside a shadow root stays open when focus moves to another element in the same shadow root or to a light-DOM element. Only a pointer-down outside closes it (P16, four builds). Focus that leaves for light DOM is missed because `@zag-js/interact-outside` reads `composedPath()` in a deferred frame, after dispatch has emptied the path. Focus inside one shadow root is missed because that `focusin` never reaches `document`, where Zag listens. Tab from the open listbox is not evidence: Zag traps Tab in a listbox with no tabbable children, in light DOM too.
 > - **zag#3239 reproduces without `scroll-padding`.** Focusing the hidden radio of a group inside a stuck `position: sticky` header scrolls the page by −360 px in every build (−424 px in Chromium and WebKit with `scroll-padding-top: 128px`), on a real click and on `api.focus()`. The same happens with a plain light-DOM radio styled with Zag's `visuallyHiddenStyle`. `focus({ preventScroll: true })` and `position: fixed` on the hidden input both give 0 (P9, P10). 1.49.0 has not taken the `preventScroll` change the maintainer promised.
 > - **Number Input submits its formatted string.** In light DOM the `de-DE` input submits `12.345,00`. The machine also parses `defaultValue` with the locale, so `"1234.5"` becomes 12 345 under `de-DE`. `valueAsNumber` from `onValueChange` is the machine-readable value (P14).
 > - **Toggle Group has no native input.** `setFormValue(FormData)` submits repeated entries in all four builds, even when the host has no `name` (P4, P11). Slotted toggle items are invisible to the machine's DOM queries, so roving focus dies. Radios in separate shadow roots do not form one group (P3, P11).
@@ -127,7 +127,7 @@ identical in all four builds):
 | `fieldset.disabled = true` | Inner input stays enabled; the form-associated host matches `:disabled` and gets `formDisabledCallback(true)` | A fieldset disables its DOM-tree descendants only |
 | `form.reset()` after editing the inner input | Inner value stays edited; host gets `formResetCallback` once | Reset walks the form's controls |
 
-So plan §1's "a native input inside a shadow root has no form owner … `closest()` does not cross the shadow boundary
+So plan §1's "A native input inside a shadow root has no form owner … `closest()` does not cross the shadow boundary
 [INFERENCE …]" (`:39-41`) is now observed. The same tree rule means a form inside a consumer's own shadow root
 does not own the inputs inside a line component's shadow root either [INFERENCE: same rule, not probed].
 
@@ -180,6 +180,17 @@ the host callbacks (`c1`) with one that left them to Zag (`c5`). All four builds
   press and focus-visible effects (`checkbox.machine.mjs:64`, `:71`, `:82`). So a host that set `fieldsetDisabled`
   through `CONTEXT.SET` would leave the hidden input enabled [INFERENCE from source; not probed].
 - The disabled host is left out of `FormData` by the platform (P5: empty while the fieldset is disabled).
+- **Zag's own fieldset tracking under recommendation 4** (R9 §6 Q5). Folding `formDisabledCallback` into the `disabled`
+  prop leaves Zag's `trackFieldsetDisabled` inert; it does not disable it. Inert holds because the hidden input's tree is
+  the shadow root, where `closest('fieldset')` finds nothing (P1; `form.mjs:62-64` returns before observing). It stops
+  holding if a component's own template puts a `<fieldset>` above a machine input in the shadow root. Zag would then
+  report that fieldset, with the 1.49.0 defects R9 measured: it reads only `closest('fieldset').disabled`, so it misses a
+  disabled outer fieldset around an enabled inner one, and it reports a control in the first `<legend>` as disabled,
+  which the platform exempts (R9 §2.8). In checkbox and switch the reported state would reach only
+  `computed('disabled')`, which gates the press and focus-visible effects, not the hidden input (`checkbox.machine.mjs:64`,
+  `:71`, `:82`). Zag 1.49.0 has no prop that turns the tracking off. Disabling it explicitly means overriding the
+  machine's `trackFormControlState` effect in the config the component passes, which also drops Zag's reset hook
+  (inert as well) [INFERENCE: not probed].
 - The reset target is the default value, which the host already holds as its own default, so it needs no Zag `initial`
   value (`context.initial(...)` is what Zag's own reset reads, `checkbox.machine.mjs:91`).
 - **The default value never reaches the form through the change callback.** `bindable` calls `onChange` only when the
@@ -230,10 +241,22 @@ two elements of the same shadow root does not close a popover or menu. After the
 persists and that a third-party draft PR carries the patch from the issue, which moves the `composedPath()` read out of
 the deferred callback and adds a `focusin` listener on the shadow root.
 
-At 1.49.0 `@zag-js/interact-outside` still reads `event.composedPath()` inside the deferred callback
-(`dist/index.mjs:105-109`). Select passes `defer: true` (`select.machine.mjs:401`). A deferred read gets an empty path,
-because dispatch clears the path when it ends (DOM Standard, "dispatch"). The target is then `undefined`, and
-`isEventOutside` returns `false` for a non-element (`:45-46`).
+Two causes keep the Select open, one for each focus move:
+
+- **Focus that leaves the shadow root for light DOM.** `@zag-js/interact-outside` 1.49.0 reads
+  `event.composedPath()` inside the deferred callback (`dist/index.mjs:105-109`, the read at `:107`). Select passes
+  `defer: true` (`select.machine.mjs:401`). A deferred read gets an empty path, because dispatch clears the path when it
+  ends (DOM Standard, "dispatch"). The target is then `undefined`, and `isEventOutside` returns `false` for a non-element
+  (`:45-46`).
+- **Focus between two elements of the same shadow root.** Zag listens for `focusin` on the document, the parent window
+  and frames (`:127-131`). When focus moves inside one shadow root, the `relatedTarget` retargets to the host at the
+  shadow root, so dispatch stops there and the event never reaches `document`. Zag's handler never runs. The issue body
+  names this case, and its patch adds a `focusin` listener on the shadow root for it.
+
+The row 01-Z16 review probed both causes in all four builds. A document capture listener saw light → `a` and `b` →
+light but not `a` → `b` inside one shadow root; a listener on the shadow root saw `a` → `b`. Zag 1.49.0 patched with the
+first half of the issue's patch (the `composedPath()` read moved out of the deferred frame) closed the Select on focus
+to a light-DOM button only. With the second half as well (the shadow-root `focusin` listener), both focus moves closed it.
 
 P16 opened the Select with the keyboard each time and then moved focus. All four builds agreed:
 
@@ -241,11 +264,16 @@ P16 opened the Select with the keyboard each time and then moved focus. All four
 |---|---|
 | `.focus()` on another button in the same shadow root | **yes** |
 | `.focus()` on a light-DOM button | **yes** |
-| Tab from the open Select | **yes** |
 | Pointer-down on the page outside | no (closes) |
 
-So the gap is wider than the issue says: no focus move closes a Select whose content lives in a shadow root. Plan §8
-already plans "a host-side focus-out listener" (`:513`). R4 owns Select.
+- **Tab is not a focus move here.** P16 also pressed Tab with the listbox open, and the Select stayed open. The review
+  found focus still on the listbox content afterwards, in all four builds, and the same in a light-DOM Select. The
+  content's `onKeyDown` calls `preventDefault()` on Tab when `isValidTabEvent` is false (`select.connect.mjs:398-402`),
+  and it is false when the content has no tabbable children (`@zag-js/dom-query` `initial-focus.mjs:13-21`). That is
+  Zag's Tab trap, independent of shadow roots, and it is not zag#3088 evidence.
+
+So no programmatic focus move closes a Select whose content lives in a shadow root. Plan §8 already plans "a host-side
+focus-out listener" (`:513`). R4 owns Select.
 
 ### 2.7 Q7 — zag#3239, Radio Group focus scroll
 
@@ -378,6 +406,9 @@ up each item by id (`select.dom.mjs`). P3 and P11, all four builds:
 - P13 and P15 used a Playwright context with `hasTouch: true` (and `isMobile: true` in Chromium). A tap at 30 % of the
   slider gave 30, and a tap on the increment stepper moved `5.00` to `6.00`, in all four builds. These are emulated
   touches on desktop engines; no device was tested.
+- **Custom machines are not covered.** No custom Phase 2 machine (Input, SearchInput, Textarea, Field) exists yet, so
+  touch and pointer behaviour for them is not verified. PRD §1.7 asks them to "follow the same pattern"
+  (`docs/PRD.md:170`); R1 has nothing to probe [INFERENCE].
 - **Linux WebKit focuses on mouse-down.** In Linux WebKit a button takes focus on `mousedown`, and macOS WebKit does not
   (P3: the clicked radio is focused on Linux and not on macOS; P17: the Select trigger). When the probe's Select rewrote
   its trigger text on every render, the focus-driven re-render replaced the node under the pointer between `pointerdown`
@@ -423,7 +454,9 @@ up each item by id (`select.dom.mjs`). P3 and P11, all four builds:
   -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright -e PW=/work/node_modules/playwright/index.mjs -e ENGINES=webkit
   mcr.microsoft.com/playwright:v1.65.1-noble node run.mjs`. The image (`1507cbfc550a`) is Ubuntu 24.04.5 on aarch64 with
   WebKit build 2388. It ran the repo's Playwright 1.65.1 JavaScript from the read-only worktree mount with the container's
-  Node v26.13.1. Exit 0, about 38 s. CI runs x86_64 Linux, and none of these probes ran there.
+  Node v26.13.1. Exit 0, about 38 s. CI runs x86_64 Linux, and none of these probes ran there. The row 01-Z16 review
+  re-ran X1 (slider start order), zag#3088 and Number Input with its own probe pages in the same image with `--cpus 1
+  --memory 1g`, and made the same observations.
 - **Debug runs.** Three single-engine scripts traced the slider thumb, number-input typing and the Linux WebKit Select
   click. Their findings are folded into §2.2, §2.8 and §2.12.
 
@@ -449,7 +482,7 @@ says otherwise.
 | P13 | Slider touch tap at 30 % | 30 | same | same | same |
 | P14 | Number Input (§2.8) | Defaults `12.345,00`, `12.345,00`, `1.234,50`, `1,234.50`; light DOM submits `12.345,00`, then `42,00`; shadow host submits `42`, then `43`; re-spread value: `4.00` | same | same | same |
 | P15 | Number Input touch tap on increment | `5.00` → `6.00` | same | same | same |
-| P16 | Select (§2.5, §2.6) | Opens on click; pick → `banana`, `fruit=banana`, composed `change` at host and `document`; stays open after focus in the shadow root, focus in light DOM and Tab; closes on outside pointer-down; trigger `combobox "Fruit"` | same | same | same |
+| P16 | Select (§2.5, §2.6) | Opens on click; pick → `banana`, `fruit=banana`, composed `change` at host and `document`; stays open after focus in the shadow root and focus in light DOM (and after Tab, which Zag traps, §2.6); closes on outside pointer-down; trigger `combobox "Fruit"` | same | same | same |
 | P17 | Select trigger text rewritten on every render | Opens; focus moves to the content | same | same | **Does not open**; focus stays on the trigger |
 | P18 | Date Input typing | `12/25/2026` in segments, hidden input and `FormData`; no error | same | same | same |
 
@@ -495,11 +528,14 @@ Each is an input for the post-research revision (plan §10 step 4) and the Phase
    keep the `name` the machine needs (radio grouping) because the shadow root keeps them out of the form.
 4. **Reset and disabled.** `formResetCallback` calls the machine setter with the host's default, and
    `formDisabledCallback` folds into the `disabled` prop, not into `CONTEXT.SET fieldsetDisabled` (recommended; §2.4).
+   Zag's `trackFieldsetDisabled` stays inert, not disabled, as long as no component template puts a `<fieldset>` above a
+   machine input in its shadow root (§2.4). The alternative is to override `trackFormControlState` explicitly.
 5. **Events.** Map the callbacks of the §2.5 table to `line-change` and `line-input`. Stop Select's internal `change` at
    the shadow root before it reaches the host [INFERENCE: a `stopPropagation` listener on the shadow root, not probed]
    (recommended). The fate of trusted composed `input` events is open (§7 Q3).
 6. **zag#3088.** A host-side listener closes the Select when focus leaves the host, as plan §8 states (recommended;
-   R4 settles it). The alternative is a patch of `@zag-js/interact-outside` along the lines of the issue.
+   R4 settles it). It also has to cover focus moving inside the Select's own shadow root, the second cause of §2.6. The
+   alternative is a patch of `@zag-js/interact-outside` with both halves of the issue's patch.
 7. **zag#3239.** Give the radio's hidden input a position that does not scroll on focus, such as `position: fixed` with
    zero insets (0 px in P10 in all four builds), and pass `preventScroll` in the component's own focus calls
    (recommended). `preventScroll` alone leaves the click path.
@@ -562,10 +598,11 @@ machines.
 12. **Tier inputs.** Date Input runs in a shadow root in all four builds (P18). PasswordInput's machine holds no value
     (§2.3). Both feed the tier decision of plan §5.5 (`:404`) with R5.
 
-**Not verified.** CI x86_64 Linux; real touch devices (only Playwright emulation ran); `@zag-js/focus-visible` with a
-shadow-root `root`; editable and password-input in a browser (source reading only); Select with slotted items or
-`multiple`; a two-thumb slider; Date Input in locales other than `en-US`; number-input scrubbing and RTL hints; restore
-(R2); the `stopPropagation` and host-side focus-out fixes of §5 items 5 and 6.
+**Not verified.** CI x86_64 Linux; real touch devices (only Playwright emulation ran); touch, pointer and RTL for the
+custom machines (none exists yet); `@zag-js/focus-visible` with a shadow-root `root`; editable and password-input in a
+browser (source reading only); Select with slotted items or `multiple`; a two-thumb slider; Date Input in locales other
+than `en-US`; number-input scrubbing and RTL hints; restore (R2); the `stopPropagation` and host-side focus-out fixes of
+§5 items 5 and 6; an override of Zag's `trackFormControlState` effect.
 
 ## 8. Sources
 
