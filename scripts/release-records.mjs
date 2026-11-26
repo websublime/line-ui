@@ -10,8 +10,9 @@
  * A PR that is not the Version PR gets `success`, or no status at all when its head sha is the Version PR's,
  * because a status belongs to the sha. The Version PR gets `success` only when its record, the latest marker
  * comment whose author and last editor are admins, cites one passing `workflow_dispatch` run on the `main` tip
- * of each release-time workflow and carries the Anthropic live-call line. Every fact comes from the GitHub API;
- * `evaluate` turns the facts into the status and does no I/O. A run posts only when the status changes.
+ * of each release-time workflow and no other run. Other comment text is prose, read only for run URLs, each of
+ * which counts as a citation (§12 AM-122). Every fact comes from the GitHub API; `evaluate` turns the facts into
+ * the status and does no I/O. A run posts only when the status changes.
  */
 
 export const STATUS_CONTEXT = 'release-records';
@@ -91,19 +92,6 @@ export function citedRuns(body, repository) {
     else foreign.add(url);
   }
   return { ids: [...ids], foreign: [...foreign] };
-}
-
-/** One line that names Anthropic and holds an ISO date, `<n> tools` and `passed`. */
-export function hasAnthropicLine(body) {
-  return body
-    .split('\n')
-    .some(
-      (line) =>
-        /anthropic/i.test(line) &&
-        /\b\d{4}-\d{2}-\d{2}\b/.test(line) &&
-        /\b[1-9]\d* tools?\b/.test(line) &&
-        /\bpassed\b/i.test(line),
-    );
 }
 
 /**
@@ -202,8 +190,6 @@ export function evaluate({
   const { ids, foreign } = citedRuns(record.body, repository);
   if (foreign.length > 0) problems.push(`cites a run outside ${repository}`);
   problems.push(...citedRunProblems(ids, runs, versions, mainSha));
-
-  if (!hasAnthropicLine(record.body)) problems.push('no Anthropic line (date, <n> tools, passed)');
 
   if (problems.length > 0) return { state: 'failure', description: describe(problems) };
   return { state: 'success', description: `Records cite runs on main ${mainSha.slice(0, 7)}` };
