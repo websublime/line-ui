@@ -13,6 +13,7 @@
  */
 
 import { expect, type Page, test } from 'playwright/test';
+import { normalizeAlignment } from '../computed-style';
 
 const FIXTURE_URL = 'http://127.0.0.1:4321/stack/';
 
@@ -34,12 +35,13 @@ async function mount(page: Page, markup: string): Promise<void> {
   }, markup);
 }
 
-/** Computed values of the first `line-stack` in `<main>`. */
-function computed(page: Page, properties: string[]): Promise<Record<string, string>> {
-  return page.evaluate((names) => {
+/** Computed values of the first `line-stack` in `<main>`, with Chromium 159's `flow-*` read as `flex-*`. */
+async function computed(page: Page, properties: string[]): Promise<Record<string, string>> {
+  const values = await page.evaluate((names) => {
     const style = getComputedStyle(document.querySelector('main line-stack') as Element);
     return Object.fromEntries(names.map((name) => [name, style.getPropertyValue(name)]));
   }, properties);
+  return normalizeAlignment(values);
 }
 
 const ITEMS = '<div style="inline-size: 40px">a</div><div style="inline-size: 40px">b</div>';
@@ -116,18 +118,20 @@ test.describe('with line-tokens', () => {
         page,
         `<div style="text-align: justify"><line-stack align="${value}">${ITEMS}</line-stack></div><line-stack id="consumer" align="${value}" style="text-align: right">${ITEMS}</line-stack>`,
       );
-      const result = await page.evaluate(() => {
-        const host = document.querySelector('main div line-stack') as Element;
-        const consumer = document.getElementById('consumer') as Element;
-        const text = (el: Element) => getComputedStyle(el).textAlign;
-        return {
-          host: text(host),
-          child: text(host.firstElementChild as Element),
-          alignItems: getComputedStyle(host).alignItems,
-          consumer: text(consumer),
-          consumerChild: text(consumer.firstElementChild as Element),
-        };
-      });
+      const result = normalizeAlignment(
+        await page.evaluate(() => {
+          const host = document.querySelector('main div line-stack') as Element;
+          const consumer = document.getElementById('consumer') as Element;
+          const text = (el: Element) => getComputedStyle(el).textAlign;
+          return {
+            host: text(host),
+            child: text(host.firstElementChild as Element),
+            alignItems: getComputedStyle(host).alignItems,
+            consumer: text(consumer),
+            consumerChild: text(consumer.firstElementChild as Element),
+          };
+        }),
+      );
       expect(result.host, value).toBe('justify');
       expect(result.child, value).toBe('justify');
       expect(result.alignItems, value).toBe(alignItems);

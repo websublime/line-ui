@@ -110,11 +110,11 @@ jobs:
             if [ -f "$entry/custom-elements.json" ]; then cp "$entry/custom-elements.json" "packages/$pkg/"; fi
           done
       - name: Compute snapshot versions
-        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only
+        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only; AM-090: exits 1 when no changeset is pending
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # @changesets/changelog-github calls the GitHub GraphQL API
       - name: Write the npm token fallback (bootstrap only)
-        run: |                                 # AM-038: same rule as changesets/action — no line when the secret is unset
+        run: |                                 # AM-038: no line when the secret is unset; AM-090: the only token fallback, since changesets/action v2 writes no ~/.npmrc
           if [ -n "$NPM_TOKEN" ]; then
             printf '//registry.npmjs.org/:_authToken=%s\n' "$NPM_TOKEN" >> "$HOME/.npmrc"
           fi

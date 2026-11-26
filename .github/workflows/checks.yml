@@ -11,12 +11,16 @@ jobs:
     steps:                                     # AM-067: every action is pinned to a full commit SHA (AM-040 pattern)
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with: { persist-credentials: false }   # AM-025: nothing downstream needs git auth
+        with: { fetch-depth: 0, persist-credentials: false }  # AM-025: nothing downstream needs git auth; Phase 1 spec AM-121: history for the SD76 merge base
       - name: Setup Bun                        # AM-069: no job restores or saves the Bun executable in the Actions cache
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
         with: { bun-version-file: .bun-version, no-cache: true }
       - name: Install dependencies
         run: bun install --frozen-lockfile
+      - name: Peer ranges (SD76)               # Phase 1 spec §7.2, AM-121: changeset status takes the merge base from a local main
+        run: |
+          git branch --force main origin/main
+          bun run scripts/verify-peer-ranges.mjs
       - name: Lint (biome check)
         run: bun run lint
       - name: Build packages                   # AM-029: two-phase (packages, then apps)

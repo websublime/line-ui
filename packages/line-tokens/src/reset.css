@@ -71,7 +71,7 @@
    * Headings, paragraphs, lists inside containers — margin, padding, list-style.
    * ------------------------------------------------------------------------- */
   :where(line-card, line-dialog, line-alert, line-drawer, line-popover, line-tooltip, line-callout, line-banner)
-  :where(h1, h2, h3, h4, h5, h6, p) {
+    :where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
     padding: 0;
   }

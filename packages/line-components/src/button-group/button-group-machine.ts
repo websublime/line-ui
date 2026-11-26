@@ -8,7 +8,7 @@
  * that focuses an item, as live props. The module knows nothing about the DOM
  * and imports no component (MANIFESTO Law 4).
  *
- * `send()` runs in a microtask (`@zag-js/vanilla` 1.47.0; spec probe P7), so
+ * `send()` runs in a microtask (`@zag-js/vanilla` 1.49.0; 1.47.0 in spec probe P7), so
  * the host never reads `activeIndex` right after sending: it writes the tab
  * stops from `onMove` and in `updated()`.
  *

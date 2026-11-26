@@ -503,13 +503,13 @@ describe('custom-elements.json in the packed tarball', () => {
 });
 
 describe('the @zag-js/presence dependency (0017-presence.md Tests, Packaging row; Phase 1 spec §6.C.7)', () => {
-  test('the packed package.json declares @zag-js/presence at ^1.47.0', () => {
-    expect(packedDependencies['@zag-js/presence']).toBe('^1.47.0');
+  test('the packed package.json declares @zag-js/presence at ^1.49.0 (row 01-Z14)', () => {
+    expect(packedDependencies['@zag-js/presence']).toBe('^1.49.0');
   });
 
-  test('bun.lock resolves every @zag-js package to 1.47.0', async () => {
+  test('bun.lock resolves every @zag-js package to 1.49.0 (row 01-Z14)', async () => {
     const lock = await Bun.file(resolve(PACKAGE_DIR, '../../bun.lock')).text();
     const versions = new Set([...lock.matchAll(/"@zag-js\/[a-z-]+@([^"]+)"/g)].map((match) => match[1]));
-    expect([...versions]).toEqual(['1.47.0']);
+    expect([...versions]).toEqual(['1.49.0']);
   });
 });
