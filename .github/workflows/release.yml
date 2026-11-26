@@ -43,7 +43,7 @@ jobs:
       pull-requests: write                     # open / update the Version PR
       id-token: write                          # npm trusted publishing (OIDC) and provenance
     steps:                                     # AM-040: every action is pinned to a full commit SHA; the trailing comment names its release
-      - name: Checkout                         # AM-038: node24 runtime; credentials kept: changesets/action pushes the Version PR branch and tags
+      - name: Checkout                         # AM-038: node24 runtime; credentials kept; AM-090: the action's git pushes authenticate with its github-token input
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Set up Bun                       # AM-069: no job restores or saves the Bun executable in the Actions cache
         uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2.2.0
@@ -94,10 +94,9 @@ jobs:
             if [ -f "$entry/custom-elements.json" ]; then cp "$entry/custom-elements.json" "packages/$pkg/"; fi
           done
       - name: Version PR or publish
-        uses: changesets/action@a45c4d594aa4e2c509dc14a9f2b3b67ba3780d0d # v1.9.0
+        uses: changesets/action@ae32849d5ba541f9ae29e40e22a623bc13562f51 # v2.1.2
         with:
-          version: bun run version             # AM-072: changeset version, then bun install --ignore-scripts; the Version PR carries the synced bun.lock
-          publish: bun run release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}  # AM-038: `npm` environment secret, bootstrap only; unset → "" → the action writes no auth line
+          version-script: bun run version      # AM-072: changeset version, then bun install --ignore-scripts; the Version PR carries the synced bun.lock
+          publish-script: bun run release      # AM-090: the publisher's changeset git-tag writes each new tag to $CHANGESETS_OUTPUT; the action pushes those tags and creates their releases
+          github-token: ${{ secrets.GITHUB_TOKEN }} # AM-090: v2 reads the token only from this input and passes it to both scripts as GITHUB_TOKEN
+          push-with-git-cli: true              # AM-090: the Version PR branch and the tags go through git, as under v1; no NPM_TOKEN: v2 writes no ~/.npmrc
