@@ -12,6 +12,7 @@
  */
 
 import { type CDPSession, expect, type Page, test } from 'playwright/test';
+import { normalizeAlignment } from '../computed-style';
 
 const FIXTURE_URL = 'http://127.0.0.1:4321/alert/';
 
@@ -60,14 +61,17 @@ function box(page: Page, part?: string, selector = 'line-alert'): Promise<Box> {
   );
 }
 
-/** Computed values of `part` in the alert matched by `selector`, or of the host itself. */
-function computed(
+/**
+ * Computed values of `part` in the alert matched by `selector`, or of the host itself, with Chromium 159's `flow-*`
+ * read as `flex-*`.
+ */
+async function computed(
   page: Page,
   properties: string[],
   part?: string,
   selector = 'line-alert',
 ): Promise<Record<string, string>> {
-  return page.evaluate(
+  const values = await page.evaluate(
     ([names, name, sel]) => {
       const host = document.querySelector(`main ${sel}`) as HTMLElement;
       const element = name ? (host.shadowRoot?.querySelector(`[part="${name}"]`) as HTMLElement) : host;
@@ -76,6 +80,7 @@ function computed(
     },
     [properties, part, selector] as const,
   );
+  return normalizeAlignment(values);
 }
 
 /** The zones whose wrapper renders, by part name. */
