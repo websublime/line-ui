@@ -9,7 +9,7 @@
 >
 > - Today line://ui exposes four theme axes and two knobs: the accent hue (`data-accent`, 31 hues, none means indigo), the gray hue (`data-gray`, 6 hues, none means the auto pair), the colour scheme (`color-scheme`, the only mode switch), and the shadow strengths (`--line-shadow-strength`, `--line-shadow-strength-dark`). The semantic roles are fixed by design. There is no radius, density or scaling axis in any package or in the PRD.
 > - The five Phase 2 controls map onto those axes: Select → accent (32 options, grouped), Radio Group → gray (6 hues), Switch → gray auto-pair on or off, Toggle Group (single) → light, dark or system, Slider → shadow strength. Each mapping puts a concrete requirement on its component spec, for example Toggle Group must expose `deselectable: false`, because Zag defaults it to `true`.
-> - A live switch is one attribute or property write. In a probe the role tokens of a nested `[data-accent]` scope recomputed in the same task in Chromium, Firefox and WebKit, and `color-scheme` on the scope flipped its `light-dark()` values. But `--line-focus-ring-color`, the gradient, highlight and SVG tokens resolve on `html` and keep the page accent inside a scoped preview. A site rule that recomposes the ring on the scope fixes the ring in all three engines. The WebKit runs were macOS WebKit, and they hold only once Linux WebKit runs them in CI (§3).
+> - A live switch is one attribute or property write. In a probe the role tokens of a nested `[data-accent]` scope recomputed in the same task in Chromium, Firefox and WebKit (macOS and Linux aarch64), and `color-scheme` on the scope flipped its `light-dark()` values. But `--line-focus-ring-color`, the gradient, highlight and SVG tokens resolve on `html` and keep the page accent inside a scoped preview. A site rule that recomposes the ring on the scope fixes the ring in all three engines. Linux WebKit differed from macOS WebKit only in colour space: it took the sRGB branch, macOS the `color-gamut: p3` branch (§3.2). The CI runner is x86_64 and has not run these probes.
 > - Contrast is the main risk. The primary Button, IconButton and pressed primary Chip paint `--line-accent-contrast` on `--line-accent-solid`. That pair is below 4.5:1 for 34 of the 62 hue × mode pairs (minimum 2.97:1, orange). Only 11 hues pass in both modes. `validate-contrast` gates 3:1 on that one pair (Phase 00 spec AM-014), while PRD §5.2.1 still says 4.5:1. A showcase that offers all 31 accents will show combinations that fail axe `color-contrast` on component labels.
 > - The site needs every palette for a full browser. The `line-colors` barrel is 123,326 B raw and 23,896 B gzipped, against today's whole page stylesheet of 108,302 B raw and 15,790 B gzipped.
 > - Stream S cannot open its PR before the five controls are done (plan §6). Those controls sit in the "other 12" wave after stream F, the Input, Field and Checkbox set, and stream G. Every merge to `main` that touches `apps/site/**` deploys to production, so a scaffold PR would publish a partial showcase, and wiring each control in as it lands would need a plan §6 change (§6 Q10).
@@ -65,7 +65,7 @@ Zag facts come from the 1.49.0 type declarations, the O4 baseline (plan §5.2). 
 
 ### 2.3 Q3: applying changes live on a static page
 
-**The mechanism.** A processed client module listens for `line-change` and `line-input` on the panel. It sets `data-accent` and `data-gray` on the preview scope, removes `data-gray` while auto-pair is on, sets `color-scheme` and writes the knob properties. Probe 3.2 measured this in Chromium 159, Firefox 159 and WebKit 27.2 on the row 01-Z14 baseline, with the same results as the first run on Chromium 156 and Firefox 157:
+**The mechanism.** A processed client module listens for `line-change` and `line-input` on the panel. It sets `data-accent` and `data-gray` on the preview scope, removes `data-gray` while auto-pair is on, sets `color-scheme` and writes the knob properties. Probe 3.2 measured this in Chromium 159, Firefox 159 and WebKit 27.2 (macOS, and Linux aarch64 in the official Playwright container) on the row 01-Z14 baseline, with the same results as the first run on Chromium 156 and Firefox 157:
 
 - Setting `data-accent` from `violet` to `tomato` on the scope recomputed the scope's `--line-accent-8`, `--line-accent-solid` and `--line-gray-1` before the next read, in the same task.
 - Removing the attribute fell back to the page's lime.
@@ -208,7 +208,9 @@ The readout keeps the showcase honest about §2.5 without narrowing the 31 hues.
 
 All commands ran on 2026-11-26 on macOS 27.2.1 (arm64) in the worktree `line-ui-z15` (branch `docs/01-z15-r10-theming-showcase`), first at HEAD `e0e0424`, then again after merging `origin/main` `9c9b1f4` (row 01-Z14, #368) at HEAD `15f2392`. Throwaway scripts lived at the worktree root and were deleted after each run; `git status` was clean.
 
-**Toolchain baseline.** The first run predates row 01-Z14: Bun 1.4.3, Astro 7.3.8, Playwright 1.64.0 (Chromium 156.0.8078.4, Firefox 157.0, WebKit 27.2 build 2370), Node 22.23.3. The re-run uses the Z14 baseline: Bun 1.4.5 (`/tmp/bun145`, because the workstation `bun` is still 1.4.3), `HOME=/tmp/emptyhome bun install --frozen-lockfile`, Astro 7.4.13 on Node 22.23.5 (`/tmp/node-v22.23.5-darwin-arm64`, because Astro 7.4.13 needs Node >=22.23.4 and the workstation has 22.23.3), and Playwright 1.65.1 (Chromium 159.0.8154.6, Firefox 159.0, WebKit 27.2 build 2388). Probes 3.2 and 3.3 and every build-derived size in §3.1 were re-run. Every figure that changed shows old → new; the rest matched. `@radix-ui/colors` stayed at 3.0.0 in `bun.lock`, so the contrast matrix (3.4) was not re-run. The macOS WebKit caveat of §3.2 still applies.
+**Toolchain baseline.** The first run predates row 01-Z14: Bun 1.4.3, Astro 7.3.8, Playwright 1.64.0 (Chromium 156.0.8078.4, Firefox 157.0, WebKit 27.2 build 2370), Node 22.23.3. The re-run uses the Z14 baseline: Bun 1.4.5 (`/tmp/bun145`, because the workstation `bun` is still 1.4.3), `HOME=/tmp/emptyhome bun install --frozen-lockfile`, Astro 7.4.13 on Node 22.23.5 (`/tmp/node-v22.23.5-darwin-arm64`, because Astro 7.4.13 needs Node >=22.23.4 and the workstation has 22.23.3), and Playwright 1.65.1 (Chromium 159.0.8154.6, Firefox 159.0, WebKit 27.2 build 2388). Probes 3.2 and 3.3 and every build-derived size in §3.1 were re-run. Every figure that changed shows old → new; the rest matched. `@radix-ui/colors` stayed at 3.0.0 in `bun.lock`, so the contrast matrix (3.4) was not re-run.
+
+**Linux WebKit.** Per Miguel's choice of 2026-11-26, the WebKit side of probes 3.2 and 3.3 also ran on Linux. The image was `mcr.microsoft.com/playwright:v1.65.1-noble` (Ubuntu 24.04.5, aarch64, WebKit build 2388 under `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright`), started with `docker run --rm --cpus 2 --memory 1g --ipc=host -v <worktree>:/work:ro -w /work`. It ran the repo's Playwright 1.65.1 JavaScript from the mounted `node_modules` with the container's Node 26.13.1; nothing was installed in the container. The script was one WebKit-only file holding both probes' pages; it exited 0 and was deleted afterwards. This is a local aarch64 run. The CI runner is x86_64 and has not run these probes.
 
 ### 3.1 Build and output
 
@@ -221,29 +223,29 @@ All commands ran on 2026-11-26 on macOS 27.2.1 (arm64) in the worktree `line-ui-
 
 ### 3.2 Nested scope (`bun .r10-probe.mjs`, exit 0)
 
-The WebKit column is macOS WebKit 27.2 through Playwright. Per plan §5.3 lesson 4 (`docs/plans/02-plan-essential-forms.md:296`), no WebKit claim of probes 3.2 and 3.3 holds until Linux WebKit runs it in CI.
+The macOS WebKit column ran through Playwright on the host, and the Linux WebKit column in the container described above. The two WebKit builds behaved the same in every check. They differ only in colour space: macOS WebKit reported `color(display-p3 …)` values, because it matches the palettes' `@media (color-gamut: p3)` blocks. Linux WebKit reported the same sRGB hex values and `rgb()` colours as Chromium and Firefox, so it took the sRGB branch [INFERENCE: the headless Linux WebKit reports no P3 gamut; the media query was not read directly].
 
-`page.setContent` with the built tokens, the `line-colors` barrel and the `line-themes` barrel; `<html data-accent="lime" data-gray="olive">`, `color-scheme: light dark`; a `<section data-accent="violet">`; a second one with `color-scheme: dark`. Elements read `outline: var(--line-focus-ring)` and `color: var(--line-accent-8)`. Light media. Every value below matched in both runs (before and after row 01-Z14).
+`page.setContent` with the built tokens, the `line-colors` barrel and the `line-themes` barrel; `<html data-accent="lime" data-gray="olive">`, `color-scheme: light dark`; a `<section data-accent="violet">`; a second one with `color-scheme: dark`. Elements read `outline: var(--line-focus-ring)` and `color: var(--line-accent-8)`. Light media. Every value below matched in both host runs (before and after row 01-Z14).
 
-| Check | Chromium 156.0.8078.4 → 159.0.8154.6 | Firefox 157.0 → 159.0 | WebKit 27.2 (build 2370 → 2388) |
-|---|---|---|---|
-| Scope `--line-accent-8` | violet `light-dark(#aa99ec, #6958ad)` | same | P3 violet |
-| Scope `--line-focus-ring-color`, outline colour | lime `rgb(141, 182, 84)` | same | P3 lime |
-| Scope `--line-gradient-1`, `--line-highlight-bg`, `--line-svg-fill` | lime values | same | same |
-| Scope `--line-gray-1` | slate `#fcfcfd` (auto-pair over page olive) | same | P3 slate |
-| Dark scope background | `rgb(17, 17, 19)` (slate-1 dark) | same | P3 |
-| After `setAttribute('data-accent', 'tomato')`, same task | tomato `--line-accent-8`, `--line-accent-solid` `#e54d2e` | same | P3 tomato |
-| After `removeAttribute('data-accent')` | lime again | same | same |
+| Check | Chromium 156.0.8078.4 → 159.0.8154.6 | Firefox 157.0 → 159.0 | macOS WebKit 27.2 (build 2370 → 2388) | Linux WebKit 27.2 (build 2388, aarch64) |
+|---|---|---|---|---|
+| Scope `--line-accent-8` | violet `light-dark(#aa99ec, #6958ad)` | same | P3 violet | same as Chromium |
+| Scope `--line-focus-ring-color`, outline colour | lime `rgb(141, 182, 84)` | same | P3 lime | same as Chromium |
+| Scope `--line-gradient-1`, `--line-highlight-bg`, `--line-svg-fill` | lime values | same | same | same as Chromium |
+| Scope `--line-gray-1` | slate `#fcfcfd` (auto-pair over page olive) | same | P3 slate | `rgb(252, 252, 253)` |
+| Dark scope background | `rgb(17, 17, 19)` (slate-1 dark) | same | P3 | `rgb(17, 17, 19)` |
+| After `setAttribute('data-accent', 'tomato')`, same task | tomato `--line-accent-8`, `--line-accent-solid` `#e54d2e` | same | P3 tomato | same as Chromium |
+| After `removeAttribute('data-accent')` | lime again | same | same | same |
 
 ### 3.3 Knobs and the ring fix (`bun .r10-knobs.mjs`, exit 0)
 
-Same engines as 3.2, before and after row 01-Z14; every value matched.
+Same engines as 3.2. On the host, every value matched before and after row 01-Z14.
 
-| Check | Chromium | Firefox | WebKit |
-|---|---|---|---|
-| `border-radius: var(--line-radius-2)` (through an intermediate token), page / scope with `--line-radius-2: 12px` | `5px` / `12px` | same | same |
-| `box-shadow: var(--line-shadow-2)` first-layer alpha, page / scope with `--line-shadow-strength: 20%` | 0.04 / 0.23 | same | same |
-| Outline in a violet scope, plain / with the ring redeclared on the scope | lime / `rgb(170, 153, 236)` | same | P3 lime / P3 violet |
+| Check | Chromium | Firefox | macOS WebKit | Linux WebKit (aarch64) |
+|---|---|---|---|---|
+| `border-radius: var(--line-radius-2)` (through an intermediate token), page / scope with `--line-radius-2: 12px` | `5px` / `12px` | same | same | same |
+| `box-shadow: var(--line-shadow-2)` first-layer alpha, page / scope with `--line-shadow-strength: 20%` | 0.04 / 0.23 | same | same | same |
+| Outline in a violet scope, plain / with the ring redeclared on the scope | lime / `rgb(170, 153, 236)` | same | P3 lime / P3 violet | same as Chromium |
 
 ### 3.4 Contrast matrix (`bun .r10-contrast.mjs`, exit 0)
 
