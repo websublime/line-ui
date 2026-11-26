@@ -176,9 +176,10 @@ the host callbacks (`c1`) with one that left them to Zag (`c5`). All four builds
 
 - The probe reset through the machine API (`api.setChecked(default)`) and disabled by passing the fieldset state into the
   `disabled` prop. The checkbox and switch `connect` read `disabled` from the prop only (`checkbox.connect.mjs:9`;
-  `switch.connect.mjs:9`). The machine's own `fieldsetDisabled` context feeds only `computed('disabled')`, which gates the
-  press and focus-visible effects (`checkbox.machine.mjs:64`, `:71`, `:82`). So a host that set `fieldsetDisabled`
-  through `CONTEXT.SET` would leave the hidden input enabled [INFERENCE from source; not probed].
+  `switch.connect.mjs:9`). The machine's own `fieldsetDisabled` context feeds only a computed value, `disabled` in
+  checkbox and `isDisabled` in switch, which gates the press and focus-visible effects (`checkbox.machine.mjs:64`, `:71`,
+  `:82`; `switch.machine.mjs:36`, `:67`, `:78`). So a host that set `fieldsetDisabled` through `CONTEXT.SET` would leave
+  the hidden input enabled [INFERENCE from source; not probed].
 - The disabled host is left out of `FormData` by the platform (P5: empty while the fieldset is disabled).
 - **Zag's own fieldset tracking under recommendation 4** (R9 §6 Q5). Folding `formDisabledCallback` into the `disabled`
   prop leaves Zag's `trackFieldsetDisabled` inert; it does not disable it. Inert holds because the hidden input's tree is
@@ -186,11 +187,12 @@ the host callbacks (`c1`) with one that left them to Zag (`c5`). All four builds
   holding if a component's own template puts a `<fieldset>` above a machine input in the shadow root. Zag would then
   report that fieldset, with the 1.49.0 defects R9 measured: it reads only `closest('fieldset').disabled`, so it misses a
   disabled outer fieldset around an enabled inner one, and it reports a control in the first `<legend>` as disabled,
-  which the platform exempts (R9 §2.8). In checkbox and switch the reported state would reach only
-  `computed('disabled')`, which gates the press and focus-visible effects, not the hidden input (`checkbox.machine.mjs:64`,
-  `:71`, `:82`). Zag 1.49.0 has no prop that turns the tracking off. Disabling it explicitly means overriding the
-  machine's `trackFormControlState` effect in the config the component passes, which also drops Zag's reset hook
-  (inert as well) [INFERENCE: not probed].
+  which the platform exempts (R9 §2.8). In checkbox and switch the reported state would reach only the computed value
+  (`disabled` in checkbox, `isDisabled` in switch), which gates the press and focus-visible effects, not the hidden input
+  (`checkbox.machine.mjs:64`, `:71`, `:82`; `switch.machine.mjs:36`, `:67`, `:78`). Zag 1.49.0 has no prop that turns the
+  tracking off. Disabling it explicitly means overriding the machine effect that calls `trackFormControl`, which also
+  drops Zag's reset hook (inert as well) [INFERENCE: not probed]. That effect is `trackFormControlState` in checkbox,
+  switch, radio-group, slider and select, and `trackFormControl` in number-input (`number-input.machine.mjs:103`, `:292`).
 - The reset target is the default value, which the host already holds as its own default, so it needs no Zag `initial`
   value (`context.initial(...)` is what Zag's own reset reads, `checkbox.machine.mjs:91`).
 - **The default value never reaches the form through the change callback.** `bindable` calls `onChange` only when the
@@ -529,7 +531,8 @@ Each is an input for the post-research revision (plan §10 step 4) and the Phase
 4. **Reset and disabled.** `formResetCallback` calls the machine setter with the host's default, and
    `formDisabledCallback` folds into the `disabled` prop, not into `CONTEXT.SET fieldsetDisabled` (recommended; §2.4).
    Zag's `trackFieldsetDisabled` stays inert, not disabled, as long as no component template puts a `<fieldset>` above a
-   machine input in its shadow root (§2.4). The alternative is to override `trackFormControlState` explicitly.
+   machine input in its shadow root (§2.4). The alternative is to override the effect explicitly
+   (`trackFormControlState`, or `trackFormControl` in number-input).
 5. **Events.** Map the callbacks of the §2.5 table to `line-change` and `line-input`. Stop Select's internal `change` at
    the shadow root before it reaches the host [INFERENCE: a `stopPropagation` listener on the shadow root, not probed]
    (recommended). The fate of trusted composed `input` events is open (§7 Q3).
@@ -602,7 +605,8 @@ machines.
 custom machines (none exists yet); `@zag-js/focus-visible` with a shadow-root `root`; editable and password-input in a
 browser (source reading only); Select with slotted items or `multiple`; a two-thumb slider; Date Input in locales other
 than `en-US`; number-input scrubbing and RTL hints; restore (R2); the `stopPropagation` and host-side focus-out fixes of
-§5 items 5 and 6; an override of Zag's `trackFormControlState` effect.
+§5 items 5 and 6; an override of Zag's form-tracking effect (`trackFormControlState`, or `trackFormControl` in
+number-input).
 
 ## 8. Sources
 
