@@ -186,7 +186,7 @@ Probe 3.3 listed segments as `[type|text|aria-label]` with literals quoted. Each
 
 | Flags | Segments | ISO the surface writes |
 |---|---|---|
-| neither, or `enableDate` only | `granularity: "day"` | `CalendarDate.toString()` → `2026-12-25` |
+| both absent, or `enableDate` only | `granularity: "day"` | `CalendarDate.toString()` → `2026-12-25` |
 | `enableDate` + `enableTime` | `granularity: "minute"` | `CalendarDateTime.toString()` → `2026-12-25T14:30:00` |
 | `enableTime` only | custom `formatter` (probe) or Zag 2 `maxGranularity` | the time part of a `CalendarDateTime`, `14:30:00`; the date part is a placeholder and must be dropped |
 | both `false` explicitly | — (the reference renderer renders the label and no input) | none |
