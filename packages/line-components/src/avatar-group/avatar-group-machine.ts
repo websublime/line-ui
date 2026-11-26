@@ -22,7 +22,7 @@
  * `isOpening` and `isClosing`, and `noSource` reads `hovered` as `false` on
  * `HOVER.END` and `focused` as `false` on `FOCUS.OUT` (spec AM-001).
  *
- * `send()` runs in a microtask (`@zag-js/vanilla` 1.47.0), so the host reads
+ * `send()` runs in a microtask (`@zag-js/vanilla` 1.49.0), so the host reads
  * the state in `update()` and never right after sending.
  *
  * @module avatar-group/avatar-group-machine

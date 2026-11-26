@@ -19,10 +19,10 @@
  * 4. stage + `bun pm pack` (shared staging function)
  * 5. pack checks (a)–(e); a failure stops the run before that package uploads
  * 6. `npm publish <tarball> --access public --tag <tag>` (default tag `latest`)
- * 7. `changeset tag` (stdout passed through) unless --no-git-tag
+ * 7. `changeset git-tag` (stdout passed through; inherits CHANGESETS_OUTPUT, AM-090) unless --no-git-tag
  *
  * Fails fast. `--dry-run` runs steps 1–5 (and the guards) for every package and prints the plan;
- * it never runs `npm publish` or `changeset tag`. Never prints secrets or the environment.
+ * it never runs `npm publish` or `changeset git-tag`. Never prints secrets or the environment.
  */
 
 import {
@@ -196,15 +196,15 @@ async function main() {
     }
 
     if (opts.dryRun) {
-      console.info('\nPublish plan (dry run; npm publish and changeset tag not run):');
+      console.info('\nPublish plan (dry run; npm publish and changeset git-tag not run):');
       for (const p of plan) console.info(`  ${p.action.padEnd(7)} ${p.name}@${p.version}  tag=${p.tag}  ${p.tarball}`);
       return;
     }
 
     if (opts.gitTag) {
-      // Root `changeset` script → local @changesets/cli bin; fails rather than downloading if missing.
-      const res = run(['bun', 'run', 'changeset', 'tag'], { inherit: true });
-      if (res.exitCode !== 0) throw new Error('changeset tag failed');
+      // Root `changeset` script → local @changesets/cli bin; no `env`, so CHANGESETS_OUTPUT reaches it (AM-090).
+      const res = run(['bun', 'run', 'changeset', 'git-tag'], { inherit: true });
+      if (res.exitCode !== 0) throw new Error('changeset git-tag failed');
     }
   } finally {
     for (const cleanup of cleanups) cleanup();

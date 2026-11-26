@@ -35,7 +35,7 @@ jobs:
       - name: Install
         run: bun install --frozen-lockfile --ignore-scripts  # AM-067: same install as snapshot-deploy.yml; no build step needs a package lifecycle script
       - name: Compute snapshot versions
-        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only
+        run: bun run snapshot:version          # changeset version --snapshot → <version>-<sha>-SNAPSHOT, working tree only; AM-090: exits 1 when no changeset is pending
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # @changesets/changelog-github calls the GitHub GraphQL API
       - name: Build
