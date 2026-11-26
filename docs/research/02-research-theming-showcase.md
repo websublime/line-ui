@@ -9,10 +9,10 @@
 >
 > - Today line://ui exposes four theme axes and two knobs: the accent hue (`data-accent`, 31 hues, none means indigo), the gray hue (`data-gray`, 6 hues, none means the auto pair), the colour scheme (`color-scheme`, the only mode switch), and the shadow strengths (`--line-shadow-strength`, `--line-shadow-strength-dark`). The semantic roles are fixed by design. There is no radius, density or scaling axis in any package or in the PRD.
 > - The five Phase 2 controls map onto those axes: Select → accent (32 options, grouped), Radio Group → gray (6 hues), Switch → gray auto-pair on or off, Toggle Group (single) → light, dark or system, Slider → shadow strength. Each mapping puts a concrete requirement on its component spec, for example Toggle Group must expose `deselectable: false`, because Zag defaults it to `true`.
-> - A live switch is one attribute or property write. In a probe the role tokens of a nested `[data-accent]` scope recomputed in the same task in Chromium, Firefox and WebKit, and `color-scheme` on the scope flipped its `light-dark()` values. But `--line-focus-ring-color`, the gradient, highlight and SVG tokens resolve on `html` and keep the page accent inside a scoped preview. A site rule that recomposes the ring on the scope fixes the ring in all three engines.
+> - A live switch is one attribute or property write. In a probe the role tokens of a nested `[data-accent]` scope recomputed in the same task in Chromium, Firefox and WebKit, and `color-scheme` on the scope flipped its `light-dark()` values. But `--line-focus-ring-color`, the gradient, highlight and SVG tokens resolve on `html` and keep the page accent inside a scoped preview. A site rule that recomposes the ring on the scope fixes the ring in all three engines. The WebKit runs were macOS WebKit, and they hold only once Linux WebKit runs them in CI (§3).
 > - Contrast is the main risk. The primary Button, IconButton and pressed primary Chip paint `--line-accent-contrast` on `--line-accent-solid`. That pair is below 4.5:1 for 34 of the 62 hue × mode pairs (minimum 2.97:1, orange). Only 11 hues pass in both modes. `validate-contrast` gates 3:1 on that one pair (Phase 00 spec AM-014), while PRD §5.2.1 still says 4.5:1. A showcase that offers all 31 accents will show combinations that fail axe `color-contrast` on component labels.
 > - The site needs every palette for a full browser. The `line-colors` barrel is 123,326 B raw and 23,896 B gzipped, against today's whole page stylesheet of 108,302 B raw and 15,790 B gzipped.
-> - Stream S cannot open its PR before the five controls are done (plan §6). Those controls sit in the "other 12" wave after stream F, the Input, Field and Checkbox set, and stream G. Every merge to `main` that touches `apps/site/**` deploys to production, so a scaffold PR would publish a partial showcase.
+> - Stream S cannot open its PR before the five controls are done (plan §6). Those controls sit in the "other 12" wave after stream F, the Input, Field and Checkbox set, and stream G. Every merge to `main` that touches `apps/site/**` deploys to production, so a scaffold PR would publish a partial showcase, and wiring each control in as it lands would need a plan §6 change (§6 Q10).
 
 ---
 
@@ -116,7 +116,7 @@ Zag facts come from the 1.49.0 type declarations, the O4 baseline (plan §5.2). 
 - Each section has a processed `<script>import '@websublime/line-components/<c>';</script>`, with no Astro or Lit integration (Phase 1 spec SD72, `docs/specs/01-spec-core-primitives.md:2446`; `apps/site/src/components/SiteHeader.astro:22-28`).
 - A Playwright guard asserts that every `line-*` element is `:defined` in three engines, against the silent `sideEffects` drop (R12 §2.2; `apps/site/__tests__/landing.e2e.ts:42-57`). It runs on the fourth `webServer`, port 4322 (`landing.e2e.ts:15`).
 - The showcase adds the subpaths of the five controls. Select's family is `./select` (`docs/ARCHITECTURE.md:579`). The subpaths of Radio Group, Toggle Group, Switch and Slider are R8's to settle (plan `:270`).
-- Before upgrade, the light DOM of a Select shows its 32 item labels as plain text. That makes a `:not(:defined)` rule necessary for the listbox content. The landing page keeps light-DOM text visible for Law 8 (`apps/site/src/styles/site.css:3-20`).
+- Before upgrade, the light DOM of a Select would show its 32 item labels as plain text, which would make a `:not(:defined)` rule necessary for the listbox content [INFERENCE: no `<line-select>` exists yet; its light-DOM anatomy is R4's to settle and its pre-upgrade behaviour R7's (plan `:266`, `:269`)]. The landing page keeps light-DOM text visible for Law 8 (`apps/site/src/styles/site.css:3-20`).
 
 **CSS weight.** The worktree build (§3.1) emits one stylesheet of 108,302 B raw and 15,790 B gzipped for tokens, six hues, the themes barrel and the site styles. A browser of all 31 accents needs every palette:
 
@@ -160,7 +160,7 @@ Zag facts come from the 1.49.0 type declarations, the O4 baseline (plan §5.2). 
 - **Accents.** Only 11 hues pass the solid pair in both modes: amber, cyan, indigo, iris, lime, mint, plum, purple, sky, violet and yellow. The six grays used as accents fail only in light mode.
 - **What the gate checks.** `validate-contrast` checks only the solid pair, at 3:1, with orange allowlisted at 2.97 (`scripts/validate-contrast.mjs:11-32`, `:82-86`; Phase 00 spec AM-014). PRD §5.2.1 still describes a 4.5:1 check over "relevant role pairs" (`docs/PRD.md:555`); see §5.
 - **What axe would flag.** The landing page passes axe because lime and olive sit in the passing set (retrospective S9.3.2, `:51`). With a blue accent the primary Button label measures 3.26:1, which the axe `color-contrast` rule reports for normal-size text [INFERENCE: axe applies 4.5:1 to text below the large-text size; the showcase build not run].
-- **Unaffected pairs.** The semantic Badge and Alert pairs (`-text` on `-bg`) and every gray text pair hold in all 372 combinations. The semantic `-text-low` failures do not depend on the visitor's choice. They matter only if the preview paints semantic `-text-low` on a surface.
+- **Unaffected pairs.** The semantic Badge and Alert pairs (`--line-{role}-text` on `--line-{role}-bg`, steps 12 on 3) do not depend on the accent or the gray, because the semantic roles are fixed on `html`. They therefore hold in all 372 combinations if they hold for the 4 roles × 2 modes. A `bun -e` run of `contrastRatio` over the `SEMANTIC_MAP` hues' base steps 12 and 3 (the probe 3.4 method) gave a minimum of 10.47:1 (amber, light) and a maximum of 12.98:1 (amber, dark); Main's reviewer reproduced the 10.47:1. Every gray text pair holds in all 372 combinations (probe 3.4). The semantic `-text-low` failures do not depend on the visitor's choice either. They matter only if the preview paints semantic `-text-low` on a surface.
 - **The focus ring.** The ring pair is below 3:1 in more than half the combinations. WCAG 2.1 SC 1.4.11 asks 3:1 for the visual information that identifies a component's state, and its Understanding document covers focus indicators; axe does not test it. Plan §5.7 already tracks the step-7-versus-step-8 ring gap (`docs/plans/02-plan-essential-forms.md:443`).
 - A showcase that offers every combination therefore shows failing ones by construction. The options are in §2.6 and §6 Q4.
 
@@ -206,7 +206,9 @@ The readout keeps the showcase honest about §2.5 without narrowing the 31 hues.
 
 ## 3. Probes
 
-All commands ran on 2026-11-26 in the worktree `line-ui-z15` (branch `docs/01-z15-r10-theming-showcase`, HEAD `e0e0424`): Bun 1.4.3, Astro 7.3.8 (locked; npm `latest` is 7.4.13), Playwright 1.64.0, `@radix-ui/colors` 3.0.0. Throwaway scripts lived at the worktree root and were deleted afterwards; `git status` was clean.
+All commands ran on 2026-11-26 on macOS 27.2.1 (arm64) in the worktree `line-ui-z15` (branch `docs/01-z15-r10-theming-showcase`, HEAD `e0e0424`): Bun 1.4.3, Astro 7.3.8 (locked; npm `latest` is 7.4.13), Playwright 1.64.0, `@radix-ui/colors` 3.0.0. Throwaway scripts lived at the worktree root and were deleted afterwards; `git status` was clean.
+
+**Toolchain baseline.** Every probe ran before row 01-Z14 moved the dependency baseline (plan O4 (c)), on Playwright 1.64.0, Astro 7.3.8 and Bun 1.4.3 on macOS. Re-check on the Z14 baseline: the engine probes 3.2 and 3.3, the site stylesheet of 15,790 B gzipped, and every other size derived from a build (§3.1, §2.4). The contrast matrix (3.4) reads `@radix-ui/colors` and changes only if Z14 moves that package.
 
 ### 3.1 Build and output
 
@@ -218,6 +220,8 @@ All commands ran on 2026-11-26 in the worktree `line-ui-z15` (branch `docs/01-z1
 | Same over `packages/line-colors/dist/index.css`, `line-themes/dist/index.css`, `line-themes/dist/accent/violet.css`, `line-themes/dist/defaults.css` | 0 | 123,326 / 23,896; 73,296 / 5,890; 1,017 / 214; 31,008 / 1,215 B |
 
 ### 3.2 Nested scope (`bun .r10-probe.mjs`, exit 0)
+
+The WebKit column is macOS WebKit 27.2 through Playwright. Per plan §5.3 lesson 4 (`docs/plans/02-plan-essential-forms.md:296`), no WebKit claim of probes 3.2 and 3.3 holds until Linux WebKit runs it in CI.
 
 `page.setContent` with the built tokens, the `line-colors` barrel and the `line-themes` barrel; `<html data-accent="lime" data-gray="olive">`, `color-scheme: light dark`; a `<section data-accent="violet">`; a second one with `color-scheme: dark`. Elements read `outline: var(--line-focus-ring)` and `color: var(--line-accent-8)`. Light media.
 
@@ -270,8 +274,8 @@ No finding contradicts plan §2.8, §4.6 or O5. Three gaps touch the showcase. N
 1. **Scope.** Option (a), (a) with the (b) contrast readout (recommended), full (b) with a sample Phase 2 form, or (c) (§2.6)?
 2. **Placement.** A `/theming/` route linked from the header (recommended), or a section of the landing page?
 3. **Theming target.** A scoped preview (recommended) or the whole page? If scoped, is the focus ring recomposed in site CSS (probe 3.3), or do `focus-ring.css`, `gradients.css`, `highlights.css` and `svg.css` move to theming scopes as `shadows.css` did? The second is a published `line-tokens` change and its own row (gap 2).
-4. **Contrast policy.** Which policy applies to the 34 failing solid pairs?
-   - Offer all 31 accents with a computed readout, and gate axe on the default pairs of the passing hues plus a documented exclusion for the rest.
+4. **Contrast policy.** Which policy applies to the 34 failing solid pairs? §2.6 recommends the first.
+   - Offer all 31 accents with a computed readout, and gate axe on the default pairs of the passing hues plus a documented exclusion for the rest (recommended).
    - Narrow the accent list to the 11 passing hues; this narrows the PRD scope and needs Miguel.
    - Settle gap 1 first as a library decision (the PRD §5.2.1 bar against AM-014, and the primary label size).
 5. **Control mapping.** Is §2.2 the mapping? In particular: does the Switch drive auto-pair or the whole-page toggle? Does the Slider drive the shadow strength (a real knob), a radius (site-defined), or a step explorer? Does accent use Select (32 options, grouped) or a Radio Group of swatches?
@@ -279,7 +283,7 @@ No finding contradicts plan §2.8, §4.6 or O5. Three gaps touch the showcase. N
 7. **CSS delivery.** The `line-colors` barrel on the showcase route (+23,896 B gzipped), or per-hue files loaded on selection?
 8. **Shareable state.** A query string from the panel's `GET` form (recommended) or a fragment? Is a shared link applied before first paint by an `is:inline` script with its own hue list, or is the default-theme flash accepted?
 9. **Controls inside or outside the themed scope.** Inside, they show their own theming; outside, they stay readable under failing combinations.
-10. **Sequencing.** One S row that opens when Select, Slider, Switch, Radio Group and Toggle Group are `done`, as S1 did (recommended)? Or rows that wire each control in as it lands, live on every merge (`deploy-site.yml:5`)?
+10. **Sequencing.** One S row that opens when Select, Slider, Switch, Radio Group and Toggle Group are `done`, as S1 did and as plan §6 sets it (recommended)? Or rows that wire each control in as it lands, live on every merge (`deploy-site.yml:5`)? The second needs a plan §6 change, because §6 makes S depend on all five controls (`docs/plans/02-plan-essential-forms.md:456`).
 11. **Requirements for the component specs.** Which of these go into the specs: Select item groups and slotted item content; Radio Group disabled as a whole; Toggle Group `deselectable: false` and its `line-change` detail shape (`string` or `string[]`); Slider `line-input` during drag and a value-text hook?
 12. **Exit evidence.** Which combinations does the axe check of the showcase e2e cover? Does the showcase also get visual baselines, or does the SD98 Roles coverage stand?
 
