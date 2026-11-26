@@ -1,5 +1,5 @@
 /**
- * release-records decision tests (ledger 01-Z10, Phase 1 spec §7.2, §12 AM-114).
+ * release-records decision tests (ledger 01-Z10, 01-Z27, Phase 1 spec §7.2, §12 AM-114, AM-122).
  *
  * `evaluate(facts)` is the pure decision `scripts/release-records.mjs` runs after it reads the PR, the
  * `main` tip, the PR comments with their author and editor permissions, the cited runs and the
@@ -67,8 +67,7 @@ const RUNS: Record<number, Run> = {
   3: run('visual-off-pairs.yml'),
 };
 
-const ANTHROPIC = 'Anthropic live call 2026-11-20: 17 tools, passed';
-const body = (ids = [1, 2, 3], extra = ANTHROPIC) => [MARKER, ...ids.map((id) => `- ${url(id)}`), extra].join('\n');
+const body = (ids = [1, 2, 3]) => [MARKER, ...ids.map((id) => `- ${url(id)}`)].join('\n');
 const comment = (text = body(), overrides: Partial<Comment> = {}): Comment => ({
   body: text,
   authorAdmin: true,
@@ -315,26 +314,46 @@ describe('the cdn-check version', () => {
   });
 });
 
-describe('the Anthropic live-call line', () => {
-  test.each([
-    ['missing', ''],
-    ['without a date', 'Anthropic live call: 17 tools, passed'],
-    ['without a tool count', 'Anthropic live call 2026-11-20: passed'],
-    ['without passed', 'Anthropic live call 2026-11-20: 17 tools, failed'],
-    ['split over two lines', 'Anthropic live call 2026-11-20\n17 tools, passed'],
-  ])('%s fails', (_label, line) => {
-    expect(versionPr({ comments: [comment(body([1, 2, 3], line))] })).toEqual({
+describe('prose in the record', () => {
+  const ANTHROPIC = 'Anthropic live call 2026-11-20: 17 tools, passed';
+
+  test('a valid record with no Anthropic line gives success', () => {
+    expect(body()).not.toMatch(/anthropic/i);
+    expect(versionPr()).toEqual({ state: 'success', description: `Records cite runs on main ${MAIN.slice(0, 7)}` });
+  });
+
+  test('a record that still carries an Anthropic line gives success', () => {
+    expect(versionPr({ comments: [comment(`${body()}\n${ANTHROPIC}`)] })).toEqual({
+      state: 'success',
+      description: `Records cite runs on main ${MAIN.slice(0, 7)}`,
+    });
+  });
+
+  test('a run URL inside a prose line counts as a citation, so a fourth run fails', () => {
+    const runs = { ...RUNS, 4: run('checks.yml') };
+    const text = `${body()}\n${ANTHROPIC}, see ${url(4)}`;
+    expect(versionPr({ comments: [comment(text)], runs })).toEqual({
       state: 'failure',
-      description: 'no Anthropic line (date, <n> tools, passed)',
+      description: 'run 4 is not a release-time workflow',
     });
   });
 });
 
 test('the description names every problem and stays within the 140 characters GitHub accepts', () => {
-  const result = versionPr({ comments: [comment(`${MARKER}\n${url(5, 'stranger/line-ui')}`)] });
-  expect(result.state).toBe('failure');
-  expect(result.description.length).toBeLessThanOrEqual(140);
-  expect(result.description.startsWith(`cites a run outside ${REPO}; no snapshot-deploy run`)).toBe(true);
+  const text = [MARKER, url(5, 'stranger/line-ui'), url(7), url(8), url(9)].join('\n');
+  const result = versionPr({ comments: [comment(text)], runs: { 7: null, 8: null, 9: null } });
+  const full = [
+    `cites a run outside ${REPO}`,
+    'run 7 not found',
+    'run 8 not found',
+    'run 9 not found',
+    'no snapshot-deploy run',
+    'no cdn-check run',
+    'no visual-off-pairs run',
+  ].join('; ');
+  expect(full.length).toBeGreaterThan(140);
+  expect(result).toEqual({ state: 'failure', description: `${full.slice(0, 139)}…` });
+  expect(result.description.length).toBe(140);
 });
 
 describe('posting only on change', () => {
