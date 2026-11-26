@@ -3,13 +3,14 @@
 **Date:** 2026-11-25
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.35
+**Version:** 0.8.36
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.36 (2026-11-25) — Phase 2 targets A2UI v1.0 beside v0.9.1, the Theming showcase gates the Phase 2 exit, and the SSR/SSG investigation joins the Phase 2 research.** A2UI v1.0 went final on 2026-11-11, which ended the condition "The A2UI renderer is a preview until A2UI v1.0 is final" while `line-genui` still targets v0.9.1. §7.4 now schedules the v1.0 `line` and `basic` catalogs beside v0.9.1, the surface on both protocol versions and the end of the preview at the phase exit, with an exit criterion; principle 6, §2 and Appendix D tie the preview to the package targeting the final v1.0. §2 also drops "A2UI calls itself a public preview", which v1.0 made stale, and keeps the exact pin on the ground that `web_core` still ships breaking changes in minor versions (0.15.0 and 0.16.0, `@a2ui/web_core` CHANGELOG). The §7.4 "Parallel" line becomes an exit criterion: the site's Theming showcase is built with the Phase 2 controls. The SSR/SSG investigation that §1.7 and the comparison table planned "post-Phase 1" runs as a Phase 2 research question, with no exit criterion. Decisions by Miguel at the Phase 2 plan gate on 2026-11-25, forks O3 (b), O5 (b) and O8 (a) of `docs/plans/02-plan-essential-forms.md` (ledger row `01-Z11`). Why: v1.0 changed the form types Phase 2 maps (`@checks`, `ValidationResult`, TextField, Slider) while Gemini and Compose still run v0.9.1; a theme browser is built from exactly the Phase 2 controls, and the Phase 1 landing page found defects before its release; the progressive-enhancement research on Input, Textarea and Select asks the same question as server rendering. Sections touched: header, principle 6, §1.7, §2, the comparison table, §7.4, Appendix D; MANIFESTO principle 8, Out of Scope and its Source line; ARCHITECTURE v0.8.28 (§17.3, §17.7); the Phase 2 plan; the Phase 1 plan Status and Source PRD lines, §2.1 and §3; the Phase 1 spec Status and Source lines, §2 Non-Goals, §4.3 and its PRD locator (AM-117); the site's agent card; live `docs/PRD.md` and `docs/ARCHITECTURE.md` locators outside the pinned component specs, realigned.
 - **v0.8.35 (2026-11-25) — Phase 1 closes.** §7.3 gains a Phase 1 status note that points to the exit record in `docs/retrospective/01-phase-01-retro.md`. Every §7.3 exit criterion, with the Phase 1 plan and spec additions, was evidenced on 2026-11-25 in three slices: commands run once on `main` at `16d3e06`, the files read at that sha, and GitHub Actions, the Version PRs, npm and the deployed URLs. No criterion failed (decision by Miguel on 2026-11-25 that row `01-Z3` closes the phase; record in `docs/context/01-z3.md`). Why: Phase 1 spec §6.Z.2 and AM-115 have the row that writes the retrospective close the phase, as v0.8.14 closed Phase 0. Sections touched: §7.3; header; Phase 1 spec AM-115 (§6.Z.2, §6.P.13, §9, §10 SD87) and AM-116 (Source PRD line, §6.P.11 PRD locator, §9.1 approval check); plan header, §4.0, §4.6, §6, §7 and §10 step 7; the live `docs/PRD.md` locators into the lines this note and the status note move, realigned in component specs `0003`, `0004`, `0006`–`0022` (one AM row each).
 - **v0.8.34 (2026-11-20) — The §7.3 tool-acceptance criterion states how acceptance is proved.** The §7.3 exit criterion keeps the claim that the emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini, and now states the proof. An Anthropic live call before each release proves Anthropic acceptance, and the offline R3 P11 subset checks in CI on every PR prove OpenAI and Gemini acceptance. Phase 1 spec §10 SD49 had asked for a live call to all three providers before each release. Miguel chose the Anthropic-only live call, and a required `release-records` commit status that keeps a Version PR from merging until a record comment cites the release-time runs and the Anthropic call (decision by Miguel on 2026-11-20, F2 (b) and F3 (c); ledger row `01-Z10`; record in `docs/context/01-z10.md`). Why: the Phase 1 exit sweep found Version PRs without their release-time records, and #313, the one Version PR with a live-call record, called Anthropic only because no OpenAI or Gemini key was available; the offline checks already prove each provider's subset on every PR, strict mode for OpenAI and Anthropic and the OpenAPI `parameters` subset for Gemini. Sections touched: §7.3; header; Phase 1 spec AM-113 (§6.G.3, §7.2, §8, §9.2, §10 SD49, §6.P.11 PRD locator) and AM-114 (§7.2 `release-records` contract); plan §7.2 and header; PROCESS §6; the live `docs/PRD.md` locators into the lines this note moves, realigned in component specs `0003`, `0004`, `0006`–`0022` (one AM row each).
 - **v0.8.33 (2026-11-12) — Portal shows its content in the top layer and moves no node.** The §4.1 Portal row said "Renders child content outside its DOM parent". It now says that Portal shows its content in the browser top layer, above clipping, transforms and stacking contexts, while the content keeps its DOM position. The probes of component spec `docs/specs/0013-portal.md` showed that every way to move nodes into another container needs DOM mutation outside Lit's reactive cycle, which MANIFESTO Law 5 forbids, and that a move loses inherited theme, `dir` and `lang`, event bubbling through the host, form ownership, DOM focus and reading order, the htmx paths, and the A2UI surface's `aria-busy`, live region and focus rule. A `popover="manual"` box in the shadow root keeps all of them. Miguel chose the top layer over an imperative move, a Lit `render()` move into a target, `position: fixed` on the host, and the top layer with an optional target (decision by Miguel on 2026-11-12, `0013-portal.md` F1 (c) and F9 (b); ledger row `01-C13`; record in `docs/context/01-c13.md`). Why: Law 5 outranks the PRD, and the probes found no move that keeps it. Sections touched: §4.1; header; Phase 1 spec AM-097 (§6.C.4 C13 row, §6.G.1 Portal reason row, §6.P.12 PRD locator); the live `docs/PRD.md` locators into the lines this note moves, realigned in component specs `0003`, `0004`, `0006`–`0012`, `0014` and `0018` (one AM row each) and in the draft `0013-portal.md`.
@@ -78,7 +79,7 @@ line://ui is a headless UI component library built as native Web Components. It 
 | Component Count | 131 (planned) | 90 elements (73 free, 17 Pro) | ~40-50 | ~40+ | 42 elements |
 | Ecosystem | Pre-launch | 470k+ weekly downloads; Font Awesome team, paid Pro tier | Enterprise (Adobe products) | Enterprise (ING banking) | 67k+ weekly downloads; Microsoft-maintained |
 | Theming | Headless default; optional 5-package layered design system (31 Radix hues, attribute-based) | 3 free + 8 Pro themes, light/dark | Adobe Spectrum theme | No built-in themes | Fluent light/dark themes via `setTheme` |
-| SSR/SSG | Investigation planned post-Phase 1 | Experimental (Lit SSR) | Limited | Limited | Declarative Shadow DOM templates + FAST hydration |
+| SSR/SSG | Investigated in the Phase 2 research (Phase 2 plan R7) | Experimental (Lit SSR) | Limited | Limited | Declarative Shadow DOM templates + FAST hydration |
 
 [`COMPETITIVE-COMPONENT-ANALYSIS.md`](./COMPETITIVE-COMPONENT-ANALYSIS.md) compares line://ui with these libraries component by component, in one table per §4 family that each component spec fills.
 
@@ -131,7 +132,7 @@ The headless-first approach is validated across multiple framework ecosystems, b
 3. **Composition over configuration** — Components connect via `<slot>`, not props. A Field does not import an Input — it accepts any form control via slot. A DatePicker accepts any trigger via slot. Independence is the default.
 4. **HTMX through native paths** — Web Components are browser-native. A `<line-dialog>` works in plain HTML served by any backend. HTMX adds server-driven interactivity through host attributes, slotted content, form values and commit events. The `LineHtmxElement` adapter is deferred past 1.0.
 5. **Inspector as dev tooling** — Feature flag via localStorage. When active, every component exposes metadata: version, docs link, scope, QA tags. Useful for QA teams and integrating developers.
-6. **Agent-ready by construction** — Every component is describable to an AI agent through a protocol-neutral catalog of Zod descriptors checked against the Custom Elements Manifest. Agents render line://ui components through the opt-in `@websublime/line-genui` package, which speaks A2UI today. Components never import a protocol, and the host keeps every styling decision. The A2UI renderer is a preview until A2UI v1.0 is final. See Appendix D.
+6. **Agent-ready by construction** — Every component is describable to an AI agent through a protocol-neutral catalog of Zod descriptors checked against the Custom Elements Manifest. Agents render line://ui components through the opt-in `@websublime/line-genui` package, which speaks A2UI today. Components never import a protocol, and the host keeps every styling decision. The A2UI renderer is a preview until it targets the final A2UI v1.0, which Phase 2 adds (§7.4). See Appendix D.
 
 ### 1.5 Target Users
 
@@ -162,7 +163,7 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 | Browser support | Chrome, Firefox, Safari — latest 2 stable versions |
 | Accessibility | WCAG 2.1 AA (Zag.js provides this natively for state-machine components) |
 | Bundle size | Soft target < 5KB gzipped per component |
-| SSR/SSG | Out of scope for Phase 0. Investigation planned post-Phase 1 for Astro, Nuxt, Next.js compatibility |
+| SSR/SSG | Out of scope for Phase 0. The Phase 2 research investigates Astro, Nuxt and Next.js compatibility; it is not a launch blocker |
 | CDN usage | CDN distribution via unpkg and jsdelivr from Phase 1 onwards. The transforming endpoints (jsDelivr `+esm`, esm.unpkg.com) rewrite the bare specifiers of the ESM builds. Raw files keep bare specifiers and need an import map. The Phase 1 spec fixes the CDN contract |
 | i18n — RTL | Supported natively via `dir` attribute |
 | i18n — Localisation | Localisation of component labels (e.g., "Close", "Dismiss") is the consumer's responsibility via slots and attributes |
@@ -213,7 +214,7 @@ All `--line-*` prefixed. Token names remain singular (`--line-radius-1`, `--line
 
 **Colour System (`line-colors` + `line-schemas` + `line-themes`)** — Radix-fiel. 31 hues x 12 steps (Radix Colors 3.x). `line-colors` ships pure palette CSS (`--line-amber-1..12`, etc.), sourced from `@radix-ui/colors` npm but committed into the repo so CI does not regenerate every build. `line-schemas` is the TS contract layer (Zod + types) declaring `HUES`, `ACCENT_HUES`, `GRAY_HUES`, and `SEMANTIC_MAP`. `line-themes` ships role-mapping CSS (`--line-accent-*`, `--line-gray-*`, semantic `--line-success/warning/danger/info-*`, named aliases, and the `[data-accent]` / `[data-gray]` selectors). Light/dark lives inside the palette via CSS `light-dark()` — themes are mono-declaration.
 
-**Agent-Driven UI (`line-genui`)** — A2UI is the only agent-UI standard where the client owns the component vocabulary and the styling, which matches a headless library. `@a2ui/web_core` is the official framework-agnostic core; it shares `lit ^3.3.3` and `zod ^3.25.76` with line://ui. A2UI calls itself a public preview, and `web_core` ships breaking changes in minor versions, so `line-genui` pins it exactly and its A2UI renderer is a preview until A2UI v1.0 is final (ARCHITECTURE §17.7).
+**Agent-Driven UI (`line-genui`)** — A2UI is the only agent-UI standard where the client owns the component vocabulary and the styling, which matches a headless library. `@a2ui/web_core` is the official framework-agnostic core; it shares `lit ^3.3.3` and `zod ^3.25.76` with line://ui. A2UI v1.0 went final on 2026-11-11, but `web_core` still ships breaking changes in minor versions, so `line-genui` pins it exactly, and its A2UI renderer is a preview until it targets the final A2UI v1.0, which Phase 2 adds beside v0.9.1 (§7.4; ARCHITECTURE §17.7).
 
 ---
 
@@ -969,6 +970,8 @@ Button, Icon, Stack and Separator ship first and validate the stream, which adds
 
 **15 components.** First substantial Zag.js integration in forms — both pre-built and custom machines applied at scale. Validates machine + Lit + parts pattern in form contexts. Validates Field orchestration, formAssociated integration, and the slot/part decision rule for internal elements (toggle, clear, increment).
 
+**A2UI v1.0.** A2UI v1.0 went final on 2026-11-11. `line-genui` emits the `line` and `basic` catalogs for v1.0 beside v0.9.1, `<line-a2ui-surface>` renders both protocol versions, and the Phase 2 basic types (TextField, CheckBox, ChoicePicker, Slider, DateTimeInput) map on both. `@websublime/line-genui/a2ui` and `@websublime/line-icons/a2ui` leave preview at the phase exit (Appendix D).
+
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
 - Field correctly detects child state via events, validity, and explicit props
@@ -978,8 +981,10 @@ Button, Icon, Stack and Separator ship first and validate the stream, which adds
 - Zero axe-core violations
 - CEM manifest generated and verified
 - Changeset entry for every component
+- `line-genui` emits the A2UI v1.0 catalogs beside v0.9.1, the surface renders both protocol versions, and the A2UI renderer leaves preview
+- The site's Theming showcase (§5.3) is built with Phase 2 line://ui components and is live at `line-ui.websublime.com`
 
-**Parallel:** Theming showcase on site.
+**Theming showcase:** The site's Theming showcase dogfoods the Phase 2 controls and gates the exit through the criterion above.
 
 ### 7.5 Phase 3 — Overlays & Navigation (v0.4.0)
 
@@ -1828,8 +1833,8 @@ Agent-driven UI lets an AI agent compose an interface from line://ui components 
 ### Preview policy
 
 - `@websublime/line-genui/a2ui` may change in any minor release.
-- `@websublime/line-genui/a2ui` sits outside the §7.1 breaking-changes policy until the package targets a final A2UI v1.0.
-- `@websublime/line-icons/a2ui` follows the same preview status until A2UI v1.0, because its `A2uiIconName`, `A2uiIconEntry` and `A2uiIconMap` types and its `a2uiIconMap` helper feed the preview property `iconMap` (Phase 1 spec AM-008, AM-011, AM-014; ARCHITECTURE §17.7).
+- `@websublime/line-genui/a2ui` sits outside the §7.1 breaking-changes policy until the package targets a final A2UI v1.0, which Phase 2 adds (§7.4).
+- `@websublime/line-icons/a2ui` follows the same preview status until `line-genui/a2ui` targets the final A2UI v1.0, because its `A2uiIconName`, `A2uiIconEntry` and `A2uiIconMap` types and its `a2uiIconMap` helper feed the preview property `iconMap` (Phase 1 spec AM-008, AM-011, AM-014; ARCHITECTURE §17.7).
 - The descriptor API and the catalogs follow the normal policy.
 
 ### Deferred and rejected
