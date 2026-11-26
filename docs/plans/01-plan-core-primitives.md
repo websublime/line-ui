@@ -9,6 +9,7 @@ Row 01-S1 on 2026-11-19 applies Miguel's decision that the landing page depends 
 Row 01-Z10 on 2026-11-20 applies Miguel's decision that an Anthropic live call before each release proves Anthropic acceptance of the emitted tools, and the offline R3 P11 subset checks in CI prove OpenAI and Gemini acceptance (§7.2; spec AM-113), citing PRD v0.8.34 (Source PRD line).
 Row 01-Z3 on 2026-11-25 applies Miguel's decision that Z3 closes Phase 1 as well as writing its retrospective: it evidences every spec §9 criterion in three slices, ticks the spec §9 and plan §7 boxes and adds the PRD §7.3 status line, and a criterion fixed during the close that changes a published package is released before Z3 lands, as a row that is not a P13 dependency (§4.0, §4.6, §6, §7, §10 step 7; spec §6.Z.2, §6.P.13, AM-115), citing PRD v0.8.35 (Source PRD line). The same row corrects the `00-Z29` trigger as a fact: Biome PR #11869 already ships in 2.5.15, and 2.6.8 still panics, so the row waits for a release that fixes biomejs/biome#12158 (§5.4 O4.b, §11).
 Row 01-Z11 on 2026-11-25 aligns §2.1 and §3 with PRD v0.8.36 and ARCHITECTURE v0.8.28: `line-icons/a2ui` follows the preview until `line-genui/a2ui` targets the final A2UI v1.0, and the v1.0 emitter that stayed out of Phase 1 is Phase 2 scope (Phase 2 plan O3 (b)), citing PRD v0.8.36 (Source PRD line).
+Row 01-Z14 on 2026-11-26 moves the Chip machine in §2.2 to `@zag-js/toggle` 1.49.0, the dependency baseline of Phase 2 plan O4 (c) (spec AM-120); the C24 lines keep 1.47.0 as record.
 **Author:** line://ui orchestrator (row 00-Z27)
 **Date:** 2026-10-20
 **Phase Version Target:** `line://ui` v0.2.0 (also called "Phase 1" in the PRD)
@@ -143,7 +144,7 @@ ARCHITECTURE §17.3 maps these basic catalog types in Phase 1.
 | IconButton | Custom | `./icon-button` |
 | ButtonGroup | Custom; a custom roving-focus machine (D5, spec §10) | `./button-group` |
 | Alert | Static | `./alert` |
-| Chip | Pre-built; `@zag-js/toggle` 1.47.0 (D6, spec §10, AM-052) | `./chip` |
+| Chip | Pre-built; `@zag-js/toggle` 1.49.0 (D6, spec §10, AM-052, AM-120) | `./chip` |
 | Badge | Static | `./badge` (spec §10 SD12) |
 | Avatar | Static | `./avatar` |
 | AvatarGroup | Custom | `./avatar-group` |
@@ -161,7 +162,7 @@ ARCHITECTURE §17.3 maps these basic catalog types in Phase 1.
 | Spinner | Static | `./spinner` |
 
 - PRD §7.3 names Button, Icon, Stack and Separator as the validating set, and the plan gate confirmed it (O2.b (a)). They ship first, and stream G validates on them.
-- ButtonGroup and Chip left the Static tier (D5, D6), so each gains a machine and the tests that cover it. ButtonGroup is a `toolbar` with roving focus (APG Toolbar) on a custom roving-focus machine, because `npm view @zag-js/toolbar` on 2026-10-20 shows only pre-release versions (`latest` and `next` are 2.0.0-next.x). Chip is a toggle button with `aria-pressed` on the pre-built `@zag-js/toggle` 1.47.0 machine (spec AM-052).
+- ButtonGroup and Chip left the Static tier (D5, D6), so each gains a machine and the tests that cover it. ButtonGroup is a `toolbar` with roving focus (APG Toolbar) on a custom roving-focus machine, because `npm view @zag-js/toolbar` on 2026-10-20 shows only pre-release versions (`latest` and `next` are 2.0.0-next.x). Chip is a toggle button with `aria-pressed` on the pre-built `@zag-js/toggle` 1.49.0 machine (spec AM-052, AM-120).
 - The PRD says "From then on, every component ships its descriptor in the same PR".
 
 ### 2.3 Component specs and the agent contract

@@ -99,7 +99,7 @@ PRD §7.4 lists what the phase validates.
   (ARCHITECTURE §9, `docs/ARCHITECTURE.md:474-498`; MANIFESTO Law 4).
 - Its state comes from explicit props first, then child events, then native validity (ARCHITECTURE §9, `:482-485`).
 - The labelling mechanism across the shadow boundary was deferred to "the Field spec" twice (`:487`; Phase 1 plan
-  §5.6, `docs/plans/01-plan-core-primitives.md:511`). Phase 2 settles it after R3.
+  §5.6, `docs/plans/01-plan-core-primitives.md:512`). Phase 2 settles it after R3.
 - The floating label is not built in. `data-focused` and `data-filled` enable it in pure CSS, and Storybook
   documents the pattern (ARCHITECTURE §9, `:491`; PRD §7.4 exit).
 
