@@ -29,7 +29,7 @@
 >   ignored. The shadow styles paint before any script runs. A declarative root with a `<slot>` around a light-DOM
 >   native control is both styled and functional without JavaScript.
 > - **Lit SSR (`@lit-labs/ssr` 4.1.0) renders 17 of the 20 Phase 1 elements** on Node 22.23.5 and Bun 1.4.5. Avatar
->   and AvatarGroup call `closest()` in `render()`, and Badge iterates `childNodes` in its constructor; those three
+>   and AvatarGroup reach `closest()` from `render()`, and Badge iterates `childNodes` in its constructor; those three
 >   throw. A `FormAssociated(LineElement)` probe renders and hydrates in three engines when
 >   `lit-element-hydrate-support` loads first. Without it, Lit reuses the declarative root and renders a second copy
 >   (two inputs, two buttons). `line-core` builds its reset sheets with `new CSSStyleSheet()` at module scope, which
@@ -132,7 +132,10 @@ WebKit 27.2 and Linux WebKit 27.2, with JavaScript disabled and also with JavaSc
 
 ### 2.3 Q3: upgrading over a slotted control
 
-Probe 3.3 defined two vanilla custom elements over the same slotted control, with JavaScript enabled.
+Probe 3.3 defined two vanilla custom elements over the same slotted control, with JavaScript enabled. The take-over
+markup is `<pe-take name="n"><input name="n" value="n0"></pe-take>`: the host carries the same `name` as the slotted
+control. The row 01-Z22 review re-ran it without the host `name`: take over gave `n=n0` (only the slotted control) and
+take over + disable gave an empty body, because an unnamed form-associated host contributes no entry.
 
 | Strategy | What the element does | `FormData` | Submit | Validity and reset |
 |---|---|---|---|---|
@@ -192,12 +195,13 @@ while page scripts stay off.
 Probe 3.5 used `@lit-labs/ssr` 4.1.0 with its global DOM shim, sharing one `lit` 3.3.3 instance with the worktree
 build.
 
-**Phase 1 components** (`render(html\`<line-x>x</line-x>\`)`, Node 22.23.5 and Bun 1.4.5, identical):
+**Phase 1 components** (`render(html\`<line-x>x</line-x>\`)`, Node 22.23.5 and Bun 1.4.5: same pass/fail; the error
+texts differ by runtime, for example Badge on Bun throws `undefined is not an object (evaluating 't of e')`):
 
 | Result | Components |
 |---|---|
 | Renders a declarative root with its styles | Alert, AspectRatio, Button (`shadowrootdelegatesfocus`), ButtonGroup, Center, Chip (`delegatesfocus`), Grid, Icon, IconButton (`delegatesfocus`), Kbd, Portal, Presence, Separator, Skeleton, Spinner, Stack, VisuallyHidden |
-| Throws `TypeError: e.closest is not a function` in `render()` | Avatar, AvatarGroup (`#language()`, `packages/line-components/src/avatar/avatar.ts:216-222`, called from `:279`) |
+| Throws `TypeError: e.closest is not a function`, reached from `render()` | Avatar (`#language()`, `packages/line-components/src/avatar/avatar.ts:217-225`, `closest` at `:219`, called from `render()` `:273` at `:279`); AvatarGroup (its own `#language()`, `packages/line-components/src/avatar-group/avatar-group.ts:372-380`, `closest` at `:374`, reached from `render()` `:495` through `#format()` `:383-384` at `:499`) |
 | Throws `TypeError: e is not iterable` in the constructor | Badge (`holdsContent(this.childNodes)`, `packages/line-components/src/badge/badge.ts:24`, `:160`) |
 
 - **`LineElement` and `FormAssociated` on the shim.** `#internals = this.attachInternals()`
@@ -240,7 +244,7 @@ All three were installed under `/tmp` only, built for production, and probed in 
 |---|---|
 | Plain markup: hosts with slotted native controls | Emitted verbatim; `b=b0&c=c0&d=2&f=f0` with and without JavaScript |
 | Hand-written DSD in an `.astro` file | `<template shadowrootmode>` kept, but the compiler **removed the `<slot></slot>`**: the slotted input rendered at 0 × 0 (no box) and still submitted. `<slot is:inline>`, `set:html` on the template, or a `<Fragment set:html>` kept the slot (withastro/astro#12322) |
-| Lit SSR | No official integration: Astro 5 removed `@astrojs/lit` (Astro v5 upgrade guide). `@semantic-ui/astro-lit` 5.3.0 (peer `lit` ^3.2.0, `@lit-labs/ssr` ^3.3.1) |
+| Lit SSR | No official integration: Astro 5 removed `@astrojs/lit` (Astro v5 upgrade guide). `@semantic-ui/astro-lit` 5.3.0: peers `lit` ^3.2.0 and `@webcomponents/template-shadowroot` ^0.2.1; `@lit-labs/ssr` ^3.3.1 is a regular dependency |
 | `@semantic-ui/astro-lit` with line-core | Build failed with `ReferenceError: CSSStyleSheet is not defined`. With the integration's own `@lit-labs/ssr` 3.3.1 shim imported first: `TypeError: t.replaceSync is not a function`. With the 4.1.0 global shim: `customElements.get(...) is not a constructor` for islands (two registries). It built with a one-line page import that sets `globalThis.CSSStyleSheet` from `@lit-labs/ssr-dom-shim` |
 | Tags without `client:*` | Server-rendered DSD with `defer-hydration`, no client script; the elements never upgrade |
 | Attributes that are reactive properties | `name="p" value="p0"` on `<probe-inner>` became properties, were **not** serialised, and set `defer-hydration` (`server.js:44-61`). After `client:load` hydration, `nameProp: "p"` but no `name` attribute, so `FormData` lacked `p` in all engines. The platform takes a form-associated element's entry name from its `name` content attribute |
@@ -305,6 +309,8 @@ written to the repository.
   from the default font metrics: an input was 212 × 27 px on Linux against 156 × 21 px on macOS, and the
   "host = input + 12 px" relation held on both.
 - CI runs x86_64 Linux; these probes ran on aarch64 only.
+- The row 01-Z22 review re-ran the no-JavaScript forms (3.2), the adopt and take-over strategies (3.3) and the Lit SSR
+  17-of-20 result (3.5) with `--cpus 1` for Linux WebKit, with the same results.
 
 ### 3.1 Harness
 
@@ -338,10 +344,11 @@ With JavaScript enabled and no definitions, every row returned the same body, an
 The results are in §2.3 and were identical in Chromium, Firefox, macOS WebKit and Linux WebKit.
 
 - `pe-adopt` is a vanilla element whose shadow root holds a `<style>` and a `<span part="root"><slot>`.
-- `pe-take` is `formAssociated`. Its root is a `<style>` and an `<input part="input">`, with `delegatesFocus`. In
-  `connectedCallback` it copies the light-DOM `input.value`, calls `setFormValue`, and listens for `input`.
-  `formResetCallback` restores `defaultValue`. Variants add `native.disabled = true`, or force the host value to
-  `host` over an empty `required` control.
+- `pe-take` is `formAssociated`, on `<pe-take name="n"><input name="n" value="n0"></pe-take>`. Its root is a `<style>`
+  and an `<input part="input">`, with `delegatesFocus`. In `connectedCallback` it copies the light-DOM `input.value`,
+  calls `setFormValue`, and listens for `input`. `formResetCallback` restores `defaultValue`. Variants add
+  `native.disabled = true`, or force the host value to `host` over an empty `required` control. The duplicate entry
+  needs the host `name`; without it the review measured `n=n0`, and an empty body with the disable variant.
 
 ### 3.4 Declarative shadow DOM
 
