@@ -309,8 +309,9 @@ written to the repository.
   from the default font metrics: an input was 212 × 27 px on Linux against 156 × 21 px on macOS, and the
   "host = input + 12 px" relation held on both.
 - CI runs x86_64 Linux; these probes ran on aarch64 only.
-- The row 01-Z22 review re-ran the no-JavaScript forms (3.2), the adopt and take-over strategies (3.3) and the Lit SSR
-  17-of-20 result (3.5) with `--cpus 1` for Linux WebKit, with the same results.
+- The row 01-Z22 review re-ran the no-JavaScript forms (3.2) and the adopt and take-over strategies (3.3) in Chromium
+  and in Linux WebKit (`--cpus 1`), and the Lit SSR 17-of-20 result (3.5) on Node 22.23.5 and Bun 1.4.5 on the host
+  (SSR runs no browser), with the same results.
 
 ### 3.1 Harness
 
