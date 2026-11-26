@@ -2,7 +2,7 @@
 
 **Row:** `01-Z24` (Phase 2 plan §5.1 R9, §5.3)
 **Date:** 2026-11-26
-**Repo sources:** `docs/plans/02-plan-essential-forms.md` §1, §2.1, §2.3, §3, §5.1 R1, R3, R9, §5.2, §5.3, §5.5, §7.1; `docs/PRD.md` (v0.8.36) §4.2, §7.4; `docs/ARCHITECTURE.md` (v0.8.28) §7, §8, §9, §14.3, §14.8, §14.9, §17.2, §17.3; `docs/MANIFESTO.md` Laws 1, 4, 5, 7, 8; `docs/specs/01-spec-core-primitives.md` §10 SD36; `docs/specs/0002-button.md`; `docs/specs/0003-icon-button.md`; `packages/line-core/src/form-associated.ts`; `packages/line-components/src/button/button.ts`; `packages/line-components/__tests__/integration/button/button.e2e.ts`; `docs/research/01-research-zag-machines.md` (format)
+**Repo sources:** `docs/PROCESS.md` §1, §2; `docs/plans/02-plan-essential-forms.md` §1, §2.1, §2.3, §3, §5.1 R1, R3, R9, §5.2, §5.3, §5.5, §7.1; `docs/PRD.md` (v0.8.36) §4.2, §7.4; `docs/ARCHITECTURE.md` (v0.8.28) §7, §8, §9, §14.3, §14.4, §14.7, §14.8, §14.9, §17.2, §17.3; `docs/MANIFESTO.md` Laws 1, 4, 5, 7, 8; `docs/specs/01-spec-core-primitives.md` §10 SD36; `docs/specs/0002-button.md`; `docs/specs/0003-icon-button.md`; `docs/specs/0008-chip.md`; `packages/line-core/src/form-associated.ts`; `packages/line-components/src/button/button.ts`; `packages/line-components/__tests__/integration/button/button.e2e.ts`; `packages/line-components/__tests__/integration/alert/alert.e2e.ts`; `docs/research/01-research-zag-machines.md` (format)
 **Toolchain:** the row 01-Z14 baseline on `origin/main` `9c9b1f4`: Playwright 1.65.1 (Chromium 159.0.8154.6, Firefox 159.0, WebKit 27.2 build 2388), Bun 1.4.5 (`/tmp/bun145`), Node 22.23.5 (`/tmp/node-v22.23.5-darwin-arm64`), Zag 1.49.0. Linux WebKit in `mcr.microsoft.com/playwright:v1.65.1-noble` (§3).
 **Status:** Evidence. Research carries no rules (`docs/PROCESS.md` §1). Recommendations are marked as such; every decision is an open question in §6.
 
@@ -294,7 +294,9 @@ afterwards; the repo tree stayed clean.
 | Chromium 159.0.8154.6, Firefox 159.0, macOS WebKit 27.2 (build 2388) | Host, Node 22.23.5, the worktree's Playwright 1.65.1 |
 | Linux WebKit 27.2 (build 2388, aarch64) | `docker run --rm --cpus 2 --memory 1g --ipc=host -e PLAYWRIGHT_BROWSERS_PATH=/ms-playwright -v <worktree>:/work:ro -v /tmp/z24-probes:/probes mcr.microsoft.com/playwright:v1.65.1-noble`; Ubuntu 24.04.5, the container's Node 26.13.1 running the worktree's Playwright 1.65.1 JavaScript from the mounted `node_modules`; nothing installed in the container |
 
-This is a local aarch64 Linux run. The CI runner is x86_64 and has not run these probes.
+This is a local aarch64 Linux run with `--cpus 2`, as shown. The review of this note re-ran P1 and P2 in the same
+image with `--cpus 1` and reported the same values (review report, not observed by this run). The CI runner is
+x86_64 and has not run these probes.
 
 ### 3.3 Probe list and results
 
@@ -363,8 +365,9 @@ quoted sentences extracted. WPT files at the cited commits on `master`; wpt.fyi 
 - **ChoicePicker.** ARCHITECTURE §17.3 renders a multiple-selection ChoicePicker as a `<line-fieldset>` of
   `<line-checkbox>` elements (`docs/ARCHITECTURE.md:1623`). With mechanism A, disabling that `<line-fieldset>` would
   disable none of its checkboxes.
-- **Reset sheet.** `reset.fieldset.css` targets a `fieldset` and `legend` in a shadow root (ARCHITECTURE §14.3,
-  `docs/ARCHITECTURE.md:972-984`, `:1160`); under mechanism C the native fieldset is in light DOM, where a shadow
+- **Reset sheet.** `reset.fieldset.css` targets a `fieldset` and `legend` in a shadow root (ARCHITECTURE §14.4
+  Reset Module Contents, `docs/ARCHITECTURE.md:972-984`; §14.7 reset-module table, `:1160`; §14.3 only lists the
+  file in the tree); under mechanism C the native fieldset is in light DOM, where a shadow
   reset sheet does not reach it.
 
 ## 5. Contradictions and gaps
@@ -374,8 +377,8 @@ flagged, not resolved.
 
 1. **PRD §4.2 "disabled propagation" vs a shadow-root fieldset.** PRD §4.2 promises "Semantic grouping of related
    controls with legend and disabled propagation" for a Static Fieldset (`docs/PRD.md:282`). A `<line-fieldset>` that
-   renders its `<fieldset>` in its shadow root, which is the shape `reset.fieldset.css` assumes (ARCHITECTURE §14.3,
-   `:972-984`) and the one that gives the fieldset and legend `::part()` names (Law 1), propagates nothing to slotted controls
+   renders its `<fieldset>` in its shadow root, which is the shape `reset.fieldset.css` assumes (ARCHITECTURE §14.4,
+   `:972-984`; §14.7, `:1160`) and the one that gives the fieldset and legend `::part()` names (Law 1), propagates nothing to slotted controls
    in any engine (P1). Propagation needs either a light-DOM native fieldset (C) or script that writes author
    attributes (B), and B conflicts with MANIFESTO Law 5 (`docs/MANIFESTO.md:47`). Neither the PRD, ARCHITECTURE nor
    the plan states which shape Fieldset takes.
