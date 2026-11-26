@@ -1,7 +1,7 @@
 # Research: Theming showcase on the Astro site (R10)
 
 **Row:** `01-Z15` (Phase 2 plan §5.1 R10, decision O5 (b))
-**Date:** 2026-11-26
+**Date:** 2026-11-26 (engine probes and build sizes re-run the same day on the row 01-Z14 baseline, §3)
 **Repo sources:** `docs/plans/02-plan-essential-forms.md` §1, §2.8, §4.0, §4.6, §5.1 R1, R4, R8, R10, §5.4 O5, §5.5, §5.7, §6, §7.3; `docs/PRD.md` (v0.8.36) §5.2.1, §5.3, §7.4, §9.3–§9.9, §9.12, §9.14, Appendix C; `docs/ARCHITECTURE.md` (v0.8.28) §4, §12, §16.2, §17.2, §17.3; `docs/MANIFESTO.md` Principles 1, 4, 5, Laws 2–4, 7–10, Out of Scope; `docs/plans/01-plan-core-primitives.md` §5.4 O3; `docs/specs/01-spec-core-primitives.md` §6.S.1, §10 SD72, SD98, §12 AM-109; `docs/specs/00-spec-design-system.md` AM-014; `docs/retrospective/01-phase-01-retro.md`; `docs/research/01-research-site-dogfooding.md` (R12); `apps/site/**`; `apps/storybook/.storybook/preview.ts`, `stories/theming.mdx`; `packages/line-tokens/src`, `line-colors`, `line-schemas/src`, `line-themes/src`, `line-utils/src/contrast.ts`; `packages/line-components/src/{button,icon-button,chip,badge,alert}`; `scripts/validate-contrast.mjs`; `.github/workflows/deploy-site.yml`, `checks.yml`
 **Status:** Evidence. Research carries no rules (`docs/PROCESS.md` §1). Recommendations are marked as such; every decision is an open question in §6.
 
@@ -65,7 +65,7 @@ Zag facts come from the 1.49.0 type declarations, the O4 baseline (plan §5.2). 
 
 ### 2.3 Q3: applying changes live on a static page
 
-**The mechanism.** A processed client module listens for `line-change` and `line-input` on the panel. It sets `data-accent` and `data-gray` on the preview scope, removes `data-gray` while auto-pair is on, sets `color-scheme` and writes the knob properties. Probe 3.2 measured this in Chromium 156, Firefox 157 and WebKit 27.2:
+**The mechanism.** A processed client module listens for `line-change` and `line-input` on the panel. It sets `data-accent` and `data-gray` on the preview scope, removes `data-gray` while auto-pair is on, sets `color-scheme` and writes the knob properties. Probe 3.2 measured this in Chromium 159, Firefox 159 and WebKit 27.2 on the row 01-Z14 baseline, with the same results as the first run on Chromium 156 and Firefox 157:
 
 - Setting `data-accent` from `violet` to `tomato` on the scope recomputed the scope's `--line-accent-8`, `--line-accent-solid` and `--line-gray-1` before the next read, in the same task.
 - Removing the attribute fell back to the page's lime.
@@ -206,26 +206,26 @@ The readout keeps the showcase honest about §2.5 without narrowing the 31 hues.
 
 ## 3. Probes
 
-All commands ran on 2026-11-26 on macOS 27.2.1 (arm64) in the worktree `line-ui-z15` (branch `docs/01-z15-r10-theming-showcase`, HEAD `e0e0424`): Bun 1.4.3, Astro 7.3.8 (locked; npm `latest` is 7.4.13), Playwright 1.64.0, `@radix-ui/colors` 3.0.0. Throwaway scripts lived at the worktree root and were deleted afterwards; `git status` was clean.
+All commands ran on 2026-11-26 on macOS 27.2.1 (arm64) in the worktree `line-ui-z15` (branch `docs/01-z15-r10-theming-showcase`), first at HEAD `e0e0424`, then again after merging `origin/main` `9c9b1f4` (row 01-Z14, #368) at HEAD `15f2392`. Throwaway scripts lived at the worktree root and were deleted after each run; `git status` was clean.
 
-**Toolchain baseline.** Every probe ran before row 01-Z14 moved the dependency baseline (plan O4 (c)), on Playwright 1.64.0, Astro 7.3.8 and Bun 1.4.3 on macOS. Re-check on the Z14 baseline: the engine probes 3.2 and 3.3, the site stylesheet of 15,790 B gzipped, and every other size derived from a build (§3.1, §2.4). The contrast matrix (3.4) reads `@radix-ui/colors` and changes only if Z14 moves that package.
+**Toolchain baseline.** The first run predates row 01-Z14: Bun 1.4.3, Astro 7.3.8, Playwright 1.64.0 (Chromium 156.0.8078.4, Firefox 157.0, WebKit 27.2 build 2370), Node 22.23.3. The re-run uses the Z14 baseline: Bun 1.4.5 (`/tmp/bun145`, because the workstation `bun` is still 1.4.3), `HOME=/tmp/emptyhome bun install --frozen-lockfile`, Astro 7.4.13 on Node 22.23.5 (`/tmp/node-v22.23.5-darwin-arm64`, because Astro 7.4.13 needs Node >=22.23.4 and the workstation has 22.23.3), and Playwright 1.65.1 (Chromium 159.0.8154.6, Firefox 159.0, WebKit 27.2 build 2388). Probes 3.2 and 3.3 and every build-derived size in §3.1 were re-run. Every figure that changed shows old → new; the rest matched. `@radix-ui/colors` stayed at 3.0.0 in `bun.lock`, so the contrast matrix (3.4) was not re-run. The macOS WebKit caveat of §3.2 still applies.
 
 ### 3.1 Build and output
 
 | Command | Exit | Observation |
 |---|---|---|
-| `bun --filter './packages/*' build` | 0 | 24.0 s |
-| `bun --filter '@websublime/line-site' build` | 0 | 1 page in 1.70 s |
-| `gzip -9 -n -c <file> \| wc -c` over `apps/site/dist` | 0 | `_astro/index.*.css` 108,302 / 15,790 B; `index.html` 13,962 / 3,616 B; ten section scripts and shared chunks, the largest `stack.*.js` 21,827 / 7,827 B and `if-defined.*.js` 17,231 / 6,293 B |
-| Same over `packages/line-colors/dist/index.css`, `line-themes/dist/index.css`, `line-themes/dist/accent/violet.css`, `line-themes/dist/defaults.css` | 0 | 123,326 / 23,896; 73,296 / 5,890; 1,017 / 214; 31,008 / 1,215 B |
+| `bun --filter './packages/*' build` | 0 → 0 | 24.0 s → not re-timed |
+| `bun --filter '@websublime/line-site' build` | 0 → 0 | 1 page in 1.70 s → 2.09 s |
+| `gzip -9 -n -c <file> \| wc -c` over `apps/site/dist` | 0 | `_astro/index.*.css` 108,302 / 15,790 B, unchanged (same content hash `ChH5pI3D`); `index.html` 13,962 / 3,616 → 13,962 / 3,613 B; ten section scripts and shared chunks, the largest `stack.*.js` 21,827 / 7,827 → 21,823 / 7,821 B and `if-defined.*.js` 17,231 / 6,293 → 17,837 / 6,484 B |
+| Same over `packages/line-colors/dist/index.css`, `line-themes/dist/index.css`, `line-themes/dist/accent/violet.css`, `line-themes/dist/defaults.css` | 0 | 123,326 / 23,896; 73,296 / 5,890; 1,017 / 214; 31,008 / 1,215 B, all unchanged |
 
 ### 3.2 Nested scope (`bun .r10-probe.mjs`, exit 0)
 
 The WebKit column is macOS WebKit 27.2 through Playwright. Per plan §5.3 lesson 4 (`docs/plans/02-plan-essential-forms.md:296`), no WebKit claim of probes 3.2 and 3.3 holds until Linux WebKit runs it in CI.
 
-`page.setContent` with the built tokens, the `line-colors` barrel and the `line-themes` barrel; `<html data-accent="lime" data-gray="olive">`, `color-scheme: light dark`; a `<section data-accent="violet">`; a second one with `color-scheme: dark`. Elements read `outline: var(--line-focus-ring)` and `color: var(--line-accent-8)`. Light media.
+`page.setContent` with the built tokens, the `line-colors` barrel and the `line-themes` barrel; `<html data-accent="lime" data-gray="olive">`, `color-scheme: light dark`; a `<section data-accent="violet">`; a second one with `color-scheme: dark`. Elements read `outline: var(--line-focus-ring)` and `color: var(--line-accent-8)`. Light media. Every value below matched in both runs (before and after row 01-Z14).
 
-| Check | Chromium 156.0.8078.4 | Firefox 157.0 | WebKit 27.2 |
+| Check | Chromium 156.0.8078.4 → 159.0.8154.6 | Firefox 157.0 → 159.0 | WebKit 27.2 (build 2370 → 2388) |
 |---|---|---|---|
 | Scope `--line-accent-8` | violet `light-dark(#aa99ec, #6958ad)` | same | P3 violet |
 | Scope `--line-focus-ring-color`, outline colour | lime `rgb(141, 182, 84)` | same | P3 lime |
@@ -236,6 +236,8 @@ The WebKit column is macOS WebKit 27.2 through Playwright. Per plan §5.3 lesson
 | After `removeAttribute('data-accent')` | lime again | same | same |
 
 ### 3.3 Knobs and the ring fix (`bun .r10-knobs.mjs`, exit 0)
+
+Same engines as 3.2, before and after row 01-Z14; every value matched.
 
 | Check | Chromium | Firefox | WebKit |
 |---|---|---|---|
