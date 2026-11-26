@@ -109,9 +109,9 @@
     "@websublime/line-themes": "workspace:^",
     "@websublime/line-tokens": "workspace:^",
     "@websublime/line-utils": "workspace:^",
-    "@zag-js/core": "^1.47.0",
-    "@zag-js/presence": "^1.47.0",
-    "@zag-js/toggle": "^1.47.0",
+    "@zag-js/core": "^1.49.0",
+    "@zag-js/presence": "^1.49.0",
+    "@zag-js/toggle": "^1.49.0",
     "lit": "^3.3.3"
   },
   "devDependencies": {

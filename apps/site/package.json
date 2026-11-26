@@ -11,7 +11,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "astro": "^7.3.8"
+    "astro": "^7.4.13"
   },
   "devDependencies": {
     "@websublime/line-colors": "workspace:^",
