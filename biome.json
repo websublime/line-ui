@@ -90,6 +90,11 @@
   "html": {
     "experimentalFullSupportEnabled": true
   },
+  "yaml": {
+    "formatter": {
+      "enabled": false
+    }
+  },
   "files": {
     "includes": [
       "**",
