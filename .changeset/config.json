@@ -19,5 +19,6 @@
   "snapshot": {
     "useCalculatedVersion": true,
     "prereleaseTemplate": "{commit}-SNAPSHOT"
-  }
+  },
+  "format": false
 }
