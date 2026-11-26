@@ -226,7 +226,7 @@ CDP drives the fill data path, not the user's suggestion popup [INFERENCE: the p
 - Bitwarden reaches shadow roots through `chrome.dom.openOrClosedShadowRoot` (Chrome) and `Element.openOrClosedShadowRoot` (Firefox). On Safari it falls back to `Element.shadowRoot`, so only open roots work there ([Bitwarden contributing docs, "Shadow DOM"](https://contributing.bitwarden.com/architecture/deep-dives/autofill/shadow-dom)).
 - 1Password and Proton Pass users still report shadow-DOM misses in 2026 (1Password Community thread "Autofill does not work on cosmosdirekt.de customer login (fields inside shadow DOM)", 2026-11-13; ProtonMail/WebClients#516, 2026-06-22).
 
-None of these were probed. ARCHITECTURE §16.2 already calls this "best effort" (`docs/ARCHITECTURE.md:1486-1492`, `:1530`).
+None of these were probed. ARCHITECTURE §16.2 describes the password-manager strategy (`docs/ARCHITECTURE.md:1486-1492`), and §16.3 (Summary — Strategy Per Case) calls it "best effort" (`:1530`).
 
 **The FACE host itself is never autofilled.** Autofill writes native controls only, and no engine calls the `"autocomplete"` restore reason (§2.4).
 
@@ -241,7 +241,7 @@ None of these were probed. ARCHITECTURE §16.2 already calls this "best effort" 
 | `:user-invalid` (native controls) | 119 | 88 | 16.5 | `css.selectors.user-invalid` |
 | `:autofill` | 110 | 86 (partial) | 15 | `css.selectors.autofill` |
 
-Both plan facts hold: "ElementInternals is in all three engines from Safari 16.4", and "`:state()` from Chrome 125, Firefox 126 and Safari 17.4" (`:284-285`). On the baseline, `'states' in ElementInternals.prototype` and `CSS.supports('selector(:state(x))')` were true in all four runs (probe 3.2).
+Both plan facts hold: "`ElementInternals` is in all three engines from Safari 16.4", and "`:state()` from Chrome 125, Firefox 126 and Safari 17.4" (`:284-285`). On the baseline, `'states' in ElementInternals.prototype` and `CSS.supports('selector(:state(x))')` were true in all four runs (probe 3.2).
 
 ## 3. Probes
 
@@ -273,7 +273,7 @@ All probes ran on 2026-11-26 on macOS 27.2.1 (arm64, build 26B131) in the worktr
 **Linux WebKit.** Per Miguel's choice of 2026-11-26, both scripts also ran in WebKit on Linux:
 
 - Image: `mcr.microsoft.com/playwright:v1.65.1-noble` (`sha256:1507cbfc…5579`; Ubuntu 24.04.5, aarch64, WebKit build 2388 under `PLAYWRIGHT_BROWSERS_PATH=/ms-playwright`).
-- Command: `docker run --rm --cpus 2 --memory 1g --ipc=host -v <worktree>:/work:ro -v /tmp/z17-probes:/probes`.
+- Command: `docker run --rm --cpus 2 --memory 1g --ipc=host -v <worktree>:/work:ro -v /tmp/z17-probes:/probes`. The row 01-Z17 review re-ran the C1 and C2 probes and the anchor probe with `--cpus 1` in the same image, with the same results.
 - The run used the repo's Playwright 1.65.1 JavaScript from the mounted `node_modules` with the container's Node 26.13.1, and the same port inside the container. Nothing was installed in the container.
 
 This is a local aarch64 run; the CI runner is x86_64 and has not run these probes. Every recorded value matched macOS WebKit: 193 of 193 in `probe.mjs`, all of the definition-order variants and all of `probe2.mjs`. Below, "WebKit" means both.
