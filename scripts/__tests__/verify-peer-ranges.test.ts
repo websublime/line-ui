@@ -89,6 +89,17 @@ describe('checkPeerRanges', () => {
     expect(failures[0]).toContain('is not one "^<x.y.z>" arm');
   });
 
+  test('valid caret arms followed by a non-caret arm are malformed, though the range admits the version', () => {
+    const range = 'workspace:^0.1.0 || ^0.2.0 || >=0.0.0';
+    expect(Bun.semver.satisfies('0.2.9', range.slice('workspace:'.length))).toBe(true);
+    const failures = checkPeerRanges([release(COMPONENTS, 'patch', '0.2.8', '0.2.9')], {
+      ...PEERS,
+      [COMPONENTS]: range,
+    });
+    expect(failures).toHaveLength(1);
+    expect(failures[0]).toContain(`${GENUI} peerDependencies["${COMPONENTS}"] "${range}" is not one "^<x.y.z>" arm`);
+  });
+
   test('a missing peer entry fails with its own message', () => {
     const failures = checkPeerRanges([release(ICONS, 'patch', '0.2.2', '0.2.3')], { [COMPONENTS]: UNION });
     expect(failures).toEqual([
