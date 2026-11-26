@@ -203,7 +203,11 @@ Element reflection may point from a shadow tree into its ancestor tree (HTML, re
 
 - **Click lost on a re-render (P9).** On Linux, a mouse press on the trigger focused it. Zag moved to `focused`, and the probe host's update replaced the trigger's text node before mouseup. No `click` followed, so the listbox stayed closed. The event trace read pointerdown, mousedown, focus, focusin, pointerup, mouseup, with no click. macOS WebKit does not focus a button on click (Phase 1 retrospective lesson 4, `docs/retrospective/01-phase-01-retro.md:130-131`), so no render fell between the two events and the click fired.
 - **Isolated cases.** A mousedown handler that replaces a button's text node (`textContent =`) suppressed the click in WebKit on macOS and on Linux, and not in Chromium or Firefox. Changing the same text node's `data` kept the click in all engines. An attribute change kept it too. Lit commits text by setting `.data` on the existing node, and only when the value changes (lit-html 3.3.3 `development/lit-html.js:948-968`). A Lit-bound trigger label therefore keeps its node [INFERENCE: no Lit-bound trigger was probed].
-- **Everything else matched macOS WebKit,** apart from a few pixels of font metrics (§3.4).
+- **Other differences from macOS WebKit.**
+  - Focus on click. Linux WebKit focuses the trigger on a mouse press and macOS WebKit does not (P3), so after an outside click the Linux run left focus on `#light-other` and the macOS run on `body`.
+  - Plain `<select>` tap under the iPhone 15 descriptor. `:open` read `true` on macOS and `false` on Linux. Neither run put options in the page (P8, §2.6) [INFERENCE: the cause is not traced].
+  - A few pixels of font metrics (§3.4).
+  - Every other P1–P9 result matched.
 
 ### 2.8 Weight
 
