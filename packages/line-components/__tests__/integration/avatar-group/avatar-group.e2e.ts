@@ -407,7 +407,7 @@ test.describe('expansion by hover and keyboard focus, and Escape (F2, F13; D25)'
     const ring = await page.locator('#g').evaluate((host) => {
       const root = getComputedStyle(host.shadowRoot?.querySelector('[part="root"]') as HTMLElement);
       const probe = document.createElement('span');
-      probe.style.color = 'var(--line-accent-8)';
+      probe.style.color = 'var(--line-accent-11)';
       document.body.append(probe);
       const accent = getComputedStyle(probe).color;
       probe.remove();

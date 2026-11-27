@@ -37,6 +37,8 @@ jobs:
         run: bun run scripts/verify-palettes-fresh.mjs
       - name: Contrast validation
         run: bun run scripts/validate-contrast.mjs
+      - name: Focus-ring contrast validation   # AM-093: WCAG SC 1.4.11, 3:1 for the shipped ring colour
+        run: bun run scripts/validate-focus-ring.mjs
       - name: F2 preload-presence assertion (AM-018)  # AM-025: anchored and escaped
         run: grep -qE '^preload = \["\./bun-test-preload\.ts"\]$' bunfig.toml
       - name: Unit tier
