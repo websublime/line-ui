@@ -9,6 +9,7 @@ export {
   relativeLuminance,
   SOLID_STEP,
   srgbToLinear,
+  TEXT_THRESHOLD,
   THRESHOLD,
 } from './contrast.js';
 export type { ColorSpace, MixOptions } from './mix.js';
