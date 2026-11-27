@@ -29,8 +29,8 @@
     --line-orange-a11: light-dark(#cc4e00, #ffa057);
     --line-orange-a12: light-dark(#431200e2, #ffe0c2);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-orange-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-orange-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

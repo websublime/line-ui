@@ -29,7 +29,7 @@
     --line-indigo-a11: light-dark(#002bb7c5, #9eb1ff);
     --line-indigo-a12: light-dark(#001046e0, #d6e1ff);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-indigo-contrast: #fff;
   }
 

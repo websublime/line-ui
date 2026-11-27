@@ -11,6 +11,8 @@ This document captures the **cross-cutting architectural decisions** that apply 
 ---
 
 ## Revision Notes
+- **v0.8.30 (2026-11-27)** — Aligned with PRD v0.8.39 (ledger row `01-Z30`, decision by Miguel on 2026-11-27; record in `docs/context/01-z30.md`; Phase 00 spec AM-092). The change is minimal: four §4 table cells.
+  - §4 (CSS Customisation — Dual Layer): the palette-token and role-token rows and the `--line-{hue}-contrast` and `--line-{role}-contrast` naming rows say the contrast token is black or white per hue on step 9, one value for the saturated hues and `light-dark(#000, #fff)` for the six gray hues, where they said a static single value that is never `light-dark()`.
 - **v0.8.29 (2026-11-27)** — Aligned with PRD v0.8.38 (ledger row `01-Z29`, decisions D1–D33 by Miguel on 2026-11-27 after the Phase 2 research; record in `docs/context/01-z29.md`). The Phase 2 research notes (`docs/research/02-research-*.md`) contradicted this document in the sections below.
   - §6 (Base Class Architecture): the controller starts a machine in `hostConnected` by default, or after the first render for a component that opts in, as every Phase 2 machine does, with a template that renders every part with its final `id` and `role` first (D8). It catches run-time machine errors as well as start failures, a catch not yet probed, and a fallback template wires its controls to `setFormValue` (D5). A DOM-ownership bullet states the MANIFESTO Law 5 reading, scoped by Miguel at review round 1: property and method writes on an adopted slotted native control, an orchestrator's reflection writes, documented hooks that a host managing `line-*` children (a group or family host, such as ButtonGroup) writes on them, Button's transient submitter, no restructuring of author DOM, nothing on `document.body` (D4). DateInput moves Zag's `body` live region into its own shadow root until upstream offers a `root` or an opt-out.
   - §7 (Form Association Strategy): a control participates through `ElementInternals` or through an author's slotted native control, and Input and Textarea leave the form-associated list (D1, D3). Reset runs each element's `formResetCallback`, and constraint attributes on a host do nothing until the component sets validity (factual, R2 §5 C3 and C4). Emulating implicit submission by the HTML algorithm counts as native semantics (D3).
@@ -256,8 +258,8 @@ Custom properties form three concentric tiers (full cascade documented in PRD §
 | Tier | Origin | Examples |
 |------|--------|----------|
 | **Foundation tokens** | `@websublime/line-tokens` (L0) | `--line-size-3`, `--line-radius-2`, `--line-shadow-3`, `--line-easing-out`, `--line-z-overlay`, `--line-motion-fast` |
-| **Palette tokens** | `@websublime/line-colors` (L1) | `--line-amber-1..12`, `--line-amber-contrast`, `--line-slate-1..12`, … (31 hues × 12 steps; `light-dark()` per step; static single-value `--line-{hue}-contrast`) |
-| **Role tokens (numeric)** | `@websublime/line-themes` (L3) | `--line-accent-1..12`, `--line-gray-1..12`, `--line-success-1..12`, `--line-warning-1..12`, `--line-danger-1..12`, `--line-info-1..12`, plus the sibling `--line-{role}-contrast` (one per role; static single value; not wrapped in `light-dark()`) |
+| **Palette tokens** | `@websublime/line-colors` (L1) | `--line-amber-1..12`, `--line-amber-contrast`, `--line-slate-1..12`, … (31 hues × 12 steps; `light-dark()` per step; `--line-{hue}-contrast` is black or white on step 9: one value for the 25 saturated hues, `light-dark(#000, #fff)` for the six gray hues) |
+| **Role tokens (numeric)** | `@websublime/line-themes` (L3) | `--line-accent-1..12`, `--line-gray-1..12`, `--line-success-1..12`, `--line-warning-1..12`, `--line-danger-1..12`, `--line-info-1..12`, plus the sibling `--line-{role}-contrast` (one per role; a `var()` of the active hue's contrast token, so it follows that hue's value in each mode) |
 | **Role aliases (named)** | `@websublime/line-themes` (L3) | `--line-{role}-surface` (step 2), `-bg` (step 3), `-bg-hover` (step 4), `-bg-active` (step 5), `-border` (step 7), `-solid` (step 9), `-solid-hover` (step 10), `-text-low` (step 11), `-text` (step 12) — 9 aliases × 6 roles = 54 alias variables |
 | **Component tokens** | Defined inside `:host` by each component | `--line-button-radius`, `--line-button-bg`, `--line-button-color`, … (always `--line-{component}-{prop}`) |
 
@@ -296,10 +298,10 @@ Component tokens follow the `--line-{component}-{prop}` convention. Consumers ov
 |--------|-------|----------|
 | `--line-{family}-{step}` | Foundation tokens (`line-tokens`) | `--line-radius-2`, `--line-size-3`, `--line-shadow-2` |
 | `--line-{hue}-{step}` | Palette tokens (`line-colors`) | `--line-blue-9`, `--line-slate-12`, `--line-amber-3` |
-| `--line-{hue}-contrast` | Palette contrast tokens (`line-colors`) | `--line-blue-contrast`, `--line-amber-contrast` (static; not `light-dark()`) |
+| `--line-{hue}-contrast` | Palette contrast tokens (`line-colors`) | `--line-blue-contrast` (`#000`), `--line-indigo-contrast` (`#fff`), `--line-slate-contrast` (`light-dark(#000, #fff)`) |
 | `--line-{role}-{step}` | Role tokens (`line-themes`) | `--line-accent-9`, `--line-gray-3`, `--line-danger-2` |
 | `--line-{role}-{alias}` | Role aliases (`line-themes`) | `--line-accent-solid`, `--line-gray-bg-hover`, `--line-danger-text` |
-| `--line-{role}-contrast` | Role contrast token (`line-themes`) | `--line-accent-contrast` (static; resolves through the active hue) |
+| `--line-{role}-contrast` | Role contrast token (`line-themes`) | `--line-accent-contrast` (resolves through the active hue) |
 | `--line-{component}-{prop}` | Component tokens | `--line-button-radius`, `--line-input-padding-x` |
 
 All public custom properties we author are `--line-*` prefixed. Standard HTML hooks (`data-accent`, `data-gray`, ARIA attributes, etc.) follow web conventions and are exempt (Manifesto Law 2).

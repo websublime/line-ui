@@ -29,8 +29,8 @@
     --line-bronze-a11: light-dark(#3d0f00ab, #ffd7c6d1);
     --line-bronze-a12: light-dark(#1d0600d4, #fff1e9ec);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-bronze-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-bronze-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

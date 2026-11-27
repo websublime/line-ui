@@ -29,8 +29,8 @@
     --line-tomato-a11: light-dark(#cd2200ea, #ff977d);
     --line-tomato-a12: light-dark(#460900e0, #ffd6cefb);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-tomato-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-tomato-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

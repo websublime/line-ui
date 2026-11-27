@@ -10,8 +10,9 @@
  *
  * Emits, under the --output directory:
  *   - {H}.css for each of the 31 HUES — base + alpha sRGB scales via
- *     light-dark(), a static per-hue contrast token, and a wide-gamut P3
- *     override block (@supports + @media (color-gamut: p3)).
+ *     light-dark(), the contrast token (one value when contrastFor(H, 'light')
+ *     and contrastFor(H, 'dark') agree, else light-dark(); AM-092), and a
+ *     wide-gamut P3 override block (@supports + @media (color-gamut: p3)).
  *   - special.css — the four special scales (blackA/whiteA sRGB outside
  *     light-dark(); blackP3A/whiteP3A inside the @supports block).
  *   - index.css — the @import barrel of all 31 hue files + special.css.
@@ -21,9 +22,10 @@
  * index.css holds only comments and @import rules.
  *
  * Generated CSS is COMMITTED (regeneration policy D2, §6.C.3): this script runs
- * only when @radix-ui/colors is bumped or PER_HUE_CONTRAST is intentionally
- * edited. A freshness guard (scripts/verify-palettes-fresh.mjs, C4) diffs the
- * committed output against a fresh run in CI.
+ * only when @radix-ui/colors is bumped or PER_HUE_CONTRAST or
+ * PER_HUE_CONTRAST_DARK is intentionally edited (AM-092). A freshness guard
+ * (scripts/verify-palettes-fresh.mjs, C4) diffs the committed output against a
+ * fresh run in CI.
  *
  * Radix object-vs-step-key naming (§6.C.3, AM-011): in @radix-ui/colors the
  * scale OBJECT name carries the variant (Dark, P3, A, and combinations) but the
@@ -49,7 +51,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import * as radixColors from '@radix-ui/colors';
-import { PER_HUE_CONTRAST } from '../packages/line-schemas/src/contrast-table.ts';
+import { contrastFor } from '../packages/line-schemas/src/contrast-table.ts';
 import { HUES } from '../packages/line-schemas/src/hues.ts';
 import { radixSource } from './radix-sources.mjs';
 
@@ -164,9 +166,12 @@ function renderHue(hue) {
     );
   }
 
+  const contrastLight = contrastFor(hue, 'light');
+  const contrastDark = contrastFor(hue, 'dark');
+  const contrast = contrastLight === contrastDark ? contrastLight : `light-dark(${contrastLight}, ${contrastDark})`;
   lines.push('');
-  lines.push('  /* Contrast (static single value per hue, NOT light-dark()) */');
-  lines.push(`  --line-${hue}-contrast: ${PER_HUE_CONTRAST[hue]};`);
+  lines.push('  /* Contrast: one value when both modes agree, else light-dark() (AM-092) */');
+  lines.push(`  --line-${hue}-contrast: ${contrast};`);
   lines.push('}');
 
   lines.push('');

@@ -29,8 +29,8 @@
     --line-grass-a11: light-dark(#006514d5, #89ff9fcd);
     --line-grass-a12: light-dark(#002006df, #ceffceef);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-grass-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-grass-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

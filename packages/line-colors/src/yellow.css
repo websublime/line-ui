@@ -29,7 +29,7 @@
     --line-yellow-a11: light-dark(#9e6c00, #fee949f5);
     --line-yellow-a12: light-dark(#2e2000e0, #fef6baf6);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-yellow-contrast: #000;
   }
 

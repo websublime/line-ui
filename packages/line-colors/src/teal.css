@@ -29,8 +29,8 @@
     --line-teal-a11: light-dark(#008573, #0afed5d6);
     --line-teal-a12: light-dark(#00332df2, #b8ffebef);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-teal-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-teal-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */
