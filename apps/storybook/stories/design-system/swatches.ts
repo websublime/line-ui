@@ -74,7 +74,7 @@ export const swatchStyles = html`<style>
   .ds-contrast {
     padding: 8px 12px;
     border-radius: 4px;
-    /* WCAG large text (14pt bold), so axe applies the 3:1 floor the palette is validated to. */
+    /* WCAG large text (14pt bold). Every step-9 / contrast pair also meets the 4.5:1 normal-text floor (AM-092). */
     font-size: 19px;
     font-weight: 700;
   }
