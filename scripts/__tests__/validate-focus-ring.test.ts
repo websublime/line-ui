@@ -7,8 +7,9 @@
  * @module scripts/__tests__/validate-focus-ring
  */
 
-import { describe, expect, test } from 'bun:test';
+import { describe, expect, mock, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
+import * as contrast from '../../packages/line-utils/src/contrast.ts';
 import {
   checkFocusRing,
   describePair,
@@ -17,6 +18,10 @@ import {
   parseFocusRingStep,
   surfaces,
 } from '../validate-focus-ring.mjs';
+
+const CONTRAST_MODULE = '../../packages/line-utils/src/contrast.ts';
+/** The real exports, copied before any mock: `mock.module` updates loaded modules in place. */
+const REAL_CONTRAST = { ...contrast };
 
 /** A `focus-ring.css` body with the given `--line-focus-ring-color` declarations. */
 function sheet(...values: string[]): string {
@@ -86,8 +91,20 @@ describe('parseFocusRingStep', () => {
 });
 
 describe('checkFocusRing', () => {
-  test('uses its own 3:1 constant for SC 1.4.11', () => {
+  test('bars at its own 3:1 constant, whatever THRESHOLD the shared contrast module exports', async () => {
     expect(NON_TEXT_MIN_RATIO).toBe(3);
+    mock.module(CONTRAST_MODULE, () => ({ ...REAL_CONTRAST, THRESHOLD: 5 }));
+    try {
+      // A dynamic import on purpose: the script must load after the mock, as a new instance (query string).
+      const fresh = await import('../validate-focus-ring.mjs?threshold-5');
+      expect(contrast.THRESHOLD).toBe(5);
+      const step11 = fresh.checkFocusRing(11);
+      expect(step11.pairCount).toBe(4216);
+      expect(step11.failures).toEqual([]);
+      expect(fresh.checkFocusRing(8).failures.filter((failure) => failure.surfaceStep === 1)).toHaveLength(196);
+    } finally {
+      mock.module(CONTRAST_MODULE, () => REAL_CONTRAST);
+    }
   });
 
   test('the 84 listed surfaces dedupe to 68', () => {
