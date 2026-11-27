@@ -260,7 +260,7 @@ The script read the base scales by source name (`scripts/radix-sources.mjs`), as
 - **Plan §2.8, §4.6, O5 (b).** Every option in §2.6 uses all five controls and keeps the showcase an exit criterion.
 - **PRD §5.3.** "Interactive theme browser" is met by option (a). PRD §5.3 says "Astro + MDX" (`:571`); the showcase needs no MDX, as R12 found for the landing page.
 - **PRD §9.4–§9.8.** The axes are exactly `data-accent`, `data-gray` with auto-pair, and `color-scheme`. A scoped preview demonstrates the "theming nests naturally" claim (`:1363-1368`).
-- **PRD §5.2.1 and SD98.** The `(accent, gray, mode)` coverage contract is met in Storybook by the Roles story baselines: 62 default-pair and 310 off-pair (Phase 1 spec SD98, `:2481`; corrected 2026-11-27, row 01-Z29, from `:2472`, which is SD89). The showcase is a second surface for that space and does not replace it.
+- **PRD §5.2.1 and SD98.** The `(accent, gray, mode)` coverage contract is met in Storybook by the Roles story baselines: 62 default-pair and 310 off-pair (Phase 1 spec SD98, `:2481`). The showcase is a second surface for that space and does not replace it. Corrected 2026-11-27 (row 01-Z29): the SD98 locator read `:2472`, which is SD89.
 - **ARCHITECTURE §4.** Scope overrides of foundation and component tokens are documented consumer usage (`docs/ARCHITECTURE.md:240-263`).
 - **ARCHITECTURE §16.2.** On mobile, Select shows its custom listbox, not the OS picker (`:1458-1460`). With 32 accents this is the documented trade-off.
 - **Phase 1 precedent.** The Phase 1 landing page left out the Radix-style theme switcher only because plan O3 kept the showcase out of Phase 1 (`docs/plans/01-plan-core-primitives.md:419-425`; Phase 1 spec AM-109).
