@@ -84,7 +84,7 @@
     },
     "packages/line-components": {
       "name": "@websublime/line-components",
-      "version": "0.2.8",
+      "version": "0.2.9",
       "dependencies": {
         "@websublime/line-core": "workspace:^",
         "@websublime/line-themes": "workspace:^",
@@ -103,7 +103,7 @@
     },
     "packages/line-core": {
       "name": "@websublime/line-core",
-      "version": "0.2.3",
+      "version": "0.2.4",
       "dependencies": {
         "@zag-js/core": "^1.49.0",
         "@zag-js/vanilla": "^1.49.0",

@@ -1,5 +1,13 @@
 # @websublime/line-components
 
+## 0.2.9
+
+### Patch Changes
+
+- [#368](https://github.com/websublime/line-ui/pull/368) [`9c9b1f4`](https://github.com/websublime/line-ui/commit/9c9b1f427c243966e5ffd52f238bf274d9443477) Thanks [@miguelramos](https://github.com/miguelramos)! - Zag dependencies move to `^1.49.0` (`@zag-js/core` and `@zag-js/vanilla` in line-core; `@zag-js/core`, `@zag-js/presence` and `@zag-js/toggle` in line-components), which includes the presence fix for an exit animation skipped when closing during enter.
+- Updated dependencies [[`9c9b1f4`](https://github.com/websublime/line-ui/commit/9c9b1f427c243966e5ffd52f238bf274d9443477)]:
+  - @websublime/line-core@0.2.4
+
 ## 0.2.8
 
 ### Patch Changes
