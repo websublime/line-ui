@@ -39,7 +39,7 @@ line-ui/
 │                    # genui (agent-driven UI catalog + A2UI renderer, from Phase 1);
 │                    # testing (private, never published; test helpers shared across packages, htmx harness; row 01-Z5)
 ├── apps/            # storybook (Storybook 10 + MDX); site (Astro 7)
-├── scripts/         # generate-palettes, generate-role-maps, validate-contrast, verify-palettes-fresh, lint-layers, publish, verify-pack
+├── scripts/         # generate-palettes, generate-role-maps, validate-contrast, validate-focus-ring, verify-palettes-fresh, verify-peer-ranges, lint-layers, publish, verify-pack
 ├── docs/            # MANIFESTO, PRD, ARCHITECTURE, PROCESS, STYLE, plans/ (plan + ledger), research/, specs/
 ├── .claude/         # agents/ (sdlc, git-workflow-manager, supervisors), skills/ (understand)
 ├── .changeset/ · .githooks/ (pre-commit: biome) · .github/workflows/ · .mcp.json (codebase-memory)
