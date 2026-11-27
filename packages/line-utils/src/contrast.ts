@@ -5,17 +5,23 @@
 // source of truth: the validator imports these helpers rather than inlining its
 // own copy (see bead line-ui-7qm.3.7). The math is ported verbatim from the
 // former inline implementation — any float change would shift computed ratios
-// and could flip the documented orange step-9 boundary, so it must stay exact.
+// and could move a step-9 pair across the validator's floor, so it must stay exact.
 
 /**
- * WCAG AA large-text / non-text-UI contrast floor (AM-014, spec §6.C.3).
- *
- * The design system's step-9 solid surfaces are engineered to clear this 3:1
- * bar against their paired contrast token, not the stricter 4.5:1 normal-text
- * floor (which the verbatim-adopted Radix palette cannot satisfy across all 62
- * hue × mode pairs).
+ * WCAG 2.1 AA contrast floor for non-text UI and large text, 3:1 (SC 1.4.11;
+ * SC 1.4.3 large text; spec §6.C.5). An icon on a step-9 solid, such as the
+ * IconButton `primary` glyph, needs this floor. Normal-size text needs
+ * {@link TEXT_THRESHOLD}.
  */
 export const THRESHOLD = 3;
+
+/**
+ * WCAG 2.1 AA contrast floor for normal-size text, 4.5:1 (SC 1.4.3; AM-092,
+ * spec §6.C.3, §6.C.5). `scripts/validate-contrast.mjs` requires it of every
+ * step-9 / contrast-token pair, because the Button and Chip `primary` labels
+ * are normal-size text on step 9.
+ */
+export const TEXT_THRESHOLD = 4.5;
 
 /**
  * Step 9 is the solid brand anchor a contrast token is paired against

@@ -106,7 +106,7 @@ To force a mode from script, set `colorScheme` on the root element.
 document.documentElement.style.colorScheme = 'dark';
 ```
 
-The `--line-{role}-contrast` tokens do not use `light-dark()`. Each one holds a single static colour, `#fff` or `#000`, chosen per hue.
+The `--line-{role}-contrast` tokens come from two contrast tables, one per mode. For each hue and mode the table holds `#000` or `#fff`, whichever has the higher contrast on that mode's step 9. The 25 saturated hues hold the same colour in both modes, so their token is one static value. The six gray hues need black in light mode and white in dark, so their token is `light-dark(#000, #fff)`.
 
 The demo sets `color-scheme` on its own container, so only the demo changes mode and this page stays as it is. With `light dark`, the demo follows your operating system. Some hues, such as indigo, keep the same step 9 in both modes, so the gray row shows the switch most clearly.
 

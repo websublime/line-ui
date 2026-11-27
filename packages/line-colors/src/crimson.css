@@ -29,8 +29,8 @@
     --line-crimson-a11: light-dark(#c4004fe2, #ff92ad);
     --line-crimson-a12: light-dark(#530026e9, #ffd5eafd);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-crimson-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-crimson-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

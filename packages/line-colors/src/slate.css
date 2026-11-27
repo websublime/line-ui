@@ -29,8 +29,8 @@
     --line-slate-a11: light-dark(#0007149f, #f1f7feb5);
     --line-slate-a12: light-dark(#000509e3, #fcfdffef);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-slate-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-slate-contrast: light-dark(#000, #fff);
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

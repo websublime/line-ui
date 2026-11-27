@@ -29,8 +29,8 @@
     --line-brown-a11: light-dark(#522100b9, #fed1aad9);
     --line-brown-a12: light-dark(#140600d1, #feecd4f2);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-brown-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-brown-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

@@ -29,8 +29,8 @@
     --line-jade-a11: light-dark(#007152df, #21fec0d6);
     --line-jade-a12: light-dark(#002217e2, #b8ffe1ef);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-jade-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-jade-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */
