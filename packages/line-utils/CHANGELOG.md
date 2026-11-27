@@ -1,5 +1,13 @@
 # @websublime/line-utils
 
+## 0.2.1
+
+### Patch Changes
+
+- [#382](https://github.com/websublime/line-ui/pull/382) [`ba888bc`](https://github.com/websublime/line-ui/commit/ba888bcf0df3fd5957eb5b3470cbb71d05a92f15) Thanks [@miguelramos](https://github.com/miguelramos)! - 01-Z30: new export `TEXT_THRESHOLD`, 4.5, the WCAG 2.1 AA floor for normal-size text (SC 1.4.3), which the contrast validator now applies to every step-9 label pair. `THRESHOLD` stays 3, documented as the floor for non-text UI and large text.
+- Updated dependencies [[`ba888bc`](https://github.com/websublime/line-ui/commit/ba888bcf0df3fd5957eb5b3470cbb71d05a92f15)]:
+  - @websublime/line-schemas@0.2.1
+
 ## 0.2.0
 
 ### Minor Changes

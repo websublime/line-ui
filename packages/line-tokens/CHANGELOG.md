@@ -1,5 +1,11 @@
 # @websublime/line-tokens
 
+## 0.2.1
+
+### Patch Changes
+
+- [#384](https://github.com/websublime/line-ui/pull/384) [`1525465`](https://github.com/websublime/line-ui/commit/15254656ebbeae2e99f69c340fd1ad8a3f73f73d) Thanks [@miguelramos](https://github.com/miguelramos)! - `--line-focus-ring-color` is `var(--line-accent-11)` in light and dark mode (was `var(--line-accent-8)`), so the focus ring meets WCAG 2.1 SC 1.4.11, 3:1, against every gray, accent and semantic surface it sits on, in all 31 accents and 6 grays. Step 8 was below 3:1 on `--line-gray-1` in 196 of the 372 accent × gray × mode combinations. A build and CI check now fails on any ring colour below 3:1.
+
 ## 0.2.0
 
 ### Minor Changes

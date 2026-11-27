@@ -80,7 +80,7 @@
     },
     "packages/line-colors": {
       "name": "@websublime/line-colors",
-      "version": "0.2.0",
+      "version": "0.2.1",
     },
     "packages/line-components": {
       "name": "@websublime/line-components",
@@ -149,7 +149,7 @@
     },
     "packages/line-schemas": {
       "name": "@websublime/line-schemas",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "dependencies": {
         "zod": "^3.25.76",
       },
@@ -181,11 +181,11 @@
     },
     "packages/line-tokens": {
       "name": "@websublime/line-tokens",
-      "version": "0.2.0",
+      "version": "0.2.1",
     },
     "packages/line-utils": {
       "name": "@websublime/line-utils",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "dependencies": {
         "@websublime/line-schemas": "workspace:^",
       },
