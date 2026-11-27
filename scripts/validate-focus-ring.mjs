@@ -59,13 +59,13 @@ export function parseFocusRingStep(css) {
   if (values.length !== 1) {
     throw new Error(
       `expected exactly one --line-focus-ring-color declaration in focus-ring.css, found ${values.length}` +
-        (values.length > 0 ? `: ${values.map((value) => `"${value}"`).join(', ')}` : ''),
+        (values.length > 0 ? `: ${values.map((value) => JSON.stringify(value)).join(', ')}` : ''),
     );
   }
   const step = ACCENT_VAR.exec(values[0]);
   if (!step) {
     throw new Error(
-      `--line-focus-ring-color is "${values[0]}"; it must be var(--line-accent-N) with N from 1 to 12 ` +
+      `--line-focus-ring-color is ${JSON.stringify(values[0])}; it must be var(--line-accent-N) with N from 1 to 12 ` +
         '(Phase 00 spec §6.C.3, AM-093).',
     );
   }

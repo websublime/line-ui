@@ -59,7 +59,7 @@ describe('parseFocusRingStep', () => {
     ['step 13', 'var(--line-accent-13)'],
     ['!important', 'var(--line-accent-11) !important'],
   ])('rejects %s and prints the value found', (_form, value) => {
-    expect(() => parseFocusRingStep(sheet(value))).toThrow(`--line-focus-ring-color is "${value}"`);
+    expect(() => parseFocusRingStep(sheet(value))).toThrow(`--line-focus-ring-color is ${JSON.stringify(value)}`);
   });
 
   test('rejects a missing declaration', () => {
@@ -68,6 +68,20 @@ describe('parseFocusRingStep', () => {
 
   test('rejects a repeated declaration', () => {
     expect(() => parseFocusRingStep(sheet('var(--line-accent-11)', 'var(--line-accent-11)'))).toThrow('found 2');
+  });
+
+  test.each([
+    ['an invalid value', ['#000\n::add-mask::x']],
+    ['a repeated declaration', ['var(--line-accent-11)', '#000\n::add-mask::x']],
+  ])('escapes a newline in %s, so no printed line starts a workflow command', (_case, values) => {
+    let message = '';
+    try {
+      parseFocusRingStep(sheet(...values));
+    } catch (err) {
+      message = (err as Error).message;
+    }
+    expect(message).toContain(JSON.stringify('#000\n::add-mask::x'));
+    expect(message.split(/\r?\n/).filter((line) => /^\s*::/.test(line))).toEqual([]);
   });
 });
 
