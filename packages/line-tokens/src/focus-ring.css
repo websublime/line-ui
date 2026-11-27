@@ -13,7 +13,7 @@
     --line-focus-ring-width: 2px;
     --line-focus-ring-offset: 2px;
     --line-focus-ring-style: solid;
-    --line-focus-ring-color: var(--line-accent-8);
+    --line-focus-ring-color: var(--line-accent-11);
 
     /* Composed shorthand for `outline`. */
     --line-focus-ring: var(--line-focus-ring-width) var(--line-focus-ring-style) var(--line-focus-ring-color);
