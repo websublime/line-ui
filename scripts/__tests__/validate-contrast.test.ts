@@ -3,7 +3,9 @@
  *
  * `collectResults(contrast)` measures every hue × {light, dark} step-9 pair against `contrast(hue, mode)`, which
  * defaults to line-schemas' `contrastFor`, and flags each pair below `TEXT_THRESHOLD`, 4.5:1, with no allowlist.
- * The script itself exits 0 on the committed tables and names the lowest pair.
+ * `main(contrast, report)` returns the exit code and reports through `report`, so a failing table is injected, as
+ * `verify-peer-ranges.mjs` takes its runner. The script itself exits 0 on the committed tables and names the lowest
+ * pair.
  *
  * @module scripts/__tests__/validate-contrast
  */
@@ -12,7 +14,7 @@ import { describe, expect, test } from 'bun:test';
 import { resolve } from 'node:path';
 import { PER_HUE_CONTRAST, PER_HUE_CONTRAST_DARK } from '../../packages/line-schemas/src/contrast-table.ts';
 import { TEXT_THRESHOLD } from '../../packages/line-utils/src/contrast.ts';
-import { collectResults, describePair, solidStep } from '../validate-contrast.mjs';
+import { collectResults, describePair, main, solidStep } from '../validate-contrast.mjs';
 
 const SCRIPT = resolve(import.meta.dirname, '../validate-contrast.mjs');
 
@@ -70,6 +72,42 @@ describe('solidStep', () => {
     expect(solidStep('neutral', 'light')).toBe('#8d8d8d');
     expect(solidStep('neutral', 'dark')).toBe('#6e6e6e');
     expect(solidStep('orange', 'dark')).toBe('#f76b15');
+  });
+});
+
+/** A `report` that keeps every line, by channel. */
+function capture() {
+  const lines = { info: [] as string[], error: [] as string[] };
+  return {
+    lines,
+    report: {
+      info: (message: string) => lines.info.push(message),
+      error: (message: string) => lines.error.push(message),
+    },
+  };
+}
+
+describe('main', () => {
+  test('returns 0 on the committed tables and reports only the lowest pair', () => {
+    const { lines, report } = capture();
+    expect(main(undefined, report)).toBe(0);
+    expect(lines.error).toEqual([]);
+    expect(lines.info).toEqual([
+      'validate-contrast: OK — 62 step-9/contrast pairs (31 hues × light/dark) meet ≥ 4.5:1; ' +
+        'lowest plum/light: step-9 #ab4aba vs #fff = 4.75:1.',
+    ]);
+  });
+
+  test('returns 1 on a failing table and names each failing hue, mode and ratio', () => {
+    const { lines, report } = capture();
+    const whiteOrange = (hue: string, mode: 'light' | 'dark') =>
+      hue === 'orange' ? '#fff' : (mode === 'dark' ? PER_HUE_CONTRAST_DARK : PER_HUE_CONTRAST)[hue as 'orange'];
+    expect(main(whiteOrange, report)).toBe(1);
+    expect(lines.info).toEqual([]);
+    expect(lines.error[0]).toBe('validate-contrast: FAIL — 2 contrast violation(s):');
+    expect(lines.error).toContain('  - orange/light: step-9 #f76b15 vs #fff = 2.97:1 — below the 4.5:1 floor.');
+    expect(lines.error).toContain('  - orange/dark: step-9 #f76b15 vs #fff = 2.97:1 — below the 4.5:1 floor.');
+    expect(lines.error.at(-1)).toContain('There is no allowlist (AM-092)');
   });
 });
 

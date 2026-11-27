@@ -147,29 +147,39 @@ export function collectResults(contrast = contrastFor) {
   return { pairs, failures, worst };
 }
 
-function main() {
-  const { pairs, failures, worst } = collectResults();
+/**
+ * Run the C5 gate over `contrast` (line-schemas' contrastFor by default) and
+ * return the process exit code: 0 when every pair meets TEXT_THRESHOLD, naming
+ * the lowest pair through `report.info`; 1 otherwise, naming each failing hue,
+ * mode and ratio through `report.error`. Tests inject a failing table and a
+ * capturing `report`, as verify-peer-ranges.mjs takes its runner.
+ * @param {(hue: string, mode: Mode) => string} [contrast]
+ * @param {{ info: (message: string) => void; error: (message: string) => void }} [report]
+ * @returns {0 | 1}
+ */
+export function main(contrast = contrastFor, report = { info: console.info, error: console.error }) {
+  const { pairs, failures, worst } = collectResults(contrast);
 
   if (failures.length === 0) {
-    console.info(
+    report.info(
       `validate-contrast: OK — ${pairs.length} step-9/contrast pairs (${HUES.length} hues × light/dark) meet ` +
         `≥ ${TEXT_THRESHOLD}:1; lowest ${describePair(worst)}.`,
     );
-    return;
+    return 0;
   }
 
-  process.stderr.write(`\nvalidate-contrast: FAIL — ${failures.length} contrast violation(s):\n`);
+  report.error(`validate-contrast: FAIL — ${failures.length} contrast violation(s):`);
   for (const pair of failures) {
-    process.stderr.write(`  - ${describePair(pair)} — below the ${TEXT_THRESHOLD}:1 floor.\n`);
+    report.error(`  - ${describePair(pair)} — below the ${TEXT_THRESHOLD}:1 floor.`);
   }
-  process.stderr.write(
-    `\nEach (hue × mode) step-9 solid must reach ${TEXT_THRESHOLD}:1 against contrastFor(hue, mode). ` +
+  report.error(
+    `Each (hue × mode) step-9 solid must reach ${TEXT_THRESHOLD}:1 against contrastFor(hue, mode). ` +
       'There is no allowlist (AM-092): fix PER_HUE_CONTRAST or PER_HUE_CONTRAST_DARK in ' +
-      'packages/line-schemas/src/contrast-table.ts and regenerate line-colors.\n',
+      'packages/line-schemas/src/contrast-table.ts and regenerate line-colors.',
   );
-  process.exitCode = 1;
+  return 1;
 }
 
 if (import.meta.main) {
-  main();
+  process.exitCode = main();
 }
