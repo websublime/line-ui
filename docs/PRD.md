@@ -1,15 +1,16 @@
 # line://ui — Product Requirements Specification
 
-**Date:** 2026-11-26
+**Date:** 2026-11-27
 **Author:** Miguel Ramos
 **Status:** APPROVED
-**Version:** 0.8.37
+**Version:** 0.8.38
 **Manifesto:** [`docs/MANIFESTO.md`](./MANIFESTO.md)
 
 ---
 
 ## Revision Notes
 
+- **v0.8.38 (2026-11-27) — The Phase 2 research lands: Input and Textarea slot a native control, Select stays custom, DateInput is pre-built, and every control follows one failure, size and theming contract.** §1.7 progressive enhancement now names Input and Textarea, which take an author's native `<input>` or `<textarea>` in light DOM as their control and work without JavaScript; Select renders a custom listbox on `@zag-js/select`, and a native `<select>` inside `<line-field>` is its no-JavaScript and OS-picker path. §1.7 error handling covers a machine that fails at run time as well as at start, a catch the Phase 2 spec still has to probe; the touch row records Zag's focus-outside gaps for focus moves a pointer did not cause; and the localisation row admits dependency locale data that the consumer can override. §1.6 and §1.7 define the size unit (1 KB = 1,000 B of GNU gzip output, as CI runs it) and add a per-machine weight table beside the component rows. §2.1 and §6.2 describe the opt-in controller start after the first render, which the Phase 2 machines use, and the run-time fallback; §2.1 also corrects Vite 8.3.8's Rolldown range to `~1.2.18`. §4.2 states the slotted control of Input and Textarea and qualifies Input's autofill detection as observed in Chromium only; PasswordInput's tier is settled as Custom in §4.2 and §7.4; DateInput becomes pre-built on `@zag-js/date-input` in both, with locale-aware editable segments where it said "masked" and a time-only mode for the A2UI DateTimeInput; Fieldset wraps an authored native `<fieldset>`; Select keeps "with search", and its search field carries combobox semantics. §7.4 names the v1.0 `line` catalog id and the v1_0 basic id. §7.6 puts DateInput in a field slot of the DatePicker, which keeps a trigger slot whose default content is its own popup button. §5.2.1 keeps the 4.5:1 bar and records the 3:1 gate that a library row brings up to it; §5.3 places the showcase on its own `/theming/` route with a contrast readout. §9.2 and §9.6 take "focus ring" off step 7 and state the WCAG 2.1 SC 1.4.11 3:1 requirement that a token row meets; §9.4 notes the tokens that resolve on `html`. Decisions by Miguel on 2026-11-27, D1–D33 of the row's decision register (ledger row `01-Z29`; record in `docs/context/01-z29.md`, register in `docs/context/01-z29-register.md`); D14 (b), D18 (a), D23 (b) and D32 (b) depart from the register's recommendation, and Miguel then made PasswordInput the form-associated text control of the Phase 2 validating set, which settles its tier as Custom in place of D16's "the Phase 2 spec settles it". At review round 1 the same day Miguel scoped the MANIFESTO Law 5 reading: a component may set standard properties and call standard methods on a native control it adopts from its slot, a host that manages `line-*` children (a group or family host, such as ButtonGroup) may write documented hooks on them, Button may create a transient native submitter, and no component restructures author DOM. He also added a Law 1 reading for adopted author elements, moved DateInput's Zag live region into its shadow root until upstream offers a `root`, and kept the DatePicker's trigger slot. Why: the ten Phase 2 research notes (`docs/research/02-research-*.md`) contradict the PRD, ARCHITECTURE, the MANIFESTO and the Phase 2 plan, and PROCESS §2 returns such research to the plan and the PRD before any spec work (Phase 2 plan §5.7, §10 step 4). Sections touched: header; §1.6; §1.7; §2.1; §4.2; §5.2.1; §5.3; §6.2; §7.4; §7.6; §9.2; §9.4; §9.6; MANIFESTO Laws 1, 5, 7 and 8 and two Out of Scope lines; ARCHITECTURE v0.8.29; Phase 2 plan §1–§11; Phase 1 spec AM-123 (§10 SD29, the opt-in start) and AM-124 (the Phase 00 spec locators); `apps/storybook/stories/theming.mdx:144`, the step-7 alias; the live `docs/PRD.md` locators into the lines this note moves, realigned in the Phase 2 plan and the Phase 1 spec.
 - **v0.8.37 (2026-11-26) — No release calls Anthropic live; the offline subset checks prove Anthropic acceptance, a weaker guarantee.** The §7.3 exit criterion keeps the claim that the emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini, and its proof now rests, for all three providers, on the offline R3 P11 subset checks in CI on every PR. The Anthropic live call before each release that v0.8.34 required is dropped, and the required `release-records` status stops asking the Version PR record for it. The criterion states the residual risk: a later change to a provider's accepted subset goes unnoticed until the checks follow it. For Anthropic the guarantee is weaker than the live call: the arguments a model returns are no longer checked, and the per-request caps are documented, not tested live. Miguel chose this over funding `count_tokens` probes and over a paid live call before each release (decision by Miguel on 2026-11-26, option (b); ledger row `01-Z27`; record in `docs/context/01-z27.md`). Why: the project has no API budget. The account behind the last live call has no credit, and `/v1/messages/count_tokens` refused every request on it before any validation, so it could not stand in; it generates nothing either, so it could never check the returned arguments. Sections touched: §7.3; header; Phase 1 spec AM-122 (§6.G.3, §7.2, §8, §9.2, §10 SD49, §6.P.11 PRD locator); Phase 1 plan header and §7.2; the live `docs/PRD.md` locators into the lines this note moves, realigned in the Phase 2 plan.
 - **v0.8.36 (2026-11-25) — Phase 2 targets A2UI v1.0 beside v0.9.1, the Theming showcase gates the Phase 2 exit, and the SSR/SSG investigation joins the Phase 2 research.** A2UI v1.0 went final on 2026-11-11, which ended the condition "The A2UI renderer is a preview until A2UI v1.0 is final" while `line-genui` still targets v0.9.1. §7.4 now schedules the v1.0 `line` and `basic` catalogs beside v0.9.1, the surface on both protocol versions and the end of the preview at the phase exit, with an exit criterion; principle 6, §2 and Appendix D tie the preview to the package targeting the final v1.0. §2 also drops "A2UI calls itself a public preview", which v1.0 made stale, and keeps the exact pin on the ground that `web_core` still ships breaking changes in minor versions (0.15.0 and 0.16.0, `@a2ui/web_core` CHANGELOG). The §7.4 "Parallel" line becomes an exit criterion: the site's Theming showcase is built with the Phase 2 controls. The SSR/SSG investigation that §1.7 and the comparison table planned "post-Phase 1" runs as a Phase 2 research question, with no exit criterion. Decisions by Miguel at the Phase 2 plan gate on 2026-11-25, forks O3 (b), O5 (b) and O8 (a) of `docs/plans/02-plan-essential-forms.md` (ledger row `01-Z11`). Why: v1.0 changed the form types Phase 2 maps (`@checks`, `ValidationResult`, TextField, Slider) while Gemini and Compose still run v0.9.1; a theme browser is built from exactly the Phase 2 controls, and the Phase 1 landing page found defects before its release; the progressive-enhancement research on Input, Textarea and Select asks the same question as server rendering. Sections touched: header, principle 6, §1.7, §2, the comparison table, §7.4, Appendix D; MANIFESTO principle 8, Out of Scope and its Source line; ARCHITECTURE v0.8.28 (§17.3, §17.7); the Phase 2 plan; the Phase 1 plan Status and Source PRD lines, §2.1 and §3; the Phase 1 spec Status and Source lines, §2 Non-Goals, §4.3 and its PRD locator (AM-117); the site's agent card; live `docs/PRD.md` and `docs/ARCHITECTURE.md` locators outside the pinned component specs, realigned.
 - **v0.8.35 (2026-11-25) — Phase 1 closes.** §7.3 gains a Phase 1 status note that points to the exit record in `docs/retrospective/01-phase-01-retro.md`. Every §7.3 exit criterion, with the Phase 1 plan and spec additions, was evidenced on 2026-11-25 in three slices: commands run once on `main` at `16d3e06`, the files read at that sha, and GitHub Actions, the Version PRs, npm and the deployed URLs. No criterion failed (decision by Miguel on 2026-11-25 that row `01-Z3` closes the phase; record in `docs/context/01-z3.md`). Why: Phase 1 spec §6.Z.2 and AM-115 have the row that writes the retrospective close the phase, as v0.8.14 closed Phase 0. Sections touched: §7.3; header; Phase 1 spec AM-115 (§6.Z.2, §6.P.13, §9, §10 SD87) and AM-116 (Source PRD line, §6.P.11 PRD locator, §9.1 approval check); plan header, §4.0, §4.6, §6, §7 and §10 step 7; the live `docs/PRD.md` locators into the lines this note and the status note move, realigned in component specs `0003`, `0004`, `0006`–`0022` (one AM row each).
@@ -151,7 +152,7 @@ Soft targets (aspirational, not blocking):
 
 | Metric | Target | Notes |
 |--------|--------|-------|
-| Bundle size | < 5KB gzipped per component | Monitored, not blocking |
+| Bundle size | < 5KB gzipped per component | Monitored, not blocking. 1 KB = 1,000 B of GNU gzip output, as CI runs it. The report keeps the component rows (machines external) and adds a per-machine table: each Zag machine's weight over the Zag baseline and its split chunk |
 | Accessibility | axe-core zero violations per component | Hard requirement per component spec |
 | Time-to-first-component | 15 minutes | A new developer can create and render a custom line://ui component within 15 minutes using the docs |
 
@@ -163,14 +164,14 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 |-------------|---------------|
 | Browser support | Chrome, Firefox, Safari — latest 2 stable versions |
 | Accessibility | WCAG 2.1 AA (Zag.js provides this natively for state-machine components) |
-| Bundle size | Soft target < 5KB gzipped per component |
+| Bundle size | Soft target < 5KB gzipped per component (1 KB = 1,000 B; §1.6) |
 | SSR/SSG | Out of scope for Phase 0. The Phase 2 research investigates Astro, Nuxt and Next.js compatibility; it is not a launch blocker |
 | CDN usage | CDN distribution via unpkg and jsdelivr from Phase 1 onwards. The transforming endpoints (jsDelivr `+esm`, esm.unpkg.com) rewrite the bare specifiers of the ESM builds. Raw files keep bare specifiers and need an import map. The Phase 1 spec fixes the CDN contract |
 | i18n — RTL | Supported natively via `dir` attribute |
-| i18n — Localisation | Localisation of component labels (e.g., "Close", "Dismiss") is the consumer's responsibility via slots and attributes |
-| Touch & pointer | All interactive components support both pointer and touch events. Zag.js handles this natively for pre-built machines; custom machines must follow the same pattern |
-| Error handling | Components fail gracefully: if a Zag.js machine fails to initialise, the component renders in a static fallback state. No JavaScript errors thrown to the consumer |
-| Progressive enhancement | Components that wrap native elements (Input, Textarea, Select) remain functional without JavaScript via light DOM fallback where feasible |
+| i18n — Localisation | Localisation of component labels (e.g., "Close", "Dismiss") is the consumer's responsibility via slots and attributes. Locale data that a dependency supplies and the consumer can override, such as date-segment placeholders, is not bundled localisation |
+| Touch & pointer | All interactive components support both pointer and touch events. Zag.js handles this natively for pre-built machines; custom machines must follow the same pattern. Zag's focus-outside tracking is off on touch devices, and while the machine's root node is a shadow root it misses every focus move that a pointer did not cause, though a pointer-down outside still closes the popup (Phase 2 research R4 §2.4). A component spec states its own remedy where it closes a popup on focus-out |
+| Error handling | Components fail gracefully: if a Zag.js machine fails to initialise or run, the component renders in a static fallback state, and a form control's fallback keeps its form value in step with what it shows (ARCHITECTURE §6). No JavaScript errors thrown to the consumer. The run-time catch is not yet probed, and the Phase 2 spec probes it before a component relies on it |
+| Progressive enhancement | Input and Textarea take an author's native `<input>` or `<textarea>` in light DOM as their control, so they work before upgrade and without JavaScript. Select renders a custom listbox and has no light-DOM fallback; a native `<select>` inside `<line-field>` is its no-JavaScript and OS-picker path (MANIFESTO Law 8) |
 
 ---
 
@@ -197,13 +198,13 @@ No npm download or GitHub stars targets at this stage — premature for a pre-la
 
 **Bun** — Faster runtime, faster installs, native workspace support. Replaces Node.js + pnpm. Vite is kept for builds as its library mode with Rolldown is more mature than Bun's bundler for library output.
 
-**Vite 8+ (Rolldown stable as default)** — Vite 8 ships **Rolldown** (Rust-based) as the **default, stable** bundler — Rolldown 1.x is a direct dependency of Vite 8, and Vite 8.3.4 depends on Rolldown `~1.2.12`. This replaces the Rollup-as-default model of earlier Vite versions. Pre-v8, Rolldown was opt-in via `package.json` overrides and **explicitly experimental** (the Vite team warned of breaking changes within patch versions of `rolldown-vite`). Vite 8 promoted Rolldown to default and removed the experimental label. Library mode for Web Components and CSS handling alongside PostCSS both work out of the box. Configuration API is the same as Rollup, so migration from Vite 7 (if a fallback to Rollup were ever needed) is a one-line override.
+**Vite 8+ (Rolldown stable as default)** — Vite 8 ships **Rolldown** (Rust-based) as the **default, stable** bundler — Rolldown 1.x is a direct dependency of Vite 8, and Vite 8.3.8 depends on Rolldown `~1.2.18`. This replaces the Rollup-as-default model of earlier Vite versions. Pre-v8, Rolldown was opt-in via `package.json` overrides and **explicitly experimental** (the Vite team warned of breaking changes within patch versions of `rolldown-vite`). Vite 8 promoted Rolldown to default and removed the experimental label. Library mode for Web Components and CSS handling alongside PostCSS both work out of the box. Configuration API is the same as Rollup, so migration from Vite 7 (if a fallback to Rollup were ever needed) is a one-line override.
 
 **Biome** — Single tool for lint + format. Rust-based, orders of magnitude faster. Replaces ~10 packages: eslint, prettier, eslint-plugin-import, eslint-plugin-unicorn, eslint-config-prettier, etc.
 
 **Zag.js** — Production-ready state machines for 50+ UI patterns. WAI-ARIA accessibility built-in. Keyboard navigation, focus management, all solved. Zag exposes framework-agnostic primitives via the `@zag-js/vanilla` package (`VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`). There is **no first-party Lit adapter** in Zag's monorepo (`packages/frameworks/` contains only `preact`, `react`, `solid`, `svelte`, `vanilla`, `vue`) — we therefore author our own.
 
-**Machine Adapter (`@websublime/line-core/machine`)** — A thin Lit-aware wrapper around `@zag-js/vanilla`, exposed as `LineMachineController` (a `ReactiveController`). It (a) instantiates the Zag machine in `hostConnected` and subscribes to state, calling `host.requestUpdate()` so Lit re-renders on every transition; (b) tears down the subscription in `hostDisconnected` for deterministic cleanup; (c) catches start-up failures and renders a static fallback (Manifesto Law 9) instead of throwing; (d) re-exports `normalizeProps`, `spreadProps`, `mergeProps`, `VanillaMachine` and the type `Attrs` from `@zag-js/vanilla`, so components have a single import surface. Components consume only `@websublime/line-core/machine` — they never import `@zag-js/vanilla` directly. This is a single point of maintenance for any future Zag API change. (Note: `bindable` is **not** publicly exported by `@zag-js/vanilla` — it is an internal Zag pattern available **inside** machine configs via the `context({ bindable })` callback argument, not via import. Components do not need to import it.)
+**Machine Adapter (`@websublime/line-core/machine`)** — A thin Lit-aware wrapper around `@zag-js/vanilla`, exposed as `LineMachineController` (a `ReactiveController`). It (a) instantiates the Zag machine in `hostConnected`, or after the host's first render for a component that opts in, as every Phase 2 machine does (ARCHITECTURE §6), and subscribes to state, calling `host.requestUpdate()` so Lit re-renders on every transition; (b) tears down the subscription in `hostDisconnected` for deterministic cleanup; (c) catches start-up and run-time failures and renders a static fallback (Manifesto Law 9) instead of throwing; (d) re-exports `normalizeProps`, `spreadProps`, `mergeProps`, `VanillaMachine` and the type `Attrs` from `@zag-js/vanilla`, so components have a single import surface. Components consume only `@websublime/line-core/machine` — they never import `@zag-js/vanilla` directly. This is a single point of maintenance for any future Zag API change. (Note: `bindable` is **not** publicly exported by `@zag-js/vanilla` — it is an internal Zag pattern available **inside** machine configs via the `context({ bindable })` callback argument, not via import. Components do not need to import it.)
 
 **Foundation Tokens (`line-tokens`)** — Non-colour primitives, split into two tiers (18 families total) plus a baseline reset:
 
@@ -274,17 +275,17 @@ Each component has a product-level description below and a detailed technical sp
 
 | Component | Tier | Description | Spec |
 |-----------|------|-------------|------|
-| Input | Custom | Text input for email, tel, url, and plain text. Detects autofill | [spec](./specs/0023-input.md) |
-| PasswordInput | Custom | Password field with built-in visibility toggle. `@zag-js/password-input` is a pre-built machine; the Phase 2 spec settles the tier | [spec](./specs/0024-password-input.md) |
+| Input | Custom | Text input for email, tel, url, and plain text around an author's native `<input>`, which stays the form control. Detects autofill (observed in Chromium only; the Phase 2 spec verifies Firefox and WebKit before the claim holds there) | [spec](./specs/0023-input.md) |
+| PasswordInput | Custom | Password field with built-in visibility toggle, on a custom machine. The tier was settled on 2026-11-27 (ledger row `01-Z29`), so the pre-built `@zag-js/password-input` is not used | [spec](./specs/0024-password-input.md) |
 | SearchInput | Custom | Text input with built-in clear action | [spec](./specs/0025-search-input.md) |
-| DateInput | Custom | Masked date field with segment navigation. No popup. `@zag-js/date-input` is a pre-built machine; the Phase 2 spec settles the tier | [spec](./specs/0026-date-input.md) |
-| Textarea | Custom | Multi-line text input with optional auto-resize | [spec](./specs/0027-textarea.md) |
+| DateInput | Pre-built | Date field on `@zag-js/date-input`: locale-aware editable segments with segment navigation, and a time-only mode for the A2UI DateTimeInput. No popup | [spec](./specs/0026-date-input.md) |
+| Textarea | Custom | Multi-line text input around an author's native `<textarea>`, which stays the form control, with optional auto-resize | [spec](./specs/0027-textarea.md) |
 | Field | Custom | Orchestrates label, hint, error, and required indicator for any control | [spec](./specs/0028-field.md) |
-| Fieldset | Static | Semantic grouping of related controls with legend and disabled propagation | [spec](./specs/0029-fieldset.md) |
+| Fieldset | Static | Semantic grouping of related controls with legend and disabled propagation, around an authored native `<fieldset>` that carries both | [spec](./specs/0029-fieldset.md) |
 | Checkbox | Pre-built | Binary or indeterminate selection control | [spec](./specs/0030-checkbox.md) |
 | Radio Group | Pre-built | Single selection from a set of options | [spec](./specs/0031-radio-group.md) |
 | Switch | Pre-built | Toggle between two states (on/off) | [spec](./specs/0032-switch.md) |
-| Select | Pre-built | Dropdown with search, groups, and keyboard navigation | [spec](./specs/0033-select.md) |
+| Select | Pre-built | Dropdown with search, groups, and keyboard navigation. The search field carries combobox semantics | [spec](./specs/0033-select.md) |
 | Toggle Group | Pre-built | Exclusive or multi-selection between segmented options | [spec](./specs/0034-toggle-group.md) |
 | Slider | Pre-built | Single-value selection along a range | [spec](./specs/0035-slider.md) |
 | Number Input | Pre-built | Numeric input with increment/decrement controls | [spec](./specs/0036-number-input.md) |
@@ -553,7 +554,7 @@ The design system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-
 | Test Category | Tool / Approach | What it validates |
 |---------------|----------------|-------------------|
 | Build-time token validation | PostCSS plugin or build script | Cross-references all `var()` usage in source CSS against declared tokens in `line-tokens`, `line-colors/src/*.css`, and `line-themes/src/**/*.css`. Fails the build if any token is referenced but undefined. |
-| Build-time contrast validation | Automated WCAG AA checker | Verifies 4.5:1 minimum contrast for the 31 hues x relevant role pairs (solid step 9 vs contrast text, background vs high-contrast text, etc.) x light/dark mode. Runs against generated CSS values. |
+| Build-time contrast validation | Automated WCAG AA checker | Verifies 4.5:1 minimum contrast for the 31 hues x relevant role pairs (solid step 9 vs contrast text, background vs high-contrast text, etc.) x light/dark mode. Runs against generated CSS values. The shipped gate checks only the solid pair, at 3:1 with an orange allowlist (Phase 00 spec AM-014), and the primary label on that pair is below 4.5:1 for 34 of 62 hue × mode pairs (Phase 2 research R10 §2.5). A library row brings normal-size labels to 4.5:1; until then the Theming showcase shows a computed contrast readout (§5.3). |
 | Schema validation tests | Bun test + Zod | Verifies that `HUES`, `ACCENT_HUES`, `GRAY_HUES`, and `SEMANTIC_MAP` in `line-schemas` parse cleanly and enumerations match the CSS files generated in `line-themes`. The schemas are the source-of-truth; CI fails on drift. |
 | Token parity tests | Bun test assertions | Verifies that every palette token uses `light-dark()` with both a light and dark value in a single declaration. The contrast tokens are single static values, not `light-dark()` pairs. |
 | Auto-pair default tests | Playwright browser tier (chromium, firefox, webkit) on the built `line-colors` and `line-themes` CSS | With no `data-accent` and no `data-gray`, the accent role is indigo and the gray role is slate. For each of the 31 accents, `data-accent` alone sits on `<html>` or on a scope whose parent sets a different gray, and the gray role equals the documented auto-pair gray (§9.5 table). An explicit `data-gray` wins over the auto pair. A nested scope with only `data-accent`, under a parent whose gray differs from its pair, takes its own auto pair (§9.5 "Auto-pair in nested scopes"). Each check compares the 12 steps, the 12 alpha steps and the contrast token with the expected hue, computed on the same page in the same engine, and every value read is non-empty. Removing any auto-pair rule fails CI. |
@@ -582,7 +583,7 @@ The design system packages (`line-tokens`, `line-colors`, `line-schemas`, `line-
 | Landing page | Value proposition, hero, features |
 | Docs | Per-component documentation with curated examples |
 | Getting started | Installation, quick start, theming |
-| Theming showcase | Interactive theme browser section on the site |
+| Theming showcase | Interactive theme browser on its own `/theming/` route: a scoped preview driven by the Phase 2 controls, with a computed contrast readout per role pair |
 | Changelog | Release notes (auto-generated via Changesets) |
 | Storybook link | Link to deployed Storybook |
 
@@ -688,7 +689,7 @@ src/ → Vite library mode → dist/
 
 The `./styles` subpath is consumed exclusively by components (each component imports only the reset sheets it needs via `static styles`). Consumers do **not** import `@websublime/line-core/styles` directly — these are shadow-DOM internal resets, distinct from the consumer-side light-DOM reset at `@websublime/line-tokens/reset` (see §9.9 and ARCHITECTURE §14.2 for the two-reset distinction).
 
-The `./machine` subpath exports the **`LineMachineController`** (Lit `ReactiveController`) that wraps `@zag-js/vanilla`. Components instantiate this controller in their constructor and the controller drives Lit's reactivity (`requestUpdate()` on each machine state transition) and lifecycle (machine started on `hostConnected`, stopped on `hostDisconnected`). The subpath also re-exports `normalizeProps`, `spreadProps`, `mergeProps` and `VanillaMachine` from `@zag-js/vanilla`, with the type `Attrs`, so component authors have a single import surface (`@websublime/line-core/machine`). It leaves out `toStyleString`, which `@zag-js/vanilla` has exported since 1.44.0. The `bindable` factory is **not** re-exported because `@zag-js/vanilla` does not publicly export it — it is provided to machine configs through the `context({ bindable })` callback argument and is used only inside those configs. **No component should import `@zag-js/vanilla` directly** — the adapter is the single point of maintenance for Zag API changes and the home of the Manifesto Law 9 fallback (failed machine → static render, no uncaught error).
+The `./machine` subpath exports the **`LineMachineController`** (Lit `ReactiveController`) that wraps `@zag-js/vanilla`. Components instantiate this controller in their constructor and the controller drives Lit's reactivity (`requestUpdate()` on each machine state transition) and lifecycle (machine started on `hostConnected`, or after the first render for a component that opts in, and stopped on `hostDisconnected`). The subpath also re-exports `normalizeProps`, `spreadProps`, `mergeProps` and `VanillaMachine` from `@zag-js/vanilla`, with the type `Attrs`, so component authors have a single import surface (`@websublime/line-core/machine`). It leaves out `toStyleString`, which `@zag-js/vanilla` has exported since 1.44.0. The `bindable` factory is **not** re-exported because `@zag-js/vanilla` does not publicly export it — it is provided to machine configs through the `context({ bindable })` callback argument and is used only inside those configs. **No component should import `@zag-js/vanilla` directly** — the adapter is the single point of maintenance for Zag API changes and the home of the Manifesto Law 9 fallback (a machine that fails at start or at run time → static render, no uncaught error).
 
 **Icons package (`@websublime/line-icons`):**
 
@@ -956,7 +957,7 @@ Button, Icon, Stack and Separator ship first and validate the stream, which adds
 | Input | Custom |
 | PasswordInput | Custom |
 | SearchInput | Custom |
-| DateInput | Custom |
+| DateInput | Pre-built |
 | Textarea | Custom |
 | Field | Custom |
 | Fieldset | Static |
@@ -971,7 +972,7 @@ Button, Icon, Stack and Separator ship first and validate the stream, which adds
 
 **15 components.** First substantial Zag.js integration in forms — both pre-built and custom machines applied at scale. Validates machine + Lit + parts pattern in form contexts. Validates Field orchestration, formAssociated integration, and the slot/part decision rule for internal elements (toggle, clear, increment).
 
-**A2UI v1.0.** A2UI v1.0 went final on 2026-11-11. `line-genui` emits the `line` and `basic` catalogs for v1.0 beside v0.9.1, `<line-a2ui-surface>` renders both protocol versions, and the Phase 2 basic types (TextField, CheckBox, ChoicePicker, Slider, DateTimeInput) map on both. `@websublime/line-genui/a2ui` and `@websublime/line-icons/a2ui` leave preview at the phase exit (Appendix D).
+**A2UI v1.0.** A2UI v1.0 went final on 2026-11-11. `line-genui` emits the `line` and `basic` catalogs for v1.0 beside v0.9.1, `<line-a2ui-surface>` renders both protocol versions, and the Phase 2 basic types (TextField, CheckBox, ChoicePicker, Slider, DateTimeInput) map on both. The v1.0 `line` catalog takes its own catalog id, and the v1.0 basic implementation registers under the v1_0 basic catalog id (ARCHITECTURE §17.3). `@websublime/line-genui/a2ui` and `@websublime/line-icons/a2ui` leave preview at the phase exit (Appendix D).
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -1035,7 +1036,7 @@ Button, Icon, Stack and Separator ship first and validate the stream, which adds
 | Mention Input | Custom |
 | Search Field | Custom |
 
-**13 components.** The most complex in the catalogue. DatePicker composes with DateInput (Phase 2) as optional trigger.
+**13 components.** The most complex in the catalogue. DatePicker composes with DateInput (Phase 2), which it takes in a field slot; the DatePicker keeps a trigger slot whose default content is its own popup button.
 
 **Exit criteria:**
 - All listed components pass the 8-point test checklist (§5.2)
@@ -1287,7 +1288,7 @@ The colour system is **faithful to Radix Colors 3.x**, not a custom 28-palette r
 | 4 | UI element background hover |
 | 5 | UI element background active |
 | 6 | Subtle borders / separators |
-| 7 | UI element border / focus ring |
+| 7 | UI element border |
 | 8 | UI element border hover |
 | 9 | Solid backgrounds (primary action) |
 | 10 | Solid hover |
@@ -1295,7 +1296,7 @@ The colour system is **faithful to Radix Colors 3.x**, not a custom 28-palette r
 | 12 | High-contrast text |
 | `contrast` | Foreground colour for text on step-9 solid (separate token) |
 
-The 12 functional roles are Radix-standard; light and dark step values are independently crafted by Radix, not algorithmic inversions.
+The 12 functional roles are Radix-standard; light and dark step values are independently crafted by Radix, not algorithmic inversions. The focus ring takes no fixed step: it meets WCAG 2.1 SC 1.4.11, 3:1 against adjacent colours, and a `line-tokens` focus-ring row sets the step that meets it, measured over every accent × gray × mode combination as Phase 2 research R10 §2.5 measures (the shipped `--line-accent-8` is below 3:1 on `--line-gray-1` in 196 of 372 combinations).
 
 **Light/dark in the palette via `light-dark()`:**
 
@@ -1366,7 +1367,7 @@ Themes are **not entities**. A "theme" is the pair `(accent, gray)` chosen via t
 <aside data-accent="crimson" data-gray="mauve">...</aside>
 ```
 
-Because `accent` and `gray` are independently namespaced (`--line-accent-*` vs `--line-gray-*`), **multiple colour contexts can coexist on the same page** without conflict.
+Because `accent` and `gray` are independently namespaced (`--line-accent-*` vs `--line-gray-*`), **multiple colour contexts can coexist on the same page** without conflict. The focus-ring colour and the gradient, highlight and SVG tokens resolve on `html` (§9.12), so they keep the page accent inside a nested `data-accent` scope; a scoped preview such as the Theming showcase recomposes the focus ring on its scope.
 
 ### 9.5 Defaults & Auto-Pairing
 
@@ -1421,7 +1422,7 @@ On top of the numeric API, `line-themes` exposes **9 named aliases per role** �
 | `--line-{role}-bg` | step 3 | UI element background |
 | `--line-{role}-bg-hover` | step 4 | UI element hover |
 | `--line-{role}-bg-active` | step 5 | UI element active/pressed |
-| `--line-{role}-border` | step 7 | UI element border / focus ring |
+| `--line-{role}-border` | step 7 | UI element border |
 | `--line-{role}-solid` | step 9 | Primary solid (e.g. solid button bg) |
 | `--line-{role}-solid-hover` | step 10 | Solid hover |
 | `--line-{role}-text-low` | step 11 | Low-contrast text |

@@ -2,7 +2,7 @@
 
 **Status:** APPROVED
 **Date:** 2026-05-19
-**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming). Revised 2026-10-07 with PRD v0.8.6 to add Principle 8 (agent-ready components and agent-driven UI). Revised 2026-10-12 with PRD v0.8.15 to restate Law 7 after the HTMX spike (ledger row `00-Z17`). Revised 2026-11-25 with PRD v0.8.36 to tie the Principle 8 preview to the renderer targeting the final A2UI v1.0 and to move the SSR/SSG investigation into Phase 2 (ledger row `01-Z11`).
+**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming). Revised 2026-10-07 with PRD v0.8.6 to add Principle 8 (agent-ready components and agent-driven UI). Revised 2026-10-12 with PRD v0.8.15 to restate Law 7 after the HTMX spike (ledger row `00-Z17`). Revised 2026-11-25 with PRD v0.8.36 to tie the Principle 8 preview to the renderer targeting the final A2UI v1.0 and to move the SSR/SSG investigation into Phase 2 (ledger row `01-Z11`). Revised 2026-11-27 with PRD v0.8.38 to restate Laws 1, 5, 7 and 8 and the localisation and Node runtime lines of Out of Scope after the Phase 2 research (ledger row `01-Z29`).
 
 This manifesto is the foundation that the PRD, the architecture, and every downstream decision must align with. If a design or task contradicts a Governing Law below, the design is wrong — not the law.
 
@@ -36,7 +36,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 ## Governing Laws
 
-1. **Every styleable zone exposes a `::part()`.** A consumer must be able to retheme any visible surface without forking the component. Hidden internal nodes are never decorative.
+1. **Every styleable zone exposes a `::part()`.** A consumer must be able to retheme any visible surface without forking the component. Hidden internal nodes are never decorative. The Law covers the zones a component renders; author elements a component adopts from its slot, such as `input`, `textarea`, `fieldset` and `legend`, are styled directly by consumer CSS.
 
 2. **All public surface we author is `line-*` prefixed.** Tag names (`<line-button>`), CSS custom properties (`--line-*`), and base classes (`LineElement`). Standard HTML hooks (`data-*` for theme switching such as `data-accent` and `data-gray`, ARIA, etc.) follow web conventions and are exempt. No exceptions otherwise, no shadowing of host names.
 
@@ -44,13 +44,13 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 4. **Composition over inheritance, slots over props for content.** A Component MUST NOT import another Component to compose its children. Slots and the orchestrator pattern are the only acceptable wiring.
 
-5. **State machines own logic. Lit owns DOM. CSS owns visuals.** No business logic in render, no styles in TypeScript, no DOM mutation outside Lit's reactive cycle.
+5. **State machines own logic. Lit owns DOM. CSS owns visuals.** No business logic in render, no styles in TypeScript, no DOM mutation outside Lit's reactive cycle. A machine's effects inside its component's own tree belong to that component's cycle. On author-supplied light DOM, a component may set standard properties and call standard methods on a native control it adopts from its slot (such as `value`, `setCustomValidity`, ARIA reflection properties and its height); an orchestrator may set ARIA reflection properties on the controls it orchestrates; a host that manages `line-*` children (a group or family host) may write documented hooks on them (such as ButtonGroup's roving `tabindex` and position); and Button may create a transient native submitter that it removes in the same task. No component restructures author DOM, and no component appends a node to `document.body`.
 
 6. **Bundle isolation: a button must not drag in a dialog.** Each component is independently importable via subpath exports — `@websublime/line-components/button`, `@websublime/line-components/dialog`, etc. — published under a single umbrella package with one version and one changelog. Component files are side-effecting only by `customElements.define()`, so importing one component never executes another. Families share a subpath only when their slots make them inseparable.
 
-7. **Form participation is opt-in via `FormAssociated` mixin and `ElementInternals`.** No bespoke form integration; native `<form>` semantics is the only contract.
+7. **Form participation is opt-in, through the `FormAssociated` mixin and `ElementInternals` or through an author's native control slotted in light DOM.** No bespoke form integration; native `<form>` semantics is the only contract. A component that reproduces the HTML implicit-submission algorithm stays within native semantics.
 
-8. **Progressive enhancement is preserved where the underlying native element supports it.** Components that wrap native controls (Input, Textarea, Select) remain functional in light DOM fallback when feasible.
+8. **Progressive enhancement is preserved where the underlying native element supports it.** Input and Textarea take an author's native `<input>` or `<textarea>` in light DOM as their control, so they work before upgrade and without JavaScript. Select renders a custom listbox; a native `<select>` inside `<line-field>` is its no-JavaScript and OS-picker path.
 
 9. **Failures are graceful.** A failed Zag.js machine renders the component in a static fallback state. Components never throw uncaught errors at the consumer.
 
@@ -63,9 +63,9 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 - **Framework-specific bindings or adapters.** No React wrappers, no Vue plugins, no Svelte stores. Web Components is the contract; framework integration belongs to the consumer. Protocol renderers such as the A2UI renderer are not framework adapters. They ship as opt-in packages outside `line-components` and render the same custom elements.
 - **Opinionated default styling in the core package.** Visual themes ship as a separate, optional package. The core renders unstyled by design.
 - **SSR/SSG as a v1 hard requirement.** Investigation for Astro / Nuxt / Next.js compatibility is a Phase 2 research question; it is not a launch blocker.
-- **Localisation of component-level strings.** Labels like "Close", "Dismiss", "Loading" are the consumer's responsibility via slots and attributes. No bundled i18n.
+- **Localisation of component-level strings.** Labels like "Close", "Dismiss", "Loading" are the consumer's responsibility via slots and attributes. No bundled i18n. Locale data that a dependency supplies and the consumer can override, such as date-segment placeholders, is not bundled i18n.
 - **Visual overrides via inline `style` attribute as a primary API.** `::part()` and `--line-*` custom properties are the supported surfaces. Inline styles are not extended.
-- **Node.js / non-browser runtime targets.** Components target Chrome / Firefox / Safari (latest 2 stable). No Node DOM polyfill story.
+- **Node.js / non-browser runtime targets.** Components target Chrome / Firefox / Safari (latest 2 stable). No Node DOM polyfill story. A consumer that server-renders components under its own DOM shim is not a polyfill story either.
 - **Custom build tooling, custom test runners, custom linters.** The stack is Bun + Vite (Rolldown) + Biome. Replacements require an architectural justification, not a preference.
 
 ---
