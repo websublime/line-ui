@@ -2,7 +2,7 @@
 
 **Row:** `01-Z16` (Phase 2 plan §5.1 R1; §5.2, §5.3; decisions O1, O4)
 **Date:** 2026-11-26
-**Repo sources** (locators at `origin/main` `9c9b1f4`): `docs/plans/02-plan-essential-forms.md` §1, §2.1, §2.3, §5.1 R1, §5.2, §5.3, §5.5, §5.7, §8; `docs/PRD.md` (v0.8.36) §1.7; `docs/ARCHITECTURE.md` (v0.8.28) §6, §7, §8, §9, §12, §15.1, §17.2; `docs/MANIFESTO.md` Laws 4, 5, 7, 9; `docs/specs/01-spec-core-primitives.md` §6.C.7, §10 SD29; `docs/research/01-research-zag-machines.md`; `packages/line-core/src/machine/line-machine-controller.ts`, `packages/line-core/src/form-associated.ts`, `packages/line-core/src/mixins/direction.ts`, `packages/line-components/src/chip/chip.ts`
+**Repo sources** (locators at `origin/main` `9c9b1f4`): `docs/plans/02-plan-essential-forms.md` §1, §2.1, §2.3, §5.1 R1, §5.2, §5.3, §5.5, §5.7, §8; `docs/PRD.md` (v0.8.36) §1.7; `docs/ARCHITECTURE.md` (v0.8.28) §6, §7, §8, §9, §12, §15.1, §17.2; `docs/MANIFESTO.md` Laws 4, 5, 7, 9; `docs/specs/01-spec-core-primitives.md` §6.C.7, §10 SD29; `docs/research/01-research-zag-machines.md`; `packages/line-core/src/machine/line-machine-controller.ts`, `packages/line-core/src/form-associated.ts`, `packages/line-core/src/mixins/direction.ts`, `packages/line-components/src/chip/chip.ts`. Corrected 2026-11-27 (row 01-Z29): the `docs/PRD.md` locators here resolve at PRD v0.8.36 (`9c9b1f4`); PRD v0.8.37 and v0.8.38 each add one revision-note line, so at v0.8.38 every cited line after the revision notes sits two lines further down.
 **Toolchain baseline (row 01-Z14):** Zag 1.49.0 (every `@zag-js/*` package below), Lit 3.3.3, Bun 1.4.5, Playwright 1.65.1 with Chromium 159.0.8154.6, Firefox 159.0 and WebKit 27.2 build 2388; Node 22.23.5 on the host; macOS 27.2.1 arm64. Linux WebKit ran in `mcr.microsoft.com/playwright:v1.65.1-noble` (§3.1).
 **Status:** Evidence. Research carries no rules (`docs/PROCESS.md` §1). Recommendations are marked "(recommended)"; every decision is an open question in §7.
 
@@ -17,7 +17,7 @@
 > - **Number Input submits its formatted string.** In light DOM the `de-DE` input submits `12.345,00`. The machine also parses `defaultValue` with the locale, so `"1234.5"` becomes 12 345 under `de-DE`. `valueAsNumber` from `onValueChange` is the machine-readable value (P14).
 > - **Toggle Group has no native input.** `setFormValue(FormData)` submits repeated entries in all four builds, even when the host has no `name` (P4, P11). Slotted toggle items are invisible to the machine's DOM queries, so roving focus dies. Radios in separate shadow roots do not form one group (P3, P11).
 > - **Static fallback covers start failures only.** A machine that throws at start renders the fallback with no uncaught error. An action that throws at run time is an uncaught page error, the controller stays out of fallback, and the native checkbox and the form value disagree (P5, P6).
-> - **RTL and touch.** With `dir` from the host, slider pointer input and arrow keys and toggle-group arrow keys mirror correctly. Touch taps drive the slider and the number-input stepper (P11–P15). Linux WebKit differs from macOS WebKit in one way that matters: it focuses a button on mouse-down, so a re-render that replaces the node under the pointer cancels the click (P17).
+> - **RTL and touch.** With `dir` from the host, slider pointer input and arrow keys and toggle-group arrow keys mirror correctly. Touch taps drive the slider and the number-input stepper (P11–P15). Linux WebKit differs from macOS WebKit in one way that matters: it focuses a button on mouse-down, so a re-render that replaces the node under the pointer cancels the click (P17). Corrected 2026-11-27 (row 01-Z29): R4 probe P9 shows that WebKit drops the click on macOS as well as on Linux whenever a render replaces the pressed node before mouseup; only Linux triggered that re-render here, because only Linux focuses the button on mouse-down (`docs/research/02-research-select.md` TL;DR, §2.7).
 
 ---
 
@@ -241,7 +241,7 @@ zag#3088 ("onFocusOutside is not detected properly in a shadow root", opened by 
 `not_planned` with the `stale` label and an automated inactivity message on 2026-05-29) reports that focus moving between
 two elements of the same shadow root does not close a popover or menu. After the close the reporter commented that the bug
 persists and that a third-party draft PR carries the patch from the issue, which moves the `composedPath()` read out of
-the deferred callback and adds a `focusin` listener on the shadow root.
+the deferred callback and adds a `focusin` listener on the shadow root. Corrected 2026-11-27 (row 01-Z29): that PR, #3093, stayed a draft and was closed unmerged on 2026-08-11, so no PR carries the patch (`docs/research/02-research-select.md` §2.4).
 
 Two causes keep the Select open, one for each focus move:
 
@@ -415,7 +415,7 @@ up each item by id (`select.dom.mjs`). P3 and P11, all four builds:
   (P3: the clicked radio is focused on Linux and not on macOS; P17: the Select trigger). When the probe's Select rewrote
   its trigger text on every render, the focus-driven re-render replaced the node under the pointer between `pointerdown`
   and `pointerup`. Linux WebKit then fired no `click`, and the Select did not open. The other three builds opened it
-  (P17). With the text written only on change, Linux WebKit behaved like the others (P16).
+  (P17). With the text written only on change, Linux WebKit behaved like the others (P16). Corrected 2026-11-27 (row 01-Z29): the click loss itself is not Linux-only; R4 probe P9 drops the click in macOS WebKit too when a render replaces the pressed node before mouseup (`docs/research/02-research-select.md` §2.7).
 - PRD §1.7 says "Zag.js handles this natively for pre-built machines; custom machines must follow the same pattern"
   (`docs/PRD.md:170`). The probes agree for the pre-built machines.
 
