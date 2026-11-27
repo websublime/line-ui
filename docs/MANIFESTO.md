@@ -2,7 +2,7 @@
 
 **Status:** APPROVED
 **Date:** 2026-05-19
-**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming). Revised 2026-10-07 with PRD v0.8.6 to add Principle 8 (agent-ready components and agent-driven UI). Revised 2026-10-12 with PRD v0.8.15 to restate Law 7 after the HTMX spike (ledger row `00-Z17`). Revised 2026-11-25 with PRD v0.8.36 to tie the Principle 8 preview to the renderer targeting the final A2UI v1.0 and to move the SSR/SSG investigation into Phase 2 (ledger row `01-Z11`). Revised 2026-11-27 with PRD v0.8.38 to restate Laws 5, 7 and 8 and the localisation and Node runtime lines of Out of Scope after the Phase 2 research (ledger row `01-Z29`).
+**Source:** Distilled from PRD v0.7.0 §1 (Vision, Positioning, Core Principles, Non-Functional Requirements) and README "What makes it different". Revised 2026-05-19 to reflect the realigned design system (5-layer package model, attribute-based theming). Revised 2026-10-07 with PRD v0.8.6 to add Principle 8 (agent-ready components and agent-driven UI). Revised 2026-10-12 with PRD v0.8.15 to restate Law 7 after the HTMX spike (ledger row `00-Z17`). Revised 2026-11-25 with PRD v0.8.36 to tie the Principle 8 preview to the renderer targeting the final A2UI v1.0 and to move the SSR/SSG investigation into Phase 2 (ledger row `01-Z11`). Revised 2026-11-27 with PRD v0.8.38 to restate Laws 1, 5, 7 and 8 and the localisation and Node runtime lines of Out of Scope after the Phase 2 research (ledger row `01-Z29`).
 
 This manifesto is the foundation that the PRD, the architecture, and every downstream decision must align with. If a design or task contradicts a Governing Law below, the design is wrong — not the law.
 
@@ -36,7 +36,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 ## Governing Laws
 
-1. **Every styleable zone exposes a `::part()`.** A consumer must be able to retheme any visible surface without forking the component. Hidden internal nodes are never decorative.
+1. **Every styleable zone exposes a `::part()`.** A consumer must be able to retheme any visible surface without forking the component. Hidden internal nodes are never decorative. The Law covers the zones a component renders; author elements a component adopts from its slot, such as `input`, `textarea`, `fieldset` and `legend`, are styled directly by consumer CSS.
 
 2. **All public surface we author is `line-*` prefixed.** Tag names (`<line-button>`), CSS custom properties (`--line-*`), and base classes (`LineElement`). Standard HTML hooks (`data-*` for theme switching such as `data-accent` and `data-gray`, ARIA, etc.) follow web conventions and are exempt. No exceptions otherwise, no shadowing of host names.
 
@@ -44,7 +44,7 @@ This manifesto is the foundation that the PRD, the architecture, and every downs
 
 4. **Composition over inheritance, slots over props for content.** A Component MUST NOT import another Component to compose its children. Slots and the orchestrator pattern are the only acceptable wiring.
 
-5. **State machines own logic. Lit owns DOM. CSS owns visuals.** No business logic in render, no styles in TypeScript, no DOM mutation outside Lit's reactive cycle. A machine's effects inside its component's own tree belong to that component's cycle. On author-supplied light DOM, only an orchestrator writes, and only ARIA reflection properties, never attributes. No component appends a node to `document.body`.
+5. **State machines own logic. Lit owns DOM. CSS owns visuals.** No business logic in render, no styles in TypeScript, no DOM mutation outside Lit's reactive cycle. A machine's effects inside its component's own tree belong to that component's cycle. On author-supplied light DOM, a component may set standard properties and call standard methods on a native control it adopts from its slot (such as `value`, `setCustomValidity`, ARIA reflection properties and its height); an orchestrator may set ARIA reflection properties on the controls it orchestrates; a family host may write documented hooks on the `line-*` children it manages (such as a roving `tabindex` and position); and Button may create a transient native submitter that it removes in the same task. No component restructures author DOM, and no component appends a node to `document.body`.
 
 6. **Bundle isolation: a button must not drag in a dialog.** Each component is independently importable via subpath exports — `@websublime/line-components/button`, `@websublime/line-components/dialog`, etc. — published under a single umbrella package with one version and one changelog. Component files are side-effecting only by `customElements.define()`, so importing one component never executes another. Families share a subpath only when their slots make them inseparable.
 

@@ -1,6 +1,6 @@
 # PHASE PLAN: Phase 02 — Essential Forms
 
-**Status:** APPROVED — Miguel at the plan gate on 2026-11-25 (row 01-Z11), after the plan↔PRD lens passed in round 2. Miguel resolved O1–O8 (§5.4, §11). Row 01-Z13 landed the O6 (c) locator policy (#366), and PRD v0.8.36, ARCHITECTURE v0.8.28 and the MANIFESTO revision of 2026-11-25 land the decisions that O3 (b), O5 (b) and O8 (a) need, in one commit with this plan (§10). Row 01-Z27 on 2026-11-26 realigns the live `docs/PRD.md` locators by one line to PRD v0.8.37, whose revision note moves them (Source PRD line). Row 01-Z29 on 2026-11-27 revises §1–§11 to the post-research decisions D1–D33 (§5.6) and closes the §5.7 gaps, with PRD v0.8.38, ARCHITECTURE v0.8.29 and the MANIFESTO revision of 2026-11-27 in one commit (§10 step 4).
+**Status:** APPROVED — Miguel at the plan gate on 2026-11-25 (row 01-Z11), after the plan↔PRD lens passed in round 2. Miguel resolved O1–O8 (§5.4, §11). Row 01-Z13 landed the O6 (c) locator policy (#366), and PRD v0.8.36, ARCHITECTURE v0.8.28 and the MANIFESTO revision of 2026-11-25 land the decisions that O3 (b), O5 (b) and O8 (a) need, in one commit with this plan (§10). Row 01-Z27 on 2026-11-26 realigns the live `docs/PRD.md` locators by one line to PRD v0.8.37, whose revision note moves them (Source PRD line). Row 01-Z29 on 2026-11-27 revises §1–§11 to the post-research decisions D1–D33 (§5.6) and closes the §5.7 gaps, with PRD v0.8.38, ARCHITECTURE v0.8.29 and the MANIFESTO revision of 2026-11-27 in one commit (§10 step 4); its review round 1 the same day adds Miguel's Law 5 scope, the Law 1 reading, the DateInput live-region move and the DatePicker trigger slot, and lists his actions outside the documents (§10.1).
 **Author:** line://ui orchestrator (row 01-Z11)
 **Date:** 2026-11-25
 **Phase Version Target:** `line://ui` v0.3.0 (also called "Phase 2" in the PRD)
@@ -30,7 +30,7 @@ Two facts shape the phase more than the component count.
    methods and declares the lifecycle callbacks, but it implements no value, default value, reset, restore, disabled
    or constraint validation (`packages/line-core/src/form-associated.ts:76-125`). On a form-associated custom
    element, `required`, `pattern` and `minlength` take effect only through `setValidity`, as ARCHITECTURE §7 now
-   states (`docs/ARCHITECTURE.md:408`). Eleven of the 15 components are form-associated (ARCHITECTURE §7, `:417`);
+   states (`docs/ARCHITECTURE.md:415`). Eleven of the 15 components are form-associated (ARCHITECTURE §7, `:424`);
    Input and Textarea take an author's native control slotted in light DOM, and Field and Fieldset are not form
    controls. Either each of the eleven builds this contract or one shared layer does (O1).
 2. **Zag's form wiring does not reach a light-DOM form from a shadow root.** Most Phase 2 pre-built machines carry
@@ -97,16 +97,16 @@ PRD §7.4 lists what the phase validates.
 
 - Field connects a label, a hint, an error and a required indicator to any slotted control, native or line, never
   imports it, and reflects `data-focused`, `data-filled`, `data-error`, `data-disabled`, `data-readonly` and
-  `data-required` (ARCHITECTURE §9, `docs/ARCHITECTURE.md:489-513`; MANIFESTO Law 4).
+  `data-required` (ARCHITECTURE §9, `docs/ARCHITECTURE.md:496-520`; MANIFESTO Law 4).
 - Its state comes from explicit props first, then native events and a re-read of `validity` for any control, then a
-  line control's validity-change event for changes no user event signals (ARCHITECTURE §9, `:497-500`; D11). A line
+  line control's validity-change event for changes no user event signals (ARCHITECTURE §9, `:504-507`; D11). A line
   control emits `line-change`, `line-input` and that event; `line-focus` and `line-blur` are dropped.
-- `data-error` is the Field's shown error, and the control's `data-invalid` is its validity (`:495`; D13).
+- `data-error` is the Field's shown error, and the control's `data-invalid` is its validity (`:502`; D13).
 - Labelling is element reflection: the Field writes `control.ariaLabelledByElements` and
-  `control.ariaDescribedByElements`, and a line control forwards them to its role element (`:502`; D12). The
+  `control.ariaDescribedByElements`, and a line control forwards them to its role element (`:509`; D12). The
   mechanism had been deferred to "the Field spec" twice (Phase 1 plan §5.6, `docs/plans/01-plan-core-primitives.md:511`).
 - The floating label is not built in. `data-focused` and `data-filled` enable it in pure CSS, and Storybook
-  documents the pattern (ARCHITECTURE §9, `:506`; PRD §7.4 exit).
+  documents the pattern (ARCHITECTURE §9, `:513`; PRD §7.4 exit).
 
 ### 2.3 Native form participation
 
@@ -130,19 +130,19 @@ and the `form` attribute are plan additions (§7).
 - Every Phase 2 component ships its descriptor in the same PR (PRD §7.3, `docs/PRD.md:903`), with the Agent
   contract C1–C9 filled.
 - Stream G maps the five A2UI basic-catalog types that ARCHITECTURE §17.3 schedules for Phase 2: TextField,
-  CheckBox, ChoicePicker, Slider and DateTimeInput (`docs/ARCHITECTURE.md:1667-1671`).
-  - The surface wraps all five in `<line-field>`, so C4's error slot exists for each (`:1678`; D26).
-  - TextField creates the native `<input>` or `<textarea>` that `<line-input>` and `<line-textarea>` slot (`:1667`; D1).
+  CheckBox, ChoicePicker, Slider and DateTimeInput (`docs/ARCHITECTURE.md:1674-1678`).
+  - The surface wraps all five in `<line-field>`, so C4's error slot exists for each (`:1685`; D26).
+  - TextField creates the native `<input>` or `<textarea>` that `<line-input>` and `<line-textarea>` slot (`:1674`; D1).
   - ChoicePicker's checkbox mode is a `<line-fieldset>` around a native `<fieldset>` that the surface creates,
     holding `<line-checkbox>` elements (O7 (a), D19). A `filterable` single-selection ChoicePicker maps to
-    `<line-select>` and its search, which carries combobox semantics (`:1669`; D14).
+    `<line-select>` and its search, which carries combobox semantics (`:1676`; D14).
   - A time-only DateTimeInput maps to DateInput's time-only mode, built on the Zag 1.49.0 `formatter`. Its value
-    carries no date, and the Phase 2 spec states its form (`:1671`; D18). The earlier "no Phase 2 target" for the
+    carries no date, and the Phase 2 spec states its form (`:1678`; D18). The earlier "no Phase 2 target" for the
     time-only case is withdrawn.
   - The five types write the data model on `line-input` as well as on the C9 commit event, through a live-event
-    member of the binding map, as A2UI v0.9.1 and v1.0 require; C9 is unchanged (`:1638`; D24).
+    member of the binding map, as A2UI v0.9.1 and v1.0 require; C9 is unchanged (`:1645`; D24).
 - The agent Button is disabled while its node's checks fail, as both protocol versions require. This is a Phase 2 row
-  against the Phase 1 surface (`:1666`; D27).
+  against the Phase 1 surface (`:1673`; D27).
 - A form-associated control that the surface renders inside a host-page `<form>` would add its field and its
   validity to that form, the hazard Phase 1 closed for Button (Phase 1 spec AM-081). The Phase 2 spec states one rule
   for every form-associated control the surface creates (R6, §5.5).
@@ -150,14 +150,14 @@ and the `form` attribute are plan additions (§7).
   `previous`). Per O3 (b), PRD v0.8.36 §7.4 schedules the v1.0 `line` and `basic` catalogs beside v0.9.1, the
   surface on both protocol versions and the end of the preview at the phase exit, with an exit criterion
   (`docs/PRD.md:975`, `:986`). MANIFESTO principle 8 (`docs/MANIFESTO.md:33`), PRD principle 6, §2 and Appendix D
-  (`docs/PRD.md:137`, `:219`, `:1838-1839`) and ARCHITECTURE §17.3 and §17.7 (`docs/ARCHITECTURE.md:1648`,
-  `:1729-1730`) keep the renderer and `line-icons/a2ui` previews until `line-genui/a2ui` targets the final A2UI
+  (`docs/PRD.md:137`, `:219`, `:1838-1839`) and ARCHITECTURE §17.3 and §17.7 (`docs/ARCHITECTURE.md:1655`,
+  `:1736-1737`) keep the renderer and `line-icons/a2ui` previews until `line-genui/a2ui` targets the final A2UI
   v1.0. v1.0 also changes the form schemas: `checks` becomes `@checks` with a `ValidationResult`, TextField gains
   `placeholder`, drops `validationRegexp` and requires `value`, and Slider gains `steps` as a count of divisions.
 - The v1.0 `line` catalog takes its own catalog id, each descriptor derives a Zod schema per protocol version from one
   declaration, the v1.0 basic implementation registers under the v1_0 basic id, and one session serves both
-  versions with a per-version data-model call (`docs/ARCHITECTURE.md:1643`, `:1648`, `:1652`; D25).
-- A v1.0 Text heading marker (`#`–`#####`) maps to `<h1>`–`<h5>` without a Markdown renderer (`:1660`; D28).
+  versions with a per-version data-model call (`docs/ARCHITECTURE.md:1650`, `:1655`, `:1659`; D25).
+- A v1.0 Text heading marker (`#`–`#####`) maps to `<h1>`–`<h5>` without a Markdown renderer (`:1667`; D28).
 
 ### 2.5 Storybook
 
@@ -214,7 +214,7 @@ The readout shows the computed contrast of each role pair while the primary labe
 ## 3. Scope — Out
 
 - Combobox, Date Picker and Time Picker, the Phase 4 refinements of ChoicePicker and DateTimeInput
-  (`docs/ARCHITECTURE.md:1674`).
+  (`docs/ARCHITECTURE.md:1681`).
 - `line-form`, cross-field validation and FloatingField, which stay after 1.0 (PRD §7.11, `docs/PRD.md:1180-1181`;
   ARCHITECTURE §7).
 - A `native-mobile` prop on Select (ARCHITECTURE §16.2, post-1.0).
@@ -251,9 +251,11 @@ ledger PR aligns that pointer, as row 00-Z49 did for Phase 1.
   reset, restore, disabled from `formDisabledCallback`, constraint validity with an anchor, the `custom-validity`
   convention, and the Field event contract (§5.5).
 - `LineMachineController` gains the opt-in start after the first render that every Phase 2 machine takes, with the
-  Phase 1 components left on the `hostConnected` default (ARCHITECTURE §6; D8).
+  Phase 1 components left on the `hostConnected` default. An opted-in component's first render holds every part with
+  its final `id` and `role`, because R1 saw the later start work only then (ARCHITECTURE §6; R1 §2.2; D8).
 - The controller catches run-time machine errors and switches to the static fallback, whose template wires its
-  controls to `setFormValue` (ARCHITECTURE §6; D5).
+  controls to `setFormValue` (ARCHITECTURE §6; D5). [INFERENCE: unprobed. Zag runs actions in a microtask of `send`,
+  outside the controller's start guard (R1 §2.10, §7 Q4), so the stream F row probes where the catch can sit (§8).]
 - Its Browser-tier tests prove §2.3 on a test element before any component uses it.
 
 ### 4.2 Stream C — the 15 components
@@ -285,7 +287,8 @@ changeset (Phase 1 spec §6.C.6).
 
 - The Storybook `Patterns` section with the floating label pattern.
 - A forms guide: native participation, the slotted native control of Input and Textarea, a native `<select>` in
-  `<line-field>` as Select's no-JavaScript and OS-picker path, validity, Field, and the agent path.
+  `<line-field>` as Select's no-JavaScript and OS-picker path, validity, Field, and the agent path. It warns that
+  Firefox matches `:user-invalid` on a form-associated control from page load, unlike Chromium and WebKit (R2 §6 Q1).
 - Getting Started for the form components, with the rule to keep every `@zag-js/*` package on one version (D23); row
   D5 of Phase 1 settles how its CDN snippets stay current.
 
@@ -388,7 +391,7 @@ names submit, reset and validation but not restore.
 
 | Option | What it decides | Recommendation |
 |---|---|---|
-| (a) | Phase 2 stays on A2UI v0.9.1 and `@a2ui/web_core` 0.14.0; the v1.0 move is a later phase; `line-genui/a2ui` and `line-icons/a2ui` stay previews. Needs a MANIFESTO revision of principle 8 and a PRD revision of principle 6, §2 and Appendix D (`docs/PRD.md:137`, `:219`, `:1839`), with ARCHITECTURE `:1730`, the Phase 1 plan §3 and the site card aligned, so that each reads "until the package targets A2UI v1.0" | — |
+| (a) | Phase 2 stays on A2UI v0.9.1 and `@a2ui/web_core` 0.14.0; the v1.0 move is a later phase; `line-genui/a2ui` and `line-icons/a2ui` stay previews. Needs a MANIFESTO revision of principle 8 and a PRD revision of principle 6, §2 and Appendix D (`docs/PRD.md:137`, `:219`, `:1839`), with ARCHITECTURE `:1737`, the Phase 1 plan §3 and the site card aligned, so that each reads "until the package targets A2UI v1.0" | — |
 | (b) | Phase 2 adds v1.0 beside v0.9.1: a v1.0 `line` and `basic` catalog, the surface on both protocol versions, the five form types on both, `web_core` moved to 0.16.x through a spec AM; `line-genui/a2ui` leaves preview at the phase exit. Needs a PRD revision of §7.4 (the v1.0 scope and its exit criterion) and Appendix D, ARCHITECTURE §17.3 and §17.7, and the same MANIFESTO principle 8 and PRD principle 6 and §2 rewording as (a) for the time until the exit | Recommended: v1.0 is final, the form types are where v1.0 changed most (`@checks`, `ValidationResult`, TextField, Slider), and Gemini and Compose still run v0.9.1, so both are needed; R6 confirms the cost before the spec |
 | (c) | Phase 2 moves to v1.0 only. Needs the revisions of (b), and drops v0.9.1 consumers | — |
 
@@ -434,7 +437,7 @@ spec (§4.7).
 **Resolution:** (a) chosen — Miguel, 2026-11-25.
 
 ARCHITECTURE v0.8.27 §17.3 mapped ChoicePicker to `<line-radio-group>`, "a checkbox group", `<line-select>` or
-`<line-toggle-group>` (now `docs/ARCHITECTURE.md:1669`, reworded by O7 (a) and D19). The PRD catalogue has no
+`<line-toggle-group>` (now `docs/ARCHITECTURE.md:1676`, reworded by O7 (a) and D19). The PRD catalogue has no
 checkbox group.
 
 | Option | What it decides | Recommendation |
@@ -478,21 +481,24 @@ labelling mechanism, the Fieldset mechanism, the entry-point rule and the time-o
   segments (PRD §1.7, MANIFESTO Out of Scope localisation).
 
 **Left to the Phase 2 spec, by note.** The decision register of row 01-Z29 (`docs/context/01-z29-register.md` §2)
-lists these questions; the notes hold the evidence.
+lists these questions; the notes hold the evidence. Q numbers are each note's open questions (§6 or §7), "rec N" items
+sit in each note's Recommendations section, and R8 numbers its §6 items without a Q.
 
 - **R1** (`docs/research/02-research-zag-form-machines.md` §7): handling of trusted `input` under C3 (Q3); switch
   `role="switch"` (Q6); NumberInput attribute format and the `valueAsNumber` event (Q7); multi-value submission,
   `FormData` entries and `null` without `name` (Q8); the zag#3239 fix, `position: fixed` on the hidden radio and
   `preventScroll` (Q9); PasswordInput hiding on owner reset and submit (Q10); the shared-layer API (initial value at
-  connect, reset, disabled into props, fallback) (Q11); tier inputs (Q12); `id` and `getRootNode` in every props
+  connect, reset, disabled into props, fallback) (Q11); `id` and `getRootNode` in every props
   function (rec 1); NumberInput applying its initial value once (rec 8); Zag's fieldset tracking left inert or
-  overridden (rec 4, with R9 Q5).
+  overridden (rec 4, with R9 Q5). Tier inputs (Q12) are answered: D15 makes DateInput pre-built, and Miguel's
+  follow-up of 2026-11-27 makes PasswordInput Custom.
 - **R2** (`docs/research/02-research-form-associated-contract.md` §6): what sets the error-after-interaction state
   and its name (Q4); what "restore where supported" proves (Q5); the identity-stamped string state (Q6); a rule that
   composed line form controls stay in light DOM (Q8); validation messages, engine text or consumer text (Q9); the
   `form-associated.ts:48` comment in stream F (Q10); x86_64 Linux WebKit through the stream F tests (Q11); password
   managers as best effort with a manual check (Q12); validity computed in the layer (rec 1); everything reset in
-  `formResetCallback` (rec 3); which controls emulate implicit submission and which fields block it (Q7, under D3).
+  `formResetCallback` (rec 3); which controls emulate implicit submission and which fields block it (Q7, under D3);
+  the forms-guide warning that Firefox matches `line-*:user-invalid` from load (Q1, carried into §4.5).
 - **R3** (`docs/research/02-research-field-labelling.md` §7): Zag's label part rendered or replaced (Q2); `<label
   for>` or click forwarding, and the named `generic` host (Q3); event `detail` types and `composed` (Q4); the
   validity-change event name (Q5); whether `<line-field error>` is visual only or sets validity and `aria-invalid`
@@ -505,8 +511,9 @@ lists these questions; the notes hold the evidence.
   `<select>` not rendered or not named (Q9); the surface render root (Q10); the required tests, Linux WebKit click,
   the four focus cases, dialog, flip and RTL (rec 7).
 - **R5** (`docs/research/02-research-date-input.md` §6): the ISO form value, empty while incomplete (Q2); range
-  through component validity, and time bounds (Q3); an IME and digit normaliser (Q4); "Empty" and the live region
-  `root`, which MANIFESTO Law 5 now keeps off `document.body` (Q5); an iOS VoiceOver pass (Q6); screen-reader
+  through component validity, and time bounds (Q3); an IME and digit normaliser (Q4); "Empty", and the probe that
+  moves Zag's `document.body` live region into DateInput's shadow root, which MANIFESTO Law 5 requires until upstream
+  offers a `root` or an opt-out (Q5; §8); an iOS VoiceOver pass (Q6); screen-reader
   verification (Q7); A2UI flag defaults, both `false` (Q9); range selection out of Phase 2 (Q12); the static fallback
   (Q13); `createCalendar` as an opt-in (rec 9).
 - **R6** (`docs/research/02-research-a2ui-form-types.md` §6): the surface rule, `form=""` on every surface-created
@@ -546,7 +553,7 @@ place of D16, and moved Input into the first wave (O1).
 | D1 | Input and Textarea take an author's native control slotted in light DOM; PasswordInput replaces Input in the O1 validating set | MANIFESTO Law 8; PRD §1.7, §4.2; ARCH §7, §13.3, §14.9, §14.10, §15, §16.2, §17.2 C4, §17.3; plan O1, §2.1, §2.3, §6 |
 | D2 | Select is custom on `@zag-js/select`; a native `<select>` in `<line-field>` is its no-JavaScript and OS-picker path | MANIFESTO Law 8; PRD §1.7; ARCH §16.2, §16.3 |
 | D3 | Participation through `ElementInternals` or an author's slotted native control; spec-algorithm implicit submission is native semantics | MANIFESTO Law 7; ARCH §7 |
-| D4 | Machine effects in the component's own tree are its cycle; on author DOM only an orchestrator writes ARIA reflection properties; nothing on `document.body` | MANIFESTO Law 5; ARCH §6 |
+| D4 | Machine effects in the component's own tree are its cycle; on author DOM a component sets properties and calls methods on a native control it adopts from its slot, an orchestrator sets ARIA reflection properties, a family host writes documented hooks on its `line-*` children, and Button creates a transient submitter; no restructuring of author DOM; nothing on `document.body` (scope set by Miguel at review round 1, with a Law 1 reading for adopted author elements and DateInput's live region moved into its shadow root) | MANIFESTO Laws 1, 5; ARCH §6, §9, §13.3, §15.1, §17.2 C4, C5; plan §5.5, §8 |
 | D5 | The controller catches run-time machine errors and falls back; fallback templates wire `setFormValue` | PRD §1.7, §2.1, §6.2; ARCH §6; plan §4.1 |
 | D6 | Light-DOM families with item tags; §12 becomes a rule with examples; the Radio item shape passes R1 P3 first | ARCH §12; plan §5.5 |
 | D7 | Dependency locale data with a consumer override is not bundled i18n; consumer-run SSR under its own shim is not a polyfill story | MANIFESTO Out of Scope; PRD §1.7 |
@@ -559,7 +566,7 @@ place of D16, and moved Input into the first wave (O1).
 | D14 | Select gains combobox semantics for its search; ChoicePicker `filterable` maps to it | PRD §4.2; ARCH §16.2, §17.3; plan §2.4 |
 | D15 | DateInput is pre-built on `@zag-js/date-input` with spinbutton segments | PRD §4.2, §7.4; ARCH §8, §13.3, §13.4, §15.1, §16.2, §16.3; plan §2.1 |
 | D16 | Replaced: PasswordInput is Custom, settled 2026-11-27 with the O1 revision | PRD §4.2, §7.4; ARCH §8; plan §2.1 |
-| D17 | The Phase 4 DatePicker takes DateInput in a field slot and owns its trigger button | PRD §7.6; ARCH §13.4 |
+| D17 | The Phase 4 DatePicker takes DateInput in a field slot and keeps a trigger slot whose default content is its own popup button | PRD §7.6; ARCH §13.4 |
 | D18 | A time-only DateInput mode through the 1.49.0 `formatter` serves the time-only DateTimeInput; its value carries no date | PRD §4.2; ARCH §13.3, §17.3; plan §2.4 |
 | D19 | `<line-fieldset>` wraps an authored native `<fieldset>`, reads it and never writes it; the surface creates the native fieldset | PRD §4.2; ARCH §14.4, §14.7, §15.1, §17.3; plan §2.3, §7.1 |
 | D20 | Each reset sheet serves a real scenario; a sheet with none leaves the §14.7 mapping and stays published | ARCH §14.3, §14.4, §14.6, §14.7 |
@@ -668,13 +675,15 @@ The 10 PRD §7.4 criteria (v0.8.36) keep their wording; the plan's additions are
 | Zag form wiring is a no-op in a shadow root (hidden inputs with no form owner; `input.form` and `closest()` tracking return nothing) | High (confirmed, R1 §2.3) | High | Stream F drives `ElementInternals` and the host callbacks |
 | Select stays open after any focus move that a pointer did not cause while its machine's root node is a `ShadowRoot`, and Zag registers no `focusin` listener on touch devices (zag#3088, closed `not_planned`; fix PR #3093 closed unmerged) | High | Medium | R4 §2.4; a host `focusout` remedy that the spec places (R4 Q7) |
 | `:user-invalid` never matches a form-associated custom element in Chromium and WebKit, and Firefox matches it from page load | High | Medium | An error-after-interaction `:state()` of the layer's own (R2 §2.2) |
-| Restore differs by engine: WebKit restores a string or a `FormData` of strings and never a `File`, no engine restores for autocomplete, Firefox restores on reload only, and Firefox can hand one element's state to another | Medium | Medium | R2; an identity-stamped string state; restore is "where the engine supports it" |
+| Restore differs by engine: all three restore on back-navigation, only Firefox also restores on reload, WebKit restores a string or a `FormData` of strings and never a `File`, no engine restores for autocomplete, and Firefox can hand one element's state to another | Medium | Medium | R2; an identity-stamped string state; restore is "where the engine supports it" |
 | The labelling hand-off breaks silently: writing or removing `aria-labelledby` clears the reflected elements, Zag `spreadProps` removes an `undefined` ARIA key on every later spread, and WebKit descriptions are not observable | Medium | High | ARCHITECTURE §9 (D12); engine-tree assertions in the Browser tier (R3 Q11) |
 | Playwright 1.65.1's Firefox crashes when page code or axe reads `ariaLabelledByElements` beside a role locator (Mozilla bug 2090055) | High | Medium | Field-related rows skip the Firefox axe scan until the repo takes Playwright 1.66 (§5.3; D32) |
 | Pre-built machines exceed the 5 KB soft target: DateInput adds 16,507 B over the Zag baseline, 10,456 B of it machine code and 4,919 B `@internationalized/date`; Select 26,738 B, Number Input 9,443 B and Slider 8,272 B (R8 §2.3) | High (measured) | Low | The report's per-machine table makes the cost visible; the target is soft (D21) |
 | The primary Button, IconButton and pressed Chip label is below 4.5:1 for 34 of 62 hue × mode pairs, and the showcase offers all 31 accents | High (measured) | High | A library contrast row brings normal-size labels to 4.5:1; the showcase shows a computed readout meanwhile (D29) |
 | The shipped focus ring (`--line-accent-8`) is below 3:1 against `--line-gray-1` in 196 of 372 combinations | High (measured) | Medium | A focus-ring token row picks the step that meets SC 1.4.11, measured with R10's method (D30) |
 | `@a2ui/web_core` 0.16.1 breaks 17 of 571 `line-genui` unit tests on the v0_9 path (18 with the exact-pin assertion) and the Storybook Alert fixture | Realised (R6 §2.6) | High | A spec AM moves the pin and settles the five items of R6 §4 item 12 |
+| `@zag-js/date-input` 1.49.0 appends a `role="alert"` live region to `document.body` per instance, with no `root` option or opt-out, against MANIFESTO Law 5 (R5 §2.2, §4 item 5, §5 item 4) | High (confirmed) | Medium | An upstream request for a `root` or an opt-out (§10.1); until then DateInput moves the region into its own shadow root right after start, a probe gate of the Phase 2 spec [INFERENCE: unprobed]. A failed probe returns to Miguel |
+| The controller's run-time catch (D5) may not reach errors thrown in Zag's `send` microtask, so a run-time action error would stay uncaught and split the form value from the visible state (R1 §2.10, §7 Q4) | Medium [INFERENCE: unprobed] | High | Stream F probes the catch before any machine row relies on it; ARCHITECTURE §6 marks it unprobed |
 | WebKit O(n²) on large inserts into a rendered `<line-stack>`, `web_core` O(N) per message, no cap on surfaces per session (Phase 1 retrospective, triaged here) | Medium | Medium | Form surfaces grow with Phase 2; R6 measured a form-sized surface (40 and 200 rows in 20–68 ms) |
 | Agent form controls submit into a host-page `<form>` | Medium | High | R6; the spec's surface rule; security review of the G rows |
 | Locator churn on every PRD or ARCHITECTURE revision | High | Low | O6 |
@@ -706,6 +715,21 @@ The 10 PRD §7.4 criteria (v0.8.36) keep their wording; the plan's additions are
 6. The ledger `docs/plans/02-tasks-essential-forms.md` follows the spec's streams; its PR aligns the PROCESS §4
    file-class pointer.
 7. Until the Phase 2 ledger exists, each opening PR gets its own row in stream Z of the Phase 1 ledger.
+
+### 10.1 Actions outside the documents (Miguel)
+
+The decision register of row 01-Z29 (§2) lists nine actions that no document carries out. Each stays with Miguel.
+
+- File the Firefox restore misroute upstream; no Bugzilla report existed on 2026-11-26 (R2 §6 Q6).
+- Re-report zag#3088, which closed `not_planned` while its fix PR #3093 closed unmerged (R4 §6 Q7).
+- File the zag#3239 probe upstream, the hidden-radio focus scroll (R1 §7 Q9).
+- File the `@zag-js/date-input` issues: ASCII-only digits and IME residue, a `translations` key for "Empty", and a
+  live-region `root` or opt-out (R5 §4 items 3–5).
+- Set the real-device mobile check policy before any mobile claim, since CI emulates no OS picker (R4 §6 Q11).
+- Clarify what "(G1)" in the plan's original R4 target meant, if it meant more than plan §5.7 row 2 (R4 §6 Q12).
+- Decide the iOS VoiceOver pass before DateInput ships (R5 §6 Q6).
+- Decide the manual password-manager check per PasswordInput release (R2 §6 Q12).
+- Accept or reject the private WebKit inspector path for engine-tree assertions (R3 §7 Q11).
 
 ---
 
