@@ -1,6 +1,6 @@
 # line://ui — Architecture
 
-**Date:** 2026-11-25
+**Date:** 2026-11-27
 **Status:** APPROVED
 **Maintenance:** Living document — updated as architectural decisions evolve.
 **Source:** Extracted from PRD v0.8.3 §3 (Component Architecture) and §9 (Design System — Layered Package Model). Aligned with Manifesto Laws 2, 6, 7, 10 (revised 2026-05-19).
@@ -11,6 +11,19 @@ This document captures the **cross-cutting architectural decisions** that apply 
 ---
 
 ## Revision Notes
+- **v0.8.29 (2026-11-27)** — Aligned with PRD v0.8.38 (ledger row `01-Z29`, decisions D1–D33 by Miguel on 2026-11-27 after the Phase 2 research; record in `docs/context/01-z29.md`). The Phase 2 research notes (`docs/research/02-research-*.md`) contradicted this document in the sections below.
+  - §6 (Base Class Architecture): the controller starts a machine in `hostConnected` by default, or after the first render for a component that opts in, as every Phase 2 machine does (D8). It catches run-time machine errors as well as start failures, and a fallback template wires its controls to `setFormValue` (D5). A DOM-ownership bullet states the MANIFESTO Law 5 reading (D4).
+  - §7 (Form Association Strategy): a control participates through `ElementInternals` or through an author's slotted native control, and Input and Textarea leave the form-associated list (D1, D3). Reset runs each element's `formResetCallback`, and constraint attributes on a host do nothing until the component sets validity (factual, R2 §5 C3 and C4). Emulating implicit submission by the HTML algorithm counts as native semantics (D3).
+  - §8 (State Management): PasswordInput is Custom and DateInput is pre-built, which settles both tiers the Phase 2 spec held (D15; Miguel's 2026-11-27 choice of PasswordInput for the O1 validating set, which replaced D16), and the Zag version reads 1.49.0 (factual, R1 X7).
+  - §9 (Field Architecture): Field reads native events and `validity` from any control, and a line control emits `line-change`, `line-input` and one validity-change event, with no `line-focus` or `line-blur` (D11). Labelling is element reflection through the control's `ariaLabelledByElements` and `ariaDescribedByElements` (D12), and the label facts are corrected (factual, R3 §6 item 1). `data-error` is the shown error, apart from the control's `data-invalid` (D13).
+  - §12 (Bundle Splitting Rule): the slot sentence follows MANIFESTO Law 6, so inseparable slotted sub-components share a family subpath. The tables become examples of the rule and name Radio Group, Toggle Group, Checkbox, Switch, Slider and Number Input (D6; factual, R8 gap 4).
+  - §13.1, §13.3, §13.4: Chip's Zag version reads 1.49.0 (factual). Input and Textarea wrap a slotted native control (D1). DateInput is pre-built with editable segments (D15). The Phase 4 DatePicker takes DateInput in a field slot and owns its trigger (D17).
+  - §14.3, §14.4, §14.6, §14.7: `reset.select.css` and `reset.range.css` serve fallback templates, `reset.fieldset.css` serves the native fieldset that `<line-fieldset>` wraps, `reset.textarea.css` leaves the mapping and stays published, and the §14.6 examples and the mapping follow (D19, D20). §14.8 states the per-component meanings of `error` (D13) and that `:disabled` also matches a form-associated host inside a disabled light-DOM fieldset (factual, R9). §14.9 names the components that use `delegatesFocus` (D1). §14.10 reads `line-number-input` (factual, R8 gap 5) and notes the slotted controls of Input and Textarea (D1).
+  - §15 (Native Element Requirements Matrix): Input, Textarea and Fieldset take their native element from the author in light DOM, and the §15.2 and §15.3 examples move to SearchInput (D1, D19). Checkbox, Radio and Switch keep Zag's hidden native input as the focus and accessible node, with `ElementInternals` for the form (D9). DateInput's segments are spinbutton spans (D15). The autofill trick is observed in Chromium only (factual, R2 C5).
+  - §16.2, §16.3 (Unsolvable Browser Limitations): DateInput's segments (D15). Number Input drops `pattern="[0-9]*"`, submits a machine-readable value and renders its steppers as parts (factual, R1 §2.8, R8 gap 6). The `<option>` styling and listbox layer facts are corrected (factual, R4 X3, X4). A native `<select>` in `<line-field>` is Select's no-JavaScript and OS-picker path (D2), and Select's search field carries combobox semantics (D14). The slotted `<textarea>` takes the consumer's `resize` (D1).
+  - §17.2 (Agent contract): C3 covers the events a component's code and machine dispatch and lets trusted `input` and `beforeinput` pass (D10). C4 covers Input and Textarea (D1). C5 names the reflection hand-off (D12).
+  - §17.3 (Descriptors and catalogs): the binding map gains a live event (D24). Each descriptor derives a schema per protocol version from one declaration, the v1.0 `line` catalog has its own id, the v1.0 basic implementation registers under the v1_0 id, and one session serves both versions (D25). Every Phase 2 form type sits in `<line-field>` (D26). The agent Button is disabled while its checks fail (D27). v1.0 Text heading markers map to headings (D28). A `filterable` single-selection ChoicePicker maps to Select's search (D14). A time-only DateTimeInput uses DateInput's time-only mode (D18). ChoicePicker's checkbox fieldset wraps a native `<fieldset>` that the surface creates (D19).
+  - §17.4 (Renderer): the Text row names the v1.0 heading markers (D28).
 - **v0.8.28 (2026-11-25)** — Aligned with PRD v0.8.36 (ledger row `01-Z11`, decisions by Miguel at the Phase 2 plan gate on 2026-11-25, forks O3 (b) and O7 (a) of `docs/plans/02-plan-essential-forms.md`). The change is minimal: one §17.3 sentence, one §17.3 table cell and one §17.7 sentence.
   - §17.3 (Descriptors and catalogs) says Phase 2 adds the A2UI v1.0 `line` and `basic` catalogs beside v0.9.1, where it said a v1.0 emitter follows when v1.0 is final; v1.0 went final on 2026-11-11.
   - The §17.3 ChoicePicker row names a `<line-fieldset>` of `<line-checkbox>` elements, where it said "a checkbox group", which no PRD component is.
@@ -368,14 +381,15 @@ A component declares its tier by composing a `LineMachineController` with a pre-
 **Zag.js integration is via the first-party `LineMachineController` adapter** (Lit `ReactiveController` exported from `@websublime/line-core/machine`). The adapter wraps the framework-agnostic `@zag-js/vanilla` package (`VanillaMachine`, `normalizeProps`, `spreadProps`, `mergeProps`) and provides:
 
 - **Lit-aware reactivity.** `host.requestUpdate()` is called on each machine state transition, so Lit re-renders deterministically.
-- **Lifecycle management.** Machine starts in `hostConnected` (subscribes to state); stops in `hostDisconnected` (unsubscribes). No manual `connectedCallback`/`disconnectedCallback` plumbing in component subclasses.
+- **Lifecycle management.** By default the machine starts in `hostConnected` (subscribes to state). A component can opt in to a start after its first render instead, and every Phase 2 machine does, because Zag's start effects query the shadow root, which is empty before the first render; the slider thumb then stays hidden and the checkbox press tracking never binds (Phase 2 research R1 §2.2). Phase 1 components keep the default, which is revisited at the Phase 2 exit. The machine stops in `hostDisconnected` (unsubscribes). No manual `connectedCallback`/`disconnectedCallback` plumbing in component subclasses.
 - **Host props into the machine.** The controller hands the component's props function to the machine at start and calls `updateProps({})` on every host update. The empty patch adds no props source and still notifies the machine, so it re-reads the live function. A component declares its machine props as a function of its properties, so controlled props and prop `watch` effects follow host property changes.
-- **Graceful failure (Manifesto Law 9).** If the machine fails to start, the controller flags fallback mode and the component renders a static state. No uncaught error propagates.
+- **Graceful failure (Manifesto Law 9).** If the machine fails to start, or an action, an effect or a props update throws at run time, the controller flags fallback mode and the component renders a static state. A form control's fallback template wires its controls to `setFormValue`, so the form value matches what the fallback shows. No uncaught error propagates.
+- **DOM ownership (Manifesto Law 5).** Machine effects inside the component's own tree, such as Zag writing `checked`, `value` or focus on an element of its shadow root, belong to the component's reactive cycle. On author-supplied light DOM, only an orchestrator such as Field writes, and only ARIA reflection properties (§9), never attributes. No component or machine effect appends a node to `document.body`.
 - **Single import surface.** Re-exports `normalizeProps`, `spreadProps`, `mergeProps`, `VanillaMachine` and the type `Attrs` from `@zag-js/vanilla`, so component authors import from one place: `@websublime/line-core/machine`. It leaves out `toStyleString`, which `@zag-js/vanilla` has exported since 1.44.0. **No component imports `@zag-js/vanilla` directly** — the adapter is the single point of maintenance for Zag API changes. Note: `bindable` is **not** re-exported because `@zag-js/vanilla` does not publicly export it. It is an internal Zag helper accessed inside machine configs via the `context({ bindable })` callback (see §8 example).
 
 There is **no first-party Lit adapter in Zag's monorepo** (`packages/frameworks/` contains only `preact`, `react`, `solid`, `svelte`, `vanilla`, `vue`) — `LineMachineController` is the line://ui adapter, authored in Phase 0 (PRD §7.2).
 
-**Failure mode (Manifesto Principle 9 / Law 9):** if a machine fails to initialise, the component renders in a static fallback state and never throws an uncaught error at the consumer.
+**Failure mode (Manifesto Principle 9 / Law 9):** if a machine fails to initialise or run, the component renders in a static fallback state and never throws an uncaught error at the consumer.
 
 **HTMX through native paths.** Components work with htmx through native paths. These paths are host-level `hx-*` attributes, `hx-*` attributes on slotted light-DOM children, a form-associated value inside an htmx form, and the §17.2 rule C9 commit event as `hx-trigger`. A Playwright harness guards those paths on htmx 2 and htmx 4 in chromium, firefox and webkit (PRD Appendix A). A host-level `click` trigger on a compound host fires for every click inside its shadow root, as the H1 `hostNative` check showed. Consumers therefore trigger on the commit event. The H1 spike ended exploratory on 2026-10-12. `LineHtmxElement` is deferred as a nice-to-have after 1.0, and `packages/line-core/__experimental__/htmx/` stays as an unbuilt reference. The evidence lives in `docs/retrospective/00-phase-00-retro.md`. No component in this document depends on an HTMX adapter.
 
@@ -383,14 +397,15 @@ There is **no first-party Lit adapter in Zag's monorepo** (`packages/frameworks/
 
 ## 7. Form Association Strategy
 
-All form control components implement `static formAssociated = true` and use `ElementInternals` to participate in native HTML `<form>` elements. This is handled as an opt-in mixin in the base class.
+Form controls participate in native HTML `<form>` elements in one of two ways (MANIFESTO Law 7). Input and Textarea take an author's native `<input>` or `<textarea>`, slotted in light DOM, as their control. That control is the only form participant, with or without JavaScript (§15.1). Every other form control sets `static formAssociated = true` and uses `ElementInternals`, through the opt-in `FormAssociated` mixin in the base class.
 
-**What `formAssociated` provides natively:**
+**What the platform provides to a form-associated element:**
 
 - A focused `<line-button type="submit">` submits its form on Enter or Space. Implicit submission (Enter in a text field) never picks a custom element as the form's default button, because the platform considers only native submit buttons (WICG/webcomponents#814; spec `0002-button.md`)
-- `<line-input name="email">` appears in `FormData` automatically
-- `<line-button type="reset">` resets all form controls
-- HTML5 validation (`required`, `pattern`, `minlength`) works natively
+- Enter in a form-associated text control submits nothing by itself, because implicit submission does not cross the shadow boundary. A control may reproduce the HTML implicit-submission algorithm, which clicks the form's default button, and that emulation counts as native semantics (MANIFESTO Law 7). The Phase 2 spec states which controls run it and which fields block it (Phase 2 research R2 §2.5, §4 item 5, §6 Q7)
+- `<line-search-input name="q">` appears in `FormData` through `setFormValue()`
+- `form.reset()` and `<line-button type="reset">` run each element's `formResetCallback`. The platform resets nothing inside a shadow root, so the component resets its value, its inner control and its state there (Phase 2 research R2 §2.3)
+- Constraint attributes (`required`, `pattern`, `minlength`) on a form-associated host do nothing by themselves. The component computes its validity and sets it through `setValidity()` with an anchor (R2 §2.1). The slotted native control of Input and Textarea validates natively
 - `:invalid`/`:valid` CSS pseudo-classes work
 - `form.checkValidity()` and `form.reportValidity()` work
 
@@ -399,7 +414,7 @@ All form control components implement `static formAssociated = true` and use `El
 - No `<line-form>` wrapper component. Each framework has its own form management solutions. Nice-to-have post-1.0.
 - No cross-field validation orchestration. This is application-level logic.
 
-**Form-associated components:** Button, Input, PasswordInput, SearchInput, DateInput, Textarea, Select, Checkbox, RadioGroup, Switch, NumberInput, Editable, ToggleGroup, Slider, Combobox, DatePicker, TimePicker, ColorPicker, PinInput, Rating, RangeSlider, FileUpload, TagInput, MentionInput, SearchField.
+**Form-associated components:** Button, PasswordInput, SearchInput, DateInput, Select, Checkbox, RadioGroup, Switch, NumberInput, Editable, ToggleGroup, Slider, Combobox, DatePicker, TimePicker, ColorPicker, PinInput, Rating, RangeSlider, FileUpload, TagInput, MentionInput, SearchField. Input and Textarea are not on the list, because their slotted native control is the form participant; a host that submitted a value of its own would submit it twice (Phase 2 research R7 §2.3). Whether their hosts set `formAssociated` for its callbacks, without a form value, is left to the Phase 2 spec (R7 §7 Q2).
 
 ---
 
@@ -413,7 +428,7 @@ All form control components implement `static formAssociated = true` and use `El
 | **Custom machine** | Uses `createMachine()` from `@zag-js/core` | Interactive components with states where no pre-built machine exists | Input, Textarea, Field, Tag Input, Search Field |
 | **Static** | No machine | Purely presentational components with zero interaction state | Badge, Separator, Skeleton, VisuallyHidden, Center |
 
-`@zag-js/password-input` and `@zag-js/date-input` exist at 1.47.0, so PasswordInput and DateInput have pre-built candidates. The Phase 2 spec settles their tier.
+PasswordInput runs a custom machine: Miguel settled its tier on 2026-11-27 (ledger row `01-Z29`), when he made it the form-associated text control of the Phase 2 validating set, so `@zag-js/password-input` 1.49.0 is not used. DateInput is pre-built on `@zag-js/date-input` 1.49.0 (§13.3).
 
 **Why custom machines for "simple" components like Input:**
 
@@ -473,29 +488,29 @@ Zag.js provides `ListCollection` and `TreeCollection` from `@zag-js/collection`.
 
 ## 9. Field Architecture
 
-The Field is the orchestrator that connects labels, hints, errors, and required indicators to any form control. It does not import any specific control — it uses `<slot>` and events.
+The Field is the orchestrator that connects labels, hints, errors, and required indicators to any form control, native or line. It does not import any specific control — it uses `<slot>`, native events and the control's `validity`.
 
 **Slots:** `label` (free content), `default` (the form control), `hint` (help text), `error` (error message — visible in error state).
 
-**Host data attributes:** `data-focused`, `data-filled`, `data-error`, `data-disabled`, `data-readonly`, `data-required`.
+**Host data attributes:** `data-focused`, `data-filled`, `data-error`, `data-disabled`, `data-readonly`, `data-required`. `data-error` reflects a shown error, which is the explicit `error` prop or the control invalid after interaction. The control's own `data-invalid` reflects its validity (§17.2 C4, §14.8), and the two differ before the first interaction; a consumer reaches the control's state from the Field through `:has()` (Phase 2 research R3 §2.7).
 
 **State detection priority:**
 1. Explicit props — `<line-field error>` overrides everything
-2. Child events — `line-focus`, `line-blur`, `line-change`, `line-invalid`, `line-valid`
-3. Native validity — via `formAssociated` + `ElementInternals`
+2. Native events from the control, for any control — `focusin` and `focusout` for focus, `input` and `line-change` or the native `change` for value, and `invalid` in the capture phase for validity, with a re-read of `control.validity` after each (Phase 2 research R3 §2.5)
+3. The validity-change event of a line control, for a validity change that no user event signals, such as external `custom-validity` or A2UI checks. The Phase 2 spec names it (R3 §7 Q5)
 
-**Label connection:** Field generates unique ID and forwards clicks on label to `.focus()` on child. An `aria-labelledby` ID reference on the child host does not reach a role on an inner native element in Firefox or Safari. It works only with a host role, a reference target (Chrome only) or element reflection. The Field spec picks the mechanism.
+**Label connection:** element reflection. The Field writes `control.ariaLabelledByElements` (the slotted label) and `control.ariaDescribedByElements` (the hint, and the error while it is shown) on the slotted control. A native control uses them as is. A line control overrides both accessors and forwards them to the element that carries its role (§17.2 C5). Its rendering, Lit or Zag `spreadProps`, never writes `aria-labelledby` or `aria-describedby` on that element, because writing or removing the attribute clears the reflected elements (Phase 2 research R3 §2.3, §5 items 1–2). ID references do not cross the shadow boundary. An `aria-labelledby` ID on the child host names a `generic` host and leaves an inner role element unnamed in Chromium, Firefox and Safari. A host role through `ElementInternals` names the host and leaves an inner native element unnamed. Reference target ships only in Chromium and forwards only references that point at the host, such as `<label for>`, not an `aria-labelledby` written on the host (R3 §6 item 1). The Field also forwards clicks on its label to `.focus()` on the control; whether a slotted `<label for>` replaces that forwarding is left to the Phase 2 spec (R3 §7 Q3).
 
 **Required indicator:** `::part(indicator)` — consumer/theme styles it. Uses the shared `indicator` part name from §5 (semantic: "state indicator").
 
 **Floating label:** NOT built in. `data-focused` and `data-filled` enable it via pure CSS. Pattern documented in Storybook.
 
-**Field-compatible controls (any component that):**
-1. Emits `line-focus`, `line-blur`, `line-change`, `line-invalid` events
-2. Has `formAssociated: true`
-3. Accepts `.focus()` programmatically
+**Field-compatible controls:** any control, native or line, that the Field reads through the native events and `validity` above and focuses with `.focus()`. A line control also:
+1. Emits `line-change` on commit and `line-input` with `detail.value` on every live edit (§17.2, rules C3 and C9)
+2. Emits the validity-change event when its validity changes without a user event
+3. Overrides `ariaLabelledByElements` and `ariaDescribedByElements` and forwards them to its role element
 
-**Live edits:** value-bearing controls also emit `line-input` with `detail.value` on every live edit (§17.2, rule C3). Field state detection does not depend on it.
+`line-focus` and `line-blur` are not part of the contract, because `focusin` and `focusout` cross the shadow boundary and carry the same information (R3 §2.5). `change` does not cross it, which is why a line control emits `line-change`.
 
 ---
 
@@ -551,7 +566,7 @@ Icons are **orthogonal to the design system.** `@websublime/line-icons` is a sep
 
 ## 12. Bundle Splitting Rule
 
-> Sub-components of a family share a single entrypoint. Independently usable components have separate entrypoints. A component belongs to a family when it requires its parent to function. Components connected via `<slot>` are always separate entrypoints — slots imply independence.
+> Sub-components of a family share a single entrypoint. Independently usable components have separate entrypoints. A component belongs to a family when it requires its parent to function. Slotted sub-components that cannot work without their parent share the family's entrypoint; an independently usable component placed in another component's slot, such as ButtonGroup's buttons or AvatarGroup's avatars, keeps its own entrypoint (MANIFESTO Law 6).
 
 **Umbrella package, not per-component packages (Manifesto Law 6).** All components ship inside a single `@websublime/line-components` package with **one version and one changelog**. Each component family or independent component is exposed as a **subpath export** in `package.json` — `@websublime/line-components/button`, `@websublime/line-components/dialog`, etc. There is no central barrel that imports every component; the root `"."` export is intentionally minimal (types and shared utilities only). This is **not** a Lerna-style "one package per component" layout — the umbrella keeps a single source of truth while subpath exports preserve tree-shaking and bundle isolation.
 
@@ -568,7 +583,7 @@ import '@websublime/line-components/input';
 
 A button must not drag in a dialog.
 
-**Families (single entrypoint):**
+**Examples of families (single entrypoint).** The rule decides every component; these rows illustrate it. The Phase 2 families (`./select`, `./radio-group`, `./toggle-group`) are light-DOM families: their sub-components are elements that the consumer authors inside the family host, so every ID reference stays in one tree (Phase 2 research R4 §2.5, R8 §2.2).
 
 | Entrypoint | Registers |
 |------------|-----------|
@@ -582,8 +597,12 @@ A button must not drag in a dialog.
 | `./tooltip` | line-tooltip, line-tooltip-trigger, line-tooltip-content |
 | `./toast` | line-toast, line-toast-group |
 | `./menubar` | line-menubar, line-menubar-menu, line-menubar-trigger, line-menubar-content, line-menubar-item |
+| `./radio-group` | line-radio-group and its item tag |
+| `./toggle-group` | line-toggle-group and its item tag |
 
-**Independent entrypoints:** `./button`, `./icon-button`, `./button-group`, `./split-button`, `./input`, `./password-input`, `./search-input`, `./date-input`, `./textarea`, `./field`, `./fieldset`, `./icon`, `./alert`, `./chip`, `./avatar`, `./avatar-group`, `./presence`, `./spinner`, `./editable`, etc.
+The Phase 2 spec names the Radio Group and Toggle Group item tags (R8 §6 item 2) and states which family part applies which machine props (R4 §6 Q5). A radio in an item's own shadow root does not join its group (R1 §2.9, probe P3), so the Radio Group spec is approved only after its item shape passes that probe.
+
+**Examples of independent entrypoints:** `./button`, `./icon-button`, `./button-group`, `./split-button`, `./input`, `./password-input`, `./search-input`, `./date-input`, `./textarea`, `./field`, `./fieldset`, `./checkbox`, `./switch`, `./slider`, `./number-input`, `./editable`, `./icon`, `./alert`, `./chip`, `./avatar`, `./avatar-group`, `./presence`, `./spinner`.
 
 **There is no convenience "import everything" barrel.** Consumers explicitly import the subpaths they need. The root `"."` export is intentionally minimal (types and shared utilities only). This enforces bundle isolation by construction (Manifesto Law 6) — no consumer can accidentally drag in the full catalogue with a single import.
 
@@ -602,7 +621,7 @@ Architectural decisions for specific components that were debated and resolved. 
 - **ButtonGroup** — `role="toolbar"` with roving focus (APG Toolbar). Arrow keys move between the buttons, and the group is one Tab stop. A custom roving-focus machine drives it, because `@zag-js/toolbar` ships only pre-release versions (`latest` and `next` are 2.0.0-next.x on 2026-10-20). Border collapse, slot-based (does NOT import Button).
 - **SplitButton** — Custom, Phase 3 (depends on Button + Menu), bundles both internally.
 - **ToggleButton** — NOT a separate component; use ToggleGroup with single item or Button with `pressed` state.
-- **Chip** — A toggle button with `aria-pressed`, Phase 1. It runs on the pre-built `@zag-js/toggle` 1.47.0 machine and carries no remove button.
+- **Chip** — A toggle button with `aria-pressed`, Phase 1. It runs on the pre-built `@zag-js/toggle` 1.49.0 machine and carries no remove button.
 
 ### 13.2 Avatar Group
 
@@ -611,17 +630,17 @@ Architectural decisions for specific components that were debated and resolved. 
 
 ### 13.3 Input Decomposition
 
-- **Input** — Custom machine, `formAssociated: true`, slots: prefix/suffix, detects autofill.
+- **Input** — Custom machine around an author's native `<input>`, slotted in light DOM, which stays the form control (§7, §15.1). Slots: prefix/suffix and the control. Detects autofill where the Phase 2 spec verifies it (§15.3).
 - **PasswordInput** — Separate. Internal `toggle` part (not slot) because it must coordinate `type` toggle.
 - **SearchInput** — Separate. Internal `clear` part (not slot) because it must call `CLEAR` on machine.
-- **DateInput** — Separate, Phase 2. Masked segments. No popup. Different from DatePicker (Phase 4).
-- **Textarea** — Separate, Custom machine, auto-resize, `formAssociated: true`.
+- **DateInput** — Separate, Phase 2, pre-built on `@zag-js/date-input`: locale-aware editable segments (`role="spinbutton"`), with a time-only mode for the A2UI DateTimeInput (§17.3). No popup. Different from DatePicker (Phase 4).
+- **Textarea** — Separate, Custom machine around an author's native `<textarea>`, slotted in light DOM, which stays the form control (§7, §15.1). Auto-resize.
 
 ### 13.4 DateInput vs DatePicker
 
-- **DateInput** (Phase 2) — masked text field, segment navigation, no popup, `formAssociated`.
-- **DatePicker** (Phase 4) — calendar popup via Zag.js, accepts any trigger via slot including DateInput.
-- Composition: `<line-date-picker><line-date-input slot="trigger"></line-date-input></line-date-picker>`
+- **DateInput** (Phase 2) — editable spinbutton segments, segment navigation, no popup, `formAssociated`.
+- **DatePicker** (Phase 4) — calendar popup via Zag.js. It owns its trigger button, a popup button as in Zag's date picker, and takes DateInput in a field slot (Phase 2 research R5 §2.7).
+- Composition: `<line-date-picker>` holds `<line-date-input>` in its field slot and renders its own trigger. The Phase 4 spec names the slot.
 
 ### 13.5 Spinner
 
@@ -682,12 +701,12 @@ packages/line-core/src/styles/
 ├── reset.common.css       ← ALL components get this (minimal)
 ├── reset.input.css        ← Components with <input> in shadow DOM
 ├── reset.button.css       ← Components with <button> in shadow DOM
-├── reset.textarea.css     ← Components with <textarea> in shadow DOM
-├── reset.select.css       ← Components with <select> in shadow DOM
-├── reset.range.css        ← Range/slider components
+├── reset.textarea.css     ← A <textarea> in shadow DOM (no Phase 2 component; published)
+├── reset.select.css       ← A <select> in a fallback template (§6)
+├── reset.range.css        ← An <input type="range"> in a fallback template (§6)
 ├── reset.progress.css     ← Progress/meter components
 ├── reset.summary.css      ← Details/summary components
-├── reset.fieldset.css     ← Fieldset/legend components
+├── reset.fieldset.css     ← The native fieldset/legend that <line-fieldset> wraps
 ├── reset.table.css        ← Table components
 ├── reset.scrollbar.css    ← Scroll area components
 └── index.ts               ← Exports all modules as CSSStyleSheet objects
@@ -846,7 +865,7 @@ button:disabled {
 }
 ```
 
-#### `reset.textarea.css` — Textarea
+#### `reset.textarea.css` — a `<textarea>` in a shadow root (no Phase 2 component)
 
 ```css
 textarea {
@@ -872,7 +891,9 @@ textarea::placeholder {
 }
 ```
 
-#### `reset.select.css` — Select (native fallback scenarios)
+#### `reset.select.css` — a `<select>` in a fallback template
+
+`<line-select>` renders no native `<select>`, and a `<select>` in a shadow root never submits, so its value reaches the form only through the host's `setFormValue` (Phase 2 research R4 §2.1). The sheet serves a fallback template (§6) that renders a `<select>` and forwards its value through `setFormValue`. Whether Select's fallback renders one is left to the Phase 2 spec.
 
 ```css
 select {
@@ -891,7 +912,9 @@ select {
 }
 ```
 
-#### `reset.range.css` — Slider, RangeSlider, AngleSlider
+#### `reset.range.css` — an `<input type="range">` in a fallback template
+
+`<line-slider>` renders no range input: Zag's slider keeps a hidden text input for its form wiring only (Phase 2 research R1 §2.3). The sheet serves a fallback template (§6) that renders an `<input type="range">` and forwards its value through `setFormValue`. Whether the Slider fallback renders one is left to the Phase 2 spec.
 
 ```css
 input[type="range"] {
@@ -969,7 +992,9 @@ summary::marker {
 }
 ```
 
-#### `reset.fieldset.css` — Fieldset
+#### `reset.fieldset.css` — the native fieldset that `<line-fieldset>` wraps
+
+`<line-fieldset>` wraps an authored native `<fieldset>` and its `<legend>` in light DOM (§15.1), where a shadow-root sheet does not reach. The sheet keeps its rules for that fieldset; where it applies is left to the Phase 2 spec (Phase 2 research R9 §6 Q2).
 
 ```css
 fieldset {
@@ -1079,11 +1104,11 @@ export const scrollbarReset = createSheet(scrollbarCSS);
 Each component declares exactly which reset modules it needs:
 
 ```typescript
-// line-input.ts — needs common + input resets
+// line-search-input.ts — needs common + input resets
 import { commonReset, inputReset } from '@websublime/line-core/styles';
 import { css } from 'lit';
 
-class LineInput extends LineElement {
+class LineSearchInput extends LineElement {
   static styles = [commonReset, inputReset, css`
     :host { display: inline-flex; }
     /* component-specific styles */
@@ -1128,7 +1153,7 @@ class LineTable extends LineElement {
 ```
 
 ```typescript
-// line-slider.ts — needs common + range resets
+// line-slider.ts — common, plus range for a fallback template that renders <input type="range"> (§14.4)
 import { commonReset, rangeReset } from '@websublime/line-core/styles';
 import { css } from 'lit';
 
@@ -1150,14 +1175,15 @@ Which modules each component category uses:
 | Button, IconButton | x | | x | | | | | | | | |
 | ButtonGroup | x | | | | | | | | | | |
 | SplitButton | x | | x | | | | | | | | |
-| Input, PasswordInput, SearchInput, DateInput | x | x | | | | | | | | | |
+| PasswordInput, SearchInput | x | x | | | | | | | | | |
+| Input, DateInput | x | | | | | | | | | | |
 | NumberInput | x | x | x | | | | | | | | |
-| Textarea | x | | | x | | | | | | | |
-| Select | x | | | | x | | | | | | |
+| Textarea | x | | | | | | | | | | |
+| Select | x | | | | fallback | | | | | | |
 | Combobox | x | x | | | | | | | | | |
-| Slider, RangeSlider | x | | | | | x | | | | | |
+| Slider, RangeSlider | x | | | | | fallback | | | | | |
 | Field | x | | | | | | | | | | |
-| Fieldset | x | | | | | | | | x | | |
+| Fieldset | x | | | | | | | | wrapped | | |
 | Checkbox, Radio, Switch | x | | | | | | | | | | |
 | Accordion, Collapsible | x | | | | | | | x | | | |
 | Progress, Gauge/Meter | x | | | | | | x | | | | |
@@ -1170,6 +1196,8 @@ Which modules each component category uses:
 | FileUpload | x | x | | | | | | | | | |
 | TagInput | x | x | | | | | | | | | |
 | Rating | x | | | | | | | | | | |
+
+`fallback` marks a sheet that serves only the component's fallback template (§6), when that template renders the native element. `wrapped` marks the native `<fieldset>` that `<line-fieldset>` wraps in light DOM (§14.4). No Phase 2 component has a `<textarea>` in its shadow root, so `reset.textarea.css` leaves the mapping and stays published.
 
 ### 14.8 State Reflection — Pseudo-Class Equivalents
 
@@ -1239,9 +1267,11 @@ protected reflectState(name: string, active: boolean) {
 | autofill | `data-autofill` | `:state(autofill)` | `:-webkit-autofill` |
 | open | `data-open` | `:state(open)` | `:open` |
 
-**Note on `:valid` / `:invalid`:** These two are special — they work natively on form-associated custom elements via `ElementInternals.setValidity()`. We still reflect them as data attributes and CustomStateSet for consistency, but the native pseudo-classes also work. A consumer can use EITHER `line-input:invalid` OR `line-input[data-invalid]` OR `line-input:state(invalid)`.
+**Note on `:valid` / `:invalid`:** These two are special — they work natively on form-associated custom elements via `ElementInternals.setValidity()`. We still reflect them as data attributes and CustomStateSet for consistency, but the native pseudo-classes also work. A consumer can use EITHER `line-search-input:invalid` OR `line-search-input[data-invalid]` OR `line-search-input:state(invalid)`. On Input and Textarea, the slotted native control carries `:invalid` (§7).
 
-**Note on `:hover`, `:active`, `:focus` and `:disabled`:** these match the host natively, so a consumer styles hover with `line-button:hover::part(root)` and no `data-hovered` exists on Button or IconButton. `:active` follows the browser's own active state; `data-active` follows the machine's press, by pointer or by Enter or Space. `:disabled` matches only a form-associated host with `disabled`; `data-disabled` covers every component, and a disabled `fieldset` around a form-associated one. `:focus` matches the host while its inner control has focus, but `:focus-visible` does not, so keyboard focus is `data-focus-visible` (§14.9).
+**Note on `error`:** its meaning is per component. On Field it is a shown validation error, which is the explicit `error` prop or the control invalid after interaction (§9). On Avatar it is an image load failure (spec `0009-avatar.md`). A control's validity is the `invalid` state.
+
+**Note on `:hover`, `:active`, `:focus` and `:disabled`:** these match the host natively, so a consumer styles hover with `line-button:hover::part(root)` and no `data-hovered` exists on Button or IconButton. `:active` follows the browser's own active state; `data-active` follows the machine's press, by pointer or by Enter or Space. `:disabled` matches a form-associated host with `disabled` and a form-associated host inside a disabled light-DOM `fieldset` (Phase 2 research R9 §2.1); `data-disabled` covers every component. `:focus` matches the host while its inner control has focus, but `:focus-visible` does not, so keyboard focus is `data-focus-visible` (§14.9).
 
 **Note on `:state()` browser support:** Chrome 125+, Firefox 126+, Safari 17.4+. Chrome 90–124 support only the older `:--foo` syntax. line://ui's latest-2 browser target (PRD §1.7) lies inside the `:state()` range. The `data-*` attributes provide a universal fallback that works everywhere.
 
@@ -1273,7 +1303,7 @@ line-input[data-focus-visible]::part(root) {
 this.attachShadow({ mode: 'open', delegatesFocus: true });
 ```
 
-Useful for Input, Textarea, SearchInput — clicking anywhere on the component focuses the internal `<input>`. Supported in Chrome 53+, Firefox 94+, Safari 15+.
+Useful for PasswordInput, SearchInput and NumberInput — clicking anywhere on the component focuses the internal `<input>`. Input and Textarea need none, because their native control is slotted in light DOM (§15.1). Supported in Chrome 53+, Firefox 94+, Safari 15+.
 
 ### 14.10 Consumer-Side Reset for Slotted Content
 
@@ -1294,11 +1324,13 @@ Every reset rule sits inside the cascade layer `line` (`@layer line`, PRD §9.12
 |---|----------|-------------------|----------------|
 | 1 | Global slotted content | Any element with a `line-*` class | Margin, padding, font inheritance, list-style, media sizing on common HTML elements (`h1`–`h6`, `p`, `ul`, `ol`, `img`, `svg`, etc.) |
 | 2 | Field component | `line-field` | Labels, hint/error slots — margin, padding, font inheritance |
-| 3 | Form-adjacent components | `line-input`, `line-textarea`, `line-select`, `line-number-field`, `line-combobox`, `line-pin-input` | Labels, hint/error/description slots — margin, padding, font inheritance |
+| 3 | Form-adjacent components | `line-input`, `line-textarea`, `line-select`, `line-number-input`, `line-combobox`, `line-pin-input` | Labels, hint/error/description slots — margin, padding, font inheritance |
 | 4 | Content containers | `line-card`, `line-dialog`, `line-alert`, `line-drawer`, `line-popover`, `line-tooltip`, `line-callout`, `line-banner` | Headings, paragraphs, lists — margin, padding, list-style |
 | 5 | Navigation components | `line-tabs`, `line-breadcrumb`, `line-menu`, `line-pagination`, `line-navigation-menu` | Links, lists — text-decoration, color, margin, padding, list-style |
 | 6 | Slotted button resets | `line-dialog`, `line-alert`, `line-drawer`, `line-toolbar`, `line-card` | Bare `<button>` elements — appearance, background, border, cursor |
 | 7 | Slotted table resets | `line-card`, `line-dialog`, `line-drawer` | `<table>`, `<th>`, `<td>` — border-collapse, spacing, alignment |
+
+Input and Textarea slot an author's native `<input>` or `<textarea>` (§15.1). Category 3 does not style that control; the consumer styles it directly, and whether this reset gains a rule for it is left to the Phase 2 spec.
 
 **Example (field component):**
 
@@ -1320,30 +1352,44 @@ Every reset rule sits inside the cascade layer `line` (`@layer line`, PRD §9.12
 
 ### 15.1 When to Use Native Elements Inside Shadow DOM
 
-Some components MUST render a native HTML element inside their shadow DOM because certain platform APIs are only available on native elements.
+Some components need a native HTML element because certain platform APIs are only available on native elements. Input, Textarea and Fieldset take that element from the author, slotted in light DOM. The other components below render it inside their shadow DOM.
 
-**Components that REQUIRE a native element internally:**
+**Components whose native element is the author's, slotted in light DOM:**
+
+| Component | Slotted element | What it gives |
+|-----------|-----------------|---------------|
+| Input | `<input>` | Form participation before upgrade and without JavaScript, native validity, reset, `form=`, fieldset disabling, implicit submission and `<label for>` naming (Phase 2 research R7 §3.2); IME composition, autofill, password managers, selection API (`setSelectionRange`, `selectionStart`), mobile keyboard hints (`inputmode`, `enterkeyhint`), speech-to-text |
+| Textarea | `<textarea>` | The same form participation; IME, selection API, speech-to-text, undo/redo stack |
+| Fieldset | `<fieldset>` with its `<legend>` | Disabled propagation to every descendant native control and form-associated element, nesting and the first-legend rule (Phase 2 research R9 §2.10, mechanism C). `<line-fieldset>` reads the fieldset and never writes it. The fieldset and legend are light DOM, so the consumer styles them directly, not through `::part()`, and the A2UI surface creates the native fieldset when it renders a `<line-fieldset>` (§17.3) |
+
+The slotted element is the component's control, so the component exposes no `::part()` for it. The component renders a styled shadow frame around a `<slot>`, reflects state on its host, and reads the control; under MANIFESTO Law 5 it writes no attribute on it (§6).
+
+**Components that REQUIRE a native element in their shadow DOM:**
 
 | Component | Internal element | APIs that require it |
 |-----------|-----------------|---------------------|
-| Input | `<input>` | IME composition, autofill, password managers, selection API (`setSelectionRange`, `selectionStart`), mobile keyboard hints (`inputmode`, `enterkeyhint`), speech-to-text |
 | PasswordInput | `<input type="password">` | Password manager detection (1Password, Bitwarden, LastPass look for this) |
 | SearchInput | `<input>` | Autofill, IME |
-| DateInput | `<input>` (per segment) | IME for segment values, keyboard navigation |
-| Textarea | `<textarea>` | IME, selection API, speech-to-text, undo/redo stack |
 | FileUpload | `<input type="file">` | OS file dialog (no JS API exists to open it) |
-| NumberInput | `<input type="text" inputmode="numeric">` | Mobile numeric keyboard |
+| NumberInput | `<input type="text">` with the machine's `inputmode` (§16.2) | Mobile numeric keyboard |
+
+**Components whose Zag machine renders a hidden native input in the shadow DOM:**
+
+| Component | Hidden input | Role |
+|-----------|--------------|------|
+| Checkbox, Radio, Switch | Zag's visually hidden `<input>` | The focus, keyboard and accessible node. `ElementInternals` carries the form value; the inner input has no form owner in a shadow root and never joins the form (Phase 2 research R1 §2.3) |
+| Slider, Select, DateInput | Zag's hidden input | Zag's own form wiring only, which has no form owner in a shadow root. `ElementInternals` carries the form value, and whether the component renders the hidden input at all is left to the Phase 2 spec. DateInput's segments are `<span contenteditable role="spinbutton">` elements, so it needs no native input for IME or navigation (Phase 2 research R5 §2.2) |
 
 **Components that do NOT need a native element:**
 
-Checkbox, Radio, Switch, Select, Slider, Range Slider, Color Picker, Date Picker (calendar UI), Rating, Toggle Group, Combobox (dropdown part), Editable (preview mode), and all non-form components. These use `ElementInternals` for form participation and fully custom rendering for visuals.
+Range Slider, Color Picker, Date Picker (calendar UI), Rating, Toggle Group, Combobox (dropdown part), Editable (preview mode), and all non-form components. These use `ElementInternals` for form participation and fully custom rendering for visuals.
 
 ### 15.2 Delegation Pattern
 
 When a native element lives inside the shadow DOM, the custom element must delegate certain APIs that only exist on the native element:
 
 ```typescript
-class LineInput extends LineElement {
+class LineSearchInput extends LineElement {
   get #input(): HTMLInputElement {
     return this.shadowRoot!.querySelector('input')!;
   }
@@ -1364,17 +1410,17 @@ class LineInput extends LineElement {
 }
 ```
 
-The internal native element is always exposed as `::part(input)` so the consumer can style it:
+An internal native element is always exposed as `::part(input)` so the consumer can style it:
 
 ```css
-line-input::part(input) {
+line-search-input::part(input) {
   caret-color: var(--line-accent-solid); /* role token; resolves through active accent hue */
 }
 ```
 
 ### 15.3 Autofill Detection
 
-Browser autofill forces a background colour (typically light yellow) that cannot be prevented via CSS alone. The `reset.input.css` module includes an animation-based detection trick that works across all browsers:
+Browser autofill forces a background colour (typically light yellow) that cannot be prevented via CSS alone. The `reset.input.css` module includes an animation-based detection trick. It was observed in Chromium only (Phase 2 research R2 §2.6). BCD marks Firefox's `:autofill` and `:-webkit-autofill` as matching username and password fields only, and WebKit was not observable, so the Phase 2 spec verifies the other engines before a component claims detection there. The sheet lives in a shadow root and does not reach the slotted `<input>` of Input, so the Phase 2 spec also states how Input detects autofill. The trick in the sheet reads as follows.
 
 ```css
 /* Already in reset.input.css */
@@ -1400,7 +1446,7 @@ this.#input.addEventListener('animationstart', (e) => {
 Consumer styles the autofilled state:
 
 ```css
-line-input[data-autofill]::part(root) {
+line-search-input[data-autofill]::part(root) {
   background: var(--line-warning-2);
 }
 ```
@@ -1425,7 +1471,7 @@ This is the fundamental reason line://ui exists. If browsers let you fully style
 |---|---|
 | **Problem** | Firefox renders a calendar icon on `<input type="date">`, `<input type="time">`, and `<input type="datetime-local">`. There is NO pseudo-element to target it. `appearance: none` does NOT remove it. |
 | **Affects** | `<line-date-input>`, `<line-time-picker>` — any component using native date/time inputs internally |
-| **line://ui strategy** | `<line-date-input>` does NOT use `<input type="date">`. It uses `<input type="text">` with segment masking (day/month/year as separate navigable segments). No native picker icon exists to leak through. The date machine manages the segment state. |
+| **line://ui strategy** | `<line-date-input>` does NOT use `<input type="date">`. It runs `@zag-js/date-input`, whose editable segments are `<span contenteditable role="spinbutton">` elements, one per date or time part, with segment navigation (Phase 2 research R5 §2.2). No native picker icon exists to leak through. The date machine manages the segment state. |
 
 #### Input Date/Time — Picker Popup Cannot Be Prevented
 
@@ -1433,7 +1479,7 @@ This is the fundamental reason line://ui exists. If browsers let you fully style
 |---|---|
 | **Problem** | Even with the icon hidden (Chrome/Safari), clicking the native date input may still open the browser's calendar popup. There is no way to prevent this via CSS or `preventDefault()`. |
 | **Affects** | Any component using `<input type="date/time/datetime-local/month/week">` |
-| **line://ui strategy** | Same as above — use `<input type="text">` with custom segment navigation. The native picker never exists. `<line-date-picker>` renders its own calendar popup via Zag.js, completely independent of the browser. |
+| **line://ui strategy** | Same as above — editable spinbutton segments with custom segment navigation. The native picker never exists. `<line-date-picker>` renders its own calendar popup via Zag.js, completely independent of the browser. |
 
 #### Input Number — Spinner Arrows (Partial)
 
@@ -1441,15 +1487,15 @@ This is the fundamental reason line://ui exists. If browsers let you fully style
 |---|---|
 | **Problem** | Chrome/Safari: `::-webkit-inner-spin-button { display: none }` works. Firefox: `appearance: textfield` removes them BUT also changes the input's validation behaviour. There is no way in Firefox to hide the arrows while keeping `type="number"` validation. |
 | **Affects** | `<line-number-input>` |
-| **line://ui strategy** | Use `<input type="text" inputmode="numeric" pattern="[0-9]*">`. This gives the mobile numeric keyboard without native spinner arrows in ANY browser. Validation is handled by the Zag.js machine, not native number type. The internal `::part(increment)` and `::part(decrement)` are custom elements rendered by the component. |
+| **line://ui strategy** | Use `<input type="text">` with the `inputmode` the Zag number-input machine sets, and no `pattern="[0-9]*"`, which would reject the locale-formatted display (decimals, negatives, group separators). This gives the mobile numeric keyboard without native spinner arrows in ANY browser. Validation is handled by the Zag.js machine, not native number type. The form value is machine-readable (`String(valueAsNumber)`), never the formatted display that the machine's own input submits in light DOM (Phase 2 research R1 §2.8). The Phase 2 spec confirms the `inputmode` in three engines. `::part(increment)` and `::part(decrement)` are parts the component renders, not custom elements. |
 
 #### Select — Dropdown Options List
 
 | | |
 |---|---|
-| **Problem** | `<option>` elements inside a `<select>` dropdown are rendered by the OS, not the browser. They cannot be styled with CSS in any browser. `appearance: none` removes the select arrow but does NOT affect the dropdown list. |
+| **Problem** | `<option>` elements inside a `<select>` dropdown are rendered by the OS in Firefox 159, where they cannot be styled with CSS. Chromium 159 and WebKit 27.2 style them through customizable select (`appearance: base-select`, `::picker(select)`), which Firefox lacks (Phase 2 research R4 §2.1). `appearance: none` removes the select arrow but does NOT affect the dropdown list. |
 | **Affects** | Any component using native `<select>` for the dropdown |
-| **line://ui strategy** | `<line-select>` does NOT use a native `<select>` element. It renders a custom trigger via `::part(trigger)` and a custom dropdown via Popover/floating positioning (Zag.js select machine). Options are `<line-select-item>` custom elements. No native `<option>` elements exist. Form value is set via `ElementInternals.setFormValue()`. |
+| **line://ui strategy** | `<line-select>` does NOT use a native `<select>` element. It runs `@zag-js/select` with a custom trigger and listbox in all three engines, as the `./select` light-DOM family (§12). The listbox reaches the top layer through the HTML `popover` attribute and is placed with CSS anchor positioning or Zag's popper, with no Phase 3 component (Phase 2 research R4 §2.3); the Phase 2 spec picks the placement. Options are `<line-select-item>` custom elements. No native `<option>` elements exist. Form value is set via `ElementInternals.setFormValue()`, and the machine's composed `change` stops at the shadow root (§17.2 C3). Zag 1.49.0 has typeahead and no search, so Select adds a search field with combobox semantics (PRD §4.2; Phase 2 research R4 §2.2). |
 
 #### Select — Mobile OS Picker (iOS Flipwheel, Android Spinner)
 
@@ -1457,7 +1503,7 @@ This is the fundamental reason line://ui exists. If browsers let you fully style
 |---|---|
 | **Problem** | On iOS, a native `<select>` opens the system flipwheel. On Android, it opens a system spinner/dialog. These provide excellent UX for their platform. A custom `<select>` replacement loses this UX entirely. |
 | **Affects** | `<line-select>` on mobile |
-| **line://ui strategy** | Documented trade-off. `<line-select>` provides consistent cross-platform UI (custom dropdown). Consumers who prefer the native mobile picker for specific use cases can use a native `<select>` with `<line-field>` — the Field accepts any form control via slot. A future `native-mobile` prop is a nice-to-have post-1.0. |
+| **line://ui strategy** | Documented trade-off. `<line-select>` provides consistent cross-platform UI (custom dropdown) and has no light-DOM fallback. A native `<select>` inside `<line-field>` is the no-JavaScript and OS-picker path (MANIFESTO Law 8): the Field reads any control through native events and `validity` (§9). A future `native-mobile` prop is a nice-to-have post-1.0. |
 
 #### File Input — OS Dialog
 
@@ -1513,26 +1559,26 @@ This is the fundamental reason line://ui exists. If browsers let you fully style
 |---|---|
 | **Problem** | `resize: none` removes the handle completely. But if you WANT a resize handle with custom styling, there is no standard pseudo-element. Chrome/Safari have `::-webkit-resizer` but Firefox has nothing. |
 | **Affects** | `<line-textarea>` |
-| **line://ui strategy** | `resize: none` is set in `reset.textarea.css`. If the consumer wants resize, `<line-textarea>` exposes an `auto-resize` prop (machine-driven auto-height) or a `resize` prop that re-enables native resize. A custom resize handle rendered as `::part(resize-handle)` is a nice-to-have post-1.0. |
+| **line://ui strategy** | Textarea's `<textarea>` is the author's, slotted in light DOM (§15.1), so the consumer's CSS sets its `resize`; `reset.textarea.css` sets `resize: none` only on a `<textarea>` in a shadow root. `<line-textarea>` also exposes an `auto-resize` prop (machine-driven auto-height). A custom resize handle rendered as `::part(resize-handle)` is a nice-to-have post-1.0. |
 
 ### 16.3 Summary — Strategy Per Case
 
 | Problem | Strategy | Native element used? |
 |---------|----------|---------------------|
-| Date/time picker icon (Firefox) | **Avoid** — use `<input type="text">` with segment masking | No native date input |
+| Date/time picker icon (Firefox) | **Avoid** — editable spinbutton segments (`@zag-js/date-input`) | No native date input |
 | Date/time picker popup | **Avoid** — custom calendar/time UI via Zag.js | No native date input |
-| Number spinner arrows (Firefox) | **Avoid** — use `<input type="text" inputmode="numeric">` | Text input, not number |
-| Select dropdown options | **Avoid** — fully custom dropdown, no native `<select>` | No native select |
-| Mobile OS select picker | **Documented trade-off** — custom dropdown on all platforms | No native select |
+| Number spinner arrows (Firefox) | **Avoid** — use `<input type="text">` with the machine's `inputmode` | Text input, not number |
+| Select dropdown options | **Avoid** — fully custom dropdown in all three engines; Firefox has no customizable select | No native select |
+| Mobile OS select picker | **Documented trade-off** — custom dropdown on all platforms; a native `<select>` in `<line-field>` for the OS picker | No native select in `<line-select>` |
 | File dialog | **Hidden native** — invisible `<input type="file">`, custom visible UI | Hidden file input |
 | Color dialog | **Avoid** — fully custom color picker UI | No native color input |
 | Autofill forced background | **Mitigate** — delay hack + detection + state reflection | Native input (unavoidable) |
 | Password manager detection | **Best effort** — real `<input type="password">` + attribute forwarding | Native password input |
 | Scrollbar styling (Firefox) | **Replace** — custom scrollbar overlay, native hidden | Native scrollbar hidden |
 | Details animation | **Avoid** — custom disclosure components with Presence | No native details |
-| Textarea resize handle | **Reset** — `resize: none`, custom auto-resize or re-enable via prop | Native textarea |
+| Textarea resize handle | **Consumer** — the slotted `<textarea>` takes the consumer's `resize`; custom auto-resize via prop | Native textarea (author's) |
 
-**Pattern summary:** The dominant strategy is **avoidance** — don't use the native element that causes the problem. Render custom UI powered by Zag.js machines. Use `ElementInternals` for form integration. The native element only appears when there is literally no alternative (file dialog, password manager detection, text input for IME/autofill).
+**Pattern summary:** The dominant strategy is **avoidance** — don't use the native element that causes the problem. Render custom UI powered by Zag.js machines. Use `ElementInternals` for form integration. The native element only appears when there is literally no alternative (file dialog, password manager detection, text input for IME/autofill), and Input, Textarea and Fieldset take it from the author in light DOM (§15.1).
 
 ---
 
@@ -1575,9 +1621,9 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
 |---|------|
 | C1 | Every public input is a JSON-serialisable attribute or property (string, number, boolean, string enum, string array, number array). An input that JSON cannot carry either gets a JSON-serialisable alternative or stays out of the descriptor's prop schema, and the spec's Agent contract section records the reason. |
 | C2 | Slots are documented with `@slot` and classified as single (`ComponentId`) or multiple (`ChildList`). |
-| C3 | Events are documented with `@fires` and a typed `detail`, and every event name carries the `line-` prefix (Law 2, §9). A value-bearing component is one whose descriptor binding map names a value prop. It emits `line-change` with `detail.value` on commit and `line-input` with `detail.value` on live edits. No component dispatches an unprefixed `input` or `change` event. |
-| C4 | Form-associated components (§7) expose `value` as a property and accept external validity. An attribute or property sets custom validity through the `FormAssociated` mixin's `setValidity` and reflects the invalid state (`data-invalid` and `:state(invalid)`, §14.8). The visible message stays in `<line-field>`'s `error` slot, which the renderer fills. |
-| C5 | The host accepts `aria-label` and `aria-description`, or a documented label property. The component applies the accessible name to the element that carries the role, which is either the host itself or the inner focusable element (§14.9 `delegatesFocus`). |
+| C3 | Events are documented with `@fires` and a typed `detail`, and every event name carries the `line-` prefix (Law 2, §9). A value-bearing component is one whose descriptor binding map names a value prop. It emits `line-change` with `detail.value` on commit and `line-input` with `detail.value` on live edits. No component dispatches an unprefixed `input` or `change` event. The rule covers every event the component's code dispatches, its machine's included, so a machine event such as `@zag-js/select`'s composed `change` stops at the component's shadow root. Trusted `input` and `beforeinput` events that the browser fires on an inner native control cross the shadow boundary and pass; each component spec documents them (Phase 2 research R1 §2.5). |
+| C4 | Form-associated components (§7) expose `value` as a property and accept external validity. An attribute or property sets custom validity through the `FormAssociated` mixin's `setValidity` and reflects the invalid state (`data-invalid` and `:state(invalid)`, §14.8). Input and Textarea expose `value` and accept external validity too; the Phase 2 spec states how that validity reaches their slotted native control (Phase 2 research R7 §7 Q2). The visible message stays in `<line-field>`'s `error` slot, which the renderer fills. |
+| C5 | The host accepts `aria-label` and `aria-description`, or a documented label property. The component applies the accessible name to the element that carries the role, which is either the host itself or the inner focusable element (§14.9 `delegatesFocus`). A form control also accepts `ariaLabelledByElements` and `ariaDescribedByElements` on its host and forwards them to that element (§9). |
 | C6 | Semantic variants, when a component has them, are reflected attributes with closed enums. A variant may change the defaults of the component's own `--line-{component}-*` tokens on `:host` and adds no other CSS rule. Consumers override those tokens or `::part()` as for any other default. |
 | C7 | CEM JSDoc is complete, with `@summary`, `@slot`, `@csspart`, `@cssprop`, `@fires` and `@deprecated`. |
 | C8 | Rendering with missing or partial props degrades to an empty or neutral state. |
@@ -1589,21 +1635,21 @@ Every component spec states these rules in its Agent contract section (PRD §8.1
 - A descriptor holds these fields:
   - the catalog name, the tag, and `load()`, which imports the component subpath;
   - the prop schema and the slot map;
-  - the binding map (prop → property or attribute, a surface lookup such as Icon `name` → `iconMap` (Phase 1 spec AM-071), a text binding, which writes the prop's string as the host's text content, such as Chip `label` (Phase 1 spec AM-092), or a URL binding, which runs the prop's URL through the surface's URL policy and sets the attribute only to an allowed URL, such as Avatar `src` (Phase 1 spec AM-094); the value prop; the commit event that §17.2 rule C9 names);
+  - the binding map (prop → property or attribute, a surface lookup such as Icon `name` → `iconMap` (Phase 1 spec AM-071), a text binding, which writes the prop's string as the host's text content, such as Chip `label` (Phase 1 spec AM-092), or a URL binding, which runs the prop's URL through the surface's URL policy and sets the attribute only to an allowed URL, such as Avatar `src` (Phase 1 spec AM-094); the value prop; the commit event that §17.2 rule C9 names; the live event, `line-input` for a value-bearing component, on which the surface also writes the value back to the data model, so a bound value updates on each edit as A2UI v0.9.1 and v1.0 require (Phase 2 research R6 §5 item 1));
   - the action map (prop → DOM event);
   - the accessibility requirements and the agent-facing description;
   - an optional tool description, which a descriptor sets when its agent-facing description names props the frontend tool lacks (Phase 1 spec AM-086);
   - the `agentExposed` flag, which defaults to `true`.
-- Descriptors are written on the Zod 3 API and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings) in the catalogs. Only the Zod 3 API composes with those schemas.
+- Descriptors are written on the Zod 3 API and reuse the `@a2ui/web_core` common-type schemas (`DynamicString`, `ComponentId`, `ChildList`, `Action` and their siblings) in the catalogs. Only the Zod 3 API composes with those schemas. Each descriptor declares its props once, and its Zod schema per protocol version derives from that declaration on the `@a2ui/web_core/v0_9` or `@a2ui/web_core/v1_0` common types (Phase 2 research R6 §2.5).
 - The Custom Elements Manifest enriches descriptions and deprecations. It cannot be the only source, because its types are plain text and it carries no ARIA metadata. Form association appears in it only as the inherited static member `formAssociated`.
 - A drift test fails when a descriptor names an attribute, property, slot or event that the `line-components` `custom-elements.json` lacks (Phase 1 spec §10 SD26). An action-map event that the descriptor marks native, such as `click`, is a DOM event the manifest does not list, so the test checks it against a fixed list of DOM event names instead (Phase 1 spec AM-067, AM-070). For a surface-lookup binding, such as Icon `name` → `iconMap`, the test checks the members the entry sets (`library`, `name`, `weight`, `mirror`) and not the surface key (Phase 1 spec AM-072). A text binding names no manifest member, so the test skips it (Phase 1 spec AM-092). A URL binding is checked through the attribute it sets, such as `src` (Phase 1 spec AM-094).
 - A coverage test fails when a `@websublime/line-components` component in the CEM has no descriptor. `<line-a2ui-surface>` lives in `line-genui`, so the test does not cover it.
 - Every component keeps a descriptor. A component that makes no sense to an agent carries `agentExposed: false` with a reason, and the emitters leave flagged descriptors out of the catalogs and the frontend-tool schemas.
-- The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). A tool's `description` is the descriptor's tool description when it has one and its agent-facing description otherwise (Phase 1 spec AM-086). Phase 2 adds the A2UI v1.0 `line` and `basic` catalogs beside v0.9.1 (PRD §7.4).
+- The emitters produce the A2UI v0.9.1 catalog JSON for the `line` catalog and the frontend-tool schemas (`{name, description, parameters}`). A tool's `description` is the descriptor's tool description when it has one and its agent-facing description otherwise (Phase 1 spec AM-086). Phase 2 adds the A2UI v1.0 `line` and `basic` catalogs beside v0.9.1 (PRD §7.4). The v1.0 `line` catalog has its own `catalogId`, because a v0.9 and a v1.0 catalog under one id leave v1.0 surfaces on the v0.9 catalog (R6 §2.5).
 - line://ui ships two catalogs, versioned independently.
   - The `line` catalog carries the full vocabulary under its own versioned `catalogId`. Any incompatible change gets a new id. `@websublime/line-genui/catalog.json` holds its emitted JSON.
   - A2UI v0.9.1 publishes no standalone catalog meta-schema, so the `line` catalog is checked against published artifacts. Its inline form validates against `client_capabilities.json#/$defs/Catalog`, `web_core` reads it back with `Catalog.fromJson`, and its `validationSchema` compiles.
-  - The `basic` catalog registers line components under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, so agents that know only the basic catalog render with line://ui. Its JSON Schema is A2UI's own, so line://ui registers implementations under the upstream id and does not re-emit it. The v0.9.1 protocol examples and `@ag-ui/a2ui-middleware` use other ids. The catalog answers only to the v0_9 id, and the AG-UI recipe server sets `defaultCatalogId` to it (Phase 1 spec §10 SD43).
+  - The `basic` catalog registers line components under the A2UI basic catalog id `https://a2ui.org/specification/v0_9/catalogs/basic/catalog.json`, so agents that know only the basic catalog render with line://ui. Its JSON Schema is A2UI's own, so line://ui registers implementations under the upstream id and does not re-emit it. The v0.9.1 protocol examples and `@ag-ui/a2ui-middleware` use other ids. The v0.9.1 implementation answers only to the v0_9 id, and the AG-UI recipe server sets `defaultCatalogId` to it (Phase 1 spec §10 SD43). The v1.0 implementation registers under the v1_0 basic catalog id. One session serves both protocol versions and reads the data model per version (R6 §5 item 7).
 - Frontend-tool parameters are literal and flat. They carry no `$ref`, `oneOf`, `allOf`, recursion or open maps, and no A2UI common types or dynamic bindings. The emitted tool definitions are accepted by OpenAI and Anthropic in strict mode and by Gemini. Strict mode needs `additionalProperties: false` on every object, and Gemini `parameters` allows neither `additionalProperties` nor `const`. The emitter therefore builds one flat literal model per descriptor and serialises it per provider. Gemini gets `parameters` with `nullable` (Phase 1 spec §10 SD48). The catalogs keep the common types and dynamic bindings, and the flat rule does not cover them.
 - Every tool description stays at or under 1024 characters. This is a self-imposed cap that matches OpenAI's observed function-description limit; no provider documents it.
 
@@ -1611,23 +1657,25 @@ Coverage of the `basic` catalog grows by phase. An unmapped basic type renders a
 
 | A2UI basic component | line://ui target | Phase |
 |----------------------|------------------|-------|
-| Text | Native `<p>`, `<h1>`–`<h5>`, `<small>` by `variant`; `<span>` inside Button (Phase 1 spec §10 SD59) | 1 |
+| Text | Native `<p>`, `<h1>`–`<h5>`, `<small>` by `variant`; `<span>` inside Button (Phase 1 spec §10 SD59). On v1.0, whose Text has no heading variants, a leading `#`–`#####` marker maps to `<h1>`–`<h5>` without a Markdown renderer | 1 |
 | Image | Native `<img>` behind the URL policy; `variant: "avatar"` → Avatar | 1 |
 | Icon | `<line-icon>`. The surface maps the A2UI icon name through its `iconMap` property, an `A2uiIconMap` that the consumer fills with `a2uiIconMap(set, { library })` from `@websublime/line-icons/a2ui` (Phase 1 spec AM-006, decision D-M; AM-008; shape in §17.4). A2UI also accepts `{ "svgPath": … }`. The surface renders it through the `<line-icon>` `path` property (Phase 1 spec §10 SD33) | 1 |
 | Video, AudioPlayer | Native `<video>` and `<audio controls>` | 1 |
 | Row, Column, List | `<line-stack>` | 1 |
 | Divider | `<line-separator>` | 1 |
-| Button | `<line-button>` | 1 |
-| TextField | `<line-input>`, `<line-textarea>`, `<line-password-input>`, `<line-number-input>`, wrapped in `<line-field>` for the label | 2 |
+| Button | `<line-button>`, disabled while its node's checks fail, as A2UI v0.9.1 and v1.0 require (from Phase 2) | 1 |
+| TextField | `<line-input>` with the native `<input>` it slots, `<line-textarea>` with the native `<textarea>` it slots (the surface creates both native controls), `<line-password-input>`, `<line-number-input>` | 2 |
 | CheckBox | `<line-checkbox>` | 2 |
-| ChoicePicker | `<line-radio-group>`, a `<line-fieldset>` of `<line-checkbox>` elements, `<line-select>` or `<line-toggle-group>` | 2 |
+| ChoicePicker | `<line-radio-group>`, a `<line-fieldset>` around a native `<fieldset>` that the surface creates, holding `<line-checkbox>` elements, `<line-select>` or `<line-toggle-group>`. A `filterable` single-selection ChoicePicker maps to `<line-select>` with its search | 2 |
 | Slider | `<line-slider>` | 2 |
-| DateTimeInput | `<line-date-input>` | 2 |
+| DateTimeInput | `<line-date-input>`. A time-only DateTimeInput (`enableTime` without `enableDate`) uses DateInput's time-only mode, built on the Zag 1.49.0 `formatter`, whose value carries no date; the Phase 2 spec states the value form (Phase 2 research R5 §2.6) | 2 |
 | Tabs | `<line-tabs>` | 3 |
 | Modal | `<line-dialog>` | 3 |
 | ChoicePicker, DateTimeInput refinements | Combobox, Date Picker, Time Picker | 4 |
 | Card | `<line-card>` | 5 |
 | Video, AudioPlayer refinements | Video Player, Audio Player | 8 |
+
+The surface wraps each of the five Phase 2 form types in `<line-field>`, so C4's error slot exists for each and the Field labels each control (§9; Phase 2 research R6 §5 item 4).
 
 ### 17.4 Renderer
 
@@ -1641,7 +1689,7 @@ Coverage of the `basic` catalog grows by phase. An unmapped basic type renders a
 | Events | `line-a2ui-action` carries the resolved A2UI `action` message; `line-a2ui-error` carries an A2UI `error` message | The app sends both through its transport. AG-UI defines no error channel, so the AG-UI recipe logs an error locally and sends nothing (Phase 1 spec §10 SD65) |
 | Errors | A `processMessages` throw rejects its whole message, and a rejected `updateComponents` applies nothing. The surface catches every `web_core` throw. An unknown type reaches the surface as a resolver error, and the surface renders an inert placeholder for that node. A missing child stays hidden until it arrives and raises no error. The surface passes `RELAXED_VALIDATION`, so a cycle rejects its message (Phase 1 spec §10 SD52, SD54) | Law 9 |
 | Theme | Agent theme hints are ignored by default | The host owns styling |
-| Text | Plain text by default; Markdown only through an opt-in sanitising renderer | Agent strings are untrusted |
+| Text | Plain text by default; Markdown only through an opt-in sanitising renderer. A v1.0 heading marker maps to a heading without one (§17.3) | Agent strings are untrusted |
 | URLs | A URL policy hook with the default allowlist `https:`, `http:`, `mailto:`, `tel:`; `requiresUserActivation` is honoured | Upstream does not check media URLs |
 | Limits | Configurable maximum node count, depth and data-model size | Hostile or runaway agents |
 | Accessibility | One live region per surface; `aria-busy` during batches; required names validated. The live region announces the value of the `live-update-text` attribute (default "Content updated.") once per batch that changed the DOM, and the value of `live-error-text` (default "Some content could not be shown.") on error, so the consumer localises both (MANIFESTO Out of Scope; Phase 1 spec AM-013). The surface never moves focus to another component. Its reconciler keeps focus across reorders. On a reparent the surface uses `moveBefore()` where the browser has it, and otherwise returns focus to the same `instanceId` at the end of the batch | Law 3 |
