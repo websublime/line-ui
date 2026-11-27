@@ -29,7 +29,7 @@
     --line-cyan-a11: light-dark(#007491ef, #52e1fee5);
     --line-cyan-a12: light-dark(#00323ef2, #bbf3fef7);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-cyan-contrast: #000;
   }
 

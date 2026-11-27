@@ -29,7 +29,7 @@
     --line-amber-a11: light-dark(#ab6400, #ffca16);
     --line-amber-a12: light-dark(#341500dd, #ffe7b3);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-amber-contrast: #000;
   }
 

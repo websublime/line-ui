@@ -29,8 +29,8 @@
     --line-mauve-a11: light-dark(#0400119c, #f5f1ffb7);
     --line-mauve-a12: light-dark(#020008e0, #fdfdffef);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-mauve-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-mauve-contrast: light-dark(#000, #fff);
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

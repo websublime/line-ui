@@ -29,8 +29,8 @@
     --line-sage-a11: light-dark(#000a07a0, #f4fefbb0);
     --line-sage-a12: light-dark(#000805e5, #fdfffeed);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-sage-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-sage-contrast: light-dark(#000, #fff);
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

@@ -29,8 +29,8 @@
     --line-olive-a11: light-dark(#020a00a0, #f6fef4b0);
     --line-olive-a12: light-dark(#010600e3, #fdfffded);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-olive-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-olive-contrast: light-dark(#000, #fff);
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

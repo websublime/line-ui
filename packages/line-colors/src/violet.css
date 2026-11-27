@@ -29,7 +29,7 @@
     --line-violet-a11: light-dark(#1f0099af, #baa7ff);
     --line-violet-a12: light-dark(#0b0043d9, #e3defffe);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-violet-contrast: #fff;
   }
 

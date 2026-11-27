@@ -29,8 +29,8 @@
     --line-sand-a11: light-dark(#080800a1, #fffcf4b0);
     --line-sand-a12: light-dark(#060500e3, #fffffded);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-sand-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-sand-contrast: light-dark(#000, #fff);
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

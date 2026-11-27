@@ -29,8 +29,8 @@
     --line-pink-a11: light-dark(#b60074d6, #ff8dcc);
     --line-pink-a12: light-dark(#59003bed, #ffd3ecfd);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-pink-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-pink-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

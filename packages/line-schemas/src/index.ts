@@ -9,7 +9,9 @@ export type { BlackContrastHue, ContrastColor } from './contrast-table.js';
 export {
   BLACK_CONTRAST_HUES,
   ContrastColorSchema,
+  contrastFor,
   PER_HUE_CONTRAST,
+  PER_HUE_CONTRAST_DARK,
   PerHueContrastSchema,
 } from './contrast-table.js';
 export type { AccentHue, GrayHue, Hue } from './hues.js';

@@ -29,8 +29,8 @@
     --line-gold-a11: light-dark(#362100b4, #fee7c6c8);
     --line-gold-a12: light-dark(#130c00d4, #fef7ede7);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-gold-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-gold-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */

@@ -29,7 +29,7 @@
     --line-mint-a11: light-dark(#007763fd, #67ffded2);
     --line-mint-a12: light-dark(#00312ae9, #cbfee9f5);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-mint-contrast: #000;
   }
 

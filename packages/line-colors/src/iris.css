@@ -29,7 +29,7 @@
     --line-iris-a11: light-dark(#0600abac, #b1a9ff);
     --line-iris-a12: light-dark(#000246d8, #e1e0fffe);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-iris-contrast: #fff;
   }
 

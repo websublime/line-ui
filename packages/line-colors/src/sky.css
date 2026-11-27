@@ -29,7 +29,7 @@
     --line-sky-a11: light-dark(#00749e, #7cd3ffef);
     --line-sky-a12: light-dark(#002540e2, #c2f3ff);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
     --line-sky-contrast: #000;
   }
 

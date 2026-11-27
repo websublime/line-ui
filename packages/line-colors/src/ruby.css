@@ -29,8 +29,8 @@
     --line-ruby-a11: light-dark(#c10030db, #ff949d);
     --line-ruby-a12: light-dark(#550016e8, #ffd3e2fe);
 
-    /* Contrast (static single value per hue, NOT light-dark()) */
-    --line-ruby-contrast: #fff;
+    /* Contrast: one value when both modes agree, else light-dark() (AM-092) */
+    --line-ruby-contrast: #000;
   }
 
   /* Wide-gamut P3 override — same token names, automatic upgrade */
